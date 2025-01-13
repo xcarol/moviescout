@@ -2,7 +2,9 @@
 
 Where to watch from my watchlist
 
-## Getting Started
+Project configuration at [Firebase Movie Scout](https://console.firebase.google.com/project/movie-scout-a6608/overview)
+
+## Getting Started with Flutter
 
 This project is a starting point for a Flutter application.
 
