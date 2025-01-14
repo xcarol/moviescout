@@ -12,8 +12,7 @@
         "lib/firebase_options.dart": {
           "projectId": "movie-scout-a6608",
           "configurations": {
-            "android": "1:522907829647:android:ad24946d8fa25054c2f7fa",
-            "web": "1:522907829647:web:0d1d605ef665ee2fc2f7fa"
+            "android": "1:522907829647:android:ad24946d8fa25054c2f7fa"
           }
         }
       }
