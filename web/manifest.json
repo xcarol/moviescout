@@ -1,6 +1,6 @@
 {
-    "name": "movie_scout",
-    "short_name": "movie_scout",
+    "name": "moviescout",
+    "short_name": "moviescout",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
