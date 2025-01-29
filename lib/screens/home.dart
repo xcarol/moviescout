@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/services/tmdb.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -26,6 +27,16 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: searchMovie,
+        tooltip: 'Fot-li!',
+        child: const Icon(Icons.add),
+      ),
     );
+  }
+  
+  searchMovie() async {
+    final Movies = await TmdbService().searchMovie('club lucha', Localizations.localeOf(context));
+    print(Movies);
   }
 }
