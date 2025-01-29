@@ -1,3 +1,4 @@
 {
-    "timesPushed": "You have pushed the button this many times:"
+    "title": "Movie Scout",
+    "messageEmptyList": "No films slected yet."
 }

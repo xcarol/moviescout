@@ -1,3 +1,4 @@
 {
-    "timesPushed": "Número de veces que has pulsado el botón"
+    "title": "Movie Scout",
+    "messageEmptyList": "Aún no se ha seleccionado ninguna película."
 }

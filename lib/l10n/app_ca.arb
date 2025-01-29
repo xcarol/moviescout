@@ -1,3 +1,4 @@
 {
-    "timesPushed": "Número de vegades que has pitjat el botó"
+    "title": "Movie Scout",
+    "messageEmptyList": "Encara no s'ha escollit cap pel·lícula."
 }

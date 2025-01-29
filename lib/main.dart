@@ -36,7 +36,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -63,7 +62,7 @@ class MyApp extends StatelessWidget {
             seedColor: Colors.blueGrey, brightness: Brightness.dark),
       ),
       title: 'Movie Scout',
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const Home(),
     );
   }
 }
