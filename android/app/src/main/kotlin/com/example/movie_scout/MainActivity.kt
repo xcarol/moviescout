@@ -1,4 +1,4 @@
-package com.example.movie_scout
+package com.xicra.moviescout
 
 import io.flutter.embedding.android.FlutterActivity
 

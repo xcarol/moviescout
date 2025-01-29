@@ -1,3 +1,8 @@
+# Movie Scout related
+/android/app/google-services.json
+/lib/firebase_options.dart
+firebase.json
+
 # Miscellaneous
 *.class
 *.log
@@ -43,3 +48,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Android signing keystore
+upload-keystore.jks
