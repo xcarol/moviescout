@@ -69,6 +69,12 @@ Set in _.vscode/launch.json_
         }
       ]
 
+### Internationalization
+
+Followed this guide: [i18n|Flutter](https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization)  
+
+Run `flutter gen-l10n` to update the i18n generated files.  
+
 ## Icons
 
 The [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) tool is used to generate the icons for different platforms  
