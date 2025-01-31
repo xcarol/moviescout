@@ -1,4 +1,7 @@
 {
-    "title": "Movie Scout",
-    "messageEmptyList": "No films slected yet."
+    "appTitle": "Movie Scout",
+    "messageEmptyList": "No films slected yet.",
+    "search": "Search for a title",
+    "searchTitle": "Search",
+    "back": "Back"
 }

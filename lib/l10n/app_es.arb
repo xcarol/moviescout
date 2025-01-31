@@ -1,4 +1,7 @@
 {
-    "title": "Movie Scout",
-    "messageEmptyList": "Aún no se ha seleccionado ninguna película."
+    "appTitle": "Movie Scout",
+    "messageEmptyList": "Aún no se ha seleccionado ninguna película.",
+    "search": "Busca un título",
+    "searchTitle": "Búsqueda",
+    "back": "Atrás"
 }
