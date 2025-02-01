@@ -5,7 +5,7 @@ class MainAppBar extends AppBar {
     super.key,
     required BuildContext context,
     required String title,
-    required List<Widget> actions,
+    List<Widget> actions = const [],
   }) : super(
           title: Text(title),
           actions: [...actions, const SizedBox(width: 20)],
