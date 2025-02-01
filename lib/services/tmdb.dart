@@ -6,7 +6,35 @@ import 'package:http/http.dart' as http;
 const String _tmdbSearch =
     'https://api.themoviedb.org/3/search/multi?query={SEARCH}&page=1&language={LOCALE}';
 
+const String _tmdbDetails =
+    'https://api.themoviedb.org/3/{MEDIA_TYPE}/{ID}/images';
+
 class TmdbService {
+  Future<String> tmdbRequest(Uri uri) async {
+    const apiKey =
+        'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4ODMwYjBjN2YxZWY0NmI4NzYzYWFjYjFlZDQxZTExNCIsIm5iZiI6MTczODE3MjQ0MS44ODYwMDAyLCJzdWIiOiI2NzlhNjgxOTMzNzcyZjIxNTdlZjEwNmYiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.0K3sITf-To5ahpbDvd8uU7Zty4f2JJQC3Zj9rsZgNrk';
+
+    final response = await http.get(uri, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $apiKey',
+    });
+
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      Exception exception = Exception(
+        [
+          'tmdbRequest',
+          'Error: ${response.statusCode} for the request of the search :[${uri.toString()}]',
+        ],
+      );
+      FirebaseCrashlytics.instance
+          .recordFlutterError(FlutterErrorDetails(exception: exception));
+      throw exception;
+    }
+  }
+
   Future<dynamic> searchTitle(
     String search,
     Locale locale,
@@ -20,44 +48,49 @@ class TmdbService {
           '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
     );
 
-    const apiKey =
-        '';
-
-    final response = await http.get(searchUri, headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $apiKey',
-    });
-
-    if (response.statusCode == 200) {
-      return getTitles(json.decode(response.body));
-    } else {
-      Exception exception = Exception(
-        [
-          'searchMovie',
-          'Error: ${response.statusCode} for the request of the search :[${searchUri.toString()}]',
-        ],
-      );
-      FirebaseCrashlytics.instance
-          .recordFlutterError(FlutterErrorDetails(exception: exception));
-      throw exception;
-    }
+    final result = await tmdbRequest(searchUri);
+    return getTitles(json.decode(result), locale);
   }
 
-  List getTitles(Map response) {
+  Future<List> getTitles(Map response, Locale locale) async {
     List titles = [];
     for (int count = 0;
         count < response['results'].length && count < 10;
         count += 1) {
       final title = response['results'][count];
+      final details = await getImages(title['id'], title['media_type']);
+      final poster = getPoster(details);
       titles.add({
         'id': title['id'],
         'title': title['title'] ?? title['name'],
-        'poster_path': title['poster_path'],
-        'overview': title['overview'], 
+        'poster_path': poster,
+        'overview': title['overview'],
         'release_date': title['release_date'],
       });
     }
     return titles;
+  }
+
+  getPoster(Map details) {
+    if (details['logos'].length > 0) {
+      return details['logos'][0]['file_path'];
+    } else if (details['posters'].length > 0) {
+      return details['posters'][0]['file_path'];
+    } else if (details['backdrops'].length > 0) {
+      return details['backdrops'][0]['file_path'];
+    } else {
+      return '';
+    }
+  }
+
+  getImages(int titleId, String mediaType) async {
+    Uri detailtUri = Uri.parse(
+      _tmdbDetails
+          .replaceFirst('{MEDIA_TYPE}', mediaType)
+          .replaceFirst('{ID}', titleId.toString()),
+    );
+
+    final result = await tmdbRequest(detailtUri);
+    return json.decode(result);
   }
 }
