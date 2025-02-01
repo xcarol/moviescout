@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:moviescout/screens/widgets/app_bar.dart';
+import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/services/tmdb.dart';
 
 class Search extends StatefulWidget {
@@ -12,7 +12,7 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   late TextEditingController _controller;
-  late String _searchText;
+  late List titles = List.empty();
 
   @override
   void initState() {
@@ -32,39 +32,13 @@ class _SearchState extends State<Search> {
       appBar: MainAppBar(
         context: context,
         title: AppLocalizations.of(context)!.searchTitle,
-        actions: [
-          SizedBox(
-            width: 300,
-            child: TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.searchTitle,
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.arrow_forward),
-                  onPressed: searchTitle,
-                  tooltip: AppLocalizations.of(context)!.search,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              onChanged: (value) => _searchText = value,
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.cancel),
-            onPressed: back,
-            tooltip: AppLocalizations.of(context)!.back,
-          ),
-        ],
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Search',
-            ),
+            searchBox(),
+            searchResults(),
           ],
         ),
       ),
@@ -75,9 +49,72 @@ class _SearchState extends State<Search> {
     Navigator.pop(context);
   }
 
-  searchTitle() async {
-    final Movies = await TmdbService()
-        .searchMovie(_searchText, Localizations.localeOf(context));
-    print(Movies);
+  resetTitle() {
+    _controller.clear();
+    setState(() {
+      titles = List.empty();
+    });
+  }
+
+  searchBox() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16.0),
+      child: TextField(
+        controller: _controller,
+        decoration: InputDecoration(
+          labelText: AppLocalizations.of(context)!.search,
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.clear),
+            onPressed: () {
+              resetTitle();
+            },
+            tooltip: AppLocalizations.of(context)!.search,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+        ),
+        onChanged: (title) {
+          searchTitle(title);
+        },
+      ),
+    );
+  }
+
+  searchResults() {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: titles.length,
+        itemBuilder: (context, index) {
+          return cardBuilder(titles[index]);
+        },
+      ),
+    );
+  }
+
+  cardBuilder(index) {
+    return Card(
+      child: ListTile(
+        leading: index['poster_path'] != '' && index['poster_path'] != null
+            ? Image.network(
+                'https://image.tmdb.org/t/p/w500${index['poster_path']}',
+                width: 100,
+                height: 150,
+                fit: BoxFit.cover,
+              )
+            : const Icon(Icons.movie_creation),
+        title: Text(index['title'] ?? ''),
+        subtitle: Text(index['overview'] ?? ''),
+      ),
+    );
+  }
+
+  searchTitle(title) async {
+    final result =
+        await TmdbService().searchTitle(title, Localizations.localeOf(context));
+    setState(() {
+      titles = result;
+    });
   }
 }
