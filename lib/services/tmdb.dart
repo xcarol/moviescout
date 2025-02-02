@@ -23,6 +23,9 @@ class TmdbService {
 
     if (response.statusCode == 200) {
       return response.body;
+    } else if (response.statusCode == 401) {
+      print('Unauthorized');
+      return '{}'; // Unauthorized
     } else {
       Exception exception = Exception(
         [
