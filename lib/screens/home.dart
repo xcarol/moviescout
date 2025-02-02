@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/screens/search.dart';
+import 'package:moviescout/widgets/app_bar.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,9 +14,16 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(AppLocalizations.of(context)!.title),
+      appBar: MainAppBar(
+        context: context,
+        title: AppLocalizations.of(context)!.appTitle,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: searchMovie,
+            tooltip: AppLocalizations.of(context)!.search,
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -26,6 +35,18 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: searchMovie,
+        tooltip: 'Fot-li!',
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  searchMovie() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Search()),
     );
   }
 }
