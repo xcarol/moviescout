@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:convert';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +30,11 @@ class TmdbService {
           'Error: ${response.statusCode} for the request of the search :[${uri.toString()}]',
         ],
       );
-      FirebaseCrashlytics.instance
-          .recordFlutterError(FlutterErrorDetails(exception: exception));
+      if (Platform.isAndroid) {
+        FirebaseCrashlytics.instance
+            .recordFlutterError(FlutterErrorDetails(exception: exception));
+      }
+      
       throw exception;
     }
   }
