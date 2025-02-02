@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/firebase_options.dart';
 import 'package:moviescout/screens/home.dart';
 
@@ -29,6 +30,8 @@ void main() async {
     await FirebaseCrashlytics.instance
         .setCrashlyticsCollectionEnabled(kDebugMode);
   }
+
+  await dotenv.load(fileName: ".env");
 
   runApp(const MyApp());
 }

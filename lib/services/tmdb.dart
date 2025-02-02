@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:convert';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 const String _tmdbSearch =
@@ -11,8 +13,7 @@ const String _tmdbDetails =
 
 class TmdbService {
   Future<String> tmdbRequest(Uri uri) async {
-    const apiKey =
-        '';
+    final apiKey = dotenv.env['TMDB_API_KEY'];
 
     final response = await http.get(uri, headers: {
       'Content-Type': 'application/json',
@@ -22,6 +23,9 @@ class TmdbService {
 
     if (response.statusCode == 200) {
       return response.body;
+    } else if (response.statusCode == 401) {
+      print('Unauthorized');
+      return '{}'; // Unauthorized
     } else {
       Exception exception = Exception(
         [
@@ -29,8 +33,11 @@ class TmdbService {
           'Error: ${response.statusCode} for the request of the search :[${uri.toString()}]',
         ],
       );
-      FirebaseCrashlytics.instance
-          .recordFlutterError(FlutterErrorDetails(exception: exception));
+      if (Platform.isAndroid) {
+        FirebaseCrashlytics.instance
+            .recordFlutterError(FlutterErrorDetails(exception: exception));
+      }
+      
       throw exception;
     }
   }
@@ -54,8 +61,9 @@ class TmdbService {
 
   Future<List> getTitles(Map response, Locale locale) async {
     List titles = [];
+    final totalResults = response['total_results'] ?? 0;
     for (int count = 0;
-        count < response['results'].length && count < 10;
+        count < totalResults && count < 10;
         count += 1) {
       final title = response['results'][count];
       final details = await getImages(title['id'], title['media_type']);
@@ -76,7 +84,8 @@ class TmdbService {
       return details['posters'][0]['file_path'];
     } else if (details['logos'] != null && details['logos'].length > 0) {
       return details['logos'][0]['file_path'];
-    } else if (details['backdrops'] != null && details['backdrops'].length > 0) {
+    } else if (details['backdrops'] != null &&
+        details['backdrops'].length > 0) {
       return details['backdrops'][0]['file_path'];
     } else {
       return '';
