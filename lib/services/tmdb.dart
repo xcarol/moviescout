@@ -72,11 +72,11 @@ class TmdbService {
   }
 
   getPoster(Map details) {
-    if (details['logos'].length > 0) {
-      return details['logos'][0]['file_path'];
-    } else if (details['posters'].length > 0) {
+    if (details['posters'] != null && details['posters'].length > 0) {
       return details['posters'][0]['file_path'];
-    } else if (details['backdrops'].length > 0) {
+    } else if (details['logos'] != null && details['logos'].length > 0) {
+      return details['logos'][0]['file_path'];
+    } else if (details['backdrops'] != null && details['backdrops'].length > 0) {
       return details['backdrops'][0]['file_path'];
     } else {
       return '';
