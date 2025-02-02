@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 const String _tmdbSearch =
@@ -12,8 +13,7 @@ const String _tmdbDetails =
 
 class TmdbService {
   Future<String> tmdbRequest(Uri uri) async {
-    const apiKey =
-        '';
+    final apiKey = dotenv.env['TMDB_API_KEY'];
 
     final response = await http.get(uri, headers: {
       'Content-Type': 'application/json',
