@@ -95,17 +95,45 @@ class _SearchState extends State<Search> {
 
   cardBuilder(index) {
     return Card(
-      child: ListTile(
-        leading: index['poster_path'] != '' && index['poster_path'] != null
-            ? Image.network(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 110,
+              height: 150,
+              child: Image.network(
                 'https://image.tmdb.org/t/p/w500${index['poster_path']}',
-                width: 100,
-                height: 150,
                 fit: BoxFit.cover,
-              )
-            : const Icon(Icons.movie_creation),
-        title: Text(index['title'] ?? ''),
-        subtitle: Text(index['overview'] ?? ''),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(index['title'] ?? '',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16)),
+                  const SizedBox(height: 5),
+                  Text(index['overview'] ?? '',
+                      maxLines: 3, overflow: TextOverflow.ellipsis),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {/* ... */},
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
