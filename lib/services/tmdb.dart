@@ -58,8 +58,9 @@ class TmdbService {
 
   Future<List> getTitles(Map response, Locale locale) async {
     List titles = [];
+    final totalResults = response['total_results'] ?? 0;
     for (int count = 0;
-        count < response['results'].length && count < 10;
+        count < totalResults && count < 10;
         count += 1) {
       final title = response['results'][count];
       final details = await getImages(title['id'], title['media_type']);
@@ -80,7 +81,8 @@ class TmdbService {
       return details['posters'][0]['file_path'];
     } else if (details['logos'] != null && details['logos'].length > 0) {
       return details['logos'][0]['file_path'];
-    } else if (details['backdrops'] != null && details['backdrops'].length > 0) {
+    } else if (details['backdrops'] != null &&
+        details['backdrops'].length > 0) {
       return details['backdrops'][0]['file_path'];
     } else {
       return '';
