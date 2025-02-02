@@ -12,7 +12,7 @@ const String _tmdbDetails =
 class TmdbService {
   Future<String> tmdbRequest(Uri uri) async {
     const apiKey =
-        'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4ODMwYjBjN2YxZWY0NmI4NzYzYWFjYjFlZDQxZTExNCIsIm5iZiI6MTczODE3MjQ0MS44ODYwMDAyLCJzdWIiOiI2NzlhNjgxOTMzNzcyZjIxNTdlZjEwNmYiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.0K3sITf-To5ahpbDvd8uU7Zty4f2JJQC3Zj9rsZgNrk';
+        '';
 
     final response = await http.get(uri, headers: {
       'Content-Type': 'application/json',
