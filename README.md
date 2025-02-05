@@ -83,6 +83,15 @@ The file used as the app logo is _./lib/assets/logo-icon.png_  defined in the _p
 
 After updating the logo run:  $ `dart run flutter_launcher_icons`
 
+## Tmdb integration
+
+Get the **API Read Access Token** from [The Movie DB API Settings](https://www.themoviedb.org/settings/api)     
+Create a file called _.env_ in the root directory and add the key:
+```
+TMDB_API_KEY=apiReadAccessTokenGotFromTmdb
+``` 
+
+
 ## Build and run Android App
 
 Setup this file in the path _./android_:  
