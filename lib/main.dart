@@ -14,18 +14,19 @@ void main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  FlutterError.onError = (errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
-
-  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
+  // Crashlytics is not yet available for web
+  // https://firebase.google.com/docs/flutter/setup?platform=web#available-plugins
 
   if (defaultTargetPlatform == TargetPlatform.android) {
-    // Enable debug logging for Firebase Crashlytics
+    FlutterError.onError = (errorDetails) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+    };
+
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+
     await FirebaseCrashlytics.instance
         .setCrashlyticsCollectionEnabled(kDebugMode);
   }
