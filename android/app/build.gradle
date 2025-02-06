@@ -32,6 +32,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        minSdkVersion = 23
     }
 
     buildTypes {
@@ -46,3 +47,8 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    implementation 'com.google.android.gms:play-services-auth:20.7.0'
+}
+

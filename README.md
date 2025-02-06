@@ -91,6 +91,13 @@ Create a file called _.env_ in the root directory and add the key:
 TMDB_API_KEY=apiReadAccessTokenGotFromTmdb
 ``` 
 
+## Google Sign In
+
+Get the **OAuth 2.0 Client ID** from [Google APIs & Services > Credentials](https://console.cloud.google.com/apis/credentials?inv=1&invt=Abo3Jg&project=movie-scout-a6608)     
+Create a file called _.env_ in the root directory and add the key:
+```
+OAUTH_CLIENT_ID=googleOauthClintIDGotFromGoogle
+``` 
 
 ## Build and run Android App
 
