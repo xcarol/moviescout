@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/services/tmdb.dart';
+import 'package:moviescout/widgets/app_drawer.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -33,6 +34,7 @@ class _SearchState extends State<Search> {
         context: context,
         title: AppLocalizations.of(context)!.searchTitle,
       ),
+      drawer: AppDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

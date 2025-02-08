@@ -3,5 +3,8 @@
     "messageEmptyList": "Aún no se ha seleccionado ninguna película.",
     "search": "Busca un título",
     "searchTitle": "Búsqueda",
-    "back": "Atrás"
+    "back": "Atrás",
+    "anonymousUser": "Sin usuario",
+    "login": "Inicia sessión",
+    "logout": "Cierra sessión"
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/screens/search.dart';
 import 'package:moviescout/widgets/app_bar.dart';
+import 'package:moviescout/widgets/app_drawer.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -25,6 +26,7 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
+      drawer: AppDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -34,11 +36,6 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: searchMovie,
-        tooltip: 'Fot-li!',
-        child: const Icon(Icons.add),
       ),
     );
   }

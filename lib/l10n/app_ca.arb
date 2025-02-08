@@ -3,5 +3,8 @@
     "messageEmptyList": "Encara no s'ha escollit cap pel·lícula.",
     "search": "Cerca un títol",
     "searchTitle": "Cerca",
-    "back": "Enrere"
+    "back": "Enrere",
+    "anonymousUser": "Sense usuari",
+    "login": "Inicia sessió",
+    "logout": "Tanca sessió"
 }
