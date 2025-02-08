@@ -3,5 +3,8 @@
     "messageEmptyList": "No films slected yet.",
     "search": "Search for a title",
     "searchTitle": "Search",
-    "back": "Back"
+    "back": "Back",
+    "anonymousUser": "Anonymous user",
+    "login": "Login",
+    "logout": "Logout"
 }

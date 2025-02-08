@@ -1,9 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/screens/search.dart';
 import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/services/google.dart';
+import 'package:moviescout/widgets/app_drawer.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -27,6 +26,7 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
+      drawer: AppDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -37,11 +37,6 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: loquin,
-        tooltip: 'Fot-li!',
-        child: const Icon(Icons.add),
-      ),
     );
   }
 
@@ -50,14 +45,5 @@ class _HomeState extends State<Home> {
       context,
       MaterialPageRoute(builder: (context) => Search()),
     );
-  }
-
-  loquin() async {
-    User? user = await signInWithGoogle();
-    if (user != null) {
-      print("Sessió iniciada amb: ${user.displayName}");
-    } else {
-      print("Error en iniciar sessió.");
-    }
   }
 }

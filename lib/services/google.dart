@@ -4,9 +4,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<User?> signInWithGoogle() async {
   try {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn(
-            clientId: dotenv.env['OAUTH_CLIENT_ID'])
-        .signIn();
+    final GoogleSignInAccount? googleUser =
+        await GoogleSignIn(clientId: dotenv.env['OAUTH_CLIENT_ID']).signIn();
     if (googleUser == null) return null; // Usuari cancel·la el login
 
     final GoogleSignInAuthentication googleAuth =
@@ -26,6 +25,10 @@ Future<User?> signInWithGoogle() async {
 }
 
 Future<void> signOutGoogle() async {
-  await GoogleSignIn().signOut();
-  await FirebaseAuth.instance.signOut();
+  try {
+    await GoogleSignIn(clientId: dotenv.env['OAUTH_CLIENT_ID']).signOut();
+    await FirebaseAuth.instance.signOut();
+  } catch (e) {
+    print("Error in signOutGoogle: $e");
+  }
 }
