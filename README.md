@@ -59,15 +59,37 @@ This process will generate the files:
 
 ### VSCODE
 
-Set in _.vscode/launch.json_
+Useful _.vscode/launch.json_
 
-    "configurations": [
-        {
-          "name": "moviescout",
-          "request": "launch",
-          "type": "dart"
-        }
-      ]
+```
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+
+    {
+      "name": "MovieScout Web",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--web-port", "8080", "--device-id", "chrome"],
+    },
+    {
+      "name": "MovieScout Android",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--device-id", "RMX2001"]
+    }
+  ]
+}
+```
+
+On _MovieScout Web_ parameter `--web-port` is important to set it as the one defined at the [Authorized JavaScript origins](https://console.cloud.google.com/apis/credentials/oauthclient/522907829647-g3amo1mcfp0smq336kqsaf8826g3d418.apps.googleusercontent.com?inv=1&invt=AbpCsw&project=movie-scout-a6608)
+
+On _MovieScout Android_ parameter `--device-id` set the desired device name.  
 
 ### Internationalization
 
