@@ -2,11 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:google_sign_in_web/google_sign_in_web.dart';
-import 'package:google_sign_in_web/web_only.dart' as web;
 import 'package:moviescout/services/google.dart';
-
-typedef HandleSignInFn = Future<void> Function();
+import 'mobile_fake_web_sign_in_button.dart'
+    if (dart.library.js_util) 'web_sign_in_button.dart' show buildSignInButton;
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -58,14 +56,6 @@ class AppDrawer extends StatelessWidget {
               },
             ),
         ],
-      ),
-    );
-  }
-
-  Widget buildSignInButton({HandleSignInFn? onPressed}) {
-    return web.renderButton(
-      configuration: GSIButtonConfiguration(
-        type: GSIButtonType.icon,
       ),
     );
   }
