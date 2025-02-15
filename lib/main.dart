@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/firebase_options.dart';
 import 'package:moviescout/screens/home.dart';
+import 'package:moviescout/services/google.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,7 @@ void main() async {
   }
 
   await dotenv.load(fileName: ".env");
+  await GoogleSignInService.instance.initService();
 
   runApp(const MyApp());
 }
