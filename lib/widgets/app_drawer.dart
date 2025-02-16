@@ -12,7 +12,7 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    GoogleSignInAccount? user = GoogleSignInService.instance.currentUser;
+    GoogleSignInAccount? user = GoogleService.instance.currentUser;
     NetworkImage? userImage = NetworkImage(user?.photoUrl ?? '');
 
     return Drawer(
@@ -63,7 +63,7 @@ class AppDrawer extends StatelessWidget {
 
   Future<void> login(BuildContext context) async {
     try {
-      await GoogleSignInService.instance.signIn();
+      await GoogleService.instance.signIn();
       if (context.mounted) {
         SnackMessage.showSnackBar(
             context, AppLocalizations.of(context)!.loginSuccess);
@@ -77,7 +77,7 @@ class AppDrawer extends StatelessWidget {
 
   logout(BuildContext context) async {
     try {
-      await GoogleSignInService.instance.signOut();
+      await GoogleService.instance.signOut();
       if (context.mounted) {
         SnackMessage.showSnackBar(
             context, AppLocalizations.of(context)!.logoutSuccess);
