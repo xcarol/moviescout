@@ -6,5 +6,7 @@
     "back": "Enrere",
     "anonymousUser": "Sense usuari",
     "login": "Inicia sessió",
-    "logout": "Tanca sessió"
+    "logout": "Tanca sessió",
+    "loginSuccess": "Sessió iniciada correctament.",
+    "logoutSuccess": "Sessió tancada correctament."
 }

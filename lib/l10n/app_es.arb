@@ -6,5 +6,7 @@
     "back": "Atrás",
     "anonymousUser": "Sin usuario",
     "login": "Inicia sessión",
-    "logout": "Cierra sessión"
+    "logout": "Cierra sessión",
+    "loginSuccess": "Sessión iniciada correctamente.",
+    "logoutSuccess": "Sessión cerrada correctamente."
 }
