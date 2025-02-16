@@ -6,5 +6,7 @@
     "back": "Back",
     "anonymousUser": "Anonymous user",
     "login": "Login",
-    "logout": "Logout"
+    "logout": "Logout",
+    "loginSuccess": "Logged in succesfully.",
+    "logoutSuccess": "Logged out succesfully."
 }

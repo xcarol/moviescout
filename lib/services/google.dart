@@ -39,18 +39,10 @@ class GoogleSignInService {
   }
 
   Future<void> signIn() async {
-    try {
-      await _googleSignIn.signIn();
-    } catch (error) {
-      print(error);
-    }
+    await _googleSignIn.signIn();
   }
 
   Future<void> signOut() async {
-    try {
-      await _googleSignIn.disconnect();
-    } catch (e) {
-      print("Error in signOutGoogle: $e");
-    }
+    await _googleSignIn.disconnect();
   }
 }
