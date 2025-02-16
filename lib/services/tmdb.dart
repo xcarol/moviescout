@@ -15,6 +15,8 @@ class TmdbService {
   Future<String> tmdbRequest(Uri uri) async {
     final apiKey = dotenv.env['TMDB_API_KEY'];
 
+    // http.get doesn't return a resonse for a non valid (2xx) server response.
+    // it sends an exception instead. Use android for debugging.
     final response = await http.get(uri, headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -23,22 +25,15 @@ class TmdbService {
 
     if (response.statusCode == 200) {
       return response.body;
-    } else if (response.statusCode == 401) {
-      print('Unauthorized');
-      return '{}'; // Unauthorized
     } else {
-      Exception exception = Exception(
-        [
-          'tmdbRequest',
-          'Error: ${response.statusCode} for the request of the search :[${uri.toString()}]',
-        ],
-      );
+      final message =
+          'tmbRequest Error. Status code: ${response.statusCode}. Message: ${response.reasonPhrase}. Uri: ${uri.toString()}';
       if (Platform.isAndroid) {
         FirebaseCrashlytics.instance
-            .recordFlutterError(FlutterErrorDetails(exception: exception));
+            .recordFlutterError(FlutterErrorDetails(exception: ([message])));
       }
-      
-      throw exception;
+
+      throw HttpException(message);
     }
   }
 
@@ -62,9 +57,7 @@ class TmdbService {
   Future<List> getTitles(Map response, Locale locale) async {
     List titles = [];
     final totalResults = response['total_results'] ?? 0;
-    for (int count = 0;
-        count < totalResults && count < 10;
-        count += 1) {
+    for (int count = 0; count < totalResults && count < 10; count += 1) {
       final title = response['results'][count];
       final details = await getImages(title['id'], title['media_type']);
       final poster = getPoster(details);
