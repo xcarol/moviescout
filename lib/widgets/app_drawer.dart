@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:moviescout/services/google.dart';
 import 'mobile_fake_web_sign_in_button.dart'
     if (dart.library.js_util) 'web_sign_in_button.dart' show buildSignInButton;
+import 'package:moviescout/services/snack_bar.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -38,7 +39,7 @@ class AppDrawer extends StatelessWidget {
                   : AppLocalizations.of(context)!.login),
               onTap: () => {
                 Navigator.of(context).pop(),
-                if (user != null) {logout()} else {login()}
+                if (user != null) {logout(context)} else {login(context)}
               },
             ),
           if (kIsWeb && user == null)
@@ -52,7 +53,7 @@ class AppDrawer extends StatelessWidget {
               title: Text(AppLocalizations.of(context)!.logout),
               onTap: () => {
                 Navigator.of(context).pop(),
-                logout(),
+                logout(context),
               },
             ),
         ],
@@ -60,16 +61,32 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Future<void> login() async {
+  Future<void> login(BuildContext context) async {
     try {
       await GoogleSignInService.instance.signIn();
+      if (context.mounted) {
+        SnackMessage.showSnackBar(
+            context, AppLocalizations.of(context)!.loginSuccess);
+      }
     } catch (error) {
-      print(error);
+      if (context.mounted) {
+        SnackMessage.showSnackBar(context, "signIn error: ${error.toString()}");
+      }
     }
   }
 
-  logout() async {
-    await GoogleSignInService.instance.signOut();
-    print("Sessió finalitzada.");
+  logout(BuildContext context) async {
+    try {
+      await GoogleSignInService.instance.signOut();
+      if (context.mounted) {
+        SnackMessage.showSnackBar(
+            context, AppLocalizations.of(context)!.logoutSuccess);
+      }
+    } catch (error) {
+      if (context.mounted) {
+        SnackMessage.showSnackBar(
+            context, "signOut error: ${error.toString()}");
+      }
+    }
   }
 }

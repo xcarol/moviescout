@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/services/tmdb.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
@@ -78,7 +79,7 @@ class _SearchState extends State<Search> {
           ),
         ),
         onChanged: (title) {
-          searchTitle(title);
+          searchTitle(context, title);
         },
       ),
     );
@@ -140,11 +141,17 @@ class _SearchState extends State<Search> {
     );
   }
 
-  searchTitle(title) async {
-    final result =
-        await TmdbService().searchTitle(title, Localizations.localeOf(context));
-    setState(() {
-      titles = result;
-    });
+  searchTitle(BuildContext context, title) async {
+    try {
+      final result = await TmdbService()
+          .searchTitle(title, Localizations.localeOf(context));
+      setState(() {
+        titles = result;
+      });
+    } catch (error) {
+      if (context.mounted) {
+        SnackMessage.showSnackBar(context, error.toString());
+      }
+    }
   }
 }
