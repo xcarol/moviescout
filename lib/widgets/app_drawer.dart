@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:moviescout/services/google.dart';
-import 'mobile_fake_web_sign_in_button.dart'
+import 'web_sign_in_button_mobile_fake.dart'
     if (dart.library.js_util) 'web_sign_in_button.dart' show buildSignInButton;
 import 'package:moviescout/services/snack_bar.dart';
 
