@@ -33,7 +33,7 @@ void main() async {
   }
 
   await dotenv.load(fileName: ".env");
-  await GoogleSignInService.instance.initService();
+  await GoogleService.instance.init();
 
   runApp(const MyApp());
 }

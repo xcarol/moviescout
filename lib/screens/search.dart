@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/services/google.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/services/tmdb.dart';
@@ -125,10 +126,7 @@ class _SearchState extends State<Search> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {/* ... */},
-                      ),
+                      favoriteButton(index['id']),
                       const SizedBox(width: 8),
                     ],
                   ),
@@ -140,6 +138,39 @@ class _SearchState extends State<Search> {
       ),
     );
   }
+
+  Future<bool> isFavoriteMovie(BuildContext context, titleId) async {
+    return GoogleService.instance.isFavoriteMovie(context, titleId);
+  }
+
+  FutureBuilder<bool> favoriteButton(titleId) {
+    return FutureBuilder<bool>(
+      future: isFavoriteMovie(context, titleId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (GoogleService.instance.currentUser == null) {
+            return IconButton(
+              icon: const Icon(Icons.highlight_off),
+              onPressed: () {
+                SnackMessage.showSnackBar(
+                    context, AppLocalizations.of(context)!.signInToFavorite);
+              },
+            );
+          }
+          return IconButton(
+            icon: Icon(snapshot.data! ? Icons.cancel : Icons.add_circle),
+            onPressed: () {
+              GoogleService.instance
+                  .updateFavoriteMovie(context, titleId, !snapshot.data!);
+            },
+          );
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    );
+  }
+
 
   searchTitle(BuildContext context, title) async {
     try {
