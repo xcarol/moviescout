@@ -8,5 +8,6 @@
     "login": "Inicia sessión",
     "logout": "Cierra sessión",
     "loginSuccess": "Sessión iniciada correctamente.",
-    "logoutSuccess": "Sessión cerrada correctamente."
+    "logoutSuccess": "Sessión cerrada correctamente.",
+    "signInToFavorite": "Es necesario iniciar sessión para añadir títulos."
 }
