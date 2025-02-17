@@ -121,6 +121,23 @@ Create a file called _.env_ in the root directory and add the key:
 OAUTH_CLIENT_ID=googleOauthClintIDGotFromGoogle
 ``` 
 
+## Google Database
+
+Used database is at [Firebase Realtime Database](https://console.firebase.google.com/project/movie-scout-a6608/database)
+
+### Rules
+```
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid",
+      }
+    }
+  }
+}
+```
 ## Build and run Android App
 
 Setup this file in the path _./android_:  
