@@ -21,7 +21,7 @@ class _HomeState extends State<Home> {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: searchMovie,
+            onPressed: searchTitle,
             tooltip: AppLocalizations.of(context)!.search,
           ),
         ],
@@ -40,7 +40,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  searchMovie() async {
+  searchTitle() async {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => Search()),

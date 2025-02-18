@@ -139,13 +139,13 @@ class _SearchState extends State<Search> {
     );
   }
 
-  Future<bool> isFavoriteMovie(BuildContext context, titleId) async {
-    return GoogleService.instance.isFavoriteMovie(context, titleId);
+  Future<bool> isFavoriteTitle(BuildContext context, titleId) async {
+    return GoogleService.instance.isFavoriteTitle(context, titleId);
   }
 
   FutureBuilder<bool> favoriteButton(titleId) {
     return FutureBuilder<bool>(
-      future: isFavoriteMovie(context, titleId),
+      future: isFavoriteTitle(context, titleId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (GoogleService.instance.currentUser == null) {
@@ -161,7 +161,7 @@ class _SearchState extends State<Search> {
             icon: Icon(snapshot.data! ? Icons.cancel : Icons.add_circle),
             onPressed: () {
               GoogleService.instance
-                  .updateFavoriteMovie(context, titleId, !snapshot.data!);
+                  .updateFavoriteTitle(context, titleId, !snapshot.data!);
             },
           );
         } else {
@@ -170,7 +170,6 @@ class _SearchState extends State<Search> {
       },
     );
   }
-
 
   searchTitle(BuildContext context, title) async {
     try {

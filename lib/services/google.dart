@@ -76,7 +76,7 @@ class GoogleService {
     await _googleSignIn.disconnect();
   }
 
-  Future<bool> isFavoriteMovie(BuildContext context, int movieId) async {
+  Future<bool> isFavoriteTitle(BuildContext context, int movieId) async {
     if (currentUser == null) {
       // Handle the case where the user is not logged in.
       return false; // Return false if the user isn't logged in
@@ -85,7 +85,7 @@ class GoogleService {
     final database = FirebaseDatabase.instance.ref();
     try {
       final snapshot =
-          await database.child('users/$uid/favoriteMovieIds').once();
+          await database.child('users/$uid/favoriteTitleIds').once();
 
       if (snapshot.snapshot.value != null) {
         final favoriteIds = snapshot.snapshot.value as List<dynamic>;
@@ -94,21 +94,21 @@ class GoogleService {
         return false; // Return false if the user has no favorites
       }
     } catch (e) {
-        if (context.mounted) {
-          SnackMessage.showSnackBar(context, "isFavoriteMovie error: $e");
-        }
+      if (context.mounted) {
+        SnackMessage.showSnackBar(context, "isFavoriteTitle error: $e");
+      }
     }
     return false;
   }
 
-  Future<List<String>> readFavoriteMovies(BuildContext context) async {
+  Future<List<String>> readFavoriteTitles(BuildContext context) async {
     if (currentUser == null) {
       // Handle the case where the user is not logged in.
       return []; // Return an empty list
     }
     final uid = await getFirebaseUid(context, currentUser);
     final database = FirebaseDatabase.instance.ref();
-    final snapshot = await database.child('users/$uid/favoriteMovieIds').once();
+    final snapshot = await database.child('users/$uid/favoriteTitleIds').once();
 
     if (snapshot.snapshot.value != null) {
       final favoriteIds = snapshot.snapshot.value as List<dynamic>;
@@ -118,7 +118,7 @@ class GoogleService {
     }
   }
 
-  Future<void> updateFavoriteMovie(
+  Future<void> updateFavoriteTitle(
       BuildContext context, int movieId, bool add) async {
     if (currentUser == null) {
       // Handle the case where the user is not logged in.
@@ -126,7 +126,7 @@ class GoogleService {
     }
     final uid = await getFirebaseUid(context, currentUser);
     final database = FirebaseDatabase.instance.ref();
-    final favoritesRef = database.child('users/$uid/favoriteMovieIds');
+    final favoritesRef = database.child('users/$uid/favoriteTitleIds');
 
     await favoritesRef.once().then((value) async {
       try {
@@ -150,7 +150,7 @@ class GoogleService {
         }
       } catch (e) {
         if (context.mounted) {
-          SnackMessage.showSnackBar(context, "updateFavoriteMovie error: $e");
+          SnackMessage.showSnackBar(context, "updateFavoriteTitle error: $e");
         }
       }
     });
