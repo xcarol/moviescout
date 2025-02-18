@@ -15,12 +15,14 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   late TextEditingController _controller;
-  late List titles = List.empty();
+  late List searchTitles = List.empty();
+  late List favoriteTitles = List.empty();
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
     _controller = TextEditingController();
+    favoriteTitles = await GoogleService.instance.readFavoriteTitles(context);
   }
 
   @override
@@ -56,7 +58,7 @@ class _SearchState extends State<Search> {
   resetTitle() {
     _controller.clear();
     setState(() {
-      titles = List.empty();
+      searchTitles = List.empty();
     });
   }
 
@@ -89,9 +91,9 @@ class _SearchState extends State<Search> {
   searchResults() {
     return Expanded(
       child: ListView.builder(
-        itemCount: titles.length,
+        itemCount: searchTitles.length,
         itemBuilder: (context, index) {
-          return cardBuilder(titles[index]);
+          return cardBuilder(searchTitles[index]);
         },
       ),
     );
@@ -176,7 +178,7 @@ class _SearchState extends State<Search> {
       final result = await TmdbService()
           .searchTitle(title, Localizations.localeOf(context));
       setState(() {
-        titles = result;
+        searchTitles = result;
       });
     } catch (error) {
       if (context.mounted) {
