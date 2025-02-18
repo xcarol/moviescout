@@ -101,7 +101,7 @@ class GoogleService {
     return false;
   }
 
-  Future<List<String>> readFavoriteTitles(BuildContext context) async {
+  Future<List<int>> readFavoriteTitles(BuildContext context) async {
     if (currentUser == null) {
       // Handle the case where the user is not logged in.
       return []; // Return an empty list
@@ -112,7 +112,7 @@ class GoogleService {
 
     if (snapshot.snapshot.value != null) {
       final favoriteIds = snapshot.snapshot.value as List<dynamic>;
-      return favoriteIds.map((e) => e.toString()).toList();
+      return favoriteIds.map((e) => e as int).toList();
     } else {
       return []; // Return an empty list if the user has no favorites
     }
