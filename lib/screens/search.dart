@@ -143,6 +143,8 @@ class _SearchState extends State<Search> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
+              favoriteText(index['id']),
+              const SizedBox(width: 8),
               favoriteButton(index['id']),
               const SizedBox(width: 8),
             ],
@@ -170,6 +172,15 @@ class _SearchState extends State<Search> {
 
   Future<bool> isFavoriteTitle(BuildContext context, titleId) async {
     return GoogleService.instance.isFavoriteTitle(context, titleId);
+  }
+
+  Text favoriteText(titleId) {
+    final bool isFavorite = favoriteTitles.contains(titleId);
+    return Text(
+      isFavorite
+          ? AppLocalizations.of(context)!.removeFromFavorites
+          : AppLocalizations.of(context)!.addToFavorites,
+    );
   }
 
   IconButton favoriteButton(titleId) {
