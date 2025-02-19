@@ -1,6 +1,7 @@
 {
     "appTitle": "Movie Scout",
     "messageEmptyList": "No films slected yet.",
+    "messageEmptyList2": "Do a search using the magnifying glass in the top right.",
     "search": "Search for a title",
     "searchTitle": "Search",
     "back": "Back",
@@ -9,5 +10,7 @@
     "logout": "Logout",
     "loginSuccess": "Logged in succesfully.",
     "logoutSuccess": "Logged out succesfully.",
-    "signInToFavorite": "User must be logged in to add titles."
+    "signInToFavorite": "User must be logged in to add titles.",
+    "addToFavorites": "Add to the watchlist",
+    "removeFromFavorites": "Remove from the watchlist"
 }

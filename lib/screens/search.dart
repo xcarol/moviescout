@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/services/google.dart';
 import 'package:moviescout/services/snack_bar.dart';
@@ -15,12 +16,15 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   late TextEditingController _controller;
-  late List titles = List.empty();
+  late List searchTitles = List.empty();
+  late List<int> favoriteTitles = List.empty();
+  late int updatingTitleId = 0;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    loadFavoriteTitles();
   }
 
   @override
@@ -56,7 +60,7 @@ class _SearchState extends State<Search> {
   resetTitle() {
     _controller.clear();
     setState(() {
-      titles = List.empty();
+      searchTitles = List.empty();
     });
   }
 
@@ -89,10 +93,63 @@ class _SearchState extends State<Search> {
   searchResults() {
     return Expanded(
       child: ListView.builder(
-        itemCount: titles.length,
+        itemCount: searchTitles.length,
         itemBuilder: (context, index) {
-          return cardBuilder(titles[index]);
+          return cardBuilder(searchTitles[index]);
         },
+      ),
+    );
+  }
+
+  Widget titlePoster(String? posterPath) {
+    if (posterPath == null || posterPath.isEmpty) {
+      return SizedBox(
+        width: 110,
+        height: 150,
+        child: SvgPicture.asset(
+          'lib/assets/movie.svg',
+          fit: BoxFit.cover,
+        ),
+      );
+    }
+
+    return SizedBox(
+      width: 110,
+      height: 150,
+      child: Image.network(
+        'https://image.tmdb.org/t/p/w500$posterPath',
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return SvgPicture.asset(
+            'lib/assets/movie.svg',
+            fit: BoxFit.cover,
+          );
+        },
+      ),
+    );
+  }
+
+  titleCard(index) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(index['title'] ?? '',
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const SizedBox(height: 5),
+          Text(index['overview'] ?? '',
+              maxLines: 3, overflow: TextOverflow.ellipsis),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              favoriteText(index['id']),
+              const SizedBox(width: 8),
+              favoriteButton(index['id']),
+              const SizedBox(width: 8),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -104,80 +161,86 @@ class _SearchState extends State<Search> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              width: 110,
-              height: 150,
-              child: Image.network(
-                'https://image.tmdb.org/t/p/w500${index['poster_path']}',
-                fit: BoxFit.cover,
-              ),
-            ),
+            titlePoster(index['poster_path']),
             const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(index['title'] ?? '',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16)),
-                  const SizedBox(height: 5),
-                  Text(index['overview'] ?? '',
-                      maxLines: 3, overflow: TextOverflow.ellipsis),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      favoriteButton(index['id']),
-                      const SizedBox(width: 8),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            titleCard(index),
           ],
         ),
       ),
     );
   }
 
-  Future<bool> isFavoriteMovie(BuildContext context, titleId) async {
-    return GoogleService.instance.isFavoriteMovie(context, titleId);
+  Future<bool> isFavoriteTitle(BuildContext context, titleId) async {
+    return GoogleService.instance.isFavoriteTitle(context, titleId);
   }
 
-  FutureBuilder<bool> favoriteButton(titleId) {
-    return FutureBuilder<bool>(
-      future: isFavoriteMovie(context, titleId),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (GoogleService.instance.currentUser == null) {
-            return IconButton(
-              icon: const Icon(Icons.highlight_off),
-              onPressed: () {
-                SnackMessage.showSnackBar(
-                    context, AppLocalizations.of(context)!.signInToFavorite);
-              },
-            );
-          }
-          return IconButton(
-            icon: Icon(snapshot.data! ? Icons.cancel : Icons.add_circle),
-            onPressed: () {
-              GoogleService.instance
-                  .updateFavoriteMovie(context, titleId, !snapshot.data!);
-            },
-          );
-        } else {
-          return const CircularProgressIndicator();
-        }
+  Text favoriteText(titleId) {
+    final bool isFavorite = favoriteTitles.contains(titleId);
+    return Text(
+      isFavorite
+          ? AppLocalizations.of(context)!.removeFromFavorites
+          : AppLocalizations.of(context)!.addToFavorites,
+    );
+  }
+
+  IconButton favoriteButton(titleId) {
+    if (GoogleService.instance.currentUser == null) {
+      return IconButton(
+        icon: const Icon(Icons.highlight_off),
+        onPressed: () {
+          SnackMessage.showSnackBar(
+              context, AppLocalizations.of(context)!.signInToFavorite);
+        },
+      );
+    }
+
+    if (updatingTitleId == titleId) {
+      return IconButton(
+        icon: const Icon(Icons.hourglass_empty),
+        onPressed: () {},
+      );
+    }
+
+    final bool isFavorite = favoriteTitles.contains(titleId);
+    return IconButton(
+      color: isFavorite ? Colors.red : Colors.green,
+      icon: Icon(isFavorite ? Icons.close_sharp : Icons.add_sharp),
+      onPressed: () {
+        setState(() {
+          updatingTitleId = titleId;
+        });
+        GoogleService.instance
+            .updateFavoriteTitle(context, titleId, !isFavorite)
+            .then((value) async {
+          await updateFavorites();
+          setState(() {
+            updatingTitleId = 0;
+          });
+        });
       },
     );
   }
 
+  void loadFavoriteTitles() async {
+    List<int> titles = await GoogleService.instance.readFavoriteTitles(context);
+    setState(() {
+      favoriteTitles = titles;
+    });
+  }
+
+  updateFavorites() async {
+    final favorites = await GoogleService.instance.readFavoriteTitles(context);
+    setState(() {
+      favoriteTitles = favorites;
+    });
+  }
 
   searchTitle(BuildContext context, title) async {
     try {
       final result = await TmdbService()
           .searchTitle(title, Localizations.localeOf(context));
       setState(() {
-        titles = result;
+        searchTitles = result;
       });
     } catch (error) {
       if (context.mounted) {

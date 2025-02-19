@@ -1,6 +1,7 @@
 {
     "appTitle": "Movie Scout",
     "messageEmptyList": "Aún no se ha seleccionado ninguna película.",
+    "messageEmptyList2": "Haz una búsqueda utilizando la lupa de arriba a la derecha.",
     "search": "Busca un título",
     "searchTitle": "Búsqueda",
     "back": "Atrás",
@@ -9,5 +10,7 @@
     "logout": "Cierra sessión",
     "loginSuccess": "Sessión iniciada correctamente.",
     "logoutSuccess": "Sessión cerrada correctamente.",
-    "signInToFavorite": "Es necesario iniciar sessión para añadir títulos."
+    "signInToFavorite": "Es necesario iniciar sessión para añadir títulos.",
+    "addToFavorites": "Añadir a la watchlist",
+    "removeFromFavorites": "Eliminar de la watchlist"
 }
