@@ -31,8 +31,15 @@ class _HomeState extends State<Home> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              AppLocalizations.of(context)!.messageEmptyList,
+            Column(
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.messageEmptyList,
+                ),
+                Text(
+                  AppLocalizations.of(context)!.messageEmptyList2,
+                ),
+              ],
             ),
           ],
         ),

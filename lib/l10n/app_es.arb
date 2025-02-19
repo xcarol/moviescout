@@ -1,6 +1,7 @@
 {
     "appTitle": "Movie Scout",
     "messageEmptyList": "Aún no se ha seleccionado ninguna película.",
+    "messageEmptyList2": "Haz una búsqueda utilizando la lupa de arriba a la derecha.",
     "search": "Busca un título",
     "searchTitle": "Búsqueda",
     "back": "Atrás",

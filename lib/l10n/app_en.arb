@@ -1,6 +1,7 @@
 {
     "appTitle": "Movie Scout",
     "messageEmptyList": "No films slected yet.",
+    "messageEmptyList2": "Do a search using the magnifying glass in the top right.",
     "search": "Search for a title",
     "searchTitle": "Search",
     "back": "Back",
