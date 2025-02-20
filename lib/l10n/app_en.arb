@@ -10,7 +10,7 @@
     "logout": "Logout",
     "loginSuccess": "Logged in succesfully.",
     "logoutSuccess": "Logged out succesfully.",
-    "signInToFavorite": "User must be logged in to add titles.",
-    "addToFavorites": "Add to the watchlist",
-    "removeFromFavorites": "Remove from the watchlist"
+    "signInToWatchlist": "User must be logged in to add titles.",
+    "addToWatchlist": "Add to the watchlist",
+    "removeFromWatchlist": "Remove from the watchlist"
 }

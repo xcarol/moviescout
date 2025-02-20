@@ -17,14 +17,14 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   late TextEditingController _controller;
   late List searchTitles = List.empty();
-  late List<int> favoriteTitles = List.empty();
+  late List<int> watchlistTitles = List.empty();
   late int updatingTitleId = 0;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    loadFavoriteTitles();
+    loadWatchlistTitles();
   }
 
   @override
@@ -150,9 +150,9 @@ class _SearchState extends State<Search> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              favoriteText(index['id']),
+              watchlistText(index['id']),
               const SizedBox(width: 8),
-              favoriteButton(index['id']),
+              watchlistButton(index['id']),
               const SizedBox(width: 8),
             ],
           ),
@@ -177,26 +177,26 @@ class _SearchState extends State<Search> {
     );
   }
 
-  Future<bool> isFavoriteTitle(BuildContext context, titleId) async {
-    return GoogleService.instance.isFavoriteTitle(context, titleId);
+  Future<bool> isTitleInWatchList(BuildContext context, titleId) async {
+    return GoogleService.instance.isTitleInWatchlist(context, titleId);
   }
 
-  Text favoriteText(titleId) {
-    final bool isFavorite = favoriteTitles.contains(titleId);
+  Text watchlistText(titleId) {
+    final bool isInWatchlist = watchlistTitles.contains(titleId);
     return Text(
-      isFavorite
-          ? AppLocalizations.of(context)!.removeFromFavorites
-          : AppLocalizations.of(context)!.addToFavorites,
+      isInWatchlist
+          ? AppLocalizations.of(context)!.removeFromWatchlist
+          : AppLocalizations.of(context)!.addToWatchlist,
     );
   }
 
-  IconButton favoriteButton(titleId) {
+  IconButton watchlistButton(titleId) {
     if (GoogleService.instance.currentUser == null) {
       return IconButton(
         icon: const Icon(Icons.highlight_off),
         onPressed: () {
           SnackMessage.showSnackBar(
-              context, AppLocalizations.of(context)!.signInToFavorite);
+              context, AppLocalizations.of(context)!.signInToWatchlist);
         },
       );
     }
@@ -208,18 +208,18 @@ class _SearchState extends State<Search> {
       );
     }
 
-    final bool isFavorite = favoriteTitles.contains(titleId);
+    final bool isInWatchlist = watchlistTitles.contains(titleId);
     return IconButton(
-      color: isFavorite ? Colors.red : Colors.green,
-      icon: Icon(isFavorite ? Icons.close_sharp : Icons.add_sharp),
+      color: isInWatchlist ? Colors.red : Colors.green,
+      icon: Icon(isInWatchlist ? Icons.close_sharp : Icons.add_sharp),
       onPressed: () {
         setState(() {
           updatingTitleId = titleId;
         });
         GoogleService.instance
-            .updateFavoriteTitle(context, titleId, !isFavorite)
+            .updateWatchlistTitle(context, titleId, !isInWatchlist)
             .then((value) async {
-          await updateFavorites();
+          await updateWatchlist();
           setState(() {
             updatingTitleId = 0;
           });
@@ -228,17 +228,18 @@ class _SearchState extends State<Search> {
     );
   }
 
-  void loadFavoriteTitles() async {
-    List<int> titles = await GoogleService.instance.readFavoriteTitles(context);
+  void loadWatchlistTitles() async {
+    List<int> titles =
+        await GoogleService.instance.readWatchlistTitles(context);
     setState(() {
-      favoriteTitles = titles;
+      watchlistTitles = titles;
     });
   }
 
-  updateFavorites() async {
-    final favorites = await GoogleService.instance.readFavoriteTitles(context);
+  updateWatchlist() async {
+    final watchlist = await GoogleService.instance.readWatchlistTitles(context);
     setState(() {
-      favoriteTitles = favorites;
+      watchlistTitles = watchlist;
     });
   }
 

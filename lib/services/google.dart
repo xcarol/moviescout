@@ -76,7 +76,7 @@ class GoogleService {
     await _googleSignIn.disconnect();
   }
 
-  Future<bool> isFavoriteTitle(BuildContext context, int movieId) async {
+  Future<bool> isTitleInWatchlist(BuildContext context, int titleId) async {
     if (currentUser == null) {
       // Handle the case where the user is not logged in.
       return false; // Return false if the user isn't logged in
@@ -85,72 +85,73 @@ class GoogleService {
     final database = FirebaseDatabase.instance.ref();
     try {
       final snapshot =
-          await database.child('users/$uid/favoriteTitleIds').once();
+          await database.child('users/$uid/watchlistTitleIds').once();
 
       if (snapshot.snapshot.value != null) {
-        final favoriteIds = snapshot.snapshot.value as List<dynamic>;
-        return favoriteIds.contains(movieId);
+        final titlesIds = snapshot.snapshot.value as List<dynamic>;
+        return titlesIds.contains(titleId);
       } else {
-        return false; // Return false if the user has no favorites
+        return false; // Return false if the user has no watchlist
       }
     } catch (e) {
       if (context.mounted) {
-        SnackMessage.showSnackBar(context, "isFavoriteTitle error: $e");
+        SnackMessage.showSnackBar(context, "isTitleInWatchlist error: $e");
       }
     }
     return false;
   }
 
-  Future<List<int>> readFavoriteTitles(BuildContext context) async {
+  Future<List<int>> readWatchlistTitles(BuildContext context) async {
     if (currentUser == null) {
       // Handle the case where the user is not logged in.
       return []; // Return an empty list
     }
     final uid = await getFirebaseUid(context, currentUser);
     final database = FirebaseDatabase.instance.ref();
-    final snapshot = await database.child('users/$uid/favoriteTitleIds').once();
+    final snapshot =
+        await database.child('users/$uid/watchlistTitleIds').once();
 
     if (snapshot.snapshot.value != null) {
-      final favoriteIds = snapshot.snapshot.value as List<dynamic>;
-      return favoriteIds.map((e) => e as int).toList();
+      final titlesIds = snapshot.snapshot.value as List<dynamic>;
+      return titlesIds.map((e) => e as int).toList();
     } else {
-      return []; // Return an empty list if the user has no favorites
+      return []; // Return an empty list if the user has no watchlist
     }
   }
 
-  Future<void> updateFavoriteTitle(
-      BuildContext context, int movieId, bool add) async {
+  Future<void> updateWatchlistTitle(
+      BuildContext context, int titleId, bool add) async {
     if (currentUser == null) {
       // Handle the case where the user is not logged in.
       return; // Do nothing if the user isn't logged in
     }
     final uid = await getFirebaseUid(context, currentUser);
     final database = FirebaseDatabase.instance.ref();
-    final favoritesRef = database.child('users/$uid/favoriteTitleIds');
+    final watchlistRef = database.child('users/$uid/watchlistTitleIds');
 
-    await favoritesRef.once().then((value) async {
+    await watchlistRef.once().then((value) async {
       try {
         if (value.snapshot.exists) {
-          List<int> favorites = (value.snapshot.value as List<dynamic>)
+          List<int> watchlist = (value.snapshot.value as List<dynamic>)
               .map((e) => e as int)
               .toList();
 
           if (add) {
-            if (!favorites.contains(movieId)) {
-              favorites.add(movieId);
+            if (!watchlist.contains(titleId)) {
+              watchlist.add(titleId);
             }
           } else {
-            favorites.remove(movieId);
+            watchlist.remove(titleId);
           }
-          await favoritesRef.set(favorites);
+          await watchlistRef.set(watchlist);
         } else {
           if (add) {
-            await favoritesRef.set([movieId]);
+            await watchlistRef.set([titleId]);
           }
         }
       } catch (e) {
         if (context.mounted) {
-          SnackMessage.showSnackBar(context, "updateFavoriteTitle error: $e");
+          SnackMessage.showSnackBar(context, "updateWatchlistTitle error: $e");
         }
       }
     });
