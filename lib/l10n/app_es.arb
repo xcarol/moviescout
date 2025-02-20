@@ -10,7 +10,7 @@
     "logout": "Cierra sessión",
     "loginSuccess": "Sessión iniciada correctamente.",
     "logoutSuccess": "Sessión cerrada correctamente.",
-    "signInToFavorite": "Es necesario iniciar sessión para añadir títulos.",
-    "addToFavorites": "Añadir a la watchlist",
-    "removeFromFavorites": "Eliminar de la watchlist"
+    "signInToWatchlist": "Es necesario iniciar sessión para añadir títulos.",
+    "addToWatchlist": "Añadir a la watchlist",
+    "removeFromWatchlist": "Eliminar de la watchlist"
 }
