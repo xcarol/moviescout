@@ -39,6 +39,13 @@ class _SearchState extends State<Search> {
       appBar: MainAppBar(
         context: context,
         title: AppLocalizations.of(context)!.searchTitle,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: back,
+            tooltip: AppLocalizations.of(context)!.back,
+          ),
+        ],
       ),
       drawer: AppDrawer(),
       body: Center(
