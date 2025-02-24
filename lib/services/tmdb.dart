@@ -5,11 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
+const String _tmdbTypeMovie = 'movie';
+const String _tmdbTypeTv = 'tv';
+
 const String _tmdbSearch =
     'https://api.themoviedb.org/3/search/multi?query={SEARCH}&page=1&language={LOCALE}';
 
 const String _tmdbImages =
     'https://api.themoviedb.org/3/{MEDIA_TYPE}/{ID}/images';
+
+const String _tmdbDetails =
+    'https://api.themoviedb.org/3/{MEDIA_TYPE}/{ID}?language={LOCALE}';
 
 class TmdbService {
   Future<String> tmdbRequest(Uri uri) async {
@@ -75,6 +81,32 @@ class TmdbService {
     return titles;
   }
 
+  Future<dynamic> getTitlesDetails(
+    List titles,
+    Locale locale,
+  ) async {
+    for (int count = 0; count < titles.length; count += 1) {
+      final title = titles[count];
+      final details = await getTitleDetails(title, locale);
+      titles[count] = details;
+    }
+    return titles;
+  }
+
+  Future<dynamic> getTitleDetails(
+    Map title,
+    Locale locale,
+  ) async {
+    Uri searchUri = Uri.parse(
+      _tmdbDetails.replaceFirst('{MEDIA_TYPE}', title['media_type'])
+      .replaceFirst('{ID}', title['id'])
+      .replaceFirst('{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+    );
+
+    final result = await tmdbRequest(searchUri);
+    return json.decode(result);
+  }
+  
   getPoster(Map details) {
     if (details['posters'] != null && details['posters'].length > 0) {
       return details['posters'][0]['file_path'];
