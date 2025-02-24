@@ -115,8 +115,8 @@ class GoogleService with ChangeNotifier {
         await database.child('$_dbUsersRoot/$uid/$_dbWatchlistTitles').once();
 
     if (snapshot.snapshot.value != null) {
-      final titlesIds = snapshot.snapshot.value as List<dynamic>;
-      userWatchlist = titlesIds.toList();
+      final titles = snapshot.snapshot.value as List<dynamic>;
+      userWatchlist = titles;
     } else {
       userWatchlist = List.empty(growable: true);
     }
@@ -125,7 +125,7 @@ class GoogleService with ChangeNotifier {
   }
 
   Future<void> updateWatchlistTitle(
-      BuildContext context, int titleId, bool add) async {
+      BuildContext context, Map title, bool add) async {
     if (currentUser == null) {
       // Handle the case where the user is not logged in.
       return; // Do nothing if the user isn't logged in
@@ -137,23 +137,21 @@ class GoogleService with ChangeNotifier {
     await watchlistRef.once().then((value) async {
       try {
         if (value.snapshot.exists) {
-          List<int> watchlist = (value.snapshot.value as List<dynamic>)
-              .map((e) => e as int)
-              .toList();
+          List<dynamic> watchlist = (value.snapshot.value as List<dynamic>);
 
           if (add) {
-            if (!watchlist.contains(titleId)) {
-              watchlist.add(titleId);
+            if (!watchlist.any((t) => t['id'] == title['id'])) {
+              watchlist.add(title);
             }
           } else {
-            watchlist.remove(titleId);
+            watchlist.removeWhere((t) => t['id'] == title['id']);
           }
           await watchlistRef.set(watchlist);
           userWatchlist = watchlist;
         } else {
           if (add) {
-            await watchlistRef.set([titleId]);
-            userWatchlist = [titleId];
+            await watchlistRef.set([title]);
+            userWatchlist = [title];
           }
         }
         notifyListeners();
