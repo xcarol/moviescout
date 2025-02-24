@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 const String _tmdbSearch =
     'https://api.themoviedb.org/3/search/multi?query={SEARCH}&page=1&language={LOCALE}';
 
-const String _tmdbDetails =
+const String _tmdbImages =
     'https://api.themoviedb.org/3/{MEDIA_TYPE}/{ID}/images';
 
 class TmdbService {
@@ -87,7 +87,7 @@ class TmdbService {
 
   getImages(int titleId, String mediaType) async {
     Uri detailtUri = Uri.parse(
-      _tmdbDetails
+      _tmdbImages
           .replaceFirst('{MEDIA_TYPE}', mediaType)
           .replaceFirst('{ID}', titleId.toString()),
     );
