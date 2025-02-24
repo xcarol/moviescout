@@ -99,14 +99,14 @@ class TmdbService {
   ) async {
     Uri searchUri = Uri.parse(
       _tmdbDetails.replaceFirst('{MEDIA_TYPE}', title['media_type'])
-      .replaceFirst('{ID}', title['id'])
+      .replaceFirst('{ID}', title['id'].toString())
       .replaceFirst('{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
     );
 
     final result = await tmdbRequest(searchUri);
     return json.decode(result);
   }
-  
+
   getPoster(Map details) {
     if (details['posters'] != null && details['posters'].length > 0) {
       return details['posters'][0]['file_path'];
