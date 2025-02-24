@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/services/google.dart';
 import 'package:moviescout/screens/search.dart';
+import 'package:moviescout/services/tmdb.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/title_list.dart';
@@ -14,12 +15,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late List<int> watchlistTitles = List.empty();
-
   @override
   void initState() {
     super.initState();
-    loadWatchlistTitles();
+    GoogleService.instance.readWatchlistTitles(context);
   }
 
   @override
@@ -47,11 +46,16 @@ class _HomeState extends State<Home> {
   }
 
   Widget homeBody() {
-    if (watchlistTitles.isEmpty) {
-      return emptyBody();
-    } else {
-      return watchlistBody();
-    }
+    return ListenableBuilder(
+      listenable: GoogleService.instance,
+      builder: (BuildContext context, Widget? child) {
+        if (GoogleService.instance.userWatchlist.isEmpty) {
+          return emptyBody();
+        } else {
+          return watchlistBody();
+        }
+      },
+    );
   }
 
   Widget emptyBody() {
@@ -73,27 +77,31 @@ class _HomeState extends State<Home> {
   }
 
   Widget watchlistBody() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        TitleList(titles: watchlistTitles),
-      ],
+    return FutureBuilder(
+      future: TmdbService().getTitlesDetails(
+          GoogleService.instance.userWatchlist,
+          Localizations.localeOf(context)),
+      builder: (context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        } else {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TitleList(titles: snapshot.data!),
+            ],
+          );
+        }
+      },
     );
   }
 
   searchTitle() async {
-    loadWatchlistTitles();
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => Search()),
     );
-  }
-
-  void loadWatchlistTitles() async {
-    List<int> titles =
-        await GoogleService.instance.readWatchlistTitles(context);
-    setState(() {
-      watchlistTitles = titles;
-    });
   }
 }
