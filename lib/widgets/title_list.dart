@@ -17,7 +17,7 @@ class TitleList extends StatefulWidget {
 }
 
 class _TitleListState extends State<TitleList> {
-  late int updatingTitleId = 0;
+  Map updatingTitle = {};
 
   @override
   Widget build(BuildContext context) {
@@ -75,23 +75,23 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
-  titleCard(index) {
+  titleCard(title) {
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(index['title'] ?? '',
+          Text(title['title'] ?? '',
               style:
                   const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           const SizedBox(height: 5),
-          Text(index['overview'] ?? '',
+          Text(title['overview'] ?? '',
               maxLines: 3, overflow: TextOverflow.ellipsis),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              watchlistText(index['id']),
+              watchlistText(title),
               const SizedBox(width: 8),
-              watchlistButton(index['id']),
+              watchlistButton(title),
               const SizedBox(width: 8),
             ],
           ),
@@ -100,9 +100,9 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
-  Text watchlistText(titleId) {
+  Text watchlistText(title) {
     final bool isInWatchlist =
-        GoogleService.instance.userWatchlist.contains(titleId);
+        GoogleService.instance.userWatchlist.any((t) => t['id'] == title['id']);
     return Text(
       isInWatchlist
           ? AppLocalizations.of(context)!.removeFromWatchlist
@@ -110,7 +110,7 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
-  IconButton watchlistButton(titleId) {
+  IconButton watchlistButton(title) {
     if (GoogleService.instance.currentUser == null) {
       return IconButton(
         icon: const Icon(Icons.highlight_off),
@@ -121,7 +121,7 @@ class _TitleListState extends State<TitleList> {
       );
     }
 
-    if (updatingTitleId == titleId) {
+    if (updatingTitle == title) {
       return IconButton(
         icon: const Icon(Icons.hourglass_empty),
         onPressed: () {},
@@ -129,19 +129,19 @@ class _TitleListState extends State<TitleList> {
     }
 
     final bool isInWatchlist =
-        GoogleService.instance.userWatchlist.contains(titleId);
+        GoogleService.instance.userWatchlist.any((t) => t['id'] == title['id']);
     return IconButton(
       color: isInWatchlist ? Colors.red : Colors.green,
       icon: Icon(isInWatchlist ? Icons.close_sharp : Icons.add_sharp),
       onPressed: () {
         setState(() {
-          updatingTitleId = titleId;
+          updatingTitle = title;
         });
         GoogleService.instance
-            .updateWatchlistTitle(context, titleId, !isInWatchlist)
+            .updateWatchlistTitle(context, title, !isInWatchlist)
             .then((value) async {
           setState(() {
-            updatingTitleId = 0;
+            updatingTitle = {};
           });
         });
       },
