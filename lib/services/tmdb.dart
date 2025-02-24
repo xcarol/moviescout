@@ -67,6 +67,9 @@ class TmdbService {
         'poster_path': poster,
         'overview': title['overview'],
         'release_date': title['release_date'],
+        'media_type': title['media_type'],
+        'genre_ids': title['genre_ids'],
+        'vote_average': title['vote_average'],
       });
     }
     return titles;
