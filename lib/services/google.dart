@@ -6,39 +6,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:moviescout/services/snack_bar.dart';
 
+const _dbUsersRoot = 'users';
+const _dbWatchlistTitles = 'watchlistTitles';
 const List<String> scopes = <String>['email'];
 late GoogleSignIn _googleSignIn;
 
 GoogleService defaultAppInstance = GoogleService();
 
-Future<String?> getFirebaseUid(BuildContext context, googleUser) async {
-  if (googleUser != null) {
-    final googleAuth = await googleUser.authentication;
-    final credential = GoogleAuthProvider.credential(
-      idToken: googleAuth.idToken,
-      accessToken: googleAuth.accessToken,
-    );
-
-    try {
-      final userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-      final firebaseUser = userCredential.user;
-      return firebaseUser?.uid;
-    } on FirebaseAuthException catch (e) {
-      // Handle authentication errors (e.g., network issues, invalid credentials)
-      if (context.mounted) {
-        SnackMessage.showSnackBar(
-            context, "getFirebaseUid - Firebase Authentication error: $e");
-      }
-      return null;
-    }
-  } else {
-    return null; // Sign-in failed
-  }
-}
-
-class GoogleService {
+class GoogleService with ChangeNotifier {
   GoogleSignInAccount? get currentUser => _googleSignIn.currentUser;
+  List<dynamic> userWatchlist = List.empty(growable: true);
 
   static GoogleService get instance {
     return defaultAppInstance;
@@ -85,7 +62,7 @@ class GoogleService {
     final database = FirebaseDatabase.instance.ref();
     try {
       final snapshot =
-          await database.child('users/$uid/watchlistTitleIds').once();
+          await database.child('$_dbUsersRoot/$uid/$_dbWatchlistTitles').once();
 
       if (snapshot.snapshot.value != null) {
         final titlesIds = snapshot.snapshot.value as List<dynamic>;
@@ -101,22 +78,50 @@ class GoogleService {
     return false;
   }
 
-  Future<List<int>> readWatchlistTitles(BuildContext context) async {
-    if (currentUser == null) {
-      // Handle the case where the user is not logged in.
-      return []; // Return an empty list
+  Future<String?> getFirebaseUid(BuildContext context, googleUser) async {
+    if (googleUser != null) {
+      final googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+        accessToken: googleAuth.accessToken,
+      );
+
+      try {
+        final userCredential =
+            await FirebaseAuth.instance.signInWithCredential(credential);
+        final firebaseUser = userCredential.user;
+        return firebaseUser?.uid;
+      } on FirebaseAuthException catch (e) {
+        // Handle authentication errors (e.g., network issues, invalid credentials)
+        if (context.mounted) {
+          SnackMessage.showSnackBar(
+              context, "getFirebaseUid - Firebase Authentication error: $e");
+        }
+        return null;
+      }
+    } else {
+      return null; // Sign-in failed
     }
+  }
+
+  Future<void> readWatchlistTitles(BuildContext context) async {
+    if (currentUser == null) {
+      return;
+    }
+
     final uid = await getFirebaseUid(context, currentUser);
     final database = FirebaseDatabase.instance.ref();
     final snapshot =
-        await database.child('users/$uid/watchlistTitleIds').once();
+        await database.child('$_dbUsersRoot/$uid/$_dbWatchlistTitles').once();
 
     if (snapshot.snapshot.value != null) {
       final titlesIds = snapshot.snapshot.value as List<dynamic>;
-      return titlesIds.map((e) => e as int).toList();
+      userWatchlist = titlesIds.toList();
     } else {
-      return []; // Return an empty list if the user has no watchlist
+      userWatchlist = List.empty(growable: true);
     }
+
+    notifyListeners();
   }
 
   Future<void> updateWatchlistTitle(
@@ -127,7 +132,7 @@ class GoogleService {
     }
     final uid = await getFirebaseUid(context, currentUser);
     final database = FirebaseDatabase.instance.ref();
-    final watchlistRef = database.child('users/$uid/watchlistTitleIds');
+    final watchlistRef = database.child('users/$uid/watchlistTitles');
 
     await watchlistRef.once().then((value) async {
       try {
@@ -144,11 +149,14 @@ class GoogleService {
             watchlist.remove(titleId);
           }
           await watchlistRef.set(watchlist);
+          userWatchlist = watchlist;
         } else {
           if (add) {
             await watchlistRef.set([titleId]);
+            userWatchlist = [titleId];
           }
         }
+        notifyListeners();
       } catch (e) {
         if (context.mounted) {
           SnackMessage.showSnackBar(context, "updateWatchlistTitle error: $e");
