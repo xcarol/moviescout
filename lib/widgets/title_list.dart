@@ -17,19 +17,7 @@ class TitleList extends StatefulWidget {
 }
 
 class _TitleListState extends State<TitleList> {
-  late List<int> watchlistTitles = List.empty();
   late int updatingTitleId = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    updateWatchlist();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +101,8 @@ class _TitleListState extends State<TitleList> {
   }
 
   Text watchlistText(titleId) {
-    final bool isInWatchlist = watchlistTitles.contains(titleId);
+    final bool isInWatchlist =
+        GoogleService.instance.userWatchlist.contains(titleId);
     return Text(
       isInWatchlist
           ? AppLocalizations.of(context)!.removeFromWatchlist
@@ -139,7 +128,8 @@ class _TitleListState extends State<TitleList> {
       );
     }
 
-    final bool isInWatchlist = watchlistTitles.contains(titleId);
+    final bool isInWatchlist =
+        GoogleService.instance.userWatchlist.contains(titleId);
     return IconButton(
       color: isInWatchlist ? Colors.red : Colors.green,
       icon: Icon(isInWatchlist ? Icons.close_sharp : Icons.add_sharp),
@@ -150,19 +140,11 @@ class _TitleListState extends State<TitleList> {
         GoogleService.instance
             .updateWatchlistTitle(context, titleId, !isInWatchlist)
             .then((value) async {
-          await updateWatchlist();
           setState(() {
             updatingTitleId = 0;
           });
         });
       },
     );
-  }
-
-  updateWatchlist() async {
-    final watchlist = await GoogleService.instance.readWatchlistTitles(context);
-    setState(() {
-      watchlistTitles = watchlist;
-    });
   }
 }
