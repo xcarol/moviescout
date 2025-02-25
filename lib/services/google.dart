@@ -40,6 +40,8 @@ class GoogleService with ChangeNotifier {
       // But in web, if more persmissions are required at some time,
       // this is the place to check for them using canAccessScopes method.
       // Check it out at https://pub.dev/packages/google_sign_in_web
+
+      await readWatchlistTitles(null);
     });
 
     _googleSignIn.signInSilently();
@@ -78,7 +80,7 @@ class GoogleService with ChangeNotifier {
     return false;
   }
 
-  Future<String?> getFirebaseUid(BuildContext context, googleUser) async {
+  Future<String?> getFirebaseUid(BuildContext? context, googleUser) async {
     if (googleUser != null) {
       final googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
@@ -93,7 +95,7 @@ class GoogleService with ChangeNotifier {
         return firebaseUser?.uid;
       } on FirebaseAuthException catch (e) {
         // Handle authentication errors (e.g., network issues, invalid credentials)
-        if (context.mounted) {
+        if (context!.mounted) {
           SnackMessage.showSnackBar(
               context, "getFirebaseUid - Firebase Authentication error: $e");
         }
@@ -104,7 +106,7 @@ class GoogleService with ChangeNotifier {
     }
   }
 
-  Future<void> readWatchlistTitles(BuildContext context) async {
+  Future<void> readWatchlistTitles(BuildContext? context) async {
     if (currentUser == null) {
       return;
     }
