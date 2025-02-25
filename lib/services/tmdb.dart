@@ -6,9 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-const String _tmdbTypeMovie = 'movie';
-const String _tmdbTypeTv = 'tv';
-
 const String _tmdbSearch =
     'https://api.themoviedb.org/3/search/multi?query={SEARCH}&page=1&language={LOCALE}';
 
