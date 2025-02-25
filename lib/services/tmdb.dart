@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -16,6 +17,9 @@ const String _tmdbImages =
 
 const String _tmdbDetails =
     'https://api.themoviedb.org/3/{MEDIA_TYPE}/{ID}?language={LOCALE}';
+
+const String _tmdbProviders =
+    'https://api.themoviedb.org/3/{MEDIA_TYPE}/{ID}/watch/providers';
 
 class TmdbService {
   Future<String> tmdbRequest(Uri uri) async {
@@ -81,6 +85,21 @@ class TmdbService {
     return titles;
   }
 
+  String getCountryCode() {
+    return PlatformDispatcher.instance.locale.countryCode ?? "US";
+  }
+
+  getTitleProviders(int titleId, String mediaType) async {
+    Uri detailtUri = Uri.parse(
+      _tmdbProviders
+          .replaceFirst('{MEDIA_TYPE}', mediaType)
+          .replaceFirst('{ID}', titleId.toString()),
+    );
+
+    final result = await tmdbRequest(detailtUri);
+    return json.decode(result)['results'][getCountryCode()];
+  }
+
   Future<dynamic> getTitlesDetails(
     List titles,
     Locale locale,
@@ -98,13 +117,19 @@ class TmdbService {
     Locale locale,
   ) async {
     Uri searchUri = Uri.parse(
-      _tmdbDetails.replaceFirst('{MEDIA_TYPE}', title['media_type'])
-      .replaceFirst('{ID}', title['id'].toString())
-      .replaceFirst('{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+      _tmdbDetails
+          .replaceFirst('{MEDIA_TYPE}', title['media_type'])
+          .replaceFirst('{ID}', title['id'].toString())
+          .replaceFirst(
+              '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
     );
 
     final result = await tmdbRequest(searchUri);
-    return json.decode(result);
+    final details = json.decode(result);
+
+    details['providers'] = await getTitleProviders(title['id'], title['media_type']);
+
+    return details;
   }
 
   getPoster(Map details) {
