@@ -139,7 +139,7 @@ class GoogleService with ChangeNotifier {
     await watchlistRef.once().then((value) async {
       try {
         if (value.snapshot.exists) {
-          List<dynamic> watchlist = (value.snapshot.value as List<dynamic>);
+          List<dynamic> watchlist = List.from((value.snapshot.value as List<dynamic>));
 
           if (add) {
             if (!watchlist.any((t) => t['id'] == title['id'])) {
