@@ -58,10 +58,10 @@ class TmdbService {
     );
 
     final result = await tmdbRequest(searchUri);
-    return titlesList(json.decode(result), locale);
+    return _titlesList(json.decode(result), locale);
   }
 
-  Future<List> titlesList(Map response, Locale locale) async {
+  Future<List> _titlesList(Map response, Locale locale) async {
     List titles = [];
     final totalResults = response['total_results'] ?? 0;
     for (int count = 0; count < totalResults && count < 10; count += 1) {
