@@ -38,10 +38,14 @@ class _HomeState extends State<Home> {
     return ListenableBuilder(
       listenable: GoogleService.instance,
       builder: (BuildContext context, Widget? child) {
-        if (GoogleService.instance.userWatchlist.isEmpty) {
-          return emptyBody();
+        if (ModalRoute.of(context)?.isCurrent ?? false) {
+          if (GoogleService.instance.userWatchlist.isEmpty) {
+            return emptyBody();
+          } else {
+            return watchlistBody();
+          }
         } else {
-          return watchlistBody();
+          return const SizedBox.shrink(); // Draw nothing if not currently visible
         }
       },
     );
