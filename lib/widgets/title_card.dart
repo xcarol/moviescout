@@ -70,9 +70,7 @@ class TitleCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title['title'] ?? title['name'] ?? '',
-              style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          titleHeader(title),
           const SizedBox(height: 5),
           Text(title['overview'] ?? '',
               maxLines: 3, overflow: TextOverflow.ellipsis),
@@ -88,6 +86,42 @@ class TitleCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Text titleHeader(title) {
+    String text;
+
+    if (title['title'] != null) {
+      text = movieTitleDetails(title);
+    } else {
+      text = tvShowTitleDetails(title);
+    }
+
+    return Text(text,
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16));
+  }
+
+  String movieTitleDetails(title) {
+    String text = title['title'] ?? '';
+    text += title['release_date'] != null
+        ? ' - ${title['release_date'].substring(0, 4)}'
+        : '';
+    return text;
+  }
+
+  String tvShowTitleDetails(title) {
+    String text = title['name'] ?? '';
+    text += title['first_air_date'] != null
+        ? ' - ${title['first_air_date'].substring(0, 4)}'
+        : '';
+
+    if (title['next_episode_to_air'] != null) {
+      text += ' - ...';
+    } else if (title['last_air_date'] != null) {
+      text += ' - ${title['last_air_date'].substring(0, 4)}';
+    }
+
+    return text;
   }
 
   Text watchlistText(title) {
