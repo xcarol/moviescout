@@ -72,17 +72,8 @@ class TitleCard extends StatelessWidget {
         children: [
           titleHeader(title),
           const SizedBox(height: 5),
-          Text(title['overview'] ?? '',
-              maxLines: 3, overflow: TextOverflow.ellipsis),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              watchlistText(title),
-              const SizedBox(width: 8),
-              watchlistButton(title),
-              const SizedBox(width: 8),
-            ],
-          ),
+          titleBody(title),
+          titleBottomRow(title),
         ],
       ),
     );
@@ -122,6 +113,66 @@ class TitleCard extends StatelessWidget {
     }
 
     return text;
+  }
+
+  Text titleBody(title) {
+    return Text(
+      title['overview'] ?? '',
+      maxLines: 4,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Row titleBottomRow(title) {
+    return Row(
+      mainAxisAlignment:
+          MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Expanded(
+          child: providers(title),
+        ),
+        Row(
+          children: [
+            watchlistText(title),
+            const SizedBox(width: 8),
+            watchlistButton(title),
+            const SizedBox(width: 8),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget providers(title) {
+    if (title['providers'] == null) {
+      return const SizedBox.shrink();
+    }
+    return Row(
+      children: (title['providers']['flatrate'] as List?)
+              ?.map<Widget>((provider) => providerLogo(provider))
+              .toList() ??
+          [],
+    );
+  }
+
+  Widget providerLogo(provider) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 5),
+      child: SizedBox(
+        width: 30,
+        height: 30,
+        child: Image.network(
+          'https://image.tmdb.org/t/p/w92${provider['logo_path']}',
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return SvgPicture.asset(
+              'lib/assets/movie.svg',
+              fit: BoxFit.cover,
+            );
+          },
+        ),
+      ),
+    );
   }
 
   Text watchlistText(title) {
