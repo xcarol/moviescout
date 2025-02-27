@@ -12,5 +12,7 @@
     "logoutSuccess": "Sessión cerrada correctamente.",
     "signInToWatchlist": "Es necesario iniciar sessión para añadir títulos.",
     "addToWatchlist": "Añadir a la watchlist",
-    "removeFromWatchlist": "Eliminar de la watchlist"
+    "removeFromWatchlist": "Eliminar de la watchlist",
+    "tvShow": "Serie",
+    "movie": "Película"
 }

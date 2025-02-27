@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -8,8 +9,14 @@ import 'package:http/http.dart' as http;
 const String _tmdbSearch =
     'https://api.themoviedb.org/3/search/multi?query={SEARCH}&page=1&language={LOCALE}';
 
-const String _tmdbDetails =
+const String _tmdbImages =
     'https://api.themoviedb.org/3/{MEDIA_TYPE}/{ID}/images';
+
+const String _tmdbDetails =
+    'https://api.themoviedb.org/3/{MEDIA_TYPE}/{ID}?language={LOCALE}';
+
+const String _tmdbProviders =
+    'https://api.themoviedb.org/3/{MEDIA_TYPE}/{ID}/watch/providers';
 
 class TmdbService {
   Future<String> tmdbRequest(Uri uri) async {
@@ -51,10 +58,10 @@ class TmdbService {
     );
 
     final result = await tmdbRequest(searchUri);
-    return getTitles(json.decode(result), locale);
+    return _titlesList(json.decode(result), locale);
   }
 
-  Future<List> getTitles(Map response, Locale locale) async {
+  Future<List> _titlesList(Map response, Locale locale) async {
     List titles = [];
     final totalResults = response['total_results'] ?? 0;
     for (int count = 0; count < totalResults && count < 10; count += 1) {
@@ -67,9 +74,59 @@ class TmdbService {
         'poster_path': poster,
         'overview': title['overview'],
         'release_date': title['release_date'],
+        'media_type': title['media_type'],
+        'genre_ids': title['genre_ids'],
+        'vote_average': title['vote_average'],
       });
     }
     return titles;
+  }
+
+  String getCountryCode() {
+    return PlatformDispatcher.instance.locale.countryCode ?? "US";
+  }
+
+  getTitleProviders(int titleId, String mediaType) async {
+    Uri detailtUri = Uri.parse(
+      _tmdbProviders
+          .replaceFirst('{MEDIA_TYPE}', mediaType)
+          .replaceFirst('{ID}', titleId.toString()),
+    );
+
+    final result = await tmdbRequest(detailtUri);
+    return json.decode(result)['results'][getCountryCode()];
+  }
+
+  Future<dynamic> getTitlesDetails(
+    List titles,
+    Locale locale,
+  ) async {
+    for (int count = 0; count < titles.length; count += 1) {
+      final title = titles[count];
+      final details = await getTitleDetails(title, locale);
+      titles[count] = details;
+    }
+    return titles;
+  }
+
+  Future<dynamic> getTitleDetails(
+    Map title,
+    Locale locale,
+  ) async {
+    Uri searchUri = Uri.parse(
+      _tmdbDetails
+          .replaceFirst('{MEDIA_TYPE}', title['media_type'])
+          .replaceFirst('{ID}', title['id'].toString())
+          .replaceFirst(
+              '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+    );
+
+    final result = await tmdbRequest(searchUri);
+    final details = json.decode(result);
+
+    details['providers'] = await getTitleProviders(title['id'], title['media_type']);
+
+    return details;
   }
 
   getPoster(Map details) {
@@ -87,7 +144,7 @@ class TmdbService {
 
   getImages(int titleId, String mediaType) async {
     Uri detailtUri = Uri.parse(
-      _tmdbDetails
+      _tmdbImages
           .replaceFirst('{MEDIA_TYPE}', mediaType)
           .replaceFirst('{ID}', titleId.toString()),
     );
