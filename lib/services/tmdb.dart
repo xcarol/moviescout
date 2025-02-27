@@ -113,9 +113,14 @@ class TmdbService {
     Map title,
     Locale locale,
   ) async {
+    String mediaType = title['media_type'] ?? '';
+    if (mediaType == '') {
+      mediaType = title['title'] != null ? 'movie' : 'tv';
+    }
+
     Uri searchUri = Uri.parse(
       _tmdbDetails
-          .replaceFirst('{MEDIA_TYPE}', title['media_type'])
+          .replaceFirst('{MEDIA_TYPE}', mediaType)
           .replaceFirst('{ID}', title['id'].toString())
           .replaceFirst(
               '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
@@ -124,7 +129,7 @@ class TmdbService {
     final result = await tmdbRequest(searchUri);
     final details = json.decode(result);
 
-    details['providers'] = await getTitleProviders(title['id'], title['media_type']);
+    details['providers'] = await getTitleProviders(title['id'], mediaType);
 
     return details;
   }
