@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:moviescout/services/google.dart';
+import 'package:moviescout/screens/import_imdb.dart';
 import 'web_sign_in_button_mobile_fake.dart'
     if (dart.library.js_util) 'web_sign_in_button.dart' show buildSignInButton;
 import 'package:moviescout/services/snack_bar.dart';
@@ -31,6 +32,18 @@ class AppDrawer extends StatelessWidget {
             ),
             accountEmail: Text(user?.email ?? ''),
           ),
+          if (user != null)
+            ListTile(
+              leading: Icon(Icons.import_export),
+              title: Text(AppLocalizations.of(context)!.imdbImport),
+              onTap: () => {
+                Navigator.of(context).pop(),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ImportIMDB()),
+                ),
+              },
+            ),
           if (!kIsWeb)
             ListTile(
               leading: Icon(user != null ? Icons.logout : Icons.login),
