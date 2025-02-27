@@ -117,7 +117,9 @@ class TitleCard extends StatelessWidget {
 
   Text titleBody(title) {
     return Text(
-      title['overview'] ?? '',
+      title['overview'] == null || title['overview'].isEmpty
+          ? AppLocalizations.of(context)!.missingDescription
+          : title['overview'],
       maxLines: 4,
       overflow: TextOverflow.ellipsis,
     );
@@ -125,8 +127,7 @@ class TitleCard extends StatelessWidget {
 
   Row titleBottomRow(title) {
     return Row(
-      mainAxisAlignment:
-          MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Expanded(
           child: providers(title),
