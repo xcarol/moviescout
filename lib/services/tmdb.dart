@@ -113,6 +113,14 @@ class TmdbService {
     Map title,
     Locale locale,
   ) async {
+    if (title['last_updated'] != null &&
+        DateTime.now()
+                .difference(DateTime.parse(title['last_updated']))
+                .inDays <
+            DateTime.daysPerWeek) {
+      return title;
+    }
+
     String mediaType = title['media_type'] ?? '';
     if (mediaType == '') {
       mediaType = title['title'] != null ? 'movie' : 'tv';
@@ -127,11 +135,12 @@ class TmdbService {
     );
 
     final result = await tmdbRequest(searchUri);
-    final details = json.decode(result);
+    final titleDetails = json.decode(result);
 
-    details['providers'] = await getTitleProviders(title['id'], mediaType);
+    titleDetails['providers'] = await getTitleProviders(title['id'], mediaType);
+    titleDetails['last_updated'] = DateTime.now().toIso8601String();
 
-    return details;
+    return titleDetails;
   }
 
   getPoster(Map details) {
