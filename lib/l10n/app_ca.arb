@@ -17,5 +17,6 @@
     "movie": "Pel·lícula",
     "imdbImport": "Importar de IMDB",
     "imdbImportHint": "Introdueix els ids de IMDB. Un per línia.",
+    "imdbImportNotFound": "Títols no trobats",
     "missingDescription": "Falta la descripció"
 }

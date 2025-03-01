@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/tmdb.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
+import 'package:moviescout/widgets/title_list.dart';
 
 class ImportIMDB extends StatefulWidget {
   const ImportIMDB({super.key});
@@ -11,6 +14,25 @@ class ImportIMDB extends StatefulWidget {
 }
 
 class _ImportIMDBState extends State<ImportIMDB> {
+  late TextEditingController _titlesController;
+  late TextEditingController _notFoundTitlesController;
+  late List imdbTitles = List.empty();
+  late List notFoundTitles = List.empty();
+
+  @override
+  void initState() {
+    super.initState();
+    _titlesController = TextEditingController();
+    _notFoundTitlesController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _titlesController.dispose();
+    _notFoundTitlesController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,34 +48,102 @@ class _ImportIMDBState extends State<ImportIMDB> {
         ],
       ),
       drawer: AppDrawer(),
-      body:Center(
-      child: Material(
-        // child: SizedBox(
-        //   width: 300,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TextField(
-                minLines: 3,
-                maxLines: 1000,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: AppLocalizations.of(context)!.imdbImportHint,
-                ),
-              ),
-              const SizedBox(height: 15),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('Close'),
-              ),
-            ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            importBox(),
+            if (notFoundTitles.isNotEmpty) importNotFoundBox(),
+            importResults(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  resetText() {
+    _titlesController.clear();
+    setState(() {
+      imdbTitles = List.empty();
+      notFoundTitles = List.empty();
+    });
+  }
+
+  importBox() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16.0),
+      child: TextField(
+        minLines: 3,
+        maxLines: 3,
+        controller: _titlesController,
+        decoration: InputDecoration(
+          labelText: AppLocalizations.of(context)!.imdbImportHint,
+          suffixIcon: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                importTitles(context, _titlesController.text);
+              },
+              tooltip: AppLocalizations.of(context)!.imdbImportHint,
+            ),
+            IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: () {
+                resetText();
+              },
+              tooltip: AppLocalizations.of(context)!.imdbImportHint,
+            ),
+          ]),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+        ),
+        onSubmitted: (String value) {
+          importTitles(context, value);
+        },
+      ),
+    );
+  }
+
+  importNotFoundBox() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16.0),
+      child: TextField(
+        readOnly: true,
+        minLines: 3,
+        maxLines: 3,
+        controller: _notFoundTitlesController,
+        decoration: InputDecoration(
+          labelText: AppLocalizations.of(context)!.imdbImportNotFound,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
           ),
         ),
       ),
-    // ),
     );
+  }
+
+  importResults() {
+    return TitleList(titles: imdbTitles);
+  }
+
+  importTitles(BuildContext context, String titlesIds) async {
+    try {
+      final result = await TmdbService()
+          .searchImdbTitles(titlesIds.split(RegExp(r'\r?\n')), Localizations.localeOf(context));
+      setState(() {
+        imdbTitles = result['titles'];
+        notFoundTitles = result['notFound'];
+        _notFoundTitlesController.text = notFoundTitles.join('\n');
+      });
+    } catch (error) {
+      if (context.mounted) {
+        SnackMessage.showSnackBar(context, error.toString());
+      }
+    }
   }
 }
