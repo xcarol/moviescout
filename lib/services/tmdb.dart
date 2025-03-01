@@ -113,6 +113,14 @@ class TmdbService {
     Map title,
     Locale locale,
   ) async {
+    if (title['last_updated'] != null &&
+        DateTime.now()
+                .difference(DateTime.parse(title['last_updated']))
+                .inDays <
+            DateTime.daysPerWeek) {
+      return title;
+    }
+
     Uri searchUri = Uri.parse(
       _tmdbDetails
           .replaceFirst('{MEDIA_TYPE}', title['media_type'])
@@ -122,11 +130,13 @@ class TmdbService {
     );
 
     final result = await tmdbRequest(searchUri);
-    final details = json.decode(result);
+    final titleDetails = json.decode(result);
 
-    details['providers'] = await getTitleProviders(title['id'], title['media_type']);
+    titleDetails['providers'] =
+        await getTitleProviders(title['id'], title['media_type']);
+    titleDetails['last_updated'] = DateTime.now().toIso8601String();
 
-    return details;
+    return titleDetails;
   }
 
   getPoster(Map details) {
