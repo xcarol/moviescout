@@ -99,6 +99,10 @@ class TmdbService {
     for (int count = 0; count < imdbIds.length; count += 1) {
       final id = imdbIds[count];
 
+      if (id.trim().isEmpty) {
+        continue;
+      }
+      
       Uri searchUri = Uri.parse(
         _tmdbFindByID.replaceFirst('{ID}', id).replaceFirst(
             '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
