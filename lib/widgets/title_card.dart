@@ -94,9 +94,8 @@ class TitleCard extends StatelessWidget {
 
   String movieTitleDetails(title) {
     String text = title['title'] ?? '';
-    text += title['release_date'] != null
-        ? ' - ${title['release_date'].substring(0, 4)}'
-        : '';
+    String releaseDate = title['release_date'] ?? '';
+    text += releaseDate.isNotEmpty ? ' - ${releaseDate.substring(0, 4)}' : '';
     return text;
   }
 
@@ -106,9 +105,7 @@ class TitleCard extends StatelessWidget {
     String nextEpisodeToAir = title['next_episode_to_air'] ?? '';
     String lastAirDate = title['last_air_date'] ?? '';
 
-    text += firstAirDate.isNotEmpty
-        ? ' - ${firstAirDate.substring(0, 4)}'
-        : '';
+    text += firstAirDate.isNotEmpty ? ' - ${firstAirDate.substring(0, 4)}' : '';
 
     if (nextEpisodeToAir.isNotEmpty) {
       text += ' - ...';
