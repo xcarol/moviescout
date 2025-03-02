@@ -102,14 +102,18 @@ class TitleCard extends StatelessWidget {
 
   String tvShowTitleDetails(title) {
     String text = title['name'] ?? '';
-    text += title['first_air_date'] != null
-        ? ' - ${title['first_air_date'].substring(0, 4)}'
+    String firstAirDate = title['first_air_date'] ?? '';
+    String nextEpisodeToAir = title['next_episode_to_air'] ?? '';
+    String lastAirDate = title['last_air_date'] ?? '';
+
+    text += firstAirDate.isNotEmpty
+        ? ' - ${firstAirDate.substring(0, 4)}'
         : '';
 
-    if (title['next_episode_to_air'] != null) {
+    if (nextEpisodeToAir.isNotEmpty) {
       text += ' - ...';
-    } else if (title['last_air_date'] != null) {
-      text += ' - ${title['last_air_date'].substring(0, 4)}';
+    } else if (lastAirDate.isNotEmpty) {
+      text += ' - ${lastAirDate.substring(0, 4)}';
     }
 
     return text;
