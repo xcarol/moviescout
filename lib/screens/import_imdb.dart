@@ -18,6 +18,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
   late TextEditingController _notFoundTitlesController;
   late List imdbTitles = List.empty();
   late List notFoundTitles = List.empty();
+  Future<bool> isLoading = Future.value(false);
 
   @override
   void initState() {
@@ -66,6 +67,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
     setState(() {
       imdbTitles = List.empty();
       notFoundTitles = List.empty();
+      isLoading = Future.value(false);
     });
   }
 
@@ -82,21 +84,22 @@ class _ImportIMDBState extends State<ImportIMDB> {
           suffixIcon: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                importTitles(context, _titlesController.text);
-              },
-              tooltip: AppLocalizations.of(context)!.imdbImportHint,
-            ),
-            IconButton(
-              icon: const Icon(Icons.clear),
-              onPressed: () {
-                resetText();
-              },
-              tooltip: AppLocalizations.of(context)!.imdbImportHint,
-            ),
-          ]),
+              IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  importTitles(context, _titlesController.text);
+                },
+                tooltip: AppLocalizations.of(context)!.imdbImportHint,
+              ),
+              IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  resetText();
+                },
+                tooltip: AppLocalizations.of(context)!.imdbImportHint,
+              ),
+            ],
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),
@@ -128,13 +131,29 @@ class _ImportIMDBState extends State<ImportIMDB> {
   }
 
   importResults() {
-    return TitleList(titles: imdbTitles);
+    return FutureBuilder(
+      future: isLoading,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Expanded(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else {
+          return TitleList(titles: imdbTitles);
+        }
+      },
+    );
   }
 
   importTitles(BuildContext context, String titlesIds) async {
     try {
-      final result = await TmdbService()
-          .searchImdbTitles(titlesIds.split(RegExp(r'\r?\n')), Localizations.localeOf(context));
+      setState(() {
+        isLoading = Future.value(true);
+      });
+      final result = await TmdbService().searchImdbTitles(
+          titlesIds.split(RegExp(r'\r?\n')), Localizations.localeOf(context));
       setState(() {
         imdbTitles = result['titles'];
         notFoundTitles = result['notFound'];
@@ -144,6 +163,10 @@ class _ImportIMDBState extends State<ImportIMDB> {
       if (context.mounted) {
         SnackMessage.showSnackBar(context, error.toString());
       }
+    } finally {
+      setState(() {
+        isLoading = Future.value(false);
+      });
     }
   }
 }
