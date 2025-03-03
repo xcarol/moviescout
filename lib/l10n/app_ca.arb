@@ -14,5 +14,9 @@
     "addToWatchlist": "Afegir a la watchlist",
     "removeFromWatchlist": "Eliminar de la watchlist",
     "tvShow": "Sèrie",
-    "movie": "Pel·lícula"
+    "movie": "Pel·lícula",
+    "imdbImport": "Importar de IMDB",
+    "imdbImportHint": "Introdueix els ids de IMDB. Un per línia.",
+    "imdbImportNotFound": "Títols no trobats",
+    "missingDescription": "Falta la descripció"
 }

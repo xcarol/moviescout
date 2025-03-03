@@ -53,6 +53,8 @@ class GoogleService with ChangeNotifier {
 
   Future<void> signOut() async {
     await _googleSignIn.disconnect();
+    userWatchlist = List.empty(growable: true);
+    notifyListeners();
   }
 
   Future<bool> isTitleInWatchlist(BuildContext context, int titleId) async {

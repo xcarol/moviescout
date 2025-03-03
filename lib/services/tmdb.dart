@@ -18,6 +18,9 @@ const String _tmdbDetails =
 const String _tmdbProviders =
     'https://api.themoviedb.org/3/{MEDIA_TYPE}/{ID}/watch/providers';
 
+const String _tmdbFindByID =
+    'https://api.themoviedb.org/3/find/{ID}?language={LOCALE}&external_source=imdb_id';
+
 class TmdbService {
   Future<String> tmdbRequest(Uri uri) async {
     final apiKey = dotenv.env['TMDB_API_KEY'];
@@ -82,6 +85,59 @@ class TmdbService {
     return titles;
   }
 
+  Future<dynamic> searchImdbTitles(
+    List imdbIds,
+    Locale locale,
+  ) async {
+    List titles = [];
+    List notFound = [];
+
+    if (imdbIds.isEmpty) {
+      return [];
+    }
+
+    for (int count = 0; count < imdbIds.length; count += 1) {
+      final id = imdbIds[count];
+
+      if (id.trim().isEmpty) {
+        continue;
+      }
+      
+      Uri searchUri = Uri.parse(
+        _tmdbFindByID.replaceFirst('{ID}', id).replaceFirst(
+            '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+      );
+
+      final response = await tmdbRequest(searchUri);
+      List titlesFromId = _fromImdbIdToTitle(json.decode(response));
+      if (titlesFromId.isEmpty) {
+        notFound.add(id);
+      }
+      titles.addAll(titlesFromId);
+    }
+
+    return {}
+      ..['titles'] = titles
+      ..['notFound'] = notFound;
+  }
+
+  List _fromImdbIdToTitle(Map response) {
+    List titles = [];
+    for (var key in response.keys) {
+      if (key == 'movie_results') {
+        for (var movie in response[key]) {
+          titles.add(movie);
+        }
+      }
+      if (key == 'tv_results') {
+        for (var tv in response[key]) {
+          titles.add(tv);
+        }
+      }
+    }
+    return titles;
+  }
+
   String getCountryCode() {
     return PlatformDispatcher.instance.locale.countryCode ?? "US";
   }
@@ -121,9 +177,14 @@ class TmdbService {
       return title;
     }
 
+    String mediaType = title['media_type'] ?? '';
+    if (mediaType == '') {
+      mediaType = title['title'] != null ? 'movie' : 'tv';
+    }
+
     Uri searchUri = Uri.parse(
       _tmdbDetails
-          .replaceFirst('{MEDIA_TYPE}', title['media_type'])
+          .replaceFirst('{MEDIA_TYPE}', mediaType)
           .replaceFirst('{ID}', title['id'].toString())
           .replaceFirst(
               '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
@@ -132,8 +193,7 @@ class TmdbService {
     final result = await tmdbRequest(searchUri);
     final titleDetails = json.decode(result);
 
-    titleDetails['providers'] =
-        await getTitleProviders(title['id'], title['media_type']);
+    titleDetails['providers'] = await getTitleProviders(title['id'], mediaType);
     titleDetails['last_updated'] = DateTime.now().toIso8601String();
 
     return titleDetails;

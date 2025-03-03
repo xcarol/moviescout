@@ -13,6 +13,11 @@ Whether you’re keeping track of what to watch next or exploring new favorites,
 **Discover. Track. Watch.**  
 Download Movie Scout now and streamline your streaming experience!
 
+## IDMB Import Export
+
+To import titles from IMDB go to you Imdb account > [Watchlist](https://www.imdb.com/user/ur49413795/watchlist/) > Export.  
+Download the CSV file from [Exports](https://www.imdb.com/exports/?ref_=wl) and open it in the editor to get the IDs.
+
 ## Development environment
 
 ### Flutter installation

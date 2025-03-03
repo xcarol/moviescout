@@ -45,7 +45,8 @@ class _HomeState extends State<Home> {
             return watchlistBody();
           }
         } else {
-          return const SizedBox.shrink(); // Draw nothing if not currently visible
+          return const SizedBox
+              .shrink(); // Draw nothing if not currently visible
         }
       },
     );
