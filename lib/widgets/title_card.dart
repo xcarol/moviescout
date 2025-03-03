@@ -100,30 +100,40 @@ class TitleCard extends StatelessWidget {
   }
 
   String tvShowTitleDetails(title) {
-    String text = title['name'] ?? '';
-    String firstAirDate = title['first_air_date'] ?? '';
-    String nextEpisodeToAir = title['next_episode_to_air'] ?? '';
-    String lastAirDate = title['last_air_date'] ?? '';
+    try {
+      String text = title['name'] ?? '';
+      String firstAirDate = title['first_air_date'] ?? '';
+      dynamic nextEpisodeToAir = title['next_episode_to_air'] ??
+          ''; // Can be a String or a Map with next episode details
+      String lastAirDate = title['last_air_date'] ?? '';
 
-    text += firstAirDate.isNotEmpty ? ' - ${firstAirDate.substring(0, 4)}' : '';
+      text +=
+          firstAirDate.isNotEmpty ? ' - ${firstAirDate.substring(0, 4)}' : '';
 
-    if (nextEpisodeToAir.isNotEmpty) {
-      text += ' - ...';
-    } else if (lastAirDate.isNotEmpty) {
-      text += ' - ${lastAirDate.substring(0, 4)}';
+      if (nextEpisodeToAir.isNotEmpty) {
+        text += ' - ...';
+      } else if (lastAirDate.isNotEmpty) {
+        text += ' - ${lastAirDate.substring(0, 4)}';
+      }
+
+      return text;
+    } catch (e) {
+      return 'Error: $e in tvShowTitleDetails for titleId ${title['id']}';
     }
-
-    return text;
   }
 
   Text titleBody(title) {
-    return Text(
-      title['overview'] == null || title['overview'].isEmpty
-          ? AppLocalizations.of(context)!.missingDescription
-          : title['overview'],
-      maxLines: 4,
-      overflow: TextOverflow.ellipsis,
-    );
+    try {
+      return Text(
+        title['overview'] == null || title['overview'].isEmpty
+            ? AppLocalizations.of(context)!.missingDescription
+            : title['overview'],
+        maxLines: 4,
+        overflow: TextOverflow.ellipsis,
+      );
+    } catch (e) {
+      return Text('Error: $e in titleBody for titleId ${title['id']}');
+    }
   }
 
   Row titleBottomRow(title) {
@@ -146,35 +156,43 @@ class TitleCard extends StatelessWidget {
   }
 
   Widget providers(title) {
-    if (title['providers'] == null) {
-      return const SizedBox.shrink();
+    try {
+      if (title['providers'] == null) {
+        return const SizedBox.shrink();
+      }
+      return Row(
+        children: (title['providers']['flatrate'] as List?)
+                ?.map<Widget>((provider) => providerLogo(provider))
+                .toList() ??
+            [],
+      );
+    } catch (e) {
+      return Text('Error: $e in providers for titleId ${title['id']}');
     }
-    return Row(
-      children: (title['providers']['flatrate'] as List?)
-              ?.map<Widget>((provider) => providerLogo(provider))
-              .toList() ??
-          [],
-    );
   }
 
   Widget providerLogo(provider) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 5),
-      child: SizedBox(
-        width: 30,
-        height: 30,
-        child: Image.network(
-          'https://image.tmdb.org/t/p/w92${provider['logo_path']}',
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return SvgPicture.asset(
-              'lib/assets/movie.svg',
-              fit: BoxFit.cover,
-            );
-          },
+    try {
+      return Padding(
+        padding: const EdgeInsets.only(right: 5),
+        child: SizedBox(
+          width: 30,
+          height: 30,
+          child: Image.network(
+            'https://image.tmdb.org/t/p/w92${provider['logo_path']}',
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return SvgPicture.asset(
+                'lib/assets/movie.svg',
+                fit: BoxFit.cover,
+              );
+            },
+          ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      return Text('Error: $e in providerLogo for provider $provider');
+    }
   }
 
   Text watchlistText(title) {
