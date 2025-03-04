@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/services/google.dart';
+import 'package:moviescout/services/tmdb_base_service.dart';
+import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
 
 class TitleList extends StatefulWidget {
@@ -35,13 +37,13 @@ class _TitleListState extends State<TitleList> {
                 setState(() {
                   updatingTitle = title;
                 });
-                GoogleService.instance
-                    .updateWatchlistTitle(context, title, !isInWatchlist)
-                    .then((value) async {
-                  setState(() {
-                    updatingTitle = {};
-                  });
-                });
+                // TmdbTitleService()
+                //     .updateWatchlistTitle(context, title, !isInWatchlist)
+                //     .then((value) async {
+                //   setState(() {
+                //     updatingTitle = {};
+                //   });
+                // });
               });
         },
       ),

@@ -6,6 +6,9 @@ import 'package:flutter/foundation.dart'
     show PlatformDispatcher, TargetPlatform, defaultTargetPlatform, kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:moviescout/services/tmdb_user_service.dart';
+import 'package:moviescout/services/tmdb_watchlist_service.dart';
+import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
 import 'package:moviescout/screens/home.dart';
 import 'package:moviescout/services/google.dart';
@@ -33,9 +36,15 @@ void main() async {
   }
 
   await dotenv.load(fileName: ".env");
-  await GoogleService.instance.init();
+  // await GoogleService.instance.init();
 
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => TmdbUserService()),
+      ChangeNotifierProvider(create: (_) => TmdbWatchlistService()),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

@@ -6,6 +6,8 @@
     "searchTitle": "Cerca",
     "back": "Enrere",
     "anonymousUser": "Sense usuari",
+    "loginTitle": "Inici de sessió",
+    "loginDescription": "Inicia sessió al teu compte de TMDB",
     "login": "Inicia sessió",
     "logout": "Tanca sessió",
     "loginSuccess": "Sessió iniciada correctament.",

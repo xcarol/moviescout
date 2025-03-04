@@ -6,6 +6,8 @@
     "searchTitle": "Search",
     "back": "Back",
     "anonymousUser": "Anonymous user",
+    "loginTitle": "Login",
+    "loginDescription": "Login to your TMDB account",
     "login": "Login",
     "logout": "Logout",
     "loginSuccess": "Logged in succesfully.",

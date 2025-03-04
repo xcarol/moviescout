@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/services/google.dart';
 import 'package:moviescout/screens/search.dart';
-import 'package:moviescout/services/tmdb.dart';
+import 'package:moviescout/services/tmdb_base_service.dart';
+import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/title_list.dart';
@@ -72,7 +73,7 @@ class _HomeState extends State<Home> {
 
   Widget watchlistBody() {
     return FutureBuilder(
-      future: TmdbService().getTitlesDetails(
+      future: TmdbTitleService().getTitlesDetails(
           GoogleService.instance.userWatchlist,
           Localizations.localeOf(context)),
       builder: (context, AsyncSnapshot<dynamic> snapshot) {

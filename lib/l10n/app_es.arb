@@ -6,6 +6,8 @@
     "searchTitle": "Búsqueda",
     "back": "Atrás",
     "anonymousUser": "Sin usuario",
+    "loginTitle": "Inicio de sessión",
+    "loginDescription": "Inicia sessión en tu cuenta de TMDB",
     "login": "Inicia sessión",
     "logout": "Cierra sessión",
     "loginSuccess": "Sessión iniciada correctamente.",
