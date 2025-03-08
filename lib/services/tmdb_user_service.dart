@@ -30,13 +30,19 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     return response['session_id'];
   }
 
+  Future<dynamic> getUserDetails() async {
+    final response = await get('/account');
+    return response;
+  }
+
   Future<bool> login(String username, String password) async {
     final requestToken = await getRequestToken();
 
     final isValid = await validateWithLogin(username, password, requestToken);
     if (isValid) {
-      final sessionId = await createSession(requestToken);
-      this.sessionId = sessionId;
+      final newSessionId = await createSession(requestToken);
+      sessionId = newSessionId;
+      user = await getUserDetails();
       notifyListeners();
       return true;
     }
