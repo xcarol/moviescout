@@ -43,6 +43,7 @@ dependencies:
   google_sign_in_web: ^0.12.4+3
   firebase_database: ^11.3.2
   flutter_svg: ^2.0.17
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
