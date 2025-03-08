@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/services/snack_bar.dart';
@@ -7,6 +5,7 @@ import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -24,10 +23,14 @@ class _LoginState extends State<Login> {
     super.initState();
     _userController = TextEditingController();
     _passwordController = TextEditingController();
+    _userController.addListener(updateLoginButtonState);
+    _passwordController.addListener(updateLoginButtonState);
   }
 
   @override
   void dispose() {
+    _userController.removeListener(updateLoginButtonState);
+    _passwordController.removeListener(updateLoginButtonState);
     _userController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -87,12 +90,32 @@ class _LoginState extends State<Login> {
           ),
         ),
         const SizedBox(height: 8),
-        ElevatedButton(
-          onPressed: () => login(context),
-          child: Text(AppLocalizations.of(context)!.login),
+        FractionallySizedBox(
+          widthFactor: 0.9,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                onPressed: () => launchUrlString(
+                    'https://www.themoviedb.org/account/signup'),
+                child: Text(AppLocalizations.of(context)!.signup),
+              ),
+              ElevatedButton(
+                onPressed: _userController.text.isNotEmpty &&
+                        _passwordController.text.isNotEmpty
+                    ? () => login(context)
+                    : null,
+                child: Text(AppLocalizations.of(context)!.login),
+              ),
+            ],
+          ),
         ),
       ],
     );
+  }
+
+  updateLoginButtonState() {
+    setState(() {});
   }
 
   login(context) async {

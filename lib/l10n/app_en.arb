@@ -13,6 +13,7 @@
     "loginSuccess": "Logged in succesfully.",
     "loginFailed": "Username or password incorrect.",
     "logoutSuccess": "Logged out succesfully.",
+    "signup": "Register to TMDb",
     "signInToWatchlist": "User must be logged in to add titles.",
     "addToWatchlist": "Add to the watchlist",
     "removeFromWatchlist": "Remove from the watchlist",

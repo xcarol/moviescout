@@ -13,6 +13,7 @@
     "loginSuccess": "Sessió iniciada correctament.",
     "loginFailed": "Usuari o contrasenya incorrectes.",
     "logoutSuccess": "Sessió tancada correctament.",
+    "signup": "Registra't a TMDb",
     "signInToWatchlist": "Cal iniciar sessió per afegir títols.",
     "addToWatchlist": "Afegir a la watchlist",
     "removeFromWatchlist": "Eliminar de la watchlist",
