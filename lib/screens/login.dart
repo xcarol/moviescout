@@ -78,6 +78,7 @@ class _LoginState extends State<Login> {
         FractionallySizedBox(
           widthFactor: 0.9,
           child: TextField(
+            obscureText: true,
             controller: _passwordController,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
