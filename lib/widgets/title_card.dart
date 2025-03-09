@@ -43,7 +43,7 @@ class TitleCard extends StatelessWidget {
         width: 110,
         height: 150,
         child: SvgPicture.asset(
-          'lib/assets/movie.svg',
+          'assets/movie.svg',
           fit: BoxFit.cover,
         ),
       );
@@ -57,7 +57,7 @@ class TitleCard extends StatelessWidget {
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return SvgPicture.asset(
-            'lib/assets/movie.svg',
+            'assets/movie.svg',
             fit: BoxFit.cover,
           );
         },
@@ -183,7 +183,7 @@ class TitleCard extends StatelessWidget {
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
               return SvgPicture.asset(
-                'lib/assets/movie.svg',
+                'assets/movie.svg',
                 fit: BoxFit.cover,
               );
             },
