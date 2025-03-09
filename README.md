@@ -53,9 +53,11 @@ Configure project
 Select  
 
 ✔ Select a Firebase project to configure your Flutter application with  
-· overmap-1503847389383 (Overmaps)  
+- movie-scout-a6608 (MovieScout)  
+
 ✔ Which platforms should your configuration support (use arrow keys & space to select)?  
-· android  
+- android  
+- web 
 
 This process will generate the files:  
 
@@ -106,7 +108,7 @@ Run `flutter gen-l10n` to update the i18n generated files.
 
 The [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) tool is used to generate the icons for different platforms  
 
-The file used as the app logo is _./lib/assets/logo-icon.png_  defined in the _pubspec.yaml_ file under the _flutter_launcher_icons_ section.  
+The file used as the app logo is _./assets/logo-icon.png_  defined in the _pubspec.yaml_ file under the _flutter_launcher_icons_ section.  
 
 After updating the logo run:  $ `dart run flutter_launcher_icons`
 
