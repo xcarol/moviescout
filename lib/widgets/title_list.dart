@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/services/google.dart';
+import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
+import 'package:provider/provider.dart';
 
 class TitleList extends StatefulWidget {
   final List titles;
@@ -24,8 +25,10 @@ class _TitleListState extends State<TitleList> {
         itemCount: widget.titles.length,
         itemBuilder: (context, index) {
           final title = widget.titles[index];
-          final bool isInWatchlist = GoogleService.instance.userWatchlist
-              .any((t) => t['id'] == title['id']);
+          final bool isInWatchlist =
+              Provider.of<TmdbWatchlistService>(context, listen: false)
+                  .userWatchlist
+                  .any((t) => t['id'] == title['id']);
           return TitleCard(
               context: context,
               title: title,
@@ -35,13 +38,13 @@ class _TitleListState extends State<TitleList> {
                 setState(() {
                   updatingTitle = title;
                 });
-                GoogleService.instance
-                    .updateWatchlistTitle(context, title, !isInWatchlist)
-                    .then((value) async {
-                  setState(() {
-                    updatingTitle = {};
-                  });
-                });
+                // TmdbTitleService()
+                //     .updateWatchlistTitle(context, title, !isInWatchlist)
+                //     .then((value) async {
+                //   setState(() {
+                //     updatingTitle = {};
+                //   });
+                // });
               });
         },
       ),
