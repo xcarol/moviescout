@@ -11,25 +11,32 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isUserLoggedIn =
-        Provider.of<TmdbUserService>(context).isUserLoggedIn;
+    bool isUserLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
+    var user = Provider.of<TmdbUserService>(context).user;
+    ImageProvider<Object>? userImage = user != null
+        ? NetworkImage(
+            'https://www.gravatar.com/avatar/${user['avatar']['gravatar']['hash']}?s=200')
+        : AssetImage('anonymous.png');
+    var userName = user != null
+        ? user['name'].toString().isNotEmpty
+            ? user['name']
+            : user['username']
+        : AppLocalizations.of(context)!.anonymousUser;
 
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          // UserAccountsDrawerHeader(
-          //   currentAccountPicture: CircleAvatar(
-          //     backgroundImage: userImage,
-          //   ),
-          //   decoration: BoxDecoration(
-          //     color: Theme.of(context).colorScheme.inversePrimary,
-          //   ),
-          //   accountName: Text(
-          //     user?.displayName ?? AppLocalizations.of(context)!.anonymousUser,
-          //   ),
-          //   accountEmail: Text(isUserLoggedIn?.email ?? ''),
-          // ),
+          UserAccountsDrawerHeader(
+            currentAccountPicture: CircleAvatar(
+              backgroundImage: userImage,
+            ),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.inversePrimary,
+            ),
+            accountName: Text(userName),
+            accountEmail: null,
+          ),
           if (isUserLoggedIn)
             ListTile(
               leading: Icon(Icons.import_export),
