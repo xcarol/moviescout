@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/screens/search.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
+import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
@@ -18,21 +19,30 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MainAppBar(
-        context: context,
-        title: AppLocalizations.of(context)!.appTitle,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: searchTitle,
-            tooltip: AppLocalizations.of(context)!.search,
-          ),
-        ],
-      ),
-      drawer: AppDrawer(),
-      body: Center(child: homeBody()),
-    );
+    return FutureBuilder(
+        future: Future.wait([
+          Provider.of<TmdbUserService>(context, listen: false).setup(),
+        ]),
+        builder: (context, snapshot) {
+          if (snapshot.data == null) {
+            return const Scaffold();
+          }
+          return Scaffold(
+            appBar: MainAppBar(
+              context: context,
+              title: AppLocalizations.of(context)!.appTitle,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: searchTitle,
+                  tooltip: AppLocalizations.of(context)!.search,
+                ),
+              ],
+            ),
+            drawer: AppDrawer(),
+            body: Center(child: homeBody()),
+          );
+        });
   }
 
   Widget homeBody() {
