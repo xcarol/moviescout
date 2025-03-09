@@ -1,10 +1,24 @@
 import 'package:flutter/foundation.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TmdbUserService extends TmdbBaseService with ChangeNotifier {
+  SharedPreferencesWithCache? preferences;
   String sessionId = '';
+  String get accountId => user?['id'] ?? '';
   Map? user;
   bool get isUserLoggedIn => sessionId.isNotEmpty;
+
+  Future<void> setup() async {
+    preferences = await SharedPreferencesWithCache.create(
+      cacheOptions: const SharedPreferencesWithCacheOptions(),
+    );
+
+    sessionId = preferences?.getString('sessionId') ?? '';
+    if (sessionId.isNotEmpty) {
+      user = await getUserDetails();
+    }
+  }
 
   Future<dynamic> getRequestToken() async {
     final response = await get('authentication/token/new');
@@ -42,6 +56,7 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     if (isValid) {
       final newSessionId = await createSession(requestToken);
       sessionId = newSessionId;
+      preferences?.setString('sessionId', sessionId);
       user = await getUserDetails();
       notifyListeners();
       return true;
