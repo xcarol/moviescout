@@ -1,11 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:moviescout/services/google.dart';
+import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
-import 'web_sign_in_button_mobile_fake.dart'
-    if (dart.library.js_util) 'web_sign_in_button.dart' show buildSignInButton;
+import 'package:moviescout/services/tmdb_user_service.dart';
+import 'package:provider/provider.dart';
 import 'package:moviescout/services/snack_bar.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -13,8 +11,17 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    GoogleSignInAccount? user = GoogleService.instance.currentUser;
-    NetworkImage? userImage = NetworkImage(user?.photoUrl ?? '');
+    bool isUserLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
+    var user = Provider.of<TmdbUserService>(context).user;
+    ImageProvider<Object>? userImage = user != null
+        ? NetworkImage(
+            'https://www.gravatar.com/avatar/${user['avatar']['gravatar']['hash']}?s=200')
+        : AssetImage('anonymous.png');
+    var userName = user != null
+        ? user['name'].toString().isNotEmpty
+            ? user['name']
+            : user['username']
+        : AppLocalizations.of(context)!.anonymousUser;
 
     return Drawer(
       child: ListView(
@@ -27,12 +34,10 @@ class AppDrawer extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.inversePrimary,
             ),
-            accountName: Text(
-              user?.displayName ?? AppLocalizations.of(context)!.anonymousUser,
-            ),
-            accountEmail: Text(user?.email ?? ''),
+            accountName: Text(userName),
+            accountEmail: null,
           ),
-          if (user != null)
+          if (isUserLoggedIn)
             ListTile(
               leading: Icon(Icons.import_export),
               title: Text(AppLocalizations.of(context)!.imdbImport),
@@ -44,62 +49,45 @@ class AppDrawer extends StatelessWidget {
                 ),
               },
             ),
-          if (!kIsWeb)
-            ListTile(
-              leading: Icon(user != null ? Icons.logout : Icons.login),
-              title: Text(user != null
-                  ? AppLocalizations.of(context)!.logout
-                  : AppLocalizations.of(context)!.login),
-              onTap: () => {
-                Navigator.of(context).pop(),
-                if (user != null) {logout(context)} else {login(context)}
-              },
-            ),
-          if (kIsWeb && user == null)
-            ListTile(
-              leading: buildSignInButton(),
-              title: Text(AppLocalizations.of(context)!.login),
-            ),
-          if (kIsWeb && user != null)
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text(AppLocalizations.of(context)!.logout),
-              onTap: () => {
-                Navigator.of(context).pop(),
-                logout(context),
-              },
-            ),
+          ListTile(
+            leading: Icon(isUserLoggedIn ? Icons.logout : Icons.login),
+            title: Text(isUserLoggedIn
+                ? AppLocalizations.of(context)!.logout
+                : AppLocalizations.of(context)!.login),
+            onTap: () => {
+              Navigator.of(context).pop(),
+              if (isUserLoggedIn)
+                {logout(context)}
+              else
+                {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Login()),
+                  ),
+                }
+            },
+          ),
         ],
       ),
     );
   }
 
-  Future<void> login(BuildContext context) async {
-    try {
-      await GoogleService.instance.signIn();
-      if (context.mounted) {
-        SnackMessage.showSnackBar(
-            context, AppLocalizations.of(context)!.loginSuccess);
-      }
-    } catch (error) {
-      if (context.mounted) {
-        SnackMessage.showSnackBar(context, "signIn error: ${error.toString()}");
-      }
-    }
-  }
-
   logout(BuildContext context) async {
-    try {
-      await GoogleService.instance.signOut();
+    await Provider.of<TmdbUserService>(context, listen: false)
+        .logout()
+        .catchError((error) {
       if (context.mounted) {
         SnackMessage.showSnackBar(
-            context, AppLocalizations.of(context)!.logoutSuccess);
+          context,
+          error.toString(),
+        );
       }
-    } catch (error) {
-      if (context.mounted) {
-        SnackMessage.showSnackBar(
-            context, "signOut error: ${error.toString()}");
-      }
+    });
+    if (context.mounted) {
+      SnackMessage.showSnackBar(
+        context,
+        AppLocalizations.of(context)!.logoutSuccess,
+      );
     }
   }
 }

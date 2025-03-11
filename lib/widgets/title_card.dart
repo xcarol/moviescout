@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:moviescout/services/google.dart';
 import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/tmdb_user_service.dart';
+import 'package:moviescout/services/tmdb_watchlist_service.dart';
+import 'package:provider/provider.dart';
 
 class TitleCard extends StatelessWidget {
   final Map title;
@@ -43,7 +45,7 @@ class TitleCard extends StatelessWidget {
         width: 110,
         height: 150,
         child: SvgPicture.asset(
-          'lib/assets/movie.svg',
+          'assets/movie.svg',
           fit: BoxFit.cover,
         ),
       );
@@ -57,7 +59,7 @@ class TitleCard extends StatelessWidget {
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return SvgPicture.asset(
-            'lib/assets/movie.svg',
+            'assets/movie.svg',
             fit: BoxFit.cover,
           );
         },
@@ -183,7 +185,7 @@ class TitleCard extends StatelessWidget {
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
               return SvgPicture.asset(
-                'lib/assets/movie.svg',
+                'assets/movie.svg',
                 fit: BoxFit.cover,
               );
             },
@@ -197,7 +199,9 @@ class TitleCard extends StatelessWidget {
 
   Text watchlistText(title) {
     final bool isInWatchlist =
-        GoogleService.instance.userWatchlist.any((t) => t['id'] == title['id']);
+        Provider.of<TmdbWatchlistService>(context, listen: false)
+            .userWatchlist
+            .any((t) => t['id'] == title['id']);
     return Text(
       isInWatchlist
           ? AppLocalizations.of(context)!.removeFromWatchlist
@@ -206,7 +210,7 @@ class TitleCard extends StatelessWidget {
   }
 
   IconButton watchlistButton(title) {
-    if (GoogleService.instance.currentUser == null) {
+    if (Provider.of<TmdbUserService>(context, listen: false).user == null) {
       return IconButton(
         icon: const Icon(Icons.highlight_off),
         onPressed: () {

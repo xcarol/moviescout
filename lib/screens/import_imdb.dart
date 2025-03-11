@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/services/snack_bar.dart';
-import 'package:moviescout/services/tmdb.dart';
+import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/title_list.dart';
@@ -152,7 +152,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
       setState(() {
         isLoading = Future.value(true);
       });
-      final result = await TmdbService().searchImdbTitles(
+      final result = await TmdbSearchService().searchImdbTitles(
           titlesIds.split(RegExp(r'\r?\n')), Localizations.localeOf(context));
       setState(() {
         imdbTitles = result['titles'];

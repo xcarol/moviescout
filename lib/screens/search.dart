@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/services/tmdb.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/title_list.dart';
 
@@ -99,7 +99,7 @@ class _SearchState extends State<Search> {
 
   searchTitle(BuildContext context, title) async {
     try {
-      final result = await TmdbService()
+      final result = await TmdbSearchService()
           .searchTitle(title, Localizations.localeOf(context));
       setState(() {
         searchTitles = result;
