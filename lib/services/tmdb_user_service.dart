@@ -68,6 +68,8 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
   Future<void> logout() async {
     await delete('/authentication/session', {'session_id': sessionId});
     sessionId = '';
+    user = null;
+    preferences?.remove('sessionId');
     notifyListeners();
   }
 }
