@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:provider/provider.dart';
@@ -38,13 +40,21 @@ class _TitleListState extends State<TitleList> {
                 setState(() {
                   updatingTitle = title;
                 });
-                // TmdbTitleService()
-                //     .updateWatchlistTitle(context, title, !isInWatchlist)
-                //     .then((value) async {
-                //   setState(() {
-                //     updatingTitle = {};
-                //   });
-                // });
+                try {
+                  Provider.of<TmdbWatchlistService>(context, listen: false)
+                      .updateWatchlistTitle(
+                          Provider.of<TmdbUserService>(context, listen: false)
+                              .accountId,
+                          title,
+                          !isInWatchlist)
+                      .then((value) async {
+                    setState(() {
+                      updatingTitle = {};
+                    });
+                  });
+                } catch (error) {
+                  SnackMessage.showSnackBar(context, error.toString());
+                }
               });
         },
       ),
