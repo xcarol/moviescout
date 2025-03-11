@@ -26,8 +26,8 @@ class _HomeState extends State<Home> {
               .then((_) {
             if (context.mounted) {
               return Provider.of<TmdbWatchlistService>(context, listen: false)
-                  .setup(Provider.of<TmdbUserService>(context, listen: false)
-                      .user);
+                  .retrieveUserWatchlist(Provider.of<TmdbUserService>(context, listen: false)
+                      .accountId);
             } else {
               return null;
             }

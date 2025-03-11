@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
+import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
@@ -132,6 +133,8 @@ class _LoginState extends State<Login> {
       return false;
     });
     if (success) {
+      await Provider.of<TmdbWatchlistService>(context, listen: false)
+          .retrieveUserWatchlist(Provider.of<TmdbUserService>(context, listen: false).accountId);
       SnackMessage.showSnackBar(
           context, AppLocalizations.of(context)!.loginSuccess);
       Navigator.pop(context);
