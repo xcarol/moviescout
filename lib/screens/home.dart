@@ -21,7 +21,17 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: Future.wait([
-          Provider.of<TmdbUserService>(context, listen: false).setup(),
+          Provider.of<TmdbUserService>(context, listen: false)
+              .setup()
+              .then((_) {
+            if (context.mounted) {
+              return Provider.of<TmdbWatchlistService>(context, listen: false)
+                  .setup(Provider.of<TmdbUserService>(context, listen: false)
+                      .user);
+            } else {
+              return null;
+            }
+          }),
         ]),
         builder: (context, snapshot) {
           if (snapshot.data == null) {
