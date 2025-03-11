@@ -13,6 +13,17 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
   Future<List> _getUserWatchlist(int accountId) async {
     final movies = await get('account/$accountId/watchlist/movies');
     final tv = await get('account/$accountId/watchlist/tv');
+
+    movies['results'].forEach((element) {
+      element['last_updated'] = DateTime.now().toIso8601String();
+      element['media_type'] = 'movie';
+    });
+
+    tv['results'].forEach((element) {
+      element['last_updated'] = DateTime.now().toIso8601String();
+      element['media_type'] = 'tv';
+    });
+
     return movies['results'] + tv['results'];
   }
   
