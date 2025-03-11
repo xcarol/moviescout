@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class TmdbUserService extends TmdbBaseService with ChangeNotifier {
   SharedPreferencesWithCache? preferences;
   String sessionId = '';
-  String get accountId => user?['id'] ?? '';
+  int get accountId => user?['id'] ?? '';
   Map? user;
   bool get isUserLoggedIn => sessionId.isNotEmpty;
 
