@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
+import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/snack_bar.dart';
 
@@ -84,6 +85,8 @@ class AppDrawer extends StatelessWidget {
       }
     });
     if (context.mounted) {
+      Provider.of<TmdbWatchlistService>(context, listen: false).clearWatchList();
+
       SnackMessage.showSnackBar(
         context,
         AppLocalizations.of(context)!.logoutSuccess,
