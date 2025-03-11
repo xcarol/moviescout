@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
@@ -26,6 +27,7 @@ class _LoginState extends State<Login> {
     _passwordController = TextEditingController();
     _userController.addListener(updateLoginButtonState);
     _passwordController.addListener(updateLoginButtonState);
+    _userController.text = PreferencesService().prefs.getString('username') ?? '';
   }
 
   @override
@@ -133,6 +135,7 @@ class _LoginState extends State<Login> {
       return false;
     });
     if (success) {
+      PreferencesService().prefs.setString('username', _userController.text);
       await Provider.of<TmdbWatchlistService>(context, listen: false)
           .retrieveUserWatchlist(Provider.of<TmdbUserService>(context, listen: false).accountId);
       SnackMessage.showSnackBar(
