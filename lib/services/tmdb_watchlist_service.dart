@@ -4,13 +4,12 @@ import 'package:moviescout/services/tmdb_base_service.dart';
 class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
   List userWatchlist = List.empty(growable: true);
 
-  Future<void> setup(Map? user) async {
-    if (user != null) {
-      userWatchlist = await _getUserWatchlist(user['id']);
-    }
+  void clearWatchList() {
+    userWatchlist = List.empty(growable: true);
+    notifyListeners();
   }
-
-  Future<List> _getUserWatchlist(int accountId) async {
+  
+  Future<void> retrieveUserWatchlist(int accountId) async {
     final movies = await get('account/$accountId/watchlist/movies');
     final tv = await get('account/$accountId/watchlist/tv');
 
@@ -24,7 +23,8 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
       element['media_type'] = 'tv';
     });
 
-    return movies['results'] + tv['results'];
+    userWatchlist = movies['results'] + tv['results'];
+    notifyListeners();
   }
   
   Future<dynamic> _updateTitleInWatchlistToTmdb(

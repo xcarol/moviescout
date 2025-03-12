@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart'
     show PlatformDispatcher, TargetPlatform, defaultTargetPlatform, kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:provider/provider.dart';
@@ -35,6 +36,7 @@ void main() async {
   }
 
   await dotenv.load(fileName: ".env");
+  await PreferencesService().init();
 
   runApp(MultiProvider(
     providers: [
