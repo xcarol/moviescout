@@ -5,6 +5,8 @@
     "search": "Cerca un títol",
     "searchTitle": "Cerca",
     "back": "Enrere",
+    "username": "Usuari",
+    "password": "Contrasenya",
     "anonymousUser": "Sense usuari",
     "loginTitle": "Inici de sessió",
     "loginDescription": "Inicia sessió al teu compte de TMDB",

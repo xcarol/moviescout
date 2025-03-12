@@ -76,7 +76,7 @@ class _LoginState extends State<Login> {
             controller: _userController,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
-              labelText: 'Email',
+              labelText: AppLocalizations.of(context)!.username,
             ),
           ),
         ),
@@ -88,7 +88,7 @@ class _LoginState extends State<Login> {
             controller: _passwordController,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
-              labelText: 'Password',
+              labelText: AppLocalizations.of(context)!.password,
             ),
           ),
         ),
