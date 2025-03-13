@@ -17,7 +17,7 @@ class AppDrawer extends StatelessWidget {
     ImageProvider<Object>? userImage = user != null
         ? NetworkImage(
             'https://www.gravatar.com/avatar/${user['avatar']['gravatar']['hash']}?s=200')
-        : AssetImage('anonymous.png');
+        : AssetImage('assets/anonymous.png');
     var userName = user != null
         ? user['name'].toString().isNotEmpty
             ? user['name']
