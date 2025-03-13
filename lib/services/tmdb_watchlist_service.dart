@@ -8,8 +8,12 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
     userWatchlist = List.empty(growable: true);
     notifyListeners();
   }
-  
+
   Future<void> retrieveUserWatchlist(int accountId) async {
+    if (accountId <= 0) {
+      return;
+    }
+
     final movies = await get('account/$accountId/watchlist/movies');
     final tv = await get('account/$accountId/watchlist/tv');
 
@@ -26,7 +30,7 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
     userWatchlist = movies['results'] + tv['results'];
     notifyListeners();
   }
-  
+
   Future<dynamic> _updateTitleInWatchlistToTmdb(
       int accountId, int id, bool add) async {
     return post('account/$accountId/watchlist',
@@ -48,7 +52,8 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
       if (result['success'] == true) {
         userWatchlist.removeWhere((element) => element['id'] == title['id']);
       } else {
-        throw Exception('Failed to remove title to watchlist. Response: $result');
+        throw Exception(
+            'Failed to remove title to watchlist. Response: $result');
       }
     }
     notifyListeners();
