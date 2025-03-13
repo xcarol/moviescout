@@ -215,7 +215,7 @@ class TitleCard extends StatelessWidget {
         icon: const Icon(Icons.highlight_off),
         onPressed: () {
           SnackMessage.showSnackBar(
-              context, AppLocalizations.of(context)!.signInToWatchlist);
+              AppLocalizations.of(context)!.signInToWatchlist);
         },
       );
     }

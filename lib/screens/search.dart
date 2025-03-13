@@ -106,7 +106,7 @@ class _SearchState extends State<Search> {
       });
     } catch (error) {
       if (context.mounted) {
-        SnackMessage.showSnackBar(context, error.toString());
+        SnackMessage.showSnackBar(error.toString());
       }
     }
   }
