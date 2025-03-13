@@ -74,23 +74,19 @@ class AppDrawer extends StatelessWidget {
   }
 
   logout(BuildContext context) async {
-    await Provider.of<TmdbUserService>(context, listen: false)
-        .logout()
-        .catchError((error) {
-      if (context.mounted) {
-        SnackMessage.showSnackBar(
-          context,
-          error.toString(),
-        );
-      }
-    });
-    if (context.mounted) {
-      Provider.of<TmdbWatchlistService>(context, listen: false).clearWatchList();
+    final tmdbUserService =
+        Provider.of<TmdbUserService>(context, listen: false);
+    final tmdbWatchlistService =
+        Provider.of<TmdbWatchlistService>(context, listen: false);
+    final logoutSuccessText = AppLocalizations.of(context)!.logoutSuccess;
 
+    await tmdbUserService.logout().catchError((error) {
       SnackMessage.showSnackBar(
-        context,
-        AppLocalizations.of(context)!.logoutSuccess,
+        error.toString(),
       );
-    }
+    });
+
+    tmdbWatchlistService.clearWatchList();
+    SnackMessage.showSnackBar(logoutSuccessText);
   }
 }
