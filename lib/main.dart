@@ -13,6 +13,9 @@ import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
 import 'package:moviescout/screens/home.dart';
 
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -75,6 +78,7 @@ class MyApp extends StatelessWidget {
       ),
       title: 'Movie Scout',
       home: const Home(),
+      scaffoldMessengerKey: scaffoldMessengerKey,
     );
   }
 }

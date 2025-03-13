@@ -53,7 +53,7 @@ class _TitleListState extends State<TitleList> {
                     });
                   });
                 } catch (error) {
-                  SnackMessage.showSnackBar(context, error.toString());
+                  SnackMessage.showSnackBar(error.toString());
                 }
               });
         },
