@@ -40,21 +40,22 @@ class _TitleListState extends State<TitleList> {
                 setState(() {
                   updatingTitle = title;
                 });
-                try {
-                  Provider.of<TmdbWatchlistService>(context, listen: false)
-                      .updateWatchlistTitle(
-                          Provider.of<TmdbUserService>(context, listen: false)
-                              .accountId,
-                          title,
-                          !isInWatchlist)
-                      .then((value) async {
-                    setState(() {
-                      updatingTitle = {};
-                    });
+                Provider.of<TmdbWatchlistService>(context, listen: false)
+                    .updateWatchlistTitle(
+                        Provider.of<TmdbUserService>(context, listen: false)
+                            .accountId,
+                        title,
+                        !isInWatchlist)
+                    .then((value) async {
+                  setState(() {
+                    updatingTitle = {};
                   });
-                } catch (error) {
+                }).catchError((error) {
+                  setState(() {
+                    updatingTitle = {};
+                  });
                   SnackMessage.showSnackBar(error.toString());
-                }
+                });
               });
         },
       ),
