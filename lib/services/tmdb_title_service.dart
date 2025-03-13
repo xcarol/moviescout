@@ -16,7 +16,10 @@ class TmdbTitleService extends TmdbBaseService {
           .replaceFirst('{MEDIA_TYPE}', mediaType)
           .replaceFirst('{ID}', titleId.toString()),
     );
-    return result['results'][getCountryCode()];
+    if (result.statusCode == 200) {
+      return body(result)['results'][getCountryCode()];
+    }
+    return {};
   }
 
   Future<dynamic> getTitlesDetails(
@@ -55,11 +58,15 @@ class TmdbTitleService extends TmdbBaseService {
           .replaceFirst(
               '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
     );
-    final titleDetails = result;
+    if (result.statusCode == 200) {
+      final titleDetails = body(result);
 
-    titleDetails['providers'] = await getTitleProviders(title['id'], mediaType);
-    titleDetails['last_updated'] = DateTime.now().toIso8601String();
+      titleDetails['providers'] =
+          await getTitleProviders(title['id'], mediaType);
+      titleDetails['last_updated'] = DateTime.now().toIso8601String();
 
-    return titleDetails;
+      return titleDetails;
+    }
+    return {};
   }
 }

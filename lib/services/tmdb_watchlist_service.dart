@@ -14,8 +14,16 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
       return;
     }
 
-    final movies = await get('account/$accountId/watchlist/movies');
-    final tv = await get('account/$accountId/watchlist/tv');
+    late Map<String, dynamic> movies;
+    dynamic response = await get('account/$accountId/watchlist/movies');
+    if (response.statusCode == 200) {
+      movies = body(response);
+    }
+    late Map<String, dynamic> tv;
+    response = await get('account/$accountId/watchlist/tv');
+    if (response.statusCode == 200) {
+      tv = body(response);
+    }
 
     movies['results'].forEach((element) {
       element['last_updated'] = DateTime.now().toIso8601String();
@@ -41,19 +49,19 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
     if (add) {
       final result =
           await _updateTitleInWatchlistToTmdb(accountId, title['id'], true);
-      if (result['success'] == true) {
+      if (result.statusCode == 201) {
         userWatchlist.add(title);
       } else {
-        throw Exception('Failed to add title to watchlist. Response: $result');
+        throw Exception('Failed to add title to watchlist. Response code: ${result.statusCode}');
       }
     } else {
       final result =
           await _updateTitleInWatchlistToTmdb(accountId, title['id'], false);
-      if (result['success'] == true) {
+      if (result.statusCode == 200) {
         userWatchlist.removeWhere((element) => element['id'] == title['id']);
       } else {
         throw Exception(
-            'Failed to remove title to watchlist. Response: $result');
+            'Failed to remove title to watchlist. Response code: ${result.statusCode}');
       }
     }
     notifyListeners();
