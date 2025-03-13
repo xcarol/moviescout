@@ -17,6 +17,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  bool _loginInProgress = false;
   late TextEditingController _userController;
   late TextEditingController _passwordController;
 
@@ -27,7 +28,8 @@ class _LoginState extends State<Login> {
     _passwordController = TextEditingController();
     _userController.addListener(updateLoginButtonState);
     _passwordController.addListener(updateLoginButtonState);
-    _userController.text = PreferencesService().prefs.getString('username') ?? '';
+    _userController.text =
+        PreferencesService().prefs.getString('username') ?? '';
   }
 
   @override
@@ -108,7 +110,9 @@ class _LoginState extends State<Login> {
                         _passwordController.text.isNotEmpty
                     ? () => login(context)
                     : null,
-                child: Text(AppLocalizations.of(context)!.login),
+                child: _loginInProgress == true
+                    ? CircularProgressIndicator()
+                    : Text(AppLocalizations.of(context)!.login),
               ),
             ],
           ),
@@ -122,14 +126,19 @@ class _LoginState extends State<Login> {
   }
 
   login(context) async {
+    setState(() {
+      _loginInProgress = true;
+    });
     bool success = await Provider.of<TmdbUserService>(context, listen: false)
         .login(
       _userController.text,
       _passwordController.text,
     )
         .catchError((error) {
+      setState(() {
+        _loginInProgress = false;
+      });
       SnackMessage.showSnackBar(
-        context,
         error.toString(),
       );
       return false;
@@ -137,15 +146,15 @@ class _LoginState extends State<Login> {
     if (success) {
       PreferencesService().prefs.setString('username', _userController.text);
       await Provider.of<TmdbWatchlistService>(context, listen: false)
-          .retrieveUserWatchlist(Provider.of<TmdbUserService>(context, listen: false).accountId);
-      SnackMessage.showSnackBar(
-          context, AppLocalizations.of(context)!.loginSuccess);
+          .retrieveUserWatchlist(
+              Provider.of<TmdbUserService>(context, listen: false).accountId);
+      SnackMessage.showSnackBar(AppLocalizations.of(context)!.loginSuccess);
       Navigator.pop(context);
     } else {
-      SnackMessage.showSnackBar(
-        context,
-        AppLocalizations.of(context)!.loginFailed,
-      );
+      SnackMessage.showSnackBar(AppLocalizations.of(context)!.loginFailed);
     }
+    setState(() {
+      _loginInProgress = false;
+    });
   }
 }
