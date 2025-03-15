@@ -3,8 +3,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
-import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:provider/provider.dart';
+
+// ignore: non_constant_identifier_names
+double CARD_HEIGHT = 250.0;
 
 class TitleCard extends StatelessWidget {
   final Map title;
@@ -24,16 +26,59 @@ class TitleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return SizedBox(
+      height: CARD_HEIGHT,
+      child: Card(
+        // color: Colors.red,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              titlePoster(title['poster_path']),
+              const SizedBox(width: 10),
+              titleCard(title),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget titleRating(title) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Row(
           children: [
-            titlePoster(title['poster_path']),
-            const SizedBox(width: 10),
-            titleCard(title),
+            Icon(Icons.star),
+            const SizedBox(width: 5),
+            Text((title['vote_average'] as double).toStringAsFixed(2)),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget titleGenres(title) {
+    List<Widget> genres = [];
+    title['genres'].forEach((genre) {
+      genres.add(Chip(
+        label: Text(genre['name']),
+        padding: EdgeInsets.all(5),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ));
+      genres.add(const SizedBox(width: 5));
+    });
+    return Flexible(
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: genres,
+          ),
         ),
       ),
     );
@@ -74,7 +119,16 @@ class TitleCard extends StatelessWidget {
         children: [
           titleHeader(title),
           const SizedBox(height: 5),
+          Row(
+            children: [
+              titleRating(title),
+              const SizedBox(width: 20),
+              titleGenres(title),
+            ],
+          ),
+          const SizedBox(height: 5),
           titleBody(title),
+          const SizedBox(height: 5),
           titleBottomRow(title),
         ],
       ),
@@ -142,13 +196,11 @@ class TitleCard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Expanded(
+        Flexible(
           child: providers(title),
         ),
         Row(
           children: [
-            watchlistText(title),
-            const SizedBox(width: 8),
             watchlistButton(title),
             const SizedBox(width: 8),
           ],
@@ -162,14 +214,20 @@ class TitleCard extends StatelessWidget {
       if (title['providers'] == null) {
         return const SizedBox.shrink();
       }
-      return Row(
-        children: (title['providers']['flatrate'] as List?)
-                ?.map<Widget>((provider) => providerLogo(provider))
-                .toList() ??
-            [],
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: (title['providers']['flatrate'] as List?)
+                  ?.map<Widget>((provider) => providerLogo(provider))
+                  .toList() ??
+              [],
+        ),
       );
     } catch (e) {
-      return Text('Error: $e in providers for titleId ${title['id']}');
+      return Text(
+        'Error: $e in providers for titleId ${title['id']}',
+        overflow: TextOverflow.ellipsis,
+      );
     }
   }
 
@@ -195,18 +253,6 @@ class TitleCard extends StatelessWidget {
     } catch (e) {
       return Text('Error: $e in providerLogo for provider $provider');
     }
-  }
-
-  Text watchlistText(title) {
-    final bool isInWatchlist =
-        Provider.of<TmdbWatchlistService>(context, listen: false)
-            .userWatchlist
-            .any((t) => t['id'] == title['id']);
-    return Text(
-      isInWatchlist
-          ? AppLocalizations.of(context)!.removeFromWatchlist
-          : AppLocalizations.of(context)!.addToWatchlist,
-    );
   }
 
   IconButton watchlistButton(title) {
