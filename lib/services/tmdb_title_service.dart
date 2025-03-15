@@ -61,6 +61,7 @@ class TmdbTitleService extends TmdbBaseService {
     if (result.statusCode == 200) {
       final titleDetails = body(result);
 
+      titleDetails['media_type'] = mediaType;
       titleDetails['providers'] =
           await getTitleProviders(title['id'], mediaType);
       titleDetails['last_updated'] = DateTime.now().toIso8601String();

@@ -38,15 +38,15 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
   }
 
   Future<dynamic> _updateTitleInWatchlistToTmdb(
-      int accountId, int id, bool add) async {
+      int accountId, int id, String mediaType, bool add) async {
     return post('account/$accountId/watchlist',
-        {'media_type': 'movie', 'media_id': id, 'watchlist': add});
+        {'media_type': mediaType, 'media_id': id, 'watchlist': add});
   }
 
   Future<void> updateWatchlistTitle(int accountId, Map title, bool add) async {
     if (add) {
       final result =
-          await _updateTitleInWatchlistToTmdb(accountId, title['id'], true);
+          await _updateTitleInWatchlistToTmdb(accountId, title['id'], title['media_type'], true);
       if (result.statusCode == 201) {
         userWatchlist.add(title);
       } else {
@@ -54,7 +54,7 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
       }
     } else {
       final result =
-          await _updateTitleInWatchlistToTmdb(accountId, title['id'], false);
+          await _updateTitleInWatchlistToTmdb(accountId, title['id'], title['media_type'], false);
       if (result.statusCode == 200) {
         userWatchlist.removeWhere((element) => element['id'] == title['id']);
       } else {
