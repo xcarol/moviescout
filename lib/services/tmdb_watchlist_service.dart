@@ -26,12 +26,10 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
     }
 
     movies['results'].forEach((element) {
-      element['last_updated'] = DateTime.now().toIso8601String();
       element['media_type'] = 'movie';
     });
 
     tv['results'].forEach((element) {
-      element['last_updated'] = DateTime.now().toIso8601String();
       element['media_type'] = 'tv';
     });
 
