@@ -49,7 +49,7 @@ class TitleCard extends StatelessWidget {
     if (title['vote_average'] == null) {
       return const SizedBox();
     }
-    
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -66,6 +66,11 @@ class TitleCard extends StatelessWidget {
 
   Widget titleGenres(title) {
     List<Widget> genres = [];
+
+    if (title['genres'] == null) {
+      return const SizedBox();
+    }
+    
     title['genres'].forEach((genre) {
       genres.add(Chip(
         label: Text(genre['name']),
