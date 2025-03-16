@@ -46,6 +46,10 @@ class TitleCard extends StatelessWidget {
   }
 
   Widget titleRating(title) {
+    if (title['vote_average'] == null) {
+      return const SizedBox();
+    }
+    
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
