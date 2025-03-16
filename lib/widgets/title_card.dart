@@ -29,13 +29,18 @@ class TitleCard extends StatelessWidget {
     return SizedBox(
       height: CARD_HEIGHT,
       child: Card(
-        // color: Colors.red,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(right: 8.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              titlePoster(title['poster_path']),
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
+                ),
+                child: titlePoster(title['poster_path']),
+              ),
               const SizedBox(width: 10),
               titleCard(title),
             ],
@@ -70,7 +75,7 @@ class TitleCard extends StatelessWidget {
     if (title['genres'] == null) {
       return const SizedBox();
     }
-    
+
     title['genres'].forEach((genre) {
       genres.add(Chip(
         label: Text(genre['name']),
@@ -95,9 +100,8 @@ class TitleCard extends StatelessWidget {
 
   Widget titlePoster(String? posterPath) {
     if (posterPath == null || posterPath.isEmpty) {
-      return SizedBox(
-        width: 110,
-        height: 150,
+      return AspectRatio(
+        aspectRatio: 2 / 3,
         child: SvgPicture.asset(
           'assets/movie.svg',
           fit: BoxFit.cover,
@@ -105,9 +109,8 @@ class TitleCard extends StatelessWidget {
       );
     }
 
-    return SizedBox(
-      width: 110,
-      height: 150,
+    return AspectRatio(
+      aspectRatio: 2 / 3,
       child: Image.network(
         'https://image.tmdb.org/t/p/w500$posterPath',
         fit: BoxFit.cover,
@@ -123,23 +126,26 @@ class TitleCard extends StatelessWidget {
 
   titleCard(title) {
     return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          titleHeader(title),
-          const SizedBox(height: 5),
-          Row(
-            children: [
-              titleRating(title),
-              const SizedBox(width: 20),
-              titleGenres(title),
-            ],
-          ),
-          const SizedBox(height: 5),
-          titleBody(title),
-          const SizedBox(height: 5),
-          titleBottomRow(title),
-        ],
+      child: Padding(
+        padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            titleHeader(title),
+            const SizedBox(height: 5),
+            Row(
+              children: [
+                titleRating(title),
+                const SizedBox(width: 20),
+                titleGenres(title),
+              ],
+            ),
+            const SizedBox(height: 5),
+            titleBody(title),
+            const SizedBox(height: 5),
+            titleBottomRow(title),
+          ],
+        ),
       ),
     );
   }
