@@ -143,7 +143,14 @@ class TitleCard extends StatelessWidget {
             const SizedBox(height: 5),
             titleBody(title),
             const SizedBox(height: 5),
-            titleBottomRow(title),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  titleBottomRow(title),
+                ],
+              ),
+            ),
           ],
         ),
       ),
