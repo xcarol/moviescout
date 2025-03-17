@@ -29,7 +29,9 @@ class TmdbSearchService extends TmdbBaseService {
           .replaceFirst('{MEDIA_TYPE}', mediaType)
           .replaceFirst('{ID}', titleId.toString()),
     );
-    return result;
+    if (result.statusCode == 200) {
+      return body(result);
+    }
   }
 
   List _fromImdbIdToTitle(Map response) {
@@ -82,7 +84,11 @@ class TmdbSearchService extends TmdbBaseService {
       _tmdbSearch.replaceFirst('{SEARCH}', search).replaceFirst(
           '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
     );
-    return _titlesList(result, locale);
+    if (result.statusCode == 200) {
+      return _titlesList(body(result), locale);
+    }
+    throw Exception(
+        'Failed to search title. Response code: ${result.statusCode}');
   }
 
   Future<dynamic> searchImdbTitles(
@@ -103,15 +109,20 @@ class TmdbSearchService extends TmdbBaseService {
         continue;
       }
 
-      final response = await get(
+      final result = await get(
         _tmdbFindByID.replaceFirst('{ID}', id).replaceFirst(
             '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
       );
-      List titlesFromId = _fromImdbIdToTitle(response);
-      if (titlesFromId.isEmpty) {
-        notFound.add(id);
+      if (result.statusCode == 200) {
+        List titlesFromId = _fromImdbIdToTitle(body(result));
+        if (titlesFromId.isEmpty) {
+          notFound.add(id);
+        }
+        titles.addAll(titlesFromId);
+      } else {
+        throw Exception(
+            'Failed to search IMDB title. Response code: ${result.statusCode}');
       }
-      titles.addAll(titlesFromId);
     }
 
     return {}

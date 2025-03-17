@@ -17,8 +17,6 @@
     "logoutSuccess": "Logged out succesfully.",
     "signup": "Register to TMDb",
     "signInToWatchlist": "User must be logged in to add titles.",
-    "addToWatchlist": "Add to the watchlist",
-    "removeFromWatchlist": "Remove from the watchlist",
     "tvShow": "Tv show",
     "movie": "Movie",
     "imdbImport": "Import from IMDB",

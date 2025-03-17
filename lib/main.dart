@@ -13,15 +13,16 @@ import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
 import 'package:moviescout/screens/home.dart';
 
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  // Crashlytics is not yet available for web
-  // https://firebase.google.com/docs/flutter/setup?platform=web#available-plugins
-
   if (defaultTargetPlatform == TargetPlatform.android) {
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform);
+
     FlutterError.onError = (errorDetails) {
       FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
     };
@@ -77,6 +78,7 @@ class MyApp extends StatelessWidget {
       ),
       title: 'Movie Scout',
       home: const Home(),
+      scaffoldMessengerKey: scaffoldMessengerKey,
     );
   }
 }

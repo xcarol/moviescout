@@ -3,8 +3,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
-import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:provider/provider.dart';
+
+// ignore: non_constant_identifier_names
+double CARD_HEIGHT = 160.0;
 
 class TitleCard extends StatelessWidget {
   final Map title;
@@ -24,26 +26,53 @@ class TitleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            titlePoster(title['poster_path']),
-            const SizedBox(width: 10),
-            titleCard(title),
-          ],
+    return SizedBox(
+      height: CARD_HEIGHT,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
+                ),
+                child: titlePoster(title['poster_path']),
+              ),
+              const SizedBox(width: 10),
+              titleCard(),
+            ],
+          ),
         ),
       ),
     );
   }
 
+  Widget titleRating() {
+    if (title['vote_average'] == null) {
+      return const SizedBox();
+    }
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.star),
+            const SizedBox(width: 5),
+            Text((title['vote_average'] as double).toStringAsFixed(2)),
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget titlePoster(String? posterPath) {
     if (posterPath == null || posterPath.isEmpty) {
-      return SizedBox(
-        width: 110,
-        height: 150,
+      return AspectRatio(
+        aspectRatio: 2 / 3,
         child: SvgPicture.asset(
           'assets/movie.svg',
           fit: BoxFit.cover,
@@ -51,9 +80,8 @@ class TitleCard extends StatelessWidget {
       );
     }
 
-    return SizedBox(
-      width: 110,
-      height: 150,
+    return AspectRatio(
+      aspectRatio: 2 / 3,
       child: Image.network(
         'https://image.tmdb.org/t/p/w500$posterPath',
         fit: BoxFit.cover,
@@ -67,89 +95,116 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  titleCard(title) {
+  titleCard() {
     return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          titleHeader(title),
-          const SizedBox(height: 5),
-          titleBody(title),
-          titleBottomRow(title),
-        ],
+      child: Padding(
+        padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            titleHeader(),
+            const SizedBox(height: 5),
+            Row(
+              children: [
+                titleDate(),
+                Text(' '),
+                titleDuration(),
+              ],
+            ),
+            const SizedBox(height: 5),
+            titleRating(),
+            const SizedBox(height: 5),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [titleBottomRow()],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Text titleHeader(title) {
+  Text titleHeader() {
     String text;
 
     if (title['title'] != null) {
-      text = movieTitleDetails(title);
+      text = title['title'] ?? '';
     } else {
-      text = tvShowTitleDetails(title);
+      text = title['name'] ?? '';
     }
 
-    return Text(text,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16));
+    return Text(
+      text,
+      style: const TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
   }
 
-  String movieTitleDetails(title) {
-    String text = title['title'] ?? '';
-    String releaseDate = title['release_date'] ?? '';
-    text += releaseDate.isNotEmpty ? ' - ${releaseDate.substring(0, 4)}' : '';
-    return text;
-  }
+  Text titleDate() {
+    String text = '';
 
-  String tvShowTitleDetails(title) {
     try {
-      String text = title['name'] ?? '';
-      String firstAirDate = title['first_air_date'] ?? '';
-      dynamic nextEpisodeToAir = title['next_episode_to_air'] ??
-          ''; // Can be a String or a Map with next episode details
-      String lastAirDate = title['last_air_date'] ?? '';
+      if (title['title'] != null) {
+        String releaseDate = title['release_date'] ?? '';
+        text = releaseDate.isNotEmpty ? releaseDate.substring(0, 4) : '';
+      } else if (title['name'] != null) {
+        String firstAirDate = title['first_air_date'] ?? '';
+        dynamic nextEpisodeToAir = title['next_episode_to_air'] ??
+            ''; // Can be a String or a Map with next episode details
+        String lastAirDate = title['last_air_date'] ?? '';
 
-      text +=
-          firstAirDate.isNotEmpty ? ' - ${firstAirDate.substring(0, 4)}' : '';
+        text += firstAirDate.isNotEmpty ? firstAirDate.substring(0, 4) : '';
 
-      if (nextEpisodeToAir.isNotEmpty) {
-        text += ' - ...';
-      } else if (lastAirDate.isNotEmpty) {
-        text += ' - ${lastAirDate.substring(0, 4)}';
+        if (nextEpisodeToAir.isNotEmpty) {
+          text += ' - ...';
+        } else if (lastAirDate.isNotEmpty) {
+          text += ' - ${lastAirDate.substring(0, 4)}';
+        }
       }
-
-      return text;
-    } catch (e) {
-      return 'Error: $e in tvShowTitleDetails for titleId ${title['id']}';
+    } catch (error) {
+      text = 'Error: $error in titleDate';
     }
+
+    return Text(text);
   }
 
-  Text titleBody(title) {
+  Text titleDuration() {
+    String text = '';
     try {
-      return Text(
-        title['overview'] == null || title['overview'].isEmpty
-            ? AppLocalizations.of(context)!.missingDescription
-            : title['overview'],
-        maxLines: 4,
-        overflow: TextOverflow.ellipsis,
-      );
-    } catch (e) {
-      return Text('Error: $e in titleBody for titleId ${title['id']}');
+      if (title['title'] != null && title['runtime'] != null) {
+        int runtime = title['runtime'];
+        int hours = (runtime / 60).floor().toInt();
+        int minutes = runtime - hours * 60;
+        if (hours > 0) {
+          text = '${hours}h ';
+        }
+        text += '${minutes}m';
+      } else if (title['name'] != null && title['number_of_episodes'] != null) {
+        text = '${title['number_of_episodes']}eps';
+      }
+    } catch (error) {
+      text = 'Error: $error in titleDuration';
     }
+
+    return Text(text);
   }
 
-  Row titleBottomRow(title) {
+  Row titleBottomRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Expanded(
-          child: providers(title),
+        Flexible(
+          child: providers(),
         ),
         Row(
           children: [
-            watchlistText(title),
-            const SizedBox(width: 8),
-            watchlistButton(title),
+            watchlistButton(),
             const SizedBox(width: 8),
           ],
         ),
@@ -157,19 +212,25 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget providers(title) {
+  Widget providers() {
     try {
       if (title['providers'] == null) {
         return const SizedBox.shrink();
       }
-      return Row(
-        children: (title['providers']['flatrate'] as List?)
-                ?.map<Widget>((provider) => providerLogo(provider))
-                .toList() ??
-            [],
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: (title['providers']['flatrate'] as List?)
+                  ?.map<Widget>((provider) => providerLogo(provider))
+                  .toList() ??
+              [],
+        ),
       );
     } catch (e) {
-      return Text('Error: $e in providers for titleId ${title['id']}');
+      return Text(
+        'Error: $e in providers for titleId ${title['id']}',
+        overflow: TextOverflow.ellipsis,
+      );
     }
   }
 
@@ -197,25 +258,13 @@ class TitleCard extends StatelessWidget {
     }
   }
 
-  Text watchlistText(title) {
-    final bool isInWatchlist =
-        Provider.of<TmdbWatchlistService>(context, listen: false)
-            .userWatchlist
-            .any((t) => t['id'] == title['id']);
-    return Text(
-      isInWatchlist
-          ? AppLocalizations.of(context)!.removeFromWatchlist
-          : AppLocalizations.of(context)!.addToWatchlist,
-    );
-  }
-
-  IconButton watchlistButton(title) {
+  IconButton watchlistButton() {
     if (Provider.of<TmdbUserService>(context, listen: false).user == null) {
       return IconButton(
         icon: const Icon(Icons.highlight_off),
         onPressed: () {
           SnackMessage.showSnackBar(
-              context, AppLocalizations.of(context)!.signInToWatchlist);
+              AppLocalizations.of(context)!.signInToWatchlist);
         },
       );
     }

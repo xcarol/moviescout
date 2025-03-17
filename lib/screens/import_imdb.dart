@@ -161,7 +161,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
       });
     } catch (error) {
       if (context.mounted) {
-        SnackMessage.showSnackBar(context, error.toString());
+        SnackMessage.showSnackBar(error.toString());
       }
     } finally {
       setState(() {

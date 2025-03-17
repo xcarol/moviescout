@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/main.dart';
 
 class SnackMessage {
-  static void showSnackBar(var context, String message) {
-    final scaffold = ScaffoldMessenger.of(context);
+  static void showSnackBar(String message) {
+    final scaffold = scaffoldMessengerKey.currentState;
 
-    scaffold.showSnackBar(SnackBar(
+    scaffold?.showSnackBar(SnackBar(
       content: Text(message),
       action: SnackBarAction(
         label: 'OK',

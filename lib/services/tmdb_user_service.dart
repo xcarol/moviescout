@@ -15,9 +15,12 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     }
   }
 
-  Future<dynamic> getRequestToken() async {
+  Future<String> getRequestToken() async {
     final response = await get('authentication/token/new');
-    return response['request_token'];
+    if (response.statusCode == 200) {
+      return body(response)['request_token'];
+    }
+    return '';
   }
 
   Future<bool> validateWithLogin(
@@ -30,22 +33,28 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
       'password': password,
       'request_token': requestToken,
     });
-    return response['success'];
+    return response.statusCode == 200;
   }
 
   Future<String> createSession(String requestToken) async {
     final response = await post(
         '/authentication/session/new', {'request_token': requestToken});
-    return response['session_id'];
+    if (response.statusCode == 200) {
+      return body(response)['session_id'];
+    }
+    throw Exception(
+        'createSession http Error: ${body(response)['status_code']}. Message: ${body(response)['status_message']}');
   }
 
   Future<dynamic> getUserDetails() async {
     final response = await get('/account');
-    return response;
+    if (response.statusCode == 200) {
+      return body(response);
+    }
   }
 
   Future<bool> login(String username, String password) async {
-    final requestToken = await getRequestToken();
+    String requestToken = await getRequestToken();
 
     final isValid = await validateWithLogin(username, password, requestToken);
     if (isValid) {
