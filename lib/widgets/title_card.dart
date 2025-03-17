@@ -6,7 +6,7 @@ import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
 
 // ignore: non_constant_identifier_names
-double CARD_HEIGHT = 250.0;
+double CARD_HEIGHT = 160.0;
 
 class TitleCard extends StatelessWidget {
   final Map title;
@@ -42,7 +42,7 @@ class TitleCard extends StatelessWidget {
                 child: titlePoster(title['poster_path']),
               ),
               const SizedBox(width: 10),
-              titleCard(title),
+              titleCard(),
             ],
           ),
         ),
@@ -50,7 +50,7 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget titleRating(title) {
+  Widget titleRating() {
     if (title['vote_average'] == null) {
       return const SizedBox();
     }
@@ -66,35 +66,6 @@ class TitleCard extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-
-  Widget titleGenres(title) {
-    List<Widget> genres = [];
-
-    if (title['genres'] == null) {
-      return const SizedBox();
-    }
-
-    title['genres'].forEach((genre) {
-      genres.add(Chip(
-        label: Text(genre['name']),
-        padding: EdgeInsets.all(5),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ));
-      genres.add(const SizedBox(width: 5));
-    });
-    return Flexible(
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: genres,
-          ),
-        ),
-      ),
     );
   }
 
@@ -124,31 +95,29 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  titleCard(title) {
+  titleCard() {
     return Expanded(
       child: Padding(
         padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            titleHeader(title),
+            titleHeader(),
             const SizedBox(height: 5),
             Row(
               children: [
-                titleRating(title),
-                const SizedBox(width: 20),
-                titleGenres(title),
+                titleDate(),
+                Text(' '),
+                titleDuration(),
               ],
             ),
             const SizedBox(height: 5),
-            titleBody(title),
+            titleRating(),
             const SizedBox(height: 5),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  titleBottomRow(title),
-                ],
+                children: [titleBottomRow()],
               ),
             ),
           ],
@@ -157,73 +126,85 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Text titleHeader(title) {
+  Text titleHeader() {
     String text;
 
     if (title['title'] != null) {
-      text = movieTitleDetails(title);
+      text = title['title'] ?? '';
     } else {
-      text = tvShowTitleDetails(title);
+      text = title['name'] ?? '';
     }
 
-    return Text(text,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16));
+    return Text(
+      text,
+      style: const TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
   }
 
-  String movieTitleDetails(title) {
-    String text = title['title'] ?? '';
-    String releaseDate = title['release_date'] ?? '';
-    text += releaseDate.isNotEmpty ? ' - ${releaseDate.substring(0, 4)}' : '';
-    return text;
-  }
+  Text titleDate() {
+    String text = '';
 
-  String tvShowTitleDetails(title) {
     try {
-      String text = title['name'] ?? '';
-      String firstAirDate = title['first_air_date'] ?? '';
-      dynamic nextEpisodeToAir = title['next_episode_to_air'] ??
-          ''; // Can be a String or a Map with next episode details
-      String lastAirDate = title['last_air_date'] ?? '';
+      if (title['title'] != null) {
+        String releaseDate = title['release_date'] ?? '';
+        text = releaseDate.isNotEmpty ? releaseDate.substring(0, 4) : '';
+      } else if (title['name'] != null) {
+        String firstAirDate = title['first_air_date'] ?? '';
+        dynamic nextEpisodeToAir = title['next_episode_to_air'] ??
+            ''; // Can be a String or a Map with next episode details
+        String lastAirDate = title['last_air_date'] ?? '';
 
-      text +=
-          firstAirDate.isNotEmpty ? ' - ${firstAirDate.substring(0, 4)}' : '';
+        text += firstAirDate.isNotEmpty ? firstAirDate.substring(0, 4) : '';
 
-      if (nextEpisodeToAir.isNotEmpty) {
-        text += ' - ...';
-      } else if (lastAirDate.isNotEmpty) {
-        text += ' - ${lastAirDate.substring(0, 4)}';
+        if (nextEpisodeToAir.isNotEmpty) {
+          text += ' - ...';
+        } else if (lastAirDate.isNotEmpty) {
+          text += ' - ${lastAirDate.substring(0, 4)}';
+        }
       }
-
-      return text;
-    } catch (e) {
-      return 'Error: $e in tvShowTitleDetails for titleId ${title['id']}';
+    } catch (error) {
+      text = 'Error: $error in titleDate';
     }
+
+    return Text(text);
   }
 
-  Text titleBody(title) {
+  Text titleDuration() {
+    String text = '';
     try {
-      return Text(
-        title['overview'] == null || title['overview'].isEmpty
-            ? AppLocalizations.of(context)!.missingDescription
-            : title['overview'],
-        maxLines: 4,
-        overflow: TextOverflow.ellipsis,
-      );
-    } catch (e) {
-      return Text('Error: $e in titleBody for titleId ${title['id']}');
+      if (title['title'] != null && title['runtime'] != null) {
+        int runtime = title['runtime'];
+        int hours = (runtime / 60).floor().toInt();
+        int minutes = runtime - hours * 60;
+        if (hours > 0) {
+          text = '${hours}h ';
+        }
+        text += '${minutes}m';
+      } else if (title['name'] != null && title['number_of_episodes'] != null) {
+        text = '${title['number_of_episodes']}eps';
+      }
+    } catch (error) {
+      text = 'Error: $error in titleDuration';
     }
+
+    return Text(text);
   }
 
-  Row titleBottomRow(title) {
+  Row titleBottomRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Flexible(
-          child: providers(title),
+          child: providers(),
         ),
         Row(
           children: [
-            watchlistButton(title),
+            watchlistButton(),
             const SizedBox(width: 8),
           ],
         ),
@@ -231,7 +212,7 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget providers(title) {
+  Widget providers() {
     try {
       if (title['providers'] == null) {
         return const SizedBox.shrink();
@@ -277,7 +258,7 @@ class TitleCard extends StatelessWidget {
     }
   }
 
-  IconButton watchlistButton(title) {
+  IconButton watchlistButton() {
     if (Provider.of<TmdbUserService>(context, listen: false).user == null) {
       return IconButton(
         icon: const Icon(Icons.highlight_off),
