@@ -24,6 +24,7 @@ class _TitleListState extends State<TitleList> {
   Widget build(BuildContext context) {
     return Expanded(
       child: ListView.builder(
+        key: PageStorageKey('TitleListView'),
         itemCount: widget.titles.length,
         itemBuilder: (context, index) {
           final title = widget.titles[index];
