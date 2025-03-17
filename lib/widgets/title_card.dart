@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
@@ -29,21 +30,29 @@ class TitleCard extends StatelessWidget {
     return SizedBox(
       height: CARD_HEIGHT,
       child: Card(
-        child: Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  bottomLeft: Radius.circular(12),
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => TitleDetails(title: title)),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    bottomLeft: Radius.circular(12),
+                  ),
+                  child: titlePoster(title['poster_path']),
                 ),
-                child: titlePoster(title['poster_path']),
-              ),
-              const SizedBox(width: 10),
-              titleCard(),
-            ],
+                const SizedBox(width: 10),
+                titleCard(),
+              ],
+            ),
           ),
         ),
       ),
