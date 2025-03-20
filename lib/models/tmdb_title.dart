@@ -153,4 +153,21 @@ class TmdbTitle {
   int get numberOfEpisodes {
     return _tmdbTitle[_number_of_episodes] ?? 0;
   }
+
+  String get duration {
+    String duration = '';
+
+    if (isMovie && runtime > 0) {
+      int hours = (runtime / 60).floor().toInt();
+      int minutes = runtime - hours * 60;
+      if (hours > 0) {
+        duration = '${hours}h ';
+      }
+      duration += '${minutes}m';
+    } else if (isSerie && numberOfEpisodes > 0) {
+      duration = '${numberOfEpisodes}eps';
+    }
+
+    return duration;
+  }
 }
