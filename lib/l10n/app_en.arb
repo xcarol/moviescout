@@ -22,5 +22,8 @@
     "imdbImport": "Import from IMDB",
     "imdbImportHint": "Insert the IMDB ids. One per line.",
     "imdbImportNotFound": "Titles not found",
-    "missingDescription": "Missing description"
+    "missingDescription": "Missing description",
+    "flatrateProviders": "Flatrate",
+    "rentProviders": "Rent",
+    "buyProviders": "Buy"
 }
