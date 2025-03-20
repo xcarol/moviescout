@@ -120,7 +120,7 @@ class TitleCard extends StatelessWidget {
             Row(
               children: [
                 titleDate(),
-                Text(' '),
+                Text(' - '),
                 titleDuration(),
               ],
             ),
@@ -175,21 +175,7 @@ class TitleCard extends StatelessWidget {
   }
 
   Text titleDuration() {
-    String text = '';
-
-    if (_title.isMovie && _title.runtime > 0) {
-      int runtime = _title.runtime;
-      int hours = (runtime / 60).floor().toInt();
-      int minutes = runtime - hours * 60;
-      if (hours > 0) {
-        text = '${hours}h ';
-      }
-      text += '${minutes}m';
-    } else if (_title.isSerie && _title.numberOfEpisodes > 0) {
-      text = '${_title.numberOfEpisodes}eps';
-    }
-
-    return Text(text);
+    return Text(_title.duration);
   }
 
   Row titleBottomRow() {
