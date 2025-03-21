@@ -26,8 +26,9 @@ class _HomeState extends State<Home> {
               .then((_) {
             if (context.mounted) {
               return Provider.of<TmdbWatchlistService>(context, listen: false)
-                  .retrieveUserWatchlist(Provider.of<TmdbUserService>(context, listen: false)
-                      .accountId);
+                  .retrieveUserWatchlist(
+                      Provider.of<TmdbUserService>(context, listen: false)
+                          .accountId);
             } else {
               return null;
             }
@@ -97,8 +98,7 @@ class _HomeState extends State<Home> {
     return FutureBuilder(
       future: TmdbTitleService().getTitlesDetails(
           Provider.of<TmdbWatchlistService>(context, listen: false)
-              .userWatchlist,
-          Localizations.localeOf(context)),
+              .userWatchlist),
       builder: (context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
