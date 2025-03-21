@@ -8,33 +8,7 @@ const String _tmdbSearch =
 const String _tmdbFindByID =
     '/find/{ID}?language={LOCALE}&external_source=imdb_id';
 
-const String _tmdbImages = '/{MEDIA_TYPE}/{ID}/images';
-
 class TmdbSearchService extends TmdbBaseService {
-  _getPoster(Map details) {
-    if (details['posters'] != null && details['posters'].length > 0) {
-      return details['posters'][0]['file_path'];
-    } else if (details['logos'] != null && details['logos'].length > 0) {
-      return details['logos'][0]['file_path'];
-    } else if (details['backdrops'] != null &&
-        details['backdrops'].length > 0) {
-      return details['backdrops'][0]['file_path'];
-    } else {
-      return '';
-    }
-  }
-
-  _getImages(int titleId, String mediaType) async {
-    final result = await get(
-      _tmdbImages
-          .replaceFirst('{MEDIA_TYPE}', mediaType)
-          .replaceFirst('{ID}', titleId.toString()),
-    );
-    if (result.statusCode == 200) {
-      return body(result);
-    }
-  }
-
   List<TmdbTitle> _fromImdbIdToTitle(Map response) {
     List<TmdbTitle> titles = [];
     for (var key in response.keys) {
@@ -55,22 +29,11 @@ class TmdbSearchService extends TmdbBaseService {
   Future<List<TmdbTitle>> _titlesList(Map response, Locale locale) async {
     List<TmdbTitle> titles = [];
     final totalResults = response['total_results'] ?? 0;
+    
     for (int count = 0; count < totalResults && count < 10; count += 1) {
-      final TmdbTitle title = TmdbTitle(title: response['results'][count]);
-      final details = await _getImages(title.id, title.mediaType);
-      final poster = _getPoster(details);
-      titles.add(
-        TmdbTitle(title: {
-          'id': title.id,
-          'title': title.name,
-          'poster_path': poster,
-          'overview': title.overview,
-          'release_date': title.releaseDate,
-          'media_type': title.mediaType,
-          'vote_average': title.voteAverage,
-        }),
-      );
+      titles.add(TmdbTitle(title: response['results'][count]));
     }
+    
     return titles;
   }
 
