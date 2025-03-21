@@ -86,19 +86,15 @@ class TmdbTitle {
   }
 
   String get posterPath {
-    if (_tmdbTitle[_poster_path] != null) {
-      return (_tmdbTitle[_poster_path] as String).isNotEmpty
-          ? 'https://image.tmdb.org/t/p/w500${_tmdbTitle[_poster_path]}'
-          : '';
-    }
-
-    return '';
+    return (_tmdbTitle[_poster_path] as String).isNotEmpty
+        ? 'https://image.tmdb.org/t/p/original${_tmdbTitle[_poster_path]}'
+        : '';
   }
 
   String get backdropPath {
     if (_tmdbTitle[_backdrop_path] != null) {
       return (_tmdbTitle[_backdrop_path] as String).isNotEmpty
-          ? 'https://image.tmdb.org/t/p/w500${_tmdbTitle[_backdrop_path]}'
+          ? 'https://image.tmdb.org/t/p/original${_tmdbTitle[_backdrop_path]}'
           : '';
     }
 
