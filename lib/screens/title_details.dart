@@ -22,10 +22,8 @@ class _TitleDetailsState extends State<TitleDetails> {
     String appTitle = widget._title.name;
 
     return FutureBuilder(
-      future: TmdbTitleService().getTitleDetails(
-        widget._title,
-        Localizations.localeOf(context),
-      ),
+      future:
+          TmdbTitleService().getTitleDetails(widget._title),
       builder: (context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -65,10 +63,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(
-            height: 250,
-            child: _banner(title.backdropPath),
-          ),
+          _banner(title.backdropPath),
           const SizedBox(height: 20),
           _details(title),
         ],
@@ -152,29 +147,16 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  Widget _banner(String? backdropPath) {
-    if (backdropPath == null || backdropPath.isEmpty) {
-      return AspectRatio(
-        aspectRatio: 3 / 2,
-        child: SvgPicture.asset(
+  Widget _banner(String image) {
+    return Image.network(
+      image,
+      fit: BoxFit.fill,
+      errorBuilder: (context, error, stackTrace) {
+        return SvgPicture.asset(
           'assets/movie.svg',
-          fit: BoxFit.cover,
-        ),
-      );
-    }
-
-    return AspectRatio(
-      aspectRatio: 3 / 2,
-      child: Image.network(
-        backdropPath,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return SvgPicture.asset(
-            'assets/movie.svg',
-            fit: BoxFit.cover,
-          );
-        },
-      ),
+          fit: BoxFit.fill,
+        );
+      },
     );
   }
 
