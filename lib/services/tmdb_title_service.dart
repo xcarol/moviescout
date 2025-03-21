@@ -46,6 +46,19 @@ class TmdbTitleService extends TmdbBaseService {
     return titles;
   }
 
+  _retrieveTitleDetailsByLocale(
+    int id,
+    String mediaType,
+    String locale,
+  ) async {
+    return get(
+      _tmdbDetails
+          .replaceFirst('{MEDIA_TYPE}', mediaType)
+          .replaceFirst('{ID}', id.toString())
+          .replaceFirst('{LOCALE}', locale),
+    );
+  }
+
   Future<TmdbTitle> getTitleDetails(TmdbTitle title) async {
     if (_isUpToDate(title)) {
       return title;
@@ -56,24 +69,52 @@ class TmdbTitleService extends TmdbBaseService {
       mediaType = title.isMovie ? 'movie' : 'tv';
     }
 
-    final result = await get(
-      _tmdbDetails
-          .replaceFirst('{MEDIA_TYPE}', mediaType)
-          .replaceFirst('{ID}', title.id.toString())
-          .replaceFirst(
-              '{LOCALE}', '${_getLanguageCode()}-${_getCountryCode()}'),
+    final result = await _retrieveTitleDetailsByLocale(
+      title.id,
+      mediaType,
+      '${_getLanguageCode()}-${_getCountryCode()}',
     );
 
-    if (result.statusCode == 200) {
-      final titleDetails = body(result);
-
-      titleDetails['media_type'] = mediaType;
-      titleDetails['providers'] = await _getProviders(title.id, mediaType);
-      titleDetails['last_updated'] = DateTime.now().toIso8601String();
-
-      return TmdbTitle(title: titleDetails);
+    if (result.statusCode != 200) {
+      return TmdbTitle(title: {});
     }
 
-    return TmdbTitle(title: {});
+    final titleDetails = body(result);
+
+    if (titleDetails['overview'].isEmpty) {
+      final result = await _retrieveTitleDetailsByLocale(
+        title.id,
+        mediaType,
+        _getCountryCode(),
+      );
+
+      if (result.statusCode == 200) {
+        final details = body(result);
+        if (details['overview'].isNotEmpty) {
+          titleDetails['overview'] = details['overview'];
+        }
+      }
+    }
+
+    if (titleDetails['overview'].isEmpty) {
+      final result = await _retrieveTitleDetailsByLocale(
+        title.id,
+        mediaType,
+        'en-US',
+      );
+
+      if (result.statusCode == 200) {
+        final details = body(result);
+        if (details['overview'].isNotEmpty) {
+          titleDetails['overview'] = details['overview'];
+        }
+      }
+    }
+
+    titleDetails['media_type'] = mediaType;
+    titleDetails['providers'] = await _getProviders(title.id, mediaType);
+    titleDetails['last_updated'] = DateTime.now().toIso8601String();
+
+    return TmdbTitle(title: titleDetails);
   }
 }
