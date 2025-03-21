@@ -22,8 +22,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     String appTitle = widget._title.name;
 
     return FutureBuilder(
-      future:
-          TmdbTitleService().getTitleDetails(widget._title),
+      future: TmdbTitleService().getTitleDetails(widget._title),
       builder: (context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -58,16 +57,18 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   _detailsBody(TmdbTitle title) {
-    return Padding(
-      padding: EdgeInsets.only(left: 20, right: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _banner(title.backdropPath),
-          const SizedBox(height: 20),
-          _details(title),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        _banner(title.backdropPath.isNotEmpty
+            ? title.backdropPath
+            : title.posterPath),
+        const SizedBox(height: 20),
+        Padding(
+          padding: EdgeInsets.only(left: 5, right: 5),
+          child: _details(title),
+        ),
+      ],
     );
   }
 
