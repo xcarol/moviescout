@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +11,7 @@ import 'package:provider/provider.dart';
 double CARD_HEIGHT = 160.0;
 
 class TitleCard extends StatelessWidget {
-  final Map title;
+  final TmdbTitle _title;
   final bool isUpdating;
   final bool isInWatchlist;
   final BuildContext context;
@@ -18,32 +20,43 @@ class TitleCard extends StatelessWidget {
   const TitleCard({
     super.key,
     required this.context,
-    required this.title,
+    required TmdbTitle title,
     required this.isUpdating,
     required this.isInWatchlist,
     required this.onPressed,
-  });
+  }) : _title = title;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: CARD_HEIGHT,
       child: Card(
-        child: Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  bottomLeft: Radius.circular(12),
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => TitleDetails(
+                        title: TmdbTitle(title: _title.map),
+                      )),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    bottomLeft: Radius.circular(12),
+                  ),
+                  child: titlePoster(_title.posterPath),
                 ),
-                child: titlePoster(title['poster_path']),
-              ),
-              const SizedBox(width: 10),
-              titleCard(),
-            ],
+                const SizedBox(width: 10),
+                titleCard(),
+              ],
+            ),
           ),
         ),
       ),
@@ -51,7 +64,7 @@ class TitleCard extends StatelessWidget {
   }
 
   Widget titleRating() {
-    if (title['vote_average'] == null) {
+    if (_title.voteAverage == 0.0) {
       return const SizedBox();
     }
 
@@ -62,7 +75,7 @@ class TitleCard extends StatelessWidget {
           children: [
             Icon(Icons.star),
             const SizedBox(width: 5),
-            Text((title['vote_average'] as double).toStringAsFixed(2)),
+            Text(_title.voteAverage.toStringAsFixed(2)),
           ],
         ),
       ],
@@ -83,7 +96,7 @@ class TitleCard extends StatelessWidget {
     return AspectRatio(
       aspectRatio: 2 / 3,
       child: Image.network(
-        'https://image.tmdb.org/t/p/w500$posterPath',
+        posterPath,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return SvgPicture.asset(
@@ -107,7 +120,7 @@ class TitleCard extends StatelessWidget {
             Row(
               children: [
                 titleDate(),
-                Text(' '),
+                Text(' - '),
                 titleDuration(),
               ],
             ),
@@ -127,16 +140,8 @@ class TitleCard extends StatelessWidget {
   }
 
   Text titleHeader() {
-    String text;
-
-    if (title['title'] != null) {
-      text = title['title'] ?? '';
-    } else {
-      text = title['name'] ?? '';
-    }
-
     return Text(
-      text,
+      _title.name,
       style: const TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 16,
@@ -149,50 +154,28 @@ class TitleCard extends StatelessWidget {
   Text titleDate() {
     String text = '';
 
-    try {
-      if (title['title'] != null) {
-        String releaseDate = title['release_date'] ?? '';
-        text = releaseDate.isNotEmpty ? releaseDate.substring(0, 4) : '';
-      } else if (title['name'] != null) {
-        String firstAirDate = title['first_air_date'] ?? '';
-        dynamic nextEpisodeToAir = title['next_episode_to_air'] ??
-            ''; // Can be a String or a Map with next episode details
-        String lastAirDate = title['last_air_date'] ?? '';
+    if (_title.isMovie) {
+      String releaseDate = _title.releaseDate;
+      text = releaseDate.isNotEmpty ? releaseDate.substring(0, 4) : '';
+    } else if (_title.isSerie) {
+      String firstAirDate = _title.firstAirDate;
+      dynamic nextEpisodeToAir = _title.nextEpisodeToAir;
+      String lastAirDate = _title.lastAirDate;
 
-        text += firstAirDate.isNotEmpty ? firstAirDate.substring(0, 4) : '';
+      text += firstAirDate.isNotEmpty ? firstAirDate.substring(0, 4) : '';
 
-        if (nextEpisodeToAir.isNotEmpty) {
-          text += ' - ...';
-        } else if (lastAirDate.isNotEmpty) {
-          text += ' - ${lastAirDate.substring(0, 4)}';
-        }
+      if (nextEpisodeToAir.isNotEmpty) {
+        text += ' - ...';
+      } else if (lastAirDate.isNotEmpty) {
+        text += ' - ${lastAirDate.substring(0, 4)}';
       }
-    } catch (error) {
-      text = 'Error: $error in titleDate';
     }
 
     return Text(text);
   }
 
   Text titleDuration() {
-    String text = '';
-    try {
-      if (title['title'] != null && title['runtime'] != null) {
-        int runtime = title['runtime'];
-        int hours = (runtime / 60).floor().toInt();
-        int minutes = runtime - hours * 60;
-        if (hours > 0) {
-          text = '${hours}h ';
-        }
-        text += '${minutes}m';
-      } else if (title['name'] != null && title['number_of_episodes'] != null) {
-        text = '${title['number_of_episodes']}eps';
-      }
-    } catch (error) {
-      text = 'Error: $error in titleDuration';
-    }
-
-    return Text(text);
+    return Text(_title.duration);
   }
 
   Row titleBottomRow() {
@@ -213,49 +196,37 @@ class TitleCard extends StatelessWidget {
   }
 
   Widget providers() {
-    try {
-      if (title['providers'] == null) {
-        return const SizedBox.shrink();
-      }
-      return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: (title['providers']['flatrate'] as List?)
-                  ?.map<Widget>((provider) => providerLogo(provider))
-                  .toList() ??
-              [],
-        ),
-      );
-    } catch (e) {
-      return Text(
-        'Error: $e in providers for titleId ${title['id']}',
-        overflow: TextOverflow.ellipsis,
-      );
+    if (_title.providers.isEmpty) {
+      return const SizedBox.shrink();
     }
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: _title.providers.flatrate
+            .map<Widget>((provider) => providerLogo(provider))
+            .toList(),
+      ),
+    );
   }
 
   Widget providerLogo(provider) {
-    try {
-      return Padding(
-        padding: const EdgeInsets.only(right: 5),
-        child: SizedBox(
-          width: 30,
-          height: 30,
-          child: Image.network(
-            'https://image.tmdb.org/t/p/w92${provider['logo_path']}',
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return SvgPicture.asset(
-                'assets/movie.svg',
-                fit: BoxFit.cover,
-              );
-            },
-          ),
+    return Padding(
+      padding: const EdgeInsets.only(right: 5),
+      child: SizedBox(
+        width: 30,
+        height: 30,
+        child: Image.network(
+          provider.logoPath,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return SvgPicture.asset(
+              'assets/movie.svg',
+              fit: BoxFit.cover,
+            );
+          },
         ),
-      );
-    } catch (e) {
-      return Text('Error: $e in providerLogo for provider $provider');
-    }
+      ),
+    );
   }
 
   IconButton watchlistButton() {

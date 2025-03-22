@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 
 class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
-  List userWatchlist = List.empty(growable: true);
+  List<TmdbTitle> userWatchlist = List.empty(growable: true);
 
   void clearWatchList() {
     userWatchlist = List.empty(growable: true);
@@ -25,15 +26,18 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
       tv = body(response);
     }
 
+    userWatchlist.clear();
+
     movies['results'].forEach((element) {
       element['media_type'] = 'movie';
+      userWatchlist.add(TmdbTitle(title: element));
     });
 
     tv['results'].forEach((element) {
       element['media_type'] = 'tv';
+      userWatchlist.add(TmdbTitle(title: element));
     });
 
-    userWatchlist = movies['results'] + tv['results'];
     notifyListeners();
   }
 
@@ -43,10 +47,10 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
         {'media_type': mediaType, 'media_id': id, 'watchlist': add});
   }
 
-  Future<void> updateWatchlistTitle(int accountId, Map title, bool add) async {
+  Future<void> updateWatchlistTitle(int accountId, TmdbTitle title, bool add) async {
     if (add) {
       final result =
-          await _updateTitleInWatchlistToTmdb(accountId, title['id'], title['media_type'], true);
+          await _updateTitleInWatchlistToTmdb(accountId, title.id, title.mediaType, true);
       if (result.statusCode == 201) {
         userWatchlist.add(title);
       } else {
@@ -54,9 +58,9 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
       }
     } else {
       final result =
-          await _updateTitleInWatchlistToTmdb(accountId, title['id'], title['media_type'], false);
+          await _updateTitleInWatchlistToTmdb(accountId, title.id, title.mediaType, false);
       if (result.statusCode == 200) {
-        userWatchlist.removeWhere((element) => element['id'] == title['id']);
+        userWatchlist.removeWhere((element) => element.id == title.id);
       } else {
         throw Exception(
             'Failed to remove title to watchlist. Response code: ${result.statusCode}');
