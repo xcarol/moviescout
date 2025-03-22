@@ -85,7 +85,7 @@ class TmdbTitleService extends TmdbBaseService {
       final result = await _retrieveTitleDetailsByLocale(
         title.id,
         mediaType,
-        _getCountryCode(),
+        _getCountryCode().toLowerCase(),
       );
 
       if (result.statusCode == 200) {
