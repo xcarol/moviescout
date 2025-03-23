@@ -25,5 +25,8 @@
     "missingDescription": "Missing description",
     "flatrateProviders": "Flatrate",
     "rentProviders": "Rent",
-    "buyProviders": "Buy"
+    "buyProviders": "Buy",
+    "allTypes": "All",
+    "movies": "Movies",
+    "tvshows": "Tv Shows"
 }
