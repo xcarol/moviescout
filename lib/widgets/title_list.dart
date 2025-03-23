@@ -9,7 +9,7 @@ import 'package:moviescout/widgets/title_list_controls.dart';
 import 'package:provider/provider.dart';
 
 class TitleList extends StatefulWidget {
-  final List titles;
+  final List<TmdbTitle> titles;
 
   const TitleList({
     super.key,
@@ -24,6 +24,8 @@ class _TitleListState extends State<TitleList> {
   int updatingTitleId = 0;
   late String selectedType;
   late List<String> titleTypes;
+  late String selectedSort;
+  late List<String> titleSorts;
 
   @override
   didChangeDependencies() {
@@ -34,10 +36,17 @@ class _TitleListState extends State<TitleList> {
       AppLocalizations.of(context)!.movies,
       AppLocalizations.of(context)!.tvshows,
     ];
+    selectedSort = AppLocalizations.of(context)!.sortAlphabetically;
+    titleSorts = [
+      AppLocalizations.of(context)!.sortAlphabetically,
+      AppLocalizations.of(context)!.sortRating,
+      AppLocalizations.of(context)!.sortReleaseDate,
+      AppLocalizations.of(context)!.sortRuntime,
+    ];
   }
 
   Widget titleList() {
-    List filteredTitles = widget.titles;
+    List<TmdbTitle> filteredTitles = widget.titles;
     if (selectedType != AppLocalizations.of(context)!.allTypes) {
       filteredTitles = widget.titles
           .where((title) =>
@@ -48,12 +57,35 @@ class _TitleListState extends State<TitleList> {
           .toList();
     }
 
+    List<TmdbTitle> sortedTitles = filteredTitles;
+    if (selectedSort == AppLocalizations.of(context)!.sortAlphabetically) {
+      sortedTitles.sort((a, b) => a.name.compareTo(b.name));
+    } else if (selectedSort == AppLocalizations.of(context)!.sortRating) {
+      sortedTitles.sort((a, b) => b.voteAverage.compareTo(a.voteAverage));
+    } else if (selectedSort == AppLocalizations.of(context)!.sortReleaseDate) {
+      sortedTitles.sort((a, b) {
+        if (a.mediaType == 'movie') {
+          return b.releaseDate.compareTo(a.releaseDate);
+        } else {
+          return b.firstAirDate.compareTo(a.firstAirDate);
+        }
+      });
+    } else if (selectedSort == AppLocalizations.of(context)!.sortRuntime) {
+      sortedTitles.sort((a, b) {
+        if (a.mediaType == 'movie') {
+          return b.runtime.compareTo(a.runtime);
+        } else {
+          return b.numberOfEpisodes.compareTo(a.numberOfEpisodes);
+        }
+      });
+    }
+
     return Expanded(
       child: ListView.builder(
         key: PageStorageKey('TitleListView'),
-        itemCount: filteredTitles.length,
+        itemCount: sortedTitles.length,
         itemBuilder: (context, index) {
-          final TmdbTitle title = filteredTitles[index];
+          final TmdbTitle title = sortedTitles[index];
           final bool isInWatchlist =
               Provider.of<TmdbWatchlistService>(context, listen: false)
                   .userWatchlist
@@ -102,6 +134,13 @@ class _TitleListState extends State<TitleList> {
               typeChanged: (typeChanged) {
                 setState(() {
                   selectedType = typeChanged;
+                });
+              },
+              selectedSort: selectedSort,
+              listSorts: titleSorts,
+              sortChanged: (sortChanged) {
+                setState(() {
+                  selectedSort = sortChanged;
                 });
               }),
           titleList(),
