@@ -65,12 +65,21 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget titleList() {
+    List filteredTitles = widget.titles;
+    if (selectedType != AppLocalizations.of(context)!.allTypes) {
+      filteredTitles = widget.titles
+          .where((title) =>
+              (title.mediaType == 'movie' && selectedType == AppLocalizations.of(context)!.movies) ||
+              (title.mediaType == 'tv' && selectedType == AppLocalizations.of(context)!.tvshows))
+          .toList();
+    }
+
     return Expanded(
       child: ListView.builder(
         key: PageStorageKey('TitleListView'),
-        itemCount: widget.titles.length,
+        itemCount: filteredTitles.length,
         itemBuilder: (context, index) {
-          final TmdbTitle title = widget.titles[index];
+          final TmdbTitle title = filteredTitles[index];
           final bool isInWatchlist =
               Provider.of<TmdbWatchlistService>(context, listen: false)
                   .userWatchlist
