@@ -60,7 +60,6 @@ class _HomeState extends State<Home> {
     return ListenableBuilder(
       listenable: Provider.of<TmdbWatchlistService>(context, listen: false),
       builder: (BuildContext context, Widget? child) {
-        if (ModalRoute.of(context)?.isCurrent ?? false) {
           if (Provider.of<TmdbWatchlistService>(context, listen: false)
               .userWatchlist
               .isEmpty) {
@@ -68,10 +67,6 @@ class _HomeState extends State<Home> {
           } else {
             return watchlistBody();
           }
-        } else {
-          return const SizedBox
-              .shrink(); // Draw nothing if not currently visible
-        }
       },
     );
   }
