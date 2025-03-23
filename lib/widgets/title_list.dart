@@ -5,6 +5,7 @@ import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
+import 'package:moviescout/widgets/title_list_controls.dart';
 import 'package:provider/provider.dart';
 
 class TitleList extends StatefulWidget {
@@ -35,42 +36,15 @@ class _TitleListState extends State<TitleList> {
     ];
   }
 
-  Widget typeSelector() {
-    return DropdownButton<String>(
-      value: selectedType,
-      items: titleTypes.map((title) {
-        return DropdownMenuItem(
-          value: title,
-          child: Text(title),
-        );
-      }).toList(),
-      onChanged: (newValue) {
-        setState(() {
-          selectedType = newValue!;
-        });
-      },
-    );
-  }
-
-  Widget listControls() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          typeSelector(),
-        ],
-      ),
-    );
-  }
-
   Widget titleList() {
     List filteredTitles = widget.titles;
     if (selectedType != AppLocalizations.of(context)!.allTypes) {
       filteredTitles = widget.titles
           .where((title) =>
-              (title.mediaType == 'movie' && selectedType == AppLocalizations.of(context)!.movies) ||
-              (title.mediaType == 'tv' && selectedType == AppLocalizations.of(context)!.tvshows))
+              (title.mediaType == 'movie' &&
+                  selectedType == AppLocalizations.of(context)!.movies) ||
+              (title.mediaType == 'tv' &&
+                  selectedType == AppLocalizations.of(context)!.tvshows))
           .toList();
     }
 
@@ -122,7 +96,14 @@ class _TitleListState extends State<TitleList> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          listControls(),
+          TitleListControls(
+              selectedType: selectedType,
+              listTypes: titleTypes,
+              typeChanged: (typeChanged) {
+                setState(() {
+                  selectedType = typeChanged;
+                });
+              }),
           titleList(),
         ],
       ),
