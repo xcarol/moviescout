@@ -28,5 +28,9 @@
     "buyProviders": "Compra",
     "allTypes": "Tots",
     "movies": "Pel·lícules",
-    "tvshows": "Sèries"
+    "tvshows": "Sèries",
+    "sortAlphabetically": "Alfabètic",
+    "sortRating": "Puntuació",
+    "sortReleaseDate": "Data d'estrena",
+    "sortRuntime": "Duració"
 }
