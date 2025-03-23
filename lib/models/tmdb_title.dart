@@ -86,7 +86,7 @@ class TmdbTitle {
   }
 
   String get posterPath {
-    return (_tmdbTitle[_poster_path] as String).isNotEmpty
+    return _tmdbTitle[_poster_path]!=null && (_tmdbTitle[_poster_path] as String).isNotEmpty
         ? 'https://image.tmdb.org/t/p/original${_tmdbTitle[_poster_path]}'
         : '';
   }
