@@ -5,7 +5,7 @@ import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
-import 'package:moviescout/widgets/title_list_controls.dart';
+import 'package:moviescout/widgets/title_list_control_panel.dart';
 import 'package:provider/provider.dart';
 
 class TitleList extends StatefulWidget {
@@ -142,8 +142,8 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
-  Widget listControls() {
-    return TitleListControls(
+  Widget listControlPanel() {
+    return TitleListControlPanel(
       selectedType: selectedType,
       typesList: titleTypes,
       typeChanged: (typeChanged) {
@@ -179,7 +179,7 @@ class _TitleListState extends State<TitleList> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          listControls(),
+          listControlPanel(),
           titleList(),
         ],
       ),

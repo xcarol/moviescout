@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class TitleListControls extends StatelessWidget {
+class TitleListControlPanel extends StatelessWidget {
   final String selectedType;
   final List<String> typesList;
   final Function typeChanged;
@@ -13,7 +13,7 @@ class TitleListControls extends StatelessWidget {
   final Function sortChanged;
   final Function swapSort;
 
-  const TitleListControls({
+  const TitleListControlPanel({
     super.key,
     required this.selectedType,
     required this.typesList,
