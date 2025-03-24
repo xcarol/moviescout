@@ -138,33 +138,37 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
+  Widget listControls() {
+    return TitleListControls(
+      selectedType: selectedType,
+      listTypes: titleTypes,
+      typeChanged: (typeChanged) {
+        setState(() {
+          selectedType = typeChanged;
+        });
+      },
+      selectedSort: selectedSort,
+      listSorts: titleSorts,
+      sortChanged: (sortChanged) {
+        setState(() {
+          selectedSort = sortChanged;
+        });
+      },
+      swapSort: () {
+        setState(() {
+          isSortAsc = !isSortAsc;
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TitleListControls(
-            selectedType: selectedType,
-            listTypes: titleTypes,
-            typeChanged: (typeChanged) {
-              setState(() {
-                selectedType = typeChanged;
-              });
-            },
-            selectedSort: selectedSort,
-            listSorts: titleSorts,
-            sortChanged: (sortChanged) {
-              setState(() {
-                selectedSort = sortChanged;
-              });
-            },
-            swapSort: () {
-              setState(() {
-                isSortAsc = !isSortAsc;
-              });
-            },
-          ),
+          listControls(),
           titleList(),
         ],
       ),
