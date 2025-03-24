@@ -7,6 +7,7 @@ class TitleListControls extends StatelessWidget {
   final String selectedSort;
   final List<String> listSorts;
   final Function sortChanged;
+  final Function swapSort;
 
   const TitleListControls({
     super.key,
@@ -16,6 +17,7 @@ class TitleListControls extends StatelessWidget {
     required this.selectedSort,
     required this.listSorts,
     required this.sortChanged,
+    required this.swapSort,
   });
 
   @override
@@ -25,14 +27,15 @@ class TitleListControls extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          typeSelector(),
-          sortSelector(),
+          _typeSelector(),
+          _sortSelector(),
+          _swapSortButton(),
         ],
       ),
     );
   }
 
-  Widget typeSelector() {
+  Widget _typeSelector() {
     return DropdownButton<String>(
       value: selectedType,
       items: listTypes.map((title) {
@@ -47,7 +50,7 @@ class TitleListControls extends StatelessWidget {
     );
   }
 
-  Widget sortSelector() {
+  Widget _sortSelector() {
     return DropdownButton<String>(
       hint: Text('Sort by'),
       value: selectedSort,
@@ -59,6 +62,15 @@ class TitleListControls extends StatelessWidget {
       }).toList(),
       onChanged: (newValue) {
         sortChanged(newValue);
+      },
+    );
+  }
+
+  Widget _swapSortButton() {
+    return IconButton(
+      icon: Icon(Icons.swap_vert),
+      onPressed: () {
+        swapSort();
       },
     );
   }
