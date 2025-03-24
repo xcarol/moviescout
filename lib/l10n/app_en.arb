@@ -32,5 +32,6 @@
     "sortAlphabetically": "Alphabetical",
     "sortRating": "Rating",
     "sortReleaseDate": "Release date",
-    "sortRuntime": "Runtime"
+    "sortRuntime": "Runtime",
+    "genres": "Genres"
 }

@@ -27,6 +27,8 @@ class _TitleListState extends State<TitleList> {
   late List<String> titleTypes;
   late String selectedSort;
   late List<String> titleSorts;
+  late List<String> selectedGenres;
+  late List<String> genresList;
 
   @override
   didChangeDependencies() {
@@ -37,6 +39,8 @@ class _TitleListState extends State<TitleList> {
       AppLocalizations.of(context)!.movies,
       AppLocalizations.of(context)!.tvshows,
     ];
+    selectedGenres = [];
+    genresList = [];
     selectedSort = AppLocalizations.of(context)!.sortAlphabetically;
     titleSorts = [
       AppLocalizations.of(context)!.sortAlphabetically,
@@ -141,14 +145,21 @@ class _TitleListState extends State<TitleList> {
   Widget listControls() {
     return TitleListControls(
       selectedType: selectedType,
-      listTypes: titleTypes,
+      typesList: titleTypes,
       typeChanged: (typeChanged) {
         setState(() {
           selectedType = typeChanged;
         });
       },
+      selectedGenres: selectedGenres,
+      genresList: genresList,
+      genresChanged: (genresChanged) {
+        setState(() {
+          selectedGenres = genresChanged;
+        });
+      },
       selectedSort: selectedSort,
-      listSorts: titleSorts,
+      sortsList: titleSorts,
       sortChanged: (sortChanged) {
         setState(() {
           selectedSort = sortChanged;

@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TitleListControls extends StatelessWidget {
   final String selectedType;
-  final List<String> listTypes;
+  final List<String> typesList;
   final Function typeChanged;
+  final List<String> selectedGenres;
+  final List<String> genresList;
+  final Function genresChanged;
   final String selectedSort;
-  final List<String> listSorts;
+  final List<String> sortsList;
   final Function sortChanged;
   final Function swapSort;
 
   const TitleListControls({
     super.key,
     required this.selectedType,
-    required this.listTypes,
+    required this.typesList,
     required this.typeChanged,
+    required this.selectedGenres,
+    required this.genresList,
+    required this.genresChanged,
     required this.selectedSort,
-    required this.listSorts,
+    required this.sortsList,
     required this.sortChanged,
     required this.swapSort,
   });
@@ -28,6 +35,7 @@ class TitleListControls extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _typeSelector(),
+          _genresSelector(context, genresChanged),
           _sortSelector(),
           _swapSortButton(),
         ],
@@ -38,7 +46,7 @@ class TitleListControls extends StatelessWidget {
   Widget _typeSelector() {
     return DropdownButton<String>(
       value: selectedType,
-      items: listTypes.map((title) {
+      items: typesList.map((title) {
         return DropdownMenuItem(
           value: title,
           child: Text(title),
@@ -50,11 +58,54 @@ class TitleListControls extends StatelessWidget {
     );
   }
 
+  Widget _genresSelector(BuildContext context, Function genresChanged) {
+    return PopupMenuButton<String>(
+      onSelected: (String value) {},
+      itemBuilder: (BuildContext context) {
+        return genresList.map((String option) {
+          return PopupMenuItem<String>(
+            value: option,
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                return CheckboxListTile(
+                  title: Text(option),
+                  value: selectedGenres.contains(option),
+                  onChanged: (bool? checked) {
+                    if (checked == true) {
+                      selectedGenres.add(option);
+                    } else {
+                      selectedGenres.remove(option);
+                    }
+                    genresChanged(selectedGenres);
+                  },
+                );
+              },
+            ),
+          );
+        }).toList();
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(AppLocalizations.of(context)!.genres),
+            Icon(Icons.arrow_drop_down),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _sortSelector() {
     return DropdownButton<String>(
       hint: Text('Sort by'),
       value: selectedSort,
-      items: listSorts.map((sortName) {
+      items: sortsList.map((sortName) {
         return DropdownMenuItem(
           value: sortName,
           child: Text(sortName),

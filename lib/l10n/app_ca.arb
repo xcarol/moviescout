@@ -32,5 +32,6 @@
     "sortAlphabetically": "Alfabètic",
     "sortRating": "Puntuació",
     "sortReleaseDate": "Data d'estrena",
-    "sortRuntime": "Duració"
+    "sortRuntime": "Duració",
+    "genres": "Gèneres"
 }

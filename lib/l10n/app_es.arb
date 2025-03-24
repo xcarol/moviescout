@@ -32,5 +32,6 @@
     "sortAlphabetically": "Alfabético",
     "sortRating": "Puntuación",
     "sortReleaseDate": "Fecha de estreno",
-    "sortRuntime": "Duración"
+    "sortRuntime": "Duración",
+    "genres": "Géneros"
 }
