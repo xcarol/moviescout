@@ -22,6 +22,7 @@ class TitleList extends StatefulWidget {
 
 class _TitleListState extends State<TitleList> {
   int updatingTitleId = 0;
+  bool isSortAsc = true;
   late String selectedType;
   late List<String> titleTypes;
   late String selectedSort;
@@ -45,10 +46,46 @@ class _TitleListState extends State<TitleList> {
     ];
   }
 
+  void _sortTitles(List<TmdbTitle> titles) {
+    final ascending = isSortAsc ? 1 : -1;
+
+    final sortFunctions = {
+      AppLocalizations.of(context)!.sortAlphabetically:
+          (TmdbTitle a, TmdbTitle b) => a.name.compareTo(b.name),
+      AppLocalizations.of(context)!.sortRating: (TmdbTitle a, TmdbTitle b) =>
+          b.voteAverage.compareTo(a.voteAverage),
+      AppLocalizations.of(context)!.sortReleaseDate:
+          (TmdbTitle a, TmdbTitle b) => _compareReleaseDates(a, b),
+      AppLocalizations.of(context)!.sortRuntime: (TmdbTitle a, TmdbTitle b) =>
+          _compareRuntimes(a, b),
+    };
+
+    titles.sort(
+        (a, b) => ascending * (sortFunctions[selectedSort]?.call(a, b) ?? 0));
+  }
+
+  int _compareReleaseDates(TmdbTitle a, TmdbTitle b) {
+    final dateA = a.mediaType == 'movie' ? a.releaseDate : a.firstAirDate;
+    final dateB = b.mediaType == 'movie' ? b.releaseDate : b.firstAirDate;
+    return dateA.compareTo(dateB);
+  }
+
+  int _compareRuntimes(TmdbTitle a, TmdbTitle b) {
+    if (a.mediaType == 'movie' && b.mediaType == 'movie') {
+      return a.runtime.compareTo(b.runtime);
+    } else if (a.mediaType == 'movie') {
+      return -1;
+    } else if (b.mediaType == 'movie') {
+      return 1;
+    } else {
+      return a.numberOfEpisodes.compareTo(b.numberOfEpisodes);
+    }
+  }
+
   Widget titleList() {
-    List<TmdbTitle> filteredTitles = widget.titles;
+    List<TmdbTitle> titles = widget.titles;
     if (selectedType != AppLocalizations.of(context)!.allTypes) {
-      filteredTitles = widget.titles
+      titles = widget.titles
           .where((title) =>
               (title.mediaType == 'movie' &&
                   selectedType == AppLocalizations.of(context)!.movies) ||
@@ -57,35 +94,14 @@ class _TitleListState extends State<TitleList> {
           .toList();
     }
 
-    List<TmdbTitle> sortedTitles = filteredTitles;
-    if (selectedSort == AppLocalizations.of(context)!.sortAlphabetically) {
-      sortedTitles.sort((a, b) => a.name.compareTo(b.name));
-    } else if (selectedSort == AppLocalizations.of(context)!.sortRating) {
-      sortedTitles.sort((a, b) => b.voteAverage.compareTo(a.voteAverage));
-    } else if (selectedSort == AppLocalizations.of(context)!.sortReleaseDate) {
-      sortedTitles.sort((a, b) {
-        if (a.mediaType == 'movie') {
-          return b.releaseDate.compareTo(a.releaseDate);
-        } else {
-          return b.firstAirDate.compareTo(a.firstAirDate);
-        }
-      });
-    } else if (selectedSort == AppLocalizations.of(context)!.sortRuntime) {
-      sortedTitles.sort((a, b) {
-        if (a.mediaType == 'movie') {
-          return b.runtime.compareTo(a.runtime);
-        } else {
-          return b.numberOfEpisodes.compareTo(a.numberOfEpisodes);
-        }
-      });
-    }
+    _sortTitles(titles);
 
     return Expanded(
       child: ListView.builder(
         key: PageStorageKey('TitleListView'),
-        itemCount: sortedTitles.length,
+        itemCount: titles.length,
         itemBuilder: (context, index) {
-          final TmdbTitle title = sortedTitles[index];
+          final TmdbTitle title = titles[index];
           final bool isInWatchlist =
               Provider.of<TmdbWatchlistService>(context, listen: false)
                   .userWatchlist
@@ -129,20 +145,26 @@ class _TitleListState extends State<TitleList> {
         mainAxisSize: MainAxisSize.min,
         children: [
           TitleListControls(
-              selectedType: selectedType,
-              listTypes: titleTypes,
-              typeChanged: (typeChanged) {
-                setState(() {
-                  selectedType = typeChanged;
-                });
-              },
-              selectedSort: selectedSort,
-              listSorts: titleSorts,
-              sortChanged: (sortChanged) {
-                setState(() {
-                  selectedSort = sortChanged;
-                });
-              }),
+            selectedType: selectedType,
+            listTypes: titleTypes,
+            typeChanged: (typeChanged) {
+              setState(() {
+                selectedType = typeChanged;
+              });
+            },
+            selectedSort: selectedSort,
+            listSorts: titleSorts,
+            sortChanged: (sortChanged) {
+              setState(() {
+                selectedSort = sortChanged;
+              });
+            },
+            swapSort: () {
+              setState(() {
+                isSortAsc = !isSortAsc;
+              });
+            },
+          ),
           titleList(),
         ],
       ),
