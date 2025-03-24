@@ -77,6 +77,11 @@ class TitleListControlPanel extends StatelessWidget {
                       selectedGenres.remove(option);
                     }
                     genresChanged(selectedGenres);
+                    setState(() {
+                      // Needed to 'do' something to update the UI
+                      // ignore: unused_local_variable
+                      final trickState = '';
+                    });
                   },
                 );
               },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
@@ -41,6 +42,13 @@ class _TitleListState extends State<TitleList> {
     ];
     selectedGenres = [];
     genresList = [];
+    for (TmdbTitle title in widget.titles) {
+      for (TmdbGenre genre in title.genres) {
+        if (!genresList.contains(genre.name)) {
+          genresList.add(genre.name);
+        }
+      }
+    }
     selectedSort = AppLocalizations.of(context)!.sortAlphabetically;
     titleSorts = [
       AppLocalizations.of(context)!.sortAlphabetically,
@@ -86,8 +94,20 @@ class _TitleListState extends State<TitleList> {
     }
   }
 
-  Widget titleList() {
+  List<TmdbTitle> _filterGenres(List<TmdbTitle> titles) {
+    if (selectedGenres.isEmpty) {
+      return titles;
+    }
+
+    return titles
+        .where((title) =>
+            title.genres.any((genre) => selectedGenres.contains(genre.name)))
+        .toList();
+  }
+
+  Widget _titleList() {
     List<TmdbTitle> titles = widget.titles;
+
     if (selectedType != AppLocalizations.of(context)!.allTypes) {
       titles = widget.titles
           .where((title) =>
@@ -99,6 +119,7 @@ class _TitleListState extends State<TitleList> {
     }
 
     _sortTitles(titles);
+    titles = _filterGenres(titles);
 
     return Expanded(
       child: ListView.builder(
@@ -142,7 +163,7 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
-  Widget listControlPanel() {
+  Widget _listControlPanel() {
     return TitleListControlPanel(
       selectedType: selectedType,
       typesList: titleTypes,
@@ -151,11 +172,11 @@ class _TitleListState extends State<TitleList> {
           selectedType = typeChanged;
         });
       },
-      selectedGenres: selectedGenres,
+      selectedGenres: selectedGenres.toList(),
       genresList: genresList,
-      genresChanged: (genresChanged) {
+      genresChanged: (List<String> genresChanged) {
         setState(() {
-          selectedGenres = genresChanged;
+          selectedGenres = genresChanged.toList();
         });
       },
       selectedSort: selectedSort,
@@ -179,8 +200,8 @@ class _TitleListState extends State<TitleList> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          listControlPanel(),
-          titleList(),
+          _listControlPanel(),
+          _titleList(),
         ],
       ),
     );
