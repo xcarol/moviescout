@@ -115,7 +115,10 @@ class TitleListControlPanel extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(AppLocalizations.of(context)!.genres),
+                Text(
+                  AppLocalizations.of(context)!.genres,
+                  style: TextStyle(fontSize: 16),
+                ),
                 const Icon(Icons.arrow_drop_down),
               ],
             ),
