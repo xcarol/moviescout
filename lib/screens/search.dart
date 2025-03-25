@@ -71,7 +71,7 @@ class _SearchState extends State<Search> {
   searchBox() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
       child: TextField(
         controller: _controller,
         decoration: InputDecoration(
