@@ -228,8 +228,9 @@ class _TitleListState extends State<TitleList> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _listControlPanel(),
-          _titleList(),
+          if (widget.titles.isNotEmpty) _listControlPanel(),
+          if (widget.titles.isNotEmpty) const Divider(),
+          if (widget.titles.isNotEmpty) _titleList(),
         ],
       ),
     );
