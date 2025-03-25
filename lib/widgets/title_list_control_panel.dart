@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+typedef MenuEntry = DropdownMenuEntry<String>;
+
 class TitleListControlPanel extends StatelessWidget {
   final String selectedType;
   final List<String> typesList;
@@ -43,16 +45,17 @@ class TitleListControlPanel extends StatelessWidget {
     );
   }
 
+  List<MenuEntry> _menuEntries(List<String> list) {
+    return list
+        .map<MenuEntry>((String name) => MenuEntry(value: name, label: name))
+        .toList();
+  }
+
   Widget _typeSelector() {
-    return DropdownButton<String>(
-      value: selectedType,
-      items: typesList.map((title) {
-        return DropdownMenuItem(
-          value: title,
-          child: Text(title),
-        );
-      }).toList(),
-      onChanged: (newValue) {
+    return DropdownMenu<String>(
+      initialSelection: selectedType,
+      dropdownMenuEntries: _menuEntries(typesList),
+      onSelected: (newValue) {
         typeChanged(newValue);
       },
     );
@@ -107,16 +110,10 @@ class TitleListControlPanel extends StatelessWidget {
   }
 
   Widget _sortSelector() {
-    return DropdownButton<String>(
-      hint: Text('Sort by'),
-      value: selectedSort,
-      items: sortsList.map((sortName) {
-        return DropdownMenuItem(
-          value: sortName,
-          child: Text(sortName),
-        );
-      }).toList(),
-      onChanged: (newValue) {
+    return DropdownMenu<String>(
+      initialSelection: selectedSort,
+      dropdownMenuEntries: _menuEntries(sortsList),
+      onSelected: (newValue) {
         sortChanged(newValue);
       },
     );
