@@ -7,6 +7,8 @@ class TitleListControlPanel extends StatelessWidget {
   final String selectedType;
   final List<String> typesList;
   final Function typeChanged;
+  final Function textFilterChanged;
+  final TextEditingController textFilterController;
   final List<String> selectedGenres;
   final List<String> genresList;
   final Function genresChanged;
@@ -20,6 +22,8 @@ class TitleListControlPanel extends StatelessWidget {
     required this.selectedType,
     required this.typesList,
     required this.typeChanged,
+    required this.textFilterChanged,
+    required this.textFilterController,
     required this.selectedGenres,
     required this.genresList,
     required this.genresChanged,
@@ -37,7 +41,11 @@ class TitleListControlPanel extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _typeSelector(),
+          const SizedBox(width: 8),
+          _textFilter(AppLocalizations.of(context)!.search),
+          const SizedBox(width: 8),
           _genresSelector(context, genresChanged),
+          const SizedBox(width: 8),
           _sortSelector(),
           _swapSortButton(),
         ],
@@ -61,10 +69,35 @@ class TitleListControlPanel extends StatelessWidget {
     );
   }
 
+  Widget _textFilter(String hintText) {
+    return Expanded(
+      child: TextField(
+          controller: textFilterController,
+          decoration: InputDecoration(
+            hintText: hintText,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+            suffixIcon: IconButton(
+              icon: Icon(Icons.clear),
+              onPressed: () {
+                textFilterChanged('');
+                textFilterController.clear();
+              },
+            ),
+          ),
+          onChanged: (String value) {
+            textFilterChanged(value);
+          }),
+    );
+  }
+
   Widget _genresSelector(BuildContext context, Function genresChanged) {
     return MenuAnchor(
       key: Key('_menuKey'),
-      builder: (BuildContext context, MenuController controller, Widget? child) {
+      builder:
+          (BuildContext context, MenuController controller, Widget? child) {
         return GestureDetector(
           onTap: () {
             if (controller.isOpen) {
@@ -109,7 +142,7 @@ class TitleListControlPanel extends StatelessWidget {
           },
         );
       }).toList(),
-    );;
+    );
   }
 
   Widget _sortSelector() {

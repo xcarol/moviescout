@@ -26,10 +26,24 @@ class _TitleListState extends State<TitleList> {
   bool isSortAsc = true;
   late String selectedType;
   late List<String> titleTypes;
+  late String textFilter;
   late String selectedSort;
   late List<String> titleSorts;
   late List<String> selectedGenres;
   late List<String> genresList;
+  late TextEditingController _textFilterController;
+
+  @override
+  void initState() {
+    super.initState();
+    _textFilterController = TextEditingController();
+  }
+  
+  @override
+  void dispose() {
+    _textFilterController.dispose();
+    super.dispose();
+  }
 
   @override
   didChangeDependencies() {
@@ -40,6 +54,7 @@ class _TitleListState extends State<TitleList> {
       AppLocalizations.of(context)!.movies,
       AppLocalizations.of(context)!.tvshows,
     ];
+    textFilter = '';
     selectedGenres = [];
     genresList = [];
     for (TmdbTitle title in widget.titles) {
@@ -118,6 +133,13 @@ class _TitleListState extends State<TitleList> {
           .toList();
     }
 
+    if (textFilter.isNotEmpty) {
+      titles = titles
+          .where((title) =>
+              title.name.toLowerCase().contains(textFilter.toLowerCase()))
+          .toList();
+    }
+
     _sortTitles(titles);
     titles = _filterGenres(titles);
 
@@ -172,6 +194,12 @@ class _TitleListState extends State<TitleList> {
           selectedType = typeChanged;
         });
       },
+      textFilterChanged: (newTextFilter) {
+        setState(() {
+          textFilter = newTextFilter;
+        });
+      },
+      textFilterController: _textFilterController,
       selectedGenres: selectedGenres.toList(),
       genresList: genresList,
       genresChanged: (List<String> genresChanged) {
