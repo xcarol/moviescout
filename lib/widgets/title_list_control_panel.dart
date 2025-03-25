@@ -62,51 +62,54 @@ class TitleListControlPanel extends StatelessWidget {
   }
 
   Widget _genresSelector(BuildContext context, Function genresChanged) {
-    return PopupMenuButton<String>(
-      onSelected: (String value) {},
-      itemBuilder: (BuildContext context) {
-        return genresList.map((String option) {
-          return PopupMenuItem<String>(
-            value: option,
-            child: StatefulBuilder(
-              builder: (context, setState) {
-                return CheckboxListTile(
-                  title: Text(option),
-                  value: selectedGenres.contains(option),
-                  onChanged: (bool? checked) {
-                    if (checked == true) {
-                      selectedGenres.add(option);
-                    } else {
-                      selectedGenres.remove(option);
-                    }
-                    genresChanged(selectedGenres);
-                    setState(() {
-                      // Needed to 'do' something to update the UI
-                      // ignore: unused_local_variable
-                      final trickState = '';
-                    });
-                  },
-                );
-              },
+    return MenuAnchor(
+      key: Key('_menuKey'),
+      builder: (BuildContext context, MenuController controller, Widget? child) {
+        return GestureDetector(
+          onTap: () {
+            if (controller.isOpen) {
+              controller.close();
+            } else {
+              controller.open();
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(5),
             ),
-          );
-        }).toList();
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(AppLocalizations.of(context)!.genres),
+                const Icon(Icons.arrow_drop_down),
+              ],
+            ),
+          ),
+        );
       },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(AppLocalizations.of(context)!.genres),
-            Icon(Icons.arrow_drop_down),
-          ],
-        ),
-      ),
-    );
+      menuChildren: genresList.map((String option) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return CheckboxListTile(
+              title: Text(option),
+              value: selectedGenres.contains(option),
+              onChanged: (bool? checked) {
+                setState(() {
+                  if (checked == true) {
+                    selectedGenres.add(option);
+                  } else {
+                    selectedGenres.remove(option);
+                  }
+                  genresChanged(selectedGenres);
+                });
+              },
+            );
+          },
+        );
+      }).toList(),
+    );;
   }
 
   Widget _sortSelector() {
