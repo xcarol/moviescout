@@ -84,7 +84,7 @@ class _SearchState extends State<Search> {
             tooltip: AppLocalizations.of(context)!.search,
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(5),
           ),
         ),
         onChanged: (title) {

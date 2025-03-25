@@ -102,7 +102,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
             ],
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(5),
           ),
         ),
         onSubmitted: (String value) {
@@ -124,7 +124,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
         decoration: InputDecoration(
           labelText: AppLocalizations.of(context)!.imdbImportNotFound,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(5),
           ),
         ),
       ),
