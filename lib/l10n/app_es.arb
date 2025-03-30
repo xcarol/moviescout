@@ -33,5 +33,6 @@
     "sortRating": "Puntuación",
     "sortReleaseDate": "Fecha de estreno",
     "sortRuntime": "Duración",
-    "genres": "Géneros"
+    "genres": "Géneros",
+    "titles": "Títulos"
 }

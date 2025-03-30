@@ -38,7 +38,7 @@ class _TitleListState extends State<TitleList> {
     super.initState();
     _textFilterController = TextEditingController();
   }
-  
+
   @override
   void dispose() {
     _textFilterController.dispose();
@@ -222,6 +222,39 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
+  Widget _infoLine() {
+    String totalTitles =
+        '${widget.titles.length} ${AppLocalizations.of(context)!.titles}';
+    String totalMovies =
+        '${widget.titles.where((title) => title.isMovie).length} ${AppLocalizations.of(context)!.movies}';
+    String totalSeries =
+        '${widget.titles.where((title) => title.isSerie).length} ${AppLocalizations.of(context)!.tvshows}';
+    String totalByType = selectedType == AppLocalizations.of(context)!.movies
+        ? totalMovies
+        : selectedType == AppLocalizations.of(context)!.tvshows
+            ? totalSeries
+            : totalTitles;
+    String sortBy = selectedSort;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(totalByType),
+          Row(
+            children: [
+              Text(sortBy),
+              isSortAsc
+                  ? Icon(Icons.arrow_drop_up)
+                  : Icon(Icons.arrow_drop_down),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -229,6 +262,8 @@ class _TitleListState extends State<TitleList> {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (widget.titles.isNotEmpty) _listControlPanel(),
+          if (widget.titles.isNotEmpty) const Divider(),
+          if (widget.titles.isNotEmpty) _infoLine(),
           if (widget.titles.isNotEmpty) const Divider(),
           if (widget.titles.isNotEmpty) _titleList(),
         ],

@@ -33,5 +33,6 @@
     "sortRating": "Rating",
     "sortReleaseDate": "Release date",
     "sortRuntime": "Runtime",
-    "genres": "Genres"
+    "genres": "Genres",
+    "titles": "Titles"
 }
