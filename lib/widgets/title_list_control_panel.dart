@@ -36,7 +36,7 @@ class TitleListControlPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: Column(
         spacing: 8,
         children: [
@@ -131,8 +131,7 @@ class TitleListControlPanel extends StatelessWidget {
   }
 
   Widget _genresSelector(BuildContext context, Function genresChanged) {
-    return
-        _menuBuilder(
+    return _menuBuilder(
       '_genresSelector',
       MenuController(),
       AppLocalizations.of(context)!.genres,
