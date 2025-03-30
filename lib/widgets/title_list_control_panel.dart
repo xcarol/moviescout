@@ -37,65 +37,41 @@ class TitleListControlPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        spacing: 8,
         children: [
-          _typeSelector(),
-          const SizedBox(width: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _typeSelector(),
+                      const SizedBox(width: 8),
+                      _genresSelector(context, genresChanged),
+                      const SizedBox(width: 8),
+                      _sortSelector(),
+                    ],
+                  ),
+                ),
+              ),
+              _swapSortButton(),
+            ],
+          ),
           _textFilter(AppLocalizations.of(context)!.search),
-          const SizedBox(width: 8),
-          _genresSelector(context, genresChanged),
-          const SizedBox(width: 8),
-          _sortSelector(),
-          _swapSortButton(),
         ],
       ),
     );
   }
 
-  List<MenuEntry> _menuEntries(List<String> list) {
-    return list
-        .map<MenuEntry>((String name) => MenuEntry(value: name, label: name))
-        .toList();
-  }
-
-  Widget _typeSelector() {
-    return DropdownMenu<String>(
-      initialSelection: selectedType,
-      dropdownMenuEntries: _menuEntries(typesList),
-      onSelected: (newValue) {
-        typeChanged(newValue);
-      },
-    );
-  }
-
-  Widget _textFilter(String hintText) {
-    return Expanded(
-      child: TextField(
-          controller: textFilterController,
-          decoration: InputDecoration(
-            hintText: hintText,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-            suffixIcon: IconButton(
-              icon: Icon(Icons.clear),
-              onPressed: () {
-                textFilterChanged('');
-                textFilterController.clear();
-              },
-            ),
-          ),
-          onChanged: (String value) {
-            textFilterChanged(value);
-          }),
-    );
-  }
-
-  Widget _genresSelector(BuildContext context, Function genresChanged) {
+  Widget _menuBuilder(String key, MenuController controller, String title,
+      Iterable<StatefulWidget> menuChildren) {
     return MenuAnchor(
-      key: Key('_menuKey'),
+      key: Key(key),
+      controller: controller,
       builder:
           (BuildContext context, MenuController controller, Widget? child) {
         return GestureDetector(
@@ -107,7 +83,7 @@ class TitleListControlPanel extends StatelessWidget {
             }
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(5),
@@ -116,7 +92,7 @@ class TitleListControlPanel extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  AppLocalizations.of(context)!.genres,
+                  title,
                   style: TextStyle(fontSize: 16),
                 ),
                 const Icon(Icons.arrow_drop_down),
@@ -125,10 +101,45 @@ class TitleListControlPanel extends StatelessWidget {
           ),
         );
       },
-      menuChildren: genresList.map((String option) {
+      menuChildren: menuChildren.toList(),
+    );
+  }
+
+  Widget _typeSelector() {
+    MenuController controller = MenuController();
+    return _menuBuilder(
+      '_typeSelector',
+      controller,
+      selectedType,
+      typesList.map((String option) {
         return StatefulBuilder(
           builder: (context, setState) {
-            return CheckboxListTile(
+            return ListTile(
+              title: Text(option),
+              selected: selectedType == option,
+              onTap: () {
+                setState(() {
+                  controller.close();
+                  typeChanged(option);
+                });
+              },
+            );
+          },
+        );
+      }),
+    );
+  }
+
+  Widget _genresSelector(BuildContext context, Function genresChanged) {
+    return
+        _menuBuilder(
+      '_genresSelector',
+      MenuController(),
+      AppLocalizations.of(context)!.genres,
+      genresList.map((String option) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return SwitchListTile(
               title: Text(option),
               value: selectedGenres.contains(option),
               onChanged: (bool? checked) {
@@ -144,17 +155,32 @@ class TitleListControlPanel extends StatelessWidget {
             );
           },
         );
-      }).toList(),
+      }),
     );
   }
 
   Widget _sortSelector() {
-    return DropdownMenu<String>(
-      initialSelection: selectedSort,
-      dropdownMenuEntries: _menuEntries(sortsList),
-      onSelected: (newValue) {
-        sortChanged(newValue);
-      },
+    MenuController controller = MenuController();
+    return _menuBuilder(
+      '_sortSelector',
+      controller,
+      selectedSort,
+      sortsList.map((String option) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return ListTile(
+              title: Text(option),
+              selected: selectedSort == option,
+              onTap: () {
+                setState(() {
+                  controller.close();
+                  sortChanged(option);
+                });
+              },
+            );
+          },
+        );
+      }),
     );
   }
 
@@ -163,6 +189,30 @@ class TitleListControlPanel extends StatelessWidget {
       icon: Icon(Icons.swap_vert),
       onPressed: () {
         swapSort();
+      },
+    );
+  }
+
+  Widget _textFilter(String hintText) {
+    return TextField(
+      controller: textFilterController,
+      decoration: InputDecoration(
+        isDense: true,
+        hintText: hintText,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+        suffixIcon: IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: () {
+            textFilterChanged('');
+            textFilterController.clear();
+          },
+        ),
+      ),
+      onChanged: (String value) {
+        textFilterChanged(value);
       },
     );
   }
