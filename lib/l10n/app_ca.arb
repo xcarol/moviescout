@@ -25,5 +25,14 @@
     "missingDescription": "Falta la descripció",
     "flatrateProviders": "Subscripció",
     "rentProviders": "Lloguer",
-    "buyProviders": "Compra"
+    "buyProviders": "Compra",
+    "allTypes": "Tots",
+    "movies": "Pel·lícules",
+    "tvshows": "Sèries",
+    "sortAlphabetically": "Alfabètic",
+    "sortRating": "Puntuació",
+    "sortReleaseDate": "Data d'estrena",
+    "sortRuntime": "Duració",
+    "genres": "Gèneres",
+    "titles": "Títols"
 }

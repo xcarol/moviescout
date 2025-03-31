@@ -120,8 +120,11 @@ class TitleCard extends StatelessWidget {
             Row(
               children: [
                 titleDate(),
-                Text(' - '),
-                titleDuration(),
+                const Text(' - '),
+                if (_title.duration.isNotEmpty)
+                  titleDuration()
+                else
+                  titleType(),
               ],
             ),
             const SizedBox(height: 5),
@@ -176,6 +179,12 @@ class TitleCard extends StatelessWidget {
 
   Text titleDuration() {
     return Text(_title.duration);
+  }
+
+  Text titleType() {
+    return Text(_title.mediaType == 'movie'
+        ? AppLocalizations.of(context)!.movie
+        : AppLocalizations.of(context)!.tvShow);
   }
 
   Row titleBottomRow() {

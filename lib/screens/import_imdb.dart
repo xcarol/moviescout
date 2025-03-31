@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
@@ -16,7 +17,7 @@ class ImportIMDB extends StatefulWidget {
 class _ImportIMDBState extends State<ImportIMDB> {
   late TextEditingController _titlesController;
   late TextEditingController _notFoundTitlesController;
-  late List imdbTitles = List.empty();
+  late List<TmdbTitle> imdbTitles = List.empty();
   late List notFoundTitles = List.empty();
   Future<bool> isLoading = Future.value(false);
 
@@ -101,7 +102,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
             ],
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(5),
           ),
         ),
         onSubmitted: (String value) {
@@ -123,7 +124,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
         decoration: InputDecoration(
           labelText: AppLocalizations.of(context)!.imdbImportNotFound,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(5),
           ),
         ),
       ),

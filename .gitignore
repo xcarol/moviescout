@@ -3,6 +3,7 @@
 /lib/firebase_options.dart
 firebase.json
 .env
+.cxx
 
 # Miscellaneous
 *.class

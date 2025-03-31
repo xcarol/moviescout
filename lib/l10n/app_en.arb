@@ -25,5 +25,14 @@
     "missingDescription": "Missing description",
     "flatrateProviders": "Flatrate",
     "rentProviders": "Rent",
-    "buyProviders": "Buy"
+    "buyProviders": "Buy",
+    "allTypes": "All",
+    "movies": "Movies",
+    "tvshows": "Tv Shows",
+    "sortAlphabetically": "Alphabetical",
+    "sortRating": "Rating",
+    "sortReleaseDate": "Release date",
+    "sortRuntime": "Runtime",
+    "genres": "Genres",
+    "titles": "Titles"
 }

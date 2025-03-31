@@ -31,6 +31,10 @@ class TmdbSearchService extends TmdbBaseService {
     final totalResults = response['total_results'] ?? 0;
     
     for (int count = 0; count < totalResults && count < 10; count += 1) {
+      Map title = response['results'][count];
+      if (title['media_type'] != 'movie' && title['media_type'] != 'tv') {
+        continue;
+      }
       titles.add(TmdbTitle(title: response['results'][count]));
     }
     
