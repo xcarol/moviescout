@@ -88,7 +88,7 @@ class TitleCard extends StatelessWidget {
         aspectRatio: 2 / 3,
         child: SvgPicture.asset(
           'assets/movie.svg',
-          fit: BoxFit.cover,
+          fit: BoxFit.contain,
         ),
       );
     }
@@ -101,7 +101,7 @@ class TitleCard extends StatelessWidget {
         errorBuilder: (context, error, stackTrace) {
           return SvgPicture.asset(
             'assets/movie.svg',
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
           );
         },
       ),
