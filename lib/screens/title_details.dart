@@ -60,9 +60,11 @@ class _TitleDetailsState extends State<TitleDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _banner(title.backdropPath.isNotEmpty
-            ? title.backdropPath
-            : title.posterPath),
+        _banner(
+            title.backdropPath.isNotEmpty
+                ? title.backdropPath
+                : title.posterPath,
+            title.isMovie),
         const SizedBox(height: 20),
         Padding(
           padding: EdgeInsets.only(left: 5, right: 5),
@@ -148,14 +150,14 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  Widget _banner(String image) {
+  Widget _banner(String image, bool isMovie) {
     return Image.network(
       image,
       fit: BoxFit.fill,
       errorBuilder: (context, error, stackTrace) {
-        return SvgPicture.asset(
-          'assets/movie.svg',
-          fit: BoxFit.fill,
+        return Image.asset(
+          isMovie ? 'assets/movie_poster.png' : 'assets/tvshow_poster.png',
+          fit: BoxFit.fitWidth,
         );
       },
     );

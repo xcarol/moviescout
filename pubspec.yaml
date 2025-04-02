@@ -69,6 +69,8 @@ flutter:
     - .env
     - assets/movie.svg
     - assets/anonymous.png
+    - assets/movie_poster.png
+    - assets/tvshow_poster.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
