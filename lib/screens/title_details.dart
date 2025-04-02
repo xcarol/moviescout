@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/services/cached_network_image.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
@@ -151,7 +152,7 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   Widget _banner(String image, bool isMovie) {
-    return Image.network(
+    return CachedNetworkImage(
       image,
       fit: BoxFit.fill,
       errorBuilder: (context, error, stackTrace) {
@@ -276,7 +277,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       child: SizedBox(
         width: 30,
         height: 30,
-        child: Image.network(
+        child: CachedNetworkImage(
           provider.logoPath,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {

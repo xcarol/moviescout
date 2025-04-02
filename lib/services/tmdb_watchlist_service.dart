@@ -1,5 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 
 class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
@@ -15,6 +19,16 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
       return;
     }
 
+    if (await _retrieveUserWatchlistFromCache(accountId)) {
+      await _updateUserWatchList(accountId);
+    } else {
+      await _retrieveUserWatchlistFromServer(accountId);
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> _retrieveUserWatchlistFromServer(int accountId) async {
     late Map<String, dynamic> movies;
     dynamic response = await get('account/$accountId/watchlist/movies');
     if (response.statusCode == 200) {
@@ -37,9 +51,21 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
       element['media_type'] = 'tv';
       userWatchlist.add(TmdbTitle(title: element));
     });
-
-    notifyListeners();
   }
+
+  Future<bool> _retrieveUserWatchlistFromCache(int accountId) async {
+    final List<String>? watchlistJson =
+        PreferencesService().prefs.getStringList('user_watchlist');
+
+    if (watchlistJson == null || watchlistJson.isEmpty) {
+      return false;
+    }
+    // userWatchlist = watchlistJson.map((json) => TmdbTitle.fromJson(jsonDecode(json))).toList();
+
+    return true;
+  }
+
+  Future<void> _updateUserWatchList(int accountId) async {}
 
   Future<dynamic> _updateTitleInWatchlistToTmdb(
       int accountId, int id, String mediaType, bool add) async {
@@ -47,18 +73,20 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
         {'media_type': mediaType, 'media_id': id, 'watchlist': add});
   }
 
-  Future<void> updateWatchlistTitle(int accountId, TmdbTitle title, bool add) async {
+  Future<void> updateWatchlistTitle(
+      int accountId, TmdbTitle title, bool add) async {
     if (add) {
-      final result =
-          await _updateTitleInWatchlistToTmdb(accountId, title.id, title.mediaType, true);
+      final result = await _updateTitleInWatchlistToTmdb(
+          accountId, title.id, title.mediaType, true);
       if (result.statusCode == 201) {
         userWatchlist.add(title);
       } else {
-        throw Exception('Failed to add title to watchlist. Response code: ${result.statusCode}');
+        throw Exception(
+            'Failed to add title to watchlist. Response code: ${result.statusCode}');
       }
     } else {
-      final result =
-          await _updateTitleInWatchlistToTmdb(accountId, title.id, title.mediaType, false);
+      final result = await _updateTitleInWatchlistToTmdb(
+          accountId, title.id, title.mediaType, false);
       if (result.statusCode == 200) {
         userWatchlist.removeWhere((element) => element.id == title.id);
       } else {
