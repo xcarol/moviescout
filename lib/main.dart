@@ -68,13 +68,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF2B1410)),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blueGrey, brightness: Brightness.dark),
+            seedColor: Color(0xFF2B1410), brightness: Brightness.dark),
       ),
       title: 'Movie Scout',
       home: const Home(),
