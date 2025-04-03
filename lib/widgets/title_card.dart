@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
+import 'package:moviescout/services/cached_network_image.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
@@ -95,7 +96,7 @@ class TitleCard extends StatelessWidget {
 
     return AspectRatio(
       aspectRatio: 2 / 3,
-      child: Image.network(
+      child: CachedNetworkImage(
         posterPath,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
@@ -224,7 +225,7 @@ class TitleCard extends StatelessWidget {
       child: SizedBox(
         width: 30,
         height: 30,
-        child: Image.network(
+        child: CachedNetworkImage(
           provider.logoPath,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
