@@ -26,7 +26,7 @@ class _HomeState extends State<Home> {
               .then((_) {
             if (context.mounted) {
               return Provider.of<TmdbWatchlistService>(context, listen: false)
-                  .retrieveUserWatchlist(
+                  .retrieveWatchlist(
                       Provider.of<TmdbUserService>(context, listen: false)
                           .accountId);
             } else {
@@ -60,13 +60,13 @@ class _HomeState extends State<Home> {
     return ListenableBuilder(
       listenable: Provider.of<TmdbWatchlistService>(context, listen: false),
       builder: (BuildContext context, Widget? child) {
-          if (Provider.of<TmdbWatchlistService>(context, listen: false)
-              .userWatchlist
-              .isEmpty) {
-            return emptyBody();
-          } else {
-            return watchlistBody();
-          }
+        if (Provider.of<TmdbWatchlistService>(context, listen: false)
+            .watchlist
+            .isEmpty) {
+          return emptyBody();
+        } else {
+          return watchlistBody();
+        }
       },
     );
   }
@@ -92,8 +92,7 @@ class _HomeState extends State<Home> {
   Widget watchlistBody() {
     return FutureBuilder(
       future: TmdbTitleService().getTitlesDetails(
-          Provider.of<TmdbWatchlistService>(context, listen: false)
-              .userWatchlist),
+          Provider.of<TmdbWatchlistService>(context, listen: false).watchlist),
       builder: (context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

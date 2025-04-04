@@ -146,7 +146,7 @@ class _LoginState extends State<Login> {
     if (success) {
       PreferencesService().prefs.setString('username', _userController.text);
       await Provider.of<TmdbWatchlistService>(context, listen: false)
-          .retrieveUserWatchlist(
+          .retrieveWatchlist(
               Provider.of<TmdbUserService>(context, listen: false).accountId);
       SnackMessage.showSnackBar(AppLocalizations.of(context)!.loginSuccess);
       Navigator.pop(context);
