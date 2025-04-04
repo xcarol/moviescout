@@ -5,32 +5,34 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 
+String _prefsWatchlistName = 'watchlist';
+
 class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
-  List<TmdbTitle> userWatchlist = List.empty(growable: true);
+  List<TmdbTitle> watchlist = List.empty(growable: true);
 
   void clearWatchList() {
-    userWatchlist = List.empty(growable: true);
-    _updateUserWatchlistCache();
+    watchlist = List.empty(growable: true);
+    _updateWatchlistInCache();
     notifyListeners();
   }
 
-  Future<void> retrieveUserWatchlist(int accountId) async {
+  Future<void> retrieveWatchlist(int accountId) async {
     if (accountId <= 0) {
       return;
     }
 
-    userWatchlist = _retrieveUserWatchlistFromCache();
-    if (userWatchlist.isNotEmpty) {
-      await _syncUserWatchListWithServer(accountId);
+    watchlist = _retrieveWatchlistFromCache();
+    if (watchlist.isNotEmpty) {
+      await _syncCacheWatchListWithServer(accountId);
     } else {
-      userWatchlist = await _retrieveUserWatchlistFromServer(accountId);
-      _updateUserWatchlistCache();
+      watchlist = await _retrieveWatchlistFromServer(accountId);
+      _updateWatchlistInCache();
     }
 
     notifyListeners();
   }
 
-  Future<dynamic> _retrieveUserWatchlistFromServer(int accountId) async {
+  Future<dynamic> _retrieveWatchlistFromServer(int accountId) async {
     late Map<String, dynamic> movies;
     dynamic response = await get('account/$accountId/watchlist/movies');
     if (response.statusCode == 200) {
@@ -58,12 +60,12 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
     return watchlist;
   }
 
-  dynamic _retrieveUserWatchlistFromCache() {
+  List<TmdbTitle> _retrieveWatchlistFromCache() {
     final List<String>? watchlistJson =
-        PreferencesService().prefs.getStringList('user_watchlist');
+        PreferencesService().prefs.getStringList(_prefsWatchlistName);
 
     if (watchlistJson == null || watchlistJson.isEmpty) {
-      return null;
+      return List.empty(growable: true);
     }
 
     return watchlistJson
@@ -71,10 +73,10 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
         .toList();
   }
 
-  Future<void> _syncUserWatchListWithServer(int accountId) async {
-    List<TmdbTitle> cacheWatchlist = _retrieveUserWatchlistFromCache();
+  Future<void> _syncCacheWatchListWithServer(int accountId) async {
+    List<TmdbTitle> cacheWatchlist = _retrieveWatchlistFromCache();
     List<TmdbTitle> serverWatchlist =
-        await _retrieveUserWatchlistFromServer(accountId);
+        await _retrieveWatchlistFromServer(accountId);
 
     List<TmdbTitle> titlesToAdd = serverWatchlist
         .where((title) => !cacheWatchlist.contains(title))
@@ -85,19 +87,19 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
         .toList();
 
     for (TmdbTitle title in titlesToAdd) {
-      userWatchlist.add(title);
+      watchlist.add(title);
     }
     for (TmdbTitle title in titlesToRemove) {
-      userWatchlist.removeWhere((element) => element.id == title.id);
+      watchlist.removeWhere((element) => element.id == title.id);
     }
-    _updateUserWatchlistCache();
+    _updateWatchlistInCache();
   }
 
-  Future<void> _updateUserWatchlistCache() async {
+  Future<void> _updateWatchlistInCache() async {
     List<String> watchlistJson =
-        userWatchlist.map((title) => jsonEncode(title.map)).toList();
+        watchlist.map((title) => jsonEncode(title.map)).toList();
 
-    PreferencesService().prefs.setStringList('user_watchlist', watchlistJson);
+    PreferencesService().prefs.setStringList(_prefsWatchlistName, watchlistJson);
   }
 
   Future<dynamic> _updateTitleInWatchlistToTmdb(
@@ -112,7 +114,7 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
       final result = await _updateTitleInWatchlistToTmdb(
           accountId, title.id, title.mediaType, true);
       if (result.statusCode == 201) {
-        userWatchlist.add(title);
+        watchlist.add(title);
       } else {
         throw Exception(
             'Failed to add title to watchlist. Response code: ${result.statusCode}');
@@ -121,13 +123,13 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
       final result = await _updateTitleInWatchlistToTmdb(
           accountId, title.id, title.mediaType, false);
       if (result.statusCode == 200) {
-        userWatchlist.removeWhere((element) => element.id == title.id);
+        watchlist.removeWhere((element) => element.id == title.id);
       } else {
         throw Exception(
             'Failed to remove title to watchlist. Response code: ${result.statusCode}');
       }
     }
-    _updateUserWatchlistCache();
+    _updateWatchlistInCache();
     notifyListeners();
   }
 }
