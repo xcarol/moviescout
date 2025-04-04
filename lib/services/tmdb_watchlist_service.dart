@@ -5,7 +5,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 
-String _prefsWatchlistName = 'watchlistx';
+String _prefsWatchlistName = 'watchlist';
 
 class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
   List<TmdbTitle> watchlist = List.empty(growable: true);
