@@ -57,6 +57,13 @@ class TmdbTitle {
   final Map _tmdbTitle;
   const TmdbTitle({required Map<dynamic, dynamic> title}) : _tmdbTitle = title;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is TmdbTitle && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+
   Map get map {
     return _tmdbTitle;
   }
@@ -86,7 +93,8 @@ class TmdbTitle {
   }
 
   String get posterPath {
-    return _tmdbTitle[_poster_path]!=null && (_tmdbTitle[_poster_path] as String).isNotEmpty
+    return _tmdbTitle[_poster_path] != null &&
+            (_tmdbTitle[_poster_path] as String).isNotEmpty
         ? 'https://image.tmdb.org/t/p/original${_tmdbTitle[_poster_path]}'
         : '';
   }
