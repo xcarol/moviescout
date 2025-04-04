@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
-class CachedNetworkImage extends StatefulWidget {
+class CachedNetworkImage extends StatelessWidget {
   const CachedNetworkImage(this.imageUrl,
       {super.key, this.fit, this.errorBuilder});
 
@@ -11,54 +11,54 @@ class CachedNetworkImage extends StatefulWidget {
   final BoxFit? fit;
   final Widget Function(BuildContext, Object, StackTrace?)? errorBuilder;
 
-  @override
-  State<CachedNetworkImage> createState() => _CachedNetworkImageState();
-}
-
-class _CachedNetworkImageState extends State<CachedNetworkImage> {
-  File? _imageFile;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadImage();
-  }
-
-  Future<void> _loadImage() async {
-    final fileName =
-        widget.imageUrl.split('/').last;
+  Future<dynamic> _loadImage(String imageUrl) async {
+    final fileName = imageUrl.split('/').last;
     final dir = await getApplicationCacheDirectory();
     final filePath = '${dir.path}/$fileName';
     final file = File(filePath);
 
     if (await file.exists()) {
-      setState(() => _imageFile = file);
-    } else {
-      await _downloadImage(widget.imageUrl, filePath);
+      return file;
+    } else if (imageUrl.isNotEmpty) {
+      return _downloadImage(imageUrl, filePath);
     }
+
+    return null;
   }
 
-  Future<void> _downloadImage(String url, String savePath) async {
+  Future<dynamic> _downloadImage(String url, String savePath) async {
     final response = await http.get(Uri.parse(url));
+
     if (response.statusCode == 200) {
       final file = File(savePath);
       await file.writeAsBytes(response.bodyBytes);
-      setState(() => _imageFile = file);
+      return file;
     }
+
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
-    return _imageFile != null
-        ? Image.file(
-            _imageFile!,
-            fit: widget.fit,
-            errorBuilder: widget.errorBuilder,
-          )
-        : Image.network(
-            widget.imageUrl,
-            fit: widget.fit,
-            errorBuilder: widget.errorBuilder,
-          );
+    return FutureBuilder(
+        future: _loadImage(imageUrl),
+        builder: (context, AsyncSnapshot<dynamic> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            final imageFile = snapshot.data;
+            return imageFile != null
+                ? Image.file(
+                    imageFile!,
+                    fit: fit,
+                    errorBuilder: errorBuilder,
+                  )
+                : Image.network(
+                    imageUrl,
+                    fit: fit,
+                    errorBuilder: errorBuilder,
+                  );
+          }
+        });
   }
 }
