@@ -46,6 +46,7 @@ dependencies:
   provider: ^6.1.2
   url_launcher: ^6.3.1
   shared_preferences: ^2.5.2
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
@@ -103,5 +104,5 @@ flutter:
 flutter_launcher_icons:
   android: true
   image_path_android: "assets/logo-icon.png" 
-  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_background: "#2B1410"
   adaptive_icon_foreground: "assets/logo-icon.png"
