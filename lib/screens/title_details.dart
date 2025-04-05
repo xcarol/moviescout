@@ -6,8 +6,11 @@ import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/cached_network_image.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
+import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
+import 'package:moviescout/widgets/rate_form.dart';
+import 'package:provider/provider.dart';
 
 class TitleDetails extends StatefulWidget {
   final TmdbTitle _title;
@@ -111,6 +114,33 @@ class _TitleDetailsState extends State<TitleDetails> {
             Icon(Icons.star),
             const SizedBox(width: 5),
             Text(title.voteAverage.toStringAsFixed(2)),
+          ],
+        ),
+        Row(
+          children: [
+            Icon(Icons.star),
+            const SizedBox(width: 5),
+            // This if statement should check against the rateslist
+            if (!Provider.of<TmdbWatchlistService>(context, listen: false)
+                .watchlist
+                .contains(title))
+              Text('your vote')
+              // Text('${AppLocalizations.of(context)!.your_rate}: ${title.userRating}')
+            else
+              TextButton(
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) {
+                    return RateForm(
+                      title: title.name,
+                      onSubmit: (int rating) {
+                        // TmdbRateslistService().rateTitle(title, rating);
+                      },
+                    );
+                  },
+                ),
+                child: Text(AppLocalizations.of(context)!.rate),
+              ),
           ],
         ),
       ],
