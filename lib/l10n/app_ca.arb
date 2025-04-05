@@ -34,5 +34,7 @@
     "sortReleaseDate": "Data d'estrena",
     "sortRuntime": "Duració",
     "genres": "Gèneres",
-    "titles": "Títols"
+    "titles": "Títols",
+    "rate": "Puntua",
+    "your_rate": "La teva puntuació"
 }

@@ -1,0 +1,63 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+class RateForm extends Dialog {
+  const RateForm({super.key, required this.onSubmit, required this.title});
+
+  final String title;
+  final Function(int) onSubmit;
+
+  @override
+  Widget build(BuildContext context) {
+    String rate = AppLocalizations.of(context)!.rate;
+    ValueNotifier<int> rating = ValueNotifier(0);
+
+    return AlertDialog(
+      title: Text(
+        '$rate $title',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      content: ValueListenableBuilder(
+        valueListenable: rating,
+        builder: (context, value, child) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                if (rating.value > 0)
+                  Text(
+                    '${AppLocalizations.of(context)!.your_rate}: ${rating.value}',
+                  )
+                else
+                  Text('${AppLocalizations.of(context)!.your_rate}: '),
+              ]),
+              const SizedBox(height: 20),
+              Wrap(
+                alignment: WrapAlignment.center,
+                runAlignment: WrapAlignment.center,
+                children: List.generate(10, (index) {
+                  return IconButton(
+                    icon: Icon(Icons.star),
+                    onPressed: () {
+                      rating.value = index + 1;
+                    },
+                  );
+                }),
+              ),
+              const SizedBox(height: 20),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                TextButton(
+                    onPressed: () {
+                      onSubmit(rating.value);
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(rate)),
+              ]),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
