@@ -38,7 +38,9 @@ class RateForm extends Dialog {
                 runAlignment: WrapAlignment.center,
                 children: List.generate(10, (index) {
                   return IconButton(
-                    icon: Icon(Icons.star),
+                    icon: rating.value >= index + 1
+                        ? Icon(Icons.star)
+                        : Icon(Icons.star_border),
                     onPressed: () {
                       rating.value = index + 1;
                     },
@@ -46,7 +48,13 @@ class RateForm extends Dialog {
                 }),
               ),
               const SizedBox(height: 20),
-              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                TextButton(
+                    onPressed: () {
+                      onSubmit(0);
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(AppLocalizations.of(context)!.reset_rate)),
                 TextButton(
                     onPressed: () {
                       onSubmit(rating.value);

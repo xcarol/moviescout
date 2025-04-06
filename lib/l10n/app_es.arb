@@ -36,5 +36,6 @@
     "genres": "Géneros",
     "titles": "Títulos",
     "rate": "Puntua",
-    "your_rate": "Tu puntuación"
+    "your_rate": "Tu puntuación",
+    "reset_rate": "Elimina tu puntuación"
 }
