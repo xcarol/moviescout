@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
@@ -147,6 +148,9 @@ class _LoginState extends State<Login> {
       PreferencesService().prefs.setString('username', _userController.text);
       await Provider.of<TmdbWatchlistService>(context, listen: false)
           .retrieveWatchlist(
+              Provider.of<TmdbUserService>(context, listen: false).accountId);
+      await Provider.of<TmdbRateslistService>(context, listen: false)
+          .retrieveRateslist(
               Provider.of<TmdbUserService>(context, listen: false).accountId);
       SnackMessage.showSnackBar(AppLocalizations.of(context)!.loginSuccess);
       Navigator.pop(context);
