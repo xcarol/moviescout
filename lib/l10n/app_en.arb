@@ -36,5 +36,7 @@
     "genres": "Genres",
     "titles": "Titles",
     "rate": "Rate",
-    "reset_rate": "Reset rating"
+    "your_rate": "Your rating",
+    "reset_rate": "Reset rating",
+    "emptyRates": "You have not been rated any title yet."
 }
