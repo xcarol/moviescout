@@ -1,15 +1,20 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MainAppBar extends AppBar {
   MainAppBar({
     super.key,
     required BuildContext context,
     required String title,
-    List<Widget> actions = const [],
   }) : super(
           title: Text(title),
-          actions: [...actions, const SizedBox(width: kDebugMode == true ? 20 : 0)],
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.canPop(context) ? Navigator.pop(context) : null,
+              tooltip: AppLocalizations.of(context)!.back,
+            ),
+          ],
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         );
 }

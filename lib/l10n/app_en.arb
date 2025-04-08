@@ -1,7 +1,7 @@
 {
     "appTitle": "Movie Scout",
     "messageEmptyList": "No films slected yet.",
-    "messageEmptyList2": "Do a search using the magnifying glass in the top right.",
+    "messageEmptyList2": "Do a search using the magnifying glass in the bottom bar.",
     "search": "Search for a title",
     "searchTitle": "Search",
     "back": "Back",
@@ -36,5 +36,9 @@
     "genres": "Genres",
     "titles": "Titles",
     "rate": "Rate",
-    "reset_rate": "Reset rating"
+    "your_rate": "Your rating",
+    "reset_rate": "Reset rating",
+    "emptyRates": "You have not been rated any title yet.",
+    "watchlistTitle": "Watchlist",
+    "rateslistTitle": "Rated list"
 }

@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:moviescout/screens/search.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
+import 'package:moviescout/widgets/bottom_bar.dart';
 import 'package:moviescout/widgets/title_list.dart';
 import 'package:provider/provider.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class WatchList extends StatefulWidget {
+  const WatchList({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<WatchList> createState() => _WatchListState();
 }
 
-class _HomeState extends State<Home> {
+class _WatchListState extends State<WatchList> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -41,22 +41,17 @@ class _HomeState extends State<Home> {
           return Scaffold(
             appBar: MainAppBar(
               context: context,
-              title: AppLocalizations.of(context)!.appTitle,
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: searchTitle,
-                  tooltip: AppLocalizations.of(context)!.search,
-                ),
-              ],
+              title: AppLocalizations.of(context)!.watchlistTitle,
             ),
             drawer: AppDrawer(),
-            body: Center(child: homeBody()),
+            body: Center(child: body()),
+            bottomNavigationBar:
+                BottomBar(currentIndex: BottomBarIndex.indexWatchlist),
           );
         });
   }
 
-  Widget homeBody() {
+  Widget body() {
     return ListenableBuilder(
       listenable: Provider.of<TmdbWatchlistService>(context, listen: false),
       builder: (BuildContext context, Widget? child) {
@@ -107,13 +102,6 @@ class _HomeState extends State<Home> {
           );
         }
       },
-    );
-  }
-
-  searchTitle() async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Search()),
     );
   }
 }

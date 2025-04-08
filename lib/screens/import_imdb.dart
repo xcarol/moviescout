@@ -41,13 +41,6 @@ class _ImportIMDBState extends State<ImportIMDB> {
       appBar: MainAppBar(
         context: context,
         title: AppLocalizations.of(context)!.imdbImport,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
-            tooltip: AppLocalizations.of(context)!.back,
-          ),
-        ],
       ),
       drawer: AppDrawer(),
       body: Center(

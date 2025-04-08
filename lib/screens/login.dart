@@ -48,13 +48,6 @@ class _LoginState extends State<Login> {
       appBar: MainAppBar(
         context: context,
         title: AppLocalizations.of(context)!.loginTitle,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: back,
-            tooltip: AppLocalizations.of(context)!.back,
-          ),
-        ],
       ),
       drawer: AppDrawer(),
       body: Center(child: loginBody()),
