@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
+import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:provider/provider.dart';
@@ -78,6 +79,8 @@ class AppDrawer extends StatelessWidget {
         Provider.of<TmdbUserService>(context, listen: false);
     final tmdbWatchlistService =
         Provider.of<TmdbWatchlistService>(context, listen: false);
+    final tmdbRateslistService =
+        Provider.of<TmdbRateslistService>(context, listen: false);
     final logoutSuccessText = AppLocalizations.of(context)!.logoutSuccess;
 
     await tmdbUserService.logout().catchError((error) {
@@ -87,6 +90,7 @@ class AppDrawer extends StatelessWidget {
     });
 
     tmdbWatchlistService.clearWatchList();
+    tmdbRateslistService.clearRatesList();
     SnackMessage.showSnackBar(logoutSuccessText);
   }
 }
