@@ -41,7 +41,7 @@ class _WatchListState extends State<WatchList> {
           return Scaffold(
             appBar: MainAppBar(
               context: context,
-              title: AppLocalizations.of(context)!.appTitle,
+              title: AppLocalizations.of(context)!.watchlistTitle,
             ),
             drawer: AppDrawer(),
             body: Center(child: body()),

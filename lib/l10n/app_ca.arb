@@ -38,5 +38,7 @@
     "rate": "Puntua",
     "your_rate": "La teva puntuació",
     "reset_rate": "Elimina la puntuació",
-    "emptyRates": "Encara no has puntuat cap títol."
+    "emptyRates": "Encara no has puntuat cap títol.",
+    "watchlistTitle": "Per veure",
+    "rateslistTitle": "Valorades"
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/screens/rates_list.dart';
 import 'package:moviescout/screens/search.dart';
 import 'package:moviescout/screens/watch_list.dart';
@@ -26,7 +27,7 @@ class BottomBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             IconButton(
-              tooltip: 'Watchlist',
+              tooltip: AppLocalizations.of(context)!.watchlistTitle,
               icon: Icon(
                 Icons.remove_red_eye_outlined,
                 color: currentIndex == BottomBarIndex.indexWatchlist
@@ -42,7 +43,7 @@ class BottomBar extends StatelessWidget {
               },
             ),
             IconButton(
-                tooltip: 'Rateslist',
+                tooltip: AppLocalizations.of(context)!.rateslistTitle,
                 icon: Icon(
                   Icons.rate_review_outlined,
                   color: currentIndex == BottomBarIndex.indexRateslist
@@ -58,7 +59,7 @@ class BottomBar extends StatelessWidget {
                   }
                 }),
             IconButton(
-                tooltip: 'Search',
+                tooltip: AppLocalizations.of(context)!.searchTitle,
                 icon: Icon(
                   Icons.search,
                   color: currentIndex == BottomBarIndex.indexSearch

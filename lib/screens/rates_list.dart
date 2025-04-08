@@ -43,7 +43,7 @@ class _RatesListState extends State<RatesList> {
           return Scaffold(
             appBar: MainAppBar(
               context: context,
-              title: AppLocalizations.of(context)!.appTitle,
+              title: AppLocalizations.of(context)!.rateslistTitle,
             ),
             drawer: AppDrawer(),
             body: Center(child: body()),
