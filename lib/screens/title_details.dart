@@ -38,13 +38,6 @@ class _TitleDetailsState extends State<TitleDetails> {
             appBar: MainAppBar(
               context: context,
               title: appTitle,
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: _back,
-                  tooltip: AppLocalizations.of(context)!.back,
-                ),
-              ],
             ),
             drawer: AppDrawer(),
             body: SingleChildScrollView(

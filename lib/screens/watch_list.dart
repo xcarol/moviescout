@@ -42,13 +42,6 @@ class _WatchListState extends State<WatchList> {
             appBar: MainAppBar(
               context: context,
               title: AppLocalizations.of(context)!.appTitle,
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: searchTitle,
-                  tooltip: AppLocalizations.of(context)!.search,
-                ),
-              ],
             ),
             drawer: AppDrawer(),
             body: Center(child: body()),
