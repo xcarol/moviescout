@@ -35,7 +35,6 @@
     "sortRuntime": "Duració",
     "genres": "Gèneres",
     "titles": "Títols",
-    "rate": "Puntua",
-    "your_rate": "La teva puntuació",
+    "rate": "Puntua"
     "reset_rate": "Elimina la puntuació"
 }
