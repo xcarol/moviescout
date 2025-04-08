@@ -34,5 +34,7 @@
     "sortReleaseDate": "Fecha de estreno",
     "sortRuntime": "Duración",
     "genres": "Géneros",
-    "titles": "Títulos"
+    "titles": "Títulos",
+    "rate": "Puntua",
+    "reset_rate": "Elimina tu puntuación"
 }

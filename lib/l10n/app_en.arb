@@ -34,5 +34,7 @@
     "sortReleaseDate": "Release date",
     "sortRuntime": "Runtime",
     "genres": "Genres",
-    "titles": "Titles"
+    "titles": "Titles",
+    "rate": "Rate",
+    "reset_rate": "Reset rating"
 }

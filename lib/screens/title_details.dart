@@ -5,9 +5,13 @@ import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/cached_network_image.dart';
+import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
+import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
+import 'package:moviescout/widgets/rate_form.dart';
+import 'package:provider/provider.dart';
 
 class TitleDetails extends StatefulWidget {
   final TmdbTitle _title;
@@ -108,10 +112,63 @@ class _TitleDetailsState extends State<TitleDetails> {
       children: [
         Row(
           children: [
-            Icon(Icons.star),
+            const Icon(Icons.star),
             const SizedBox(width: 5),
             Text(title.voteAverage.toStringAsFixed(2)),
           ],
+        ),
+        Consumer<TmdbRateslistService>(
+          builder: (context, ratingService, child) {
+            final titleRating = ratingService.getRating(title.id);
+
+            return Row(
+              children: [
+                Icon(Icons.star, color: Theme.of(context).colorScheme.primary),
+                const SizedBox(width: 5),
+                if (ratingService.rateslist.contains(title))
+                  Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: Text(
+                      '$titleRating',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 1,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (context) {
+                      return RateForm(
+                        title: title.name,
+                        initialRate: titleRating,
+                        onSubmit: (int rating) {
+                          Provider.of<TmdbRateslistService>(context,
+                                  listen: false)
+                              .updateRateslistTitle(
+                            Provider.of<TmdbUserService>(context, listen: false)
+                                .accountId,
+                            title,
+                            rating,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  child: Text(AppLocalizations.of(context)!.rate),
+                ),
+              ],
+            );
+          },
         ),
       ],
     );
