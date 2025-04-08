@@ -12,7 +12,7 @@ import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
-import 'package:moviescout/screens/home.dart';
+import 'package:moviescout/screens/watch_list.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -79,7 +79,7 @@ class MyApp extends StatelessWidget {
             seedColor: Color(0xFF2B1410), brightness: Brightness.dark),
       ),
       title: 'Movie Scout',
-      home: const Home(),
+      home: const WatchList(),
       scaffoldMessengerKey: scaffoldMessengerKey,
     );
   }
