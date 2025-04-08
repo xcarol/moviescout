@@ -5,6 +5,7 @@ import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
+import 'package:moviescout/widgets/bottom_bar.dart';
 import 'package:moviescout/widgets/title_list.dart';
 
 class Search extends StatefulWidget {
@@ -47,6 +48,7 @@ class _SearchState extends State<Search> {
           ],
         ),
       ),
+      bottomNavigationBar: BottomBar(currentIndex: BottomBarIndex.indexSearch),
     );
   }
 

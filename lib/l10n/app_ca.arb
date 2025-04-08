@@ -1,7 +1,7 @@
 {
     "appTitle": "Movie Scout",
     "messageEmptyList": "Encara no s'ha escollit cap pel·lícula.",
-    "messageEmptyList2": "Fes una cerca utilitzant la lupa de dalt a la dreta.",
+    "messageEmptyList2": "Fes una cerca utilitzant la lupa de la barra inferior.",
     "search": "Cerca un títol",
     "searchTitle": "Cerca",
     "back": "Enrere",
