@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RateForm extends Dialog {
-  const RateForm({super.key, required this.onSubmit, required this.title});
+  const RateForm({super.key, required this.onSubmit, required this.title, this.initialRate});
 
   final String title;
+  final int? initialRate;
   final Function(int) onSubmit;
 
   @override
   Widget build(BuildContext context) {
     String rate = AppLocalizations.of(context)!.rate;
-    ValueNotifier<int> rating = ValueNotifier(0);
+    ValueNotifier<int> rating = ValueNotifier(initialRate ?? 0);
 
     return AlertDialog(
       title: Text(
