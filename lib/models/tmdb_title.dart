@@ -20,6 +20,7 @@ const _poster_path = 'poster_path';
 const _production_companies = 'production_companies';
 const _production_countries = 'production_countries';
 const _release_date = 'release_date';
+const _rating = 'rating';
 const _revenue = 'revenue';
 const _runtime = 'runtime';
 const _spoken_languages = 'spoken_languages';
@@ -88,6 +89,10 @@ class TmdbTitle {
     return _tmdbTitle[_last_updated] ?? '1970-01-01';
   }
 
+  set lastUpdated(String date) {
+    _tmdbTitle[_last_updated] = date;
+  }
+
   String get mediaType {
     return _tmdbTitle[_media_type] ?? '';
   }
@@ -125,6 +130,14 @@ class TmdbTitle {
 
   String get releaseDate {
     return _tmdbTitle[_release_date] ?? '';
+  }
+
+  double get rating {
+    return _tmdbTitle[_rating] ?? 0;
+  }
+
+  set rating(double rate) {
+    _tmdbTitle[_rating] = rate;
   }
 
   String get firstAirDate {
