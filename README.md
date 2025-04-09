@@ -141,6 +141,18 @@ Setup this file in the path _./android_:
 
 The keystore (and password) used for the app signing is at the Bitwarden vault. These are the same used in the _key.properties_ file.  
 
+## Check android gradle.build
+
+This attribute shuld be like this
+```
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.release
+        }
+    }
+```
+it is worth comparing it with the same Overmaps file to imitate it as much as possible.
+
 ### Publishing a new version for internal test
 
 - Modify the last (build) number in _version: 1.0.0+**X**_ at the _pubspec.yaml_ file before building the new .aab bundle.
