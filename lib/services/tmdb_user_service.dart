@@ -1,79 +1,120 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 
 class TmdbUserService extends TmdbBaseService with ChangeNotifier {
-  String sessionId = '';
-  int get accountId => user?['id'] ?? 0;
+  String accountId = '';
   Map? user;
-  bool get isUserLoggedIn => sessionId.isNotEmpty;
+  bool get isUserLoggedIn => accessToken.isNotEmpty;
+  String? _requestToken;
+  final String redirectTo = 'moviescout://auth/callback';
 
   Future<void> setup() async {
-    sessionId = PreferencesService().prefs.getString('sessionId') ?? '';
-    if (sessionId.isNotEmpty) {
-      user = await getUserDetails();
+    accessToken = PreferencesService().prefs.getString('accessToken') ?? '';
+    if (accessToken.isNotEmpty) {
+      accountId = PreferencesService().prefs.getString('accountId') ?? '';
+      if (accountId.isNotEmpty) {
+        user = await getUserDetails(accountId);
+      }
     }
   }
 
-  Future<String> getRequestToken() async {
-    final response = await get('authentication/token/new');
-    if (response.statusCode == 200) {
-      return body(response)['request_token'];
+  Future<Map> completeLogin(dynamic uri) async {
+    if (uri.queryParameters['error'] != null) {
+      return {
+        'success': false,
+        'message': uri.queryParameters['error'],
+      };
     }
-    return '';
+
+    if (_requestToken != null) {
+      int status = await _exchangeToken(_requestToken!);
+      if (status != 200) {
+        return {
+          'success': false,
+          'message': 'Error $status in exchangeToken with token $_requestToken',
+        };
+      }
+      user = await getUserDetails(accountId);
+      notifyListeners();
+      return {'success': true};
+    }
+
+    return {
+      'success': false,
+      'message': 'Error: _requestToken is null',
+    };
   }
 
-  Future<bool> validateWithLogin(
-    String username,
-    String password,
-    String requestToken,
-  ) async {
-    final response = await post('/authentication/token/validate_with_login', {
-      'username': username,
-      'password': password,
-      'request_token': requestToken,
-    });
-    return response.statusCode == 200;
-  }
-
-  Future<String> createSession(String requestToken) async {
+  Future<int> _exchangeToken(String requestToken) async {
     final response = await post(
-        '/authentication/session/new', {'request_token': requestToken});
+        '/auth/access_token', {'request_token': requestToken},
+        version: ApiVersion.v4);
+
     if (response.statusCode == 200) {
-      return body(response)['session_id'];
+      final json = jsonDecode(response.body);
+      accessToken = json['access_token'];
+      accountId = json['account_id'];
+      PreferencesService().prefs.setString('accessToken', accessToken);
+      PreferencesService().prefs.setString('accountId', accountId);
     }
-    throw Exception(
-        'createSession http Error: ${body(response)['status_code']}. Message: ${body(response)['status_message']}');
+
+    return response.statusCode;
   }
 
-  Future<dynamic> getUserDetails() async {
-    final response = await get('/account');
+  Future<Map> _startLogin() async {
+    final response = await post(
+        '/auth/request_token', {'redirect_to': redirectTo},
+        version: ApiVersion.v4);
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      _requestToken = json['request_token'];
+
+      final authUrl =
+          'https://www.themoviedb.org/auth/access?request_token=$_requestToken';
+
+      try {
+        await launchUrl(Uri.parse(authUrl),
+            mode: LaunchMode.externalApplication);
+      } catch (e) {
+        return {
+          'success': false,
+          'message': 'Error launching URL: $e',
+        };
+      }
+    } else {
+      return {
+        'success': false,
+        'message': 'Error ${response.statusCode} in _startLogin',
+      };
+    }
+
+    return {
+      'success': true,
+    };
+  }
+
+  Future<dynamic> getUserDetails(String accountId) async {
+    final response = await get('/account/$accountId');
     if (response.statusCode == 200) {
       return body(response);
     }
   }
 
-  Future<bool> login(String username, String password) async {
-    String requestToken = await getRequestToken();
-
-    final isValid = await validateWithLogin(username, password, requestToken);
-    if (isValid) {
-      final newSessionId = await createSession(requestToken);
-      sessionId = newSessionId;
-      PreferencesService().prefs.setString('sessionId', sessionId);
-      user = await getUserDetails();
-      notifyListeners();
-      return true;
-    }
-
-    return false;
+  Future<Map> login() async {
+    return _startLogin();
   }
 
   Future<void> logout() async {
-    await delete('/authentication/session', {'session_id': sessionId});
-    sessionId = '';
+    accessToken = '';
+    accountId = '';
     user = null;
-    PreferencesService().prefs.remove('sessionId');
+    PreferencesService().prefs.remove('accessToken');
+    PreferencesService().prefs.remove('accountId');
     notifyListeners();
   }
 }
