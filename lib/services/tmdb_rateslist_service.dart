@@ -29,8 +29,8 @@ class TmdbRateslistService extends TmdbBaseService with ChangeNotifier {
     return title.rating.toInt();
   }
 
-  Future<void> retrieveRateslist(int accountId) async {
-    if (accountId <= 0) {
+  Future<void> retrieveRateslist(String accountId) async {
+    if (accountId.isEmpty) {
       return;
     }
 
@@ -45,29 +45,33 @@ class TmdbRateslistService extends TmdbBaseService with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<dynamic> _retrieveRateslistFromServer(int accountId) async {
-    late Map<String, dynamic> movies;
+  Future<dynamic> _retrieveRateslistFromServer(String accountId) async {
+    late Map<String, dynamic> movies = {};
     List<TmdbTitle> serverRateslist = List.empty(growable: true);
     dynamic response = await get('account/$accountId/rated/movies');
     if (response.statusCode == 200) {
       movies = body(response);
     }
 
-    late Map<String, dynamic> tv;
+    late Map<String, dynamic> tv = {};
     response = await get('account/$accountId/rated/tv');
     if (response.statusCode == 200) {
       tv = body(response);
     }
 
-    movies['results'].forEach((element) {
-      element['media_type'] = 'movie';
-      serverRateslist.add(TmdbTitle(title: element));
-    });
+    if (movies['results'] != null) {
+      movies['results'].forEach((element) {
+        element['media_type'] = 'movie';
+        serverRateslist.add(TmdbTitle(title: element));
+      });
+    }
 
-    tv['results'].forEach((element) {
-      element['media_type'] = 'tv';
-      serverRateslist.add(TmdbTitle(title: element));
-    });
+    if (tv['results'] != null) {
+      tv['results'].forEach((element) {
+        element['media_type'] = 'tv';
+        serverRateslist.add(TmdbTitle(title: element));
+      });
+    }
 
     return serverRateslist;
   }
@@ -85,7 +89,7 @@ class TmdbRateslistService extends TmdbBaseService with ChangeNotifier {
         .toList();
   }
 
-  Future<void> _syncCacheRatesListWithServer(int accountId) async {
+  Future<void> _syncCacheRatesListWithServer(String accountId) async {
     List<TmdbTitle> cacheRateslist = _retrieveRateslistFromCache();
     List<TmdbTitle> serverRateslist =
         await _retrieveRateslistFromServer(accountId);
@@ -117,7 +121,7 @@ class TmdbRateslistService extends TmdbBaseService with ChangeNotifier {
   }
 
   Future<dynamic> _updateTitleInRateslistToTmdb(
-      int accountId, int id, String mediaType, int rate) async {
+      String accountId, int id, String mediaType, int rate) async {
     if (rate > 0) {
       if (mediaType == 'movie') {
         return post('movie/$id/rating', {'value': rate});
@@ -138,7 +142,7 @@ class TmdbRateslistService extends TmdbBaseService with ChangeNotifier {
   }
 
   Future<void> updateRateslistTitle(
-      int accountId, TmdbTitle title, int rating) async {
+      String accountId, TmdbTitle title, int rating) async {
     if (rating > 0) {
       final result = await _updateTitleInRateslistToTmdb(
           accountId, title.id, title.mediaType, rating);

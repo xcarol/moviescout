@@ -16,8 +16,8 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> retrieveWatchlist(int accountId) async {
-    if (accountId <= 0) {
+  Future<void> retrieveWatchlist(String accountId) async {
+    if (accountId.isEmpty) {
       return;
     }
 
@@ -32,14 +32,14 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<dynamic> _retrieveWatchlistFromServer(int accountId) async {
-    late Map<String, dynamic> movies;
+  Future<dynamic> _retrieveWatchlistFromServer(String accountId) async {
+    Map<String, dynamic> movies = {};
     dynamic response = await get('account/$accountId/watchlist/movies');
     if (response.statusCode == 200) {
       movies = body(response);
     }
 
-    late Map<String, dynamic> tv;
+    Map<String, dynamic> tv = {};
     response = await get('account/$accountId/watchlist/tv');
     if (response.statusCode == 200) {
       tv = body(response);
@@ -47,15 +47,19 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
 
     List<TmdbTitle> watchlist = List.empty(growable: true);
 
-    movies['results'].forEach((element) {
-      element['media_type'] = 'movie';
-      watchlist.add(TmdbTitle(title: element));
-    });
+    if (movies['results'] != null) {
+      movies['results'].forEach((element) {
+        element['media_type'] = 'movie';
+        watchlist.add(TmdbTitle(title: element));
+      });
+    }
 
-    tv['results'].forEach((element) {
-      element['media_type'] = 'tv';
-      watchlist.add(TmdbTitle(title: element));
-    });
+    if (tv['results'] != null) {
+      tv['results'].forEach((element) {
+        element['media_type'] = 'tv';
+        watchlist.add(TmdbTitle(title: element));
+      });
+    }
 
     return watchlist;
   }
@@ -73,7 +77,7 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
         .toList();
   }
 
-  Future<void> _syncCacheWatchListWithServer(int accountId) async {
+  Future<void> _syncCacheWatchListWithServer(String accountId) async {
     List<TmdbTitle> cacheWatchlist = _retrieveWatchlistFromCache();
     List<TmdbTitle> serverWatchlist =
         await _retrieveWatchlistFromServer(accountId);
@@ -99,17 +103,19 @@ class TmdbWatchlistService extends TmdbBaseService with ChangeNotifier {
     List<String> watchlistJson =
         watchlist.map((title) => jsonEncode(title.map)).toList();
 
-    PreferencesService().prefs.setStringList(_prefsWatchlistName, watchlistJson);
+    PreferencesService()
+        .prefs
+        .setStringList(_prefsWatchlistName, watchlistJson);
   }
 
   Future<dynamic> _updateTitleInWatchlistToTmdb(
-      int accountId, int id, String mediaType, bool add) async {
+      String accountId, int id, String mediaType, bool add) async {
     return post('account/$accountId/watchlist',
         {'media_type': mediaType, 'media_id': id, 'watchlist': add});
   }
 
   Future<void> updateWatchlistTitle(
-      int accountId, TmdbTitle title, bool add) async {
+      String accountId, TmdbTitle title, bool add) async {
     if (add) {
       final result = await _updateTitleInWatchlistToTmdb(
           accountId, title.id, title.mediaType, true);
