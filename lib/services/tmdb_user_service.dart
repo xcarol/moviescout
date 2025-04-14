@@ -22,14 +22,7 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     }
   }
 
-  Future<Map> completeLogin(dynamic uri) async {
-    if (uri.queryParameters['error'] != null) {
-      return {
-        'success': false,
-        'message': uri.queryParameters['error'],
-      };
-    }
-
+  Future<Map> completeLogin() async {
     if (_requestToken != null) {
       int status = await _exchangeToken(_requestToken!);
       if (status != 200) {
