@@ -50,10 +50,6 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  _back() async {
-    Navigator.pop(context);
-  }
-
   _detailsBody(TmdbTitle title) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,

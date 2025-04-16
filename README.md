@@ -117,7 +117,7 @@ After updating the logo run:  $ `dart run flutter_launcher_icons`
 Get the **API Read Access Token** from [The Movie DB API Settings](https://www.themoviedb.org/settings/api)     
 Create a file called _.env_ in the root directory and add the key:
 ```
-TMDB_API_KEY=apiReadAccessTokenGotFromTmdb
+TMDB_API_RAT=apiReadAccessTokenGotFromTmdb
 ``` 
 
 ## Build and run Android App
