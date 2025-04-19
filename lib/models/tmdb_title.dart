@@ -121,8 +121,10 @@ class TmdbTitle {
   List get genres {
     List genresList = List.empty(growable: true);
 
-    for (var genre in _tmdbTitle[_genres]) {
-      genresList.add(TmdbGenre(genre: genre));
+    if (_tmdbTitle[_genres] is List) {
+      for (var genre in _tmdbTitle[_genres]) {
+        genresList.add(TmdbGenre(genre: genre));
+      }
     }
 
     return genresList;
