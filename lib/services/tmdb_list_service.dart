@@ -143,7 +143,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       _updateLocalList();
       notifyListeners();
     } else {
-      throw Exception('Failed to update titleId: ${title.id}. Status code: ${result.statusCode} - ${result.message}');
+      throw Exception('Failed to update titleId: ${title.id}. Status code: ${result.statusCode} - ${result.body}');
     }
   }
 }
