@@ -44,7 +44,7 @@ void main() async {
     providers: [
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
       ChangeNotifierProvider(create: (_) => TmdbWatchlistService()),
-      ChangeNotifierProvider(create: (_) => TmdbRateslistService()),
+      ChangeNotifierProvider(create: (_) => TmdbRateslistService('rateslist')),
     ],
     child: const MyApp(),
   ));

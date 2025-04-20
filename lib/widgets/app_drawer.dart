@@ -90,7 +90,7 @@ class AppDrawer extends StatelessWidget {
     });
 
     tmdbWatchlistService.clearWatchList();
-    tmdbRateslistService.clearRatesList();
+    tmdbRateslistService.clearList();
     SnackMessage.showSnackBar(logoutSuccessText);
   }
 }

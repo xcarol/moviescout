@@ -114,7 +114,7 @@ class _TitleDetailsState extends State<TitleDetails> {
               children: [
                 Icon(Icons.star, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 5),
-                if (ratingService.rateslist.contains(title))
+                if (ratingService.titles.contains(title))
                   Padding(
                     padding: EdgeInsets.only(right: 10),
                     child: Text(
@@ -143,7 +143,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                         onSubmit: (int rating) {
                           Provider.of<TmdbRateslistService>(context,
                                   listen: false)
-                              .updateRateslistTitle(
+                              .updateTitleRate(
                             Provider.of<TmdbUserService>(context, listen: false)
                                 .accountId,
                             title,

@@ -61,7 +61,7 @@ class _LoginState extends State<Login> {
 
       if (mounted) {
         await Provider.of<TmdbRateslistService>(context, listen: false)
-            .retrieveRateslist(
+            .retrieveRates(
                 Provider.of<TmdbUserService>(context, listen: false).accountId);
       }
 
@@ -103,8 +103,8 @@ class _LoginState extends State<Login> {
 
   // This is a workaround for the Linux platform
   //
-  // When login in Linux, the TMDB Auth web page will try to open 
-  // the Android app, but it will not work on Linux, 
+  // When login in Linux, the TMDB Auth web page will try to open
+  // the Android app, but it will not work on Linux,
   // so close the browser (or tab) and complete the login by clicking this button.
   Widget _linuxCompleteLoginButton() {
     return ElevatedButton(
