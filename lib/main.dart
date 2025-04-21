@@ -43,7 +43,7 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
-      ChangeNotifierProvider(create: (_) => TmdbWatchlistService()),
+      ChangeNotifierProvider(create: (_) => TmdbWatchlistService('watchlist')),
       ChangeNotifierProvider(create: (_) => TmdbRateslistService('rateslist')),
     ],
     child: const MyApp(),

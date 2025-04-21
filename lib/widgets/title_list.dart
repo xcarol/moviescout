@@ -151,7 +151,7 @@ class _TitleListState extends State<TitleList> {
           final TmdbTitle title = titles[index];
           final bool isInWatchlist =
               Provider.of<TmdbWatchlistService>(context, listen: false)
-                  .watchlist
+                  .titles
                   .any((t) => t.id == title.id);
           return TitleCard(
             context: context,
