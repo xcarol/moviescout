@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:moviescout/screens/search.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
@@ -97,13 +96,6 @@ class _RatesListState extends State<RatesList> {
             titles: Provider.of<TmdbRateslistService>(context, listen: false)
                 .titles),
       ],
-    );
-  }
-
-  searchTitle() async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Search()),
     );
   }
 }
