@@ -145,7 +145,8 @@ class _TitleListState extends State<TitleList> {
 
     return Expanded(
       child: ListView.builder(
-        key: PageStorageKey('TitleListView'),
+        key: const PageStorageKey('TitleListView'),
+        shrinkWrap: true,
         itemCount: titles.length,
         itemBuilder: (context, index) {
           final TmdbTitle title = titles[index];
