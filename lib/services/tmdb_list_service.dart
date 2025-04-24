@@ -23,6 +23,10 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     notifyListeners();
   }
 
+  bool contains(TmdbTitle title) {
+    return titles.contains(title);
+  }
+
   Future<void> retrieveList(
     String accountId, {
     required Future<Map<String, dynamic>> Function() retrieveMovies,
