@@ -9,7 +9,7 @@ const String _tmdbFindByID =
     '/find/{ID}?language={LOCALE}&external_source=imdb_id';
 
 class TmdbSearchService extends TmdbBaseService {
-  List<TmdbTitle> _fromImdbIdToTitle(Map response) {
+  List<TmdbTitle> fromImdbIdToTitle(Map response) {
     List<TmdbTitle> titles = [];
     for (var key in response.keys) {
       if (key == 'movie_results') {
@@ -29,7 +29,7 @@ class TmdbSearchService extends TmdbBaseService {
   Future<List<TmdbTitle>> _titlesList(Map response, Locale locale) async {
     List<TmdbTitle> titles = [];
     final totalResults = response['total_results'] ?? 0;
-    
+
     for (int count = 0; count < totalResults && count < 10; count += 1) {
       Map title = response['results'][count];
       if (title['media_type'] != 'movie' && title['media_type'] != 'tv') {
@@ -37,7 +37,7 @@ class TmdbSearchService extends TmdbBaseService {
       }
       titles.add(TmdbTitle(title: response['results'][count]));
     }
-    
+
     return titles;
   }
 
@@ -60,42 +60,13 @@ class TmdbSearchService extends TmdbBaseService {
         'Failed to search title. Response code: ${result.statusCode}');
   }
 
-  Future<dynamic> searchImdbTitles(
-    List imdbIds,
+  Future<dynamic> searchImdbTitle(
+    String imdbId,
     Locale locale,
   ) async {
-    List titles = [];
-    List notFound = [];
-
-    if (imdbIds.isEmpty) {
-      return [];
-    }
-
-    for (int count = 0; count < imdbIds.length; count += 1) {
-      final id = imdbIds[count];
-
-      if (id.trim().isEmpty) {
-        continue;
-      }
-
-      final result = await get(
-        _tmdbFindByID.replaceFirst('{ID}', id).replaceFirst(
-            '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-      );
-      if (result.statusCode == 200) {
-        List titlesFromId = _fromImdbIdToTitle(body(result));
-        if (titlesFromId.isEmpty) {
-          notFound.add(id);
-        }
-        titles.addAll(titlesFromId);
-      } else {
-        throw Exception(
-            'Failed to search IMDB title. Response code: ${result.statusCode}');
-      }
-    }
-
-    return {}
-      ..['titles'] = titles
-      ..['notFound'] = notFound;
+    return get(
+      _tmdbFindByID.replaceFirst('{ID}', imdbId).replaceFirst(
+          '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+    );
   }
 }
