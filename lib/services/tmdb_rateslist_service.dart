@@ -27,14 +27,14 @@ class TmdbRateslistService extends TmdbListService {
       if (response.statusCode == 200) {
         movies = body(response);
       }
-      return movies;
+      return movies['results'];
     }, retrieveTvshows: () async {
       late Map<String, dynamic> tv = {};
       dynamic response = await get('account/$accountId/rated/tv');
       if (response.statusCode == 200) {
         tv = body(response);
       }
-      return tv;
+      return tv['results'];
     });
   }
 

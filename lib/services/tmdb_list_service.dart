@@ -29,8 +29,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   Future<void> retrieveList(
     String accountId, {
-    required Future<Map<String, dynamic>> Function() retrieveMovies,
-    required Future<Map<String, dynamic>> Function() retrieveTvshows,
+    required Future<List> Function() retrieveMovies,
+    required Future<List> Function() retrieveTvshows,
   }) async {
     bool isUpToDate =
         DateTime.now().difference(DateTime.parse(_lastUpdated)).inHours < 10;
@@ -61,27 +61,23 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   Future<dynamic> _retrieveServerList(
     String accountId,
-    Future<Map<String, dynamic>> Function() retrieveMovies,
-    Future<Map<String, dynamic>> Function() retrieveTvshows,
+    Future<List> Function() retrieveMovies,
+    Future<List> Function() retrieveTvshows,
   ) async {
     List<TmdbTitle> serverList = List.empty(growable: true);
-    Map<String, dynamic> movies = await retrieveMovies();
-    Map<String, dynamic> tv = await retrieveTvshows();
+    List movies = await retrieveMovies();
+    List tv = await retrieveTvshows();
 
-    if (movies['results'] != null) {
-      movies['results'].forEach((element) {
-        element['media_type'] = 'movie';
-        element['last_updated'] = DateTime.now().toString();
-        serverList.add(TmdbTitle(title: element));
-      });
+    for (var element in movies) {
+      element['media_type'] = 'movie';
+      element['last_updated'] = DateTime.now().toString();
+      serverList.add(TmdbTitle(title: element));
     }
 
-    if (tv['results'] != null) {
-      tv['results'].forEach((element) {
-        element['media_type'] = 'tv';
-        element['last_updated'] = DateTime.now().toString();
-        serverList.add(TmdbTitle(title: element));
-      });
+    for (var element in tv) {
+      element['media_type'] = 'tv';
+      element['last_updated'] = DateTime.now().toString();
+      serverList.add(TmdbTitle(title: element));
     }
 
     return serverList;
@@ -100,8 +96,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   Future<List<TmdbTitle>> _syncWithServer(
     String accountId,
-    Future<Map<String, dynamic>> Function() retrieveMovies,
-    Future<Map<String, dynamic>> Function() retrieveTvshows,
+    Future<List> Function() retrieveMovies,
+    Future<List> Function() retrieveTvshows,
   ) async {
     List<TmdbTitle> localList = _retrieveLocalList();
     List<TmdbTitle> serverList =
@@ -114,9 +110,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         localList.where((title) => !serverList.contains(title)).toList();
 
     List<TmdbTitle> listUpdated = _titles;
-    for (TmdbTitle title in titlesToAdd) {
-      listUpdated.add(title);
-    }
+    listUpdated.addAll(titlesToAdd);
     for (TmdbTitle title in titlesToRemove) {
       listUpdated.removeWhere((element) => element.id == title.id);
     }
@@ -147,7 +141,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       _updateLocalList();
       notifyListeners();
     } else {
-      throw Exception('Failed to update titleId: ${title.id}. Status code: ${result.statusCode} - ${result.body}');
+      throw Exception(
+          'Failed to update titleId: ${title.id}. Status code: ${result.statusCode} - ${result.body}');
     }
   }
 }

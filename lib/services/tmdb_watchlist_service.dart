@@ -12,14 +12,14 @@ class TmdbWatchlistService extends TmdbListService {
       if (response.statusCode == 200) {
         movies = body(response);
       }
-      return movies;
+      return movies['results'];
     }, retrieveTvshows: () async {
       Map<String, dynamic> tv = {};
       dynamic response = await get('account/$accountId/watchlist/tv');
       if (response.statusCode == 200) {
         tv = body(response);
       }
-      return tv;
+      return tv['results'];
     });
   }
 
