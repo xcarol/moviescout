@@ -145,4 +145,23 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
           'Failed to update titleId: ${title.id}. Status code: ${result.statusCode} - ${result.body}');
     }
   }
+
+  Future<List> getTitlesFromServer(Future<dynamic> Function(int) getTitles) async {
+    int page = 1, pages = 1;
+    List titles = List.empty(growable: true);
+    do {
+      dynamic response = await getTitles(page);
+      if (response.statusCode == 200) {
+        final Map responseBody = body(response);
+        if (responseBody['total_pages'] != null) {
+          pages = responseBody['total_pages'];
+        }
+        if (responseBody['results'] != null) {
+          titles.addAll(responseBody['results']);
+        }
+      }
+    } while (page++ < pages);
+
+    return titles;
+  }
 }
