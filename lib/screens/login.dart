@@ -56,7 +56,9 @@ class _LoginState extends State<Login> {
       if (mounted) {
         await Provider.of<TmdbWatchlistService>(context, listen: false)
             .retrieveWatchlist(
-                Provider.of<TmdbUserService>(context, listen: false).accountId);
+          Provider.of<TmdbUserService>(context, listen: false).accountId,
+          Localizations.localeOf(context),
+        );
       }
 
       if (mounted) {
