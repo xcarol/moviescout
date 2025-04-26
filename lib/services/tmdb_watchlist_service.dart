@@ -1,25 +1,36 @@
+import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
+
+const String _tmdbWatchlistMovies =
+    'account/{ACCOUNT_ID}/movie/watchlist?page={PAGE}&language={LOCALE}';
+const String _tmdbWatchlistTv =
+    'account/{ACCOUNT_ID}/tv/watchlist?page={PAGE}&language={LOCALE}';
 
 class TmdbWatchlistService extends TmdbListService {
   TmdbWatchlistService(super.listName);
 
-  Future<void> retrieveWatchlist(String accountId) async {
+  Future<void> retrieveWatchlist(String accountId, Locale locale) async {
     retrieveList(accountId, retrieveMovies: () async {
-      late Map<String, dynamic> movies = {};
-      dynamic response = await get('account/$accountId/watchlist/movies');
-      if (response.statusCode == 200) {
-        movies = body(response);
-      }
-      return movies['results'];
+      return getTitlesFromServer((int page) async {
+        return get(
+            _tmdbWatchlistMovies
+                .replaceFirst('{ACCOUNT_ID}', accountId)
+                .replaceFirst('{PAGE}', page.toString())
+                .replaceFirst('{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+            version: ApiVersion.v4);
+      });
     }, retrieveTvshows: () async {
-      Map<String, dynamic> tv = {};
-      dynamic response = await get('account/$accountId/watchlist/tv');
-      if (response.statusCode == 200) {
-        tv = body(response);
-      }
-      return tv['results'];
+      return getTitlesFromServer((int page) async {
+        return get(
+            _tmdbWatchlistTv
+                .replaceFirst('{ACCOUNT_ID}', accountId)
+                .replaceFirst('{PAGE}', page.toString())
+                .replaceFirst('{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+            version: ApiVersion.v4);
+      });
     });
   }
 
