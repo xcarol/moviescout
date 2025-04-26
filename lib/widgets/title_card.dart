@@ -16,7 +16,7 @@ class TitleCard extends StatelessWidget {
   final bool isUpdating;
   final bool isInWatchlist;
   final BuildContext context;
-  final VoidCallback onPressed;
+  final VoidCallback onWatchlistPressed;
 
   const TitleCard({
     super.key,
@@ -24,7 +24,7 @@ class TitleCard extends StatelessWidget {
     required TmdbTitle title,
     required this.isUpdating,
     required this.isInWatchlist,
-    required this.onPressed,
+    required this.onWatchlistPressed,
   }) : _title = title;
 
   @override
@@ -260,7 +260,7 @@ class TitleCard extends StatelessWidget {
     return IconButton(
       color: isInWatchlist ? Colors.red : Colors.green,
       icon: Icon(isInWatchlist ? Icons.close_sharp : Icons.add_sharp),
-      onPressed: onPressed,
+      onPressed: onWatchlistPressed,
     );
   }
 }

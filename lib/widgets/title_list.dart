@@ -159,7 +159,7 @@ class _TitleListState extends State<TitleList> {
             title: title,
             isUpdating: updatingTitleId == title.id,
             isInWatchlist: isInWatchlist,
-            onPressed: () {
+            onWatchlistPressed: () {
               setState(() {
                 updatingTitleId = title.id;
               });
