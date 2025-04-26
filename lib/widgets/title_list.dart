@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
@@ -11,10 +12,12 @@ import 'package:provider/provider.dart';
 
 class TitleList extends StatefulWidget {
   final List<TmdbTitle> titles;
+  final TmdbListService? updateService;
 
   const TitleList({
     super.key,
     required this.titles,
+    this.updateService,
   });
 
   @override
@@ -32,11 +35,13 @@ class _TitleListState extends State<TitleList> {
   late List<String> selectedGenres;
   late List<String> genresList;
   late TextEditingController _textFilterController;
+  late List<TmdbTitle> _titles;
 
   @override
   void initState() {
     super.initState();
     _textFilterController = TextEditingController();
+    _titles = widget.titles;
   }
 
   @override
@@ -57,7 +62,7 @@ class _TitleListState extends State<TitleList> {
     textFilter = '';
     selectedGenres = [];
     genresList = [];
-    for (TmdbTitle title in widget.titles) {
+    for (TmdbTitle title in _titles) {
       for (TmdbGenre genre in title.genres) {
         if (!genresList.contains(genre.name)) {
           genresList.add(genre.name);
@@ -121,10 +126,10 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _titleList() {
-    List<TmdbTitle> titles = widget.titles;
+    List<TmdbTitle> titles = _titles;
 
     if (selectedType != AppLocalizations.of(context)!.allTypes) {
-      titles = widget.titles
+      titles = _titles
           .where((title) =>
               (title.mediaType == 'movie' &&
                   selectedType == AppLocalizations.of(context)!.movies) ||
@@ -159,6 +164,7 @@ class _TitleListState extends State<TitleList> {
             title: title,
             isUpdating: updatingTitleId == title.id,
             isInWatchlist: isInWatchlist,
+            listService: widget.updateService ?? null,
             onWatchlistPressed: () {
               setState(() {
                 updatingTitleId = title.id;
@@ -225,11 +231,11 @@ class _TitleListState extends State<TitleList> {
 
   Widget _infoLine() {
     String totalTitles =
-        '${widget.titles.length} ${AppLocalizations.of(context)!.titles}';
+        '${_titles.length} ${AppLocalizations.of(context)!.titles}';
     String totalMovies =
-        '${widget.titles.where((title) => title.isMovie).length} ${AppLocalizations.of(context)!.movies}';
+        '${_titles.where((title) => title.isMovie).length} ${AppLocalizations.of(context)!.movies}';
     String totalSeries =
-        '${widget.titles.where((title) => title.isSerie).length} ${AppLocalizations.of(context)!.tvshows}';
+        '${_titles.where((title) => title.isSerie).length} ${AppLocalizations.of(context)!.tvshows}';
     String totalByType = selectedType == AppLocalizations.of(context)!.movies
         ? totalMovies
         : selectedType == AppLocalizations.of(context)!.tvshows
@@ -258,16 +264,22 @@ class _TitleListState extends State<TitleList> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> children = List.empty(growable: true);
+
+    if (_titles.isNotEmpty) {
+      children = [
+        _listControlPanel(),
+        const Divider(),
+        _infoLine(),
+        const Divider(),
+        _titleList(),
+      ];
+    }
+
     return Expanded(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          if (widget.titles.isNotEmpty) _listControlPanel(),
-          if (widget.titles.isNotEmpty) const Divider(),
-          if (widget.titles.isNotEmpty) _infoLine(),
-          if (widget.titles.isNotEmpty) const Divider(),
-          if (widget.titles.isNotEmpty) _titleList(),
-        ],
+        children: children,
       ),
     );
   }

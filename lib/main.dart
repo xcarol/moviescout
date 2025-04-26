@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';

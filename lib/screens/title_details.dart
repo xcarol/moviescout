@@ -26,28 +26,40 @@ class _TitleDetailsState extends State<TitleDetails> {
   Widget build(BuildContext context) {
     String appTitle = widget._title.name;
 
-    return FutureBuilder(
-      future: TmdbTitleService().getTitleDetails(widget._title),
-      builder: (context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
-        } else {
-          return Scaffold(
-            appBar: MainAppBar(
-              context: context,
-              title: appTitle,
-            ),
-            drawer: AppDrawer(),
-            body: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: _detailsBody(snapshot.data!),
-            ),
-          );
-        }
-      },
+    return Scaffold(
+      appBar: MainAppBar(
+        context: context,
+        title: appTitle,
+      ),
+      drawer: AppDrawer(),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: _detailsBody(widget._title),
+      ),
     );
+
+    // return FutureBuilder(
+    //   future: TmdbTitleService().getTitleDetails(widget._title),
+    //   builder: (context, AsyncSnapshot<dynamic> snapshot) {
+    //     if (snapshot.connectionState == ConnectionState.waiting) {
+    //       return const Center(child: CircularProgressIndicator());
+    //     } else if (snapshot.hasError) {
+    //       return Center(child: Text("Error: ${snapshot.error}"));
+    //     } else {
+    //       return Scaffold(
+    //         appBar: MainAppBar(
+    //           context: context,
+    //           title: appTitle,
+    //         ),
+    //         drawer: AppDrawer(),
+    //         body: SingleChildScrollView(
+    //           scrollDirection: Axis.vertical,
+    //           child: _detailsBody(snapshot.data!),
+    //         ),
+    //       );
+    //     }
+    //   },
+    // );
   }
 
   _detailsBody(TmdbTitle title) {

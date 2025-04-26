@@ -5,7 +5,9 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/cached_network_image.dart';
 import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
+import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:provider/provider.dart';
 
 // ignore: non_constant_identifier_names
@@ -13,6 +15,7 @@ double CARD_HEIGHT = 160.0;
 
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
+  final TmdbListService? _listService;
   final bool isUpdating;
   final bool isInWatchlist;
   final BuildContext context;
@@ -22,25 +25,30 @@ class TitleCard extends StatelessWidget {
     super.key,
     required this.context,
     required TmdbTitle title,
+    required TmdbListService? listService,
     required this.isUpdating,
     required this.isInWatchlist,
     required this.onWatchlistPressed,
-  }) : _title = title;
+  }) : _title = title, _listService = listService;
 
   @override
   Widget build(BuildContext context) {
+    TmdbUserService userService =
+        Provider.of<TmdbUserService>(context, listen: false);
+
     return SizedBox(
       height: CARD_HEIGHT,
       child: Card(
         child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => TitleDetails(
-                        title: TmdbTitle(title: _title.map),
-                      )),
-            );
+          onTap: () async {
+            TmdbTitle updatedTitle = await _listService!.updateTitleDetails(userService.accountId, _title);
+            if (context.mounted) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TitleDetails(title: updatedTitle)),
+              );
+            }
           },
           child: Padding(
             padding: const EdgeInsets.only(right: 8.0),

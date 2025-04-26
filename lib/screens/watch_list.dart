@@ -102,8 +102,9 @@ class _WatchListState extends State<WatchList> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         TitleList(
-          titles:
-              Provider.of<TmdbWatchlistService>(context, listen: false).titles,
+          titles:Provider.of<TmdbWatchlistService>(context, listen: false).titles,
+          updateService:
+              Provider.of<TmdbWatchlistService>(context, listen: false),
         ),
       ],
     );
