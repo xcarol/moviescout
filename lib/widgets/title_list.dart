@@ -124,7 +124,7 @@ class _TitleListState extends State<TitleList> {
     List<TmdbTitle> titles = widget.titles;
 
     if (selectedType != AppLocalizations.of(context)!.allTypes) {
-      titles = widget.titles
+      titles = titles
           .where((title) =>
               (title.mediaType == 'movie' &&
                   selectedType == AppLocalizations.of(context)!.movies) ||
@@ -258,16 +258,22 @@ class _TitleListState extends State<TitleList> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> children = List.empty(growable: true);
+
+    if (widget.titles.isNotEmpty) {
+      children = [
+        _listControlPanel(),
+        const Divider(),
+        _infoLine(),
+        const Divider(),
+        _titleList(),
+      ];
+    }
+
     return Expanded(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          if (widget.titles.isNotEmpty) _listControlPanel(),
-          if (widget.titles.isNotEmpty) const Divider(),
-          if (widget.titles.isNotEmpty) _infoLine(),
-          if (widget.titles.isNotEmpty) const Divider(),
-          if (widget.titles.isNotEmpty) _titleList(),
-        ],
+        children: children,
       ),
     );
   }
