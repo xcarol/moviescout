@@ -8,8 +8,8 @@ import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
 
-// ignore: non_constant_identifier_names
-double CARD_HEIGHT = 160.0;
+// ignore: constant_identifier_names
+const double CARD_HEIGHT = 160.0;
 
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
