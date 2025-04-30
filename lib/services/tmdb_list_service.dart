@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
+import 'package:moviescout/services/tmdb_title_service.dart';
 
 class TmdbListService extends TmdbBaseService with ChangeNotifier {
   String _prefsListName = '';
@@ -146,7 +147,24 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
   }
 
-  Future<List> getTitlesFromServer(Future<dynamic> Function(int) getTitles) async {
+  Future<TmdbTitle> updateTitleDetails(
+      String accountId, TmdbTitle title) async {
+    TmdbTitle titleFromList =
+        _titles.firstWhere((element) => element.id == title.id);
+
+    if (TmdbTitleService.isUpToDate(titleFromList) == false) {
+      TmdbTitle updatedTitle =
+          await TmdbTitleService().getTitleDetails(titleFromList);
+      _titles.removeWhere((element) => element.id == title.id);
+      _titles.add(updatedTitle);
+      return updatedTitle;
+    }
+
+    return titleFromList;
+  }
+
+  Future<List> getTitlesFromServer(
+      Future<dynamic> Function(int) getTitles) async {
     int page = 1, pages = 1;
     List titles = List.empty(growable: true);
     do {
