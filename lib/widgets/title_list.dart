@@ -12,12 +12,12 @@ import 'package:provider/provider.dart';
 
 class TitleList extends StatefulWidget {
   final List<TmdbTitle> titles;
-  final TmdbListService? listProvider;
+  final TmdbListService listProvider;
 
   const TitleList({
     super.key,
     required this.titles,
-    this.listProvider,
+    required this.listProvider,
   });
 
   @override
@@ -158,7 +158,7 @@ class _TitleListState extends State<TitleList> {
           final TmdbTitle title = titles[index];
 
           return FutureBuilder<TmdbTitle>(
-            future: widget.listProvider!.updateTitleDetails(
+            future: widget.listProvider.updateTitleDetails(
               userService.accountId,
               title,
             ),
