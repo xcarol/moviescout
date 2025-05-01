@@ -104,6 +104,8 @@ class _WatchListState extends State<WatchList> {
         TitleList(
           titles:
               Provider.of<TmdbWatchlistService>(context, listen: false).titles,
+          listProvider:
+              Provider.of<TmdbWatchlistService>(context, listen: false),
         ),
       ],
     );

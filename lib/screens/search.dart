@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
@@ -86,7 +87,7 @@ class _SearchState extends State<Search> {
   }
 
   searchResults() {
-    return TitleList(titles: searchTitles);
+    return TitleList(titles: searchTitles, listProvider: TmdbListService('searchProvider'));
   }
 
   searchTitle(BuildContext context, title) async {

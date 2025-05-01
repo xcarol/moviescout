@@ -95,6 +95,8 @@ class _RatesListState extends State<RatesList> {
         TitleList(
           titles:
               Provider.of<TmdbRateslistService>(context, listen: false).titles,
+          listProvider:
+              Provider.of<TmdbRateslistService>(context, listen: false),
         ),
       ],
     );
