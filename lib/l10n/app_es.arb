@@ -23,6 +23,7 @@
     "movie": "Película",
     "imdbSelect": "Selecciona",
     "imdbImport": "Importar de IMDB",
+    "imdbImportCancel": "Cancela",
     "imdbImportHint": "Selecciona un archivo CSV exportado de IMDB",
     "imdbImportWatchlist": "Importar Para Ver",
     "imdbImportRateslist": "Importar Valoraciones",

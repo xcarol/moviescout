@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
+import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
@@ -31,6 +32,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
   late int _imdbRateColumn = -1;
   late int _importId = -1;
   late bool _isRateList = false;
+  late bool _importInProgress = false;
 
   @override
   void initState() {
@@ -143,16 +145,28 @@ class _ImportIMDBState extends State<ImportIMDB> {
           ),
           const SizedBox(width: 10),
           ElevatedButton(
-            onPressed: _filenameController.text.isEmpty || _isRateList
+            onPressed: _filenameController.text.isEmpty ||
+                    _isRateList ||
+                    _importInProgress
                 ? null
                 : () => _importWatchlist(context),
             child: Text(AppLocalizations.of(context)!.imdbImportWatchlist),
           ),
+          const SizedBox(width: 10),
           ElevatedButton(
-            onPressed: _filenameController.text.isNotEmpty && _isRateList
+            onPressed: _filenameController.text.isNotEmpty &&
+                    _isRateList &&
+                    _importInProgress == false
                 ? () => {}
                 : null,
             child: Text(AppLocalizations.of(context)!.imdbImportRateslist),
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton(
+            onPressed: _importInProgress == true
+                ? () => _importInProgress = false
+                : null,
+            child: Text(AppLocalizations.of(context)!.imdbImportCancel),
           ),
         ],
       ),
@@ -261,6 +275,9 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
   _importWatchlist(BuildContext context) async {
     try {
+      setState(() {
+        _importInProgress = true;
+      });
       final imdbIds = _csvTitles
           .where((row) => row.length > _imdbIdColumn)
           .map((row) => row[_imdbIdColumn])
@@ -271,7 +288,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           _importId = index;
         });
 
-        if (!context.mounted) {
+        if (!context.mounted || _importInProgress == false) {
           return;
         }
 
