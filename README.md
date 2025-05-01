@@ -15,8 +15,10 @@ Download Movie Scout now and streamline your streaming experience!
 
 ## IDMB Import Export
 
-To import titles from IMDB go to you Imdb account > [Watchlist](https://www.imdb.com/user/ur49413795/watchlist/) > Export.  
-Download the CSV file from [Exports](https://www.imdb.com/exports/?ref_=wl) and open it in the editor to get the IDs.
+To import titles from IMDB go to your Imdb account > [Watchlist](https://www.imdb.com/user/ur49413795/watchlist/) > Export  
+and Imdb account > [Ratings](https://www.imdb.com/es-es/user/ur49413795/ratings) > Export.  
+
+Download the CSV files from [Exports](https://www.imdb.com/exports/?ref_=wl) and import them with the menu option _Import From IMDB_.
 
 ## Development environment
 
@@ -103,6 +105,10 @@ On _MovieScout Android_ parameter `--device-id` set the desired device name.
 Followed this guide: [i18n|Flutter](https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization)  
 
 Run `flutter gen-l10n` to update the i18n generated files.  
+
+### Shared Preferences
+
+The shared preferences are located at: _~/.local/share/com.xicra.moviescout_ folder.  
 
 ## Icons
 
