@@ -6,7 +6,6 @@ import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/cached_network_image.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
-import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
@@ -26,27 +25,16 @@ class _TitleDetailsState extends State<TitleDetails> {
   Widget build(BuildContext context) {
     String appTitle = widget._title.name;
 
-    return FutureBuilder(
-      future: TmdbTitleService().getTitleDetails(widget._title),
-      builder: (context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
-        } else {
-          return Scaffold(
-            appBar: MainAppBar(
-              context: context,
-              title: appTitle,
-            ),
-            drawer: AppDrawer(),
-            body: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: _detailsBody(snapshot.data!),
-            ),
-          );
-        }
-      },
+    return Scaffold(
+      appBar: MainAppBar(
+        context: context,
+        title: appTitle,
+      ),
+      drawer: AppDrawer(),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: _detailsBody(widget._title),
+      ),
     );
   }
 
