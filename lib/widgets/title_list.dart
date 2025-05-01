@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
@@ -11,10 +12,12 @@ import 'package:provider/provider.dart';
 
 class TitleList extends StatefulWidget {
   final List<TmdbTitle> titles;
+  final TmdbListService? listProvider;
 
   const TitleList({
     super.key,
     required this.titles,
+    this.listProvider,
   });
 
   @override
@@ -143,6 +146,9 @@ class _TitleListState extends State<TitleList> {
     _sortTitles(titles);
     titles = _filterGenres(titles);
 
+    TmdbUserService userService =
+        Provider.of<TmdbUserService>(context, listen: false);
+
     return Expanded(
       child: ListView.builder(
         key: const PageStorageKey('TitleListView'),
@@ -150,35 +156,57 @@ class _TitleListState extends State<TitleList> {
         itemCount: titles.length,
         itemBuilder: (context, index) {
           final TmdbTitle title = titles[index];
-          final bool isInWatchlist =
-              Provider.of<TmdbWatchlistService>(context, listen: false)
-                  .titles
-                  .any((t) => t.id == title.id);
-          return TitleCard(
-            context: context,
-            title: title,
-            isUpdating: updatingTitleId == title.id,
-            isInWatchlist: isInWatchlist,
-            onWatchlistPressed: () {
-              setState(() {
-                updatingTitleId = title.id;
-              });
-              Provider.of<TmdbWatchlistService>(context, listen: false)
-                  .updateWatchlistTitle(
-                      Provider.of<TmdbUserService>(context, listen: false)
-                          .accountId,
-                      title,
-                      !isInWatchlist)
-                  .then((value) async {
-                setState(() {
-                  updatingTitleId = 0;
-                });
-              }).catchError((error) {
-                setState(() {
-                  updatingTitleId = 0;
-                });
-                SnackMessage.showSnackBar(error.toString());
-              });
+
+          return FutureBuilder<TmdbTitle>(
+            future: widget.listProvider!.updateTitleDetails(
+              userService.accountId,
+              title,
+            ),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done ||
+                  !snapshot.hasData) {
+                return TitleCard(
+                    context: context,
+                    title: TmdbTitle(title: {}),
+                    isUpdatingWatchlist: false,
+                    isInWatchlist: false,
+                    onWatchlistPressed: () {});
+              }
+
+              final updatedTitle = snapshot.data!;
+              final isInWatchlist =
+                  Provider.of<TmdbWatchlistService>(context, listen: false)
+                      .titles
+                      .any((t) => t.id == updatedTitle.id);
+
+              return TitleCard(
+                context: context,
+                title: updatedTitle,
+                isUpdatingWatchlist: updatingTitleId == updatedTitle.id,
+                isInWatchlist: isInWatchlist,
+                onWatchlistPressed: () {
+                  setState(() {
+                    updatingTitleId = updatedTitle.id;
+                  });
+                  Provider.of<TmdbWatchlistService>(context, listen: false)
+                      .updateWatchlistTitle(
+                    Provider.of<TmdbUserService>(context, listen: false)
+                        .accountId,
+                    updatedTitle,
+                    !isInWatchlist,
+                  )
+                      .then((value) async {
+                    setState(() {
+                      updatingTitleId = 0;
+                    });
+                  }).catchError((error) {
+                    setState(() {
+                      updatingTitleId = 0;
+                    });
+                    SnackMessage.showSnackBar(error.toString());
+                  });
+                },
+              );
             },
           );
         },
