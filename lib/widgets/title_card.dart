@@ -13,7 +13,7 @@ const double CARD_HEIGHT = 160.0;
 
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
-  final bool isUpdating;
+  final bool isUpdatingWatchlist;
   final bool isInWatchlist;
   final BuildContext context;
   final VoidCallback onWatchlistPressed;
@@ -22,7 +22,7 @@ class TitleCard extends StatelessWidget {
     super.key,
     required this.context,
     required TmdbTitle title,
-    required this.isUpdating,
+    required this.isUpdatingWatchlist,
     required this.isInWatchlist,
     required this.onWatchlistPressed,
   }) : _title = title;
@@ -250,7 +250,7 @@ class TitleCard extends StatelessWidget {
       );
     }
 
-    if (isUpdating) {
+    if (isUpdatingWatchlist) {
       return IconButton(
         icon: const Icon(Icons.hourglass_empty),
         onPressed: () {},
