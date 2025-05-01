@@ -342,6 +342,10 @@ class _ImportIMDBState extends State<ImportIMDB> {
       if (context.mounted) {
         SnackMessage.showSnackBar(error.toString());
       }
+    } finally {
+      setState(() {
+        _importInProgress = false;
+      });
     }
   }
 
@@ -414,6 +418,10 @@ class _ImportIMDBState extends State<ImportIMDB> {
       if (context.mounted) {
         SnackMessage.showSnackBar(error.toString());
       }
+    } finally {
+      setState(() {
+        _importInProgress = false;
+      });
     }
   }
 }
