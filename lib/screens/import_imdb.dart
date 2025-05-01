@@ -157,7 +157,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
             onPressed: _filenameController.text.isNotEmpty &&
                     _isRateList &&
                     _importInProgress == false
-                ? () => {}
+                ? () => _importRateslist(context)
                 : null,
             child: Text(AppLocalizations.of(context)!.imdbImportRateslist),
           ),
@@ -326,6 +326,78 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
           setState(() {
             if (Provider.of<TmdbWatchlistService>(context, listen: false)
+                .contains(titlesFromId.first)) {
+              _csvTitlesStatus[index] = TitleStatus.success;
+            } else {
+              _csvTitlesStatus[index] = TitleStatus.failed;
+            }
+          });
+        } else {
+          setState(() {
+            _csvTitlesStatus[index] = TitleStatus.failed;
+          });
+        }
+      }
+    } catch (error) {
+      if (context.mounted) {
+        SnackMessage.showSnackBar(error.toString());
+      }
+    }
+  }
+
+  _importRateslist(BuildContext context) async {
+    const int idIndex = 0, rateIndex = 1;
+    try {
+      setState(() {
+        _importInProgress = true;
+      });
+      final imdbIds = _csvTitles
+          .where((row) => row.length > _imdbIdColumn)
+          .map((row) => [row[_imdbIdColumn], row[_imdbRateColumn]])
+          .toList();
+
+      for (int index = 0; index < imdbIds.length; index++) {
+        setState(() {
+          _importId = index;
+        });
+
+        if (!context.mounted || _importInProgress == false) {
+          return;
+        }
+
+        final searchResult = await TmdbSearchService().searchImdbTitle(
+          imdbIds[index][idIndex],
+          Localizations.localeOf(context),
+        );
+
+        if (searchResult.statusCode == 200) {
+          if (!context.mounted) {
+            return;
+          }
+          List titlesFromId = TmdbSearchService()
+              .fromImdbIdToTitle(TmdbBaseService().body(searchResult));
+
+          if (titlesFromId.isEmpty) {
+            _csvTitlesStatus[index] = TitleStatus.failed;
+            continue;
+          }
+
+          // We don't want to re-import a rate (it would change the rating date)... or do we?
+          if (Provider.of<TmdbRateslistService>(context, listen: false)
+              .contains(titlesFromId.first)) {
+            _csvTitlesStatus[index] = TitleStatus.success;
+            continue;
+          }
+
+          await Provider.of<TmdbRateslistService>(context, listen: false)
+              .updateTitleRate(
+                  Provider.of<TmdbUserService>(context, listen: false)
+                      .accountId,
+                  titlesFromId.first,
+                  imdbIds[index][rateIndex]);
+
+          setState(() {
+            if (Provider.of<TmdbRateslistService>(context, listen: false)
                 .contains(titlesFromId.first)) {
               _csvTitlesStatus[index] = TitleStatus.success;
             } else {
