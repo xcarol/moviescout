@@ -29,6 +29,12 @@ class TitleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_title.id == 0) {
+      return SizedBox(
+          height: CARD_HEIGHT,
+          child: Center(child: CircularProgressIndicator()));
+    }
+
     return SizedBox(
       height: CARD_HEIGHT,
       child: Card(
