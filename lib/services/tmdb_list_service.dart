@@ -148,6 +148,10 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   Future<TmdbTitle> updateTitleDetails(
       String accountId, TmdbTitle title) async {
+    if (_titles.isEmpty) {
+      return title;
+    }
+
     TmdbTitle titleFromList =
         _titles.firstWhere((element) => element.id == title.id);
 
