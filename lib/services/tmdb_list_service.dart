@@ -50,7 +50,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
 
     _updateLocalList();
-    notifyListeners();
   }
 
   void retreiveListFromLocal({bool notify = true}) {
