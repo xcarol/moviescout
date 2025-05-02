@@ -12,14 +12,19 @@ const String _tmdbWatchlistTv =
 class TmdbWatchlistService extends TmdbListService {
   TmdbWatchlistService(super.listName);
 
-  Future<void> retrieveWatchlist(String accountId, Locale locale) async {
-    retrieveList(accountId, retrieveMovies: () async {
+  Future<void> retrieveWatchlist(
+    String accountId,
+    Locale locale, {
+    bool notify = false,
+  }) async {
+    retrieveList(accountId, notify: notify, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
             _tmdbWatchlistMovies
                 .replaceFirst('{ACCOUNT_ID}', accountId)
                 .replaceFirst('{PAGE}', page.toString())
-                .replaceFirst('{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+                .replaceFirst(
+                    '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
             version: ApiVersion.v4);
       });
     }, retrieveTvshows: () async {
@@ -28,7 +33,8 @@ class TmdbWatchlistService extends TmdbListService {
             _tmdbWatchlistTv
                 .replaceFirst('{ACCOUNT_ID}', accountId)
                 .replaceFirst('{PAGE}', page.toString())
-                .replaceFirst('{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+                .replaceFirst(
+                    '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
             version: ApiVersion.v4);
       });
     });

@@ -20,8 +20,13 @@ class TmdbRateslistService extends TmdbListService {
     return title.rating.toInt();
   }
 
-  Future<void> retrieveRates(String accountId) async {
-    retrieveList(accountId, retrieveMovies: () async {
+  Future<void> retrieveRateslist(
+    String accountId, {
+    bool notify = false,
+  }) async {
+    // Implementar paginació com a watchlist
+
+    retrieveList(accountId, notify: notify, retrieveMovies: () async {
       late Map<String, dynamic> movies = {};
       dynamic response = await get('account/$accountId/rated/movies');
       if (response.statusCode == 200) {

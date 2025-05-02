@@ -58,13 +58,15 @@ class _LoginState extends State<Login> {
             .retrieveWatchlist(
           Provider.of<TmdbUserService>(context, listen: false).accountId,
           Localizations.localeOf(context),
+          notify: true,
         );
       }
 
       if (mounted) {
         await Provider.of<TmdbRateslistService>(context, listen: false)
-            .retrieveRates(
-                Provider.of<TmdbUserService>(context, listen: false).accountId);
+            .retrieveRateslist(
+                Provider.of<TmdbUserService>(context, listen: false).accountId,
+                notify: true);
       }
 
       SnackMessage.showSnackBar(loginSuccessMessage);

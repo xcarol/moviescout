@@ -30,7 +30,7 @@ class _RatesListState extends State<RatesList> {
         Provider.of<TmdbRateslistService>(context, listen: false);
 
     await userService.setup();
-    await rateslistService.retrieveRates(userService.accountId);
+    await rateslistService.retrieveRateslist(userService.accountId);
   }
 
   @override
