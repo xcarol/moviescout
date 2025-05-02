@@ -283,6 +283,9 @@ class _ImportIMDBState extends State<ImportIMDB> {
           .map((row) => row[_imdbIdColumn])
           .toList();
 
+      final tmdbBaseService = TmdbBaseService();
+      final tmdbSearchService = TmdbSearchService();
+
       for (int index = 0; index < imdbIds.length; index++) {
         setState(() {
           _importId = index;
@@ -292,7 +295,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           return;
         }
 
-        final searchResult = await TmdbSearchService().searchImdbTitle(
+        final searchResult = await tmdbSearchService.searchImdbTitle(
           imdbIds[index],
           Localizations.localeOf(context),
         );
@@ -302,7 +305,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
             return;
           }
           List titlesFromId = TmdbSearchService()
-              .fromImdbIdToTitle(TmdbBaseService().body(searchResult));
+              .fromImdbIdToTitle(tmdbBaseService.body(searchResult));
 
           if (titlesFromId.isEmpty) {
             _csvTitlesStatus[index] = TitleStatus.failed;
@@ -360,6 +363,9 @@ class _ImportIMDBState extends State<ImportIMDB> {
           .map((row) => [row[_imdbIdColumn], row[_imdbRateColumn]])
           .toList();
 
+      final tmdbBaseService = TmdbBaseService();
+      final tmdbSearchService = TmdbSearchService();
+
       for (int index = 0; index < imdbIds.length; index++) {
         setState(() {
           _importId = index;
@@ -369,7 +375,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           return;
         }
 
-        final searchResult = await TmdbSearchService().searchImdbTitle(
+        final searchResult = await tmdbSearchService.searchImdbTitle(
           imdbIds[index][idIndex],
           Localizations.localeOf(context),
         );
@@ -379,7 +385,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
             return;
           }
           List titlesFromId = TmdbSearchService()
-              .fromImdbIdToTitle(TmdbBaseService().body(searchResult));
+              .fromImdbIdToTitle(tmdbBaseService.body(searchResult));
 
           if (titlesFromId.isEmpty) {
             _csvTitlesStatus[index] = TitleStatus.failed;
