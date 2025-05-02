@@ -30,6 +30,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   Future<void> retrieveList(
     String accountId, {
+    required bool notify,
     required Future<List> Function() retrieveMovies,
     required Future<List> Function() retrieveTvshows,
   }) async {
@@ -50,6 +51,10 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
 
     _updateLocalList();
+    
+    if (notify) {
+      notifyListeners();
+    }
   }
 
   void retreiveListFromLocal({bool notify = true}) {
