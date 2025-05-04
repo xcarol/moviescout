@@ -34,6 +34,7 @@ class _WatchListState extends State<WatchList> {
 
       await watchlistService.retrieveWatchlist(
         userService.accountId,
+        userService.sessionId,
         Localizations.localeOf(context),
       );
     }
