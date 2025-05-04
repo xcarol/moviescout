@@ -6,18 +6,23 @@ import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 
 class TmdbUserService extends TmdbBaseService with ChangeNotifier {
-  String accountId = '';
-  Map? user;
-  bool get isUserLoggedIn => accessToken.isNotEmpty;
-  String? _requestToken;
   final String redirectTo = 'moviescout://auth/callback';
+
+  String _accountId = '';
+  String _sessionId = '';
+  String? _requestToken;
+  Map? user;
+
+  bool get isUserLoggedIn => accessToken.isNotEmpty;
+  String get accountId => _accountId;
 
   Future<void> setup() async {
     accessToken = PreferencesService().prefs.getString('accessToken') ?? '';
     if (accessToken.isNotEmpty) {
-      accountId = PreferencesService().prefs.getString('accountId') ?? '';
-      if (accountId.isNotEmpty) {
-        user = await getUserDetails(accountId);
+      _accountId = PreferencesService().prefs.getString('accountId') ?? '';
+      _sessionId = PreferencesService().prefs.getString('sessionId') ?? '';
+      if (_accountId.isNotEmpty) {
+        user = await _getUserDetails();
       }
     }
   }
@@ -28,10 +33,17 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
       if (status != 200) {
         return {
           'success': false,
-          'message': 'Error $status in exchangeToken with token $_requestToken',
+          'message': 'Error $status in completeLogin with token $_requestToken',
         };
       }
-      user = await getUserDetails(accountId);
+      status = await _getSession();
+      if (status != 200) {
+        return {
+          'success': false,
+          'message': 'Error $status in completeLogin with token $_requestToken',
+        };
+      }
+      user = await _getUserDetails();
       notifyListeners();
       return {'success': true};
     }
@@ -42,6 +54,24 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     };
   }
 
+  Future<int> _getSession() async {
+    String accessToken =
+        PreferencesService().prefs.getString('accessToken') ?? '';
+
+    final response = await post(
+      '/authentication/session/convert/4',
+      {'access_token': accessToken},
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      _sessionId = json['session_id'];
+      PreferencesService().prefs.setString('sessionId', _sessionId);
+    }
+
+    return response.statusCode;
+  }
+
   Future<int> _exchangeToken(String requestToken) async {
     final response = await post(
         '/auth/access_token', {'request_token': requestToken},
@@ -50,9 +80,9 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
       accessToken = json['access_token'];
-      accountId = json['account_id'];
+      _accountId = json['account_id'];
       PreferencesService().prefs.setString('accessToken', accessToken);
-      PreferencesService().prefs.setString('accountId', accountId);
+      PreferencesService().prefs.setString('accountId', _accountId);
     }
 
     return response.statusCode;
@@ -60,8 +90,10 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
 
   Future<Map> _startLogin() async {
     final response = await post(
-        '/auth/request_token', {'redirect_to': redirectTo},
-        version: ApiVersion.v4);
+      '/auth/request_token',
+      {'redirect_to': redirectTo},
+      version: ApiVersion.v4,
+    );
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
@@ -71,8 +103,10 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
           'https://www.themoviedb.org/auth/access?request_token=$_requestToken';
 
       try {
-        await launchUrl(Uri.parse(authUrl),
-            mode: LaunchMode.externalApplication);
+        await launchUrl(
+          Uri.parse(authUrl),
+          mode: LaunchMode.externalApplication,
+        );
       } catch (e) {
         return {
           'success': false,
@@ -91,8 +125,8 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     };
   }
 
-  Future<dynamic> getUserDetails(String accountId) async {
-    final response = await get('/account/$accountId');
+  Future<dynamic> _getUserDetails() async {
+    final response = await get('/account/$_accountId?session_id=$_sessionId');
     if (response.statusCode == 200) {
       return body(response);
     }
@@ -104,10 +138,11 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
 
   Future<void> logout() async {
     accessToken = '';
-    accountId = '';
+    _accountId = '';
     user = null;
     PreferencesService().prefs.remove('accessToken');
     PreferencesService().prefs.remove('accountId');
+    PreferencesService().prefs.remove('sessionId');
     notifyListeners();
   }
 }
