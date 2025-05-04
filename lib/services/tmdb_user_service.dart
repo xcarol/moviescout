@@ -15,6 +15,7 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
 
   bool get isUserLoggedIn => accessToken.isNotEmpty;
   String get accountId => _accountId;
+  String get sessionId => _sessionId;
 
   Future<void> setup() async {
     accessToken = PreferencesService().prefs.getString('accessToken') ?? '';
