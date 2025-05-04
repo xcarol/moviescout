@@ -1,8 +1,9 @@
-import 'package:file_picker/file_picker.dart';
-import 'package:csv/csv.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:csv/csv.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
@@ -32,7 +33,9 @@ class _ImportIMDBState extends State<ImportIMDB> {
   late int _imdbRateColumn = -1;
   late int _importId = -1;
   late bool _isRateList = false;
-  late bool _importInProgress = false;
+  late bool _operationInProgress = false;
+  late String _resetTitlesMessage = '';
+  late int _resetTitlesCount = 0;
 
   @override
   void initState() {
@@ -69,7 +72,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
     );
   }
 
-  resetText() {
+  _resetText() {
     _filenameController.clear();
     setState(() {
       _importId = -1;
@@ -77,6 +80,118 @@ class _ImportIMDBState extends State<ImportIMDB> {
       _csvTitlesStatus = List.empty();
       _filenameController.clear();
     });
+  }
+
+  Future<bool> _confirmationDialog(BuildContext context, String message) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.imdbConfirmationTitle),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(AppLocalizations.of(context)!.yes),
+            ),
+          ],
+        );
+      },
+    ).then((value) => value ?? false);
+  }
+
+  _resetWatchlist(BuildContext context) async {
+    final confirm = await _confirmationDialog(
+      context,
+      AppLocalizations.of(context)!.imdbResetWatchlistConfirmation,
+    );
+    if (context.mounted && confirm) {
+      setState(() {
+        _operationInProgress = true;
+      });
+      TmdbWatchlistService watchlistService =
+          Provider.of<TmdbWatchlistService>(context, listen: false);
+      TmdbUserService userService =
+          Provider.of<TmdbUserService>(context, listen: false);
+
+      await watchlistService.retrieveWatchlist(
+        userService.accountId,
+        userService.sessionId,
+        Localizations.localeOf(context),
+      );
+
+      while (watchlistService.titles.isNotEmpty) {
+        if (!context.mounted || _operationInProgress == false) {
+          break;
+        }
+
+        setState(() {
+          _resetTitlesMessage =
+              AppLocalizations.of(context)!.resetWatchlistCount;
+          _resetTitlesCount = watchlistService.titles.length;
+        });
+
+        await watchlistService.updateWatchlistTitle(
+          userService.accountId,
+          watchlistService.titles.first,
+          false,
+        );
+      }
+
+      setState(() {
+        _operationInProgress = false;
+        _resetTitlesCount = 0;
+      });
+    }
+  }
+
+  _resetRatings(BuildContext context) async {
+    final confirm = await _confirmationDialog(
+      context,
+      AppLocalizations.of(context)!.imdbResetRateslistConfirmation,
+    );
+    if (context.mounted && confirm) {
+      setState(() {
+        _operationInProgress = true;
+      });
+      TmdbRateslistService rateslistService =
+          Provider.of<TmdbRateslistService>(context, listen: false);
+      TmdbUserService userService =
+          Provider.of<TmdbUserService>(context, listen: false);
+
+      await rateslistService.retrieveRateslist(
+        userService.accountId,
+        userService.sessionId,
+        Localizations.localeOf(context),
+      );
+
+      while (rateslistService.titles.isNotEmpty) {
+        if (!context.mounted || _operationInProgress == false) {
+          return;
+        }
+
+        setState(() {
+          _resetTitlesMessage =
+              AppLocalizations.of(context)!.resetRateslistCount;
+          _resetTitlesCount = rateslistService.titles.length;
+        });
+
+        await rateslistService.updateTitleRate(
+          userService.accountId,
+          rateslistService.titles.first,
+          0,
+        );
+      }
+
+      setState(() {
+        _operationInProgress = false;
+        _resetTitlesCount = 0;
+      });
+    }
   }
 
   Future<void> _readCsvFromFile(String path) async {
@@ -117,57 +232,83 @@ class _ImportIMDBState extends State<ImportIMDB> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Column(
         children: [
-          ElevatedButton(
-            child: Text(AppLocalizations.of(context)!.imdbSelect),
-            onPressed: () => _pickFile(context),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              readOnly: true,
-              controller: _filenameController,
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.imdbImportHint,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    resetText();
-                  },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                child: Text(AppLocalizations.of(context)!.imdbSelect),
+                onPressed: () => _pickFile(context),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: TextField(
+                  readOnly: true,
+                  controller: _filenameController,
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.imdbImportHint,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _resetText();
+                      },
+                    ),
+                  ),
                 ),
               ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: _filenameController.text.isEmpty ||
+                        _isRateList ||
+                        _operationInProgress
+                    ? null
+                    : () => _importWatchlist(context),
+                child: Text(AppLocalizations.of(context)!.imdbImportWatchlist),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: _filenameController.text.isNotEmpty &&
+                        _isRateList &&
+                        _operationInProgress == false
+                    ? () => _importRateslist(context)
+                    : null,
+                child: Text(AppLocalizations.of(context)!.imdbImportRateslist),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: _operationInProgress == true
+                    ? () => _operationInProgress = false
+                    : null,
+                child: Text(AppLocalizations.of(context)!.cancel),
+              ),
+            ],
+          ),
+          if (kDebugMode) const SizedBox(height: 10),
+          if (kDebugMode)
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: _operationInProgress == false
+                      ? () => _resetWatchlist(context)
+                      : null,
+                  child: Text(AppLocalizations.of(context)!.imdbResetWatchlist),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: _operationInProgress == false
+                      ? () => _resetRatings(context)
+                      : null,
+                  child: Text(AppLocalizations.of(context)!.imdbResetRateslist),
+                ),
+                const SizedBox(width: 10),
+                if (_resetTitlesCount > 0)
+                  Text('$_resetTitlesMessage: $_resetTitlesCount'),
+              ],
             ),
-          ),
-          const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: _filenameController.text.isEmpty ||
-                    _isRateList ||
-                    _importInProgress
-                ? null
-                : () => _importWatchlist(context),
-            child: Text(AppLocalizations.of(context)!.imdbImportWatchlist),
-          ),
-          const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: _filenameController.text.isNotEmpty &&
-                    _isRateList &&
-                    _importInProgress == false
-                ? () => _importRateslist(context)
-                : null,
-            child: Text(AppLocalizations.of(context)!.imdbImportRateslist),
-          ),
-          const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: _importInProgress == true
-                ? () => _importInProgress = false
-                : null,
-            child: Text(AppLocalizations.of(context)!.imdbImportCancel),
-          ),
         ],
       ),
     );
@@ -276,7 +417,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
   _importWatchlist(BuildContext context) async {
     try {
       setState(() {
-        _importInProgress = true;
+        _operationInProgress = true;
       });
       final imdbIds = _csvTitles
           .where((row) => row.length > _imdbIdColumn)
@@ -291,7 +432,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           _importId = index;
         });
 
-        if (!context.mounted || _importInProgress == false) {
+        if (!context.mounted || _operationInProgress == false) {
           return;
         }
 
@@ -347,7 +488,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
       }
     } finally {
       setState(() {
-        _importInProgress = false;
+        _operationInProgress = false;
       });
     }
   }
@@ -356,7 +497,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
     const int idIndex = 0, rateIndex = 1;
     try {
       setState(() {
-        _importInProgress = true;
+        _operationInProgress = true;
       });
       final imdbIds = _csvTitles
           .where((row) => row.length > _imdbIdColumn)
@@ -371,7 +512,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           _importId = index;
         });
 
-        if (!context.mounted || _importInProgress == false) {
+        if (!context.mounted || _operationInProgress == false) {
           return;
         }
 
@@ -426,7 +567,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
       }
     } finally {
       setState(() {
-        _importInProgress = false;
+        _operationInProgress = false;
       });
     }
   }

@@ -23,11 +23,17 @@
     "movie": "Pel·lícula",
     "imdbSelect": "Sel·lecciona",
     "imdbImport": "Importar de IMDB",
-    "imdbImportCancel": "Cancel·la",
     "imdbImportHint": "Sel·lecciona un arxiu CSV exportat de IMDB",
     "imdbImportWatchlist": "Importar Per Veure",
     "imdbImportRateslist": "Importar Valoracions",
     "imdbImportCount": "Títols importats correctament",
+    "imdbResetWatchlist":"ELIMINAR PER VEURE",
+    "imdbResetRateslist":"ELIMINAR VALORACIONS",
+    "imdbConfirmationTitle": "ATENCIÓ",
+    "imdbResetWatchlistConfirmation": "Segur que vols eliminar els títols Per Veure?",
+    "imdbResetRateslistConfirmation": "Segur que vols eliminar les Valoracions?",
+    "resetWatchlistCount": "Títols Per Veure: ",
+    "resetRateslistCount": "Títols Valorats: ",
     "missingDescription": "Falta la descripció",
     "flatrateProviders": "Subscripció",
     "rentProviders": "Lloguer",
@@ -46,5 +52,7 @@
     "reset_rate": "Elimina la valoració",
     "emptyRates": "Encara no has valorat cap títol.",
     "watchlistTitle": "Per veure",
-    "rateslistTitle": "Valorades"
+    "rateslistTitle": "Valorades",
+    "yes": "Sí",
+    "cancel": "Cancel·la"
 }

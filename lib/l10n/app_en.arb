@@ -23,11 +23,17 @@
     "movie": "Movie",
     "imdbSelect": "Select",
     "imdbImport": "Import from IMDB",
-    "imdbImportCancel": "Cancel",
     "imdbImportHint": "Select an IMDB export CSV file",
     "imdbImportWatchlist": "Import Watchlist",
     "imdbImportRateslist": "Import Rates",
     "imdbImportCount": "Succesfully imported titles",
+    "imdbResetWatchlist":"RESET WATCHLIST",
+    "imdbResetRateslist":"RESET RATINGS",
+    "imdbConfirmationTitle": "WARNING",
+    "imdbResetWatchlistConfirmation": "Do you really want to reset Watchlist?",
+    "imdbResetRateslistConfirmation": "Do you really want to reset Ratings?",
+    "resetWatchlistCount": "Watchlist titles: ",
+    "resetRateslistCount": "Rated titles: ",
     "missingDescription": "Missing description",
     "flatrateProviders": "Flatrate",
     "rentProviders": "Rent",
@@ -46,5 +52,7 @@
     "reset_rate": "Reset rating",
     "emptyRates": "You have not been rated any title yet.",
     "watchlistTitle": "Watchlist",
-    "rateslistTitle": "Rated list"
+    "rateslistTitle": "Rated list",
+    "yes": "Yes",
+    "cancel": "Cancel"
 }

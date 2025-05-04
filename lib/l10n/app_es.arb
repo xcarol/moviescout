@@ -23,11 +23,17 @@
     "movie": "Película",
     "imdbSelect": "Selecciona",
     "imdbImport": "Importar de IMDB",
-    "imdbImportCancel": "Cancela",
     "imdbImportHint": "Selecciona un archivo CSV exportado de IMDB",
     "imdbImportWatchlist": "Importar Para Ver",
     "imdbImportRateslist": "Importar Valoraciones",
     "imdbImportCount": "Títulos importados correctamente",
+    "imdbResetWatchlist":"ELIMINAR PARA VER",
+    "imdbResetRateslist":"ELIMINAR VALORACIONES",
+    "imdbConfirmationTitle": "ATENCIÓN",
+    "imdbResetWatchlistConfirmation": "¿Seguro que quieres eliminar los títulos Para Ver?",
+    "imdbResetRateslistConfirmation": "¿Seguro que quieres eliminar las Valoraciones?",
+    "resetWatchlistCount": "Títulos para ver: ",
+    "resetRateslistCount": "Títulos valorados: ",
     "missingDescription": "Falta la descripción",
     "flatrateProviders": "Suscripción",
     "rentProviders": "Alquiler",
@@ -46,5 +52,7 @@
     "reset_rate": "Elimina tu valoración",
     "emptyRates": "Todavía no has valorado ningún título.",
     "watchlistTitle": "Por ver",
-    "rateslistTitle": "Valoradas"
+    "rateslistTitle": "Valoradas",
+    "yes": "Sí",
+    "cancel": "Cancela"
 }
