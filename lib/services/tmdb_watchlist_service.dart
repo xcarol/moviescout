@@ -5,15 +5,16 @@ import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 
 const String _tmdbWatchlistMovies =
-    'account/{ACCOUNT_ID}/movie/watchlist?page={PAGE}&language={LOCALE}';
+    'account/{ACCOUNT_ID}/movie/watchlist?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}';
 const String _tmdbWatchlistTv =
-    'account/{ACCOUNT_ID}/tv/watchlist?page={PAGE}&language={LOCALE}';
+    'account/{ACCOUNT_ID}/tv/watchlist?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}';
 
 class TmdbWatchlistService extends TmdbListService {
   TmdbWatchlistService(super.listName);
 
   Future<void> retrieveWatchlist(
     String accountId,
+    String sessionId,
     Locale locale, {
     bool notify = false,
   }) async {
@@ -22,6 +23,7 @@ class TmdbWatchlistService extends TmdbListService {
         return get(
             _tmdbWatchlistMovies
                 .replaceFirst('{ACCOUNT_ID}', accountId)
+                .replaceFirst('{SESSION_ID}', sessionId)
                 .replaceFirst('{PAGE}', page.toString())
                 .replaceFirst(
                     '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
@@ -32,6 +34,7 @@ class TmdbWatchlistService extends TmdbListService {
         return get(
             _tmdbWatchlistTv
                 .replaceFirst('{ACCOUNT_ID}', accountId)
+                .replaceFirst('{SESSION_ID}', sessionId)
                 .replaceFirst('{PAGE}', page.toString())
                 .replaceFirst(
                     '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
