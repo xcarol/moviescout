@@ -1,9 +1,16 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
+
+const String _tmdbRateslistMovies =
+    'account/{ACCOUNT_ID}/rated/movies?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}';
+const String _tmdbRateslistTv =
+    'account/{ACCOUNT_ID}/tv/watchlist?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}';
 
 class TmdbRateslistService extends TmdbListService {
   TmdbRateslistService(super.listName);
@@ -21,25 +28,33 @@ class TmdbRateslistService extends TmdbListService {
   }
 
   Future<void> retrieveRateslist(
-    String accountId, {
+    String accountId,
+    String sessionId,
+    Locale locale, {
     bool notify = false,
   }) async {
-    // Implementar paginació com a watchlist
-
     retrieveList(accountId, notify: notify, retrieveMovies: () async {
-      late Map<String, dynamic> movies = {};
-      dynamic response = await get('account/$accountId/rated/movies');
-      if (response.statusCode == 200) {
-        movies = body(response);
-      }
-      return movies['results'];
+      return getTitlesFromServer((int page) async {
+        return get(
+            _tmdbRateslistMovies
+                .replaceFirst('{ACCOUNT_ID}', accountId)
+                .replaceFirst('{SESSION_ID}', sessionId)
+                .replaceFirst('{PAGE}', page.toString())
+                .replaceFirst(
+                    '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+            version: ApiVersion.v4);
+      });
     }, retrieveTvshows: () async {
-      late Map<String, dynamic> tv = {};
-      dynamic response = await get('account/$accountId/rated/tv');
-      if (response.statusCode == 200) {
-        tv = body(response);
-      }
-      return tv['results'];
+      return getTitlesFromServer((int page) async {
+        return get(
+            _tmdbRateslistTv
+                .replaceFirst('{ACCOUNT_ID}', accountId)
+                .replaceFirst('{SESSION_ID}', sessionId)
+                .replaceFirst('{PAGE}', page.toString())
+                .replaceFirst(
+                    '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+            version: ApiVersion.v4);
+      });
     });
   }
 
