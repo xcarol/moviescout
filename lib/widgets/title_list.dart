@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
@@ -11,10 +12,12 @@ import 'package:provider/provider.dart';
 
 class TitleList extends StatefulWidget {
   final List<TmdbTitle> titles;
+  final TmdbListService listProvider;
 
   const TitleList({
     super.key,
     required this.titles,
+    required this.listProvider,
   });
 
   @override
@@ -124,7 +127,7 @@ class _TitleListState extends State<TitleList> {
     List<TmdbTitle> titles = widget.titles;
 
     if (selectedType != AppLocalizations.of(context)!.allTypes) {
-      titles = widget.titles
+      titles = titles
           .where((title) =>
               (title.mediaType == 'movie' &&
                   selectedType == AppLocalizations.of(context)!.movies) ||
@@ -143,41 +146,69 @@ class _TitleListState extends State<TitleList> {
     _sortTitles(titles);
     titles = _filterGenres(titles);
 
+    TmdbUserService userService =
+        Provider.of<TmdbUserService>(context, listen: false);
+
     return Expanded(
       child: ListView.builder(
-        key: PageStorageKey('TitleListView'),
+        key: const PageStorageKey('TitleListView'),
+        shrinkWrap: true,
         itemCount: titles.length,
         itemBuilder: (context, index) {
           final TmdbTitle title = titles[index];
-          final bool isInWatchlist =
-              Provider.of<TmdbWatchlistService>(context, listen: false)
-                  .watchlist
-                  .any((t) => t.id == title.id);
-          return TitleCard(
-            context: context,
-            title: title,
-            isUpdating: updatingTitleId == title.id,
-            isInWatchlist: isInWatchlist,
-            onPressed: () {
-              setState(() {
-                updatingTitleId = title.id;
-              });
-              Provider.of<TmdbWatchlistService>(context, listen: false)
-                  .updateWatchlistTitle(
-                      Provider.of<TmdbUserService>(context, listen: false)
-                          .accountId,
-                      title,
-                      !isInWatchlist)
-                  .then((value) async {
-                setState(() {
-                  updatingTitleId = 0;
-                });
-              }).catchError((error) {
-                setState(() {
-                  updatingTitleId = 0;
-                });
-                SnackMessage.showSnackBar(error.toString());
-              });
+
+          return FutureBuilder<TmdbTitle>(
+            future: widget.listProvider.updateTitleDetails(
+              userService.accountId,
+              title,
+            ),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done ||
+                  !snapshot.hasData) {
+                return TitleCard(
+                    context: context,
+                    title: TmdbTitle(title: {}),
+                    isUpdatingWatchlist: false,
+                    isInWatchlist: false,
+                    onWatchlistPressed: () {});
+              }
+
+              final updatedTitle = snapshot.data!;
+              final isInWatchlist =
+                  Provider.of<TmdbWatchlistService>(context, listen: false)
+                      .titles
+                      .any((t) => t.id == updatedTitle.id);
+              TmdbUserService userService =
+                  Provider.of<TmdbUserService>(context, listen: false);
+
+              return TitleCard(
+                context: context,
+                title: updatedTitle,
+                isUpdatingWatchlist: updatingTitleId == updatedTitle.id,
+                isInWatchlist: isInWatchlist,
+                onWatchlistPressed: () {
+                  setState(() {
+                    updatingTitleId = updatedTitle.id;
+                  });
+                  Provider.of<TmdbWatchlistService>(context, listen: false)
+                      .updateWatchlistTitle(
+                    userService.accountId,
+                    userService.sessionId,
+                    updatedTitle,
+                    !isInWatchlist,
+                  )
+                      .then((value) async {
+                    setState(() {
+                      updatingTitleId = 0;
+                    });
+                  }).catchError((error) {
+                    setState(() {
+                      updatingTitleId = 0;
+                    });
+                    SnackMessage.showSnackBar(error.toString());
+                  });
+                },
+              );
             },
           );
         },
@@ -257,16 +288,22 @@ class _TitleListState extends State<TitleList> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> children = List.empty(growable: true);
+
+    if (widget.titles.isNotEmpty) {
+      children = [
+        _listControlPanel(),
+        const Divider(),
+        _infoLine(),
+        const Divider(),
+        _titleList(),
+      ];
+    }
+
     return Expanded(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          if (widget.titles.isNotEmpty) _listControlPanel(),
-          if (widget.titles.isNotEmpty) const Divider(),
-          if (widget.titles.isNotEmpty) _infoLine(),
-          if (widget.titles.isNotEmpty) const Divider(),
-          if (widget.titles.isNotEmpty) _titleList(),
-        ],
+        children: children,
       ),
     );
   }

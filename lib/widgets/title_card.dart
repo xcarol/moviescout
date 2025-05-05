@@ -8,27 +8,33 @@ import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
 
-// ignore: non_constant_identifier_names
-double CARD_HEIGHT = 160.0;
+// ignore: constant_identifier_names
+const double CARD_HEIGHT = 160.0;
 
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
-  final bool isUpdating;
+  final bool isUpdatingWatchlist;
   final bool isInWatchlist;
   final BuildContext context;
-  final VoidCallback onPressed;
+  final VoidCallback onWatchlistPressed;
 
   const TitleCard({
     super.key,
     required this.context,
     required TmdbTitle title,
-    required this.isUpdating,
+    required this.isUpdatingWatchlist,
     required this.isInWatchlist,
-    required this.onPressed,
+    required this.onWatchlistPressed,
   }) : _title = title;
 
   @override
   Widget build(BuildContext context) {
+    if (_title.id == 0) {
+      return SizedBox(
+          height: CARD_HEIGHT,
+          child: Center(child: CircularProgressIndicator()));
+    }
+
     return SizedBox(
       height: CARD_HEIGHT,
       child: Card(
@@ -250,7 +256,7 @@ class TitleCard extends StatelessWidget {
       );
     }
 
-    if (isUpdating) {
+    if (isUpdatingWatchlist) {
       return IconButton(
         icon: const Icon(Icons.hourglass_empty),
         onPressed: () {},
@@ -260,7 +266,7 @@ class TitleCard extends StatelessWidget {
     return IconButton(
       color: isInWatchlist ? Colors.red : Colors.green,
       icon: Icon(isInWatchlist ? Icons.close_sharp : Icons.add_sharp),
-      onPressed: onPressed,
+      onPressed: onWatchlistPressed,
     );
   }
 }

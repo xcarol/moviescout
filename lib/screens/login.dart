@@ -49,20 +49,32 @@ class _LoginState extends State<Login> {
   }
 
   void _completeLogin() async {
-    Map result = await Provider.of<TmdbUserService>(context, listen: false)
-        .completeLogin();
+    TmdbUserService userService =
+        Provider.of<TmdbUserService>(context, listen: false);
+    TmdbWatchlistService watchlistService =
+        Provider.of<TmdbWatchlistService>(context, listen: false);
+    TmdbRateslistService rateslistService =
+        Provider.of<TmdbRateslistService>(context, listen: false);
+
+    Map result = await userService.completeLogin();
 
     if (result['success']) {
       if (mounted) {
-        await Provider.of<TmdbWatchlistService>(context, listen: false)
-            .retrieveWatchlist(
-                Provider.of<TmdbUserService>(context, listen: false).accountId);
+        await watchlistService.retrieveWatchlist(
+          userService.accountId,
+          userService.sessionId,
+          Localizations.localeOf(context),
+          notify: true,
+        );
       }
 
       if (mounted) {
-        await Provider.of<TmdbRateslistService>(context, listen: false)
-            .retrieveRateslist(
-                Provider.of<TmdbUserService>(context, listen: false).accountId);
+        await rateslistService.retrieveRateslist(
+          userService.accountId,
+          userService.sessionId,
+          Localizations.localeOf(context),
+          notify: true,
+        );
       }
 
       SnackMessage.showSnackBar(loginSuccessMessage);
@@ -75,8 +87,8 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> login() async {
-    final tmdbService = Provider.of<TmdbUserService>(context, listen: false);
-    final result = await tmdbService.login();
+    final userService = Provider.of<TmdbUserService>(context, listen: false);
+    final result = await userService.login();
 
     if (result['success'] == false) {
       SnackMessage.showSnackBar(loginFailedMessage);
@@ -103,8 +115,8 @@ class _LoginState extends State<Login> {
 
   // This is a workaround for the Linux platform
   //
-  // When login in Linux, the TMDB Auth web page will try to open 
-  // the Android app, but it will not work on Linux, 
+  // When login in Linux, the TMDB Auth web page will try to open
+  // the Android app, but it will not work on Linux,
   // so close the browser (or tab) and complete the login by clicking this button.
   Widget _linuxCompleteLoginButton() {
     return ElevatedButton(

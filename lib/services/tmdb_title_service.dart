@@ -14,15 +14,6 @@ class TmdbTitleService extends TmdbBaseService {
     return PlatformDispatcher.instance.locale.languageCode;
   }
 
-  bool _isUpToDate(TmdbTitle title) {
-    return DateTime.now()
-            .difference(
-              DateTime.parse(title.lastUpdated),
-            )
-            .inDays <
-        DateTime.daysPerWeek;
-  }
-
   _getProviders(int titleId, String mediaType) async {
     final result = await get(
       _tmdbProviders
@@ -35,15 +26,13 @@ class TmdbTitleService extends TmdbBaseService {
     return {};
   }
 
-  Future<dynamic> getTitlesDetails(
-    List titles,
-  ) async {
-    for (int count = 0; count < titles.length; count += 1) {
-      final TmdbTitle title = titles[count];
-      final TmdbTitle details = await getTitleDetails(title);
-      titles[count] = details;
-    }
-    return titles;
+  static bool isUpToDate(TmdbTitle title) {
+    return DateTime.now()
+            .difference(
+              DateTime.parse(title.lastUpdated),
+            )
+            .inDays <
+        DateTime.daysPerWeek;
   }
 
   _retrieveTitleDetailsByLocale(
@@ -60,7 +49,7 @@ class TmdbTitleService extends TmdbBaseService {
   }
 
   Future<TmdbTitle> getTitleDetails(TmdbTitle title) async {
-    if (_isUpToDate(title)) {
+    if (isUpToDate(title)) {
       return title;
     }
 

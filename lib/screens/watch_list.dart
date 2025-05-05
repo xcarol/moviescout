@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
@@ -17,47 +16,62 @@ class WatchList extends StatefulWidget {
 }
 
 class _WatchListState extends State<WatchList> {
+  late Future<void> _init;
+
+  @override
+  void initState() {
+    super.initState();
+    _init = _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final userService = Provider.of<TmdbUserService>(context, listen: false);
+    await userService.setup();
+
+    if (mounted) {
+      final watchlistService =
+          Provider.of<TmdbWatchlistService>(context, listen: false);
+
+      await watchlistService.retrieveWatchlist(
+        userService.accountId,
+        userService.sessionId,
+        Localizations.localeOf(context),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Future.wait([
-          Provider.of<TmdbUserService>(context, listen: false)
-              .setup()
-              .then((_) {
-            if (context.mounted) {
-              return Provider.of<TmdbWatchlistService>(context, listen: false)
-                  .retrieveWatchlist(
-                      Provider.of<TmdbUserService>(context, listen: false)
-                          .accountId);
-            } else {
-              return null;
-            }
-          }),
-        ]),
-        builder: (context, snapshot) {
-          if (snapshot.data == null) {
-            return const Scaffold();
-          }
-          return Scaffold(
-            appBar: MainAppBar(
-              context: context,
-              title: AppLocalizations.of(context)!.watchlistTitle,
-            ),
-            drawer: AppDrawer(),
-            body: Center(child: body()),
-            bottomNavigationBar:
-                BottomBar(currentIndex: BottomBarIndex.indexWatchlist),
-          );
-        });
+      future: _init,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Scaffold(
+              body: Center(child: CircularProgressIndicator()));
+        }
+
+        return Consumer<TmdbWatchlistService>(
+          builder: (context, watchlistService, _) {
+            return Scaffold(
+              appBar: MainAppBar(
+                context: context,
+                title: AppLocalizations.of(context)!.watchlistTitle,
+              ),
+              drawer: AppDrawer(),
+              body: Center(child: body()),
+              bottomNavigationBar:
+                  BottomBar(currentIndex: BottomBarIndex.indexWatchlist),
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget body() {
-    return ListenableBuilder(
-      listenable: Provider.of<TmdbWatchlistService>(context, listen: false),
-      builder: (BuildContext context, Widget? child) {
-        if (Provider.of<TmdbWatchlistService>(context, listen: false)
-            .watchlist
-            .isEmpty) {
+    return Consumer<TmdbWatchlistService>(
+      builder: (context, watchlistService, child) {
+        if (watchlistService.titles.isEmpty) {
           return emptyBody();
         } else {
           return watchlistBody();
@@ -78,6 +92,9 @@ class _WatchListState extends State<WatchList> {
             Text(
               AppLocalizations.of(context)!.messageEmptyList2,
             ),
+            Text(
+              AppLocalizations.of(context)!.messageEmptyList3,
+            ),
           ],
         ),
       ],
@@ -85,23 +102,16 @@ class _WatchListState extends State<WatchList> {
   }
 
   Widget watchlistBody() {
-    return FutureBuilder(
-      future: TmdbTitleService().getTitlesDetails(
-          Provider.of<TmdbWatchlistService>(context, listen: false).watchlist),
-      builder: (context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
-        } else {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TitleList(titles: snapshot.data!),
-            ],
-          );
-        }
-      },
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        TitleList(
+          titles:
+              Provider.of<TmdbWatchlistService>(context, listen: false).titles,
+          listProvider:
+              Provider.of<TmdbWatchlistService>(context, listen: false),
+        ),
+      ],
     );
   }
 }
