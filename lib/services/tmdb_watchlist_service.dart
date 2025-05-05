@@ -8,6 +8,8 @@ const String _tmdbWatchlistMovies =
     'account/{ACCOUNT_ID}/movie/watchlist?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}';
 const String _tmdbWatchlistTv =
     'account/{ACCOUNT_ID}/tv/watchlist?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}';
+const String _updateWatchlistTitle =
+    'account/{ACCOUNT_ID}/watchlist?session_id={SESSION_ID}';
 
 class TmdbWatchlistService extends TmdbListService {
   TmdbWatchlistService(super.listName);
@@ -44,17 +46,26 @@ class TmdbWatchlistService extends TmdbListService {
   }
 
   Future<dynamic> _updateTitleInWatchlistToTmdb(
-      String accountId, int id, String mediaType, bool add) async {
-    return post('account/$accountId/watchlist',
+    String accountId,
+    String sessionId,
+    int id,
+    String mediaType,
+    bool add,
+  ) async {
+    return post(
+        _updateWatchlistTitle
+            .replaceFirst('{ACCOUNT_ID}', accountId)
+            .replaceFirst('{SESSION_ID}', sessionId),
         {'media_type': mediaType, 'media_id': id, 'watchlist': add});
   }
 
   Future<void> updateWatchlistTitle(
-      String accountId, TmdbTitle title, bool add) async {
+      String accountId, String sessionId, TmdbTitle title, bool add) async {
     try {
-      await updateTitle(accountId, title, add, (String accountId) async {
+      await updateTitle(accountId, sessionId, title, add,
+          (String accountId, String sessionId) async {
         return _updateTitleInWatchlistToTmdb(
-            accountId, title.id, title.mediaType, add);
+            accountId, sessionId, title.id, title.mediaType, add);
       });
     } catch (error) {
       SnackMessage.showSnackBar(
