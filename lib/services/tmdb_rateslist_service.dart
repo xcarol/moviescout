@@ -8,9 +8,11 @@ import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 
 const String _tmdbRateslistMovies =
-    'account/{ACCOUNT_ID}/rated/movies?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}';
+    'account/{ACCOUNT_ID}/movie/rated?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}';
 const String _tmdbRateslistTv =
-    'account/{ACCOUNT_ID}/tv/watchlist?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}';
+    'account/{ACCOUNT_ID}/tv/rated?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}';
+const String _rateMovie = 'movie/{ID}/rating?session_id={SESSION_ID}';
+const String _rateTv = 'tv/{ID}/rating?session_id={SESSION_ID}';
 
 class TmdbRateslistService extends TmdbListService {
   TmdbRateslistService(super.listName);
@@ -59,20 +61,41 @@ class TmdbRateslistService extends TmdbListService {
   }
 
   Future<dynamic> _updateTitleRateToTmdb(
-      String accountId, int id, String mediaType, int rate) async {
+    String accountId,
+    String sessionId,
+    int id,
+    String mediaType,
+    int rate,
+  ) async {
     if (rate > 0) {
       if (mediaType == 'movie') {
-        return post('movie/$id/rating', {'value': rate});
+        return post(
+            _rateMovie
+                .replaceFirst('{ID}', id.toString())
+                .replaceFirst('{SESSION_ID}', sessionId),
+            {'value': rate});
       } else if (mediaType == 'tv') {
-        return post('tv/$id/rating', {'value': rate});
+        return post(
+            _rateTv
+                .replaceFirst('{ID}', id.toString())
+                .replaceFirst('{SESSION_ID}', sessionId),
+            {'value': rate});
       }
       HttpException(
           'Invalid media type: $mediaType. Expected "movie" or "tv".');
     } else {
       if (mediaType == 'movie') {
-        return delete('movie/$id/rating', {});
+        return delete(
+            _rateMovie
+                .replaceFirst('{ID}', id.toString())
+                .replaceFirst('{SESSION_ID}', sessionId),
+            {});
       } else if (mediaType == 'tv') {
-        return delete('tv/$id/rating', {});
+        return delete(
+            _rateTv
+                .replaceFirst('{ID}', id.toString())
+                .replaceFirst('{SESSION_ID}', sessionId),
+            {});
       }
       HttpException(
           'Invalid media type: $mediaType. Expected "movie" or "tv".');
@@ -81,6 +104,7 @@ class TmdbRateslistService extends TmdbListService {
 
   Future<void> updateTitleRate(
     String accountId,
+    String sessionId,
     TmdbTitle title,
     int rating,
   ) async {
@@ -88,9 +112,10 @@ class TmdbRateslistService extends TmdbListService {
       if (rating > 0) {
         title.rating = rating.toDouble();
       }
-      await updateTitle(accountId, title, rating > 0, (String accountId) async {
+      await updateTitle(accountId, sessionId, title, rating > 0,
+          (String accountId, String sessionId) async {
         return _updateTitleRateToTmdb(
-            accountId, title.id, title.mediaType, rating);
+            accountId, sessionId, title.id, title.mediaType, rating);
       });
     } catch (error) {
       SnackMessage.showSnackBar(
