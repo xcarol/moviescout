@@ -51,7 +51,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
 
     _updateLocalList();
-    
+
     if (notify) {
       notifyListeners();
     }
@@ -132,9 +132,17 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     _lastUpdated = DateTime.now().toIso8601String();
   }
 
-  Future<void> updateTitle(String accountId, TmdbTitle title, bool add,
-      Future<dynamic> Function(String accountId) updateTitleToServer) async {
-    final result = await updateTitleToServer(accountId);
+  Future<void> updateTitle(
+    String accountId,
+    String sessionId,
+    TmdbTitle title,
+    bool add,
+    Future<dynamic> Function(
+      String accountId,
+      String sessionId,
+    ) updateTitleToServer,
+  ) async {
+    final result = await updateTitleToServer(accountId, sessionId);
     if (result.statusCode == 200 || result.statusCode == 201) {
       _titles.removeWhere((element) => element.id == title.id);
 

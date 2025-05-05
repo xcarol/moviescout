@@ -178,6 +178,8 @@ class _TitleListState extends State<TitleList> {
                   Provider.of<TmdbWatchlistService>(context, listen: false)
                       .titles
                       .any((t) => t.id == updatedTitle.id);
+              TmdbUserService userService =
+                  Provider.of<TmdbUserService>(context, listen: false);
 
               return TitleCard(
                 context: context,
@@ -190,8 +192,8 @@ class _TitleListState extends State<TitleList> {
                   });
                   Provider.of<TmdbWatchlistService>(context, listen: false)
                       .updateWatchlistTitle(
-                    Provider.of<TmdbUserService>(context, listen: false)
-                        .accountId,
+                    userService.accountId,
+                    userService.sessionId,
                     updatedTitle,
                     !isInWatchlist,
                   )

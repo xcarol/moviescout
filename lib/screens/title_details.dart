@@ -134,6 +134,8 @@ class _TitleDetailsState extends State<TitleDetails> {
                               .updateTitleRate(
                             Provider.of<TmdbUserService>(context, listen: false)
                                 .accountId,
+                            Provider.of<TmdbUserService>(context, listen: false)
+                                .sessionId,
                             title,
                             rating,
                           );

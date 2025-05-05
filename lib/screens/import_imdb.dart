@@ -137,6 +137,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
         await watchlistService.updateWatchlistTitle(
           userService.accountId,
+          userService.sessionId,
           watchlistService.titles.first,
           false,
         );
@@ -171,7 +172,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
       while (rateslistService.titles.isNotEmpty) {
         if (!context.mounted || _operationInProgress == false) {
-          return;
+          break;
         }
 
         setState(() {
@@ -182,6 +183,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
         await rateslistService.updateTitleRate(
           userService.accountId,
+          userService.sessionId,
           rateslistService.titles.first,
           0,
         );
@@ -426,6 +428,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
       final tmdbBaseService = TmdbBaseService();
       final tmdbSearchService = TmdbSearchService();
+      final TmdbUserService tmdbUserService =
+          Provider.of<TmdbUserService>(context, listen: false);
 
       for (int index = 0; index < imdbIds.length; index++) {
         setState(() {
@@ -463,10 +467,11 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
           await Provider.of<TmdbWatchlistService>(context, listen: false)
               .updateWatchlistTitle(
-                  Provider.of<TmdbUserService>(context, listen: false)
-                      .accountId,
-                  titlesFromId.first,
-                  true);
+            tmdbUserService.accountId,
+            tmdbUserService.sessionId,
+            titlesFromId.first,
+            true,
+          );
 
           setState(() {
             if (Provider.of<TmdbWatchlistService>(context, listen: false)
@@ -506,6 +511,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
       final tmdbBaseService = TmdbBaseService();
       final tmdbSearchService = TmdbSearchService();
+      final tmdbUserService =
+          Provider.of<TmdbUserService>(context, listen: false);
 
       for (int index = 0; index < imdbIds.length; index++) {
         setState(() {
@@ -542,10 +549,11 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
           await Provider.of<TmdbRateslistService>(context, listen: false)
               .updateTitleRate(
-                  Provider.of<TmdbUserService>(context, listen: false)
-                      .accountId,
-                  titlesFromId.first,
-                  imdbIds[index][rateIndex]);
+            tmdbUserService.accountId,
+            tmdbUserService.sessionId,
+            titlesFromId.first,
+            imdbIds[index][rateIndex],
+          );
 
           setState(() {
             if (Provider.of<TmdbRateslistService>(context, listen: false)
