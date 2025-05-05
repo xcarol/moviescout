@@ -2,6 +2,7 @@
     "appTitle": "Movie Scout",
     "messageEmptyList": "No films slected yet.",
     "messageEmptyList2": "Do a search using the magnifying glass in the bottom bar.",
+    "messageEmptyList3": "Log in or register to TMDB from the side menu.",
     "search": "Search for a title",
     "searchTitle": "Search",
     "back": "Back",

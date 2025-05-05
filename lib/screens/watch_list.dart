@@ -92,6 +92,9 @@ class _WatchListState extends State<WatchList> {
             Text(
               AppLocalizations.of(context)!.messageEmptyList2,
             ),
+            Text(
+              AppLocalizations.of(context)!.messageEmptyList3,
+            ),
           ],
         ),
       ],
