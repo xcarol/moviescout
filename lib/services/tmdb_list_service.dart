@@ -75,13 +75,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
     for (var element in movies) {
       element['media_type'] = 'movie';
-      element['last_updated'] = DateTime.now().toString();
       serverList.add(TmdbTitle(title: element));
     }
 
     for (var element in tv) {
       element['media_type'] = 'tv';
-      element['last_updated'] = DateTime.now().toString();
       serverList.add(TmdbTitle(title: element));
     }
 
