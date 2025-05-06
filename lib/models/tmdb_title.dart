@@ -21,6 +21,9 @@ const _production_companies = 'production_companies';
 const _production_countries = 'production_countries';
 const _release_date = 'release_date';
 const _rating = 'rating';
+const _account_rating = 'account_rating';
+const _account_rating_date = 'created_at';
+const _account_rating_value = 'value';
 const _revenue = 'revenue';
 const _runtime = 'runtime';
 const _spoken_languages = 'spoken_languages';
@@ -135,11 +138,17 @@ class TmdbTitle {
   }
 
   double get rating {
-    return _tmdbTitle[_rating] ?? 0;
+    return _tmdbTitle[_account_rating] is Map &&
+            _tmdbTitle[_account_rating][_account_rating_value] != null
+        ? _tmdbTitle[_account_rating][_account_rating_value]
+        : 0.0;
   }
 
   set rating(double rate) {
-    _tmdbTitle[_rating] = rate;
+    _tmdbTitle[_account_rating] = {
+      _account_rating_date: DateTime.now().toIso8601String(),
+      _account_rating_value: rate
+    };
   }
 
   String get firstAirDate {
