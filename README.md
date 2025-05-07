@@ -126,7 +126,7 @@ Create a file called _.env_ in the root directory and add the key:
 TMDB_API_RAT=apiReadAccessTokenGotFromTmdb
 ``` 
 
-## Build and run Android App
+## Application signing and publishing
 
 Setup this file in the path _./android_:  
 
@@ -137,17 +137,7 @@ Setup this file in the path _./android_:
     keyAlias=upload  
     storeFile=/home/xcarol/workspace/moviescout/upload-keystore.jks (Stored in BitWarden with the name _Android signing_)  
 
-### Build
-
-#### Bundle
-
-`flutter build appbundle --release`
-
-## Application signing and publishing
-
-The keystore (and password) used for the app signing is at the Bitwarden vault. These are the same used in the _key.properties_ file.  
-
-## Check android gradle.build
+### Check android gradle.build
 
 This attribute shuld be like this
 ```
@@ -162,7 +152,6 @@ it is worth comparing it with the same Overmaps file to imitate it as much as po
 ### Publishing a new version for internal test
 
 - Modify the last (build) number in _version: 1.0.0+**X**_ at the _pubspec.yaml_ file before building the new .aab bundle.
-
-- Build the bundle as explained above.
-
+- Build the bundle `flutter build appbundle --release`.
 - Go to: [Create an internal test version](https://play.google.com/console/u/0/developers/5602401961225582177/app/4972075179053080011/app-dashboard) to upload it.
+
