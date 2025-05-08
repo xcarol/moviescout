@@ -5,7 +5,7 @@ const _name = 'name';
 
 class TmdbGenre {
   final Map _genre;
-  const TmdbGenre({required Map<dynamic, dynamic> genre}) : _genre = genre;
+  const TmdbGenre({required Map<int, String> genre}) : _genre = genre;
 
   int get id {
     return _genre[_id] ?? -1;
