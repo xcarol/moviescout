@@ -6,14 +6,6 @@ const String _tmdbDetails = '/{MEDIA_TYPE}/{ID}?language={LOCALE}';
 const String _tmdbProviders = '/{MEDIA_TYPE}/{ID}/watch/providers';
 
 class TmdbTitleService extends TmdbBaseService {
-  String _getCountryCode() {
-    return PlatformDispatcher.instance.locale.countryCode ?? "US";
-  }
-
-  String _getLanguageCode() {
-    return PlatformDispatcher.instance.locale.languageCode;
-  }
-
   _getProviders(int titleId, String mediaType) async {
     final result = await get(
       _tmdbProviders
@@ -21,7 +13,7 @@ class TmdbTitleService extends TmdbBaseService {
           .replaceFirst('{ID}', titleId.toString()),
     );
     if (result.statusCode == 200) {
-      return body(result)['results'][_getCountryCode()];
+      return body(result)['results'][getCountryCode()];
     }
     return {};
   }
@@ -61,7 +53,7 @@ class TmdbTitleService extends TmdbBaseService {
     final result = await _retrieveTitleDetailsByLocale(
       title.id,
       mediaType,
-      '${_getLanguageCode()}-${_getCountryCode()}',
+      '${getLanguageCode()}-${getCountryCode()}',
     );
 
     if (result.statusCode != 200) {
@@ -74,7 +66,7 @@ class TmdbTitleService extends TmdbBaseService {
       final result = await _retrieveTitleDetailsByLocale(
         title.id,
         mediaType,
-        _getCountryCode().toLowerCase(),
+        getCountryCode().toLowerCase(),
       );
 
       if (result.statusCode == 200) {
