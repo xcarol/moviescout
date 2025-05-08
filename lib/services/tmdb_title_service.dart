@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 

@@ -20,26 +20,30 @@ class TmdbGenreService extends TmdbBaseService {
 
     List<String> genreUrls = [_tmdbMovieGenres, _tmdbTvGenres];
 
+    _genreMap.clear();
     for (String url in genreUrls) {
       dynamic response = await get(url.replaceFirst(
           '{LOCALE}', '${getLanguageCode()}-${getCountryCode()}'));
 
       if (response.statusCode == 200) {
-        _genreMap.clear();
+        List<dynamic> genres =
+            (jsonDecode((response.body)) as Map<String, dynamic>)['genres'];
 
-        List<dynamic> genres = jsonDecode((response.body)['genres']);
-
-        if (genres[0]['name'].isEmpty) {
+        if (genres.isEmpty ||
+            genres[0]['name'] == null ||
+            genres[0]['name'].isEmpty) {
           response = await await get(
               url.replaceFirst('{LOCALE}', getCountryCode().toLowerCase()));
 
           if (response.statusCode == 200) {
-            genres = jsonDecode((response.body)['genres']);
+            genres =
+                (jsonDecode((response.body)) as Map<String, dynamic>)['genres'];
             if (genres[0]['name'].isEmpty) {
               response = await await get(url.replaceFirst('{LOCALE}', 'en'));
 
               if (response.statusCode == 200) {
-                genres = jsonDecode((response.body)['genres']);
+                genres = (jsonDecode((response.body))
+                    as Map<String, dynamic>)['genres'];
               }
             }
           }
@@ -58,7 +62,7 @@ class TmdbGenreService extends TmdbBaseService {
 
   String? getName(int id) => _genreMap[id];
 
-  List<TmdbGenre> getGenresFromIds(List<int> ids) {
+  List<TmdbGenre> getGenresFromIds(List<dynamic> ids) {
     return ids
         .map((id) => _genreMap.containsKey(id)
             ? TmdbGenre(genre: {id: _genreMap[id]!})
