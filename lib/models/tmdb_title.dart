@@ -1,13 +1,14 @@
 // ignore_for_file: constant_identifier_names, unused_element
 
-import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_providers.dart';
+import 'package:moviescout/services/tmbd_genre_servcie.dart';
 
 const _adult = 'adult';
 const _backdrop_path = 'backdrop_path';
 const _belongs_to_collection = 'belongs_to_collection';
 const _budget = 'budget';
 const _genres = 'genres';
+const _genre_ids = 'genre_ids';
 const _homepage = 'homepage';
 const _id = 'id';
 const _imdb_id = 'imdb_id';
@@ -122,15 +123,20 @@ class TmdbTitle {
   }
 
   List get genres {
-    List genresList = List.empty(growable: true);
+    if (_tmdbTitle[_genre_ids] == null) {
+      _tmdbTitle[_genre_ids] = <int>[];
+    }
 
     if (_tmdbTitle[_genres] is List) {
       for (var genre in _tmdbTitle[_genres]) {
-        genresList.add(TmdbGenre(genre: genre));
+        if (genre[_id] != null &&
+            !(_tmdbTitle[_genre_ids] as List).contains(genre[_id])) {
+          (_tmdbTitle[_genre_ids] as List).add(genre[_id]);
+        }
       }
     }
 
-    return genresList;
+    return  TmdbGenreService().getGenresFromIds(_tmdbTitle[_genre_ids]);
   }
 
   String get releaseDate {

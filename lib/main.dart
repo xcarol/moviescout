@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/tmbd_genre_servcie.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
@@ -39,6 +40,7 @@ void main() async {
 
   await dotenv.load(fileName: ".env");
   await PreferencesService().init();
+  await TmdbGenreService().init();
 
   runApp(MultiProvider(
     providers: [

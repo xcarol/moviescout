@@ -17,6 +17,14 @@ class TmdbBaseService {
     return jsonDecode(response.body);
   }
 
+  String getCountryCode() {
+    return PlatformDispatcher.instance.locale.countryCode ?? "US";
+  }
+
+  String getLanguageCode() {
+    return PlatformDispatcher.instance.locale.languageCode;
+  }
+
   Future<dynamic> get(String query,
       {ApiVersion version = ApiVersion.v3}) async {
     try {
