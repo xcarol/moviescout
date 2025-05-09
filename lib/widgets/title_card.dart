@@ -5,6 +5,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/cached_network_image.dart';
 import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
 
@@ -75,15 +76,37 @@ class TitleCard extends StatelessWidget {
       return const SizedBox();
     }
 
+    List<Widget> children = [
+      Icon(Icons.star),
+      const SizedBox(width: 5),
+      Text(_title.voteAverage.toStringAsFixed(2)),
+    ];
+
+    TmdbRateslistService rateslistService =
+        Provider.of<TmdbRateslistService>(context, listen: true);
+
+    TmdbTitle userRatedTitle = rateslistService.titles.isNotEmpty
+        ? rateslistService.titles.firstWhere((title) => title.id == _title.id,
+            orElse: () => TmdbTitle(title: {}))
+        : TmdbTitle(title: {});
+
+    if (userRatedTitle.id > 0) {
+      children.addAll([
+        const SizedBox(width: 20),
+        Icon(Icons.star, color: Colors.amber),
+        const SizedBox(width: 5),
+        Text(
+          userRatedTitle.rating.toStringAsFixed(2),
+          style: TextStyle(color: Colors.amber),
+        ),
+      ]);
+    }
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Row(
-          children: [
-            Icon(Icons.star),
-            const SizedBox(width: 5),
-            Text(_title.voteAverage.toStringAsFixed(2)),
-          ],
+          children: children,
         ),
       ],
     );
