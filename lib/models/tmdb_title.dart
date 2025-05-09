@@ -1,5 +1,6 @@
 // ignore_for_file: constant_identifier_names, unused_element
 
+import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_providers.dart';
 import 'package:moviescout/services/tmbd_genre_servcie.dart';
 
@@ -122,7 +123,7 @@ class TmdbTitle {
     return _tmdbTitle[_vote_average] ?? 0.0;
   }
 
-  List get genres {
+  List<TmdbGenre> get genres {
     if (_tmdbTitle[_genre_ids] == null) {
       _tmdbTitle[_genre_ids] = <int>[];
     }
