@@ -44,19 +44,22 @@ class TmdbGenreService extends TmdbBaseService {
               if (response.statusCode == 200) {
                 genres = (jsonDecode((response.body))
                     as Map<String, dynamic>)['genres'];
+              } else {
+                throw Exception('Failed to load genres');
               }
             }
+          } else {
+            throw Exception('Failed to load genres');
           }
         }
 
         for (var genre in genres) {
           _genreMap[genre['id']] = genre['name'];
         }
-
-        _isLoaded = true;
       } else {
         throw Exception('Failed to load genres');
       }
+      _isLoaded = true;
     }
   }
 
