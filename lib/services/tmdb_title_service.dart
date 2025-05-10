@@ -59,7 +59,9 @@ class TmdbTitleService extends TmdbBaseService {
       return TmdbTitle(title: {});
     }
 
-    final titleDetails = body(result);
+    final Map titleDetails = title.map;
+
+    titleDetails.addAll(body(result));
 
     if (titleDetails['overview'].isEmpty) {
       final result = await _retrieveTitleDetailsByLocale(
