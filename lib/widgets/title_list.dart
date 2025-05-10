@@ -76,8 +76,9 @@ class _TitleListState extends State<TitleList> {
     ];
   }
 
-  void _sortTitles(List<TmdbTitle> titles) {
+  List<TmdbTitle> _sortTitles(List<TmdbTitle> titles) {
     final ascending = _isSortAsc ? 1 : -1;
+    final titlesToSort = titles;
 
     final sortFunctions = {
       AppLocalizations.of(context)!.sortAlphabetically:
@@ -90,8 +91,10 @@ class _TitleListState extends State<TitleList> {
           _compareRuntimes(a, b),
     };
 
-    titles.sort(
+    titlesToSort.sort(
         (a, b) => ascending * (sortFunctions[selectedSort]?.call(a, b) ?? 0));
+
+    return titlesToSort;
   }
 
   int _compareReleaseDates(TmdbTitle a, TmdbTitle b) {
@@ -280,8 +283,8 @@ class _TitleListState extends State<TitleList> {
           .toList();
     }
 
-    _sortTitles(titles);
     titles = _filterGenres(titles);
+    titles = _sortTitles(titles);
 
     return titles;
   }
