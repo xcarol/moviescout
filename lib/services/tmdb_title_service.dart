@@ -71,6 +71,7 @@ class TmdbTitleService extends TmdbBaseService {
       if (result.statusCode == 200) {
         final details = body(result);
         if (details['overview'].isNotEmpty) {
+          titleDetails['title'] = details['title'];
           titleDetails['overview'] = details['overview'];
         }
       }
@@ -86,6 +87,7 @@ class TmdbTitleService extends TmdbBaseService {
       if (result.statusCode == 200) {
         final details = body(result);
         if (details['overview'].isNotEmpty) {
+          titleDetails['title'] = details['title'];
           titleDetails['overview'] = details['overview'];
         }
       }
