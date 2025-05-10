@@ -39,6 +39,12 @@ class TmdbTitleService extends TmdbBaseService {
     );
   }
 
+  Future<void> updateTitles(List<TmdbTitle> titles) async {
+    for (TmdbTitle title in titles) {
+      getTitleDetails(title).then((t) => title = t);
+    }
+  }
+
   Future<TmdbTitle> getTitleDetails(TmdbTitle title) async {
     if (isUpToDate(title)) {
       return title;
