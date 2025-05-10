@@ -72,7 +72,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         const SizedBox(height: 10),
         _genres(title),
         const SizedBox(height: 10),
-        _descrition(title),
+        _description(title),
         const SizedBox(height: 30),
         _providers(title),
       ],
@@ -235,7 +235,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     return Text(title.duration);
   }
 
-  Text _descrition(TmdbTitle title) {
+  Text _description(TmdbTitle title) {
     return Text(
       title.overview.isEmpty
           ? AppLocalizations.of(context)!.missingDescription
