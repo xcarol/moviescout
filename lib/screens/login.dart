@@ -60,20 +60,19 @@ class _LoginState extends State<Login> {
 
     if (result['success']) {
       if (mounted) {
-        await watchlistService.retrieveWatchlist(
+        watchlistService.retrieveWatchlist(
           userService.accountId,
           userService.sessionId,
           Localizations.localeOf(context),
           notify: true,
+          forceUpdate: true,
         );
-      }
-
-      if (mounted) {
-        await rateslistService.retrieveRateslist(
+        rateslistService.retrieveRateslist(
           userService.accountId,
           userService.sessionId,
           Localizations.localeOf(context),
           notify: true,
+          forceUpdate: true,
         );
       }
 
