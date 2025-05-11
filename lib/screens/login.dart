@@ -112,12 +112,12 @@ class _LoginState extends State<Login> {
     );
   }
 
-  // This is a workaround for the Linux platform
+  // This is a workaround for the Linux & Windows platforms
   //
   // When login in Linux, the TMDB Auth web page will try to open
-  // the Android app, but it will not work on Linux,
+  // the Android app (in Windows does nothing), but it will not work on Linux/Windows,
   // so close the browser (or tab) and complete the login by clicking this button.
-  Widget _linuxCompleteLoginButton() {
+  Widget _completeLoginButton() {
     return ElevatedButton(
       onPressed: _completeLogin,
       child: Text(AppLocalizations.of(context)!.completeLoginToTmdb),
@@ -133,8 +133,9 @@ class _LoginState extends State<Login> {
           child: Text(AppLocalizations.of(context)!.loginToTmdb),
         ),
         const SizedBox(height: 20),
-        if (defaultTargetPlatform == TargetPlatform.linux)
-          _linuxCompleteLoginButton(),
+        if (defaultTargetPlatform == TargetPlatform.linux ||
+            defaultTargetPlatform == TargetPlatform.windows)
+          _completeLoginButton(),
         const SizedBox(height: 20),
         ElevatedButton(
           onPressed: () =>
