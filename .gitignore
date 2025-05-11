@@ -19,6 +19,9 @@ firebase.json
 .swiftpm/
 migrate_working_dir/
 
+# Windows related
+.vs
+
 # IntelliJ related
 *.iml
 *.ipr
