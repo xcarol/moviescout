@@ -287,8 +287,8 @@ class TitleCard extends StatelessWidget {
     }
 
     return IconButton(
-      color: isInWatchlist ? Colors.red : Colors.green,
-      icon: Icon(isInWatchlist ? Icons.close_sharp : Icons.add_sharp),
+      color: isInWatchlist ? Colors.amber : Colors.grey,
+      icon: Icon(Icons.remove_red_eye),
       onPressed: onWatchlistPressed,
     );
   }
