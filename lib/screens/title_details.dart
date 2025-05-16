@@ -11,6 +11,7 @@ import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/rate_form.dart';
+import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:provider/provider.dart';
 
 class TitleDetails extends StatefulWidget {
@@ -72,10 +73,10 @@ class _TitleDetailsState extends State<TitleDetails> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _releaseDates(title),
-            Text(' - '),
-            _duration(title),
+            Text('${_releaseDates(title)} - ${_duration(title)}'),
+            watchlistButton(context, title),
           ],
         ),
         const SizedBox(height: 10),
@@ -211,7 +212,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  Text _releaseDates(TmdbTitle title) {
+  String _releaseDates(TmdbTitle title) {
     String text;
 
     if (title.isMovie) {
@@ -220,7 +221,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       text = _tvShowDates(title);
     }
 
-    return Text(text);
+    return text;
   }
 
   String _movieDate(TmdbTitle title) {
@@ -242,8 +243,8 @@ class _TitleDetailsState extends State<TitleDetails> {
     return text;
   }
 
-  Text _duration(TmdbTitle title) {
-    return Text(title.duration);
+  String _duration(TmdbTitle title) {
+    return title.duration;
   }
 
   Text _description(TmdbTitle title) {

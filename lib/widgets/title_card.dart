@@ -4,10 +4,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/cached_network_image.dart';
-import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
-import 'package:moviescout/services/tmdb_user_service.dart';
-import 'package:moviescout/services/tmdb_watchlist_service.dart';
+import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:provider/provider.dart';
 
 // ignore: constant_identifier_names
@@ -225,7 +223,7 @@ class TitleCard extends StatelessWidget {
         ),
         Row(
           children: [
-            watchlistButton(),
+            watchlistButton(context, _title),
             const SizedBox(width: 8),
           ],
         ),
@@ -265,33 +263,5 @@ class TitleCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Widget watchlistButton() {
-    if (Provider.of<TmdbUserService>(context, listen: false).user == null) {
-      return IconButton(
-        icon: const Icon(Icons.highlight_off),
-        onPressed: () {
-          SnackMessage.showSnackBar(
-              AppLocalizations.of(context)!.signInToWatchlist);
-        },
-      );
-    }
-
-    if (isUpdatingWatchlist) {
-      return IconButton(
-        icon: const Icon(Icons.hourglass_empty),
-        onPressed: () {},
-      );
-    }
-
-    return Consumer<TmdbWatchlistService>(builder: (_, watchlistService, __) {
-      bool isInWatchList = watchlistService.contains(_title);
-      return IconButton(
-        color: isInWatchList ? Colors.amber : Colors.grey,
-        icon: Icon(Icons.remove_red_eye),
-        onPressed: () => onWatchlistPressed(isInWatchList),
-      );
-    });
   }
 }
