@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
-import 'package:moviescout/services/cached_network_image.dart';
+import 'package:moviescout/services/network_image_cache.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:provider/provider.dart';
@@ -122,7 +122,7 @@ class TitleCard extends StatelessWidget {
 
     return AspectRatio(
       aspectRatio: 2 / 3,
-      child: CachedNetworkImage(
+      child: NetworkImageCache(
         posterPath,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
@@ -251,7 +251,7 @@ class TitleCard extends StatelessWidget {
       child: SizedBox(
         width: 30,
         height: 30,
-        child: CachedNetworkImage(
+        child: NetworkImageCache(
           provider.logoPath,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
