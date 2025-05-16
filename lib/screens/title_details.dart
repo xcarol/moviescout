@@ -114,7 +114,7 @@ class _TitleDetailsState extends State<TitleDetails> {
               children: [
                 Icon(Icons.star, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 5),
-                if (ratingService.titles.contains(title))
+                if (ratingService.contains(title))
                   Padding(
                     padding: EdgeInsets.only(right: 10),
                     child: Text(
