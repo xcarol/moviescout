@@ -7,6 +7,7 @@ import 'package:moviescout/services/cached_network_image.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
+import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:provider/provider.dart';
 
 // ignore: constant_identifier_names
@@ -15,16 +16,14 @@ const double CARD_HEIGHT = 160.0;
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
   final bool isUpdatingWatchlist;
-  final bool isInWatchlist;
   final BuildContext context;
-  final VoidCallback onWatchlistPressed;
+  final void Function(bool) onWatchlistPressed;
 
   const TitleCard({
     super.key,
     required this.context,
     required TmdbTitle title,
     required this.isUpdatingWatchlist,
-    required this.isInWatchlist,
     required this.onWatchlistPressed,
   }) : _title = title;
 
@@ -268,7 +267,7 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  IconButton watchlistButton() {
+  Widget watchlistButton() {
     if (Provider.of<TmdbUserService>(context, listen: false).user == null) {
       return IconButton(
         icon: const Icon(Icons.highlight_off),
@@ -286,10 +285,13 @@ class TitleCard extends StatelessWidget {
       );
     }
 
-    return IconButton(
-      color: isInWatchlist ? Colors.amber : Colors.grey,
-      icon: Icon(Icons.remove_red_eye),
-      onPressed: onWatchlistPressed,
-    );
+    return Consumer<TmdbWatchlistService>(builder: (_, watchlistService, __) {
+      bool isInWatchList = watchlistService.contains(_title);
+      return IconButton(
+        color: isInWatchList ? Colors.amber : Colors.grey,
+        icon: Icon(Icons.remove_red_eye),
+        onPressed: () => onWatchlistPressed(isInWatchList),
+      );
+    });
   }
 }

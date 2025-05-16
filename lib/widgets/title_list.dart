@@ -150,15 +150,10 @@ class _TitleListState extends State<TitleList> {
                     context: context,
                     title: TmdbTitle(title: {}),
                     isUpdatingWatchlist: false,
-                    isInWatchlist: false,
-                    onWatchlistPressed: () {});
+                    onWatchlistPressed: (isInWatchlist) {});
               }
 
               final updatedTitle = snapshot.data!;
-              final isInWatchlist =
-                  Provider.of<TmdbWatchlistService>(context, listen: false)
-                      .titles
-                      .any((t) => t.id == updatedTitle.id);
               TmdbUserService userService =
                   Provider.of<TmdbUserService>(context, listen: false);
 
@@ -166,8 +161,7 @@ class _TitleListState extends State<TitleList> {
                 context: context,
                 title: updatedTitle,
                 isUpdatingWatchlist: _updatingTitleId == updatedTitle.id,
-                isInWatchlist: isInWatchlist,
-                onWatchlistPressed: () {
+                onWatchlistPressed: (isInWatchlist) {
                   setState(() {
                     _updatingTitleId = updatedTitle.id;
                   });
