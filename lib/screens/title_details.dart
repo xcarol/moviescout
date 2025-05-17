@@ -255,67 +255,58 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  Column _providers(TmdbTitle title) {
+  Widget _providers(TmdbTitle title) {
     List<Widget> providers = [];
 
     if (title.providers.flatrate.isNotEmpty) {
-      providers += _providersByType(
+      providers.add(_providersByType(
         AppLocalizations.of(context)!.flatrateProviders,
         title.providers.flatrate,
-      );
+      ));
+      providers.add(const SizedBox(width: 50));
     }
 
     if (title.providers.rent.isNotEmpty) {
-      providers += _providersByType(
+      providers.add(_providersByType(
         AppLocalizations.of(context)!.rentProviders,
         title.providers.rent,
-      );
+      ));
+      providers.add(const SizedBox(width: 50));
     }
 
     if (title.providers.buy.isNotEmpty) {
-      providers += _providersByType(
+      providers.add(_providersByType(
         AppLocalizations.of(context)!.buyProviders,
         title.providers.buy,
-      );
+      ));
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: providers,
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(children: providers),
     );
   }
 
-  List<Widget> _providersByType(String typeName, List<TmdbProvider> providers) {
-    return [
+  Widget _providersByType(String typeName, List<TmdbProvider> providers) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
         typeName,
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 5),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Flexible(
-            child: _providersRow(providers),
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
-    ];
+      _providersRow(providers),
+    ]);
   }
 
   Widget _providersRow(List<TmdbProvider> providers) {
     if (providers.isEmpty) {
       return const SizedBox.shrink();
     }
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: (providers as List?)
-                ?.map<Widget>((provider) => _providerLogo(provider))
-                .toList() ??
-            [],
-      ),
+    return Row(
+      children: (providers as List?)
+              ?.map<Widget>((provider) => _providerLogo(provider))
+              .toList() ??
+          [],
     );
   }
 
