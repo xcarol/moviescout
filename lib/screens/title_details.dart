@@ -68,10 +68,45 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  _details(TmdbTitle title) {
+  Widget _infoTitleCountryLanguage(TmdbTitle title) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+              AppLocalizations.of(context)!.originaTitle,
+              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+            ),
+            Text(title.originalName),
+          ]),
+          const SizedBox(width: 20),
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+              AppLocalizations.of(context)!.originalLanguage,
+              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+            ),
+            Text(title.originalLanguage),
+          ]),
+          const SizedBox(width: 20),
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+              AppLocalizations.of(context)!.originCountry,
+              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+            ),
+            Text(title.originCountry),
+          ]),
+        ],
+      ),
+    );
+  }
+
+  Widget _details(TmdbTitle title) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        _infoTitleCountryLanguage(title),
+        const Divider(),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

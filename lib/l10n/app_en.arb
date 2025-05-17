@@ -55,5 +55,8 @@
     "watchlistTitle": "Watchlist",
     "rateslistTitle": "Rated list",
     "yes": "Yes",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "originaTitle": "Original title",
+    "originalLanguage": "Original language",
+    "originCountry": "Country"
 }
