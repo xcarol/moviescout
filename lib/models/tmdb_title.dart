@@ -102,6 +102,22 @@ class TmdbTitle {
     return _tmdbTitle[_media_type] ?? '';
   }
 
+  String get originalName {
+    return _tmdbTitle[_original_name] ?? _tmdbTitle[_original_title] ?? '';
+  }
+
+  String get originalLanguage {
+    return _tmdbTitle[_original_language] ?? '';
+  }
+
+  String get originCountry {
+    return _tmdbTitle[_origin_country] != null &&
+            _tmdbTitle[_origin_country] is List &&
+            (_tmdbTitle[_origin_country] as List).isNotEmpty
+        ? _tmdbTitle[_origin_country][0]
+        : '';
+  }
+
   String get posterPath {
     return _tmdbTitle[_poster_path] != null &&
             (_tmdbTitle[_poster_path] as String).isNotEmpty
@@ -137,7 +153,7 @@ class TmdbTitle {
       }
     }
 
-    return  TmdbGenreService().getGenresFromIds(_tmdbTitle[_genre_ids]);
+    return TmdbGenreService().getGenresFromIds(_tmdbTitle[_genre_ids]);
   }
 
   String get releaseDate {
