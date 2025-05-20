@@ -56,10 +56,10 @@ class TitleCard extends StatelessWidget {
                     topLeft: Radius.circular(12),
                     bottomLeft: Radius.circular(12),
                   ),
-                  child: titlePoster(_title.posterPath),
+                  child: _titlePoster(_title.posterPath),
                 ),
                 const SizedBox(width: 10),
-                titleCard(),
+                _titleCard(),
               ],
             ),
           ),
@@ -68,7 +68,7 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget titleRating() {
+  Widget _titleRating() {
     if (_title.voteAverage == 0.0) {
       return const SizedBox();
     }
@@ -109,7 +109,7 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget titlePoster(String? posterPath) {
+  Widget _titlePoster(String? posterPath) {
     if (posterPath == null || posterPath.isEmpty) {
       return AspectRatio(
         aspectRatio: 2 / 3,
@@ -135,32 +135,32 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  titleCard() {
+  _titleCard() {
     return Expanded(
       child: Padding(
         padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            titleHeader(),
+            _titleHeader(),
             const SizedBox(height: 5),
             Row(
               children: [
-                titleDate(),
+                _titleDate(),
                 const Text(' - '),
                 if (_title.duration.isNotEmpty)
-                  titleDuration()
+                  _titleDuration()
                 else
-                  titleType(),
+                  _titleType(),
               ],
             ),
             const SizedBox(height: 5),
-            titleRating(),
+            _titleRating(),
             const SizedBox(height: 5),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [titleBottomRow()],
+                children: [_titleBottomRow()],
               ),
             ),
           ],
@@ -169,7 +169,7 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Text titleHeader() {
+  Text _titleHeader() {
     return Text(
       _title.name,
       style: const TextStyle(
@@ -181,7 +181,7 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Text titleDate() {
+  Text _titleDate() {
     String text = '';
 
     if (_title.isMovie) {
@@ -204,22 +204,22 @@ class TitleCard extends StatelessWidget {
     return Text(text);
   }
 
-  Text titleDuration() {
+  Text _titleDuration() {
     return Text(_title.duration);
   }
 
-  Text titleType() {
+  Text _titleType() {
     return Text(_title.mediaType == 'movie'
         ? AppLocalizations.of(context)!.movie
         : AppLocalizations.of(context)!.tvShow);
   }
 
-  Row titleBottomRow() {
+  Row _titleBottomRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Flexible(
-          child: providers(),
+          child: _providers(),
         ),
         Row(
           children: [
@@ -231,7 +231,7 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget providers() {
+  Widget _providers() {
     if (_title.providers.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -239,13 +239,13 @@ class TitleCard extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: _title.providers.flatrate
-            .map<Widget>((provider) => providerLogo(provider))
+            .map<Widget>((provider) => _providerLogo(provider))
             .toList(),
       ),
     );
   }
 
-  Widget providerLogo(provider) {
+  Widget _providerLogo(provider) {
     return Padding(
       padding: const EdgeInsets.only(right: 5),
       child: SizedBox(
