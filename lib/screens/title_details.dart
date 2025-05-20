@@ -211,7 +211,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       genres.add(Chip(
         label: Text(genre.name),
         padding: EdgeInsets.all(5),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
       ));
       genres.add(const SizedBox(width: 5));
     }

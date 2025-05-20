@@ -21,61 +21,59 @@ class BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-      child: IconTheme(
-        data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            IconButton(
-              tooltip: AppLocalizations.of(context)!.watchlistTitle,
+      color: Theme.of(context).colorScheme.primary,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          IconButton(
+            tooltip: AppLocalizations.of(context)!.watchlistTitle,
+            icon: Icon(
+              Icons.remove_red_eye_outlined,
+              color: currentIndex == BottomBarIndex.indexWatchlist
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Colors.grey,
+            ),
+            onPressed: () {
+              if (currentIndex != BottomBarIndex.indexWatchlist) {}
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => WatchList()),
+              );
+            },
+          ),
+          IconButton(
+              tooltip: AppLocalizations.of(context)!.rateslistTitle,
               icon: Icon(
-                Icons.remove_red_eye_outlined,
-                color: currentIndex == BottomBarIndex.indexWatchlist
-                    ? Theme.of(context).colorScheme.primary
+                Icons.rate_review_outlined,
+                color: currentIndex == BottomBarIndex.indexRateslist
+                    ? Theme.of(context).colorScheme.onPrimary
                     : Colors.grey,
               ),
               onPressed: () {
-                if (currentIndex != BottomBarIndex.indexWatchlist) {}
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => WatchList()),
-                );
-              },
-            ),
-            IconButton(
-                tooltip: AppLocalizations.of(context)!.rateslistTitle,
-                icon: Icon(
-                  Icons.rate_review_outlined,
-                  color: currentIndex == BottomBarIndex.indexRateslist
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.grey,
-                ),
-                onPressed: () {
-                  if (currentIndex != BottomBarIndex.indexRateslist) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => RatesList()),
-                    );
-                  }
-                }),
-            IconButton(
-                tooltip: AppLocalizations.of(context)!.searchTitle,
-                icon: Icon(
-                  Icons.search,
-                  color: currentIndex == BottomBarIndex.indexSearch
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.grey,
-                ),
-                onPressed: () {
-                  if (currentIndex != BottomBarIndex.indexSearch) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Search()),
-                    );
-                  }
-                }),
-          ],
-        ),
+                if (currentIndex != BottomBarIndex.indexRateslist) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RatesList()),
+                  );
+                }
+              }),
+          IconButton(
+              tooltip: AppLocalizations.of(context)!.searchTitle,
+              icon: Icon(
+                Icons.search,
+                color: currentIndex == BottomBarIndex.indexSearch
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Colors.grey,
+              ),
+              onPressed: () {
+                if (currentIndex != BottomBarIndex.indexSearch) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Search()),
+                  );
+                }
+              }),
+        ],
       ),
     );
   }
