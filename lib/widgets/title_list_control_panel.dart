@@ -61,7 +61,7 @@ class TitleListControlPanel extends StatelessWidget {
               _swapSortButton(context),
             ],
           ),
-          _textFilter(AppLocalizations.of(context)!.search),
+          _textFilter(context, AppLocalizations.of(context)!.search),
         ],
       ),
     );
@@ -202,16 +202,33 @@ class TitleListControlPanel extends StatelessWidget {
     );
   }
 
-  Widget _textFilter(String hintText) {
+  Widget _textFilter(BuildContext context, String hintText) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textColor = colorScheme.onPrimary;
+    final borderColor = colorScheme.onPrimary;
+
     return TextField(
       controller: textFilterController,
+      style: TextStyle(color: textColor),
+      cursorColor: borderColor,
       decoration: InputDecoration(
         isDense: true,
         hintText: hintText,
+        hintStyle: TextStyle(color: textColor),
+        suffixIconColor: textColor,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(color: borderColor),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(color: borderColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(color: borderColor, width: 2),
+        ),
         suffixIcon: IconButton(
           icon: Icon(Icons.clear),
           onPressed: () {
