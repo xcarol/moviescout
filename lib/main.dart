@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmbd_genre_servcie.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
@@ -101,6 +102,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         colorScheme: ColorScheme.fromSeed(
           seedColor: seedColor,
         ),
+        extensions: <ThemeExtension<dynamic>>[
+          CustomColors(
+            inWatchlist: Colors.orange,
+            notInWatchlist: Colors.blueGrey,
+            ratedTitle: Colors.orange,
+          ),
+        ],
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
@@ -109,6 +117,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           seedColor: seedColor,
           brightness: Brightness.dark,
         ),
+        extensions: <ThemeExtension<dynamic>>[
+          CustomColors(
+            inWatchlist: Colors.amber,
+            notInWatchlist: Colors.grey,
+            ratedTitle: Colors.amber,
+          ),
+        ],
       ),
       themeMode: ThemeMode.system,
       title: 'Movie Scout',

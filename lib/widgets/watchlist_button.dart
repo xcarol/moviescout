@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
@@ -36,7 +37,9 @@ Widget watchlistButton(
       bool isInWatchlist = watchlistService.contains(title);
 
       return IconButton(
-        color: isInWatchlist ? Colors.amber : Colors.grey,
+        color: isInWatchlist
+            ? Theme.of(context).extension<CustomColors>()!.inWatchlist
+            : Theme.of(context).extension<CustomColors>()!.notInWatchlist,
         icon: Icon(Icons.remove_red_eye),
         onPressed: () {
           watchlistService.updateWatchlistTitle(

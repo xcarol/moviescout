@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/network_image_cache.dart';
@@ -36,6 +37,7 @@ class TitleCard extends StatelessWidget {
     return SizedBox(
       height: CARD_HEIGHT,
       child: Card(
+        color: Theme.of(context).colorScheme.primaryContainer,
         child: InkWell(
           onTap: () {
             Navigator.push(
@@ -69,6 +71,8 @@ class TitleCard extends StatelessWidget {
   }
 
   Widget _titleRating() {
+    final customColors = Theme.of(context).extension<CustomColors>()!;
+
     if (_title.voteAverage == 0.0) {
       return const SizedBox();
     }
@@ -90,11 +94,11 @@ class TitleCard extends StatelessWidget {
     if (userRatedTitle.id > 0) {
       children.addAll([
         const SizedBox(width: 20),
-        Icon(Icons.star, color: Colors.amber),
+        Icon(Icons.star, color: customColors.ratedTitle),
         const SizedBox(width: 5),
         Text(
           userRatedTitle.rating.toStringAsFixed(2),
-          style: TextStyle(color: Colors.amber),
+          style: TextStyle(color: customColors.ratedTitle),
         ),
       ]);
     }
