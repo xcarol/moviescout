@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart'
     show PlatformDispatcher, TargetPlatform, defaultTargetPlatform, kDebugMode;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmbd_genre_servcie.dart';
@@ -52,19 +53,44 @@ void main() async {
   ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  final seedColor = Color(0xFF0000FF);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    super.didChangePlatformBrightness();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      localizationsDelegates: [
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: [
+      supportedLocales: const [
         Locale('ca', 'ES'),
         Locale('en', 'US'),
         Locale('es', 'ES'),
@@ -72,17 +98,42 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
-        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF2B1410)),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: seedColor,
+        ),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Color(0xFF2B1410), brightness: Brightness.dark),
+          seedColor: seedColor,
+          brightness: Brightness.dark,
+        ),
       ),
+      themeMode: ThemeMode.system,
       title: 'Movie Scout',
       home: const WatchList(),
       scaffoldMessengerKey: scaffoldMessengerKey,
+      builder: (context, child) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final theme = Theme.of(context);
+          final iconBrightness = theme.brightness == Brightness.dark
+              ? Brightness.light
+              : Brightness.dark;
+          final backgroundColor = theme.colorScheme.primary;
+
+          SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle(
+              systemNavigationBarColor: backgroundColor,
+              systemNavigationBarIconBrightness: iconBrightness,
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: iconBrightness,
+            ),
+          );
+        });
+
+        return child!;
+      },
     );
   }
 }
