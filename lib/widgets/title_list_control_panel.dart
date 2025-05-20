@@ -35,8 +35,9 @@ class TitleListControlPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+    return Container(
+      color: Theme.of(context).colorScheme.primary,
+      padding: const EdgeInsets.all(4.0),
       child: Column(
         spacing: 8,
         children: [
@@ -57,7 +58,7 @@ class TitleListControlPanel extends StatelessWidget {
                 ),
               ),
               _sortSelector(),
-              _swapSortButton(),
+              _swapSortButton(context),
             ],
           ),
           _textFilter(AppLocalizations.of(context)!.search),
@@ -84,7 +85,10 @@ class TitleListControlPanel extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
+              color: Theme.of(context).colorScheme.primary,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
               borderRadius: BorderRadius.circular(5),
             ),
             child: Row(
@@ -92,9 +96,15 @@ class TitleListControlPanel extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
                 ),
-                const Icon(Icons.arrow_drop_down),
+                Icon(
+                  Icons.arrow_drop_down,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ],
             ),
           ),
@@ -182,8 +192,9 @@ class TitleListControlPanel extends StatelessWidget {
     );
   }
 
-  Widget _swapSortButton() {
+  Widget _swapSortButton(BuildContext context) {
     return IconButton(
+      color: Theme.of(context).colorScheme.onPrimary,
       icon: Icon(Icons.swap_vert),
       onPressed: () {
         swapSort();
