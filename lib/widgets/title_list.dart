@@ -230,6 +230,9 @@ class _TitleListState extends State<TitleList> {
 
   Widget _infoLine(int count) {
     String sortBy = selectedSort;
+    TextStyle textStyle = TextStyle(
+      color: Theme.of(context).colorScheme.onPrimaryContainer,
+    );
 
     String titleCountText = '$count ${AppLocalizations.of(context)!.titles}';
 
@@ -238,18 +241,31 @@ class _TitleListState extends State<TitleList> {
     } else if (selectedType == AppLocalizations.of(context)!.movies) {
       titleCountText = '$count ${AppLocalizations.of(context)!.movies}';
     }
-    return Padding(
+    return Container(
+      color: Theme.of(context).colorScheme.primaryContainer,
       padding: EdgeInsets.symmetric(horizontal: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(titleCountText),
+          Text(
+            titleCountText,
+            style: textStyle,
+          ),
           Row(
             children: [
-              Text(sortBy),
+              Text(
+                sortBy,
+                style: textStyle,
+              ),
               _isSortAsc
-                  ? Icon(Icons.arrow_drop_up)
-                  : Icon(Icons.arrow_drop_down),
+                  ? Icon(
+                      Icons.arrow_drop_up,
+                      color: textStyle.color,
+                    )
+                  : Icon(
+                      Icons.arrow_drop_down,
+                      color: textStyle.color,
+                    ),
             ],
           ),
         ],
@@ -291,17 +307,30 @@ class _TitleListState extends State<TitleList> {
       List<TmdbTitle> filteredTitles = _filterTitles();
       children = [
         _controlPanel(),
-        const Divider(),
+        Container(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          child: Divider(
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
+        ),
         _infoLine(filteredTitles.length),
-        const Divider(),
+        Container(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          child: Divider(
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
+        ),
         _titleList(filteredTitles),
       ];
     }
 
     return Expanded(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: children,
+      child: Container(
+        color: Theme.of(context).colorScheme.primary,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: children,
+        ),
       ),
     );
   }
