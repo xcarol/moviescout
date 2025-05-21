@@ -64,19 +64,21 @@ class _WatchListState extends State<WatchList> {
   }
 
   Widget emptyBody() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text(
-          AppLocalizations.of(context)!.messageEmptyList,
-        ),
-        Text(
-          AppLocalizations.of(context)!.messageEmptyList2,
-        ),
-        Text(
-          AppLocalizations.of(context)!.messageEmptyList3,
-        ),
-      ],
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            AppLocalizations.of(context)!.messageEmptyList,
+          ),
+          Text(
+            AppLocalizations.of(context)!.messageEmptyList2,
+          ),
+          Text(
+            AppLocalizations.of(context)!.messageEmptyList3,
+          ),
+        ],
+      ),
     );
   }
 

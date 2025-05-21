@@ -65,17 +65,19 @@ class _RatesListState extends State<RatesList> {
   }
 
   Widget emptyBody() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Column(
-          children: [
-            Text(
-              AppLocalizations.of(context)!.emptyRates,
-            ),
-          ],
-        ),
-      ],
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Column(
+            children: [
+              Text(
+                AppLocalizations.of(context)!.emptyRates,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
