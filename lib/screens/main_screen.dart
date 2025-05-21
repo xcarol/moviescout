@@ -16,16 +16,10 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
-  late final List<Widget> _screens;
 
   @override
   void initState() {
     super.initState();
-    _screens = const [
-      WatchList(),
-      RatesList(),
-      Search(),
-    ];
   }
 
   @override
@@ -47,7 +41,11 @@ class _MainScreenState extends State<MainScreen> {
         drawer: AppDrawer(),
         body: IndexedStack(
           index: _currentIndex,
-          children: _screens,
+          children: [
+            WatchList(),
+            RatesList(),
+            Search(isActive: _currentIndex == 2),
+          ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Theme.of(context).colorScheme.primary,

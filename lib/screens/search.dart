@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
@@ -7,13 +8,15 @@ import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/widgets/title_list.dart';
 
 class Search extends StatefulWidget {
-  const Search({super.key});
+  final bool isActive;
+  const Search({super.key, required this.isActive});
 
   @override
   State<Search> createState() => _SearchState();
 }
 
 class _SearchState extends State<Search> {
+  final FocusNode _searchFocusNode = FocusNode();
   late TextEditingController _controller;
   late List<TmdbTitle> searchTitles = List.empty();
 
@@ -26,7 +29,18 @@ class _SearchState extends State<Search> {
   @override
   void dispose() {
     _controller.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant Search oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.isActive && !oldWidget.isActive) {
+      FocusScope.of(context).requestFocus(_searchFocusNode);
+      SystemChannels.textInput.invokeMethod('TextInput.show');
+    }
   }
 
   @override
@@ -61,6 +75,7 @@ class _SearchState extends State<Search> {
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
       child: TextField(
         controller: _controller,
+        focusNode: _searchFocusNode,
         style: TextStyle(color: textColor),
         cursorColor: borderColor,
         decoration: InputDecoration(
