@@ -52,8 +52,11 @@ class _MainScreenState extends State<MainScreen> {
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Theme.of(context).colorScheme.primary,
           selectedItemColor: Theme.of(context).colorScheme.onPrimary,
-          unselectedItemColor: Theme.of(context).extension<CustomColors>()!.notSelected,
+          unselectedItemColor:
+              Theme.of(context).extension<CustomColors>()!.notSelected,
           currentIndex: _currentIndex,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
           onTap: (newIndex) {
             setState(() {
               _currentIndex = newIndex;
@@ -62,15 +65,15 @@ class _MainScreenState extends State<MainScreen> {
           items: [
             BottomNavigationBarItem(
               icon: Icon(Icons.remove_red_eye_outlined),
-              label: AppLocalizations.of(context)!.watchlistTitle,
+              label: '',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.rate_review_outlined),
-              label: AppLocalizations.of(context)!.rateslistTitle,
+              label: '',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.search),
-              label: AppLocalizations.of(context)!.searchTitle,
+              label: '',
             ),
           ],
         ),
