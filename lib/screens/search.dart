@@ -31,7 +31,8 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return Container(
+      color: Theme.of(context).colorScheme.primaryContainer,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
