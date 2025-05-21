@@ -51,20 +51,23 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   _detailsBody(TmdbTitle title) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        _banner(
-            title.backdropPath.isNotEmpty
-                ? title.backdropPath
-                : title.posterPath,
-            title.isMovie),
-        const SizedBox(height: 20),
-        Padding(
-          padding: EdgeInsets.only(left: 5, right: 5),
-          child: _details(title),
-        ),
-      ],
+    return Container(
+      color: Theme.of(context).colorScheme.primaryContainer,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _banner(
+              title.backdropPath.isNotEmpty
+                  ? title.backdropPath
+                  : title.posterPath,
+              title.isMovie),
+          const SizedBox(height: 20),
+          Padding(
+            padding: EdgeInsets.only(left: 5, right: 5),
+            child: _details(title),
+          ),
+        ],
+      ),
     );
   }
 
