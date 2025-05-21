@@ -50,13 +50,22 @@ class _SearchState extends State<Search> {
   }
 
   searchBox() {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textColor = colorScheme.onPrimary;
+    final borderColor = colorScheme.onPrimary;
+
     return Container(
+      color: Theme.of(context).colorScheme.primary,
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
       child: TextField(
         controller: _controller,
+        style: TextStyle(color: textColor),
+        cursorColor: borderColor,
         decoration: InputDecoration(
-          labelText: AppLocalizations.of(context)!.search,
+          hintText: AppLocalizations.of(context)!.search,
+          hintStyle: TextStyle(color: textColor),
+          suffixIconColor: textColor,
           suffixIcon: IconButton(
             icon: const Icon(Icons.clear),
             onPressed: () {
@@ -66,6 +75,15 @@ class _SearchState extends State<Search> {
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: borderColor),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: borderColor),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: borderColor, width: 2),
           ),
         ),
         onChanged: (title) {
