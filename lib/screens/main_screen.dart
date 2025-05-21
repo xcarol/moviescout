@@ -30,40 +30,50 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MainAppBar(
-        context: context,
-        title: _getTitleForIndex(_currentIndex, context),
-      ),
-      drawer: AppDrawer(),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        selectedItemColor: Theme.of(context).colorScheme.onPrimary,
-        unselectedItemColor: Theme.of(context).extension<CustomColors>()!.notSelected,
-        currentIndex: _currentIndex,
-        onTap: (newIndex) {
+    return PopScope(
+      canPop: _currentIndex == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && _currentIndex != 0) {
           setState(() {
-            _currentIndex = newIndex;
+            _currentIndex = 0;
           });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.remove_red_eye_outlined),
-            label: AppLocalizations.of(context)!.watchlistTitle,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.rate_review_outlined),
-            label: AppLocalizations.of(context)!.rateslistTitle,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: AppLocalizations.of(context)!.searchTitle,
-          ),
-        ],
+        }
+      },
+      child: Scaffold(
+        appBar: MainAppBar(
+          context: context,
+          title: _getTitleForIndex(_currentIndex, context),
+        ),
+        drawer: AppDrawer(),
+        body: IndexedStack(
+          index: _currentIndex,
+          children: _screens,
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          selectedItemColor: Theme.of(context).colorScheme.onPrimary,
+          unselectedItemColor: Theme.of(context).extension<CustomColors>()!.notSelected,
+          currentIndex: _currentIndex,
+          onTap: (newIndex) {
+            setState(() {
+              _currentIndex = newIndex;
+            });
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.remove_red_eye_outlined),
+              label: AppLocalizations.of(context)!.watchlistTitle,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.rate_review_outlined),
+              label: AppLocalizations.of(context)!.rateslistTitle,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search),
+              label: AppLocalizations.of(context)!.searchTitle,
+            ),
+          ],
+        ),
       ),
     );
   }
