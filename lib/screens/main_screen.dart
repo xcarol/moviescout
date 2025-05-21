@@ -39,7 +39,7 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             WatchList(),
             RatesList(),
-            Search(isActive: _currentIndex == 2),
+            Search(),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
