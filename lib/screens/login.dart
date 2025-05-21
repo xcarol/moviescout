@@ -9,7 +9,6 @@ import 'package:app_links/app_links.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
-import 'package:moviescout/widgets/bottom_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -107,8 +106,6 @@ class _LoginState extends State<Login> {
       ),
       drawer: AppDrawer(),
       body: Center(child: loginBody()),
-      bottomNavigationBar:
-          BottomBar(currentIndex: BottomBarIndex.indexWatchlist),
     );
   }
 
