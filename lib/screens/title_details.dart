@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -125,6 +126,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         _description(title),
         const SizedBox(height: 30),
         _providers(title),
+        const SizedBox(height: 30),
       ],
     );
   }
@@ -150,7 +152,7 @@ class _TitleDetailsState extends State<TitleDetails> {
 
             return Row(
               children: [
-                Icon(Icons.star, color: Theme.of(context).colorScheme.primary),
+                Icon(Icons.star, color: Theme.of(context).extension<CustomColors>()!.ratedTitle),
                 const SizedBox(width: 5),
                 if (ratingService.contains(title))
                   Padding(
@@ -158,7 +160,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                     child: Text(
                       '$titleRating',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Theme.of(context).extension<CustomColors>()!.ratedTitle,
                       ),
                     ),
                   ),
