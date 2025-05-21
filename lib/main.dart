@@ -15,7 +15,7 @@ import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
-import 'package:moviescout/screens/watch_list.dart';
+import 'package:moviescout/screens/main_screen.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -107,6 +107,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             inWatchlist: Colors.orange,
             notInWatchlist: Colors.blueGrey,
             ratedTitle: Colors.orange,
+            selected: Colors.orange,
+            notSelected: Colors.blueGrey,
           ),
         ],
       ),
@@ -122,12 +124,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             inWatchlist: Colors.amber,
             notInWatchlist: Colors.grey,
             ratedTitle: Colors.amber,
+            selected: Colors.amber,
+            notSelected: Colors.grey,
           ),
         ],
       ),
       themeMode: ThemeMode.system,
       title: 'Movie Scout',
-      home: const WatchList(),
+      home: const MainScreen(),
       scaffoldMessengerKey: scaffoldMessengerKey,
       builder: (context, child) {
         WidgetsBinding.instance.addPostFrameCallback((_) {

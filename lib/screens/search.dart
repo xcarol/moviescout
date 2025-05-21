@@ -4,9 +4,6 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
-import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
-import 'package:moviescout/widgets/bottom_bar.dart';
 import 'package:moviescout/widgets/title_list.dart';
 
 class Search extends StatefulWidget {
@@ -34,22 +31,14 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MainAppBar(
-        context: context,
-        title: AppLocalizations.of(context)!.searchTitle,
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          searchBox(),
+          searchResults(),
+        ],
       ),
-      drawer: AppDrawer(),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            searchBox(),
-            searchResults(),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomBar(currentIndex: BottomBarIndex.indexSearch),
     );
   }
 
@@ -87,7 +76,8 @@ class _SearchState extends State<Search> {
   }
 
   searchResults() {
-    return TitleList(titles: searchTitles, listProvider: TmdbListService('searchProvider'));
+    return TitleList(
+        titles: searchTitles, listProvider: TmdbListService('searchProvider'));
   }
 
   searchTitle(BuildContext context, title) async {
