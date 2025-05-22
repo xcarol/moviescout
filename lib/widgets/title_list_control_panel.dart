@@ -16,6 +16,7 @@ class TitleListControlPanel extends StatelessWidget {
   final List<String> sortsList;
   final Function sortChanged;
   final Function swapSort;
+  final FocusNode focusNode;
 
   const TitleListControlPanel({
     super.key,
@@ -31,6 +32,7 @@ class TitleListControlPanel extends StatelessWidget {
     required this.sortsList,
     required this.sortChanged,
     required this.swapSort,
+    required this.focusNode,
   });
 
   @override
@@ -209,6 +211,7 @@ class TitleListControlPanel extends StatelessWidget {
 
     return TextField(
       controller: textFilterController,
+      focusNode: focusNode,
       style: TextStyle(color: textColor),
       cursorColor: borderColor,
       decoration: InputDecoration(

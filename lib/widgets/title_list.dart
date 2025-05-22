@@ -27,6 +27,7 @@ class TitleList extends StatefulWidget {
 class _TitleListState extends State<TitleList> {
   int _updatingTitleId = 0;
   bool _isSortAsc = true;
+  final FocusNode _searchFocusNode = FocusNode();
   late String selectedType;
   late List<String> titleTypes;
   late String textFilter;
@@ -45,19 +46,24 @@ class _TitleListState extends State<TitleList> {
   @override
   void dispose() {
     _textFilterController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
   @override
   didChangeDependencies() {
     super.didChangeDependencies();
+    final isCurrent = ModalRoute.of(context)?.isCurrent ?? false;
+    if (!isCurrent && _searchFocusNode.hasFocus) {
+      _searchFocusNode.unfocus();
+    }
     selectedType = AppLocalizations.of(context)!.allTypes;
     titleTypes = [
       AppLocalizations.of(context)!.allTypes,
       AppLocalizations.of(context)!.movies,
       AppLocalizations.of(context)!.tvshows,
     ];
-    textFilter = '';
+    textFilter = _textFilterController.text;
     selectedGenres = [];
     genresList = [];
     for (TmdbTitle title in widget.titles) {
@@ -225,6 +231,7 @@ class _TitleListState extends State<TitleList> {
           _isSortAsc = !_isSortAsc;
         });
       },
+      focusNode: _searchFocusNode,
     );
   }
 
