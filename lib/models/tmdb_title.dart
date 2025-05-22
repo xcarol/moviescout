@@ -1,5 +1,6 @@
 // ignore_for_file: constant_identifier_names, unused_element
 
+import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_providers.dart';
 import 'package:moviescout/services/tmbd_genre_servcie.dart';
 
@@ -101,6 +102,22 @@ class TmdbTitle {
     return _tmdbTitle[_media_type] ?? '';
   }
 
+  String get originalName {
+    return _tmdbTitle[_original_name] ?? _tmdbTitle[_original_title] ?? '';
+  }
+
+  String get originalLanguage {
+    return _tmdbTitle[_original_language] ?? '';
+  }
+
+  String get originCountry {
+    return _tmdbTitle[_origin_country] != null &&
+            _tmdbTitle[_origin_country] is List &&
+            (_tmdbTitle[_origin_country] as List).isNotEmpty
+        ? _tmdbTitle[_origin_country][0]
+        : '';
+  }
+
   String get posterPath {
     return _tmdbTitle[_poster_path] != null &&
             (_tmdbTitle[_poster_path] as String).isNotEmpty
@@ -122,7 +139,7 @@ class TmdbTitle {
     return _tmdbTitle[_vote_average] ?? 0.0;
   }
 
-  List get genres {
+  List<TmdbGenre> get genres {
     if (_tmdbTitle[_genre_ids] == null) {
       _tmdbTitle[_genre_ids] = <int>[];
     }
@@ -136,7 +153,7 @@ class TmdbTitle {
       }
     }
 
-    return  TmdbGenreService().getGenresFromIds(_tmdbTitle[_genre_ids]);
+    return TmdbGenreService().getGenresFromIds(_tmdbTitle[_genre_ids]);
   }
 
   String get releaseDate {

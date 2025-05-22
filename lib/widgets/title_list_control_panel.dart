@@ -16,6 +16,7 @@ class TitleListControlPanel extends StatelessWidget {
   final List<String> sortsList;
   final Function sortChanged;
   final Function swapSort;
+  final FocusNode focusNode;
 
   const TitleListControlPanel({
     super.key,
@@ -31,12 +32,14 @@ class TitleListControlPanel extends StatelessWidget {
     required this.sortsList,
     required this.sortChanged,
     required this.swapSort,
+    required this.focusNode,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+    return Container(
+      color: Theme.of(context).colorScheme.primary,
+      padding: const EdgeInsets.all(4.0),
       child: Column(
         spacing: 8,
         children: [
@@ -52,16 +55,15 @@ class TitleListControlPanel extends StatelessWidget {
                       _typeSelector(),
                       const SizedBox(width: 8),
                       _genresSelector(context, genresChanged),
-                      const SizedBox(width: 8),
-                      _sortSelector(),
                     ],
                   ),
                 ),
               ),
-              _swapSortButton(),
+              _sortSelector(),
+              _swapSortButton(context),
             ],
           ),
-          _textFilter(AppLocalizations.of(context)!.search),
+          _textFilter(context, AppLocalizations.of(context)!.search),
         ],
       ),
     );
@@ -85,7 +87,10 @@ class TitleListControlPanel extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
+              color: Theme.of(context).colorScheme.primary,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
               borderRadius: BorderRadius.circular(5),
             ),
             child: Row(
@@ -93,9 +98,15 @@ class TitleListControlPanel extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
                 ),
-                const Icon(Icons.arrow_drop_down),
+                Icon(
+                  Icons.arrow_drop_down,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ],
             ),
           ),
@@ -183,8 +194,9 @@ class TitleListControlPanel extends StatelessWidget {
     );
   }
 
-  Widget _swapSortButton() {
+  Widget _swapSortButton(BuildContext context) {
     return IconButton(
+      color: Theme.of(context).colorScheme.onPrimary,
       icon: Icon(Icons.swap_vert),
       onPressed: () {
         swapSort();
@@ -192,16 +204,34 @@ class TitleListControlPanel extends StatelessWidget {
     );
   }
 
-  Widget _textFilter(String hintText) {
+  Widget _textFilter(BuildContext context, String hintText) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textColor = colorScheme.onPrimary;
+    final borderColor = colorScheme.onPrimary;
+
     return TextField(
       controller: textFilterController,
+      focusNode: focusNode,
+      style: TextStyle(color: textColor),
+      cursorColor: borderColor,
       decoration: InputDecoration(
         isDense: true,
         hintText: hintText,
+        hintStyle: TextStyle(color: textColor),
+        suffixIconColor: textColor,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(color: borderColor),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(color: borderColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(color: borderColor, width: 2),
+        ),
         suffixIcon: IconButton(
           icon: Icon(Icons.clear),
           onPressed: () {

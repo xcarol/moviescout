@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
-import 'package:moviescout/services/cached_network_image.dart';
-import 'package:moviescout/services/snack_bar.dart';
-import 'package:moviescout/services/tmdb_user_service.dart';
+import 'package:moviescout/services/network_image_cache.dart';
+import 'package:moviescout/services/tmdb_rateslist_service.dart';
+import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:provider/provider.dart';
 
 // ignore: constant_identifier_names
@@ -14,16 +15,14 @@ const double CARD_HEIGHT = 160.0;
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
   final bool isUpdatingWatchlist;
-  final bool isInWatchlist;
   final BuildContext context;
-  final VoidCallback onWatchlistPressed;
+  final void Function(bool) onWatchlistPressed;
 
   const TitleCard({
     super.key,
     required this.context,
     required TmdbTitle title,
     required this.isUpdatingWatchlist,
-    required this.isInWatchlist,
     required this.onWatchlistPressed,
   }) : _title = title;
 
@@ -38,6 +37,7 @@ class TitleCard extends StatelessWidget {
     return SizedBox(
       height: CARD_HEIGHT,
       child: Card(
+        color: Theme.of(context).colorScheme.primaryContainer,
         child: InkWell(
           onTap: () {
             Navigator.push(
@@ -58,10 +58,10 @@ class TitleCard extends StatelessWidget {
                     topLeft: Radius.circular(12),
                     bottomLeft: Radius.circular(12),
                   ),
-                  child: titlePoster(_title.posterPath),
+                  child: _titlePoster(_title.posterPath),
                 ),
                 const SizedBox(width: 10),
-                titleCard(),
+                _titleCard(),
               ],
             ),
           ),
@@ -70,26 +70,50 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget titleRating() {
+  Widget _titleRating() {
+    final customColors = Theme.of(context).extension<CustomColors>()!;
+
     if (_title.voteAverage == 0.0) {
       return const SizedBox();
+    }
+
+    List<Widget> children = [
+      Icon(Icons.star),
+      const SizedBox(width: 5),
+      Text(_title.voteAverage.toStringAsFixed(2)),
+    ];
+
+    TmdbRateslistService rateslistService =
+        Provider.of<TmdbRateslistService>(context, listen: true);
+
+    TmdbTitle userRatedTitle = rateslistService.titles.isNotEmpty
+        ? rateslistService.titles.firstWhere((title) => title.id == _title.id,
+            orElse: () => TmdbTitle(title: {}))
+        : TmdbTitle(title: {});
+
+    if (userRatedTitle.id > 0) {
+      children.addAll([
+        const SizedBox(width: 20),
+        Icon(Icons.star, color: customColors.ratedTitle),
+        const SizedBox(width: 5),
+        Text(
+          userRatedTitle.rating.toStringAsFixed(2),
+          style: TextStyle(color: customColors.ratedTitle),
+        ),
+      ]);
     }
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Row(
-          children: [
-            Icon(Icons.star),
-            const SizedBox(width: 5),
-            Text(_title.voteAverage.toStringAsFixed(2)),
-          ],
+          children: children,
         ),
       ],
     );
   }
 
-  Widget titlePoster(String? posterPath) {
+  Widget _titlePoster(String? posterPath) {
     if (posterPath == null || posterPath.isEmpty) {
       return AspectRatio(
         aspectRatio: 2 / 3,
@@ -102,7 +126,7 @@ class TitleCard extends StatelessWidget {
 
     return AspectRatio(
       aspectRatio: 2 / 3,
-      child: CachedNetworkImage(
+      child: NetworkImageCache(
         posterPath,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
@@ -115,32 +139,32 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  titleCard() {
+  _titleCard() {
     return Expanded(
       child: Padding(
         padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            titleHeader(),
+            _titleHeader(),
             const SizedBox(height: 5),
             Row(
               children: [
-                titleDate(),
+                _titleDate(),
                 const Text(' - '),
                 if (_title.duration.isNotEmpty)
-                  titleDuration()
+                  _titleDuration()
                 else
-                  titleType(),
+                  _titleType(),
               ],
             ),
             const SizedBox(height: 5),
-            titleRating(),
+            _titleRating(),
             const SizedBox(height: 5),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [titleBottomRow()],
+                children: [_titleBottomRow()],
               ),
             ),
           ],
@@ -149,7 +173,7 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Text titleHeader() {
+  Text _titleHeader() {
     return Text(
       _title.name,
       style: const TextStyle(
@@ -161,7 +185,7 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Text titleDate() {
+  Text _titleDate() {
     String text = '';
 
     if (_title.isMovie) {
@@ -184,26 +208,26 @@ class TitleCard extends StatelessWidget {
     return Text(text);
   }
 
-  Text titleDuration() {
+  Text _titleDuration() {
     return Text(_title.duration);
   }
 
-  Text titleType() {
+  Text _titleType() {
     return Text(_title.mediaType == 'movie'
         ? AppLocalizations.of(context)!.movie
         : AppLocalizations.of(context)!.tvShow);
   }
 
-  Row titleBottomRow() {
+  Row _titleBottomRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Flexible(
-          child: providers(),
+          child: _providers(),
         ),
         Row(
           children: [
-            watchlistButton(),
+            watchlistButton(context, _title),
             const SizedBox(width: 8),
           ],
         ),
@@ -211,7 +235,7 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget providers() {
+  Widget _providers() {
     if (_title.providers.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -219,19 +243,19 @@ class TitleCard extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: _title.providers.flatrate
-            .map<Widget>((provider) => providerLogo(provider))
+            .map<Widget>((provider) => _providerLogo(provider))
             .toList(),
       ),
     );
   }
 
-  Widget providerLogo(provider) {
+  Widget _providerLogo(provider) {
     return Padding(
       padding: const EdgeInsets.only(right: 5),
       child: SizedBox(
         width: 30,
         height: 30,
-        child: CachedNetworkImage(
+        child: NetworkImageCache(
           provider.logoPath,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
@@ -242,31 +266,6 @@ class TitleCard extends StatelessWidget {
           },
         ),
       ),
-    );
-  }
-
-  IconButton watchlistButton() {
-    if (Provider.of<TmdbUserService>(context, listen: false).user == null) {
-      return IconButton(
-        icon: const Icon(Icons.highlight_off),
-        onPressed: () {
-          SnackMessage.showSnackBar(
-              AppLocalizations.of(context)!.signInToWatchlist);
-        },
-      );
-    }
-
-    if (isUpdatingWatchlist) {
-      return IconButton(
-        icon: const Icon(Icons.hourglass_empty),
-        onPressed: () {},
-      );
-    }
-
-    return IconButton(
-      color: isInWatchlist ? Colors.red : Colors.green,
-      icon: Icon(isInWatchlist ? Icons.close_sharp : Icons.add_sharp),
-      onPressed: onWatchlistPressed,
     );
   }
 }

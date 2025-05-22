@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
-class CachedNetworkImage extends StatelessWidget {
-  const CachedNetworkImage(this.imageUrl,
+class NetworkImageCache extends StatelessWidget {
+  const NetworkImageCache(this.imageUrl,
       {super.key, this.fit, this.errorBuilder});
 
   final String imageUrl;

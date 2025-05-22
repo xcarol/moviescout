@@ -55,5 +55,8 @@
     "watchlistTitle": "Per veure",
     "rateslistTitle": "Valorades",
     "yes": "Sí",
-    "cancel": "Cancel·la"
+    "cancel": "Cancel·la",
+    "originaTitle": "Títol original",
+    "originalLanguage": "Idioma original",
+    "originCountry": "País"
 }

@@ -55,5 +55,8 @@
     "watchlistTitle": "Por ver",
     "rateslistTitle": "Valoradas",
     "yes": "Sí",
-    "cancel": "Cancela"
+    "cancel": "Cancela",
+    "originaTitle": "Título original",
+    "originalLanguage": "Idioma original",
+    "originCountry": "País"
 }

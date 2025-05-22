@@ -19,8 +19,9 @@ class TmdbWatchlistService extends TmdbListService {
     String sessionId,
     Locale locale, {
     bool notify = false,
+    bool forceUpdate = false,
   }) async {
-    retrieveList(accountId, notify: notify, retrieveMovies: () async {
+    retrieveList(accountId, notify: notify, updateTitles: forceUpdate, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
             _tmdbWatchlistMovies

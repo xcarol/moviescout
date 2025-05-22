@@ -39,6 +39,12 @@ class TmdbTitleService extends TmdbBaseService {
     );
   }
 
+  Future<void> updateTitles(List<TmdbTitle> titles) async {
+    for (TmdbTitle title in titles) {
+      getTitleDetails(title).then((t) => title = t);
+    }
+  }
+
   Future<TmdbTitle> getTitleDetails(TmdbTitle title) async {
     if (isUpToDate(title)) {
       return title;
@@ -59,7 +65,9 @@ class TmdbTitleService extends TmdbBaseService {
       return TmdbTitle(title: {});
     }
 
-    final titleDetails = body(result);
+    final Map titleDetails = title.map;
+
+    titleDetails.addAll(body(result));
 
     if (titleDetails['overview'].isEmpty) {
       final result = await _retrieveTitleDetailsByLocale(
@@ -71,6 +79,7 @@ class TmdbTitleService extends TmdbBaseService {
       if (result.statusCode == 200) {
         final details = body(result);
         if (details['overview'].isNotEmpty) {
+          titleDetails['title'] = details['title'];
           titleDetails['overview'] = details['overview'];
         }
       }
@@ -86,6 +95,7 @@ class TmdbTitleService extends TmdbBaseService {
       if (result.statusCode == 200) {
         final details = body(result);
         if (details['overview'].isNotEmpty) {
+          titleDetails['title'] = details['title'];
           titleDetails['overview'] = details['overview'];
         }
       }

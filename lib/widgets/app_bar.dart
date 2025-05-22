@@ -9,12 +9,14 @@ class MainAppBar extends AppBar {
   }) : super(
           title: Text(title),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.canPop(context) ? Navigator.pop(context) : null,
-              tooltip: AppLocalizations.of(context)!.back,
-            ),
+            if (Navigator.canPop(context))
+              IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context),
+                tooltip: AppLocalizations.of(context)!.back,
+              ),
           ],
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+          backgroundColor: Theme.of(context).colorScheme.primary,
         );
 }

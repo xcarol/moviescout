@@ -4,9 +4,6 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
-import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
-import 'package:moviescout/widgets/bottom_bar.dart';
 import 'package:moviescout/widgets/title_list.dart';
 
 class Search extends StatefulWidget {
@@ -17,6 +14,7 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
+  final FocusNode _searchFocusNode = FocusNode();
   late TextEditingController _controller;
   late List<TmdbTitle> searchTitles = List.empty();
 
@@ -29,27 +27,30 @@ class _SearchState extends State<Search> {
   @override
   void dispose() {
     _controller.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final isCurrent = ModalRoute.of(context)?.isCurrent ?? false;
+    if (!isCurrent && _searchFocusNode.hasFocus) {
+      _searchFocusNode.unfocus();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MainAppBar(
-        context: context,
-        title: AppLocalizations.of(context)!.searchTitle,
+    return Container(
+      color: Theme.of(context).colorScheme.primaryContainer,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          searchBox(),
+          searchResults(),
+        ],
       ),
-      drawer: AppDrawer(),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            searchBox(),
-            searchResults(),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomBar(currentIndex: BottomBarIndex.indexSearch),
     );
   }
 
@@ -60,23 +61,40 @@ class _SearchState extends State<Search> {
     });
   }
 
-  searchBox() {
+  Widget searchBox() {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textColor = colorScheme.onPrimary;
+    final borderColor = colorScheme.onPrimary;
+
     return Container(
+      color: Theme.of(context).colorScheme.primary,
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
       child: TextField(
         controller: _controller,
+        focusNode: _searchFocusNode,
+        style: TextStyle(color: textColor),
+        cursorColor: borderColor,
         decoration: InputDecoration(
-          labelText: AppLocalizations.of(context)!.search,
+          hintText: AppLocalizations.of(context)!.search,
+          hintStyle: TextStyle(color: textColor),
+          suffixIconColor: textColor,
           suffixIcon: IconButton(
             icon: const Icon(Icons.clear),
-            onPressed: () {
-              resetTitle();
-            },
+            onPressed: resetTitle,
             tooltip: AppLocalizations.of(context)!.search,
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: borderColor),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: borderColor),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: borderColor, width: 2),
           ),
         ),
         onChanged: (title) {
@@ -86,11 +104,14 @@ class _SearchState extends State<Search> {
     );
   }
 
-  searchResults() {
-    return TitleList(titles: searchTitles, listProvider: TmdbListService('searchProvider'));
+  Widget searchResults() {
+    return TitleList(
+      titles: searchTitles,
+      listProvider: TmdbListService('searchProvider'),
+    );
   }
 
-  searchTitle(BuildContext context, title) async {
+  void searchTitle(BuildContext context, String title) async {
     try {
       final result = await TmdbSearchService()
           .searchTitle(title, Localizations.localeOf(context));

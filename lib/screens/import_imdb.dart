@@ -135,12 +135,17 @@ class _ImportIMDBState extends State<ImportIMDB> {
           _resetTitlesCount = watchlistService.titles.length;
         });
 
-        await watchlistService.updateWatchlistTitle(
-          userService.accountId,
-          userService.sessionId,
-          watchlistService.titles.first,
-          false,
-        );
+        try {
+          await watchlistService.updateWatchlistTitle(
+            userService.accountId,
+            userService.sessionId,
+            watchlistService.titles.first,
+            false,
+          );
+        } catch (error) {
+          watchlistService.titles.removeAt(0);
+          break;
+        }
       }
 
       setState(() {
@@ -181,12 +186,17 @@ class _ImportIMDBState extends State<ImportIMDB> {
           _resetTitlesCount = rateslistService.titles.length;
         });
 
-        await rateslistService.updateTitleRate(
-          userService.accountId,
-          userService.sessionId,
-          rateslistService.titles.first,
-          0,
-        );
+        try {
+          await rateslistService.updateTitleRate(
+            userService.accountId,
+            userService.sessionId,
+            rateslistService.titles.first,
+            0,
+          );
+        } catch (error) {
+          rateslistService.titles.removeAt(0);
+          break;
+        }
       }
 
       setState(() {

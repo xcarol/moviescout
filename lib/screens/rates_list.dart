@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
-import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
-import 'package:moviescout/widgets/bottom_bar.dart';
 import 'package:moviescout/widgets/title_list.dart';
 import 'package:provider/provider.dart';
 
@@ -30,7 +27,7 @@ class _RatesListState extends State<RatesList> {
         Provider.of<TmdbRateslistService>(context, listen: false);
 
     await userService.setup();
-    
+
     if (mounted) {
       await rateslistService.retrieveRateslist(
         userService.accountId,
@@ -50,20 +47,7 @@ class _RatesListState extends State<RatesList> {
               body: Center(child: CircularProgressIndicator()));
         }
 
-        return Consumer<TmdbRateslistService>(
-          builder: (context, rateslistService, _) {
-            return Scaffold(
-              appBar: MainAppBar(
-                context: context,
-                title: AppLocalizations.of(context)!.rateslistTitle,
-              ),
-              drawer: AppDrawer(),
-              body: Center(child: body()),
-              bottomNavigationBar:
-                  BottomBar(currentIndex: BottomBarIndex.indexRateslist),
-            );
-          },
-        );
+        return body();
       },
     );
   }
@@ -81,17 +65,19 @@ class _RatesListState extends State<RatesList> {
   }
 
   Widget emptyBody() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Column(
-          children: [
-            Text(
-              AppLocalizations.of(context)!.emptyRates,
-            ),
-          ],
-        ),
-      ],
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Column(
+            children: [
+              Text(
+                AppLocalizations.of(context)!.emptyRates,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
-import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
-import 'package:moviescout/widgets/bottom_bar.dart';
 import 'package:moviescout/widgets/title_list.dart';
 import 'package:provider/provider.dart';
 
@@ -46,24 +43,10 @@ class _WatchListState extends State<WatchList> {
       future: _init,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Scaffold(
-              body: Center(child: CircularProgressIndicator()));
+          return const Center(child: CircularProgressIndicator());
         }
 
-        return Consumer<TmdbWatchlistService>(
-          builder: (context, watchlistService, _) {
-            return Scaffold(
-              appBar: MainAppBar(
-                context: context,
-                title: AppLocalizations.of(context)!.watchlistTitle,
-              ),
-              drawer: AppDrawer(),
-              body: Center(child: body()),
-              bottomNavigationBar:
-                  BottomBar(currentIndex: BottomBarIndex.indexWatchlist),
-            );
-          },
-        );
+        return body();
       },
     );
   }
@@ -81,23 +64,21 @@ class _WatchListState extends State<WatchList> {
   }
 
   Widget emptyBody() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Column(
-          children: [
-            Text(
-              AppLocalizations.of(context)!.messageEmptyList,
-            ),
-            Text(
-              AppLocalizations.of(context)!.messageEmptyList2,
-            ),
-            Text(
-              AppLocalizations.of(context)!.messageEmptyList3,
-            ),
-          ],
-        ),
-      ],
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            AppLocalizations.of(context)!.messageEmptyList,
+          ),
+          Text(
+            AppLocalizations.of(context)!.messageEmptyList2,
+          ),
+          Text(
+            AppLocalizations.of(context)!.messageEmptyList3,
+          ),
+        ],
+      ),
     );
   }
 
