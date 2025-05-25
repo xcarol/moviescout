@@ -52,23 +52,20 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   _detailsBody(TmdbTitle title) {
-    return Container(
-      color: Theme.of(context).colorScheme.primaryContainer,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _banner(
-              title.backdropPath.isNotEmpty
-                  ? title.backdropPath
-                  : title.posterPath,
-              title.isMovie),
-          const SizedBox(height: 20),
-          Padding(
-            padding: EdgeInsets.only(left: 5, right: 5),
-            child: _details(title),
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        _banner(
+            title.backdropPath.isNotEmpty
+                ? title.backdropPath
+                : title.posterPath,
+            title.isMovie),
+        const SizedBox(height: 20),
+        Padding(
+          padding: EdgeInsets.only(left: 5, right: 5),
+          child: _details(title),
+        ),
+      ],
     );
   }
 
@@ -141,7 +138,10 @@ class _TitleDetailsState extends State<TitleDetails> {
       children: [
         Row(
           children: [
-            const Icon(Icons.star),
+            Icon(
+              Icons.star,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             const SizedBox(width: 5),
             Text(title.voteAverage.toStringAsFixed(2)),
           ],
@@ -221,7 +221,6 @@ class _TitleDetailsState extends State<TitleDetails> {
       genres.add(Chip(
         label: Text(genre.name),
         padding: EdgeInsets.all(5),
-        backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
       ));
       genres.add(const SizedBox(width: 5));
     }
