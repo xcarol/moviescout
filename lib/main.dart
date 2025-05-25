@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -7,7 +9,7 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:moviescout/models/custom_colors.dart';
+import 'package:moviescout/models/app_color_schemes.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmbd_genre_servcie.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
@@ -62,7 +64,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  final seedColor = Color(0xFF0000FF);
+  final seedColor = Color.fromARGB(255, 255, 0, 0);
 
   @override
   void initState() {
@@ -99,35 +101,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: seedColor,
-        ),
-        extensions: <ThemeExtension<dynamic>>[
-          CustomColors(
-            inWatchlist: Colors.orange,
-            notInWatchlist: Colors.blueGrey,
-            ratedTitle: Colors.orange,
-            selected: Colors.orange,
-            notSelected: Colors.blueGrey,
-          ),
-        ],
+        colorScheme: AppColorSchemes.lightColorSchemeDefault,
+        extensions: <ThemeExtension<dynamic>>[AppColorSchemes.lightCustomColorsDefault],
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: seedColor,
-          brightness: Brightness.dark,
-        ),
-        extensions: <ThemeExtension<dynamic>>[
-          CustomColors(
-            inWatchlist: Colors.amber,
-            notInWatchlist: Colors.grey,
-            ratedTitle: Colors.amber,
-            selected: Colors.amber,
-            notSelected: Colors.grey,
-          ),
-        ],
+        colorScheme: AppColorSchemes.darkColorSchemeDefault,
+        extensions: <ThemeExtension<dynamic>>[AppColorSchemes.darkCustomColorsDefault],
       ),
       themeMode: ThemeMode.system,
       title: 'Movie Scout',
