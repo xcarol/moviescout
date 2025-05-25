@@ -37,7 +37,6 @@ class TitleCard extends StatelessWidget {
     return SizedBox(
       height: CARD_HEIGHT,
       child: Card(
-        color: Theme.of(context).colorScheme.primaryContainer,
         child: InkWell(
           onTap: () {
             Navigator.push(
@@ -78,7 +77,10 @@ class TitleCard extends StatelessWidget {
     }
 
     List<Widget> children = [
-      Icon(Icons.star, color: Theme.of(context).colorScheme.onSurface),
+      Icon(
+        Icons.star,
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
       const SizedBox(width: 5),
       Text(_title.voteAverage.toStringAsFixed(2)),
     ];
