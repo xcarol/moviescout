@@ -36,9 +36,12 @@ class AppDrawer extends StatelessWidget {
               backgroundImage: userImage,
             ),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primaryContainer,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
-            accountName: Text(userName),
+            accountName: Text(userName,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.surface,
+                )),
             accountEmail: null,
           ),
           if (isUserLoggedIn && defaultTargetPlatform == TargetPlatform.linux)
