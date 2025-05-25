@@ -38,7 +38,6 @@ class TitleListControlPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.primary,
       padding: const EdgeInsets.all(4.0),
       child: Column(
         spacing: 8,
@@ -230,7 +229,10 @@ class TitleListControlPanel extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
-          borderSide: BorderSide(color: borderColor, width: 2),
+          borderSide: BorderSide(
+            color: borderColor,
+            width: 2,
+          ),
         ),
         suffixIcon: IconButton(
           icon: Icon(Icons.clear),
