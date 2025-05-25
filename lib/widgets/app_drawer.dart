@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform;
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
@@ -34,12 +36,12 @@ class AppDrawer extends StatelessWidget {
               backgroundImage: userImage,
             ),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.inversePrimary,
+              color: Theme.of(context).colorScheme.primaryContainer,
             ),
             accountName: Text(userName),
             accountEmail: null,
           ),
-          if (isUserLoggedIn)
+          if (isUserLoggedIn && defaultTargetPlatform == TargetPlatform.linux)
             ListTile(
               leading: Icon(Icons.import_export),
               title: Text(AppLocalizations.of(context)!.imdbImport),
