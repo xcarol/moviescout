@@ -152,7 +152,10 @@ class _TitleDetailsState extends State<TitleDetails> {
 
             return Row(
               children: [
-                Icon(Icons.star, color: Theme.of(context).extension<CustomColors>()!.ratedTitle),
+                Icon(Icons.star,
+                    color: Theme.of(context)
+                        .extension<CustomColors>()!
+                        .ratedTitle),
                 const SizedBox(width: 5),
                 if (ratingService.contains(title))
                   Padding(
@@ -160,7 +163,9 @@ class _TitleDetailsState extends State<TitleDetails> {
                     child: Text(
                       '$titleRating',
                       style: TextStyle(
-                        color: Theme.of(context).extension<CustomColors>()!.ratedTitle,
+                        color: Theme.of(context)
+                            .extension<CustomColors>()!
+                            .ratedTitle,
                       ),
                     ),
                   ),
@@ -216,7 +221,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       genres.add(Chip(
         label: Text(genre.name),
         padding: EdgeInsets.all(5),
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
       ));
       genres.add(const SizedBox(width: 5));
     }
