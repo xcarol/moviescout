@@ -78,7 +78,7 @@ class TitleCard extends StatelessWidget {
     }
 
     List<Widget> children = [
-      Icon(Icons.star),
+      Icon(Icons.star, color: Theme.of(context).colorScheme.onSurface),
       const SizedBox(width: 5),
       Text(_title.voteAverage.toStringAsFixed(2)),
     ];
