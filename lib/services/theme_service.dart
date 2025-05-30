@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/custom_colors.dart';
+import 'package:moviescout/services/preferences_service.dart';
 
 enum ThemeSchemes {
   defaultScheme,
@@ -18,7 +19,14 @@ class ThemeService with ChangeNotifier {
 
   ThemeService._internal();
 
-  ThemeSchemes _currentScheme = ThemeSchemes.defaultScheme;
+  ThemeSchemes _currentScheme = ThemeSchemes.values.firstWhere(
+    (e) =>
+        e.name ==
+        (PreferencesService().prefs.getString('ThemeScheme') ??
+            ThemeSchemes.defaultScheme.name),
+    orElse: () => ThemeSchemes.defaultScheme,
+  );
+
   ThemeSchemes get currentScheme => _currentScheme;
 
   ColorScheme _lightColorScheme = lightColorSchemeDefault;
@@ -32,6 +40,35 @@ class ThemeService with ChangeNotifier {
 
   ColorScheme get darkColorScheme => _darkColorScheme;
   CustomColors get darkCustomColors => _darkCustomColors;
+
+  void setupTheme() {
+    switch (_currentScheme) {
+      case ThemeSchemes.defaultScheme:
+        _setColorScheme(
+          lightColorSchemeDefault,
+          lightCustomColorsDefault,
+          darkColorSchemeDefault,
+          darkCustomColorsDefault,
+        );
+        break;
+      case ThemeSchemes.blueScheme:
+        _setColorScheme(
+          lightColorSchemeBlue,
+          lightCustomColorsBlue,
+          darkColorSchemeBlue,
+          darkCustomColorsBlue,
+        );
+        break;
+      case ThemeSchemes.redScheme:
+        _setColorScheme(
+          lightColorSchemeRed,
+          lightCustomColorsRed,
+          darkColorSchemeRed,
+          darkCustomColorsRed,
+        );
+        break;
+    }
+  }
 
   void _setColorScheme(
     ColorScheme lightColorScheme,
@@ -75,6 +112,7 @@ class ThemeService with ChangeNotifier {
         _currentScheme = ThemeSchemes.redScheme;
         break;
     }
+    PreferencesService().prefs.setString('ThemeScheme', _currentScheme.name);
     notifyListeners();
   }
 
