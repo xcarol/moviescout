@@ -16,7 +16,5 @@ class MainAppBar extends AppBar {
                 tooltip: AppLocalizations.of(context)!.back,
               ),
           ],
-          foregroundColor: Theme.of(context).colorScheme.onPrimary,
-          backgroundColor: Theme.of(context).colorScheme.primary,
         );
 }

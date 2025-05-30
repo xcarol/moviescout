@@ -22,7 +22,7 @@
     "signInToWatchlist": "User must be logged in to add titles.",
     "tvShow": "Tv show",
     "movie": "Movie",
-    "imdbSelect": "Select",
+    "select": "Select",
     "imdbImport": "Import from IMDB",
     "imdbImportHint": "Select an IMDB export CSV file",
     "imdbImportWatchlist": "Import Watchlist",
@@ -58,5 +58,9 @@
     "cancel": "Cancel",
     "originaTitle": "Original title",
     "originalLanguage": "Original language",
-    "originCountry": "Country"
+    "originCountry": "Country",
+    "schemeSelectTitle": "Select color",
+    "defaultScheme": "Black",
+    "blueScheme": "Blue",
+    "redScheme": "Red"
 }

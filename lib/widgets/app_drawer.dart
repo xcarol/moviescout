@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform;
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
+import 'package:moviescout/services/theme_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
+import 'package:moviescout/widgets/color_scheme_form.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/snack_bar.dart';
 
@@ -14,6 +18,22 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isUserLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
+
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          _userProfileTile(context),
+          if (isUserLoggedIn && defaultTargetPlatform == TargetPlatform.linux)
+            _importImdbTile(context),
+          _colorSchemeTile(context),
+          _userSessionTile(context, isUserLoggedIn),
+        ],
+      ),
+    );
+  }
+
+  Widget _userProfileTile(BuildContext context) {
     var user = Provider.of<TmdbUserService>(context).user;
     ImageProvider<Object>? userImage = user != null
         ? NetworkImage(
@@ -25,56 +45,82 @@ class AppDrawer extends StatelessWidget {
             : user['username']
         : AppLocalizations.of(context)!.anonymousUser;
 
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          UserAccountsDrawerHeader(
-            currentAccountPicture: CircleAvatar(
-              backgroundImage: userImage,
-            ),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.inversePrimary,
-            ),
-            accountName: Text(userName),
-            accountEmail: null,
-          ),
-          if (isUserLoggedIn)
-            ListTile(
-              leading: Icon(Icons.import_export),
-              title: Text(AppLocalizations.of(context)!.imdbImport),
-              onTap: () => {
-                Navigator.of(context).pop(),
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ImportIMDB()),
-                ),
-              },
-            ),
-          ListTile(
-            leading: Icon(isUserLoggedIn ? Icons.logout : Icons.login),
-            title: Text(isUserLoggedIn
-                ? AppLocalizations.of(context)!.logout
-                : AppLocalizations.of(context)!.login),
-            onTap: () => {
-              Navigator.of(context).pop(),
-              if (isUserLoggedIn)
-                {logout(context)}
-              else
-                {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Login()),
-                  ),
-                }
-            },
-          ),
-        ],
+    return UserAccountsDrawerHeader(
+      currentAccountPicture: CircleAvatar(
+        backgroundImage: userImage,
       ),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
+      accountName: Text(userName,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.surface,
+          )),
+      accountEmail: null,
     );
   }
 
-  logout(BuildContext context) async {
+  Widget _importImdbTile(BuildContext context) {
+    return ListTile(
+      leading: Icon(Icons.import_export),
+      title: Text(AppLocalizations.of(context)!.imdbImport),
+      onTap: () => {
+        Navigator.of(context).pop(),
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ImportIMDB()),
+        ),
+      },
+    );
+  }
+
+  Widget _colorSchemeTile(BuildContext context) {
+    final themeProvider = Provider.of<ThemeService>(context);
+
+    return ListTile(
+      leading: Icon(Icons.color_lens),
+      title: Text(
+        AppLocalizations.of(context)!.schemeSelectTitle,
+      ),
+      onTap: () => {
+        Navigator.of(context).pop(),
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ColorSchemeForm(
+              currentScheme: themeProvider.currentScheme,
+              onSubmit: (ThemeSchemes schemeName) {
+                themeProvider.setColorScheme(schemeName);
+              },
+            );
+          },
+        ),
+      },
+    );
+  }
+
+  Widget _userSessionTile(BuildContext context, bool isUserLoggedIn) {
+    return ListTile(
+      leading: Icon(isUserLoggedIn ? Icons.logout : Icons.login),
+      title: Text(isUserLoggedIn
+          ? AppLocalizations.of(context)!.logout
+          : AppLocalizations.of(context)!.login),
+      onTap: () => {
+        Navigator.of(context).pop(),
+        if (isUserLoggedIn)
+          {_logout(context)}
+        else
+          {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Login()),
+            ),
+          }
+      },
+    );
+  }
+
+  _logout(BuildContext context) async {
     final tmdbUserService =
         Provider.of<TmdbUserService>(context, listen: false);
     final tmdbWatchlistService =

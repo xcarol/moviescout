@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -7,8 +9,8 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/theme_service.dart';
 import 'package:moviescout/services/tmbd_genre_servcie.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
@@ -46,6 +48,7 @@ void main() async {
 
   runApp(MultiProvider(
     providers: [
+      ChangeNotifierProvider(create: (_) => ThemeService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
       ChangeNotifierProvider(create: (_) => TmdbWatchlistService('watchlist')),
       ChangeNotifierProvider(create: (_) => TmdbRateslistService('rateslist')),
@@ -62,8 +65,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  final seedColor = Color(0xFF0000FF);
-
   @override
   void initState() {
     super.initState();
@@ -84,6 +85,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeService>(context);
+    themeProvider.setupTheme();
+
     return MaterialApp(
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -99,35 +103,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: seedColor,
-        ),
-        extensions: <ThemeExtension<dynamic>>[
-          CustomColors(
-            inWatchlist: Colors.orange,
-            notInWatchlist: Colors.blueGrey,
-            ratedTitle: Colors.orange,
-            selected: Colors.orange,
-            notSelected: Colors.blueGrey,
-          ),
-        ],
+        colorScheme: themeProvider.lightColorScheme,
+        extensions: <ThemeExtension<dynamic>>[themeProvider.lightCustomColors],
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: seedColor,
-          brightness: Brightness.dark,
-        ),
-        extensions: <ThemeExtension<dynamic>>[
-          CustomColors(
-            inWatchlist: Colors.amber,
-            notInWatchlist: Colors.grey,
-            ratedTitle: Colors.amber,
-            selected: Colors.amber,
-            notSelected: Colors.grey,
-          ),
-        ],
+        colorScheme: themeProvider.darkColorScheme,
+        extensions: <ThemeExtension<dynamic>>[themeProvider.darkCustomColors],
       ),
       themeMode: ThemeMode.system,
       title: 'Movie Scout',
