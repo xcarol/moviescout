@@ -22,7 +22,7 @@
     "signInToWatchlist": "Es necesario iniciar sesión para añadir títulos.",
     "tvShow": "Serie",
     "movie": "Película",
-    "imdbSelect": "Selecciona",
+    "select": "Selecciona",
     "imdbImport": "Importar de IMDB",
     "imdbImportHint": "Selecciona un archivo CSV exportado de IMDB",
     "imdbImportWatchlist": "Importar Para Ver",
@@ -58,5 +58,9 @@
     "cancel": "Cancela",
     "originaTitle": "Título original",
     "originalLanguage": "Idioma original",
-    "originCountry": "País"
+    "originCountry": "País",
+    "schemeSelectTitle": "Selecciona el color",
+    "defaultScheme": "Negro",
+    "blueScheme": "Azul",
+    "redScheme": "Rojo"
 }

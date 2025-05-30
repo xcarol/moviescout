@@ -9,8 +9,8 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:moviescout/models/app_color_schemes.dart';
 import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/theme_service.dart';
 import 'package:moviescout/services/tmbd_genre_servcie.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
@@ -48,6 +48,7 @@ void main() async {
 
   runApp(MultiProvider(
     providers: [
+      ChangeNotifierProvider(create: (_) => ThemeService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
       ChangeNotifierProvider(create: (_) => TmdbWatchlistService('watchlist')),
       ChangeNotifierProvider(create: (_) => TmdbRateslistService('rateslist')),
@@ -64,8 +65,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  final seedColor = Color.fromARGB(255, 255, 0, 0);
-
   @override
   void initState() {
     super.initState();
@@ -86,6 +85,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeService>(context);
+
     return MaterialApp(
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -101,14 +102,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
-        colorScheme: AppColorSchemes.lightColorSchemeDefault,
-        extensions: <ThemeExtension<dynamic>>[AppColorSchemes.lightCustomColorsDefault],
+        colorScheme: themeProvider.lightColorScheme,
+        extensions: <ThemeExtension<dynamic>>[themeProvider.lightCustomColors],
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        colorScheme: AppColorSchemes.darkColorSchemeDefault,
-        extensions: <ThemeExtension<dynamic>>[AppColorSchemes.darkCustomColorsDefault],
+        colorScheme: themeProvider.darkColorScheme,
+        extensions: <ThemeExtension<dynamic>>[themeProvider.darkCustomColors],
       ),
       themeMode: ThemeMode.system,
       title: 'Movie Scout',

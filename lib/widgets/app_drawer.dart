@@ -4,9 +4,11 @@ import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
+import 'package:moviescout/services/theme_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
+import 'package:moviescout/widgets/color_scheme_form.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/snack_bar.dart';
 
@@ -56,6 +58,7 @@ class AppDrawer extends StatelessWidget {
                 ),
               },
             ),
+            _colorSchemeTile(context),
           ListTile(
             leading: Icon(isUserLoggedIn ? Icons.logout : Icons.login),
             title: Text(isUserLoggedIn
@@ -76,6 +79,31 @@ class AppDrawer extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _colorSchemeTile(BuildContext context) {
+    final themeProvider = Provider.of<ThemeService>(context);
+
+    return ListTile(
+      leading: Icon(Icons.color_lens),
+      title: Text(
+        AppLocalizations.of(context)!.schemeSelectTitle,
+      ),
+      onTap: () => {
+        Navigator.of(context).pop(),
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ColorSchemeForm(
+              currentScheme: themeProvider.currentScheme,
+              onSubmit: (ThemeSchemes schemeName) {
+                themeProvider.setColorScheme(schemeName);
+              },
+            );
+          },
+        ),
+      },
     );
   }
 

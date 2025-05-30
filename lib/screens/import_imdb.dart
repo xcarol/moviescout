@@ -250,7 +250,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               ElevatedButton(
-                child: Text(AppLocalizations.of(context)!.imdbSelect),
+                child: Text(AppLocalizations.of(context)!.select),
                 onPressed: () => _pickFile(context),
               ),
               const SizedBox(width: 10),
