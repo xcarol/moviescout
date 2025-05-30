@@ -18,6 +18,22 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isUserLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
+
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          _userProfileTile(context),
+          if (isUserLoggedIn && defaultTargetPlatform == TargetPlatform.linux)
+            _importImdbTile(context),
+          _colorSchemeTile(context),
+          _userSessionTile(context, isUserLoggedIn),
+        ],
+      ),
+    );
+  }
+
+  Widget _userProfileTile(BuildContext context) {
     var user = Provider.of<TmdbUserService>(context).user;
     ImageProvider<Object>? userImage = user != null
         ? NetworkImage(
@@ -29,56 +45,32 @@ class AppDrawer extends StatelessWidget {
             : user['username']
         : AppLocalizations.of(context)!.anonymousUser;
 
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          UserAccountsDrawerHeader(
-            currentAccountPicture: CircleAvatar(
-              backgroundImage: userImage,
-            ),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            accountName: Text(userName,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.surface,
-                )),
-            accountEmail: null,
-          ),
-          if (isUserLoggedIn && defaultTargetPlatform == TargetPlatform.linux)
-            ListTile(
-              leading: Icon(Icons.import_export),
-              title: Text(AppLocalizations.of(context)!.imdbImport),
-              onTap: () => {
-                Navigator.of(context).pop(),
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ImportIMDB()),
-                ),
-              },
-            ),
-            _colorSchemeTile(context),
-          ListTile(
-            leading: Icon(isUserLoggedIn ? Icons.logout : Icons.login),
-            title: Text(isUserLoggedIn
-                ? AppLocalizations.of(context)!.logout
-                : AppLocalizations.of(context)!.login),
-            onTap: () => {
-              Navigator.of(context).pop(),
-              if (isUserLoggedIn)
-                {logout(context)}
-              else
-                {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Login()),
-                  ),
-                }
-            },
-          ),
-        ],
+    return UserAccountsDrawerHeader(
+      currentAccountPicture: CircleAvatar(
+        backgroundImage: userImage,
       ),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
+      accountName: Text(userName,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.surface,
+          )),
+      accountEmail: null,
+    );
+  }
+
+  Widget _importImdbTile(BuildContext context) {
+    return ListTile(
+      leading: Icon(Icons.import_export),
+      title: Text(AppLocalizations.of(context)!.imdbImport),
+      onTap: () => {
+        Navigator.of(context).pop(),
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ImportIMDB()),
+        ),
+      },
     );
   }
 
@@ -107,7 +99,28 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  logout(BuildContext context) async {
+  Widget _userSessionTile(BuildContext context, bool isUserLoggedIn) {
+    return ListTile(
+      leading: Icon(isUserLoggedIn ? Icons.logout : Icons.login),
+      title: Text(isUserLoggedIn
+          ? AppLocalizations.of(context)!.logout
+          : AppLocalizations.of(context)!.login),
+      onTap: () => {
+        Navigator.of(context).pop(),
+        if (isUserLoggedIn)
+          {_logout(context)}
+        else
+          {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Login()),
+            ),
+          }
+      },
+    );
+  }
+
+  _logout(BuildContext context) async {
     final tmdbUserService =
         Provider.of<TmdbUserService>(context, listen: false);
     final tmdbWatchlistService =
