@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
@@ -25,16 +24,16 @@ class TitleList extends StatefulWidget {
 }
 
 class _TitleListState extends State<TitleList> {
+  final FocusNode _searchFocusNode = FocusNode();
   int _updatingTitleId = 0;
   bool _isSortAsc = true;
-  final FocusNode _searchFocusNode = FocusNode();
-  late String selectedType;
-  late List<String> titleTypes;
-  late String textFilter;
-  late String selectedSort;
-  late List<String> titleSorts;
-  late List<String> selectedGenres;
-  late List<String> genresList;
+  String _selectedType = '';
+  late List<String> _titleTypes;
+  late String _textFilter;
+  String _selectedSort = '';
+  late List<String> _titleSorts;
+  List<String> _selectedGenres = [];
+  List<String> _genresList = [];
   late TextEditingController _textFilterController;
 
   @override
@@ -57,29 +56,38 @@ class _TitleListState extends State<TitleList> {
     if (!isCurrent && _searchFocusNode.hasFocus) {
       _searchFocusNode.unfocus();
     }
-    selectedType = AppLocalizations.of(context)!.allTypes;
-    titleTypes = [
-      AppLocalizations.of(context)!.allTypes,
-      AppLocalizations.of(context)!.movies,
-      AppLocalizations.of(context)!.tvshows,
-    ];
-    textFilter = _textFilterController.text;
-    selectedGenres = [];
-    genresList = [];
-    for (TmdbTitle title in widget.titles) {
-      for (TmdbGenre genre in title.genres) {
-        if (!genresList.contains(genre.name)) {
-          genresList.add(genre.name);
-        }
-      }
+    _textFilter = _textFilterController.text;
+    _initilizeControlLocalizations();
+    _retrieveGenresFromTitles();
+  }
+
+  void _initilizeControlLocalizations() {
+    final localizations = AppLocalizations.of(context)!;
+    if (_selectedType.isEmpty) {
+      _selectedType = localizations.allTypes;
     }
-    selectedSort = AppLocalizations.of(context)!.sortAlphabetically;
-    titleSorts = [
-      AppLocalizations.of(context)!.sortAlphabetically,
-      AppLocalizations.of(context)!.sortRating,
-      AppLocalizations.of(context)!.sortReleaseDate,
-      AppLocalizations.of(context)!.sortRuntime,
+    _titleTypes = [
+      localizations.allTypes,
+      localizations.movies,
+      localizations.tvshows,
     ];
+    if (_selectedSort.isEmpty) {
+      _selectedSort = localizations.sortAlphabetically;
+    }
+    _titleSorts = [
+      localizations.sortAlphabetically,
+      localizations.sortRating,
+      localizations.sortReleaseDate,
+      localizations.sortRuntime,
+    ];
+  }
+
+  void _retrieveGenresFromTitles() {
+    _genresList = widget.titles
+        .expand((title) => title.genres)
+        .map((genre) => genre.name)
+        .toSet()
+        .toList();
   }
 
   List<TmdbTitle> _sortTitles(List<TmdbTitle> titles) {
@@ -90,7 +98,7 @@ class _TitleListState extends State<TitleList> {
       AppLocalizations.of(context)!.sortAlphabetically:
           (TmdbTitle a, TmdbTitle b) => a.name.compareTo(b.name),
       AppLocalizations.of(context)!.sortRating: (TmdbTitle a, TmdbTitle b) =>
-          b.voteAverage.compareTo(a.voteAverage),
+          b.rating.compareTo(a.rating),
       AppLocalizations.of(context)!.sortReleaseDate:
           (TmdbTitle a, TmdbTitle b) => _compareReleaseDates(a, b),
       AppLocalizations.of(context)!.sortRuntime: (TmdbTitle a, TmdbTitle b) =>
@@ -98,7 +106,7 @@ class _TitleListState extends State<TitleList> {
     };
 
     titlesToSort.sort(
-        (a, b) => ascending * (sortFunctions[selectedSort]?.call(a, b) ?? 0));
+        (a, b) => ascending * (sortFunctions[_selectedSort]?.call(a, b) ?? 0));
 
     return titlesToSort;
   }
@@ -122,13 +130,13 @@ class _TitleListState extends State<TitleList> {
   }
 
   List<TmdbTitle> _filterGenres(List<TmdbTitle> titles) {
-    if (selectedGenres.isEmpty) {
+    if (_selectedGenres.isEmpty) {
       return titles;
     }
 
     return titles
         .where((title) =>
-            title.genres.any((genre) => selectedGenres.contains(genre.name)))
+            title.genres.any((genre) => _selectedGenres.contains(genre.name)))
         .toList();
   }
 
@@ -136,7 +144,7 @@ class _TitleListState extends State<TitleList> {
     TmdbUserService userService =
         Provider.of<TmdbUserService>(context, listen: false);
 
-    return Expanded(
+    return Flexible(
       child: ListView.builder(
         key: const PageStorageKey('TitleListView'),
         shrinkWrap: true,
@@ -160,8 +168,6 @@ class _TitleListState extends State<TitleList> {
               }
 
               final updatedTitle = snapshot.data!;
-              TmdbUserService userService =
-                  Provider.of<TmdbUserService>(context, listen: false);
 
               return TitleCard(
                 context: context,
@@ -199,31 +205,31 @@ class _TitleListState extends State<TitleList> {
 
   Widget _controlPanel() {
     return TitleListControlPanel(
-      selectedType: selectedType,
-      typesList: titleTypes,
+      selectedType: _selectedType,
+      typesList: _titleTypes,
       typeChanged: (typeChanged) {
         setState(() {
-          selectedType = typeChanged;
+          _selectedType = typeChanged;
         });
       },
       textFilterChanged: (newTextFilter) {
         setState(() {
-          textFilter = newTextFilter;
+          _textFilter = newTextFilter;
         });
       },
       textFilterController: _textFilterController,
-      selectedGenres: selectedGenres.toList(),
-      genresList: genresList,
+      selectedGenres: _selectedGenres.toList(),
+      genresList: _genresList,
       genresChanged: (List<String> genresChanged) {
         setState(() {
-          selectedGenres = genresChanged.toList();
+          _selectedGenres = genresChanged.toList();
         });
       },
-      selectedSort: selectedSort,
-      sortsList: titleSorts,
+      selectedSort: _selectedSort,
+      sortsList: _titleSorts,
       sortChanged: (sortChanged) {
         setState(() {
-          selectedSort = sortChanged;
+          _selectedSort = sortChanged;
         });
       },
       swapSort: () {
@@ -236,16 +242,16 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _infoLine(int count) {
-    String sortBy = selectedSort;
+    String sortBy = _selectedSort;
     TextStyle textStyle = TextStyle(
       color: Theme.of(context).colorScheme.onPrimaryContainer,
     );
 
     String titleCountText = '$count ${AppLocalizations.of(context)!.titles}';
 
-    if (selectedType == AppLocalizations.of(context)!.tvshows) {
+    if (_selectedType == AppLocalizations.of(context)!.tvshows) {
       titleCountText = '$count ${AppLocalizations.of(context)!.tvshows}';
-    } else if (selectedType == AppLocalizations.of(context)!.movies) {
+    } else if (_selectedType == AppLocalizations.of(context)!.movies) {
       titleCountText = '$count ${AppLocalizations.of(context)!.movies}';
     }
     return Container(
@@ -283,20 +289,20 @@ class _TitleListState extends State<TitleList> {
   List<TmdbTitle> _filterTitles() {
     List<TmdbTitle> titles = widget.titles;
 
-    if (selectedType != AppLocalizations.of(context)!.allTypes) {
+    if (_selectedType != AppLocalizations.of(context)!.allTypes) {
       titles = titles
           .where((title) =>
               (title.mediaType == 'movie' &&
-                  selectedType == AppLocalizations.of(context)!.movies) ||
+                  _selectedType == AppLocalizations.of(context)!.movies) ||
               (title.mediaType == 'tv' &&
-                  selectedType == AppLocalizations.of(context)!.tvshows))
+                  _selectedType == AppLocalizations.of(context)!.tvshows))
           .toList();
     }
 
-    if (textFilter.isNotEmpty) {
+    if (_textFilter.isNotEmpty) {
       titles = titles
           .where((title) =>
-              title.name.toLowerCase().contains(textFilter.toLowerCase()))
+              title.name.toLowerCase().contains(_textFilter.toLowerCase()))
           .toList();
     }
 
