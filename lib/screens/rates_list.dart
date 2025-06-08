@@ -85,12 +85,7 @@ class _RatesListState extends State<RatesList> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        TitleList(
-          titles:
-              Provider.of<TmdbRateslistService>(context, listen: false).titles,
-          listProvider:
-              Provider.of<TmdbRateslistService>(context, listen: false),
-        ),
+        TitleList(Provider.of<TmdbRateslistService>(context, listen: false)),
       ],
     );
   }

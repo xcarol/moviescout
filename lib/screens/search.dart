@@ -102,10 +102,7 @@ class _SearchState extends State<Search> {
   }
 
   Widget searchResults() {
-    return TitleList(
-      titles: searchTitles,
-      listProvider: TmdbListService('searchProvider'),
-    );
+    return TitleList(TmdbListService('searchProvider', titles: searchTitles));
   }
 
   void searchTitle(BuildContext context, String title) async {

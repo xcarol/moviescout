@@ -10,14 +10,9 @@ import 'package:moviescout/widgets/title_list_control_panel.dart';
 import 'package:provider/provider.dart';
 
 class TitleList extends StatefulWidget {
-  final List<TmdbTitle> titles;
-  final TmdbListService listProvider;
+  final TmdbListService listService;
 
-  const TitleList({
-    super.key,
-    required this.titles,
-    required this.listProvider,
-  });
+  const TitleList(this.listService, {super.key});
 
   @override
   State<TitleList> createState() => _TitleListState();
@@ -25,7 +20,6 @@ class TitleList extends StatefulWidget {
 
 class _TitleListState extends State<TitleList> {
   final FocusNode _searchFocusNode = FocusNode();
-  int _updatingTitleId = 0;
   bool _isSortAsc = true;
   String _selectedType = '';
   late List<String> _titleTypes;
@@ -83,7 +77,7 @@ class _TitleListState extends State<TitleList> {
   }
 
   void _retrieveGenresFromTitles() {
-    _genresList = widget.titles
+    _genresList = widget.listService.titles
         .expand((title) => title.genres)
         .map((genre) => genre.name)
         .toSet()
@@ -141,9 +135,6 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _titleList(List<TmdbTitle> titles) {
-    TmdbUserService userService =
-        Provider.of<TmdbUserService>(context, listen: false);
-
     return Flexible(
       child: ListView.builder(
         key: const PageStorageKey('TitleListView'),
@@ -151,51 +142,23 @@ class _TitleListState extends State<TitleList> {
         itemCount: titles.length,
         itemBuilder: (context, index) {
           final TmdbTitle title = titles[index];
-
-          return FutureBuilder<TmdbTitle>(
-            future: widget.listProvider.updateTitleDetails(
-              userService.accountId,
-              title,
-            ),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done ||
-                  !snapshot.hasData) {
-                return TitleCard(
-                    context: context,
-                    title: TmdbTitle(title: {}),
-                    isUpdatingWatchlist: false,
-                    onWatchlistPressed: (isInWatchlist) {});
-              }
-
-              final updatedTitle = snapshot.data!;
-
-              return TitleCard(
-                context: context,
-                title: updatedTitle,
-                isUpdatingWatchlist: _updatingTitleId == updatedTitle.id,
-                onWatchlistPressed: (isInWatchlist) {
-                  setState(() {
-                    _updatingTitleId = updatedTitle.id;
-                  });
-                  Provider.of<TmdbWatchlistService>(context, listen: false)
-                      .updateWatchlistTitle(
-                    userService.accountId,
-                    userService.sessionId,
-                    updatedTitle,
-                    !isInWatchlist,
-                  )
-                      .then((value) async {
-                    setState(() {
-                      _updatingTitleId = 0;
-                    });
-                  }).catchError((error) {
-                    setState(() {
-                      _updatingTitleId = 0;
-                    });
-                    SnackMessage.showSnackBar(error.toString());
-                  });
-                },
-              );
+          return TitleCard(
+            context: context,
+            title: title,
+            tmdbListService: widget.listService,
+            onWatchlistPressed: (isInWatchlist) {
+              final userService =
+                  Provider.of<TmdbUserService>(context, listen: false);
+              Provider.of<TmdbWatchlistService>(context, listen: false)
+                  .updateWatchlistTitle(
+                userService.accountId,
+                userService.sessionId,
+                title,
+                !isInWatchlist,
+              )
+                  .catchError((error) {
+                SnackMessage.showSnackBar(error.toString());
+              });
             },
           );
         },
@@ -287,7 +250,7 @@ class _TitleListState extends State<TitleList> {
   }
 
   List<TmdbTitle> _filterTitles() {
-    List<TmdbTitle> titles = widget.titles;
+    List<TmdbTitle> titles = widget.listService.titles;
 
     if (_selectedType != AppLocalizations.of(context)!.allTypes) {
       titles = titles
@@ -314,35 +277,29 @@ class _TitleListState extends State<TitleList> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = List.empty(growable: true);
-
-    if (widget.titles.isNotEmpty) {
-      List<TmdbTitle> filteredTitles = _filterTitles();
-      children = [
-        _controlPanel(),
-        Container(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          child: Divider(
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
-          ),
-        ),
-        _infoLine(filteredTitles.length),
-        Container(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          child: Divider(
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
-          ),
-        ),
-        _titleList(filteredTitles),
-      ];
-    }
-
+    List<TmdbTitle> filteredTitles = _filterTitles();
     return Expanded(
       child: Container(
         color: Theme.of(context).colorScheme.primary,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: children,
+          children: [
+            _controlPanel(),
+            Container(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: Divider(
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
+            ),
+            _infoLine(filteredTitles.length),
+            Container(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: Divider(
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
+            ),
+            _titleList(filteredTitles),
+          ],
         ),
       ),
     );
