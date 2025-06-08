@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
-import 'package:moviescout/services/tmdb_user_service.dart';
-import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/title_list_control_panel.dart';
 import 'package:provider/provider.dart';
@@ -135,33 +132,29 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _titleList(List<TmdbTitle> titles) {
-    return Flexible(
-      child: ListView.builder(
-        key: const PageStorageKey('TitleListView'),
-        shrinkWrap: true,
-        itemCount: titles.length,
-        itemBuilder: (context, index) {
-          final TmdbTitle title = titles[index];
-          return TitleCard(
-            context: context,
-            title: title,
-            tmdbListService: widget.listService,
-            onWatchlistPressed: (isInWatchlist) {
-              final userService =
-                  Provider.of<TmdbUserService>(context, listen: false);
-              Provider.of<TmdbWatchlistService>(context, listen: false)
-                  .updateWatchlistTitle(
-                userService.accountId,
-                userService.sessionId,
-                title,
-                !isInWatchlist,
-              )
-                  .catchError((error) {
-                SnackMessage.showSnackBar(error.toString());
-              });
-            },
-          );
-        },
+    return ChangeNotifierProvider.value(
+      value: widget.listService,
+      child: Flexible(
+        child: ListView.builder(
+          key: const PageStorageKey('TitleListView'),
+          shrinkWrap: true,
+          itemCount: titles.length,
+          itemBuilder: (context, index) {
+            final TmdbTitle title = titles[index];
+            return Selector<TmdbListService, TmdbTitle?>(
+              selector: (_, service) => service.titles.firstWhere(
+                (title) => title.id == title.id,
+                orElse: () => title,
+              ),
+              builder: (_, tmdbTitle, __) {
+                return TitleCard(
+                  title: title,
+                  tmdbListService: widget.listService,
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
