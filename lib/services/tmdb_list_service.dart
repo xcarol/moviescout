@@ -169,26 +169,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
   }
 
-  Future<TmdbTitle> updateTitleDetails(
-      String accountId, TmdbTitle title) async {
-    if (_titles.isEmpty) {
-      return title;
-    }
-
-    TmdbTitle titleFromList =
-        _titles.firstWhere((element) => element.id == title.id);
-
-    if (TmdbTitleService.isUpToDate(titleFromList) == false) {
-      TmdbTitle updatedTitle =
-          await TmdbTitleService().getTitleDetails(titleFromList);
-      _titles.removeWhere((element) => element.id == title.id);
-      _titles.add(updatedTitle);
-      return updatedTitle;
-    }
-
-    return titleFromList;
-  }
-
   Future<List> getTitlesFromServer(
       Future<dynamic> Function(int) getTitles) async {
     int page = 1, pages = 1;
