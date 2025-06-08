@@ -5,6 +5,7 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/network_image_cache.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +15,7 @@ const double CARD_HEIGHT = 160.0;
 
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
-  final bool isUpdatingWatchlist;
+  final TmdbListService _tmdbListService;
   final BuildContext context;
   final void Function(bool) onWatchlistPressed;
 
@@ -22,17 +23,16 @@ class TitleCard extends StatelessWidget {
     super.key,
     required this.context,
     required TmdbTitle title,
-    required this.isUpdatingWatchlist,
+    required TmdbListService tmdbListService,
     required this.onWatchlistPressed,
-  }) : _title = title;
+  }) : _title = title, _tmdbListService = tmdbListService;
 
   @override
   Widget build(BuildContext context) {
-    if (_title.id == 0) {
-      return SizedBox(
-          height: CARD_HEIGHT,
-          child: Center(child: CircularProgressIndicator()));
-    }
+    TmdbTitle tmdbTitle = _tmdbListService.titles.firstWhere(
+      (title) => title.id == _title.id,
+      orElse: () => _title,
+    );
 
     return SizedBox(
       height: CARD_HEIGHT,
@@ -43,7 +43,7 @@ class TitleCard extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => TitleDetails(
-                        title: TmdbTitle(title: _title.map),
+                        title: TmdbTitle(title: tmdbTitle.map),
                       )),
             );
           },
@@ -57,10 +57,10 @@ class TitleCard extends StatelessWidget {
                     topLeft: Radius.circular(12),
                     bottomLeft: Radius.circular(12),
                   ),
-                  child: _titlePoster(_title.posterPath),
+                  child: _titlePoster(tmdbTitle.posterPath),
                 ),
                 const SizedBox(width: 10),
-                _titleCard(),
+                _titleCard(tmdbTitle),
               ],
             ),
           ),
@@ -69,10 +69,10 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget _titleRating() {
+  Widget _titleRating(TmdbTitle tmdbTitle) {
     final customColors = Theme.of(context).extension<CustomColors>()!;
 
-    if (_title.voteAverage == 0.0) {
+    if (tmdbTitle.voteAverage == 0.0) {
       return const SizedBox();
     }
 
@@ -82,14 +82,14 @@ class TitleCard extends StatelessWidget {
         color: Theme.of(context).colorScheme.onSurface,
       ),
       const SizedBox(width: 5),
-      Text(_title.voteAverage.toStringAsFixed(2)),
+      Text(tmdbTitle.voteAverage.toStringAsFixed(2)),
     ];
 
     TmdbRateslistService rateslistService =
         Provider.of<TmdbRateslistService>(context, listen: true);
 
     TmdbTitle userRatedTitle = rateslistService.titles.isNotEmpty
-        ? rateslistService.titles.firstWhere((title) => title.id == _title.id,
+        ? rateslistService.titles.firstWhere((title) => title.id == tmdbTitle.id,
             orElse: () => TmdbTitle(title: {}))
         : TmdbTitle(title: {});
 
@@ -141,32 +141,32 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  _titleCard() {
+  _titleCard(TmdbTitle tmdbTitle) {
     return Expanded(
       child: Padding(
         padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _titleHeader(),
+            _titleHeader(tmdbTitle.name),
             const SizedBox(height: 5),
             Row(
               children: [
-                _titleDate(),
+                _titleDate(tmdbTitle),
                 const Text(' - '),
-                if (_title.duration.isNotEmpty)
-                  _titleDuration()
+                if (tmdbTitle.duration.isNotEmpty)
+                  _titleDuration(tmdbTitle.duration)
                 else
-                  _titleType(),
+                  _titleType(tmdbTitle.mediaType),
               ],
             ),
             const SizedBox(height: 5),
-            _titleRating(),
+            _titleRating(tmdbTitle),
             const SizedBox(height: 5),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [_titleBottomRow()],
+                children: [_titleBottomRow(tmdbTitle)],
               ),
             ),
           ],
@@ -175,9 +175,9 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Text _titleHeader() {
+  Text _titleHeader(String name) {
     return Text(
-      _title.name,
+      name,
       style: const TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 16,
@@ -187,16 +187,16 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Text _titleDate() {
+  Text _titleDate(TmdbTitle tmdbTitle) {
     String text = '';
 
-    if (_title.isMovie) {
-      String releaseDate = _title.releaseDate;
+    if (tmdbTitle.isMovie) {
+      String releaseDate = tmdbTitle.releaseDate;
       text = releaseDate.isNotEmpty ? releaseDate.substring(0, 4) : '';
-    } else if (_title.isSerie) {
-      String firstAirDate = _title.firstAirDate;
-      dynamic nextEpisodeToAir = _title.nextEpisodeToAir;
-      String lastAirDate = _title.lastAirDate;
+    } else if (tmdbTitle.isSerie) {
+      String firstAirDate = tmdbTitle.firstAirDate;
+      dynamic nextEpisodeToAir = tmdbTitle.nextEpisodeToAir;
+      String lastAirDate = tmdbTitle.lastAirDate;
 
       text += firstAirDate.isNotEmpty ? firstAirDate.substring(0, 4) : '';
 
@@ -210,26 +210,26 @@ class TitleCard extends StatelessWidget {
     return Text(text);
   }
 
-  Text _titleDuration() {
-    return Text(_title.duration);
+  Text _titleDuration(String duration) {
+    return Text(duration);
   }
 
-  Text _titleType() {
-    return Text(_title.mediaType == 'movie'
+  Text _titleType(String mediaType) {
+    return Text(mediaType == 'movie'
         ? AppLocalizations.of(context)!.movie
         : AppLocalizations.of(context)!.tvShow);
   }
 
-  Row _titleBottomRow() {
+  Row _titleBottomRow(TmdbTitle tmdbTitle) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Flexible(
-          child: _providers(),
+          child: _providers(tmdbTitle),
         ),
         Row(
           children: [
-            watchlistButton(context, _title),
+            watchlistButton(context, tmdbTitle),
             const SizedBox(width: 8),
           ],
         ),
@@ -237,14 +237,14 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget _providers() {
-    if (_title.providers.isEmpty) {
+  Widget _providers(TmdbTitle tmdbTitle) {
+    if (tmdbTitle.providers.isEmpty) {
       return const SizedBox.shrink();
     }
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: _title.providers.flatrate
+        children: tmdbTitle.providers.flatrate
             .map<Widget>((provider) => _providerLogo(provider))
             .toList(),
       ),
