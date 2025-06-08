@@ -9,9 +9,8 @@ import 'package:provider/provider.dart';
 
 Widget watchlistButton(
   BuildContext context,
-  TmdbTitle title, {
-  bool isUpdating = false,
-}) {
+  TmdbTitle title,
+) {
   TmdbUserService userService =
       Provider.of<TmdbUserService>(context, listen: false);
 
@@ -22,13 +21,6 @@ Widget watchlistButton(
         SnackMessage.showSnackBar(
             AppLocalizations.of(context)!.signInToWatchlist);
       },
-    );
-  }
-
-  if (isUpdating) {
-    return IconButton(
-      icon: const Icon(Icons.hourglass_empty),
-      onPressed: () {},
     );
   }
 
