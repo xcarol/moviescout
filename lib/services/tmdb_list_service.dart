@@ -14,7 +14,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   List<TmdbTitle> get titles => _titles;
   String get listName => _prefsListName;
 
-  TmdbListService(String listName) {
+  TmdbListService(String listName, {List<TmdbTitle>? titles}) {
+    if (titles != null) {
+      _titles = titles;
+      _lastUpdated = DateTime.now().toIso8601String();
+    }
     _prefsListName = listName;
   }
 
