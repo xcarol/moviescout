@@ -89,7 +89,7 @@ class _TitleListState extends State<TitleList> {
       AppLocalizations.of(context)!.sortAlphabetically:
           (TmdbTitle a, TmdbTitle b) => a.name.compareTo(b.name),
       AppLocalizations.of(context)!.sortRating: (TmdbTitle a, TmdbTitle b) =>
-          b.rating.compareTo(a.rating),
+          b.voteAverage.compareTo(a.voteAverage),
       AppLocalizations.of(context)!.sortReleaseDate:
           (TmdbTitle a, TmdbTitle b) => _compareReleaseDates(a, b),
       AppLocalizations.of(context)!.sortRuntime: (TmdbTitle a, TmdbTitle b) =>
