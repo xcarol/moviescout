@@ -36,7 +36,8 @@ class TmdbRateslistService extends TmdbListService {
     bool notify = false,
     bool forceUpdate = false,
   }) async {
-    retrieveList(accountId, notify: notify, updateTitles: forceUpdate, retrieveMovies: () async {
+    retrieveList(accountId, notify: notify, updateTitles: forceUpdate,
+        retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
             _tmdbRateslistMovies
