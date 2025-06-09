@@ -70,6 +70,11 @@ class TmdbTitle {
   @override
   int get hashCode => id.hashCode;
 
+  void copyFrom(TmdbTitle other) {
+    _tmdbTitle.clear();
+    _tmdbTitle.addAll(other.map);
+  }
+
   Map get map {
     return _tmdbTitle;
   }
