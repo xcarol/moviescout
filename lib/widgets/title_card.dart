@@ -94,7 +94,7 @@ class TitleCard extends StatelessWidget {
             Icon(Icons.star, color: customColors.ratedTitle),
             const SizedBox(width: 5),
             Text(
-              ratedTitle.rating.toStringAsFixed(2),
+              ratedTitle.rating.toStringAsFixed(0),
               style: TextStyle(color: customColors.ratedTitle),
             ),
           ]);
