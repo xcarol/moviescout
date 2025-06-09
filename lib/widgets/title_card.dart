@@ -5,6 +5,7 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/network_image_cache.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:provider/provider.dart';
@@ -14,25 +15,21 @@ const double CARD_HEIGHT = 160.0;
 
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
-  final bool isUpdatingWatchlist;
-  final BuildContext context;
-  final void Function(bool) onWatchlistPressed;
+  final TmdbListService _tmdbListService;
 
   const TitleCard({
     super.key,
-    required this.context,
     required TmdbTitle title,
-    required this.isUpdatingWatchlist,
-    required this.onWatchlistPressed,
-  }) : _title = title;
+    required TmdbListService tmdbListService,
+  })  : _title = title,
+        _tmdbListService = tmdbListService;
 
   @override
   Widget build(BuildContext context) {
-    if (_title.id == 0) {
-      return SizedBox(
-          height: CARD_HEIGHT,
-          child: Center(child: CircularProgressIndicator()));
-    }
+    TmdbTitle tmdbTitle = _tmdbListService.titles.firstWhere(
+      (title) => title.id == _title.id,
+      orElse: () => _title,
+    );
 
     return SizedBox(
       height: CARD_HEIGHT,
@@ -43,24 +40,23 @@ class TitleCard extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => TitleDetails(
-                        title: TmdbTitle(title: _title.map),
+                        title: TmdbTitle(title: tmdbTitle.map),
                       )),
             );
           },
           child: Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     bottomLeft: Radius.circular(12),
                   ),
-                  child: _titlePoster(_title.posterPath),
+                  child: _titlePoster(tmdbTitle.posterPath),
                 ),
                 const SizedBox(width: 10),
-                _titleCard(),
+                _titleCard(context, tmdbTitle),
               ],
             ),
           ),
@@ -69,10 +65,10 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget _titleRating() {
+  Widget _titleRating(BuildContext context, TmdbTitle tmdbTitle) {
     final customColors = Theme.of(context).extension<CustomColors>()!;
 
-    if (_title.voteAverage == 0.0) {
+    if (tmdbTitle.voteAverage == 0.0) {
       return const SizedBox();
     }
 
@@ -82,36 +78,30 @@ class TitleCard extends StatelessWidget {
         color: Theme.of(context).colorScheme.onSurface,
       ),
       const SizedBox(width: 5),
-      Text(_title.voteAverage.toStringAsFixed(2)),
+      Text(tmdbTitle.voteAverage.toStringAsFixed(2)),
     ];
 
-    TmdbRateslistService rateslistService =
-        Provider.of<TmdbRateslistService>(context, listen: true);
+    return Selector<TmdbRateslistService, TmdbTitle?>(
+      selector: (_, rateslistService) => rateslistService.titles.firstWhere(
+        (t) => t.id == tmdbTitle.id,
+        orElse: () => TmdbTitle(title: {}),
+      ),
+      shouldRebuild: (prev, next) => prev?.rating != next?.rating,
+      builder: (context, ratedTitle, _) {
+        if (ratedTitle != null && ratedTitle.id > 0) {
+          children.addAll([
+            const SizedBox(width: 20),
+            Icon(Icons.star, color: customColors.ratedTitle),
+            const SizedBox(width: 5),
+            Text(
+              ratedTitle.rating.toStringAsFixed(0),
+              style: TextStyle(color: customColors.ratedTitle),
+            ),
+          ]);
+        }
 
-    TmdbTitle userRatedTitle = rateslistService.titles.isNotEmpty
-        ? rateslistService.titles.firstWhere((title) => title.id == _title.id,
-            orElse: () => TmdbTitle(title: {}))
-        : TmdbTitle(title: {});
-
-    if (userRatedTitle.id > 0) {
-      children.addAll([
-        const SizedBox(width: 20),
-        Icon(Icons.star, color: customColors.ratedTitle),
-        const SizedBox(width: 5),
-        Text(
-          userRatedTitle.rating.toStringAsFixed(2),
-          style: TextStyle(color: customColors.ratedTitle),
-        ),
-      ]);
-    }
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Row(
-          children: children,
-        ),
-      ],
+        return Row(children: children);
+      },
     );
   }
 
@@ -141,32 +131,31 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  _titleCard() {
+  Widget _titleCard(BuildContext context, TmdbTitle tmdbTitle) {
     return Expanded(
       child: Padding(
-        padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _titleHeader(),
+            _titleHeader(tmdbTitle.name),
             const SizedBox(height: 5),
             Row(
               children: [
-                _titleDate(),
+                _titleDate(tmdbTitle),
                 const Text(' - '),
-                if (_title.duration.isNotEmpty)
-                  _titleDuration()
-                else
-                  _titleType(),
+                tmdbTitle.duration.isNotEmpty
+                    ? _titleDuration(tmdbTitle.duration)
+                    : _titleType(context, tmdbTitle.mediaType),
               ],
             ),
             const SizedBox(height: 5),
-            _titleRating(),
+            _titleRating(context, tmdbTitle),
             const SizedBox(height: 5),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [_titleBottomRow()],
+                children: [_titleBottomRow(context, tmdbTitle)],
               ),
             ),
           ],
@@ -175,9 +164,9 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Text _titleHeader() {
+  Text _titleHeader(String name) {
     return Text(
-      _title.name,
+      name,
       style: const TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 16,
@@ -187,16 +176,17 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Text _titleDate() {
+  Text _titleDate(TmdbTitle tmdbTitle) {
     String text = '';
 
-    if (_title.isMovie) {
-      String releaseDate = _title.releaseDate;
-      text = releaseDate.isNotEmpty ? releaseDate.substring(0, 4) : '';
-    } else if (_title.isSerie) {
-      String firstAirDate = _title.firstAirDate;
-      dynamic nextEpisodeToAir = _title.nextEpisodeToAir;
-      String lastAirDate = _title.lastAirDate;
+    if (tmdbTitle.isMovie) {
+      text = tmdbTitle.releaseDate.isNotEmpty
+          ? tmdbTitle.releaseDate.substring(0, 4)
+          : '';
+    } else if (tmdbTitle.isSerie) {
+      final firstAirDate = tmdbTitle.firstAirDate;
+      final nextEpisodeToAir = tmdbTitle.nextEpisodeToAir;
+      final lastAirDate = tmdbTitle.lastAirDate;
 
       text += firstAirDate.isNotEmpty ? firstAirDate.substring(0, 4) : '';
 
@@ -210,26 +200,22 @@ class TitleCard extends StatelessWidget {
     return Text(text);
   }
 
-  Text _titleDuration() {
-    return Text(_title.duration);
-  }
+  Text _titleDuration(String duration) => Text(duration);
 
-  Text _titleType() {
-    return Text(_title.mediaType == 'movie'
+  Text _titleType(BuildContext context, String mediaType) {
+    return Text(mediaType == 'movie'
         ? AppLocalizations.of(context)!.movie
         : AppLocalizations.of(context)!.tvShow);
   }
 
-  Row _titleBottomRow() {
+  Row _titleBottomRow(BuildContext context, TmdbTitle tmdbTitle) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Flexible(
-          child: _providers(),
-        ),
+      children: [
+        Flexible(child: _providers(tmdbTitle)),
         Row(
           children: [
-            watchlistButton(context, _title),
+            watchlistButton(context, tmdbTitle),
             const SizedBox(width: 8),
           ],
         ),
@@ -237,14 +223,14 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget _providers() {
-    if (_title.providers.isEmpty) {
+  Widget _providers(TmdbTitle tmdbTitle) {
+    if (tmdbTitle.providers.isEmpty) {
       return const SizedBox.shrink();
     }
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: _title.providers.flatrate
+        children: tmdbTitle.providers.flatrate
             .map<Widget>((provider) => _providerLogo(provider))
             .toList(),
       ),

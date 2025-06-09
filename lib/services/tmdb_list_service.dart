@@ -14,7 +14,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   List<TmdbTitle> get titles => _titles;
   String get listName => _prefsListName;
 
-  TmdbListService(String listName) {
+  TmdbListService(String listName, {List<TmdbTitle>? titles}) {
+    if (titles != null) {
+      _titles = titles;
+      _lastUpdated = DateTime.now().toIso8601String();
+    }
     _prefsListName = listName;
   }
 
@@ -163,26 +167,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       throw Exception(
           'Failed to update titleId: ${title.id}. Status code: ${result.statusCode} - ${result.body}');
     }
-  }
-
-  Future<TmdbTitle> updateTitleDetails(
-      String accountId, TmdbTitle title) async {
-    if (_titles.isEmpty) {
-      return title;
-    }
-
-    TmdbTitle titleFromList =
-        _titles.firstWhere((element) => element.id == title.id);
-
-    if (TmdbTitleService.isUpToDate(titleFromList) == false) {
-      TmdbTitle updatedTitle =
-          await TmdbTitleService().getTitleDetails(titleFromList);
-      _titles.removeWhere((element) => element.id == title.id);
-      _titles.add(updatedTitle);
-      return updatedTitle;
-    }
-
-    return titleFromList;
   }
 
   Future<List> getTitlesFromServer(

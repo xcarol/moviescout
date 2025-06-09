@@ -1,40 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
-import 'package:moviescout/services/tmdb_user_service.dart';
-import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/title_list_control_panel.dart';
 import 'package:provider/provider.dart';
 
 class TitleList extends StatefulWidget {
-  final List<TmdbTitle> titles;
-  final TmdbListService listProvider;
+  final TmdbListService listService;
 
-  const TitleList({
-    super.key,
-    required this.titles,
-    required this.listProvider,
-  });
+  const TitleList(this.listService, {super.key});
 
   @override
   State<TitleList> createState() => _TitleListState();
 }
 
 class _TitleListState extends State<TitleList> {
-  int _updatingTitleId = 0;
-  bool _isSortAsc = true;
   final FocusNode _searchFocusNode = FocusNode();
-  late String selectedType;
-  late List<String> titleTypes;
-  late String textFilter;
-  late String selectedSort;
-  late List<String> titleSorts;
-  late List<String> selectedGenres;
-  late List<String> genresList;
+  bool _isSortAsc = true;
+  String _selectedType = '';
+  late List<String> _titleTypes;
+  late String _textFilter;
+  String _selectedSort = '';
+  late List<String> _titleSorts;
+  List<String> _selectedGenres = [];
+  List<String> _genresList = [];
   late TextEditingController _textFilterController;
 
   @override
@@ -57,29 +47,38 @@ class _TitleListState extends State<TitleList> {
     if (!isCurrent && _searchFocusNode.hasFocus) {
       _searchFocusNode.unfocus();
     }
-    selectedType = AppLocalizations.of(context)!.allTypes;
-    titleTypes = [
-      AppLocalizations.of(context)!.allTypes,
-      AppLocalizations.of(context)!.movies,
-      AppLocalizations.of(context)!.tvshows,
-    ];
-    textFilter = _textFilterController.text;
-    selectedGenres = [];
-    genresList = [];
-    for (TmdbTitle title in widget.titles) {
-      for (TmdbGenre genre in title.genres) {
-        if (!genresList.contains(genre.name)) {
-          genresList.add(genre.name);
-        }
-      }
+    _textFilter = _textFilterController.text;
+    _initilizeControlLocalizations();
+    _retrieveGenresFromTitles();
+  }
+
+  void _initilizeControlLocalizations() {
+    final localizations = AppLocalizations.of(context)!;
+    if (_selectedType.isEmpty) {
+      _selectedType = localizations.allTypes;
     }
-    selectedSort = AppLocalizations.of(context)!.sortAlphabetically;
-    titleSorts = [
-      AppLocalizations.of(context)!.sortAlphabetically,
-      AppLocalizations.of(context)!.sortRating,
-      AppLocalizations.of(context)!.sortReleaseDate,
-      AppLocalizations.of(context)!.sortRuntime,
+    _titleTypes = [
+      localizations.allTypes,
+      localizations.movies,
+      localizations.tvshows,
     ];
+    if (_selectedSort.isEmpty) {
+      _selectedSort = localizations.sortAlphabetically;
+    }
+    _titleSorts = [
+      localizations.sortAlphabetically,
+      localizations.sortRating,
+      localizations.sortReleaseDate,
+      localizations.sortRuntime,
+    ];
+  }
+
+  void _retrieveGenresFromTitles() {
+    _genresList = widget.listService.titles
+        .expand((title) => title.genres)
+        .map((genre) => genre.name)
+        .toSet()
+        .toList();
   }
 
   List<TmdbTitle> _sortTitles(List<TmdbTitle> titles) {
@@ -98,7 +97,7 @@ class _TitleListState extends State<TitleList> {
     };
 
     titlesToSort.sort(
-        (a, b) => ascending * (sortFunctions[selectedSort]?.call(a, b) ?? 0));
+        (a, b) => ascending * (sortFunctions[_selectedSort]?.call(a, b) ?? 0));
 
     return titlesToSort;
   }
@@ -122,108 +121,71 @@ class _TitleListState extends State<TitleList> {
   }
 
   List<TmdbTitle> _filterGenres(List<TmdbTitle> titles) {
-    if (selectedGenres.isEmpty) {
+    if (_selectedGenres.isEmpty) {
       return titles;
     }
 
     return titles
         .where((title) =>
-            title.genres.any((genre) => selectedGenres.contains(genre.name)))
+            title.genres.any((genre) => _selectedGenres.contains(genre.name)))
         .toList();
   }
 
   Widget _titleList(List<TmdbTitle> titles) {
-    TmdbUserService userService =
-        Provider.of<TmdbUserService>(context, listen: false);
-
-    return Expanded(
-      child: ListView.builder(
-        key: const PageStorageKey('TitleListView'),
-        shrinkWrap: true,
-        itemCount: titles.length,
-        itemBuilder: (context, index) {
-          final TmdbTitle title = titles[index];
-
-          return FutureBuilder<TmdbTitle>(
-            future: widget.listProvider.updateTitleDetails(
-              userService.accountId,
-              title,
-            ),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done ||
-                  !snapshot.hasData) {
+    return ChangeNotifierProvider.value(
+      value: widget.listService,
+      child: Flexible(
+        child: ListView.builder(
+          key: const PageStorageKey('TitleListView'),
+          shrinkWrap: true,
+          itemCount: titles.length,
+          itemBuilder: (context, index) {
+            final TmdbTitle title = titles[index];
+            return Selector<TmdbListService, TmdbTitle?>(
+              selector: (_, service) => service.titles.firstWhere(
+                (title) => title.id == title.id,
+                orElse: () => title,
+              ),
+              builder: (_, tmdbTitle, __) {
                 return TitleCard(
-                    context: context,
-                    title: TmdbTitle(title: {}),
-                    isUpdatingWatchlist: false,
-                    onWatchlistPressed: (isInWatchlist) {});
-              }
-
-              final updatedTitle = snapshot.data!;
-              TmdbUserService userService =
-                  Provider.of<TmdbUserService>(context, listen: false);
-
-              return TitleCard(
-                context: context,
-                title: updatedTitle,
-                isUpdatingWatchlist: _updatingTitleId == updatedTitle.id,
-                onWatchlistPressed: (isInWatchlist) {
-                  setState(() {
-                    _updatingTitleId = updatedTitle.id;
-                  });
-                  Provider.of<TmdbWatchlistService>(context, listen: false)
-                      .updateWatchlistTitle(
-                    userService.accountId,
-                    userService.sessionId,
-                    updatedTitle,
-                    !isInWatchlist,
-                  )
-                      .then((value) async {
-                    setState(() {
-                      _updatingTitleId = 0;
-                    });
-                  }).catchError((error) {
-                    setState(() {
-                      _updatingTitleId = 0;
-                    });
-                    SnackMessage.showSnackBar(error.toString());
-                  });
-                },
-              );
-            },
-          );
-        },
+                  title: title,
+                  tmdbListService: widget.listService,
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
 
   Widget _controlPanel() {
     return TitleListControlPanel(
-      selectedType: selectedType,
-      typesList: titleTypes,
+      selectedType: _selectedType,
+      typesList: _titleTypes,
       typeChanged: (typeChanged) {
         setState(() {
-          selectedType = typeChanged;
+          _selectedType = typeChanged;
         });
       },
       textFilterChanged: (newTextFilter) {
         setState(() {
-          textFilter = newTextFilter;
+          _textFilter = newTextFilter;
         });
       },
       textFilterController: _textFilterController,
-      selectedGenres: selectedGenres.toList(),
-      genresList: genresList,
+      selectedGenres: _selectedGenres.toList(),
+      genresList: _genresList,
       genresChanged: (List<String> genresChanged) {
         setState(() {
-          selectedGenres = genresChanged.toList();
+          _selectedGenres = genresChanged.toList();
         });
       },
-      selectedSort: selectedSort,
-      sortsList: titleSorts,
+      selectedSort: _selectedSort,
+      sortsList: _titleSorts,
       sortChanged: (sortChanged) {
         setState(() {
-          selectedSort = sortChanged;
+          _selectedSort = sortChanged;
         });
       },
       swapSort: () {
@@ -236,16 +198,16 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _infoLine(int count) {
-    String sortBy = selectedSort;
+    String sortBy = _selectedSort;
     TextStyle textStyle = TextStyle(
       color: Theme.of(context).colorScheme.onPrimaryContainer,
     );
 
     String titleCountText = '$count ${AppLocalizations.of(context)!.titles}';
 
-    if (selectedType == AppLocalizations.of(context)!.tvshows) {
+    if (_selectedType == AppLocalizations.of(context)!.tvshows) {
       titleCountText = '$count ${AppLocalizations.of(context)!.tvshows}';
-    } else if (selectedType == AppLocalizations.of(context)!.movies) {
+    } else if (_selectedType == AppLocalizations.of(context)!.movies) {
       titleCountText = '$count ${AppLocalizations.of(context)!.movies}';
     }
     return Container(
@@ -281,22 +243,22 @@ class _TitleListState extends State<TitleList> {
   }
 
   List<TmdbTitle> _filterTitles() {
-    List<TmdbTitle> titles = widget.titles;
+    List<TmdbTitle> titles = widget.listService.titles;
 
-    if (selectedType != AppLocalizations.of(context)!.allTypes) {
+    if (_selectedType != AppLocalizations.of(context)!.allTypes) {
       titles = titles
           .where((title) =>
               (title.mediaType == 'movie' &&
-                  selectedType == AppLocalizations.of(context)!.movies) ||
+                  _selectedType == AppLocalizations.of(context)!.movies) ||
               (title.mediaType == 'tv' &&
-                  selectedType == AppLocalizations.of(context)!.tvshows))
+                  _selectedType == AppLocalizations.of(context)!.tvshows))
           .toList();
     }
 
-    if (textFilter.isNotEmpty) {
+    if (_textFilter.isNotEmpty) {
       titles = titles
           .where((title) =>
-              title.name.toLowerCase().contains(textFilter.toLowerCase()))
+              title.name.toLowerCase().contains(_textFilter.toLowerCase()))
           .toList();
     }
 
@@ -308,35 +270,29 @@ class _TitleListState extends State<TitleList> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = List.empty(growable: true);
-
-    if (widget.titles.isNotEmpty) {
-      List<TmdbTitle> filteredTitles = _filterTitles();
-      children = [
-        _controlPanel(),
-        Container(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          child: Divider(
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
-          ),
-        ),
-        _infoLine(filteredTitles.length),
-        Container(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          child: Divider(
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
-          ),
-        ),
-        _titleList(filteredTitles),
-      ];
-    }
-
+    List<TmdbTitle> filteredTitles = _filterTitles();
     return Expanded(
       child: Container(
         color: Theme.of(context).colorScheme.primary,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: children,
+          children: [
+            _controlPanel(),
+            Container(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: Divider(
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
+            ),
+            _infoLine(filteredTitles.length),
+            Container(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: Divider(
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
+            ),
+            _titleList(filteredTitles),
+          ],
         ),
       ),
     );
