@@ -55,16 +55,13 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
           await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
     }
 
+    if (updateTitles) {
+      await TmdbTitleService().updateTitles(_titles);
+    }
+
     _updateLocalList();
 
-    if (updateTitles) {
-      TmdbTitleService().updateTitles(_titles).then((_) {
-        if (notify) {
-          notifyListeners();
-        }
-        return null;
-      });
-    } else if (notify) {
+    if (notify) {
       notifyListeners();
     }
   }

@@ -39,11 +39,14 @@ class TmdbTitleService extends TmdbBaseService {
     );
   }
 
-  Future<void> updateTitles(List<TmdbTitle> titles) async {
-    for (TmdbTitle title in titles) {
-      getTitleDetails(title).then((t) => title = t);
-    }
-  }
+Future<void> updateTitles(List<TmdbTitle> titles) async {
+  await Future.wait(
+    titles.map((title) async {
+      final t = await getTitleDetails(title);
+      title.copyFrom(t);
+    }),
+  );
+}
 
   Future<TmdbTitle> getTitleDetails(TmdbTitle title) async {
     if (isUpToDate(title)) {
@@ -65,7 +68,7 @@ class TmdbTitleService extends TmdbBaseService {
       return TmdbTitle(title: {});
     }
 
-    final Map titleDetails = title.map;
+    final Map<String, dynamic> titleDetails = Map.from(title.map);
 
     titleDetails.addAll(body(result));
 
