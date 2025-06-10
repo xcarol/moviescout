@@ -55,7 +55,9 @@ class _RatesListState extends State<RatesList> {
   Widget body() {
     return Consumer<TmdbRateslistService>(
       builder: (context, rateslistService, child) {
-        if (rateslistService.titles.isEmpty) {
+        if (rateslistService.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (rateslistService.titles.isEmpty) {
           return emptyBody();
         } else {
           return rateslistBody();

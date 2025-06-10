@@ -13,6 +13,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   List<TmdbTitle> _titles = List.empty(growable: true);
   List<TmdbTitle> get titles => _titles;
   String get listName => _prefsListName;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
   TmdbListService(String listName, {List<TmdbTitle>? titles}) {
     if (titles != null) {
@@ -46,6 +48,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       return;
     }
 
+    if (notify) {
+      _isLoading = true;
+      notifyListeners();
+    }
+
     _titles = _retrieveLocalList();
     if (_titles.isNotEmpty) {
       _titles =
@@ -62,6 +69,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     _updateLocalList();
 
     if (notify) {
+      _isLoading = false;
       notifyListeners();
     }
   }

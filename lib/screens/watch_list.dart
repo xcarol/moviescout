@@ -54,7 +54,9 @@ class _WatchListState extends State<WatchList> {
   Widget body() {
     return Consumer<TmdbWatchlistService>(
       builder: (context, watchlistService, child) {
-        if (watchlistService.titles.isEmpty) {
+        if (watchlistService.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (watchlistService.titles.isEmpty) {
           return emptyBody();
         } else {
           return watchlistBody();
