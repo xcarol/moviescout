@@ -71,8 +71,8 @@ class TmdbTitle {
   int get hashCode => id.hashCode;
 
   void copyFrom(TmdbTitle other) {
-    _tmdbTitle.clear();
-    _tmdbTitle.addAll(other.map);
+      _tmdbTitle.clear();
+      _tmdbTitle.addAll(other.map as Map<String, dynamic>);
   }
 
   Map get map {
