@@ -18,15 +18,6 @@ class TmdbTitleService extends TmdbBaseService {
     return {};
   }
 
-  static bool isUpToDate(TmdbTitle title) {
-    return DateTime.now()
-            .difference(
-              DateTime.parse(title.lastUpdated),
-            )
-            .inDays <
-        DateTime.daysPerWeek;
-  }
-
   _retrieveTitleDetailsByLocale(
     int id,
     String mediaType,
@@ -38,6 +29,15 @@ class TmdbTitleService extends TmdbBaseService {
           .replaceFirst('{ID}', id.toString())
           .replaceFirst('{LOCALE}', locale),
     );
+  }
+
+  static bool isUpToDate(TmdbTitle title) {
+    return DateTime.now()
+            .difference(
+              DateTime.parse(title.lastUpdated),
+            )
+            .inDays <
+        DateTime.daysPerWeek;
   }
 
   Future<void> updateTitles(List<TmdbTitle> titles) async {
