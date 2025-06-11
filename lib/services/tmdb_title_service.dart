@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 
@@ -17,15 +18,6 @@ class TmdbTitleService extends TmdbBaseService {
     return {};
   }
 
-  static bool isUpToDate(TmdbTitle title) {
-    return DateTime.now()
-            .difference(
-              DateTime.parse(title.lastUpdated),
-            )
-            .inDays <
-        DateTime.daysPerWeek;
-  }
-
   _retrieveTitleDetailsByLocale(
     int id,
     String mediaType,
@@ -39,16 +31,22 @@ class TmdbTitleService extends TmdbBaseService {
     );
   }
 
-Future<void> updateTitles(List<TmdbTitle> titles) async {
-  await Future.wait(
-    titles.map((title) async {
-      final t = await getTitleDetails(title);
-      title.copyFrom(t);
-    }),
-  );
-}
+  static bool isUpToDate(TmdbTitle title) {
+    return DateTime.now()
+            .difference(
+              DateTime.parse(title.lastUpdated),
+            )
+            .inDays <
+        DateTime.daysPerWeek;
+  }
 
-  Future<TmdbTitle> getTitleDetails(TmdbTitle title) async {
+  Future<void> updateTitles(List<TmdbTitle> titles) async {
+    await Future.wait(
+      titles.map((title) async => await updateTitleDetails(title)),
+    );
+  }
+
+  Future<TmdbTitle> updateTitleDetails(TmdbTitle title) async {
     if (isUpToDate(title)) {
       return title;
     }
@@ -65,14 +63,21 @@ Future<void> updateTitles(List<TmdbTitle> titles) async {
     );
 
     if (result.statusCode != 200) {
-      return TmdbTitle(title: {});
+      FirebaseCrashlytics.instance.recordError(
+        Exception(
+          'Failed to retrieve title details for ${title.id} - ${result.statusCode} - ${result.body}',
+        ),
+        null,
+        reason: 'TmdbTitleService.updateTitleDetails',
+      );
+      return title;
     }
 
-    final Map<String, dynamic> titleDetails = Map.from(title.map);
+    final Map titleMap = title.map;
 
-    titleDetails.addAll(body(result));
+    titleMap.addAll(body(result));
 
-    if (titleDetails['overview'].isEmpty) {
+    if (titleMap['overview'].isEmpty) {
       final result = await _retrieveTitleDetailsByLocale(
         title.id,
         mediaType,
@@ -82,13 +87,13 @@ Future<void> updateTitles(List<TmdbTitle> titles) async {
       if (result.statusCode == 200) {
         final details = body(result);
         if (details['overview'].isNotEmpty) {
-          titleDetails['title'] = details['title'];
-          titleDetails['overview'] = details['overview'];
+          titleMap['title'] = details['title'];
+          titleMap['overview'] = details['overview'];
         }
       }
     }
 
-    if (titleDetails['overview'].isEmpty) {
+    if (titleMap['overview'].isEmpty) {
       final result = await _retrieveTitleDetailsByLocale(
         title.id,
         mediaType,
@@ -98,16 +103,16 @@ Future<void> updateTitles(List<TmdbTitle> titles) async {
       if (result.statusCode == 200) {
         final details = body(result);
         if (details['overview'].isNotEmpty) {
-          titleDetails['title'] = details['title'];
-          titleDetails['overview'] = details['overview'];
+          titleMap['title'] = details['title'];
+          titleMap['overview'] = details['overview'];
         }
       }
     }
 
-    titleDetails['media_type'] = mediaType;
-    titleDetails['providers'] = await _getProviders(title.id, mediaType);
-    titleDetails['last_updated'] = DateTime.now().toIso8601String();
+    titleMap['media_type'] = mediaType;
+    titleMap['providers'] = await _getProviders(title.id, mediaType);
+    titleMap['last_updated'] = DateTime.now().toIso8601String();
 
-    return TmdbTitle(title: titleDetails);
+    return title;
   }
 }
