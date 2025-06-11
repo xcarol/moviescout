@@ -29,7 +29,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     String appTitle = widget._title.name;
 
     return FutureBuilder(
-      future: TmdbTitleService().getTitleDetails(widget._title),
+      future: TmdbTitleService().updateTitleDetails(widget._title),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Scaffold(
