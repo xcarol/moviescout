@@ -13,7 +13,7 @@ class SnackMessage {
           scaffold.hideCurrentSnackBar();
         },
       ),
-      duration: Duration(days: 1),
+      duration: Duration(minutes: 1),
     ));
   }
 }
