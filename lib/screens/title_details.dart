@@ -244,15 +244,22 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   Widget _banner(String image, bool isMovie) {
-    return NetworkImageCache(
-      image,
-      fit: BoxFit.fill,
-      errorBuilder: (context, error, stackTrace) {
-        return Image.asset(
-          isMovie ? 'assets/movie_poster.png' : 'assets/tvshow_poster.png',
-          fit: BoxFit.fitWidth,
-        );
-      },
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bannerHeight = screenWidth * 9 / 16;
+    
+    return SizedBox(
+      height: bannerHeight,
+      width: double.infinity,
+      child: NetworkImageCache(
+        image,
+        fit: BoxFit.fill,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            isMovie ? 'assets/movie_poster.png' : 'assets/tvshow_poster.png',
+            fit: BoxFit.fitWidth,
+          );
+        },
+      ),
     );
   }
 
