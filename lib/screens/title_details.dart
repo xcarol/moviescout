@@ -70,7 +70,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  Widget _infoTitleCountryLanguage(TmdbTitle title) {
+  Widget _infoLine(TmdbTitle title) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -132,7 +132,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _infoTitleCountryLanguage(title),
+        _infoLine(title),
         const Divider(),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
