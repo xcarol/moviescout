@@ -4,8 +4,21 @@ import 'package:moviescout/services/tmdb_base_service.dart';
 
 const String _tmdbDetails = '/{MEDIA_TYPE}/{ID}?language={LOCALE}';
 const String _tmdbProviders = '/{MEDIA_TYPE}/{ID}/watch/providers';
+const String _tmdbExternalsIds = '/{MEDIA_TYPE}/{ID}/external_ids';
 
 class TmdbTitleService extends TmdbBaseService {
+  _getTvshowsExternalsIds(int id) async {
+    final result = await get(
+      _tmdbExternalsIds
+          .replaceFirst('{MEDIA_TYPE}', 'tv')
+          .replaceFirst('{ID}', id.toString()),
+    );
+    if (result.statusCode == 200) {
+      return body(result);
+    }
+    return {};
+  }
+
   _getProviders(int titleId, String mediaType) async {
     final result = await get(
       _tmdbProviders
@@ -106,6 +119,13 @@ class TmdbTitleService extends TmdbBaseService {
           titleMap['title'] = details['title'];
           titleMap['overview'] = details['overview'];
         }
+      }
+    }
+
+    if (mediaType == 'tv') {
+      final externals = await _getTvshowsExternalsIds(title.id);
+      if (externals.isNotEmpty) {
+        titleMap['imdb_id'] = externals['imdb_id'] ?? '';
       }
     }
 
