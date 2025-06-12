@@ -14,6 +14,7 @@ import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/rate_form.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class TitleDetails extends StatefulWidget {
   final TmdbTitle _title;
@@ -70,35 +71,60 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   Widget _infoTitleCountryLanguage(TmdbTitle title) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(
-              AppLocalizations.of(context)!.originaTitle,
-              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Flexible(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(
+                    AppLocalizations.of(context)!.originaTitle,
+                    style: const TextStyle(
+                        fontSize: 12, fontStyle: FontStyle.italic),
+                  ),
+                  Text(title.originalName),
+                ]),
+                const SizedBox(width: 20),
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(
+                    AppLocalizations.of(context)!.originalLanguage,
+                    style: const TextStyle(
+                        fontSize: 12, fontStyle: FontStyle.italic),
+                  ),
+                  Text(title.originalLanguage),
+                ]),
+                const SizedBox(width: 20),
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(
+                    AppLocalizations.of(context)!.originCountry,
+                    style: const TextStyle(
+                        fontSize: 12, fontStyle: FontStyle.italic),
+                  ),
+                  Text(title.originCountry),
+                ]),
+              ],
             ),
-            Text(title.originalName),
-          ]),
-          const SizedBox(width: 20),
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(
-              AppLocalizations.of(context)!.originalLanguage,
-              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+          ),
+        ),
+        const SizedBox(width: 8),
+        if (title.imdbId.isNotEmpty)
+          GestureDetector(
+            onTap: () {
+              launchUrlString('https://www.imdb.com/title/${title.imdbId}');
+            },
+            child: SizedBox(
+              height: 30,
+              child: Image.asset(
+                'assets/imdb-logo.png',
+                fit: BoxFit.cover,
+              ),
             ),
-            Text(title.originalLanguage),
-          ]),
-          const SizedBox(width: 20),
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(
-              AppLocalizations.of(context)!.originCountry,
-              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-            ),
-            Text(title.originCountry),
-          ]),
-        ],
-      ),
+          ),
+      ],
     );
   }
 
@@ -246,7 +272,7 @@ class _TitleDetailsState extends State<TitleDetails> {
   Widget _banner(String image, bool isMovie) {
     final screenWidth = MediaQuery.of(context).size.width;
     final bannerHeight = screenWidth * 9 / 16;
-    
+
     return SizedBox(
       height: bannerHeight,
       width: double.infinity,
