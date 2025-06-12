@@ -58,6 +58,7 @@ class TitleListControlPanel extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(width: 8),
               _sortSelector(),
               _swapSortButton(context),
             ],
