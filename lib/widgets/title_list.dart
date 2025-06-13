@@ -18,6 +18,7 @@ class TitleList extends StatefulWidget {
 class _TitleListState extends State<TitleList> {
   final FocusNode _searchFocusNode = FocusNode();
   bool _isSortAsc = true;
+  bool _showFilters = true;
   String _selectedType = '';
   late List<String> _titleTypes;
   late String _textFilter;
@@ -200,7 +201,7 @@ class _TitleListState extends State<TitleList> {
   Widget _infoLine(int count) {
     String sortBy = _selectedSort;
     TextStyle textStyle = TextStyle(
-      color: Theme.of(context).colorScheme.onPrimaryContainer,
+      color: Theme.of(context).colorScheme.primaryContainer,
     );
 
     String titleCountText = '$count ${AppLocalizations.of(context)!.titles}';
@@ -211,7 +212,7 @@ class _TitleListState extends State<TitleList> {
       titleCountText = '$count ${AppLocalizations.of(context)!.movies}';
     }
     return Container(
-      color: Theme.of(context).colorScheme.primaryContainer,
+      color: Theme.of(context).colorScheme.onPrimaryContainer,
       padding: EdgeInsets.symmetric(horizontal: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -228,13 +229,22 @@ class _TitleListState extends State<TitleList> {
               ),
               _isSortAsc
                   ? Icon(
-                      Icons.arrow_drop_up,
+                      Icons.arrow_drop_down,
                       color: textStyle.color,
                     )
                   : Icon(
-                      Icons.arrow_drop_down,
+                      Icons.arrow_drop_up,
                       color: textStyle.color,
                     ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _showFilters = !_showFilters;
+                  });
+                },
+                icon: Icon(
+                    _showFilters ? Icons.filter_list_off : Icons.filter_list),
+              ),
             ],
           ),
         ],
@@ -277,20 +287,21 @@ class _TitleListState extends State<TitleList> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _controlPanel(),
             Container(
-              color: Theme.of(context).colorScheme.primaryContainer,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
               child: Divider(
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
+                color: Theme.of(context).colorScheme.primaryContainer,
               ),
             ),
             _infoLine(filteredTitles.length),
-            Container(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              child: Divider(
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
+            if (_showFilters) _controlPanel(),
+            if (_showFilters)
+              Container(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                child: Divider(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
               ),
-            ),
             _titleList(filteredTitles),
           ],
         ),
