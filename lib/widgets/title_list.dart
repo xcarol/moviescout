@@ -294,6 +294,10 @@ class _TitleListState extends State<TitleList> {
               ),
             ),
             _infoLine(filteredTitles.length),
+            Divider(
+              height: 1,
+              color: Theme.of(context).colorScheme.primaryContainer,
+            ),
             if (_showFilters) _controlPanel(),
             if (_showFilters)
               Container(

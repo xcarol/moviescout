@@ -34,14 +34,22 @@ class _MainScreenState extends State<MainScreen> {
           title: _getTitleForIndex(_currentIndex, context),
         ),
         drawer: AppDrawer(),
-        body: IndexedStack(
-          index: _currentIndex,
-          children: [
-            WatchList(),
-            RatesList(),
-            Search(),
-          ],
-        ),
+        body: Column(children: [
+          Expanded(
+            child: IndexedStack(
+              index: _currentIndex,
+              children: [
+                WatchList(),
+                RatesList(),
+                Search(),
+              ],
+            ),
+          ),
+          Divider(
+            height: 1,
+            color: Theme.of(context).colorScheme.primaryContainer,
+          ),
+        ]),
         bottomNavigationBar: BottomNavigationBar(
           selectedItemColor:
               Theme.of(context).extension<CustomColors>()!.selected,
