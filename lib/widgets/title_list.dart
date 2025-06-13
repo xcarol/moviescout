@@ -106,18 +106,18 @@ class _TitleListState extends State<TitleList> {
   int _compareReleaseDates(TmdbTitle a, TmdbTitle b) {
     final dateA = a.mediaType == 'movie' ? a.releaseDate : a.firstAirDate;
     final dateB = b.mediaType == 'movie' ? b.releaseDate : b.firstAirDate;
-    return dateA.compareTo(dateB);
+    return dateB.compareTo(dateA);
   }
 
   int _compareRuntimes(TmdbTitle a, TmdbTitle b) {
     if (a.mediaType == 'movie' && b.mediaType == 'movie') {
-      return a.runtime.compareTo(b.runtime);
+      return b.runtime.compareTo(a.runtime);
     } else if (a.mediaType == 'movie') {
       return -1;
     } else if (b.mediaType == 'movie') {
       return 1;
     } else {
-      return a.numberOfEpisodes.compareTo(b.numberOfEpisodes);
+      return b.numberOfEpisodes.compareTo(a.numberOfEpisodes);
     }
   }
 
