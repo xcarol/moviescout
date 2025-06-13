@@ -24,6 +24,10 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     _prefsListName = listName;
   }
 
+  bool get userRatingAvailable {
+    return _titles.isNotEmpty && _titles[0].rating > 0.0;
+  }
+
   void clearList() {
     _titles = List.empty(growable: true);
     _updateLocalList();

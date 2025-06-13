@@ -44,6 +44,7 @@
     "tvshows": "Tv Shows",
     "sortAlphabetically": "Alphabetical",
     "sortRating": "Rating",
+    "sortUserRating": "Rating (Mine)",
     "sortReleaseDate": "Release date",
     "sortRuntime": "Runtime",
     "genres": "Genres",

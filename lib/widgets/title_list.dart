@@ -69,6 +69,8 @@ class _TitleListState extends State<TitleList> {
     _titleSorts = [
       localizations.sortAlphabetically,
       localizations.sortRating,
+      if (widget.listService.userRatingAvailable)
+        localizations.sortUserRating,
       localizations.sortReleaseDate,
       localizations.sortRuntime,
     ];
@@ -91,6 +93,8 @@ class _TitleListState extends State<TitleList> {
           (TmdbTitle a, TmdbTitle b) => a.name.compareTo(b.name),
       AppLocalizations.of(context)!.sortRating: (TmdbTitle a, TmdbTitle b) =>
           b.voteAverage.compareTo(a.voteAverage),
+      AppLocalizations.of(context)!.sortUserRating: (TmdbTitle a, TmdbTitle b) =>
+          b.rating.compareTo(a.rating),
       AppLocalizations.of(context)!.sortReleaseDate:
           (TmdbTitle a, TmdbTitle b) => _compareReleaseDates(a, b),
       AppLocalizations.of(context)!.sortRuntime: (TmdbTitle a, TmdbTitle b) =>
