@@ -2,22 +2,10 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 
-const String _tmdbDetails = '/{MEDIA_TYPE}/{ID}?language={LOCALE}';
-const String _tmdbProviders = '/{MEDIA_TYPE}/{ID}/watch/providers';
+const String _tmdbDetails =
+    '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders&language={LOCALE}';
 
 class TmdbTitleService extends TmdbBaseService {
-  _getProviders(int titleId, String mediaType) async {
-    final result = await get(
-      _tmdbProviders
-          .replaceFirst('{MEDIA_TYPE}', mediaType)
-          .replaceFirst('{ID}', titleId.toString()),
-    );
-    if (result.statusCode == 200) {
-      return body(result)['results'][getCountryCode()];
-    }
-    return {};
-  }
-
   _retrieveTitleDetailsByLocale(
     int id,
     String mediaType,
@@ -109,8 +97,13 @@ class TmdbTitleService extends TmdbBaseService {
       }
     }
 
+    if (mediaType == 'tv') {
+      titleMap['imdb_id'] = titleMap['external_ids']?['imdb_id'] ?? '';
+    }
+
     titleMap['media_type'] = mediaType;
-    titleMap['providers'] = await _getProviders(title.id, mediaType);
+    titleMap['providers'] =
+        titleMap['watch/providers']?['results']?[getCountryCode()] ?? {};
     titleMap['last_updated'] = DateTime.now().toIso8601String();
 
     return title;

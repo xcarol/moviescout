@@ -18,6 +18,7 @@ class TitleList extends StatefulWidget {
 class _TitleListState extends State<TitleList> {
   final FocusNode _searchFocusNode = FocusNode();
   bool _isSortAsc = true;
+  bool _showFilters = true;
   String _selectedType = '';
   late List<String> _titleTypes;
   late String _textFilter;
@@ -68,6 +69,8 @@ class _TitleListState extends State<TitleList> {
     _titleSorts = [
       localizations.sortAlphabetically,
       localizations.sortRating,
+      if (widget.listService.userRatingAvailable)
+        localizations.sortUserRating,
       localizations.sortReleaseDate,
       localizations.sortRuntime,
     ];
@@ -90,6 +93,8 @@ class _TitleListState extends State<TitleList> {
           (TmdbTitle a, TmdbTitle b) => a.name.compareTo(b.name),
       AppLocalizations.of(context)!.sortRating: (TmdbTitle a, TmdbTitle b) =>
           b.voteAverage.compareTo(a.voteAverage),
+      AppLocalizations.of(context)!.sortUserRating: (TmdbTitle a, TmdbTitle b) =>
+          b.rating.compareTo(a.rating),
       AppLocalizations.of(context)!.sortReleaseDate:
           (TmdbTitle a, TmdbTitle b) => _compareReleaseDates(a, b),
       AppLocalizations.of(context)!.sortRuntime: (TmdbTitle a, TmdbTitle b) =>
@@ -105,18 +110,18 @@ class _TitleListState extends State<TitleList> {
   int _compareReleaseDates(TmdbTitle a, TmdbTitle b) {
     final dateA = a.mediaType == 'movie' ? a.releaseDate : a.firstAirDate;
     final dateB = b.mediaType == 'movie' ? b.releaseDate : b.firstAirDate;
-    return dateA.compareTo(dateB);
+    return dateB.compareTo(dateA);
   }
 
   int _compareRuntimes(TmdbTitle a, TmdbTitle b) {
     if (a.mediaType == 'movie' && b.mediaType == 'movie') {
-      return a.runtime.compareTo(b.runtime);
+      return b.runtime.compareTo(a.runtime);
     } else if (a.mediaType == 'movie') {
       return -1;
     } else if (b.mediaType == 'movie') {
       return 1;
     } else {
-      return a.numberOfEpisodes.compareTo(b.numberOfEpisodes);
+      return b.numberOfEpisodes.compareTo(a.numberOfEpisodes);
     }
   }
 
@@ -200,7 +205,7 @@ class _TitleListState extends State<TitleList> {
   Widget _infoLine(int count) {
     String sortBy = _selectedSort;
     TextStyle textStyle = TextStyle(
-      color: Theme.of(context).colorScheme.onPrimaryContainer,
+      color: Theme.of(context).colorScheme.primaryContainer,
     );
 
     String titleCountText = '$count ${AppLocalizations.of(context)!.titles}';
@@ -211,7 +216,7 @@ class _TitleListState extends State<TitleList> {
       titleCountText = '$count ${AppLocalizations.of(context)!.movies}';
     }
     return Container(
-      color: Theme.of(context).colorScheme.primaryContainer,
+      color: Theme.of(context).colorScheme.onPrimaryContainer,
       padding: EdgeInsets.symmetric(horizontal: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -228,13 +233,22 @@ class _TitleListState extends State<TitleList> {
               ),
               _isSortAsc
                   ? Icon(
-                      Icons.arrow_drop_up,
+                      Icons.arrow_drop_down,
                       color: textStyle.color,
                     )
                   : Icon(
-                      Icons.arrow_drop_down,
+                      Icons.arrow_drop_up,
                       color: textStyle.color,
                     ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _showFilters = !_showFilters;
+                  });
+                },
+                icon: Icon(
+                    _showFilters ? Icons.filter_list_off : Icons.filter_list),
+              ),
             ],
           ),
         ],
@@ -277,20 +291,25 @@ class _TitleListState extends State<TitleList> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _controlPanel(),
             Container(
-              color: Theme.of(context).colorScheme.primaryContainer,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
               child: Divider(
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
+                color: Theme.of(context).colorScheme.primaryContainer,
               ),
             ),
             _infoLine(filteredTitles.length),
-            Container(
+            Divider(
+              height: 1,
               color: Theme.of(context).colorScheme.primaryContainer,
-              child: Divider(
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
-              ),
             ),
+            if (_showFilters) _controlPanel(),
+            if (_showFilters)
+              Container(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                child: Divider(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
+              ),
             _titleList(filteredTitles),
           ],
         ),

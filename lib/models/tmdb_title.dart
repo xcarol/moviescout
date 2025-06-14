@@ -226,4 +226,8 @@ class TmdbTitle {
 
     return duration;
   }
+
+  String get imdbId {
+    return _tmdbTitle[_imdb_id] ?? '';
+  }
 }
