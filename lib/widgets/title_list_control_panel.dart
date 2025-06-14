@@ -150,6 +150,7 @@ class TitleListControlPanel extends StatelessWidget {
         return StatefulBuilder(
           builder: (context, setState) {
             return SwitchListTile(
+              dense: true,
               title: Text(option),
               value: selectedGenres.contains(option),
               onChanged: (bool? checked) {
