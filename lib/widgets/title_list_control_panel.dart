@@ -209,43 +209,46 @@ class TitleListControlPanel extends StatelessWidget {
     final textColor = colorScheme.onPrimary;
     final borderColor = colorScheme.onPrimary;
 
-    return TextField(
-      controller: textFilterController,
-      focusNode: focusNode,
-      style: TextStyle(color: textColor),
-      cursorColor: borderColor,
-      decoration: InputDecoration(
-        isDense: true,
-        hintText: hintText,
-        hintStyle: TextStyle(color: textColor),
-        suffixIconColor: textColor,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: BorderSide(color: borderColor),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: BorderSide(color: borderColor),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: BorderSide(
-            color: borderColor,
-            width: 2,
+    return SizedBox(
+      height: 26,
+      child: TextField(
+        controller: textFilterController,
+        focusNode: focusNode,
+        style: TextStyle(color: textColor, fontSize: 14),
+        cursorColor: borderColor,
+        cursorHeight: 16,
+        decoration: InputDecoration(
+          isDense: true,
+          hintText: hintText,
+          hintStyle: TextStyle(color: textColor),
+          suffixIconColor: textColor,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 5),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: borderColor),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: borderColor),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(
+              color: borderColor,
+            ),
+          ),
+          suffixIcon: GestureDetector(
+            child: Icon(Icons.clear),
+            onTap: () {
+              textFilterChanged('');
+              textFilterController.clear();
+            },
           ),
         ),
-        suffixIcon: IconButton(
-          icon: Icon(Icons.clear),
-          onPressed: () {
-            textFilterChanged('');
-            textFilterController.clear();
-          },
-        ),
+        onChanged: (String value) {
+          textFilterChanged(value);
+        },
       ),
-      onChanged: (String value) {
-        textFilterChanged(value);
-      },
     );
   }
 }
