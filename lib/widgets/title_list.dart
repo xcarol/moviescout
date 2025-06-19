@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/title_list_control_panel.dart';
@@ -18,7 +19,8 @@ class TitleList extends StatefulWidget {
 class _TitleListState extends State<TitleList> {
   final FocusNode _searchFocusNode = FocusNode();
   bool _isSortAsc = true;
-  bool _showFilters = true;
+  late bool _showFilters;
+  late String _showFiltersPreferencesName;
   String _selectedType = '';
   late List<String> _titleTypes;
   late String _textFilter;
@@ -32,6 +34,9 @@ class _TitleListState extends State<TitleList> {
   void initState() {
     super.initState();
     _textFilterController = TextEditingController();
+    _showFiltersPreferencesName = '${widget.listService.listName}_ShowFilters';
+    _showFilters =
+        PreferencesService().prefs.getBool(_showFiltersPreferencesName) ?? true;
   }
 
   @override
@@ -69,8 +74,7 @@ class _TitleListState extends State<TitleList> {
     _titleSorts = [
       localizations.sortAlphabetically,
       localizations.sortRating,
-      if (widget.listService.userRatingAvailable)
-        localizations.sortUserRating,
+      if (widget.listService.userRatingAvailable) localizations.sortUserRating,
       localizations.sortReleaseDate,
       localizations.sortRuntime,
     ];
@@ -93,8 +97,8 @@ class _TitleListState extends State<TitleList> {
           (TmdbTitle a, TmdbTitle b) => a.name.compareTo(b.name),
       AppLocalizations.of(context)!.sortRating: (TmdbTitle a, TmdbTitle b) =>
           b.voteAverage.compareTo(a.voteAverage),
-      AppLocalizations.of(context)!.sortUserRating: (TmdbTitle a, TmdbTitle b) =>
-          b.rating.compareTo(a.rating),
+      AppLocalizations.of(context)!.sortUserRating:
+          (TmdbTitle a, TmdbTitle b) => b.rating.compareTo(a.rating),
       AppLocalizations.of(context)!.sortReleaseDate:
           (TmdbTitle a, TmdbTitle b) => _compareReleaseDates(a, b),
       AppLocalizations.of(context)!.sortRuntime: (TmdbTitle a, TmdbTitle b) =>
@@ -244,6 +248,9 @@ class _TitleListState extends State<TitleList> {
                 onPressed: () {
                   setState(() {
                     _showFilters = !_showFilters;
+                    PreferencesService()
+                        .prefs
+                        .setBool(_showFiltersPreferencesName, _showFilters);
                   });
                 },
                 icon: Icon(
