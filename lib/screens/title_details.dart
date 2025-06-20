@@ -110,21 +110,49 @@ class _TitleDetailsState extends State<TitleDetails> {
             ),
           ),
         ),
-        const SizedBox(width: 8),
-        if (title.imdbId.isNotEmpty)
-          GestureDetector(
-            onTap: () {
-              launchUrlString('https://www.imdb.com/title/${title.imdbId}');
-            },
-            child: SizedBox(
-              height: 30,
-              child: Image.asset(
-                'assets/imdb-logo.png',
-                fit: BoxFit.cover,
-              ),
+      ],
+    );
+  }
+
+  Widget _externalLinks(TmdbTitle title) {
+    List<Widget> links = [];
+
+    links.add(
+      GestureDetector(
+        onTap: () {
+          launchUrlString('https://www.themoviedb.org/movie/${title.id}');
+        },
+        child: SizedBox(
+            height: 30,
+            child: Image.asset(
+              'assets/tmdb-logo.png',
+              fit: BoxFit.cover,
             ),
           ),
-      ],
+      ),
+    );
+
+    if (title.imdbId.isNotEmpty) {
+      links.add(const SizedBox(width: 20));
+      links.add(
+        GestureDetector(
+          onTap: () {
+            launchUrlString('https://www.imdb.com/title/${title.imdbId}');
+          },
+          child: SizedBox(
+            height: 30,
+            child: Image.asset(
+              'assets/imdb-logo.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: links,
     );
   }
 
@@ -132,8 +160,10 @@ class _TitleDetailsState extends State<TitleDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _infoLine(title),
-        const Divider(),
+        // const Divider(),
+        _externalLinks(title),
+        // const Divider(),
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -148,8 +178,9 @@ class _TitleDetailsState extends State<TitleDetails> {
         const SizedBox(height: 10),
         _description(title),
         const SizedBox(height: 30),
-        _providers(title),
+        _infoLine(title),
         const SizedBox(height: 30),
+        _providers(title),
       ],
     );
   }
