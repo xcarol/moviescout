@@ -3,7 +3,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 
 const String _tmdbDetails =
-    '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders&language={LOCALE}';
+    '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders%2Crecommendations&language={LOCALE}';
 
 class TmdbTitleService extends TmdbBaseService {
   _retrieveTitleDetailsByLocale(
@@ -104,6 +104,7 @@ class TmdbTitleService extends TmdbBaseService {
     titleMap['media_type'] = mediaType;
     titleMap['providers'] =
         titleMap['watch/providers']?['results']?[getCountryCode()] ?? {};
+    titleMap['recommendations'] = titleMap['recommendations']?['results'] ?? {};
     titleMap['last_updated'] = DateTime.now().toIso8601String();
 
     return title;
