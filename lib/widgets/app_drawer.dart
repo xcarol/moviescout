@@ -111,7 +111,7 @@ class AppDrawer extends StatelessWidget {
         showAboutDialog(
           context: context,
           applicationName: 'MovieScout',
-          applicationVersion: dotenv.env['APP_VERSION'] ?? 'x.x.x',
+          applicationVersion: dotenv.env['VERSION'] ?? 'x.x.x',
           applicationIcon: SizedBox(
             width: 48,
             height: 48,
