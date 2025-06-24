@@ -63,5 +63,7 @@
     "schemeSelectTitle": "Selecciona el color",
     "defaultScheme": "Negro",
     "blueScheme": "Azul",
-    "redScheme": "Rojo"
+    "redScheme": "Rojo",
+    "about": "Sobre...",
+    "aboutDescription": "Movie Scout el mejor rastreador de películas y series."
 }

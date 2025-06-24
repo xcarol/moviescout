@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
@@ -27,6 +28,8 @@ class AppDrawer extends StatelessWidget {
           if (isUserLoggedIn && defaultTargetPlatform == TargetPlatform.linux)
             _importImdbTile(context),
           _colorSchemeTile(context),
+          _aboutTile(context),
+          const Divider(),
           _userSessionTile(context, isUserLoggedIn),
         ],
       ),
@@ -94,6 +97,27 @@ class AppDrawer extends StatelessWidget {
               },
             );
           },
+        ),
+      },
+    );
+  }
+
+  Widget _aboutTile(BuildContext context) {
+    return ListTile(
+      leading: Icon(Icons.info),
+      title: Text(AppLocalizations.of(context)!.about),
+      onTap: () => {
+        Navigator.of(context).pop(),
+        showAboutDialog(
+          context: context,
+          applicationName: 'MovieScout',
+          applicationVersion: dotenv.env['APP_VERSION'] ?? 'x.x.x',
+          applicationIcon: SizedBox(
+            width: 48,
+            height: 48,
+            child: Image.asset('assets/logo-icon.png'),
+          ),
+          children: [Text(AppLocalizations.of(context)!.aboutDescription)],
         ),
       },
     );
