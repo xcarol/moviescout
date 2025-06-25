@@ -23,6 +23,7 @@ const _production_companies = 'production_companies';
 const _production_countries = 'production_countries';
 const _release_date = 'release_date';
 const _rating = 'rating';
+const _recommendations = 'recommendations';
 const _account_rating = 'account_rating';
 const _account_rating_date = 'created_at';
 const _account_rating_value = 'value';
@@ -177,6 +178,13 @@ class TmdbTitle {
       _account_rating_date: DateTime.now().toIso8601String(),
       _account_rating_value: rate
     };
+  }
+
+  List get recommendations {
+    if (_tmdbTitle[_recommendations] is List) {
+      return _tmdbTitle[_recommendations];
+    }
+    return [];
   }
 
   String get firstAirDate {
