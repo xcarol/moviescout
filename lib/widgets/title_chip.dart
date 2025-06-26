@@ -11,13 +11,9 @@ import 'package:provider/provider.dart';
 // ignore: constant_identifier_names
 const double POSTER_HEIGHT = 100.0;
 // ignore: constant_identifier_names
-const double CARD_HEIGHT = 250.0;
+const double CARD_HEIGHT = 280.0;
 // ignore: constant_identifier_names
 const double CARD_WIDTH = 200.0;
-// ignore: constant_identifier_names
-const double CARD_WIDTH_BACKDROP = 250.0;
-// ignore: constant_identifier_names
-const double CARD_WIDTH_POSTER = 440.0;
 
 class TitleChip extends StatelessWidget {
   final TmdbTitle _title;
@@ -32,9 +28,7 @@ class TitleChip extends StatelessWidget {
     TmdbTitle tmdbTitle = _title;
 
     return SizedBox(
-      height: tmdbTitle.backdropPath.isNotEmpty
-          ? CARD_WIDTH_BACKDROP
-          : CARD_WIDTH_POSTER,
+      height: CARD_HEIGHT,
       width: CARD_WIDTH,
       child: Card(
         elevation: 4,
@@ -118,22 +112,21 @@ class TitleChip extends StatelessWidget {
   }
 
   Widget _titlePoster(TmdbTitle title) {
-    final bool hasBackdrop = title.backdropPath.isNotEmpty;
-    final String imagePath =
-        hasBackdrop ? title.backdropPath : title.posterPath;
-    final double aspectRatio = hasBackdrop ? 16 / 9 : 2 / 3;
+    final double aspectRatio = 16 / 9;
+    final String fallbackPoster =
+        title.isMovie ? 'assets/movie_poster.png' : 'assets/serie_poster.png';
 
-    final Widget imageWidget = imagePath.isEmpty
-        ? SvgPicture.asset(
-            'assets/movie.svg',
+    final Widget imageWidget = title.backdropPath.isEmpty
+        ? Image.asset(
+            fallbackPoster,
             fit: BoxFit.contain,
           )
         : NetworkImageCache(
-            imagePath,
+            title.backdropPath,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
-              return SvgPicture.asset(
-                'assets/movie.svg',
+              return Image.asset(
+                fallbackPoster,
                 fit: BoxFit.contain,
               );
             },
@@ -161,7 +154,10 @@ class TitleChip extends StatelessWidget {
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Flexible(child: _providers(tmdbTitle)),
+                  const SizedBox(height: 5),
                   Text(
                     '${_titleDate(tmdbTitle)} - ${tmdbTitle.duration}',
                   ),
@@ -208,5 +204,39 @@ class TitleChip extends StatelessWidget {
     }
 
     return text;
+  }
+
+  Widget _providers(TmdbTitle tmdbTitle) {
+    if (tmdbTitle.providers.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: tmdbTitle.providers.flatrate
+            .map<Widget>((provider) => _providerLogo(provider))
+            .toList(),
+      ),
+    );
+  }
+
+  Widget _providerLogo(provider) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 5),
+      child: SizedBox(
+        width: 30,
+        height: 30,
+        child: NetworkImageCache(
+          provider.logoPath,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return SvgPicture.asset(
+              'assets/movie.svg',
+              fit: BoxFit.cover,
+            );
+          },
+        ),
+      ),
+    );
   }
 }
