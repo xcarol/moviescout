@@ -56,7 +56,7 @@ class TitleCard extends StatelessWidget {
                   child: _titlePoster(tmdbTitle.posterPath),
                 ),
                 const SizedBox(width: 10),
-                _titleCard(context, tmdbTitle),
+                _titleDetails(context, tmdbTitle),
               ],
             ),
           ),
@@ -131,7 +131,7 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget _titleCard(BuildContext context, TmdbTitle tmdbTitle) {
+  Widget _titleDetails(BuildContext context, TmdbTitle tmdbTitle) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -142,11 +142,11 @@ class TitleCard extends StatelessWidget {
             const SizedBox(height: 5),
             Row(
               children: [
-                _titleDate(tmdbTitle),
+                Text(_titleDate(tmdbTitle)),
                 const Text(' - '),
                 tmdbTitle.duration.isNotEmpty
-                    ? _titleDuration(tmdbTitle.duration)
-                    : _titleType(context, tmdbTitle.mediaType),
+                    ? Text(tmdbTitle.duration)
+                    : Text(_titleType(context, tmdbTitle.mediaType)),
               ],
             ),
             const SizedBox(height: 5),
@@ -176,7 +176,7 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Text _titleDate(TmdbTitle tmdbTitle) {
+  String _titleDate(TmdbTitle tmdbTitle) {
     String text = '';
 
     if (tmdbTitle.isMovie) {
@@ -197,15 +197,13 @@ class TitleCard extends StatelessWidget {
       }
     }
 
-    return Text(text);
+    return text;
   }
 
-  Text _titleDuration(String duration) => Text(duration);
-
-  Text _titleType(BuildContext context, String mediaType) {
-    return Text(mediaType == 'movie'
+  String _titleType(BuildContext context, String mediaType) {
+    return mediaType == 'movie'
         ? AppLocalizations.of(context)!.movie
-        : AppLocalizations.of(context)!.tvShow);
+        : AppLocalizations.of(context)!.tvShow;
   }
 
   Row _titleBottomRow(BuildContext context, TmdbTitle tmdbTitle) {
