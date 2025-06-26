@@ -459,10 +459,23 @@ class _TitleDetailsState extends State<TitleDetails> {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: title.recommendations
-                .map((t) => Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: TitleChip(title: TmdbTitle(title: t)),
-                    ))
+                .map(
+                  (titleRecommended) => FutureBuilder(
+                    future: TmdbTitleService().updateTitleDetails(
+                      TmdbTitle(title: titleRecommended),
+                    ),
+                    builder: (context, snapshot) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: snapshot.connectionState != ConnectionState.done
+                            ? Center(child: CircularProgressIndicator())
+                            : TitleChip(
+                                title: snapshot.data as TmdbTitle,
+                              ),
+                      );
+                    },
+                  ),
+                )
                 .toList(),
           ),
         ),
