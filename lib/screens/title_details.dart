@@ -6,6 +6,7 @@ import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/network_image_cache.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
@@ -19,7 +20,14 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 class TitleDetails extends StatefulWidget {
   final TmdbTitle _title;
-  const TitleDetails({super.key, required TmdbTitle title}) : _title = title;
+  final TmdbListService _tmdbListService;
+
+  const TitleDetails({
+    super.key,
+    required TmdbTitle title,
+    required TmdbListService tmdbListService,
+  })  : _title = title,
+        _tmdbListService = tmdbListService;
 
   @override
   State<TitleDetails> createState() => _TitleDetailsState();
@@ -471,6 +479,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                             ? Center(child: CircularProgressIndicator())
                             : TitleChip(
                                 title: snapshot.data as TmdbTitle,
+                                tmdbListService: widget._tmdbListService,
                               ),
                       );
                     },
