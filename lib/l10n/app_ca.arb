@@ -63,5 +63,8 @@
     "schemeSelectTitle": "Sel·lecciona el color",
     "defaultScheme": "Negre",
     "blueScheme": "Blau",
-    "redScheme": "Vermell"
+    "redScheme": "Vermell",
+    "about": "Quant a...",
+    "aboutDescription": "Movie Scout el millor rastrejador de pel·lícules i sèries.",
+    "recommended": "Recomanats"
 }

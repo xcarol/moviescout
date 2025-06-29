@@ -6,19 +6,28 @@ import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/network_image_cache.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/rate_form.dart';
+import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class TitleDetails extends StatefulWidget {
   final TmdbTitle _title;
-  const TitleDetails({super.key, required TmdbTitle title}) : _title = title;
+  final TmdbListService _tmdbListService;
+
+  const TitleDetails({
+    super.key,
+    required TmdbTitle title,
+    required TmdbListService tmdbListService,
+  })  : _title = title,
+        _tmdbListService = tmdbListService;
 
   @override
   State<TitleDetails> createState() => _TitleDetailsState();
@@ -110,21 +119,49 @@ class _TitleDetailsState extends State<TitleDetails> {
             ),
           ),
         ),
-        const SizedBox(width: 8),
-        if (title.imdbId.isNotEmpty)
-          GestureDetector(
-            onTap: () {
-              launchUrlString('https://www.imdb.com/title/${title.imdbId}');
-            },
-            child: SizedBox(
-              height: 30,
-              child: Image.asset(
-                'assets/imdb-logo.png',
-                fit: BoxFit.cover,
-              ),
+      ],
+    );
+  }
+
+  Widget _externalLinks(TmdbTitle title) {
+    List<Widget> links = [];
+
+    links.add(
+      GestureDetector(
+        onTap: () {
+          launchUrlString('https://www.themoviedb.org/movie/${title.id}');
+        },
+        child: SizedBox(
+          height: 30,
+          child: Image.asset(
+            'assets/tmdb-logo.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+
+    if (title.imdbId.isNotEmpty) {
+      links.add(const SizedBox(width: 20));
+      links.add(
+        GestureDetector(
+          onTap: () {
+            launchUrlString('https://www.imdb.com/title/${title.imdbId}');
+          },
+          child: SizedBox(
+            height: 30,
+            child: Image.asset(
+              'assets/imdb-logo.png',
+              fit: BoxFit.cover,
             ),
           ),
-      ],
+        ),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: links,
     );
   }
 
@@ -132,8 +169,10 @@ class _TitleDetailsState extends State<TitleDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _infoLine(title),
         const Divider(),
+        _externalLinks(title),
+        const Divider(),
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -148,7 +187,11 @@ class _TitleDetailsState extends State<TitleDetails> {
         const SizedBox(height: 10),
         _description(title),
         const SizedBox(height: 30),
+        _infoLine(title),
+        const SizedBox(height: 30),
         _providers(title),
+        const SizedBox(height: 30),
+        _recommended(title),
         const SizedBox(height: 30),
       ],
     );
@@ -404,6 +447,48 @@ class _TitleDetailsState extends State<TitleDetails> {
           },
         ),
       ),
+    );
+  }
+
+  Widget _recommended(TmdbTitle title) {
+    if (title.recommendations.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.recommended,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        const SizedBox(height: 10),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: title.recommendations
+                .map(
+                  (titleRecommended) => FutureBuilder(
+                    future: TmdbTitleService().updateTitleDetails(
+                      TmdbTitle(title: titleRecommended),
+                    ),
+                    builder: (context, snapshot) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: snapshot.connectionState != ConnectionState.done
+                            ? Center(child: CircularProgressIndicator())
+                            : TitleChip(
+                                title: snapshot.data as TmdbTitle,
+                                tmdbListService: widget._tmdbListService,
+                              ),
+                      );
+                    },
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      ],
     );
   }
 }

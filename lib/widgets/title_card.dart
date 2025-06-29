@@ -24,6 +24,8 @@ class TitleCard extends StatelessWidget {
   })  : _title = title,
         _tmdbListService = tmdbListService;
 
+  TmdbListService get tmdbListService => _tmdbListService;
+
   @override
   Widget build(BuildContext context) {
     TmdbTitle tmdbTitle = _tmdbListService.titles.firstWhere(
@@ -41,6 +43,7 @@ class TitleCard extends StatelessWidget {
               MaterialPageRoute(
                   builder: (context) => TitleDetails(
                         title: TmdbTitle(title: tmdbTitle.map),
+                        tmdbListService: tmdbListService,
                       )),
             );
           },
@@ -53,10 +56,10 @@ class TitleCard extends StatelessWidget {
                     topLeft: Radius.circular(12),
                     bottomLeft: Radius.circular(12),
                   ),
-                  child: _titlePoster(tmdbTitle.posterPath),
+                  child: titlePoster(tmdbTitle.posterPath),
                 ),
                 const SizedBox(width: 10),
-                _titleCard(context, tmdbTitle),
+                _titleDetails(context, tmdbTitle),
               ],
             ),
           ),
@@ -65,7 +68,8 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget _titleRating(BuildContext context, TmdbTitle tmdbTitle) {
+  Widget titleRating(BuildContext context, TmdbTitle tmdbTitle,
+      {List<Widget>? extraWidgets}) {
     final customColors = Theme.of(context).extension<CustomColors>()!;
 
     if (tmdbTitle.voteAverage == 0.0) {
@@ -100,12 +104,16 @@ class TitleCard extends StatelessWidget {
           ]);
         }
 
+        if (extraWidgets != null) {
+          children.addAll(extraWidgets);
+        }
+
         return Row(children: children);
       },
     );
   }
 
-  Widget _titlePoster(String? posterPath) {
+  Widget titlePoster(String? posterPath) {
     if (posterPath == null || posterPath.isEmpty) {
       return AspectRatio(
         aspectRatio: 2 / 3,
@@ -131,26 +139,26 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget _titleCard(BuildContext context, TmdbTitle tmdbTitle) {
+  Widget _titleDetails(BuildContext context, TmdbTitle tmdbTitle) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _titleHeader(tmdbTitle.name),
+            titleHeader(tmdbTitle.name),
             const SizedBox(height: 5),
             Row(
               children: [
-                _titleDate(tmdbTitle),
+                Text(titleDate(tmdbTitle)),
                 const Text(' - '),
                 tmdbTitle.duration.isNotEmpty
-                    ? _titleDuration(tmdbTitle.duration)
-                    : _titleType(context, tmdbTitle.mediaType),
+                    ? Text(tmdbTitle.duration)
+                    : Text(_titleType(context, tmdbTitle.mediaType)),
               ],
             ),
             const SizedBox(height: 5),
-            _titleRating(context, tmdbTitle),
+            titleRating(context, tmdbTitle),
             const SizedBox(height: 5),
             Expanded(
               child: Column(
@@ -164,19 +172,19 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Text _titleHeader(String name) {
+  Text titleHeader(String name, {int maxLines = 1}) {
     return Text(
       name,
       style: const TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 16,
       ),
-      maxLines: 1,
+      maxLines: maxLines,
       overflow: TextOverflow.ellipsis,
     );
   }
 
-  Text _titleDate(TmdbTitle tmdbTitle) {
+  String titleDate(TmdbTitle tmdbTitle) {
     String text = '';
 
     if (tmdbTitle.isMovie) {
@@ -197,22 +205,20 @@ class TitleCard extends StatelessWidget {
       }
     }
 
-    return Text(text);
+    return text;
   }
 
-  Text _titleDuration(String duration) => Text(duration);
-
-  Text _titleType(BuildContext context, String mediaType) {
-    return Text(mediaType == 'movie'
+  String _titleType(BuildContext context, String mediaType) {
+    return mediaType == 'movie'
         ? AppLocalizations.of(context)!.movie
-        : AppLocalizations.of(context)!.tvShow);
+        : AppLocalizations.of(context)!.tvShow;
   }
 
   Row _titleBottomRow(BuildContext context, TmdbTitle tmdbTitle) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Flexible(child: _providers(tmdbTitle)),
+        Flexible(child: providers(tmdbTitle)),
         Row(
           children: [
             watchlistButton(context, tmdbTitle),
@@ -223,7 +229,7 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget _providers(TmdbTitle tmdbTitle) {
+  Widget providers(TmdbTitle tmdbTitle) {
     if (tmdbTitle.providers.isEmpty) {
       return const SizedBox.shrink();
     }

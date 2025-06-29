@@ -126,6 +126,11 @@ Create a file called _.env_ in the root directory and add the key:
 TMDB_API_RAT=apiReadAccessTokenGotFromTmdb
 ``` 
 
+## Flutter tool box
+
+Use the shell script `./flutter_tool.sh` to execute most used commands in the project.  
+Run `./flutter_tool.sh --help` to view the tool options.    
+
 ## Application signing and publishing
 
 Setup this file in the path _./android_:  
