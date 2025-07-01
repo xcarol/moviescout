@@ -66,5 +66,6 @@
     "redScheme": "Rojo",
     "about": "Sobre...",
     "aboutDescription": "Movie Scout el mejor rastreador de películas y series.",
-    "recommended": "Recomendados"
+    "recommended": "Recomendados",
+    "providersTitle": "Proveedores de contenido"
 }
