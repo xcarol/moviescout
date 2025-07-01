@@ -195,7 +195,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get schemeSelectTitle => 'Select color';
 
   @override
-  String get defaultScheme => 'Black';
+  String get defaultScheme => 'Default';
+
+  @override
+  String get blackScheme => 'Black';
 
   @override
   String get blueScheme => 'Blue';

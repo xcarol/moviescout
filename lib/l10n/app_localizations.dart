@@ -472,8 +472,14 @@ abstract class AppLocalizations {
   /// No description provided for @defaultScheme.
   ///
   /// In en, this message translates to:
-  /// **'Black'**
+  /// **'Default'**
   String get defaultScheme;
+
+  /// No description provided for @blackScheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Black'**
+  String get blackScheme;
 
   /// No description provided for @blueScheme.
   ///
