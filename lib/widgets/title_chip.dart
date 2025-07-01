@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 
 // ignore: constant_identifier_names
-const double CARD_HEIGHT = 450.0;
+const double CARD_HEIGHT = 480.0;
 // ignore: constant_identifier_names
 const double CARD_WIDTH = 200.0;
 
@@ -29,7 +30,8 @@ class TitleChip extends TitleCard {
       height: CARD_HEIGHT,
       width: CARD_WIDTH,
       child: Card(
-        elevation: 4,
+        color: Theme.of(context).extension<CustomColors>()!.chipCardBackground,
+        margin: const EdgeInsets.all(0),
         child: InkWell(
           onTap: () {
             Navigator.push(
