@@ -36,6 +36,8 @@ class TitleCard extends StatelessWidget {
     return SizedBox(
       height: CARD_HEIGHT,
       child: Card(
+        margin: const EdgeInsets.only(bottom: 1),
+        shape: RoundedRectangleBorder(),
         child: InkWell(
           onTap: () {
             Navigator.push(
@@ -51,11 +53,8 @@ class TitleCard extends StatelessWidget {
             padding: const EdgeInsets.only(right: 8.0),
             child: Row(
               children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    bottomLeft: Radius.circular(12),
-                  ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
                   child: titlePoster(tmdbTitle.posterPath),
                 ),
                 const SizedBox(width: 10),
