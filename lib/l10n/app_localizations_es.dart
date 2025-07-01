@@ -214,4 +214,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get recommended => 'Recomendados';
+
+  @override
+  String get providersTitle => 'Proveedores de contenido';
 }

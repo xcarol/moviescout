@@ -510,6 +510,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recommended'**
   String get recommended;
+
+  /// No description provided for @providersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Content providers'**
+  String get providersTitle;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

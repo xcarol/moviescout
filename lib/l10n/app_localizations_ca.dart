@@ -214,4 +214,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get recommended => 'Recomanats';
+
+  @override
+  String get providersTitle => 'Proveidors de contingut';
 }
