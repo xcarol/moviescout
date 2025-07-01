@@ -5,8 +5,6 @@ import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 
 // ignore: constant_identifier_names
-const double POSTER_HEIGHT = 100.0;
-// ignore: constant_identifier_names
 const double CARD_HEIGHT = 450.0;
 // ignore: constant_identifier_names
 const double CARD_WIDTH = 200.0;
