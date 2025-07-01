@@ -33,13 +33,13 @@ for arg in "$@"; do
     --flutterfire-config)
       run_flutterfire_config=true
       ;;
-    --gen-l10n)
+    -g|--gen-l10n)
       run_gen_l10n=true
       ;;
     --launcher-icons)
       run_launcher_icons=true
       ;;
-    --build)
+    -b|--build)
       run_build=true
       ;;
     -h|--help)
