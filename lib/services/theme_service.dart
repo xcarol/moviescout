@@ -6,6 +6,7 @@ import 'package:moviescout/services/preferences_service.dart';
 
 enum ThemeSchemes {
   defaultScheme,
+  blackScheme,
   blueScheme,
   redScheme,
 }
@@ -51,6 +52,14 @@ class ThemeService with ChangeNotifier {
           darkCustomColorsDefault,
         );
         break;
+      case ThemeSchemes.blackScheme:
+        _setColorScheme(
+          lightColorSchemeBlack,
+          lightCustomColorsBlack,
+          darkColorSchemeBlack,
+          darkCustomColorsBlack,
+        );
+        break;
       case ThemeSchemes.blueScheme:
         _setColorScheme(
           lightColorSchemeBlue,
@@ -93,6 +102,15 @@ class ThemeService with ChangeNotifier {
         );
         _currentScheme = ThemeSchemes.defaultScheme;
         break;
+      case ThemeSchemes.blackScheme:
+        _setColorScheme(
+          lightColorSchemeBlack,
+          lightCustomColorsBlack,
+          darkColorSchemeBlack,
+          darkCustomColorsBlack,
+        );
+        _currentScheme = ThemeSchemes.blackScheme;
+        break;
       case ThemeSchemes.blueScheme:
         _setColorScheme(
           lightColorSchemeBlue,
@@ -118,6 +136,31 @@ class ThemeService with ChangeNotifier {
 
   static ColorScheme lightColorSchemeDefault = ColorScheme(
     brightness: Brightness.light,
+    primary: Color.fromARGB(0xFF, 0xd3, 0x9a, 0x54),
+    onPrimary: Color.fromARGB(0xFF, 0x2B, 0x20, 0x16),
+    secondary: Colors.white,
+    onSecondary: Colors.grey,
+    error: Colors.red,
+    onError: Colors.grey,
+    surface: Color.fromARGB(0xFF, 0x2B, 0x20, 0x16),
+    onSurface: Color.fromARGB(0xFF, 0xd3, 0x9a, 0x54),
+  );
+
+  static CustomColors lightCustomColorsDefault = CustomColors(
+    inWatchlist: Color.fromARGB(0xFF, 0xFF, 0xC5, 0x00),
+    notInWatchlist: Colors.grey,
+    ratedTitle: Color.fromARGB(0xFF, 0xFF, 0xC5, 0x00),
+    selected: Colors.white,
+    notSelected: Colors.grey,
+    chipCardBackground: Color.fromARGB(0xFF, 0x30, 0x25, 0x1B),
+  );
+
+  static ColorScheme darkColorSchemeDefault =
+      lightColorSchemeDefault.copyWith(brightness: Brightness.dark);
+  static CustomColors darkCustomColorsDefault = lightCustomColorsDefault;
+
+  static ColorScheme lightColorSchemeBlack = ColorScheme(
+    brightness: Brightness.light,
     primary: Colors.grey,
     onPrimary: Colors.white,
     secondary: Colors.grey,
@@ -128,15 +171,16 @@ class ThemeService with ChangeNotifier {
     onSurface: Colors.grey,
   );
 
-  static CustomColors lightCustomColorsDefault = CustomColors(
+  static CustomColors lightCustomColorsBlack = CustomColors(
     inWatchlist: Colors.orange,
     notInWatchlist: Colors.blueGrey,
     ratedTitle: Colors.orange,
     selected: Colors.orange,
     notSelected: Colors.blueGrey,
+    chipCardBackground: Colors.grey.shade200,
   );
 
-  static ColorScheme darkColorSchemeDefault = ColorScheme(
+  static ColorScheme darkColorSchemeBlack = ColorScheme(
     brightness: Brightness.dark,
     primary: Colors.grey,
     onPrimary: Colors.black,
@@ -148,12 +192,13 @@ class ThemeService with ChangeNotifier {
     onSurface: Colors.grey,
   );
 
-  static CustomColors darkCustomColorsDefault = CustomColors(
+  static CustomColors darkCustomColorsBlack = CustomColors(
     inWatchlist: Colors.amber,
     notInWatchlist: Colors.grey,
     ratedTitle: Colors.amber,
     selected: Colors.white,
     notSelected: Colors.grey,
+    chipCardBackground: Colors.grey.shade900,
   );
 
   static ColorScheme lightColorSchemeBlue = ColorScheme(
@@ -214,6 +259,12 @@ class ThemeService with ChangeNotifier {
     ratedTitle: Colors.orange,
     selected: Colors.orange,
     notSelected: Colors.grey,
+    chipCardBackground: Color.from(
+        alpha: 0.8000,
+        red: 0.7451,
+        green: 0.7608,
+        blue: 1.0000,
+        colorSpace: ColorSpace.sRGB),
   );
 
   static ColorScheme darkColorSchemeBlue = ColorScheme(
@@ -274,6 +325,12 @@ class ThemeService with ChangeNotifier {
     ratedTitle: Colors.amber,
     selected: Colors.amber,
     notSelected: Colors.grey,
+    chipCardBackground: Color.from(
+        alpha: 0.200,
+        red: 0.1629,
+        green: 0.1786,
+        blue: 0.3865,
+        colorSpace: ColorSpace.sRGB),
   );
 
   static ColorScheme lightColorSchemeRed = ColorScheme(
@@ -334,6 +391,12 @@ class ThemeService with ChangeNotifier {
     ratedTitle: Colors.red,
     selected: Colors.red,
     notSelected: Colors.grey,
+    chipCardBackground: Color.from(
+        alpha: 0.800,
+        red: 1.000,
+        green: 0.7800,
+        blue: 0.8270,
+        colorSpace: ColorSpace.sRGB),
   );
 
   static ColorScheme darkColorSchemeRed = ColorScheme(
@@ -394,5 +457,11 @@ class ThemeService with ChangeNotifier {
     ratedTitle: Colors.orange,
     selected: Colors.orange,
     notSelected: Colors.grey,
+    chipCardBackground: Color.from(
+      alpha: 0.2000,
+      red: 0.5569,
+      green: 0.2863,
+      blue: 0.3412,
+    ),
   );
 }
