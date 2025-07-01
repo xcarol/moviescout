@@ -72,7 +72,7 @@ class _TitleDetailsState extends State<TitleDetails> {
             title.isMovie),
         const SizedBox(height: 20),
         Padding(
-          padding: EdgeInsets.only(left: 5, right: 5),
+          padding: EdgeInsets.only(left: 5, right: 5, bottom: 100),
           child: _details(title),
         ),
       ],
@@ -192,7 +192,6 @@ class _TitleDetailsState extends State<TitleDetails> {
         _providers(title),
         const SizedBox(height: 30),
         _recommended(title),
-        const SizedBox(height: 30),
       ],
     );
   }
