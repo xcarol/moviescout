@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_genre.dart';
@@ -72,7 +72,7 @@ class _TitleDetailsState extends State<TitleDetails> {
             title.isMovie),
         const SizedBox(height: 20),
         Padding(
-          padding: EdgeInsets.only(left: 5, right: 5, bottom: 10),
+          padding: EdgeInsets.only(left: 5, right: 5, bottom: 100),
           child: _details(title),
         ),
       ],
@@ -192,7 +192,6 @@ class _TitleDetailsState extends State<TitleDetails> {
         _providers(title),
         const SizedBox(height: 30),
         _recommended(title),
-        const SizedBox(height: 30),
       ],
     );
   }
