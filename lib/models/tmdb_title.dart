@@ -2,7 +2,7 @@
 
 import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_providers.dart';
-import 'package:moviescout/services/tmbd_genre_servcie.dart';
+import 'package:moviescout/services/tmdb_genre_service.dart';
 
 const _adult = 'adult';
 const _backdrop_path = 'backdrop_path';
