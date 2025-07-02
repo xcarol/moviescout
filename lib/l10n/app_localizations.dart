@@ -516,6 +516,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Content providers'**
   String get providersTitle;
+
+  /// No description provided for @noProvidersAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No providers available'**
+  String get noProvidersAvailable;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

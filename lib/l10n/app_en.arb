@@ -68,5 +68,6 @@
     "about": "About...",
     "aboutDescription": "Movie Scout the ultimate movie and series tracker.",
     "recommended": "Recommended",
-    "providersTitle": "Content providers"
+    "providersTitle": "Content providers",
+    "noProvidersAvailable": "No providers available"
 }

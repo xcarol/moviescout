@@ -217,4 +217,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get providersTitle => 'Proveidors de contingut';
+
+  @override
+  String get noProvidersAvailable => 'No hi ha proveidors disponibles';
 }

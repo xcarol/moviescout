@@ -217,4 +217,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get providersTitle => 'Content providers';
+
+  @override
+  String get noProvidersAvailable => 'No providers available';
 }

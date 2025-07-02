@@ -68,5 +68,6 @@
     "about": "Quant a...",
     "aboutDescription": "Movie Scout el millor rastrejador de pel·lícules i sèries.",
     "recommended": "Recomanats",
-    "providersTitle": "Proveidors de contingut"
+    "providersTitle": "Proveidors de contingut",
+    "noProvidersAvailable": "No hi ha proveidors disponibles"
 }
