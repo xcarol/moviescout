@@ -150,7 +150,7 @@ class ThemeService with ChangeNotifier {
     inWatchlist: Color.fromARGB(0xFF, 0xFF, 0xC5, 0x00),
     notInWatchlist: Colors.grey,
     ratedTitle: Color.fromARGB(0xFF, 0xFF, 0xC5, 0x00),
-    selected: Colors.white,
+    selected: Color.fromARGB(0xFF, 0xd3, 0x9a, 0x54),
     notSelected: Colors.grey,
     chipCardBackground: Color.fromARGB(0xFF, 0x30, 0x25, 0x1B),
   );
