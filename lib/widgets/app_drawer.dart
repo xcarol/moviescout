@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
+import 'package:moviescout/screens/providers.dart';
 import 'package:moviescout/services/theme_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
@@ -27,6 +28,7 @@ class AppDrawer extends StatelessWidget {
           _userProfileTile(context),
           if (isUserLoggedIn && defaultTargetPlatform == TargetPlatform.linux)
             _importImdbTile(context),
+          _providersTile(context),
           _colorSchemeTile(context),
           _aboutTile(context),
           const Divider(),
@@ -72,6 +74,20 @@ class AppDrawer extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const ImportIMDB()),
+        ),
+      },
+    );
+  }
+
+  Widget _providersTile(BuildContext context) {
+    return ListTile(
+      leading: Icon(Icons.tv),
+      title: Text(AppLocalizations.of(context)!.providersTitle),
+      onTap: () => {
+        Navigator.of(context).pop(),
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProvidersScreen()),
         ),
       },
     );

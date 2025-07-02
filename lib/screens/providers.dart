@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 
-class ProvidersScreen extends StatelessWidget {
+class ProvidersScreen extends StatefulWidget {
   const ProvidersScreen({super.key});
 
+  @override
+  State<ProvidersScreen> createState() => _ProvidersScreenState();
+}
+
+class _ProvidersScreenState extends State<ProvidersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,10 +25,43 @@ class ProvidersScreen extends StatelessWidget {
   }
 
   Widget _body(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-      ],
+    List<Widget> providerWidgets = [];
+
+    for (var provider in TmdbProviderService().providers.entries) {
+      String providerName = provider.value['name'] ?? '';
+      String logoPath = provider.value['logo_path'] ?? '';
+
+      if (providerName.isNotEmpty && logoPath.isNotEmpty) {
+        providerWidgets.add(
+          SwitchListTile(
+            title: Text(providerName),
+            value: provider.value['enabled'] == 'true',
+            onChanged: (value) => setState(() {
+              TmdbProviderService().toggleProvider(provider.key, value);
+            }),
+          ),
+        );
+      }
+    }
+    providerWidgets.sort((a, b) {
+      if (a is SwitchListTile && b is SwitchListTile) {
+        return a.title.toString().compareTo(b.title.toString());
+      }
+      return 0;
+    });
+
+    if (providerWidgets.isEmpty) {
+      return Center(
+        child: Text(AppLocalizations.of(context)!.noProvidersAvailable),
+      );
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: providerWidgets,
+      ),
     );
   }
 }
