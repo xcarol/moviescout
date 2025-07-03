@@ -217,27 +217,20 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _infoLine(int count) {
-    TextStyle textStyle = TextStyle(
-      color: Theme.of(context).colorScheme.primaryContainer,
-    );
-
-    String titleCountText = '$count ${AppLocalizations.of(context)!.titles}';
-
-    if (_selectedType == AppLocalizations.of(context)!.tvshows) {
-      titleCountText = '$count ${AppLocalizations.of(context)!.tvshows}';
-    } else if (_selectedType == AppLocalizations.of(context)!.movies) {
-      titleCountText = '$count ${AppLocalizations.of(context)!.movies}';
-    }
     return Container(
       color: Theme.of(context).colorScheme.onPrimaryContainer,
       padding: EdgeInsets.symmetric(horizontal: 4),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            titleCountText,
-            style: textStyle,
+            count.toString(),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 16,
+            ),
           ),
+          _typeSelector(),
+          const Spacer(),
           Row(
             children: [
               _sortSelector(),
@@ -262,7 +255,7 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _menuBuilder(String key, MenuController controller, String title,
-      Iterable<Widget> menuChildren) {
+      Iterable<Widget> menuChildren, Icon arrowIcon) {
     return MenuAnchor(
       key: Key(key),
       controller: controller,
@@ -291,21 +284,39 @@ class _TitleListState extends State<TitleList> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-                _isSortAsc
-                    ? Icon(
-                        Icons.arrow_drop_down,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : Icon(
-                        Icons.arrow_drop_up,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                arrowIcon,
               ],
             ),
           ),
         );
       },
       menuChildren: menuChildren.toList(),
+    );
+  }
+
+  Widget _typeSelector() {
+    MenuController controller = MenuController();
+    return _menuBuilder(
+      '_typeSelector',
+      controller,
+      _selectedType,
+      _titleTypes.map((String option) {
+        return ListTile(
+          title: Text(option),
+          selected: _selectedType == option,
+          selectedColor: Theme.of(context).colorScheme.secondary,
+          onTap: () {
+            setState(() {
+              _selectedType = option;
+            });
+            controller.close();
+          },
+        );
+      }),
+      Icon(
+        Icons.arrow_drop_down,
+        color: Theme.of(context).colorScheme.primary,
+      ),
     );
   }
 
@@ -329,6 +340,15 @@ class _TitleListState extends State<TitleList> {
           },
         );
       }),
+      _isSortAsc
+          ? Icon(
+              Icons.arrow_drop_down,
+              color: Theme.of(context).colorScheme.primary,
+            )
+          : Icon(
+              Icons.arrow_drop_up,
+              color: Theme.of(context).colorScheme.primary,
+            ),
     );
   }
 

@@ -51,8 +51,6 @@ class TitleListControlPanel extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _typeSelector(),
-                      const SizedBox(width: 8),
                       _genresSelector(context, genresChanged),
                     ],
                   ),
@@ -110,31 +108,6 @@ class TitleListControlPanel extends StatelessWidget {
         );
       },
       menuChildren: menuChildren.toList(),
-    );
-  }
-
-  Widget _typeSelector() {
-    MenuController controller = MenuController();
-    return _menuBuilder(
-      '_typeSelector',
-      controller,
-      selectedType,
-      typesList.map((String option) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return ListTile(
-              title: Text(option),
-              selected: selectedType == option,
-              onTap: () {
-                setState(() {
-                  controller.close();
-                  typeChanged(option);
-                });
-              },
-            );
-          },
-        );
-      }),
     );
   }
 
