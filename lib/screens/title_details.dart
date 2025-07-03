@@ -65,11 +65,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _banner(
-            title.backdropPath.isNotEmpty
-                ? title.backdropPath
-                : title.posterPath,
-            title.isMovie),
+        _banner(title),
         const SizedBox(height: 20),
         Padding(
           padding: EdgeInsets.only(left: 5, right: 5, bottom: 100),
@@ -311,9 +307,13 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  Widget _banner(String image, bool isMovie) {
+  Widget _banner(TmdbTitle title) {
     final screenWidth = MediaQuery.of(context).size.width;
     final bannerHeight = screenWidth * 9 / 16;
+
+    String image =
+        title.backdropPath.isNotEmpty ? title.backdropPath : title.posterPath;
+    bool isMovie = title.isMovie;
 
     return SizedBox(
       height: bannerHeight,
