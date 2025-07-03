@@ -164,13 +164,9 @@ class _TitleDetailsState extends State<TitleDetails> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('${_releaseDates(title)} - ${_duration(title)}'),
-              watchlistButton(context, title),
-            ],
-          ),
+          _tageLine(title),
+          const SizedBox(height: 10),
+          _durationAndWatchlist(title),
           const SizedBox(height: 10),
           _rating(title),
           const SizedBox(height: 10),
@@ -189,6 +185,28 @@ class _TitleDetailsState extends State<TitleDetails> {
           _recommended(title),
         ],
       ),
+    );
+  }
+
+  Widget _tageLine(TmdbTitle title) {
+    if (title.tagline.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Text(
+      title.tagline,
+      style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+      textAlign: TextAlign.start,
+    );
+  }
+  
+  Widget _durationAndWatchlist(TmdbTitle title) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text('${_releaseDates(title)} - ${_duration(title)}'),
+        watchlistButton(context, title),
+      ],
     );
   }
 
@@ -489,5 +507,5 @@ class _TitleDetailsState extends State<TitleDetails> {
         ),
       ],
     );
-  }
+  }  
 }
