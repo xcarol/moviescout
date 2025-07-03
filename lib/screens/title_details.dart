@@ -169,10 +169,6 @@ class _TitleDetailsState extends State<TitleDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Divider(),
-        _externalLinks(title),
-        const Divider(),
-        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -188,7 +184,11 @@ class _TitleDetailsState extends State<TitleDetails> {
         _description(title),
         const SizedBox(height: 30),
         _infoLine(title),
-        const SizedBox(height: 30),
+        const SizedBox(height: 10),
+        const Divider(),
+        _externalLinks(title),
+        const Divider(),
+        const SizedBox(height: 10),
         _providers(title),
         const SizedBox(height: 30),
         _recommended(title),
