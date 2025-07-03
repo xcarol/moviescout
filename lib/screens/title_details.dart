@@ -67,10 +67,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       children: [
         _banner(title),
         const SizedBox(height: 20),
-        Padding(
-          padding: EdgeInsets.only(left: 5, right: 5, bottom: 100),
-          child: _details(title),
-        ),
+        _details(title),
       ],
     );
   }
@@ -162,33 +159,36 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   Widget _details(TmdbTitle title) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('${_releaseDates(title)} - ${_duration(title)}'),
-            watchlistButton(context, title),
-          ],
-        ),
-        const SizedBox(height: 10),
-        _rating(title),
-        const SizedBox(height: 10),
-        _genres(title),
-        const SizedBox(height: 10),
-        _description(title),
-        const SizedBox(height: 30),
-        _infoLine(title),
-        const SizedBox(height: 10),
-        const Divider(),
-        _externalLinks(title),
-        const Divider(),
-        const SizedBox(height: 10),
-        _providers(title),
-        const SizedBox(height: 30),
-        _recommended(title),
-      ],
+    return Padding(
+      padding: EdgeInsets.only(left: 5, right: 5, bottom: 100),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('${_releaseDates(title)} - ${_duration(title)}'),
+              watchlistButton(context, title),
+            ],
+          ),
+          const SizedBox(height: 10),
+          _rating(title),
+          const SizedBox(height: 10),
+          _genres(title),
+          const SizedBox(height: 10),
+          _description(title),
+          const SizedBox(height: 30),
+          _infoLine(title),
+          const SizedBox(height: 10),
+          const Divider(),
+          _externalLinks(title),
+          const Divider(),
+          const SizedBox(height: 10),
+          _providers(title),
+          const SizedBox(height: 30),
+          _recommended(title),
+        ],
+      ),
     );
   }
 
