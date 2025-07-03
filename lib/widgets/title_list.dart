@@ -169,45 +169,54 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _controlPanel() {
-    return TitleListControlPanel(
-      selectedType: _selectedType,
-      typesList: _titleTypes,
-      typeChanged: (typeChanged) {
-        setState(() {
-          _selectedType = typeChanged;
-        });
-      },
-      textFilterChanged: (newTextFilter) {
-        setState(() {
-          _textFilter = newTextFilter;
-        });
-      },
-      textFilterController: _textFilterController,
-      selectedGenres: _selectedGenres.toList(),
-      genresList: _genresList,
-      genresChanged: (List<String> genresChanged) {
-        setState(() {
-          _selectedGenres = genresChanged.toList();
-        });
-      },
-      selectedSort: _selectedSort,
-      sortsList: _titleSorts,
-      sortChanged: (sortChanged) {
-        setState(() {
-          _selectedSort = sortChanged;
-        });
-      },
-      swapSort: () {
-        setState(() {
-          _isSortAsc = !_isSortAsc;
-        });
-      },
-      focusNode: _searchFocusNode,
+    return Column(
+      children: [
+        TitleListControlPanel(
+          selectedType: _selectedType,
+          typesList: _titleTypes,
+          typeChanged: (typeChanged) {
+            setState(() {
+              _selectedType = typeChanged;
+            });
+          },
+          textFilterChanged: (newTextFilter) {
+            setState(() {
+              _textFilter = newTextFilter;
+            });
+          },
+          textFilterController: _textFilterController,
+          selectedGenres: _selectedGenres.toList(),
+          genresList: _genresList,
+          genresChanged: (List<String> genresChanged) {
+            setState(() {
+              _selectedGenres = genresChanged.toList();
+            });
+          },
+          selectedSort: _selectedSort,
+          sortsList: _titleSorts,
+          sortChanged: (sortChanged) {
+            setState(() {
+              _selectedSort = sortChanged;
+            });
+          },
+          swapSort: () {
+            setState(() {
+              _isSortAsc = !_isSortAsc;
+            });
+          },
+          focusNode: _searchFocusNode,
+        ),
+        Container(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          child: Divider(
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
+        ),
+      ],
     );
   }
 
   Widget _infoLine(int count) {
-    String sortBy = _selectedSort;
     TextStyle textStyle = TextStyle(
       color: Theme.of(context).colorScheme.primaryContainer,
     );
@@ -231,19 +240,8 @@ class _TitleListState extends State<TitleList> {
           ),
           Row(
             children: [
-              Text(
-                sortBy,
-                style: textStyle,
-              ),
-              _isSortAsc
-                  ? Icon(
-                      Icons.arrow_drop_down,
-                      color: textStyle.color,
-                    )
-                  : Icon(
-                      Icons.arrow_drop_up,
-                      color: textStyle.color,
-                    ),
+              _sortSelector(),
+              _swapSortButton(context),
               IconButton(
                 onPressed: () {
                   setState(() {
@@ -260,6 +258,89 @@ class _TitleListState extends State<TitleList> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _menuBuilder(String key, MenuController controller, String title,
+      Iterable<Widget> menuChildren) {
+    return MenuAnchor(
+      key: Key(key),
+      controller: controller,
+      builder:
+          (BuildContext context, MenuController controller, Widget? child) {
+        return GestureDetector(
+          onTap: () {
+            if (controller.isOpen) {
+              controller.close();
+            } else {
+              controller.open();
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                _isSortAsc
+                    ? Icon(
+                        Icons.arrow_drop_down,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    : Icon(
+                        Icons.arrow_drop_up,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+              ],
+            ),
+          ),
+        );
+      },
+      menuChildren: menuChildren.toList(),
+    );
+  }
+
+  Widget _sortSelector() {
+    MenuController controller = MenuController();
+    return _menuBuilder(
+      '_sortSelector',
+      controller,
+      _selectedSort,
+      _titleSorts.map((String option) {
+        bool isSelected = _selectedSort == option;
+        return ListTile(
+          title: Text(option),
+          selected: isSelected,
+          selectedColor: Theme.of(context).colorScheme.secondary,
+          onTap: () {
+            setState(() {
+              _selectedSort = option;
+            });
+            controller.close();
+          },
+        );
+      }),
+    );
+  }
+
+  Widget _swapSortButton(BuildContext context) {
+    return IconButton(
+      color: Theme.of(context).colorScheme.primary,
+      icon: Icon(Icons.swap_vert),
+      onPressed: () {
+        setState(() {
+          _isSortAsc = !_isSortAsc;
+        });
+      },
     );
   }
 
@@ -310,13 +391,6 @@ class _TitleListState extends State<TitleList> {
               color: Theme.of(context).colorScheme.primaryContainer,
             ),
             if (_showFilters) _controlPanel(),
-            if (_showFilters)
-              Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                child: Divider(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                ),
-              ),
             _titleList(filteredTitles),
           ],
         ),

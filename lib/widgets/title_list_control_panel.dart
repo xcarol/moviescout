@@ -58,9 +58,6 @@ class TitleListControlPanel extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
-              _sortSelector(),
-              _swapSortButton(context),
             ],
           ),
           _textFilter(context, AppLocalizations.of(context)!.search),
@@ -167,41 +164,6 @@ class TitleListControlPanel extends StatelessWidget {
           },
         );
       }),
-    );
-  }
-
-  Widget _sortSelector() {
-    MenuController controller = MenuController();
-    return _menuBuilder(
-      '_sortSelector',
-      controller,
-      selectedSort,
-      sortsList.map((String option) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return ListTile(
-              title: Text(option),
-              selected: selectedSort == option,
-              onTap: () {
-                setState(() {
-                  controller.close();
-                  sortChanged(option);
-                });
-              },
-            );
-          },
-        );
-      }),
-    );
-  }
-
-  Widget _swapSortButton(BuildContext context) {
-    return IconButton(
-      color: Theme.of(context).colorScheme.onPrimary,
-      icon: Icon(Icons.swap_vert),
-      onPressed: () {
-        swapSort();
-      },
     );
   }
 
