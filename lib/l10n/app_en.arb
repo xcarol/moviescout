@@ -67,5 +67,7 @@
     "redScheme": "Red",
     "about": "About...",
     "aboutDescription": "Movie Scout the ultimate movie and series tracker.",
-    "recommended": "Recommended"
+    "recommended": "Recommended",
+    "providersTitle": "Content providers",
+    "noProvidersAvailable": "No providers available"
 }

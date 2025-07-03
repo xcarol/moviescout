@@ -214,4 +214,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get recommended => 'Recomendados';
+
+  @override
+  String get providersTitle => 'Proveedores de contenido';
+
+  @override
+  String get noProvidersAvailable => 'No hay proveedores disponibles';
 }
