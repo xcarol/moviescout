@@ -340,7 +340,7 @@ abstract class AppLocalizations {
   /// No description provided for @allTypes.
   ///
   /// In en, this message translates to:
-  /// **'All'**
+  /// **'Titles'**
   String get allTypes;
 
   /// No description provided for @movies.

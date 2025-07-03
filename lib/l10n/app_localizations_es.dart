@@ -129,7 +129,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get buyProviders => 'Compra';
 
   @override
-  String get allTypes => 'Todo';
+  String get allTypes => 'Títulos';
 
   @override
   String get movies => 'Películas';

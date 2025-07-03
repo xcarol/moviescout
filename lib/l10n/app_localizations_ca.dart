@@ -129,7 +129,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get buyProviders => 'Compra';
 
   @override
-  String get allTypes => 'Tots';
+  String get allTypes => 'Títols';
 
   @override
   String get movies => 'Pel·lícules';
