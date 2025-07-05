@@ -7,6 +7,9 @@ class DropdownSelector extends StatelessWidget {
   final Icon? arrowIcon;
   final TextStyle? textStyle;
   final Color? backgroundColor;
+  final BoxBorder? border;
+  final BorderRadiusGeometry? borderRadius;
+  final Widget Function(BuildContext, String, bool, VoidCallback)? itemBuilder;
 
   const DropdownSelector({
     super.key,
@@ -16,6 +19,9 @@ class DropdownSelector extends StatelessWidget {
     this.arrowIcon,
     this.textStyle,
     this.backgroundColor,
+    this.border,
+    this.borderRadius,
+    this.itemBuilder,
   });
 
   @override
@@ -44,14 +50,13 @@ class DropdownSelector extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
               color: backgroundColor ?? Theme.of(context).colorScheme.onPrimary,
+              border: border,
+              borderRadius: borderRadius,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  selectedOption,
-                  style: effectiveTextStyle,
-                ),
+                Text(selectedOption, style: effectiveTextStyle),
                 effectiveArrowIcon,
               ],
             ),
@@ -60,6 +65,19 @@ class DropdownSelector extends StatelessWidget {
       },
       menuChildren: options.map((option) {
         final isSelected = selectedOption == option;
+
+        if (itemBuilder != null) {
+          return itemBuilder!(
+            context,
+            option,
+            isSelected,
+            () {
+              if (!isSelected) onSelected(option);
+              controller.close();
+            },
+          );
+        }
+
         return ListTile(
           title: Text(option),
           selected: isSelected,
