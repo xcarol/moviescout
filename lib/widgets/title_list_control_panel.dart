@@ -1,38 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/widgets/drop_down_selector.dart';
 
 typedef MenuEntry = DropdownMenuEntry<String>;
 
 class TitleListControlPanel extends StatelessWidget {
-  final String selectedType;
-  final List<String> typesList;
-  final Function typeChanged;
   final Function textFilterChanged;
   final TextEditingController textFilterController;
   final List<String> selectedGenres;
   final List<String> genresList;
   final Function genresChanged;
-  final String selectedSort;
-  final List<String> sortsList;
-  final Function sortChanged;
-  final Function swapSort;
+  final List<String> selectedProviders;
+  final List<String> providersList;
+  final Function providersChanged;
   final FocusNode focusNode;
 
   const TitleListControlPanel({
     super.key,
-    required this.selectedType,
-    required this.typesList,
-    required this.typeChanged,
     required this.textFilterChanged,
     required this.textFilterController,
     required this.selectedGenres,
     required this.genresList,
     required this.genresChanged,
-    required this.selectedSort,
-    required this.sortsList,
-    required this.sortChanged,
-    required this.swapSort,
     required this.focusNode,
+    required this.selectedProviders,
+    required this.providersList,
+    required this.providersChanged,
   });
 
   @override
@@ -51,16 +44,13 @@ class TitleListControlPanel extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _typeSelector(),
-                      const SizedBox(width: 8),
                       _genresSelector(context, genresChanged),
+                      const SizedBox(width: 8),
+                      _providersSelector(context, providersChanged),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
-              _sortSelector(),
-              _swapSortButton(context),
             ],
           ),
           _textFilter(context, AppLocalizations.of(context)!.search),
@@ -69,139 +59,122 @@ class TitleListControlPanel extends StatelessWidget {
     );
   }
 
-  Widget _menuBuilder(String key, MenuController controller, String title,
-      Iterable<StatefulWidget> menuChildren) {
-    return MenuAnchor(
-      key: Key(key),
-      controller: controller,
-      builder:
-          (BuildContext context, MenuController controller, Widget? child) {
-        return GestureDetector(
-          onTap: () {
-            if (controller.isOpen) {
-              controller.close();
-            } else {
-              controller.open();
-            }
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              border: Border.all(
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                ),
-                Icon(
-                  Icons.arrow_drop_down,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-      menuChildren: menuChildren.toList(),
-    );
-  }
-
-  Widget _typeSelector() {
-    MenuController controller = MenuController();
-    return _menuBuilder(
-      '_typeSelector',
-      controller,
-      selectedType,
-      typesList.map((String option) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return ListTile(
-              title: Text(option),
-              selected: selectedType == option,
-              onTap: () {
-                setState(() {
-                  controller.close();
-                  typeChanged(option);
-                });
-              },
-            );
-          },
-        );
-      }),
-    );
-  }
-
   Widget _genresSelector(BuildContext context, Function genresChanged) {
-    return _menuBuilder(
-      '_genresSelector',
-      MenuController(),
-      AppLocalizations.of(context)!.genres,
-      genresList.map((String option) {
+    return DropdownSelector(
+      selectedOption: AppLocalizations.of(context)!.genres,
+      options: genresList,
+      onSelected: (_) {},
+      itemBuilder: (context, option, isSelected, closeMenu) {
         return StatefulBuilder(
           builder: (context, setState) {
             return SwitchListTile(
-              dense: true,
               title: Text(option),
               value: selectedGenres.contains(option),
-              onChanged: (bool? checked) {
+              onChanged: (bool value) {
                 setState(() {
-                  if (checked == true) {
+                  if (value) {
                     selectedGenres.add(option);
                   } else {
                     selectedGenres.remove(option);
                   }
-                  genresChanged(selectedGenres);
                 });
+                genresChanged(selectedGenres);
               },
             );
           },
         );
-      }),
+      },
+      arrowIcon: Icon(
+        Icons.arrow_drop_down,
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      textStyle: TextStyle(
+        fontSize: 16,
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      border: Border.all(
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      borderRadius: BorderRadius.circular(5),
     );
   }
 
-  Widget _sortSelector() {
-    MenuController controller = MenuController();
-    return _menuBuilder(
-      '_sortSelector',
-      controller,
-      selectedSort,
-      sortsList.map((String option) {
+  void _updateSelectedProviders(
+      BuildContext context, String option, bool value) {
+    if (value) {
+      if (option == AppLocalizations.of(context)!.allProviders) {
+        selectedProviders.clear();
+        selectedProviders.addAll(providersList);
+        selectedProviders.remove(AppLocalizations.of(context)!.noneProviders);
+      } else if (option == AppLocalizations.of(context)!.noneProviders) {
+        selectedProviders.clear();
+        selectedProviders.add(AppLocalizations.of(context)!.noneProviders);
+      } else if (value && !selectedProviders.contains(option)) {
+        selectedProviders.remove(AppLocalizations.of(context)!.allProviders);
+        selectedProviders.remove(AppLocalizations.of(context)!.noneProviders);
+        selectedProviders.add(option);
+
+        int selectedCount = selectedProviders
+            .where((provider) =>
+                provider != AppLocalizations.of(context)!.noneProviders &&
+                provider != AppLocalizations.of(context)!.allProviders)
+            .length;
+
+        if (selectedCount == providersList.length - 2) {
+          selectedProviders.remove(AppLocalizations.of(context)!.noneProviders);
+          selectedProviders.add(AppLocalizations.of(context)!.allProviders);
+        }
+      }
+    } else {
+      if (option == AppLocalizations.of(context)!.allProviders) {
+        selectedProviders.clear();
+        selectedProviders.add(AppLocalizations.of(context)!.noneProviders);
+      } else if (option == AppLocalizations.of(context)!.noneProviders) {
+        selectedProviders.clear();
+        selectedProviders.add(AppLocalizations.of(context)!.noneProviders);
+      } else if (selectedProviders.contains(option)) {
+        selectedProviders.remove(AppLocalizations.of(context)!.allProviders);
+        selectedProviders.remove(AppLocalizations.of(context)!.noneProviders);
+        selectedProviders.remove(option);
+      }
+    }
+  }
+
+  Widget _providersSelector(BuildContext context, Function providersChanged) {
+    return DropdownSelector(
+      selectedOption: AppLocalizations.of(context)!.providers,
+      options: providersList,
+      onSelected: (_) {},
+      itemBuilder: (context, option, isSelected, closeMenu) {
         return StatefulBuilder(
           builder: (context, setState) {
-            return ListTile(
+            return SwitchListTile(
               title: Text(option),
-              selected: selectedSort == option,
-              onTap: () {
+              value: selectedProviders.contains(option),
+              onChanged: (bool value) {
                 setState(() {
-                  controller.close();
-                  sortChanged(option);
+                  _updateSelectedProviders(context, option, value);
                 });
+                providersChanged(selectedProviders);
               },
             );
           },
         );
-      }),
-    );
-  }
-
-  Widget _swapSortButton(BuildContext context) {
-    return IconButton(
-      color: Theme.of(context).colorScheme.onPrimary,
-      icon: Icon(Icons.swap_vert),
-      onPressed: () {
-        swapSort();
       },
+      arrowIcon: Icon(
+        Icons.arrow_drop_down,
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      textStyle: TextStyle(
+        fontSize: 16,
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      border: Border.all(
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      borderRadius: BorderRadius.circular(5),
     );
   }
 

@@ -39,7 +39,7 @@
     "flatrateProviders": "Suscripción",
     "rentProviders": "Alquiler",
     "buyProviders": "Compra",
-    "allTypes": "Todo",
+    "allTypes": "Títulos",
     "movies": "Películas",
     "tvshows": "Series",
     "sortAlphabetically": "Alfabético",
@@ -69,5 +69,8 @@
     "aboutDescription": "Movie Scout el mejor rastreador de películas y series.",
     "recommended": "Recomendados",
     "providersTitle": "Proveedores de contenido",
+    "providers": "Proveedores",
+    "allProviders": "Tots",
+    "noneProviders": "Cap",
     "noProvidersAvailable": "No hay proveedores disponibles"
 }

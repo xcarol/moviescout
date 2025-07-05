@@ -96,6 +96,10 @@ class TmdbTitle {
     return _tmdbTitle[_name] ?? _tmdbTitle[_title] ?? '';
   }
 
+  String get tagline {
+    return _tmdbTitle[_tagline] ?? '';
+  }
+  
   String get lastUpdated {
     return _tmdbTitle[_last_updated] ?? '1970-01-01';
   }

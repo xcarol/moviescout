@@ -129,7 +129,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get buyProviders => 'Compra';
 
   @override
-  String get allTypes => 'Tots';
+  String get allTypes => 'Títols';
 
   @override
   String get movies => 'Pel·lícules';
@@ -217,6 +217,15 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get providersTitle => 'Proveidors de contingut';
+
+  @override
+  String get providers => 'Proveidors';
+
+  @override
+  String get allProviders => 'Tots';
+
+  @override
+  String get noneProviders => 'Cap';
 
   @override
   String get noProvidersAvailable => 'No hi ha proveidors disponibles';

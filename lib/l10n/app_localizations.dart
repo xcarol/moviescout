@@ -340,7 +340,7 @@ abstract class AppLocalizations {
   /// No description provided for @allTypes.
   ///
   /// In en, this message translates to:
-  /// **'All'**
+  /// **'Titles'**
   String get allTypes;
 
   /// No description provided for @movies.
@@ -516,6 +516,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Content providers'**
   String get providersTitle;
+
+  /// No description provided for @providers.
+  ///
+  /// In en, this message translates to:
+  /// **'Providers'**
+  String get providers;
+
+  /// No description provided for @allProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Tots'**
+  String get allProviders;
+
+  /// No description provided for @noneProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Cap'**
+  String get noneProviders;
 
   /// No description provided for @noProvidersAvailable.
   ///

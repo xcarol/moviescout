@@ -7,7 +7,8 @@ const _buy = 'buy';
 class TmdbProviders {
   final Map _providers;
 
-  const TmdbProviders({required Map<dynamic, dynamic> providers}) : _providers = providers;
+  const TmdbProviders({required Map<dynamic, dynamic> providers})
+      : _providers = providers;
 
   List<TmdbProvider> _providerList(type) {
     List<TmdbProvider> providerList = List.empty(growable: true);
@@ -15,12 +16,20 @@ class TmdbProviders {
     if (_providers[type] == null) {
       return providerList;
     }
-    
+
     for (var provider in _providers[type]) {
       providerList.add(TmdbProvider(provider: provider));
     }
 
     return providerList;
+  }
+
+  bool any(bool Function(TmdbProvider) test) {
+    for (var provider in _providers[_flatrate] ?? []) {
+      if (test(TmdbProvider(provider: provider))) return true;
+    }
+
+    return false;
   }
 
   bool get isEmpty {
