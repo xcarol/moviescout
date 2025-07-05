@@ -219,5 +219,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get providersTitle => 'Proveedores de contenido';
 
   @override
+  String get providers => 'Proveedores';
+
+  @override
+  String get allProviders => 'Tots';
+
+  @override
+  String get noneProviders => 'Cap';
+
+  @override
   String get noProvidersAvailable => 'No hay proveedores disponibles';
 }
