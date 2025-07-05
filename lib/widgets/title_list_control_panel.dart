@@ -100,6 +100,47 @@ class TitleListControlPanel extends StatelessWidget {
     );
   }
 
+  void _updateSelectedProviders(
+      BuildContext context, String option, bool value) {
+    if (value) {
+      if (option == AppLocalizations.of(context)!.allProviders) {
+        selectedProviders.clear();
+        selectedProviders.addAll(providersList);
+        selectedProviders.remove(AppLocalizations.of(context)!.noneProviders);
+      } else if (option == AppLocalizations.of(context)!.noneProviders) {
+        selectedProviders.clear();
+        selectedProviders.add(AppLocalizations.of(context)!.noneProviders);
+      } else if (value && !selectedProviders.contains(option)) {
+        selectedProviders.remove(AppLocalizations.of(context)!.allProviders);
+        selectedProviders.remove(AppLocalizations.of(context)!.noneProviders);
+        selectedProviders.add(option);
+
+        int selectedCount = selectedProviders
+            .where((provider) =>
+                provider != AppLocalizations.of(context)!.noneProviders &&
+                provider != AppLocalizations.of(context)!.allProviders)
+            .length;
+
+        if (selectedCount == providersList.length - 2) {
+          selectedProviders.remove(AppLocalizations.of(context)!.noneProviders);
+          selectedProviders.add(AppLocalizations.of(context)!.allProviders);
+        }
+      }
+    } else {
+      if (option == AppLocalizations.of(context)!.allProviders) {
+        selectedProviders.clear();
+        selectedProviders.add(AppLocalizations.of(context)!.noneProviders);
+      } else if (option == AppLocalizations.of(context)!.noneProviders) {
+        selectedProviders.clear();
+        selectedProviders.add(AppLocalizations.of(context)!.noneProviders);
+      } else if (selectedProviders.contains(option)) {
+        selectedProviders.remove(AppLocalizations.of(context)!.allProviders);
+        selectedProviders.remove(AppLocalizations.of(context)!.noneProviders);
+        selectedProviders.remove(option);
+      }
+    }
+  }
+
   Widget _providersSelector(BuildContext context, Function providersChanged) {
     return DropdownSelector(
       selectedOption: AppLocalizations.of(context)!.providers,
@@ -113,11 +154,7 @@ class TitleListControlPanel extends StatelessWidget {
               value: selectedProviders.contains(option),
               onChanged: (bool value) {
                 setState(() {
-                  if (value) {
-                    selectedProviders.add(option);
-                  } else {
-                    selectedProviders.remove(option);
-                  }
+                  _updateSelectedProviders(context, option, value);
                 });
                 providersChanged(selectedProviders);
               },
