@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/widgets/drop_down_selector.dart';
 
 typedef MenuEntry = DropdownMenuEntry<String>;
 
@@ -64,79 +65,44 @@ class TitleListControlPanel extends StatelessWidget {
     );
   }
 
-  Widget _menuBuilder(String key, MenuController controller, String title,
-      Iterable<StatefulWidget> menuChildren) {
-    return MenuAnchor(
-      key: Key(key),
-      controller: controller,
-      builder:
-          (BuildContext context, MenuController controller, Widget? child) {
-        return GestureDetector(
-          onTap: () {
-            if (controller.isOpen) {
-              controller.close();
-            } else {
-              controller.open();
-            }
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              border: Border.all(
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                ),
-                Icon(
-                  Icons.arrow_drop_down,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-      menuChildren: menuChildren.toList(),
-    );
-  }
-
   Widget _genresSelector(BuildContext context, Function genresChanged) {
-    return _menuBuilder(
-      '_genresSelector',
-      MenuController(),
-      AppLocalizations.of(context)!.genres,
-      genresList.map((String option) {
+    return DropdownSelector(
+      selectedOption: AppLocalizations.of(context)!.genres,
+      options: genresList,
+      onSelected: (_) {},
+      itemBuilder: (context, option, isSelected, closeMenu) {
         return StatefulBuilder(
           builder: (context, setState) {
             return SwitchListTile(
-              dense: true,
               title: Text(option),
               value: selectedGenres.contains(option),
-              onChanged: (bool? checked) {
+              onChanged: (bool value) {
                 setState(() {
-                  if (checked == true) {
+                  if (value) {
                     selectedGenres.add(option);
                   } else {
                     selectedGenres.remove(option);
                   }
-                  genresChanged(selectedGenres);
                 });
+                genresChanged(selectedGenres);
               },
             );
           },
         );
-      }),
+      },
+      arrowIcon: Icon(
+        Icons.arrow_drop_down,
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      textStyle: TextStyle(
+        fontSize: 16,
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      border: Border.all(
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      borderRadius: BorderRadius.circular(5),
     );
   }
 

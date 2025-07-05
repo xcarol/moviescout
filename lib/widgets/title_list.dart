@@ -3,6 +3,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/widgets/drop_down_selector.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/title_list_control_panel.dart';
 import 'package:provider/provider.dart';
@@ -254,66 +255,14 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
-  Widget _menuBuilder(String key, MenuController controller, String title,
-      Iterable<Widget> menuChildren, Icon arrowIcon) {
-    return MenuAnchor(
-      key: Key(key),
-      controller: controller,
-      builder:
-          (BuildContext context, MenuController controller, Widget? child) {
-        return GestureDetector(
-          onTap: () {
-            if (controller.isOpen) {
-              controller.close();
-            } else {
-              controller.open();
-            }
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                arrowIcon,
-              ],
-            ),
-          ),
-        );
-      },
-      menuChildren: menuChildren.toList(),
-    );
-  }
-
   Widget _typeSelector() {
-    MenuController controller = MenuController();
-    return _menuBuilder(
-      '_typeSelector',
-      controller,
-      _selectedType,
-      _titleTypes.map((String option) {
-        return ListTile(
-          title: Text(option),
-          selected: _selectedType == option,
-          selectedColor: Theme.of(context).colorScheme.secondary,
-          onTap: () {
-            setState(() {
-              _selectedType = option;
-            });
-            controller.close();
-          },
-        );
+    return DropdownSelector(
+      selectedOption: _selectedType,
+      options: _titleTypes,
+      onSelected: (value) => setState(() {
+        _selectedType = value;
       }),
-      Icon(
+      arrowIcon: Icon(
         Icons.arrow_drop_down,
         color: Theme.of(context).colorScheme.primary,
       ),
@@ -321,26 +270,13 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _sortSelector() {
-    MenuController controller = MenuController();
-    return _menuBuilder(
-      '_sortSelector',
-      controller,
-      _selectedSort,
-      _titleSorts.map((String option) {
-        bool isSelected = _selectedSort == option;
-        return ListTile(
-          title: Text(option),
-          selected: isSelected,
-          selectedColor: Theme.of(context).colorScheme.secondary,
-          onTap: () {
-            setState(() {
-              _selectedSort = option;
-            });
-            controller.close();
-          },
-        );
+    return DropdownSelector(
+      selectedOption: _selectedSort,
+      options: _titleSorts,
+      onSelected: (value) => setState(() {
+        _selectedSort = value;
       }),
-      _isSortAsc
+      arrowIcon: _isSortAsc
           ? Icon(
               Icons.arrow_drop_down,
               color: Theme.of(context).colorScheme.primary,
