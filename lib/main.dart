@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart'
     show PlatformDispatcher, TargetPlatform, defaultTargetPlatform, kDebugMode;
@@ -11,7 +11,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/theme_service.dart';
-import 'package:moviescout/services/tmbd_genre_servcie.dart';
+import 'package:moviescout/services/tmdb_genre_service.dart';
+import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
@@ -45,6 +46,7 @@ void main() async {
   await dotenv.load(fileName: ".env");
   await PreferencesService().init();
   await TmdbGenreService().init();
+  await TmdbProviderService().init();
 
   runApp(MultiProvider(
     providers: [

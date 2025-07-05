@@ -39,7 +39,7 @@
     "flatrateProviders": "Suscripción",
     "rentProviders": "Alquiler",
     "buyProviders": "Compra",
-    "allTypes": "Todo",
+    "allTypes": "Títulos",
     "movies": "Películas",
     "tvshows": "Series",
     "sortAlphabetically": "Alfabético",
@@ -61,10 +61,16 @@
     "originalLanguage": "Idioma original",
     "originCountry": "País",
     "schemeSelectTitle": "Selecciona el color",
-    "defaultScheme": "Negro",
+    "defaultScheme": "Por defecto",
+    "blackScheme": "Negro",
     "blueScheme": "Azul",
     "redScheme": "Rojo",
     "about": "Sobre...",
     "aboutDescription": "Movie Scout el mejor rastreador de películas y series.",
-    "recommended": "Recomendados"
+    "recommended": "Recomendados",
+    "providersTitle": "Proveedores de contenido",
+    "providers": "Proveedores",
+    "allProviders": "Tots",
+    "noneProviders": "Cap",
+    "noProvidersAvailable": "No hay proveedores disponibles"
 }

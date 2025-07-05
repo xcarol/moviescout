@@ -2,7 +2,7 @@
 
 import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_providers.dart';
-import 'package:moviescout/services/tmbd_genre_servcie.dart';
+import 'package:moviescout/services/tmdb_genre_service.dart';
 
 const _adult = 'adult';
 const _backdrop_path = 'backdrop_path';
@@ -96,6 +96,10 @@ class TmdbTitle {
     return _tmdbTitle[_name] ?? _tmdbTitle[_title] ?? '';
   }
 
+  String get tagline {
+    return _tmdbTitle[_tagline] ?? '';
+  }
+  
   String get lastUpdated {
     return _tmdbTitle[_last_updated] ?? '1970-01-01';
   }

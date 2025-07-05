@@ -39,7 +39,7 @@
     "flatrateProviders": "Flatrate",
     "rentProviders": "Rent",
     "buyProviders": "Buy",
-    "allTypes": "All",
+    "allTypes": "Titles",
     "movies": "Movies",
     "tvshows": "Tv Shows",
     "sortAlphabetically": "Alphabetical",
@@ -61,10 +61,16 @@
     "originalLanguage": "Original language",
     "originCountry": "Country",
     "schemeSelectTitle": "Select color",
-    "defaultScheme": "Black",
+    "defaultScheme": "Default",
+    "blackScheme": "Black",
     "blueScheme": "Blue",
     "redScheme": "Red",
     "about": "About...",
     "aboutDescription": "Movie Scout the ultimate movie and series tracker.",
-    "recommended": "Recommended"
+    "recommended": "Recommended",
+    "providersTitle": "Content providers",
+    "providers": "Providers",
+    "allProviders": "Tots",
+    "noneProviders": "Cap",
+    "noProvidersAvailable": "No providers available"
 }

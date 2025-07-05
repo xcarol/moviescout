@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_provider_service.dart';
+import 'package:moviescout/widgets/drop_down_selector.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/title_list_control_panel.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +30,8 @@ class _TitleListState extends State<TitleList> {
   late List<String> _titleSorts;
   List<String> _selectedGenres = [];
   List<String> _genresList = [];
+  List<String> _selectedProviders = [];
+  List<String> _providersList = [];
   late TextEditingController _textFilterController;
 
   @override
@@ -56,6 +60,7 @@ class _TitleListState extends State<TitleList> {
     _textFilter = _textFilterController.text;
     _initilizeControlLocalizations();
     _retrieveGenresFromTitles();
+    _retrieveUserProviders();
   }
 
   void _initilizeControlLocalizations() {
@@ -86,6 +91,31 @@ class _TitleListState extends State<TitleList> {
         .map((genre) => genre.name)
         .toSet()
         .toList();
+  }
+
+  void _retrieveUserProviders() {
+    _providersList = TmdbProviderService()
+        .providers
+        .keys
+        .where(
+            (id) => TmdbProviderService().providers[id]!['enabled'] == 'true')
+        .map((id) => TmdbProviderService().providers[id]!['name']!)
+        .toList();
+
+    if (_providersList.isNotEmpty) {
+      _providersList.sort((a, b) => a.compareTo(b));
+      _providersList.insert(
+        0,
+        AppLocalizations.of(context)!.noneProviders,
+      );
+      _providersList.insert(
+        1,
+        AppLocalizations.of(context)!.allProviders,
+      );
+      if (_selectedProviders.isEmpty) {
+        _selectedProviders = [AppLocalizations.of(context)!.noneProviders];
+      }
+    }
   }
 
   List<TmdbTitle> _sortTitles(List<TmdbTitle> titles) {
@@ -140,6 +170,18 @@ class _TitleListState extends State<TitleList> {
         .toList();
   }
 
+  List<TmdbTitle> _filterProviders(List<TmdbTitle> titles) {
+    if (_selectedProviders.isEmpty || 
+        _selectedProviders.contains(AppLocalizations.of(context)!.noneProviders)) {
+      return titles;
+    }
+
+    return titles
+        .where((title) =>
+            title.providers.any((provider) => _selectedProviders.contains(provider.name)))
+        .toList();
+  }
+
   Widget _titleList(List<TmdbTitle> titles) {
     return ChangeNotifierProvider.value(
       value: widget.listService,
@@ -169,81 +211,60 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _controlPanel() {
-    return TitleListControlPanel(
-      selectedType: _selectedType,
-      typesList: _titleTypes,
-      typeChanged: (typeChanged) {
-        setState(() {
-          _selectedType = typeChanged;
-        });
-      },
-      textFilterChanged: (newTextFilter) {
-        setState(() {
-          _textFilter = newTextFilter;
-        });
-      },
-      textFilterController: _textFilterController,
-      selectedGenres: _selectedGenres.toList(),
-      genresList: _genresList,
-      genresChanged: (List<String> genresChanged) {
-        setState(() {
-          _selectedGenres = genresChanged.toList();
-        });
-      },
-      selectedSort: _selectedSort,
-      sortsList: _titleSorts,
-      sortChanged: (sortChanged) {
-        setState(() {
-          _selectedSort = sortChanged;
-        });
-      },
-      swapSort: () {
-        setState(() {
-          _isSortAsc = !_isSortAsc;
-        });
-      },
-      focusNode: _searchFocusNode,
+    return Column(
+      children: [
+        TitleListControlPanel(
+          textFilterChanged: (newTextFilter) {
+            setState(() {
+              _textFilter = newTextFilter;
+            });
+          },
+          textFilterController: _textFilterController,
+          selectedGenres: _selectedGenres.toList(),
+          genresList: _genresList,
+          genresChanged: (List<String> genresChanged) {
+            setState(() {
+              _selectedGenres = genresChanged.toList();
+            });
+          },
+          selectedProviders: _selectedProviders.toList(),
+          providersList: _providersList,
+          providersChanged: (List<String> providersChanged) {
+            setState(() {
+              _selectedProviders = providersChanged.toList();
+            });
+          },
+          focusNode: _searchFocusNode,
+        ),
+        Container(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          child: Divider(
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
+        ),
+      ],
     );
   }
 
   Widget _infoLine(int count) {
-    String sortBy = _selectedSort;
-    TextStyle textStyle = TextStyle(
-      color: Theme.of(context).colorScheme.primaryContainer,
-    );
-
-    String titleCountText = '$count ${AppLocalizations.of(context)!.titles}';
-
-    if (_selectedType == AppLocalizations.of(context)!.tvshows) {
-      titleCountText = '$count ${AppLocalizations.of(context)!.tvshows}';
-    } else if (_selectedType == AppLocalizations.of(context)!.movies) {
-      titleCountText = '$count ${AppLocalizations.of(context)!.movies}';
-    }
     return Container(
       color: Theme.of(context).colorScheme.onPrimaryContainer,
       padding: EdgeInsets.symmetric(horizontal: 4),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            titleCountText,
-            style: textStyle,
+            count.toString(),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 16,
+            ),
           ),
+          _typeSelector(),
+          const Spacer(),
           Row(
             children: [
-              Text(
-                sortBy,
-                style: textStyle,
-              ),
-              _isSortAsc
-                  ? Icon(
-                      Icons.arrow_drop_down,
-                      color: textStyle.color,
-                    )
-                  : Icon(
-                      Icons.arrow_drop_up,
-                      color: textStyle.color,
-                    ),
+              _sortSelector(),
+              _swapSortButton(context),
               IconButton(
                 onPressed: () {
                   setState(() {
@@ -260,6 +281,51 @@ class _TitleListState extends State<TitleList> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _typeSelector() {
+    return DropdownSelector(
+      selectedOption: _selectedType,
+      options: _titleTypes,
+      onSelected: (value) => setState(() {
+        _selectedType = value;
+      }),
+      arrowIcon: Icon(
+        Icons.arrow_drop_down,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+    );
+  }
+
+  Widget _sortSelector() {
+    return DropdownSelector(
+      selectedOption: _selectedSort,
+      options: _titleSorts,
+      onSelected: (value) => setState(() {
+        _selectedSort = value;
+      }),
+      arrowIcon: _isSortAsc
+          ? Icon(
+              Icons.arrow_drop_down,
+              color: Theme.of(context).colorScheme.primary,
+            )
+          : Icon(
+              Icons.arrow_drop_up,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+    );
+  }
+
+  Widget _swapSortButton(BuildContext context) {
+    return IconButton(
+      color: Theme.of(context).colorScheme.primary,
+      icon: Icon(Icons.swap_vert),
+      onPressed: () {
+        setState(() {
+          _isSortAsc = !_isSortAsc;
+        });
+      },
     );
   }
 
@@ -284,6 +350,7 @@ class _TitleListState extends State<TitleList> {
     }
 
     titles = _filterGenres(titles);
+    titles = _filterProviders(titles);
     titles = _sortTitles(titles);
 
     return titles;
@@ -310,13 +377,6 @@ class _TitleListState extends State<TitleList> {
               color: Theme.of(context).colorScheme.primaryContainer,
             ),
             if (_showFilters) _controlPanel(),
-            if (_showFilters)
-              Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                child: Divider(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                ),
-              ),
             _titleList(filteredTitles),
           ],
         ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/theme_service.dart';
 
 class ColorSchemeForm extends Dialog {
@@ -15,6 +15,8 @@ class ColorSchemeForm extends Dialog {
 
     if (currentScheme == ThemeSchemes.defaultScheme) {
       scheme.value = AppLocalizations.of(context)!.defaultScheme;
+    } else if (currentScheme == ThemeSchemes.blackScheme) {
+      scheme.value = AppLocalizations.of(context)!.blackScheme;
     } else if (currentScheme == ThemeSchemes.blueScheme) {
       scheme.value = AppLocalizations.of(context)!.blueScheme;
     } else if (currentScheme == ThemeSchemes.redScheme) {
@@ -23,6 +25,7 @@ class ColorSchemeForm extends Dialog {
 
     List<String> schemes = [
       AppLocalizations.of(context)!.defaultScheme,
+      AppLocalizations.of(context)!.blackScheme,
       AppLocalizations.of(context)!.blueScheme,
       AppLocalizations.of(context)!.redScheme,
     ];
@@ -45,6 +48,12 @@ class ColorSchemeForm extends Dialog {
                 colorScheme = ThemeService.darkColorSchemeDefault;
               } else {
                 colorScheme = ThemeService.lightColorSchemeDefault;
+              }
+            } else if (item == AppLocalizations.of(context)!.blackScheme) {
+              if (Theme.of(context).brightness == Brightness.dark) {
+                colorScheme = ThemeService.darkColorSchemeBlack;
+              } else {
+                colorScheme = ThemeService.lightColorSchemeBlack;
               }
             } else if (item == AppLocalizations.of(context)!.blueScheme) {
               if (Theme.of(context).brightness == Brightness.dark) {
@@ -112,9 +121,12 @@ class ColorSchemeForm extends Dialog {
                               AppLocalizations.of(context)!.defaultScheme
                           ? ThemeSchemes.defaultScheme
                           : scheme.value ==
-                                  AppLocalizations.of(context)!.blueScheme
-                              ? ThemeSchemes.blueScheme
-                              : ThemeSchemes.redScheme);
+                                  AppLocalizations.of(context)!.blackScheme
+                              ? ThemeSchemes.blackScheme
+                              : scheme.value ==
+                                      AppLocalizations.of(context)!.blueScheme
+                                  ? ThemeSchemes.blueScheme
+                                  : ThemeSchemes.redScheme);
                       Navigator.of(context).pop();
                     },
                     child: Text(AppLocalizations.of(context)!.select)),

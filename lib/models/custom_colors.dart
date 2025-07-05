@@ -7,6 +7,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
   final Color ratedTitle;
   final Color selected;
   final Color notSelected;
+  final Color chipCardBackground;
 
   const CustomColors({
     required this.inWatchlist,
@@ -14,6 +15,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
     required this.ratedTitle,
     required this.selected,
     required this.notSelected,
+    required this.chipCardBackground,
   });
 
   @override
@@ -23,6 +25,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
     Color? ratedTitle,
     Color? selected,
     Color? notSelected,
+    Color? chipCardBackground,
   }) {
     return CustomColors(
       inWatchlist: inWatchlist ?? this.inWatchlist,
@@ -30,6 +33,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
       ratedTitle: ratedTitle ?? this.ratedTitle,
       selected: selected ?? this.selected,
       notSelected: notSelected ?? this.notSelected,
+      chipCardBackground: chipCardBackground ?? this.chipCardBackground,
     );
   }
 
@@ -42,6 +46,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
       ratedTitle: Color.lerp(ratedTitle, other.ratedTitle, t)!,
       selected: Color.lerp(selected, other.selected, t)!,
       notSelected: Color.lerp(notSelected, other.notSelected, t)!,
+      chipCardBackground: Color.lerp(chipCardBackground, other.chipCardBackground, t)!,
     );
   }
 }

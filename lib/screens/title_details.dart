@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_genre.dart';
@@ -65,16 +65,9 @@ class _TitleDetailsState extends State<TitleDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _banner(
-            title.backdropPath.isNotEmpty
-                ? title.backdropPath
-                : title.posterPath,
-            title.isMovie),
+        _banner(title),
         const SizedBox(height: 20),
-        Padding(
-          padding: EdgeInsets.only(left: 5, right: 5),
-          child: _details(title),
-        ),
+        _details(title),
       ],
     );
   }
@@ -166,33 +159,53 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   Widget _details(TmdbTitle title) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: EdgeInsets.only(left: 5, right: 5, bottom: 100),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _tageLine(title),
+          const SizedBox(height: 10),
+          _durationAndWatchlist(title),
+          const SizedBox(height: 10),
+          _rating(title),
+          const SizedBox(height: 10),
+          _genres(title),
+          const SizedBox(height: 10),
+          _description(title),
+          const SizedBox(height: 30),
+          _infoLine(title),
+          const SizedBox(height: 10),
+          const Divider(),
+          _externalLinks(title),
+          const Divider(),
+          const SizedBox(height: 10),
+          _providers(title),
+          const SizedBox(height: 30),
+          _recommended(title),
+        ],
+      ),
+    );
+  }
+
+  Widget _tageLine(TmdbTitle title) {
+    if (title.tagline.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Text(
+      title.tagline,
+      style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+      textAlign: TextAlign.start,
+    );
+  }
+  
+  Widget _durationAndWatchlist(TmdbTitle title) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Divider(),
-        _externalLinks(title),
-        const Divider(),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('${_releaseDates(title)} - ${_duration(title)}'),
-            watchlistButton(context, title),
-          ],
-        ),
-        const SizedBox(height: 10),
-        _rating(title),
-        const SizedBox(height: 10),
-        _genres(title),
-        const SizedBox(height: 10),
-        _description(title),
-        const SizedBox(height: 30),
-        _infoLine(title),
-        const SizedBox(height: 30),
-        _providers(title),
-        const SizedBox(height: 30),
-        _recommended(title),
-        const SizedBox(height: 30),
+        Text('${_releaseDates(title)} - ${_duration(title)}'),
+        watchlistButton(context, title),
       ],
     );
   }
@@ -312,9 +325,13 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  Widget _banner(String image, bool isMovie) {
+  Widget _banner(TmdbTitle title) {
     final screenWidth = MediaQuery.of(context).size.width;
     final bannerHeight = screenWidth * 9 / 16;
+
+    String image =
+        title.backdropPath.isNotEmpty ? title.backdropPath : title.posterPath;
+    bool isMovie = title.isMovie;
 
     return SizedBox(
       height: bannerHeight,
@@ -490,5 +507,5 @@ class _TitleDetailsState extends State<TitleDetails> {
         ),
       ],
     );
-  }
+  }  
 }

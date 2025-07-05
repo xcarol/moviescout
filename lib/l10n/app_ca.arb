@@ -39,7 +39,7 @@
     "flatrateProviders": "Subscripció",
     "rentProviders": "Lloguer",
     "buyProviders": "Compra",
-    "allTypes": "Tots",
+    "allTypes": "Títols",
     "movies": "Pel·lícules",
     "tvshows": "Sèries",
     "sortAlphabetically": "Alfabètic",
@@ -61,10 +61,16 @@
     "originalLanguage": "Idioma original",
     "originCountry": "País",
     "schemeSelectTitle": "Sel·lecciona el color",
-    "defaultScheme": "Negre",
+    "defaultScheme": "Per defecte",
+    "blackScheme": "Negre",
     "blueScheme": "Blau",
     "redScheme": "Vermell",
     "about": "Quant a...",
     "aboutDescription": "Movie Scout el millor rastrejador de pel·lícules i sèries.",
-    "recommended": "Recomanats"
+    "recommended": "Recomanats",
+    "providersTitle": "Proveidors de contingut",
+    "providers": "Proveidors",
+    "allProviders": "Tots",
+    "noneProviders": "Cap",
+    "noProvidersAvailable": "No hi ha proveidors disponibles"
 }
