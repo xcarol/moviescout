@@ -3,6 +3,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/widgets/drop_down_selector.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/title_list_control_panel.dart';
@@ -29,6 +30,8 @@ class _TitleListState extends State<TitleList> {
   late List<String> _titleSorts;
   List<String> _selectedGenres = [];
   List<String> _genresList = [];
+  List<String> _selectedProviders = [];
+  List<String> _providersList = [];
   late TextEditingController _textFilterController;
 
   @override
@@ -57,6 +60,7 @@ class _TitleListState extends State<TitleList> {
     _textFilter = _textFilterController.text;
     _initilizeControlLocalizations();
     _retrieveGenresFromTitles();
+    _retrieveUserProviders();
   }
 
   void _initilizeControlLocalizations() {
@@ -87,6 +91,31 @@ class _TitleListState extends State<TitleList> {
         .map((genre) => genre.name)
         .toSet()
         .toList();
+  }
+
+  void _retrieveUserProviders() {
+    _providersList = TmdbProviderService()
+        .providers
+        .keys
+        .where(
+            (id) => TmdbProviderService().providers[id]!['enabled'] == 'true')
+        .map((id) => TmdbProviderService().providers[id]!['name']!)
+        .toList();
+    
+    if (_providersList.isNotEmpty) {
+      _providersList.sort((a, b) => a.compareTo(b));
+      _providersList.insert(
+        0,
+        AppLocalizations.of(context)!.noneProviders,
+      );
+      _providersList.insert(
+        1,
+        AppLocalizations.of(context)!.allProviders,
+      );
+      if (_selectedProviders.isEmpty) {
+        _selectedProviders = [AppLocalizations.of(context)!.allProviders];
+      }
+    }
   }
 
   List<TmdbTitle> _sortTitles(List<TmdbTitle> titles) {
@@ -173,13 +202,6 @@ class _TitleListState extends State<TitleList> {
     return Column(
       children: [
         TitleListControlPanel(
-          selectedType: _selectedType,
-          typesList: _titleTypes,
-          typeChanged: (typeChanged) {
-            setState(() {
-              _selectedType = typeChanged;
-            });
-          },
           textFilterChanged: (newTextFilter) {
             setState(() {
               _textFilter = newTextFilter;
@@ -193,16 +215,11 @@ class _TitleListState extends State<TitleList> {
               _selectedGenres = genresChanged.toList();
             });
           },
-          selectedSort: _selectedSort,
-          sortsList: _titleSorts,
-          sortChanged: (sortChanged) {
+          selectedProviders: _selectedProviders.toList(),
+          providersList: _providersList,
+          providersChanged: (List<String> providersChanged) {
             setState(() {
-              _selectedSort = sortChanged;
-            });
-          },
-          swapSort: () {
-            setState(() {
-              _isSortAsc = !_isSortAsc;
+              _selectedProviders = providersChanged.toList();
             });
           },
           focusNode: _searchFocusNode,
