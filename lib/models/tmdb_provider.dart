@@ -11,6 +11,13 @@ class TmdbProvider {
   const TmdbProvider({required Map<dynamic, dynamic> provider})
       : _provider = provider;
 
+  String get name {
+    if (_provider[_provider_name] != null) {
+      return _provider[_provider_name].toString();
+    }
+    return '';
+  }
+  
   String get logoPath {
     if (_provider[_logo_path] != null) {
       return (_provider[_logo_path] as String).isNotEmpty
