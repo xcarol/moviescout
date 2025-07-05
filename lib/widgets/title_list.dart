@@ -101,7 +101,7 @@ class _TitleListState extends State<TitleList> {
             (id) => TmdbProviderService().providers[id]!['enabled'] == 'true')
         .map((id) => TmdbProviderService().providers[id]!['name']!)
         .toList();
-    
+
     if (_providersList.isNotEmpty) {
       _providersList.sort((a, b) => a.compareTo(b));
       _providersList.insert(
@@ -113,7 +113,7 @@ class _TitleListState extends State<TitleList> {
         AppLocalizations.of(context)!.allProviders,
       );
       if (_selectedProviders.isEmpty) {
-        _selectedProviders = [AppLocalizations.of(context)!.allProviders];
+        _selectedProviders = [AppLocalizations.of(context)!.noneProviders];
       }
     }
   }
