@@ -170,6 +170,18 @@ class _TitleListState extends State<TitleList> {
         .toList();
   }
 
+  List<TmdbTitle> _filterProviders(List<TmdbTitle> titles) {
+    if (_selectedProviders.isEmpty || 
+        _selectedProviders.contains(AppLocalizations.of(context)!.noneProviders)) {
+      return titles;
+    }
+
+    return titles
+        .where((title) =>
+            title.providers.any((provider) => _selectedProviders.contains(provider.name)))
+        .toList();
+  }
+
   Widget _titleList(List<TmdbTitle> titles) {
     return ChangeNotifierProvider.value(
       value: widget.listService,
@@ -338,6 +350,7 @@ class _TitleListState extends State<TitleList> {
     }
 
     titles = _filterGenres(titles);
+    titles = _filterProviders(titles);
     titles = _sortTitles(titles);
 
     return titles;
