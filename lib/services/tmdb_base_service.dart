@@ -27,28 +27,43 @@ class TmdbBaseService {
 
   Future<dynamic> get(String query,
       {ApiVersion version = ApiVersion.v3}) async {
-    try {
-      final String baseUrl = version == ApiVersion.v3 ? _baseUrlv3 : _baseUrlv4;
-      final token = accessToken.isEmpty || version == ApiVersion.v3
-          ? dotenv.env['TMDB_API_RAT']
-          : accessToken;
-      Uri uri = Uri.parse('$baseUrl$query');
+    final String baseUrl = version == ApiVersion.v3 ? _baseUrlv3 : _baseUrlv4;
+    final token = accessToken.isEmpty || version == ApiVersion.v3
+        ? dotenv.env['TMDB_API_RAT']
+        : accessToken;
+    final uri = Uri.parse('$baseUrl$query');
 
-      // Running in a browser http.get doesn't return a resonse for a non valid (2xx) server response.
-      // It sends an exception instead. Use android for debugging.
-      return http.get(uri, headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      });
-    } catch (error) {
-      final message = 'TmdbBaseService get Error: ${error.toString()}';
-      if (Platform.isAndroid) {
-        FirebaseCrashlytics.instance
-            .recordFlutterError(FlutterErrorDetails(exception: ([message])));
+    const int maxRetries = 3;
+    const Duration retryDelay = Duration(seconds: 2);
+
+    for (int attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        // Running in a browser http.get doesn't return a resonse for a non valid (2xx) server response.
+        // It sends an exception instead. Use android for debugging.
+        final response = await http.get(uri, headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        });
+
+        if (response.statusCode == 429 && attempt < maxRetries - 1) {
+          await Future.delayed(retryDelay);
+          continue;
+        }
+
+        return response;
+      } catch (error) {
+        if (Platform.isAndroid) {
+          final message = 'TmdbBaseService get Error: ${error.toString()}';
+          FirebaseCrashlytics.instance.recordFlutterError(
+            FlutterErrorDetails(exception: message),
+          );
+        }
+        rethrow;
       }
-      throw HttpException(message);
     }
+
+    throw HttpException('TmdbBaseService get Error: Too many retries');
   }
 
   Future<dynamic> post(String endpoint, Map<String, dynamic> body,
