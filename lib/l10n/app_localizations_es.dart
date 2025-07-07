@@ -222,10 +222,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get providers => 'Proveedores';
 
   @override
-  String get allProviders => 'Tots';
-
-  @override
-  String get noneProviders => 'Cap';
+  String get filterByProviders => 'Solo disponibles';
 
   @override
   String get noProvidersAvailable => 'No hay proveedores disponibles';

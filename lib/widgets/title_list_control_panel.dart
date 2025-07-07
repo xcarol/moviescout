@@ -10,8 +10,7 @@ class TitleListControlPanel extends StatelessWidget {
   final List<String> selectedGenres;
   final List<String> genresList;
   final Function genresChanged;
-  final List<String> selectedProviders;
-  final List<String> providersList;
+  final bool filterByProviders;
   final Function providersChanged;
   final FocusNode focusNode;
 
@@ -22,10 +21,9 @@ class TitleListControlPanel extends StatelessWidget {
     required this.selectedGenres,
     required this.genresList,
     required this.genresChanged,
-    required this.focusNode,
-    required this.selectedProviders,
-    required this.providersList,
+    required this.filterByProviders,
     required this.providersChanged,
+    required this.focusNode,
   });
 
   @override
@@ -36,21 +34,11 @@ class TitleListControlPanel extends StatelessWidget {
         spacing: 8,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      _genresSelector(context, genresChanged),
-                      const SizedBox(width: 8),
-                      _providersSelector(context, providersChanged),
-                    ],
-                  ),
-                ),
-              ),
+              _genresSelector(context, genresChanged),
+              _providersSelector(context, filterByProviders),
             ],
           ),
           _textFilter(context, AppLocalizations.of(context)!.search),
@@ -100,81 +88,26 @@ class TitleListControlPanel extends StatelessWidget {
     );
   }
 
-  void _updateSelectedProviders(
-      BuildContext context, String option, bool value) {
-    if (value) {
-      if (option == AppLocalizations.of(context)!.allProviders) {
-        selectedProviders.clear();
-        selectedProviders.addAll(providersList);
-        selectedProviders.remove(AppLocalizations.of(context)!.noneProviders);
-      } else if (option == AppLocalizations.of(context)!.noneProviders) {
-        selectedProviders.clear();
-        selectedProviders.add(AppLocalizations.of(context)!.noneProviders);
-      } else if (value && !selectedProviders.contains(option)) {
-        selectedProviders.remove(AppLocalizations.of(context)!.allProviders);
-        selectedProviders.remove(AppLocalizations.of(context)!.noneProviders);
-        selectedProviders.add(option);
-
-        int selectedCount = selectedProviders
-            .where((provider) =>
-                provider != AppLocalizations.of(context)!.noneProviders &&
-                provider != AppLocalizations.of(context)!.allProviders)
-            .length;
-
-        if (selectedCount == providersList.length - 2) {
-          selectedProviders.remove(AppLocalizations.of(context)!.noneProviders);
-          selectedProviders.add(AppLocalizations.of(context)!.allProviders);
-        }
-      }
-    } else {
-      if (option == AppLocalizations.of(context)!.allProviders) {
-        selectedProviders.clear();
-        selectedProviders.add(AppLocalizations.of(context)!.noneProviders);
-      } else if (option == AppLocalizations.of(context)!.noneProviders) {
-        selectedProviders.clear();
-        selectedProviders.add(AppLocalizations.of(context)!.noneProviders);
-      } else if (selectedProviders.contains(option)) {
-        selectedProviders.remove(AppLocalizations.of(context)!.allProviders);
-        selectedProviders.remove(AppLocalizations.of(context)!.noneProviders);
-        selectedProviders.remove(option);
-      }
-    }
-  }
-
-  Widget _providersSelector(BuildContext context, Function providersChanged) {
-    return DropdownSelector(
-      selectedOption: AppLocalizations.of(context)!.providers,
-      options: providersList,
-      onSelected: (_) {},
-      itemBuilder: (context, option, isSelected, closeMenu) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return SwitchListTile(
-              title: Text(option),
-              value: selectedProviders.contains(option),
-              onChanged: (bool value) {
-                setState(() {
-                  _updateSelectedProviders(context, option, value);
-                });
-                providersChanged(selectedProviders);
-              },
-            );
+  Widget _providersSelector(BuildContext context, bool filterByProviders) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+            AppLocalizations.of(context)!.filterByProviders,
+            style: TextStyle(
+              fontSize: 16,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          const SizedBox(width: 8),
+        Switch(
+          activeColor: Theme.of(context).colorScheme.onPrimary,
+          value: filterByProviders,
+          onChanged: (value) {
+            providersChanged(value);
           },
-        );
-      },
-      arrowIcon: Icon(
-        Icons.arrow_drop_down,
-        color: Theme.of(context).colorScheme.onPrimary,
-      ),
-      textStyle: TextStyle(
-        fontSize: 16,
-        color: Theme.of(context).colorScheme.onPrimary,
-      ),
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      border: Border.all(
-        color: Theme.of(context).colorScheme.onPrimary,
-      ),
-      borderRadius: BorderRadius.circular(5),
+        ),
+      ],
     );
   }
 

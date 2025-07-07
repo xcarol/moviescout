@@ -70,7 +70,7 @@
     "recommended": "Recomendados",
     "providersTitle": "Proveedores de contenido",
     "providers": "Proveedores",
-    "allProviders": "Tots",
-    "noneProviders": "Cap",
+    "filterByProviders": "Solo disponibles"
+,
     "noProvidersAvailable": "No hay proveedores disponibles"
-}
+    }

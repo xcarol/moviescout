@@ -30,7 +30,7 @@ class _TitleListState extends State<TitleList> {
   late List<String> _titleSorts;
   List<String> _selectedGenres = [];
   List<String> _genresList = [];
-  List<String> _selectedProviders = [];
+  late bool _filterByProviders = false;
   List<String> _providersList = [];
   late TextEditingController _textFilterController;
 
@@ -104,17 +104,6 @@ class _TitleListState extends State<TitleList> {
 
     if (_providersList.isNotEmpty) {
       _providersList.sort((a, b) => a.compareTo(b));
-      _providersList.insert(
-        0,
-        AppLocalizations.of(context)!.noneProviders,
-      );
-      _providersList.insert(
-        1,
-        AppLocalizations.of(context)!.allProviders,
-      );
-      if (_selectedProviders.isEmpty) {
-        _selectedProviders = [AppLocalizations.of(context)!.noneProviders];
-      }
     }
   }
 
@@ -171,14 +160,13 @@ class _TitleListState extends State<TitleList> {
   }
 
   List<TmdbTitle> _filterProviders(List<TmdbTitle> titles) {
-    if (_selectedProviders.isEmpty || 
-        _selectedProviders.contains(AppLocalizations.of(context)!.noneProviders)) {
+    if (!_filterByProviders) {
       return titles;
     }
 
     return titles
         .where((title) =>
-            title.providers.any((provider) => _selectedProviders.contains(provider.name)))
+            title.providers.any((provider) => _providersList.contains(provider.name)))
         .toList();
   }
 
@@ -227,11 +215,10 @@ class _TitleListState extends State<TitleList> {
               _selectedGenres = genresChanged.toList();
             });
           },
-          selectedProviders: _selectedProviders.toList(),
-          providersList: _providersList,
-          providersChanged: (List<String> providersChanged) {
+          filterByProviders: _filterByProviders,
+          providersChanged: (bool providersChanged) {
             setState(() {
-              _selectedProviders = providersChanged.toList();
+              _filterByProviders = providersChanged;
             });
           },
           focusNode: _searchFocusNode,

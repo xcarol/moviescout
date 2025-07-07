@@ -523,17 +523,11 @@ abstract class AppLocalizations {
   /// **'Providers'**
   String get providers;
 
-  /// No description provided for @allProviders.
+  /// No description provided for @filterByProviders.
   ///
   /// In en, this message translates to:
-  /// **'Tots'**
-  String get allProviders;
-
-  /// No description provided for @noneProviders.
-  ///
-  /// In en, this message translates to:
-  /// **'Cap'**
-  String get noneProviders;
+  /// **'Only available'**
+  String get filterByProviders;
 
   /// No description provided for @noProvidersAvailable.
   ///
