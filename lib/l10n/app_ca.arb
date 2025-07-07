@@ -70,7 +70,6 @@
     "recommended": "Recomanats",
     "providersTitle": "Proveidors de contingut",
     "providers": "Proveidors",
-    "allProviders": "Tots",
-    "noneProviders": "Cap",
+    "filterByProviders": "Només disponibles",
     "noProvidersAvailable": "No hi ha proveidors disponibles"
 }

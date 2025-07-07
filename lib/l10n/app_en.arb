@@ -70,7 +70,6 @@
     "recommended": "Recommended",
     "providersTitle": "Content providers",
     "providers": "Providers",
-    "allProviders": "Tots",
-    "noneProviders": "Cap",
+    "filterByProviders": "Only available",
     "noProvidersAvailable": "No providers available"
 }

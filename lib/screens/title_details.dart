@@ -164,7 +164,9 @@ class _TitleDetailsState extends State<TitleDetails> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _tageLine(title),
+          _titleLine(title),
+          const SizedBox(height: 10),
+          _tagLine(title),
           const SizedBox(height: 10),
           _durationAndWatchlist(title),
           const SizedBox(height: 10),
@@ -188,7 +190,19 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  Widget _tageLine(TmdbTitle title) {
+  Widget _titleLine(TmdbTitle title) {
+    if (title.name.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Text(
+      title.name,
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      textAlign: TextAlign.start,
+    );
+  }
+  
+  Widget _tagLine(TmdbTitle title) {
     if (title.tagline.isEmpty) {
       return const SizedBox.shrink();
     }
