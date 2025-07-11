@@ -3,6 +3,7 @@
 Movie Scout is your ultimate movie and series tracker. Discover where your favorite titles are streaming and keep your personal watchlist up to date.  
 
 **Key Features:**  
+
 - **Stream Availability**: Easily find out which streaming platforms host your favorite movies and series.  
 - **Search and Organize**: Quickly search, add, or remove titles from your list.  
 - **Detailed Information**: View essential details like posters, titles, brief descriptions, and more.  
