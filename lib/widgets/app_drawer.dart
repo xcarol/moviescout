@@ -28,7 +28,7 @@ class AppDrawer extends StatelessWidget {
           _userProfileTile(context),
           if (isUserLoggedIn && defaultTargetPlatform == TargetPlatform.linux)
             _importImdbTile(context),
-          _providersTile(context),
+          if (isUserLoggedIn) _providersTile(context),
           _colorSchemeTile(context),
           _aboutTile(context),
           const Divider(),
