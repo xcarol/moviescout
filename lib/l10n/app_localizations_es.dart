@@ -210,7 +210,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get about => 'Sobre...';
 
   @override
-  String get aboutDescription => 'Movie Scout el mejor rastreador de películas y series.';
+  String get aboutDescription => 'Movie Scout tu rastreador de películas y series.';
+
+  @override
+  String get aboutGithub => 'Visita el proyecto en ';
 
   @override
   String get recommended => 'Recomendados';
