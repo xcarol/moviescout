@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
@@ -13,6 +14,7 @@ import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/color_scheme_form.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/snack_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -119,23 +121,35 @@ class AppDrawer extends StatelessWidget {
   }
 
   Widget _aboutTile(BuildContext context) {
-    return ListTile(
-      leading: Icon(Icons.info),
-      title: Text(AppLocalizations.of(context)!.about),
-      onTap: () => {
-        Navigator.of(context).pop(),
-        showAboutDialog(
-          context: context,
-          applicationName: 'MovieScout',
-          applicationVersion: dotenv.env['VERSION'] ?? 'x.x.x',
-          applicationIcon: SizedBox(
-            width: 48,
-            height: 48,
-            child: Image.asset('assets/logo-icon.png'),
+    return AboutListTile(
+      icon: Icon(Icons.info),
+      applicationName: 'MovieScout',
+      applicationVersion: dotenv.env['VERSION'] ?? 'x.x.x',
+      applicationIcon: SizedBox(
+        width: 48,
+        height: 48,
+        child: Image.asset('assets/logo-icon.png'),
+      ),
+      aboutBoxChildren: [
+        Text(AppLocalizations.of(context)!.aboutDescription),
+        SelectableText.rich(
+          TextSpan(
+            children: [
+              TextSpan(text: AppLocalizations.of(context)!.aboutGithub),
+              TextSpan(
+                text: 'github',
+                style: const TextStyle(
+                  decoration: TextDecoration.underline,
+                ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () => launchUrl(
+                      Uri.parse('https://github.com/xcarol/moviescout')),
+              ),
+            ],
           ),
-          children: [Text(AppLocalizations.of(context)!.aboutDescription)],
-        ),
-      },
+        )
+      ],
+      child: Text(AppLocalizations.of(context)!.about),
     );
   }
 
