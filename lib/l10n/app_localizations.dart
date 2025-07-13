@@ -502,8 +502,14 @@ abstract class AppLocalizations {
   /// No description provided for @aboutDescription.
   ///
   /// In en, this message translates to:
-  /// **'Movie Scout the ultimate movie and series tracker.'**
+  /// **'Movie Scout your movie and series tracker.'**
   String get aboutDescription;
+
+  /// No description provided for @aboutGithub.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit project on '**
+  String get aboutGithub;
 
   /// No description provided for @recommended.
   ///

@@ -126,6 +126,7 @@ Create a file called _.env_ in the root directory and add the key:
 ```
 TMDB_API_RAT=apiReadAccessTokenGotFromTmdb
 ``` 
+NOTICE! As stated in the [TMDB API Documentation about Providers](https://developer.themoviedb.org/reference/movie-watch-providers), the data source is [**JustWatch**](https://www.justwatch.com/).  
 
 ## Flutter tool box
 
