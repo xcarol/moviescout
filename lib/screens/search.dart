@@ -4,6 +4,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
+import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/widgets/title_list.dart';
 
 class Search extends StatefulWidget {
@@ -42,12 +43,17 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        searchBox(),
-        searchResults(),
-      ],
+    return FutureBuilder(
+      future: TmdbTitleService().updateTitles(searchTitles),
+      builder: (context, snapshot) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            searchBox(),
+            searchResults(),
+          ],
+        );
+      },
     );
   }
 
