@@ -201,7 +201,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       textAlign: TextAlign.start,
     );
   }
-  
+
   Widget _tagLine(TmdbTitle title) {
     if (title.tagline.isEmpty) {
       return const SizedBox.shrink();
@@ -213,7 +213,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       textAlign: TextAlign.start,
     );
   }
-  
+
   Widget _durationAndWatchlist(TmdbTitle title) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -464,18 +464,21 @@ class _TitleDetailsState extends State<TitleDetails> {
   Widget _providerLogo(TmdbProvider provider) {
     return Padding(
       padding: const EdgeInsets.only(right: 5),
-      child: SizedBox(
-        width: 30,
-        height: 30,
-        child: NetworkImageCache(
-          provider.logoPath,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return SvgPicture.asset(
-              'assets/movie.svg',
-              fit: BoxFit.cover,
-            );
-          },
+      child: Tooltip(
+        message: provider.name,
+        child: SizedBox(
+          width: 30,
+          height: 30,
+          child: NetworkImageCache(
+            provider.logoPath,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return SvgPicture.asset(
+                'assets/movie.svg',
+                fit: BoxFit.cover,
+              );
+            },
+          ),
         ),
       ),
     );
@@ -521,5 +524,5 @@ class _TitleDetailsState extends State<TitleDetails> {
         ),
       ],
     );
-  }  
+  }
 }
