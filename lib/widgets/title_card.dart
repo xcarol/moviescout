@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
+import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/network_image_cache.dart';
@@ -149,7 +150,7 @@ class TitleCard extends StatelessWidget {
             const SizedBox(height: 5),
             Row(
               children: [
-                Text(titleDate(tmdbTitle)),
+                Text(titleDate(tmdbTitle), overflow: TextOverflow.ellipsis),
                 const Text(' - '),
                 tmdbTitle.duration.isNotEmpty
                     ? Text(tmdbTitle.duration)
@@ -242,21 +243,24 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget _providerLogo(provider) {
+  Widget _providerLogo(TmdbProvider provider) {
     return Padding(
       padding: const EdgeInsets.only(right: 5),
-      child: SizedBox(
-        width: 30,
-        height: 30,
-        child: NetworkImageCache(
-          provider.logoPath,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return SvgPicture.asset(
-              'assets/movie.svg',
-              fit: BoxFit.cover,
-            );
-          },
+      child: Tooltip(
+        message: provider.name,
+        child: SizedBox(
+          width: 30,
+          height: 30,
+          child: NetworkImageCache(
+            provider.logoPath,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return SvgPicture.asset(
+                'assets/movie.svg',
+                fit: BoxFit.cover,
+              );
+            },
+          ),
         ),
       ),
     );

@@ -201,7 +201,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       textAlign: TextAlign.start,
     );
   }
-  
+
   Widget _tagLine(TmdbTitle title) {
     if (title.tagline.isEmpty) {
       return const SizedBox.shrink();
@@ -213,7 +213,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       textAlign: TextAlign.start,
     );
   }
-  
+
   Widget _durationAndWatchlist(TmdbTitle title) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -464,19 +464,37 @@ class _TitleDetailsState extends State<TitleDetails> {
   Widget _providerLogo(TmdbProvider provider) {
     return Padding(
       padding: const EdgeInsets.only(right: 5),
-      child: SizedBox(
-        width: 30,
-        height: 30,
-        child: NetworkImageCache(
-          provider.logoPath,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return SvgPicture.asset(
-              'assets/movie.svg',
-              fit: BoxFit.cover,
-            );
-          },
+      child: Tooltip(
+        message: provider.name,
+        child: SizedBox(
+          width: 30,
+          height: 30,
+          child: NetworkImageCache(
+            provider.logoPath,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return SvgPicture.asset(
+                'assets/movie.svg',
+                fit: BoxFit.cover,
+              );
+            },
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _titleChip(BuildContext context, TmdbTitle tmdbTitle) {
+    final clampedScale =
+        MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.3);
+
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        textScaler: TextScaler.linear(clampedScale),
+      ),
+      child: TitleChip(
+        title: tmdbTitle,
+        tmdbListService: widget._tmdbListService,
       ),
     );
   }
@@ -508,9 +526,9 @@ class _TitleDetailsState extends State<TitleDetails> {
                         padding: const EdgeInsets.only(right: 10),
                         child: snapshot.connectionState != ConnectionState.done
                             ? Center(child: CircularProgressIndicator())
-                            : TitleChip(
-                                title: snapshot.data as TmdbTitle,
-                                tmdbListService: widget._tmdbListService,
+                            : _titleChip(
+                                context,
+                                snapshot.data as TmdbTitle,
                               ),
                       );
                     },
@@ -521,5 +539,5 @@ class _TitleDetailsState extends State<TitleDetails> {
         ),
       ],
     );
-  }  
+  }
 }

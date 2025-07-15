@@ -77,6 +77,10 @@ class TitleChip extends TitleCard {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    '${titleDate(tmdbTitle)} - ${tmdbTitle.duration}',
+                  ),
+                  const SizedBox(height: 5),
                   titleRating(
                     context,
                     tmdbTitle,
@@ -93,10 +97,6 @@ class TitleChip extends TitleCard {
                   ),
                   const SizedBox(height: 5),
                   Flexible(child: providers(tmdbTitle)),
-                  const SizedBox(height: 5),
-                  Text(
-                    '${titleDate(tmdbTitle)} - ${tmdbTitle.duration}',
-                  ),
                 ],
               ),
             ),

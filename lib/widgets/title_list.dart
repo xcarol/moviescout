@@ -165,8 +165,8 @@ class _TitleListState extends State<TitleList> {
     }
 
     return titles
-        .where((title) =>
-            title.providers.any((provider) => _providersList.contains(provider.name)))
+        .where((title) => title.providers
+            .any((provider) => _providersList.contains(provider.name)))
         .toList();
   }
 
@@ -186,9 +186,19 @@ class _TitleListState extends State<TitleList> {
                 orElse: () => title,
               ),
               builder: (_, tmdbTitle, __) {
-                return TitleCard(
-                  title: title,
-                  tmdbListService: widget.listService,
+                final clampedScale = MediaQuery.of(context)
+                    .textScaler
+                    .scale(1.0)
+                    .clamp(1.0, 1.3);
+
+                return MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    textScaler: TextScaler.linear(clampedScale),
+                  ),
+                  child: TitleCard(
+                    title: title,
+                    tmdbListService: widget.listService,
+                  ),
                 );
               },
             );
