@@ -484,6 +484,21 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
+  Widget _titleChip(BuildContext context, TmdbTitle tmdbTitle) {
+    final clampedScale =
+        MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.3);
+
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        textScaler: TextScaler.linear(clampedScale),
+      ),
+      child: TitleChip(
+        title: tmdbTitle,
+        tmdbListService: widget._tmdbListService,
+      ),
+    );
+  }
+
   Widget _recommended(TmdbTitle title) {
     if (title.recommendations.isEmpty) {
       return const SizedBox.shrink();
@@ -511,9 +526,9 @@ class _TitleDetailsState extends State<TitleDetails> {
                         padding: const EdgeInsets.only(right: 10),
                         child: snapshot.connectionState != ConnectionState.done
                             ? Center(child: CircularProgressIndicator())
-                            : TitleChip(
-                                title: snapshot.data as TmdbTitle,
-                                tmdbListService: widget._tmdbListService,
+                            : _titleChip(
+                                context,
+                                snapshot.data as TmdbTitle,
                               ),
                       );
                     },
