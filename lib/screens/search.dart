@@ -73,36 +73,43 @@ class _SearchState extends State<Search> {
       color: Theme.of(context).colorScheme.primary,
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-      child: TextField(
-        controller: _controller,
-        focusNode: _searchFocusNode,
-        style: TextStyle(color: textColor),
-        cursorColor: borderColor,
-        decoration: InputDecoration(
-          hintText: AppLocalizations.of(context)!.search,
-          hintStyle: TextStyle(color: textColor),
-          suffixIconColor: textColor,
-          suffixIcon: IconButton(
-            icon: const Icon(Icons.clear),
-            onPressed: resetTitle,
-            tooltip: AppLocalizations.of(context)!.search,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: borderColor),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: borderColor),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: borderColor, width: 2),
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          textSelectionTheme: TextSelectionThemeData(
+            selectionColor: textColor.withValues(alpha: 0.5),
           ),
         ),
-        onChanged: (title) {
-          searchTitle(context, title);
-        },
+        child: TextField(
+          controller: _controller,
+          focusNode: _searchFocusNode,
+          style: TextStyle(color: textColor),
+          cursorColor: borderColor,
+          decoration: InputDecoration(
+            hintText: AppLocalizations.of(context)!.search,
+            hintStyle: TextStyle(color: textColor),
+            suffixIconColor: textColor,
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: resetTitle,
+              tooltip: AppLocalizations.of(context)!.search,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: BorderSide(color: borderColor),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: BorderSide(color: borderColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: BorderSide(color: borderColor, width: 2),
+            ),
+          ),
+          onChanged: (title) {
+            searchTitle(context, title);
+          },
+        ),
       ),
     );
   }
