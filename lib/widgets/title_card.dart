@@ -150,7 +150,7 @@ class TitleCard extends StatelessWidget {
             const SizedBox(height: 5),
             Row(
               children: [
-                Text(titleDate(tmdbTitle)),
+                Text(titleDate(tmdbTitle), overflow: TextOverflow.ellipsis),
                 const Text(' - '),
                 tmdbTitle.duration.isNotEmpty
                     ? Text(tmdbTitle.duration)
