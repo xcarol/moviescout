@@ -93,13 +93,13 @@ class TitleListControlPanel extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-            AppLocalizations.of(context)!.filterByProviders,
-            style: TextStyle(
-              fontSize: 16,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
+          AppLocalizations.of(context)!.filterByProviders,
+          style: TextStyle(
+            fontSize: 16,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
-          const SizedBox(width: 8),
+        ),
+        const SizedBox(width: 8),
         Switch(
           activeColor: Theme.of(context).colorScheme.onPrimary,
           value: filterByProviders,
@@ -118,43 +118,48 @@ class TitleListControlPanel extends StatelessWidget {
 
     return SizedBox(
       height: 26,
-      child: TextField(
-        controller: textFilterController,
-        focusNode: focusNode,
-        style: TextStyle(color: textColor, fontSize: 14),
-        cursorColor: borderColor,
-        cursorHeight: 16,
-        decoration: InputDecoration(
-          isDense: true,
-          hintText: hintText,
-          hintStyle: TextStyle(color: textColor),
-          suffixIconColor: textColor,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 5),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: borderColor),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: borderColor),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(
-              color: borderColor,
-            ),
-          ),
-          suffixIcon: GestureDetector(
-            child: Icon(Icons.clear),
-            onTap: () {
-              textFilterChanged('');
-              textFilterController.clear();
-            },
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          textSelectionTheme: TextSelectionThemeData(
+            selectionColor: textColor.withValues(alpha: 0.5),
           ),
         ),
-        onChanged: (String value) {
-          textFilterChanged(value);
-        },
+        child: TextField(
+          controller: textFilterController,
+          focusNode: focusNode,
+          style: TextStyle(color: textColor, fontSize: 14),
+          cursorColor: borderColor,
+          cursorHeight: 16,
+          decoration: InputDecoration(
+            isDense: true,
+            hintText: hintText,
+            hintStyle: TextStyle(color: textColor),
+            suffixIconColor: textColor,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 5),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: BorderSide(color: borderColor),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: BorderSide(color: borderColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: BorderSide(color: borderColor),
+            ),
+            suffixIcon: GestureDetector(
+              child: Icon(Icons.clear),
+              onTap: () {
+                textFilterChanged('');
+                textFilterController.clear();
+              },
+            ),
+          ),
+          onChanged: (String value) {
+            textFilterChanged(value);
+          },
+        ),
       ),
     );
   }

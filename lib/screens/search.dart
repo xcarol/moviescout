@@ -4,6 +4,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
+import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/widgets/title_list.dart';
 
 class Search extends StatefulWidget {
@@ -42,12 +43,17 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        searchBox(),
-        searchResults(),
-      ],
+    return FutureBuilder(
+      future: TmdbTitleService().updateTitles(searchTitles),
+      builder: (context, snapshot) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            searchBox(),
+            searchResults(),
+          ],
+        );
+      },
     );
   }
 
@@ -67,36 +73,43 @@ class _SearchState extends State<Search> {
       color: Theme.of(context).colorScheme.primary,
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-      child: TextField(
-        controller: _controller,
-        focusNode: _searchFocusNode,
-        style: TextStyle(color: textColor),
-        cursorColor: borderColor,
-        decoration: InputDecoration(
-          hintText: AppLocalizations.of(context)!.search,
-          hintStyle: TextStyle(color: textColor),
-          suffixIconColor: textColor,
-          suffixIcon: IconButton(
-            icon: const Icon(Icons.clear),
-            onPressed: resetTitle,
-            tooltip: AppLocalizations.of(context)!.search,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: borderColor),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: borderColor),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: borderColor, width: 2),
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          textSelectionTheme: TextSelectionThemeData(
+            selectionColor: textColor.withValues(alpha: 0.5),
           ),
         ),
-        onChanged: (title) {
-          searchTitle(context, title);
-        },
+        child: TextField(
+          controller: _controller,
+          focusNode: _searchFocusNode,
+          style: TextStyle(color: textColor),
+          cursorColor: borderColor,
+          decoration: InputDecoration(
+            hintText: AppLocalizations.of(context)!.search,
+            hintStyle: TextStyle(color: textColor),
+            suffixIconColor: textColor,
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: resetTitle,
+              tooltip: AppLocalizations.of(context)!.search,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: BorderSide(color: borderColor),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: BorderSide(color: borderColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: BorderSide(color: borderColor, width: 2),
+            ),
+          ),
+          onChanged: (title) {
+            searchTitle(context, title);
+          },
+        ),
       ),
     );
   }
