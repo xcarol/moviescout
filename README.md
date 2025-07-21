@@ -1,5 +1,7 @@
 # Movie Scout
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/bd32d63c4ec949129898d34a3a6d7d56)](https://app.codacy.com/gh/xcarol/moviescout?utm_source=github.com&utm_medium=referral&utm_content=xcarol/moviescout&utm_campaign=Badge_Grade)
+
 Movie Scout is your ultimate movie and series tracker. Discover where your favorite titles are streaming and keep your personal watchlist up to date.  
 
 **Key Features:**  
