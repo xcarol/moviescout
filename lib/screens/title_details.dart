@@ -122,7 +122,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     links.add(
       GestureDetector(
         onTap: () {
-          launchUrlString('https://www.themoviedb.org/movie/${title.id}');
+          launchUrlString('https://www.themoviedb.org/${title.mediaType}/${title.id}');
         },
         child: SizedBox(
           height: 30,
