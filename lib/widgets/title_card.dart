@@ -193,12 +193,12 @@ class TitleCard extends StatelessWidget {
           : '';
     } else if (tmdbTitle.isSerie) {
       final firstAirDate = tmdbTitle.firstAirDate;
-      final nextEpisodeToAir = tmdbTitle.nextEpisodeToAir;
+      final status = tmdbTitle.status;
       final lastAirDate = tmdbTitle.lastAirDate;
 
       text += firstAirDate.isNotEmpty ? firstAirDate.substring(0, 4) : '';
 
-      if (nextEpisodeToAir.isNotEmpty) {
+      if (status != statusEnded && status != statusCanceled) {
         text += ' - ...';
       } else if (lastAirDate.isNotEmpty) {
         text += ' - ${lastAirDate.substring(0, 4)}';
