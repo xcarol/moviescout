@@ -60,6 +60,12 @@ const _last_updated = 'last_updated';
 const _media_type = 'media_type';
 const _providers = 'providers';
 
+const statusEnded = 'Ended';
+const statusReturning = 'Returning Series';
+const statusCanceled = 'Canceled';
+const statusInProduction = 'In Production';
+const statusPlanned = 'Planned';
+
 class TmdbTitle {
   final Map _tmdbTitle;
   const TmdbTitle({required Map<dynamic, dynamic> title}) : _tmdbTitle = title;
@@ -94,6 +100,11 @@ class TmdbTitle {
 
   String get name {
     return _tmdbTitle[_name] ?? _tmdbTitle[_title] ?? '';
+  }
+
+
+  String get status {
+    return _tmdbTitle[_status] ?? '';
   }
 
   String get tagline {

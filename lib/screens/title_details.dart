@@ -122,7 +122,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     links.add(
       GestureDetector(
         onTap: () {
-          launchUrlString('https://www.themoviedb.org/movie/${title.id}');
+          launchUrlString('https://www.themoviedb.org/${title.mediaType}/${title.id}');
         },
         child: SizedBox(
           height: 30,
@@ -385,7 +385,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     String text =
         title.firstAirDate.isNotEmpty ? title.firstAirDate.substring(0, 4) : '';
 
-    if (title.nextEpisodeToAir.isNotEmpty) {
+    if (title.status != statusEnded && title.status != statusCanceled) {
       text += ' - ...';
     } else if (title.lastAirDate.isNotEmpty) {
       text += ' - ${title.lastAirDate.substring(0, 4)}';
