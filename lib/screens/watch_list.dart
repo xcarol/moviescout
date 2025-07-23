@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/title_list.dart';
@@ -66,20 +67,50 @@ class _WatchListState extends State<WatchList> {
   }
 
   Widget emptyBody() {
+    List<Widget> children = [];
+
+    if (Provider.of<TmdbUserService>(context, listen: false).isUserLoggedIn) {
+      children.add(
+        Text(
+          AppLocalizations.of(context)!.messageEmptyList,
+          textAlign: TextAlign.center,
+        ),
+      );
+    } else {
+      children.add(
+        Text(
+          AppLocalizations.of(context)!.messageEmptySearch,
+          textAlign: TextAlign.center,
+        ),
+      );
+      children.add(
+        const SizedBox(height: 20.0),
+      );
+      children.add(
+        Text(
+          AppLocalizations.of(context)!.messageEmptyOptions,
+          textAlign: TextAlign.center,
+        ),
+      );
+      children.add(
+        const SizedBox(height: 10.0),
+      );
+      children.add(
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Login()),
+            );
+          },
+          child: Text(AppLocalizations.of(context)!.messageEmptyTmdb),
+        ),
+      );
+    }
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            AppLocalizations.of(context)!.messageEmptyList,
-          ),
-          Text(
-            AppLocalizations.of(context)!.messageEmptyList2,
-          ),
-          Text(
-            AppLocalizations.of(context)!.messageEmptyList3,
-          ),
-        ],
+        children: children,
       ),
     );
   }

@@ -15,10 +15,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get messageEmptyList => 'Aún no se ha seleccionado ninguna película.';
 
   @override
-  String get messageEmptyList2 => 'Haz una búsqueda utilizando la lupa de la barra inferior.';
+  String get messageEmptySearch => 'Puedes hacer una búsqueda utilizando la lupa de la barra inferior.';
 
   @override
-  String get messageEmptyList3 => 'Inicia sessión o registrate en TMDB desde el menú lateral.';
+  String get messageEmptyOptions => 'También puedes';
+
+  @override
+  String get messageEmptyTmdb => 'Connectarte a TMDb';
 
   @override
   String get search => 'Busca un título';

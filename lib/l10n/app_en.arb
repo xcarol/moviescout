@@ -1,8 +1,9 @@
 {
     "appTitle": "Movie Scout",
     "messageEmptyList": "No films slected yet.",
-    "messageEmptyList2": "Do a search using the magnifying glass in the bottom bar.",
-    "messageEmptyList3": "Log in or register to TMDB from the side menu.",
+    "messageEmptySearch": "You can do a search by using the magnifying glass in the bottom bar.",
+    "messageEmptyOptions": "You can also",
+    "messageEmptyTmdb": "Connect to TMDb",
     "search": "Search for a title",
     "searchTitle": "Search",
     "back": "Back",

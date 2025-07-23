@@ -109,17 +109,23 @@ abstract class AppLocalizations {
   /// **'No films slected yet.'**
   String get messageEmptyList;
 
-  /// No description provided for @messageEmptyList2.
+  /// No description provided for @messageEmptySearch.
   ///
   /// In en, this message translates to:
-  /// **'Do a search using the magnifying glass in the bottom bar.'**
-  String get messageEmptyList2;
+  /// **'You can do a search by using the magnifying glass in the bottom bar.'**
+  String get messageEmptySearch;
 
-  /// No description provided for @messageEmptyList3.
+  /// No description provided for @messageEmptyOptions.
   ///
   /// In en, this message translates to:
-  /// **'Log in or register to TMDB from the side menu.'**
-  String get messageEmptyList3;
+  /// **'You can also'**
+  String get messageEmptyOptions;
+
+  /// No description provided for @messageEmptyTmdb.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect to TMDb'**
+  String get messageEmptyTmdb;
 
   /// No description provided for @search.
   ///

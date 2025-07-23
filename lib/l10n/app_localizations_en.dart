@@ -15,10 +15,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageEmptyList => 'No films slected yet.';
 
   @override
-  String get messageEmptyList2 => 'Do a search using the magnifying glass in the bottom bar.';
+  String get messageEmptySearch => 'You can do a search by using the magnifying glass in the bottom bar.';
 
   @override
-  String get messageEmptyList3 => 'Log in or register to TMDB from the side menu.';
+  String get messageEmptyOptions => 'You can also';
+
+  @override
+  String get messageEmptyTmdb => 'Connect to TMDb';
 
   @override
   String get search => 'Search for a title';
