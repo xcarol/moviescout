@@ -40,7 +40,7 @@ class _TitleListState extends State<TitleList> {
     _textFilterController = TextEditingController();
     _showFiltersPreferencesName = '${widget.listService.listName}_ShowFilters';
     _showFilters =
-        PreferencesService().prefs.getBool(_showFiltersPreferencesName) ?? true;
+        PreferencesService().prefs.getBool(_showFiltersPreferencesName) ?? false;
   }
 
   @override
