@@ -47,6 +47,9 @@ class TmdbBaseService {
         });
 
         if (response.statusCode == 429 && attempt < maxRetries - 1) {
+          debugPrint(
+            'TmdbBaseService get Rate limit exceeded. Retrying in ${retryDelay.inSeconds} seconds...',
+          );
           await Future.delayed(retryDelay);
           continue;
         }
@@ -64,6 +67,8 @@ class TmdbBaseService {
           FirebaseCrashlytics.instance.recordFlutterError(
             FlutterErrorDetails(exception: message),
           );
+        } else {
+          debugPrint('TmdbBaseService get Error: ${error.toString()}');
         }
         rethrow;
       }
