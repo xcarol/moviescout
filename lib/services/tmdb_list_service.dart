@@ -202,6 +202,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       }
     } while (page++ < pages);
 
+    notifyListeners();
     return titles;
   }
 }
