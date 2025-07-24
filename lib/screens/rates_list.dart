@@ -42,11 +42,6 @@ class _RatesListState extends State<RatesList> {
     return FutureBuilder(
       future: _init,
       builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const Scaffold(
-              body: Center(child: CircularProgressIndicator()));
-        }
-
         return body();
       },
     );
@@ -55,9 +50,7 @@ class _RatesListState extends State<RatesList> {
   Widget body() {
     return Consumer<TmdbRateslistService>(
       builder: (context, rateslistService, child) {
-        if (rateslistService.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (rateslistService.titles.isEmpty) {
+        if (rateslistService.titles.isEmpty) {
           return emptyBody();
         } else {
           return rateslistBody();
