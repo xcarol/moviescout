@@ -52,6 +52,12 @@ class TmdbBaseService {
         }
 
         return response;
+      } on HandshakeException catch (e) {
+        debugPrint('TmdbBaseService get HandshakeException: $e');
+        if (attempt < maxRetries - 1) {
+          await Future.delayed(retryDelay);
+          continue;
+        }
       } catch (error) {
         if (Platform.isAndroid) {
           final message = 'TmdbBaseService get Error: ${error.toString()}';
