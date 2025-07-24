@@ -43,10 +43,6 @@ class _WatchListState extends State<WatchList> {
     return FutureBuilder(
       future: _init,
       builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
         return body();
       },
     );
@@ -55,9 +51,7 @@ class _WatchListState extends State<WatchList> {
   Widget body() {
     return Consumer<TmdbWatchlistService>(
       builder: (context, watchlistService, child) {
-        if (watchlistService.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (watchlistService.titles.isEmpty) {
+        if (watchlistService.titles.isEmpty) {
           return emptyBody();
         } else {
           return watchlistBody();

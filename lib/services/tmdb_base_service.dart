@@ -47,17 +47,28 @@ class TmdbBaseService {
         });
 
         if (response.statusCode == 429 && attempt < maxRetries - 1) {
+          debugPrint(
+            'TmdbBaseService get Rate limit exceeded. Retrying in ${retryDelay.inSeconds} seconds...',
+          );
           await Future.delayed(retryDelay);
           continue;
         }
 
         return response;
+      } on HandshakeException catch (e) {
+        debugPrint('TmdbBaseService get HandshakeException: $e');
+        if (attempt < maxRetries - 1) {
+          await Future.delayed(retryDelay);
+          continue;
+        }
       } catch (error) {
         if (Platform.isAndroid) {
           final message = 'TmdbBaseService get Error: ${error.toString()}';
           FirebaseCrashlytics.instance.recordFlutterError(
             FlutterErrorDetails(exception: message),
           );
+        } else {
+          debugPrint('TmdbBaseService get Error: ${error.toString()}');
         }
         rethrow;
       }

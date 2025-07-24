@@ -40,7 +40,8 @@ class _TitleListState extends State<TitleList> {
     _textFilterController = TextEditingController();
     _showFiltersPreferencesName = '${widget.listService.listName}_ShowFilters';
     _showFilters =
-        PreferencesService().prefs.getBool(_showFiltersPreferencesName) ?? true;
+        PreferencesService().prefs.getBool(_showFiltersPreferencesName) ??
+            false;
   }
 
   @override
@@ -257,6 +258,15 @@ class _TitleListState extends State<TitleList> {
             ),
           ),
           _typeSelector(),
+          const SizedBox(width: 8),
+          if (widget.listService.isLoading)
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.0,
+              ),
+            ),
           const Spacer(),
           Row(
             children: [

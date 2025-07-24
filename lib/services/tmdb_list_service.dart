@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 
@@ -57,17 +58,23 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       notifyListeners();
     }
 
-    _titles = _retrieveLocalList();
-    if (_titles.isNotEmpty) {
-      _titles =
-          await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
-    } else {
-      _titles =
-          await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
-    }
+    try {
+      _titles = _retrieveLocalList();
+      if (_titles.isNotEmpty) {
+        _titles =
+            await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
+      } else {
+        _titles = await _retrieveServerList(
+            accountId, retrieveMovies, retrieveTvshows);
+      }
 
-    if (updateTitles) {
-      await TmdbTitleService().updateTitles(_titles);
+      if (updateTitles) {
+        await TmdbTitleService().updateTitles(_titles);
+      }
+    } catch (error) {
+      SnackMessage.showSnackBar(
+        'Error retrieving $_prefsListName: $error',
+      );
     }
 
     _updateLocalList();
@@ -195,6 +202,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       }
     } while (page++ < pages);
 
+    notifyListeners();
     return titles;
   }
 }

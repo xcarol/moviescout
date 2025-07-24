@@ -1,6 +1,9 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 
 const String _tmdbDetails =
     '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders%2Crecommendations&language={LOCALE}';
@@ -51,13 +54,19 @@ class TmdbTitleService extends TmdbBaseService {
     );
 
     if (result.statusCode != 200) {
-      FirebaseCrashlytics.instance.recordError(
-        Exception(
+      if (defaultTargetPlatform == TargetPlatform.android) {
+        FirebaseCrashlytics.instance.recordError(
+          Exception(
+            'Failed to retrieve title details for ${title.id} - ${result.statusCode} - ${result.body}',
+          ),
+          null,
+          reason: 'TmdbTitleService.updateTitleDetails',
+        );
+      } else {
+        SnackMessage.showSnackBar(
           'Failed to retrieve title details for ${title.id} - ${result.statusCode} - ${result.body}',
-        ),
-        null,
-        reason: 'TmdbTitleService.updateTitleDetails',
-      );
+        );
+      }
       return title;
     }
 
