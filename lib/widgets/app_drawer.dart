@@ -43,8 +43,11 @@ class AppDrawer extends StatelessWidget {
   Widget _userProfileTile(BuildContext context) {
     var user = Provider.of<TmdbUserService>(context).user;
     ImageProvider<Object>? userImage = user != null
-        ? NetworkImage(
-            'https://www.gravatar.com/avatar/${user['avatar']['gravatar']['hash']}?s=200')
+        ? user['avatar']['tmdb'] != null && user['avatar']['tmdb'].isNotEmpty
+            ? NetworkImage(
+                'https://image.tmdb.org/t/p/w185/${user['avatar']['tmdb']['avatar_path']}')
+            : NetworkImage(
+                'https://www.gravatar.com/avatar/${user['avatar']['gravatar']['hash']}?s=200')
         : AssetImage('assets/anonymous.png');
     var userName = user != null
         ? user['name'].toString().isNotEmpty
