@@ -23,6 +23,9 @@ class _TitleListState extends State<TitleList> {
   bool _isSortAsc = true;
   late bool _showFilters;
   late String _showFiltersPreferencesName;
+  late String _textFilterPreferencesName;
+  late String _selectedGenresPreferencesName;
+  late String _filterByProvidersPreferencesName;
   String _selectedType = '';
   late List<String> _titleTypes;
   late String _textFilter;
@@ -38,9 +41,28 @@ class _TitleListState extends State<TitleList> {
   void initState() {
     super.initState();
     _textFilterController = TextEditingController();
+
+    _textFilterPreferencesName = '${widget.listService.listName}_TextFilter';
+    _textFilterController.text =
+        PreferencesService().prefs.getString(_textFilterPreferencesName) ?? '';
+    _textFilter = _textFilterController.text;
+
     _showFiltersPreferencesName = '${widget.listService.listName}_ShowFilters';
     _showFilters =
         PreferencesService().prefs.getBool(_showFiltersPreferencesName) ??
+            false;
+
+    _selectedGenresPreferencesName =
+        '${widget.listService.listName}_SelectedGenres';
+    _selectedGenres = PreferencesService()
+            .prefs
+            .getStringList(_selectedGenresPreferencesName) ??
+        [];
+
+    _filterByProvidersPreferencesName =
+        '${widget.listService.listName}_FilterByProviders';
+    _filterByProviders =
+        PreferencesService().prefs.getBool(_filterByProvidersPreferencesName) ??
             false;
   }
 
@@ -217,6 +239,9 @@ class _TitleListState extends State<TitleList> {
             setState(() {
               _textFilter = newTextFilter;
             });
+            PreferencesService()
+                .prefs
+                .setString(_textFilterPreferencesName, newTextFilter);
           },
           textFilterController: _textFilterController,
           selectedGenres: _selectedGenres.toList(),
@@ -225,12 +250,18 @@ class _TitleListState extends State<TitleList> {
             setState(() {
               _selectedGenres = genresChanged.toList();
             });
+            PreferencesService()
+                .prefs
+                .setStringList(_selectedGenresPreferencesName, _selectedGenres);
           },
           filterByProviders: _filterByProviders,
           providersChanged: (bool providersChanged) {
             setState(() {
               _filterByProviders = providersChanged;
             });
+            PreferencesService()
+                .prefs
+                .setBool(_filterByProvidersPreferencesName, _filterByProviders);
           },
           focusNode: _searchFocusNode,
         ),
