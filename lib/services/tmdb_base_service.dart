@@ -48,7 +48,7 @@ class TmdbBaseService {
 
         if (response.statusCode == 429 && attempt < maxRetries - 1) {
           debugPrint(
-            'TmdbBaseService get Rate limit exceeded. Retrying in ${retryDelay.inSeconds} seconds...',
+            'TmdbBaseService get Rate limit exceeded. Attempt ${attempt + 1} of $maxRetries. Retrying in ${retryDelay.inSeconds} seconds...',
           );
           await Future.delayed(retryDelay);
           continue;
