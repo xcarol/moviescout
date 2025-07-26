@@ -24,6 +24,12 @@ class TmdbProviderService extends TmdbBaseService {
     List<String> providerUrls = [_tmdbMovieProviders, _tmdbTvProviders];
 
     _providerMap.clear();
+
+    if (_getLocaleProviders()) {
+      _isLoaded = true;
+      return;
+    }
+
     for (String url in providerUrls) {
       dynamic response = await get(url
           .replaceFirst('{LOCALE}', '${getLanguageCode()}-${getCountryCode()}')
@@ -44,18 +50,58 @@ class TmdbProviderService extends TmdbBaseService {
             'name': provider['provider_name'].toString(),
             'logo_path': provider['logo_path'].toString(),
             'enabled': PreferencesService()
-                .prefs
-                .getString('provider_${provider['provider_id']}') ??
+                    .prefs
+                    .getString('provider_${provider['provider_id']}') ??
                 'false',
           };
         }
       } else {
-        throw Exception(
-            'Failed to load providers: ${response.statusCode}'
+        throw Exception('Failed to load providers: ${response.statusCode}'
             ' ${response.reasonPhrase}');
       }
     }
     _isLoaded = true;
+    _setLocaleProviders(_providerMap);
+  }
+
+  bool _getLocaleProviders() {
+    final providers =
+        PreferencesService().prefs.getStringList('providers') ?? [];
+    final String lastUpdated =
+        PreferencesService().prefs.getString('providers_updateTime') ?? DateTime(1970).toString();
+    bool isUpToDate =
+        DateTime.now().difference(DateTime.parse(lastUpdated)).inDays < 7;
+
+    if (providers.isEmpty || !isUpToDate) return false;
+
+    providers
+        .map((provider) => jsonDecode(provider) as Map<String, dynamic>)
+        .forEach((provider) {
+      _providerMap[provider['provider_id']] = {
+        'name': provider['provider_name'].toString(),
+        'logo_path': provider['logo_path'].toString(),
+        'enabled': PreferencesService()
+                .prefs
+                .getString('provider_${provider['provider_id']}') ??
+            'false',
+      };
+    });
+
+    return true;
+  }
+
+  void _setLocaleProviders(Map<int, Map<String, String>> providers) {
+    final providerList = providers.entries
+        .map((entry) => jsonEncode({
+              'provider_id': entry.key,
+              'provider_name': entry.value['name'],
+              'logo_path': entry.value['logo_path'],
+            }))
+        .toList();
+    PreferencesService().prefs.setStringList('providers', providerList);
+    PreferencesService()
+        .prefs
+        .setString('providers_updateTime', DateTime.now().toString());
   }
 
   void toggleProvider(int id, bool value) {

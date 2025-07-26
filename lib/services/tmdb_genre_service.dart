@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:moviescout/models/tmdb_genre.dart';
+import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 
 const String _tmdbMovieGenres = 'genre/movie/list?language={LOCALE}';
@@ -21,6 +22,12 @@ class TmdbGenreService extends TmdbBaseService {
     List<String> genreUrls = [_tmdbMovieGenres, _tmdbTvGenres];
 
     _genreMap.clear();
+
+    if (_getLocaleGenres()) {
+      _isLoaded = true;
+      return;
+    }
+
     for (String url in genreUrls) {
       dynamic response = await get(url.replaceFirst(
           '{LOCALE}', '${getLanguageCode()}-${getCountryCode()}'));
@@ -59,8 +66,38 @@ class TmdbGenreService extends TmdbBaseService {
       } else {
         throw Exception('Failed to load genres');
       }
-      _isLoaded = true;
     }
+
+    _isLoaded = true;
+    _setLocaleGenres(_genreMap);
+  }
+
+  bool _getLocaleGenres() {
+    final genres = PreferencesService().prefs.getStringList('genres') ?? [];
+    final String lastUpdated =
+        PreferencesService().prefs.getString('genres_updateTime') ?? DateTime(1970).toString();
+    bool isUpToDate =
+        DateTime.now().difference(DateTime.parse(lastUpdated)).inDays < 7;
+
+    if (genres.isEmpty || !isUpToDate) return false;
+
+    genres
+        .map((genre) => jsonDecode(genre) as Map<String, dynamic>)
+        .forEach((genre) {
+      _genreMap[genre['id']] = genre['name'];
+    });
+
+    return true;
+  }
+
+  void _setLocaleGenres(Map<int, String> genres) {
+    final genreList = genres.entries
+        .map((entry) => jsonEncode({'id': entry.key, 'name': entry.value}))
+        .toList();
+    PreferencesService().prefs.setStringList('genres', genreList);
+    PreferencesService()
+        .prefs
+        .setString('genres_updateTime', DateTime.now().toString());
   }
 
   String? getName(int id) => _genreMap[id];
