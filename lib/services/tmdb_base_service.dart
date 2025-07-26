@@ -54,6 +54,12 @@ class TmdbBaseService {
           continue;
         }
 
+        if (response.statusCode == 429) {
+          debugPrint(
+            'TmdbBaseService get Rate limit exceeded. Please try again later.',
+          );
+        }
+
         return response;
       } on HandshakeException catch (e) {
         debugPrint('TmdbBaseService get HandshakeException: $e');
