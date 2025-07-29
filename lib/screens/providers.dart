@@ -44,9 +44,10 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
         );
       }
     }
+
     providerWidgets.sort((a, b) {
       if (a is SwitchListTile && b is SwitchListTile) {
-        return a.title.toString().compareTo(b.title.toString());
+        return (a.title as Text).data!.compareTo((b.title as Text).data!);
       }
       return 0;
     });
