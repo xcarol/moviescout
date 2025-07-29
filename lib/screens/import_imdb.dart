@@ -94,7 +94,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
               onPressed: () => Navigator.of(context).pop(false),
               child: Text(AppLocalizations.of(context)!.cancel),
             ),
-            ElevatedButton(
+            OutlinedButton(
               onPressed: () => Navigator.of(context).pop(true),
               child: Text(AppLocalizations.of(context)!.yes),
             ),
@@ -249,7 +249,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              ElevatedButton(
+              OutlinedButton(
                 child: Text(AppLocalizations.of(context)!.select),
                 onPressed: () => _pickFile(context),
               ),
@@ -273,7 +273,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
                 ),
               ),
               const SizedBox(width: 10),
-              ElevatedButton(
+              OutlinedButton(
                 onPressed: _filenameController.text.isEmpty ||
                         _isRateList ||
                         _operationInProgress
@@ -282,7 +282,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
                 child: Text(AppLocalizations.of(context)!.imdbImportWatchlist),
               ),
               const SizedBox(width: 10),
-              ElevatedButton(
+              OutlinedButton(
                 onPressed: _filenameController.text.isNotEmpty &&
                         _isRateList &&
                         _operationInProgress == false
@@ -291,7 +291,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
                 child: Text(AppLocalizations.of(context)!.imdbImportRateslist),
               ),
               const SizedBox(width: 10),
-              ElevatedButton(
+              OutlinedButton(
                 onPressed: _operationInProgress == true
                     ? () => _operationInProgress = false
                     : null,
@@ -303,14 +303,14 @@ class _ImportIMDBState extends State<ImportIMDB> {
           if (kDebugMode)
             Row(
               children: [
-                ElevatedButton(
+                OutlinedButton(
                   onPressed: _operationInProgress == false
                       ? () => _resetWatchlist(context)
                       : null,
                   child: Text(AppLocalizations.of(context)!.imdbResetWatchlist),
                 ),
                 const SizedBox(width: 10),
-                ElevatedButton(
+                OutlinedButton(
                   onPressed: _operationInProgress == false
                       ? () => _resetRatings(context)
                       : null,

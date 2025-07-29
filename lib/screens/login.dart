@@ -115,7 +115,7 @@ class _LoginState extends State<Login> {
   // the Android app (in Windows does nothing), but it will not work on Linux/Windows,
   // so close the browser (or tab) and complete the login by clicking this button.
   Widget _completeLoginButton() {
-    return ElevatedButton(
+    return OutlinedButton(
       onPressed: _completeLogin,
       child: Text(AppLocalizations.of(context)!.completeLoginToTmdb),
     );
@@ -125,7 +125,7 @@ class _LoginState extends State<Login> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        ElevatedButton(
+        OutlinedButton(
           onPressed: login,
           child: Text(AppLocalizations.of(context)!.loginToTmdb),
         ),
@@ -134,7 +134,7 @@ class _LoginState extends State<Login> {
             defaultTargetPlatform == TargetPlatform.windows)
           _completeLoginButton(),
         const SizedBox(height: 20),
-        ElevatedButton(
+        OutlinedButton(
           onPressed: () =>
               launchUrlString('https://www.themoviedb.org/account/signup'),
           child: Text(AppLocalizations.of(context)!.signupToTmdb),
