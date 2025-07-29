@@ -66,6 +66,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       } else {
         _titles = await _retrieveServerList(
             accountId, retrieveMovies, retrieveTvshows);
+        updateTitles = true;
       }
 
       if (updateTitles) {

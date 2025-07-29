@@ -90,7 +90,7 @@ class _WatchListState extends State<WatchList> {
         const SizedBox(height: 10.0),
       );
       children.add(
-        ElevatedButton(
+        OutlinedButton(
           onPressed: () {
             Navigator.push(
               context,
