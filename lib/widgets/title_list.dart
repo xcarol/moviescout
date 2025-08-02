@@ -205,7 +205,7 @@ class _TitleListState extends State<TitleList> {
             final TmdbTitle title = titles[index];
             return Selector<TmdbListService, TmdbTitle?>(
               selector: (_, service) => service.titles.firstWhere(
-                (title) => title.id == title.id,
+                (title) => title.tmdbId == title.tmdbId,
                 orElse: () => title,
               ),
               builder: (_, tmdbTitle, __) {

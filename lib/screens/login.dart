@@ -66,13 +66,13 @@ class _LoginState extends State<Login> {
           notify: true,
           forceUpdate: true,
         );
-        rateslistService.retrieveRateslist(
-          userService.accountId,
-          userService.sessionId,
-          Localizations.localeOf(context),
-          notify: true,
-          forceUpdate: true,
-        );
+        // rateslistService.retrieveRateslist(
+        //   userService.accountId,
+        //   userService.sessionId,
+        //   Localizations.localeOf(context),
+        //   notify: true,
+        //   forceUpdate: true,
+        // );
       }
 
       SnackMessage.showSnackBar(loginSuccessMessage);

@@ -14,12 +14,12 @@ class TmdbSearchService extends TmdbBaseService {
     for (var key in response.keys) {
       if (key == 'movie_results') {
         for (var movie in response[key]) {
-          titles.add(TmdbTitle(title: movie));
+          titles.add(TmdbTitle.fromMap(title: movie));
         }
       }
       if (key == 'tv_results') {
         for (var tv in response[key]) {
-          titles.add(TmdbTitle(title: tv));
+          titles.add(TmdbTitle.fromMap(title: tv));
         }
       }
     }
@@ -35,7 +35,7 @@ class TmdbSearchService extends TmdbBaseService {
       if (title['media_type'] != 'movie' && title['media_type'] != 'tv') {
         continue;
       }
-      titles.add(TmdbTitle(title: response['results'][count]));
+      titles.add(TmdbTitle.fromMap(title: response['results'][count]));
     }
 
     return titles;

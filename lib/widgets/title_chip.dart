@@ -22,7 +22,7 @@ class TitleChip extends TitleCard {
   @override
   Widget build(BuildContext context) {
     TmdbTitle tmdbTitle = tmdbListService.titles.firstWhere(
-      (title) => title.id == _title.id,
+      (title) => title.tmdbId == _title.tmdbId,
       orElse: () => _title,
     );
 
@@ -38,7 +38,7 @@ class TitleChip extends TitleCard {
               context,
               MaterialPageRoute(
                   builder: (context) => TitleDetails(
-                        title: TmdbTitle(title: tmdbTitle.map),
+                        title: TmdbTitle.fromMap(title: tmdbTitle.map),
                         tmdbListService: tmdbListService,
                       )),
             );

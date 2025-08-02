@@ -28,13 +28,13 @@ class _RatesListState extends State<RatesList> {
 
     await userService.setup();
 
-    if (mounted) {
-      await rateslistService.retrieveRateslist(
-        userService.accountId,
-        userService.sessionId,
-        Localizations.localeOf(context),
-      );
-    }
+    // if (mounted) {
+    //   await rateslistService.retrieveRateslist(
+    //     userService.accountId,
+    //     userService.sessionId,
+    //     Localizations.localeOf(context),
+    //   );
+    // }
   }
 
   @override

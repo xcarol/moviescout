@@ -20,11 +20,11 @@ class TmdbRateslistService extends TmdbListService {
   int getRating(int titleId) {
     if (titles.isEmpty) {
       // retrieveRateslist may not have been called yet
-      retreiveListFromLocal(notify: false);
+      retrieveListFromLocal(notify: false);
     }
     TmdbTitle? title = titles.firstWhere(
-      (element) => element.id == titleId,
-      orElse: () => TmdbTitle(title: {}),
+      (element) => element.tmdbId == titleId,
+      orElse: () => TmdbTitle.fromMap(title: {}),
     );
     return title.rating.toInt();
   }
@@ -112,12 +112,12 @@ class TmdbRateslistService extends TmdbListService {
   ) async {
     try {
       if (rating > 0) {
-        title.rating = rating.toDouble();
+        title.updateRating(rating.toDouble());
       }
       await updateTitle(accountId, sessionId, title, rating > 0,
           (String accountId, String sessionId) async {
         return _updateTitleRateToTmdb(
-            accountId, sessionId, title.id, title.mediaType, rating);
+            accountId, sessionId, title.tmdbId, title.mediaType, rating);
       });
     } catch (error) {
       SnackMessage.showSnackBar(

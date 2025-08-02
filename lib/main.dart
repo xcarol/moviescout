@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:isar/isar.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart'
@@ -9,6 +10,7 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/theme_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
@@ -45,6 +47,7 @@ void main() async {
 
   await dotenv.load(fileName: ".env");
   await PreferencesService().init();
+  await IsarService.init();
   await TmdbGenreService().init();
   await TmdbProviderService().init();
 

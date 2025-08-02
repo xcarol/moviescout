@@ -67,7 +67,7 @@ class TmdbWatchlistService extends TmdbListService {
       await updateTitle(accountId, sessionId, title, add,
           (String accountId, String sessionId) async {
         return _updateTitleInWatchlistToTmdb(
-            accountId, sessionId, title.id, title.mediaType, add);
+            accountId, sessionId, title.tmdbId, title.mediaType, add);
       });
     } catch (error) {
       SnackMessage.showSnackBar(
