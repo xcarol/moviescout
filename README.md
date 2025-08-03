@@ -109,9 +109,17 @@ Followed this guide: [i18n|Flutter](https://docs.flutter.dev/ui/accessibility-an
 
 Run `flutter gen-l10n` to update the i18n generated files.  
 
-### Shared Preferences
+### Shared Preferences (deprecated)
 
-The shared preferences are located at: _~/.local/share/com.xicra.moviescout_ folder.  
+~~The shared preferences are located at: _~/.local/share/com.xicra.moviescout_ folder.~~  
+
+### Isar
+
+Shared Preferences are not intended for huge data and a list of 1000 titles may reach 70MB which is even to much to hold in memory.  
+
+Isar was adopted beacuse its easy to use and has power enough for the kind of queries needed by the app.
+
+**NOTE:** Each time TmdbTitle class changes its "Schema" i.e. the public attributes, the command `dart run build_runner build` has to be executed. It is also available running the script _flutter_tool.sh_  with _-i_ parameter
 
 ## Icons
 
