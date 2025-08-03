@@ -61,6 +61,7 @@ const _seasons = 'seasons';
 const _type = 'type';
 
 // Custom
+const _listName = 'list_name';
 const _last_updated = 'last_updated';
 const _media_type = 'media_type';
 const _providers = 'providers';
@@ -80,6 +81,10 @@ class TmdbTitle {
 
   @Index(unique: true)
   late int tmdbId;
+
+  @Index()
+  late String listName;
+
   late String tmdbJson;
   late String name;
   late String lastUpdated;
@@ -89,6 +94,7 @@ class TmdbTitle {
     required this.id,
     required this.tmdbJson,
     required this.tmdbId,
+    required this.listName,
     required this.name,
     required this.rating,
     required this.lastUpdated,
@@ -99,6 +105,7 @@ class TmdbTitle {
       id: Isar.autoIncrement,
       tmdbJson: jsonEncode(title),
       tmdbId: title[_id] ?? 0,
+      listName: title[_listName] ?? '',
       name: title[_name] ?? title[_title] ?? '',
       rating: title[_account_rating] is Map
           ? title[_account_rating][_account_rating_value] ?? 0.0

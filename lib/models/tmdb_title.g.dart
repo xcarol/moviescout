@@ -27,23 +27,28 @@ const TmdbTitleSchema = CollectionSchema(
       name: r'lastUpdated',
       type: IsarType.string,
     ),
-    r'name': PropertySchema(
+    r'listName': PropertySchema(
       id: 2,
+      name: r'listName',
+      type: IsarType.string,
+    ),
+    r'name': PropertySchema(
+      id: 3,
       name: r'name',
       type: IsarType.string,
     ),
     r'rating': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'rating',
       type: IsarType.double,
     ),
     r'tmdbId': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'tmdbId',
       type: IsarType.long,
     ),
     r'tmdbJson': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'tmdbJson',
       type: IsarType.string,
     )
@@ -66,6 +71,19 @@ const TmdbTitleSchema = CollectionSchema(
           caseSensitive: false,
         )
       ],
+    ),
+    r'listName': IndexSchema(
+      id: -9160894145738258075,
+      name: r'listName',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'listName',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
     )
   },
   links: {},
@@ -83,6 +101,7 @@ int _tmdbTitleEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.lastUpdated.length * 3;
+  bytesCount += 3 + object.listName.length * 3;
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.tmdbJson.length * 3;
   return bytesCount;
@@ -96,10 +115,11 @@ void _tmdbTitleSerialize(
 ) {
   writer.writeLong(offsets[0], object.hashCode);
   writer.writeString(offsets[1], object.lastUpdated);
-  writer.writeString(offsets[2], object.name);
-  writer.writeDouble(offsets[3], object.rating);
-  writer.writeLong(offsets[4], object.tmdbId);
-  writer.writeString(offsets[5], object.tmdbJson);
+  writer.writeString(offsets[2], object.listName);
+  writer.writeString(offsets[3], object.name);
+  writer.writeDouble(offsets[4], object.rating);
+  writer.writeLong(offsets[5], object.tmdbId);
+  writer.writeString(offsets[6], object.tmdbJson);
 }
 
 TmdbTitle _tmdbTitleDeserialize(
@@ -111,10 +131,11 @@ TmdbTitle _tmdbTitleDeserialize(
   final object = TmdbTitle(
     id: id,
     lastUpdated: reader.readString(offsets[1]),
-    name: reader.readString(offsets[2]),
-    rating: reader.readDouble(offsets[3]),
-    tmdbId: reader.readLong(offsets[4]),
-    tmdbJson: reader.readString(offsets[5]),
+    listName: reader.readString(offsets[2]),
+    name: reader.readString(offsets[3]),
+    rating: reader.readDouble(offsets[4]),
+    tmdbId: reader.readLong(offsets[5]),
+    tmdbJson: reader.readString(offsets[6]),
   );
   return object;
 }
@@ -133,10 +154,12 @@ P _tmdbTitleDeserializeProp<P>(
     case 2:
       return (reader.readString(offset)) as P;
     case 3:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 4:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 5:
+      return (reader.readLong(offset)) as P;
+    case 6:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -383,6 +406,51 @@ extension TmdbTitleQueryWhere
       ));
     });
   }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause> listNameEqualTo(
+      String listName) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'listName',
+        value: [listName],
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause> listNameNotEqualTo(
+      String listName) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'listName',
+              lower: [],
+              upper: [listName],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'listName',
+              lower: [listName],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'listName',
+              lower: [listName],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'listName',
+              lower: [],
+              upper: [listName],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
 }
 
 extension TmdbTitleQueryFilter
@@ -622,6 +690,137 @@ extension TmdbTitleQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'lastUpdated',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> listNameEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'listName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> listNameGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'listName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> listNameLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'listName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> listNameBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'listName',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> listNameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'listName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> listNameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'listName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> listNameContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'listName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> listNameMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'listName',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> listNameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'listName',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      listNameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'listName',
         value: '',
       ));
     });
@@ -1035,6 +1234,18 @@ extension TmdbTitleQuerySortBy on QueryBuilder<TmdbTitle, TmdbTitle, QSortBy> {
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByListName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'listName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByListNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'listName', Sort.desc);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -1122,6 +1333,18 @@ extension TmdbTitleQuerySortThenBy
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByListName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'listName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByListNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'listName', Sort.desc);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -1186,6 +1409,13 @@ extension TmdbTitleQueryWhereDistinct
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByListName(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'listName', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1230,6 +1460,12 @@ extension TmdbTitleQueryProperty
   QueryBuilder<TmdbTitle, String, QQueryOperations> lastUpdatedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastUpdated');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, String, QQueryOperations> listNameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'listName');
     });
   }
 
