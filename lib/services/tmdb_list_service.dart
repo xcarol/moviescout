@@ -1,14 +1,14 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 
 class TmdbListService extends TmdbBaseService with ChangeNotifier {
   String _prefsListName = '';
+  // TODO: Save the last update in shared preferences
   String _lastUpdated =
       DateTime.now().subtract(const Duration(hours: 2)).toIso8601String();
   List<TmdbTitle> _titles = List.empty(growable: true);
@@ -29,9 +29,9 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return _titles.isNotEmpty && _titles[0].rating > 0.0;
   }
 
-  void clearList() {
+  Future<void> clearList() async {
     _titles = List.empty(growable: true);
-    _updateLocalList();
+    await _updateLocalList();
     notifyListeners();
   }
 
@@ -59,10 +59,10 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
 
     try {
-      _titles = _retrieveLocalList();
+      _titles = await _retrieveLocalList();
       if (_titles.isNotEmpty) {
-        _titles =
-            await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
+        _titles = await _syncWithServer(
+            accountId, _titles, retrieveMovies, retrieveTvshows);
       } else {
         _titles = await _retrieveServerList(
             accountId, retrieveMovies, retrieveTvshows);
@@ -72,22 +72,22 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       if (updateTitles) {
         await TmdbTitleService().updateTitles(_titles);
       }
+
+      await _updateLocalList();
+
+      if (notify) {
+        _isLoading = false;
+        notifyListeners();
+      }
     } catch (error) {
       SnackMessage.showSnackBar(
         'Error retrieving $_prefsListName: $error',
       );
     }
-
-    _updateLocalList();
-
-    if (notify) {
-      _isLoading = false;
-      notifyListeners();
-    }
   }
 
-  void retreiveListFromLocal({bool notify = true}) {
-    _titles = _retrieveLocalList();
+  void retrieveListFromLocal({bool notify = true}) async {
+    _titles = await _retrieveLocalList();
     if (notify) {
       notifyListeners();
     }
@@ -104,57 +104,65 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
     for (var element in movies) {
       element['media_type'] = 'movie';
-      serverList.add(TmdbTitle(title: element));
+      serverList.add(TmdbTitle.fromMap(title: element));
     }
 
     for (var element in tv) {
       element['media_type'] = 'tv';
-      serverList.add(TmdbTitle(title: element));
+      serverList.add(TmdbTitle.fromMap(title: element));
     }
 
     return serverList;
   }
 
-  List<TmdbTitle> _retrieveLocalList() {
-    final List<String>? listJson =
-        PreferencesService().prefs.getStringList(_prefsListName);
-
-    if (listJson == null || listJson.isEmpty) {
+  Future<List<TmdbTitle>> _retrieveLocalList() async {
+    try {
+      final isar = IsarService.instance;
+      final titles = await isar.tmdbTitles.where().findAll();
+      return titles.toList();
+    } catch (e) {
+      SnackMessage.showSnackBar(
+        'Error retrieving local list: $e',
+      );
       return List.empty(growable: true);
     }
-
-    return listJson.map((json) => TmdbTitle(title: jsonDecode(json))).toList();
   }
 
   Future<List<TmdbTitle>> _syncWithServer(
     String accountId,
+    List<TmdbTitle> localList,
     Future<List> Function() retrieveMovies,
     Future<List> Function() retrieveTvshows,
   ) async {
-    List<TmdbTitle> localList = _retrieveLocalList();
     List<TmdbTitle> serverList =
         await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
 
-    List<TmdbTitle> titlesToAdd =
-        serverList.where((title) => !localList.contains(title)).toList();
+    List<TmdbTitle> titlesToAdd = serverList
+        .where((remote) =>
+            !localList.any((local) => local.tmdbId == remote.tmdbId))
+        .toList();
 
-    List<TmdbTitle> titlesToRemove =
-        localList.where((title) => !serverList.contains(title)).toList();
+    List<TmdbTitle> titlesToRemove = localList
+        .where((local) =>
+            !serverList.any((remote) => remote.tmdbId == local.tmdbId))
+        .toList();
 
     List<TmdbTitle> listUpdated = _titles;
     listUpdated.addAll(titlesToAdd);
     for (TmdbTitle title in titlesToRemove) {
-      listUpdated.removeWhere((element) => element.id == title.id);
+      listUpdated.removeWhere((element) => element.tmdbId == title.tmdbId);
     }
 
     return listUpdated;
   }
 
   Future<void> _updateLocalList() async {
-    List<String> listJson =
-        _titles.map((title) => jsonEncode(title.map)).toList();
+    final isar = IsarService.instance;
 
-    PreferencesService().prefs.setStringList(_prefsListName, listJson);
+    await isar.writeTxn(() async {
+      await isar.tmdbTitles.clear();
+      await isar.tmdbTitles.putAll(_titles);
+    });
 
     _lastUpdated = DateTime.now().toIso8601String();
   }
@@ -171,18 +179,18 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   ) async {
     final result = await updateTitleToServer(accountId, sessionId);
     if (result.statusCode == 200 || result.statusCode == 201) {
-      _titles.removeWhere((element) => element.id == title.id);
+      _titles.removeWhere((element) => element.tmdbId == title.tmdbId);
 
       if (add) {
         title.lastUpdated = DateTime.now().toString();
         _titles.add(title);
       }
 
-      _updateLocalList();
+      await _updateLocalList();
       notifyListeners();
     } else {
       throw Exception(
-          'Failed to update titleId: ${title.id}. Status code: ${result.statusCode} - ${result.body}');
+          'Failed to update titleId: ${title.tmdbId}. Status code: ${result.statusCode} - ${result.body}');
     }
   }
 
