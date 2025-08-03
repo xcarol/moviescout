@@ -8,8 +8,9 @@ show_help() {
   echo "Opcions disponibles:"
   echo "  --firebase-login         Fer login a Firebase"
   echo "  --flutterfire-config     Configurar Firebase amb flutterfire"
-  echo "  --gen-l10n               Generar fitxers de localització"
+  echo "  -g, --gen-l10n           Generar fitxers de localització"
   echo "  --launcher-icons         Generar icones de l'app"
+  echo "  -i, --isar               Genera els fitxers d'esquema per Isar"
   echo "  --build                  Construir l'app Android (.aab)"
   echo "  -h, --help               Mostrar aquesta ajuda"
 }
@@ -41,6 +42,9 @@ for arg in "$@"; do
       ;;
     -b|--build)
       run_build=true
+      ;;
+    -i|--isar)
+      run_isar=true
       ;;
     -h|--help)
       show_help
@@ -91,4 +95,9 @@ if $run_build; then
 
   echo "▶️ flutter build appbundle --release"
   flutter build appbundle --release
+fi
+
+if $run_isar; then
+  echo "▶️ dart run isar_generator"
+  dart run build_runner build
 fi
