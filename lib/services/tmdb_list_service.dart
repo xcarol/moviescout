@@ -103,11 +103,13 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     List tv = await retrieveTvshows();
 
     for (var element in movies) {
+      element['list_name'] = _listName;
       element['media_type'] = 'movie';
       serverList.add(TmdbTitle.fromMap(title: element));
     }
 
     for (var element in tv) {
+      element['list_name'] = _listName;
       element['media_type'] = 'tv';
       serverList.add(TmdbTitle.fromMap(title: element));
     }
