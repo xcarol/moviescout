@@ -1,8 +1,13 @@
+import 'dart:convert';
+import 'package:isar/isar.dart';
+
 // ignore_for_file: constant_identifier_names, unused_element
 
 import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_providers.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
+
+part 'tmdb_title.g.dart';
 
 const _adult = 'adult';
 const _backdrop_path = 'backdrop_path';
@@ -66,71 +71,98 @@ const statusCanceled = 'Canceled';
 const statusInProduction = 'In Production';
 const statusPlanned = 'Planned';
 
+@collection
 class TmdbTitle {
-  final Map _tmdbTitle;
-  const TmdbTitle({required Map<dynamic, dynamic> title}) : _tmdbTitle = title;
+  Id id = Isar.autoIncrement;
+
+  @ignore
+  Map<String, dynamic>? _tmdbMapCache;
+
+  @Index(unique: true)
+  late int tmdbId;
+  late String tmdbJson;
+  late String name;
+  late String lastUpdated;
+  late double rating;
+
+  TmdbTitle({
+    required this.id,
+    required this.tmdbJson,
+    required this.tmdbId,
+    required this.name,
+    required this.rating,
+    required this.lastUpdated,
+  });
+
+  factory TmdbTitle.fromMap({required Map<dynamic, dynamic> title}) {
+    return TmdbTitle(
+      id: Isar.autoIncrement,
+      tmdbJson: jsonEncode(title),
+      tmdbId: title[_id] ?? 0,
+      name: title[_name] ?? title[_title] ?? '',
+      rating: title[_account_rating] is Map
+          ? title[_account_rating][_account_rating_value] ?? 0.0
+          : 0.0,
+      lastUpdated: title[_last_updated] ?? '1970-01-01',
+    );
+  }
+
+  Map<String, dynamic> get _tmdbTitle {
+    return _tmdbMapCache ??= jsonDecode(tmdbJson);
+  }
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is TmdbTitle && id == other.id;
+      identical(this, other) || other is TmdbTitle && tmdbId == other.tmdbId;
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode => tmdbId.hashCode;
 
   void copyFrom(TmdbTitle other) {
-      _tmdbTitle.clear();
-      _tmdbTitle.addAll(other.map as Map<String, dynamic>);
+    tmdbJson = other.tmdbJson;
   }
 
+  @ignore
   Map get map {
     return _tmdbTitle;
   }
 
+  @ignore
   bool get isMovie {
     return _tmdbTitle[_title] != null;
   }
 
+  @ignore
   bool get isSerie {
     return _tmdbTitle[_name] != null;
   }
 
-  int get id {
-    return _tmdbTitle[_id] ?? 0;
-  }
-
-  String get name {
-    return _tmdbTitle[_name] ?? _tmdbTitle[_title] ?? '';
-  }
-
-
+  @ignore
   String get status {
     return _tmdbTitle[_status] ?? '';
   }
 
+  @ignore
   String get tagline {
     return _tmdbTitle[_tagline] ?? '';
   }
-  
-  String get lastUpdated {
-    return _tmdbTitle[_last_updated] ?? '1970-01-01';
-  }
 
-  set lastUpdated(String date) {
-    _tmdbTitle[_last_updated] = date;
-  }
-
+  @ignore
   String get mediaType {
     return _tmdbTitle[_media_type] ?? '';
   }
 
+  @ignore
   String get originalName {
     return _tmdbTitle[_original_name] ?? _tmdbTitle[_original_title] ?? '';
   }
 
+  @ignore
   String get originalLanguage {
     return _tmdbTitle[_original_language] ?? '';
   }
 
+  @ignore
   String get originCountry {
     return _tmdbTitle[_origin_country] != null &&
             _tmdbTitle[_origin_country] is List &&
@@ -139,6 +171,7 @@ class TmdbTitle {
         : '';
   }
 
+  @ignore
   String get posterPath {
     return _tmdbTitle[_poster_path] != null &&
             (_tmdbTitle[_poster_path] as String).isNotEmpty
@@ -146,6 +179,7 @@ class TmdbTitle {
         : '';
   }
 
+  @ignore
   String get backdropPath {
     if (_tmdbTitle[_backdrop_path] != null) {
       return (_tmdbTitle[_backdrop_path] as String).isNotEmpty
@@ -156,10 +190,12 @@ class TmdbTitle {
     return '';
   }
 
+  @ignore
   double get voteAverage {
     return _tmdbTitle[_vote_average] ?? 0.0;
   }
 
+  @ignore
   List<TmdbGenre> get genres {
     if (_tmdbTitle[_genre_ids] == null) {
       _tmdbTitle[_genre_ids] = <int>[];
@@ -177,24 +213,26 @@ class TmdbTitle {
     return TmdbGenreService().getGenresFromIds(_tmdbTitle[_genre_ids]);
   }
 
+  @ignore
   String get releaseDate {
     return _tmdbTitle[_release_date] ?? '';
   }
 
-  double get rating {
-    return _tmdbTitle[_account_rating] is Map &&
-            _tmdbTitle[_account_rating][_account_rating_value] != null
-        ? _tmdbTitle[_account_rating][_account_rating_value]
-        : 0.0;
-  }
+  void updateRating(double value) {
+    final map = _tmdbTitle;
 
-  set rating(double rate) {
-    _tmdbTitle[_account_rating] = {
+    map[_account_rating] = {
       _account_rating_date: DateTime.now().toIso8601String(),
-      _account_rating_value: rate
+      _account_rating_value: value
     };
+
+    rating = value;
+
+    tmdbJson = jsonEncode(map);
+    _tmdbMapCache = map;
   }
 
+  @ignore
   List get recommendations {
     if (_tmdbTitle[_recommendations] is List) {
       return _tmdbTitle[_recommendations];
@@ -202,14 +240,17 @@ class TmdbTitle {
     return [];
   }
 
+  @ignore
   String get firstAirDate {
     return _tmdbTitle[_first_air_date] ?? '';
   }
 
+  @ignore
   String get lastAirDate {
     return _tmdbTitle[_last_air_date] ?? '';
   }
 
+  @ignore
   String get nextEpisodeToAir {
     if (_tmdbTitle[_next_episode_to_air] == null) {
       return '';
@@ -217,22 +258,27 @@ class TmdbTitle {
     return _tmdbTitle[_next_episode_to_air][_air_date] ?? '';
   }
 
+  @ignore
   String get overview {
     return _tmdbTitle[_overview] ?? '';
   }
 
+  @ignore
   TmdbProviders get providers {
     return TmdbProviders(providers: _tmdbTitle[_providers] ?? {});
   }
 
+  @ignore
   int get runtime {
     return _tmdbTitle[_runtime] ?? 0;
   }
 
+  @ignore
   int get numberOfEpisodes {
     return _tmdbTitle[_number_of_episodes] ?? 0;
   }
 
+  @ignore
   String get duration {
     String duration = '';
 
@@ -250,6 +296,7 @@ class TmdbTitle {
     return duration;
   }
 
+  @ignore
   String get imdbId {
     return _tmdbTitle[_imdb_id] ?? '';
   }
