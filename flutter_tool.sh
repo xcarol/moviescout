@@ -11,6 +11,7 @@ show_help() {
   echo "  -g, --gen-l10n           Generar fitxers de localització"
   echo "  --launcher-icons         Generar icones de l'app"
   echo "  -i, --isar               Genera els fitxers d'esquema per Isar"
+  echo "  -w, --wipe               Netejar la caché i les dades de l'usuari"
   echo "  --build                  Construir l'app Android (.aab)"
   echo "  -h, --help               Mostrar aquesta ajuda"
 }
@@ -20,6 +21,8 @@ run_flutterfire_config=false
 run_gen_l10n=false
 run_launcher_icons=false
 run_build=false
+run_isar=false
+run_wipe=false
 
 if [ $# -eq 0 ]; then
   show_help
@@ -45,6 +48,9 @@ for arg in "$@"; do
       ;;
     -i|--isar)
       run_isar=true
+      ;;
+    -w|--wipe)
+      run_wipe=true
       ;;
     -h|--help)
       show_help
@@ -100,4 +106,11 @@ fi
 if $run_isar; then
   echo "▶️ dart run isar_generator"
   dart run build_runner build
+fi
+
+if $run_wipe; then
+  echo "▶️ Netejant la caché i les dades de l'usuari"
+  rm -rf ~/local/share/com.xicra.moviescout
+  rm -rf ~/.cache/com.xicra.moviescout
+  echo "✅ Caché i dades netejades"
 fi
