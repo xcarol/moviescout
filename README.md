@@ -2,7 +2,7 @@
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/7487a433b43b4c8781d753122b470d5b)](https://app.codacy.com/gh/xcarol/moviescout/dashboard)
 
-Movie Scout is a movie and series tracker based on TMDB. Discover where your favorite titles are streaming and keep your personal watchlist up to date.  
+Movie Scout is a movie and series tracker based on TMDB. It focuses on _What I want to watch now_ instead of _Look what I have for you to watch_ apps.  
 
 **Key Features:**  
 
