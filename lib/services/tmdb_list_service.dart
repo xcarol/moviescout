@@ -7,13 +7,13 @@ import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 
 class TmdbListService extends TmdbBaseService with ChangeNotifier {
-  String _prefsListName = '';
+  String _listName = '';
   // TODO: Save the last update in shared preferences
   String _lastUpdated =
       DateTime.now().subtract(const Duration(hours: 2)).toIso8601String();
   List<TmdbTitle> _titles = List.empty(growable: true);
   List<TmdbTitle> get titles => _titles;
-  String get listName => _prefsListName;
+  String get listName => _listName;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -22,7 +22,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       _titles = titles;
       _lastUpdated = DateTime.now().toIso8601String();
     }
-    _prefsListName = listName;
+    _listName = listName;
   }
 
   bool get userRatingAvailable {
@@ -81,7 +81,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       }
     } catch (error) {
       SnackMessage.showSnackBar(
-        'Error retrieving $_prefsListName: $error',
+        'Error retrieving $_listName: $error',
       );
     }
   }
