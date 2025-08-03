@@ -30,7 +30,7 @@ class TitleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TmdbTitle tmdbTitle = _tmdbListService.titles.firstWhere(
-      (title) => title.id == _title.id,
+      (title) => title.tmdbId == _title.tmdbId,
       orElse: () => _title,
     );
 
@@ -45,7 +45,7 @@ class TitleCard extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => TitleDetails(
-                        title: TmdbTitle(title: tmdbTitle.map),
+                        title: TmdbTitle.fromMap(title: tmdbTitle.map),
                         tmdbListService: tmdbListService,
                       )),
             );
@@ -87,12 +87,12 @@ class TitleCard extends StatelessWidget {
 
     return Selector<TmdbRateslistService, TmdbTitle?>(
       selector: (_, rateslistService) => rateslistService.titles.firstWhere(
-        (t) => t.id == tmdbTitle.id,
-        orElse: () => TmdbTitle(title: {}),
+        (t) => t.tmdbId == tmdbTitle.tmdbId,
+        orElse: () => TmdbTitle.fromMap(title: {}),
       ),
       shouldRebuild: (prev, next) => prev?.rating != next?.rating,
       builder: (context, ratedTitle, _) {
-        if (ratedTitle != null && ratedTitle.id > 0) {
+        if (ratedTitle != null && ratedTitle.tmdbId > 0) {
           children.addAll([
             const SizedBox(width: 20),
             Icon(Icons.star, color: customColors.ratedTitle),
