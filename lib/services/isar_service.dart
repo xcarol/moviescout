@@ -8,7 +8,7 @@ class IsarService {
 
   /// Inicialitza la base de dades Isar amb els esquemes necessaris
   static Future<void> init() async {
-    final dir = await getApplicationDocumentsDirectory();
+    final dir = await getApplicationCacheDirectory();
     _isar = await Isar.open(
       [TmdbTitleSchema],
       directory: dir.path,
