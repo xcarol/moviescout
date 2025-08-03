@@ -10,8 +10,10 @@ enum ApiVersion { v3, v4 }
 const String _baseUrlv4 = 'https://api.themoviedb.org/4/';
 const String _baseUrlv3 = 'https://api.themoviedb.org/3/';
 
+const int _maxRequestsCount = 40;
 class TmdbBaseService {
   String accessToken = '';
+  static int _requestCount = 0;
 
   dynamic body(response) {
     return jsonDecode(response.body);
@@ -34,8 +36,13 @@ class TmdbBaseService {
     final uri = Uri.parse('$baseUrl$query');
 
     const int maxRetries = 3;
-    const Duration retryDelay = Duration(seconds: 2);
+    const Duration retryDelay = Duration(milliseconds: 200);
 
+    while (_requestCount >= _maxRequestsCount) {
+      await Future.delayed(retryDelay);
+    }
+
+    _requestCount++;
     for (int attempt = 0; attempt < maxRetries; attempt++) {
       try {
         // Running in a browser http.get doesn't return a resonse for a non valid (2xx) server response.
@@ -60,6 +67,7 @@ class TmdbBaseService {
           );
         }
 
+        _requestCount--;
         return response;
       } on HandshakeException catch (e) {
         debugPrint('TmdbBaseService get HandshakeException: $e');
@@ -76,9 +84,11 @@ class TmdbBaseService {
         } else {
           debugPrint('TmdbBaseService get Error: ${error.toString()}');
         }
+        _requestCount--;
         rethrow;
       }
     }
+    _requestCount--;
 
     throw HttpException('TmdbBaseService get Error: Too many retries');
   }
