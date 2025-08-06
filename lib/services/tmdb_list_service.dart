@@ -31,7 +31,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   Future<void> clearList() async {
     _titles = List.empty(growable: true);
-    await _updateLocalList();
+    await _clearLocalList();
     notifyListeners();
   }
 
@@ -39,10 +39,17 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return titles.contains(title);
   }
 
+  Future<void> _clearLocalList() async {
+    final isar = IsarService.instance;
+    await isar.writeTxn(() async {
+      await isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAll();
+    });
+    _lastUpdated = DateTime.now().toIso8601String();
+  }
+
   Future<void> retrieveList(
     String accountId, {
     required bool notify,
-    required bool updateTitles,
     required Future<List> Function() retrieveMovies,
     required Future<List> Function() retrieveTvshows,
   }) async {
@@ -53,32 +60,31 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       return;
     }
 
-    if (notify) {
-      _isLoading = true;
-      notifyListeners();
-    }
+    _isLoading = true;
+    notifyListeners();
 
     try {
       _titles = await _retrieveLocalList();
       if (_titles.isNotEmpty) {
-        _titles = await _syncWithServer(
+        await _syncWithServer(
             accountId, _titles, retrieveMovies, retrieveTvshows);
       } else {
-        _titles = await _retrieveServerList(
+        List<TmdbTitle> titles = await _retrieveServerList(
             accountId, retrieveMovies, retrieveTvshows);
-        updateTitles = true;
+
+        for (var title in titles) {
+          TmdbTitle updatedTitle =
+              await TmdbTitleService().updateTitleDetails(title);
+          await _updateLocalTitle(updatedTitle);
+          _titles.add(updatedTitle);
+          notifyListeners();
+        }
+
+        _lastUpdated = DateTime.now().toIso8601String();
       }
 
-      if (updateTitles) {
-        await TmdbTitleService().updateTitles(_titles);
-      }
-
-      await _updateLocalList();
-
-      if (notify) {
-        _isLoading = false;
-        notifyListeners();
-      }
+      _isLoading = false;
+      notifyListeners();
     } catch (error) {
       SnackMessage.showSnackBar(
         'Error retrieving $_listName: $error',
@@ -120,7 +126,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   Future<List<TmdbTitle>> _retrieveLocalList() async {
     try {
       final isar = IsarService.instance;
-      final titles = await isar.tmdbTitles.where().findAll();
+      final titles =
+          await isar.tmdbTitles.filter().listNameEqualTo(_listName).findAll();
       return titles.toList();
     } catch (e) {
       SnackMessage.showSnackBar(
@@ -130,7 +137,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
   }
 
-  Future<List<TmdbTitle>> _syncWithServer(
+  Future<void> _syncWithServer(
     String accountId,
     List<TmdbTitle> localList,
     Future<List> Function() retrieveMovies,
@@ -144,29 +151,45 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
             !localList.any((local) => local.tmdbId == remote.tmdbId))
         .toList();
 
+    for (TmdbTitle title in titlesToAdd) {
+      title.listName = _listName;
+      await _updateLocalTitle(
+        await TmdbTitleService().updateTitleDetails(title),
+      );
+      _titles.add(title);
+      notifyListeners();
+    }
+
     List<TmdbTitle> titlesToRemove = localList
         .where((local) =>
             !serverList.any((remote) => remote.tmdbId == local.tmdbId))
         .toList();
 
-    List<TmdbTitle> listUpdated = _titles;
-    listUpdated.addAll(titlesToAdd);
     for (TmdbTitle title in titlesToRemove) {
-      listUpdated.removeWhere((element) => element.tmdbId == title.tmdbId);
+      await _deleteLocalTitle(title);
+      _titles.removeWhere((element) => element.tmdbId == title.tmdbId);
+      notifyListeners();
     }
-
-    return listUpdated;
   }
 
-  Future<void> _updateLocalList() async {
+  Future<void> _updateLocalTitle(TmdbTitle title) async {
+    final isar = IsarService.instance;
+
+    if (title.listName.isEmpty) {
+      return;
+    }
+
+    await isar.writeTxn(() async {
+      await isar.tmdbTitles.put(title);
+    });
+  }
+
+  Future<void> _deleteLocalTitle(TmdbTitle title) async {
     final isar = IsarService.instance;
 
     await isar.writeTxn(() async {
-      await isar.tmdbTitles.clear();
-      await isar.tmdbTitles.putAll(_titles);
+      await isar.tmdbTitles.delete(title.id);
     });
-
-    _lastUpdated = DateTime.now().toIso8601String();
   }
 
   Future<void> updateTitle(
@@ -181,14 +204,14 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   ) async {
     final result = await updateTitleToServer(accountId, sessionId);
     if (result.statusCode == 200 || result.statusCode == 201) {
-      _titles.removeWhere((element) => element.tmdbId == title.tmdbId);
-
       if (add) {
-        title.lastUpdated = DateTime.now().toString();
+        await _updateLocalTitle(title);
         _titles.add(title);
+      } else {
+        await _deleteLocalTitle(title);
+        _titles.removeWhere((element) => element.tmdbId == title.tmdbId);
       }
-
-      await _updateLocalList();
+      _lastUpdated = DateTime.now().toIso8601String();
       notifyListeners();
     } else {
       throw Exception(
