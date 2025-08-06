@@ -4,10 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
+import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
+import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
@@ -475,11 +477,20 @@ class _ImportIMDBState extends State<ImportIMDB> {
             continue;
           }
 
-          await Provider.of<TmdbWatchlistService>(context, listen: false)
-              .updateWatchlistTitle(
+          TmdbTitle updatedTitle =
+              await TmdbTitleService().updateTitleDetails(titlesFromId.first);
+
+          if (!context.mounted) {
+            return;
+          }
+
+          final watchlistService = Provider.of<TmdbWatchlistService>(context, listen: false);
+
+          updatedTitle.listName = watchlistService.listName;
+          await watchlistService.updateWatchlistTitle(
             tmdbUserService.accountId,
             tmdbUserService.sessionId,
-            titlesFromId.first,
+            updatedTitle,
             true,
           );
 
@@ -557,11 +568,20 @@ class _ImportIMDBState extends State<ImportIMDB> {
             continue;
           }
 
-          await Provider.of<TmdbRateslistService>(context, listen: false)
-              .updateTitleRate(
+          TmdbTitle updatedTitle =
+              await TmdbTitleService().updateTitleDetails(titlesFromId.first);
+
+          if (!context.mounted) {
+            return;
+          }
+
+          final ratelistService = Provider.of<TmdbRateslistService>(context, listen: false);
+
+          updatedTitle.listName = ratelistService.listName;
+          await ratelistService.updateTitleRate(
             tmdbUserService.accountId,
             tmdbUserService.sessionId,
-            titlesFromId.first,
+            updatedTitle,
             imdbIds[index][rateIndex],
           );
 
