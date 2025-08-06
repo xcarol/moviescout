@@ -62,7 +62,7 @@ const TmdbTitleSchema = CollectionSchema(
     r'tmdbId': IndexSchema(
       id: 7174867214654401712,
       name: r'tmdbId',
-      unique: true,
+      unique: false,
       replace: false,
       properties: [
         IndexPropertySchema(
@@ -176,61 +176,6 @@ List<IsarLinkBase<dynamic>> _tmdbTitleGetLinks(TmdbTitle object) {
 
 void _tmdbTitleAttach(IsarCollection<dynamic> col, Id id, TmdbTitle object) {
   object.id = id;
-}
-
-extension TmdbTitleByIndex on IsarCollection<TmdbTitle> {
-  Future<TmdbTitle?> getByTmdbId(int tmdbId) {
-    return getByIndex(r'tmdbId', [tmdbId]);
-  }
-
-  TmdbTitle? getByTmdbIdSync(int tmdbId) {
-    return getByIndexSync(r'tmdbId', [tmdbId]);
-  }
-
-  Future<bool> deleteByTmdbId(int tmdbId) {
-    return deleteByIndex(r'tmdbId', [tmdbId]);
-  }
-
-  bool deleteByTmdbIdSync(int tmdbId) {
-    return deleteByIndexSync(r'tmdbId', [tmdbId]);
-  }
-
-  Future<List<TmdbTitle?>> getAllByTmdbId(List<int> tmdbIdValues) {
-    final values = tmdbIdValues.map((e) => [e]).toList();
-    return getAllByIndex(r'tmdbId', values);
-  }
-
-  List<TmdbTitle?> getAllByTmdbIdSync(List<int> tmdbIdValues) {
-    final values = tmdbIdValues.map((e) => [e]).toList();
-    return getAllByIndexSync(r'tmdbId', values);
-  }
-
-  Future<int> deleteAllByTmdbId(List<int> tmdbIdValues) {
-    final values = tmdbIdValues.map((e) => [e]).toList();
-    return deleteAllByIndex(r'tmdbId', values);
-  }
-
-  int deleteAllByTmdbIdSync(List<int> tmdbIdValues) {
-    final values = tmdbIdValues.map((e) => [e]).toList();
-    return deleteAllByIndexSync(r'tmdbId', values);
-  }
-
-  Future<Id> putByTmdbId(TmdbTitle object) {
-    return putByIndex(r'tmdbId', object);
-  }
-
-  Id putByTmdbIdSync(TmdbTitle object, {bool saveLinks = true}) {
-    return putByIndexSync(r'tmdbId', object, saveLinks: saveLinks);
-  }
-
-  Future<List<Id>> putAllByTmdbId(List<TmdbTitle> objects) {
-    return putAllByIndex(r'tmdbId', objects);
-  }
-
-  List<Id> putAllByTmdbIdSync(List<TmdbTitle> objects,
-      {bool saveLinks = true}) {
-    return putAllByIndexSync(r'tmdbId', objects, saveLinks: saveLinks);
-  }
 }
 
 extension TmdbTitleQueryWhereSort

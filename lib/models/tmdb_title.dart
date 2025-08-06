@@ -74,12 +74,13 @@ const statusPlanned = 'Planned';
 
 @collection
 class TmdbTitle {
+  @Index(unique: true)
   Id id = Isar.autoIncrement;
 
   @ignore
   Map<String, dynamic>? _tmdbMapCache;
 
-  @Index(unique: true)
+  @Index()
   late int tmdbId;
 
   @Index()
