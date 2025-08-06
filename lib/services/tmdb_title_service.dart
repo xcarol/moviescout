@@ -116,9 +116,9 @@ class TmdbTitleService extends TmdbBaseService {
     titleMap['providers'] =
         titleMap['watch/providers']?['results']?[getCountryCode()] ?? {};
     titleMap['recommendations'] = titleMap['recommendations']?['results'] ?? {};
+    titleMap['tmdbJson'] = jsonEncode(titleMap);
     titleMap['last_updated'] = DateTime.now().toIso8601String();
 
-    title.tmdbJson = jsonEncode(titleMap);
-    return title;
+    return TmdbTitle.fromMap(title: titleMap);
   }
 }
