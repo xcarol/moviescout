@@ -20,7 +20,8 @@ run_firebase_login=false
 run_flutterfire_config=false
 run_gen_l10n=false
 run_launcher_icons=false
-run_build=false
+run_build_debug=false
+run_build_release=false
 run_isar=false
 run_wipe=false
 
@@ -44,7 +45,10 @@ for arg in "$@"; do
       run_launcher_icons=true
       ;;
     -b|--build)
-      run_build=true
+      run_build_debug=true
+      ;;
+    -r|--release)
+      run_build_release=true
       ;;
     -i|--isar)
       run_isar=true
@@ -84,7 +88,7 @@ if $run_launcher_icons; then
   dart run flutter_launcher_icons
 fi
 
-if $run_build; then
+if $run_build_debug; then
   echo "▶️ llegint versió de pubspec.yaml"
   version=$(grep '^version:' pubspec.yaml | awk '{print $2}')
 
@@ -101,6 +105,25 @@ if $run_build; then
 
   echo "▶️ flutter build appbundle --release"
   flutter build appbundle --release
+fi
+
+if $run_build_release; then
+  echo "▶️ llegint versió de pubspec.yaml"
+  version=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+
+  if [ -z "$version" ]; then
+    echo "⚠️ No s'ha pogut obtenir la versió del pubspec.yaml"
+    exit 1
+  fi
+
+  echo "▶️ actualitzant VERSION=$version a .env"
+  if [ -f .env ]; then
+    sed -i.bak '/^VERSION=/d' .env
+  fi
+  echo "VERSION=$version" >> .env
+
+  echo "▶️ flutter build apk --release"
+  flutter build apk --release
 fi
 
 if $run_isar; then
