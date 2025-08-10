@@ -172,3 +172,23 @@ it is worth comparing it with the same Overmaps file to imitate it as much as po
 - Build the bundle `flutter build appbundle --release`.
 - Go to: [Create an internal test version](https://play.google.com/console/u/0/developers/5602401961225582177/app/4972075179053080011/app-dashboard) to upload it.
 
+## Troubleshooting
+
+### adb cannot start a debug session with error: Access Denied  
+
+With the mobile connected and developer option _Enable USB install_ ON
+- Run `lsusb` to see the Android device. 
+- It will output something like `Bus 001 Device 005: ID 18d1:4ee2 Google Inc.` we need the ID, usually the `18d1`.
+- Create or open the file _/etc/udev/rules.d/51-android.rules_ and add
+```
+SUBSYSTEM=="usb", ATTR{idVendor}=="18d1", MODE="0666", GROUP="plugdev"
+```
+Check the `ATTR{idVendor}` corresponds with the ouput of `lsusb`.
+- Give read permissions if the file didn't erxist
+`sudo chmod a+r /etc/udev/rules.d/51-android.rules`
+- Restart _udev_
+```
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+Now the device should appear in the output of `adb devices` and debugger should be able to connect.  
