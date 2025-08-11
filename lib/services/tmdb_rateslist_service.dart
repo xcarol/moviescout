@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
@@ -18,15 +19,10 @@ class TmdbRateslistService extends TmdbListService {
   TmdbRateslistService(super.listName);
 
   int getRating(int titleId) {
-    if (titles.isEmpty) {
-      // retrieveRateslist may not have been called yet
-      retrieveListFromLocal(notify: false);
-    }
-    TmdbTitle? title = titles.firstWhere(
-      (element) => element.tmdbId == titleId,
-      orElse: () => TmdbTitle.fromMap(title: {}),
-    );
-    return title.rating.toInt();
+    final isar = IsarService.instance;
+    final title = isar.tmdbTitles.getSync(titleId);
+    
+    return title?.rating.toInt() ?? 0;
   }
 
   Future<void> retrieveRateslist(
@@ -35,8 +31,7 @@ class TmdbRateslistService extends TmdbListService {
     Locale locale, {
     bool notify = false,
   }) async {
-    retrieveList(accountId, notify: notify,
-        retrieveMovies: () async {
+    retrieveList(accountId, notify: notify, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
             _tmdbRateslistMovies
