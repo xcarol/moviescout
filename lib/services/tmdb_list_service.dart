@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/isar_service.dart';
+import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 
 class TmdbListService extends TmdbBaseService with ChangeNotifier {
   String _listName = '';
-  // TODO: Save the last update in shared preferences
-  String _lastUpdated =
-      DateTime.now().subtract(const Duration(hours: 2)).toIso8601String();
+  String _lastUpdate = '';
   List<TmdbTitle> _titles = List.empty(growable: true);
   List<TmdbTitle> get titles => _titles;
   String get listName => _listName;
@@ -18,11 +17,20 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   bool get isLoading => _isLoading;
 
   TmdbListService(String listName, {List<TmdbTitle>? titles}) {
+    _listName = listName;
+    _lastUpdate =
+        PreferencesService().prefs.getString('${_listName}_last_update') ??
+            DateTime.now().subtract(const Duration(hours: 2)).toIso8601String();
+
     if (titles != null) {
       _titles = titles;
-      _lastUpdated = DateTime.now().toIso8601String();
+      _lastUpdate = DateTime.now().toIso8601String();
     }
-    _listName = listName;
+  }
+
+  void _setLastUpdate() {
+    _lastUpdate = DateTime.now().toIso8601String();
+    PreferencesService().prefs.setString('${_listName}_last_update', _lastUpdate);
   }
 
   bool get userRatingAvailable {
@@ -44,7 +52,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     await isar.writeTxn(() async {
       await isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAll();
     });
-    _lastUpdated = DateTime.now().toIso8601String();
+    PreferencesService().prefs.remove('${_listName}_last_update');
   }
 
   Future<void> retrieveList(
@@ -54,7 +62,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     required Future<List> Function() retrieveTvshows,
   }) async {
     bool isUpToDate =
-        DateTime.now().difference(DateTime.parse(_lastUpdated)).inHours < 10;
+        DateTime.now().difference(DateTime.parse(_lastUpdate)).inHours < 10;
 
     if (accountId.isEmpty || (_titles.isNotEmpty && isUpToDate)) {
       return;
@@ -80,7 +88,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
           notifyListeners();
         }
 
-        _lastUpdated = DateTime.now().toIso8601String();
+        _setLastUpdate();
       }
 
       _isLoading = false;
@@ -211,7 +219,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         await _deleteLocalTitle(title);
         _titles.removeWhere((element) => element.tmdbId == title.tmdbId);
       }
-      _lastUpdated = DateTime.now().toIso8601String();
+      _setLastUpdate();
       notifyListeners();
     } else {
       throw Exception(
