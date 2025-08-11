@@ -60,18 +60,20 @@ class _RatesListState extends State<RatesList> {
   }
 
   Widget emptyBody() {
+    List<Widget> children = [];
+
+    if (Provider.of<TmdbUserService>(context, listen: false).isUserLoggedIn &&
+        Provider.of<TmdbRateslistService>(context, listen: false).isLoading) {
+      children.add(const CircularProgressIndicator());
+    } else {
+      children.add(Text(AppLocalizations.of(context)!.emptyRates,
+          textAlign: TextAlign.center));
+    }
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Column(
-            children: [
-              Text(
-                AppLocalizations.of(context)!.emptyRates,
-              ),
-            ],
-          ),
-        ],
+        children: children,
       ),
     );
   }

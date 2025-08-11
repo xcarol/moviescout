@@ -64,12 +64,16 @@ class _WatchListState extends State<WatchList> {
     List<Widget> children = [];
 
     if (Provider.of<TmdbUserService>(context, listen: false).isUserLoggedIn) {
-      children.add(
-        Text(
-          AppLocalizations.of(context)!.messageEmptyList,
-          textAlign: TextAlign.center,
-        ),
-      );
+      if (Provider.of<TmdbWatchlistService>(context, listen: false).isLoading) {
+        children.add(const CircularProgressIndicator());
+      } else {
+        children.add(
+          Text(
+            AppLocalizations.of(context)!.messageEmptyList,
+            textAlign: TextAlign.center,
+          ),
+        );
+      }
     } else {
       children.add(
         Text(
