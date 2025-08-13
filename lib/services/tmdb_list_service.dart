@@ -30,7 +30,9 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   void _setLastUpdate() {
     _lastUpdate = DateTime.now().toIso8601String();
-    PreferencesService().prefs.setString('${_listName}_last_update', _lastUpdate);
+    PreferencesService()
+        .prefs
+        .setString('${_listName}_last_update', _lastUpdate);
   }
 
   bool get userRatingAvailable {
@@ -44,7 +46,16 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   bool contains(TmdbTitle title) {
-    return titles.contains(title);
+    final isar = IsarService.instance;
+    final titles = isar.tmdbTitles
+        .filter()
+        .listNameEqualTo(_listName)
+        .tmdbIdEqualTo(title.tmdbId)
+        .findAllSync();
+    if (titles.isEmpty) {
+      return false;
+    }
+    return true;
   }
 
   Future<void> _clearLocalList() async {
