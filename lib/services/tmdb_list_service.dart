@@ -15,6 +15,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   String get listName => _listName;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+  final _isar = IsarService.instance;
 
   TmdbListService(String listName, {List<TmdbTitle>? titles}) {
     _listName = listName;
@@ -46,8 +47,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   bool contains(TmdbTitle title) {
-    final isar = IsarService.instance;
-    final titles = isar.tmdbTitles
+    final titles = _isar.tmdbTitles
         .filter()
         .listNameEqualTo(_listName)
         .tmdbIdEqualTo(title.tmdbId)
@@ -59,9 +59,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   Future<void> _clearLocalList() async {
-    final isar = IsarService.instance;
-    await isar.writeTxn(() async {
-      await isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAll();
+    await _isar.writeTxn(() async {
+      await _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAll();
     });
     PreferencesService().prefs.remove('${_listName}_last_update');
   }
@@ -144,9 +143,9 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   Future<List<TmdbTitle>> _retrieveLocalList() async {
     try {
-      final isar = IsarService.instance;
       final titles =
-          await isar.tmdbTitles.filter().listNameEqualTo(_listName).findAll();
+          await _isar.tmdbTitles.filter().listNameEqualTo(_listName).findAll();
+
       return titles.toList();
     } catch (e) {
       SnackMessage.showSnackBar(
@@ -192,22 +191,18 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   Future<void> _updateLocalTitle(TmdbTitle title) async {
-    final isar = IsarService.instance;
-
     if (title.listName.isEmpty) {
       return;
     }
 
-    await isar.writeTxn(() async {
-      await isar.tmdbTitles.put(title);
+    await _isar.writeTxn(() async {
+      await _isar.tmdbTitles.put(title);
     });
   }
 
   Future<void> _deleteLocalTitle(TmdbTitle title) async {
-    final isar = IsarService.instance;
-
-    await isar.writeTxn(() async {
-      await isar.tmdbTitles.delete(title.id);
+    await _isar.writeTxn(() async {
+      await _isar.tmdbTitles.delete(title.id);
     });
   }
 
