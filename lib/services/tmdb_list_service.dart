@@ -11,7 +11,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   String _listName = '';
   String _lastUpdate = '';
   List<TmdbTitle> _titles = List.empty(growable: true);
-  List<TmdbTitle> get titles => _titles;
+  // List<TmdbTitle> get titles => _titles;
   String get listName => _listName;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -44,6 +44,16 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     _titles = List.empty(growable: true);
     await _clearLocalList();
     notifyListeners();
+  }
+
+  bool get isEmpty {
+    final titleCount =
+        _isar.tmdbTitles.filter().listNameEqualTo(_listName).countSync();
+    return titleCount == 0;
+  }
+
+  int get itemCount {
+    return _isar.tmdbTitles.filter().listNameEqualTo(_listName).countSync();
   }
 
   bool contains(TmdbTitle title) {
@@ -252,5 +262,21 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
     notifyListeners();
     return titles;
+  }
+
+  List<String> getListGenres() {
+    final titles =
+        _isar.tmdbTitles.filter().listNameEqualTo(_listName).findAllSync();
+    final List<String> genres = titles
+        .expand((t) => t.genres)
+        .map((genre) => genre.name)
+        .toSet()
+        .toList();
+    genres.sort();
+    return genres;
+  }
+
+  Stream<void> watchChanges() {
+    return _isar.tmdbTitles.filter().listNameEqualTo(_listName).watchLazy();
   }
 }
