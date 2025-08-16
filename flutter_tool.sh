@@ -139,7 +139,7 @@ fi
 
 if $run_wipe_cache; then
   echo "▶️ Netejant la caché i les dades de l'usuari"
-  rm -rf ~/local/share/com.xicra.moviescout
+  rm -rf ~/.local/share/com.xicra.moviescout
   rm -rf ~/.cache/com.xicra.moviescout
   echo "✅ Caché i dades netejades"
 fi
