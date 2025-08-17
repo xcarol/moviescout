@@ -18,14 +18,10 @@ class TmdbRateslistService extends TmdbListService {
   TmdbRateslistService(super.listName);
 
   int getRating(int titleId) {
-    if (titles.isEmpty) {
-      // retrieveRateslist may not have been called yet
-      retrieveListFromLocal(notify: false);
+    TmdbTitle? title = getTitleByTmdbId(titleId);
+    if (title == null) {
+      return 0;
     }
-    TmdbTitle? title = titles.firstWhere(
-      (element) => element.tmdbId == titleId,
-      orElse: () => TmdbTitle.fromMap(title: {}),
-    );
     return title.rating.toInt();
   }
 

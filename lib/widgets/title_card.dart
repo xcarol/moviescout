@@ -29,10 +29,8 @@ class TitleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TmdbTitle tmdbTitle = _tmdbListService.titles.firstWhere(
-      (title) => title.tmdbId == _title.tmdbId,
-      orElse: () => _title,
-    );
+    TmdbTitle tmdbTitle =
+        _tmdbListService.getTitleByTmdbId(_title.tmdbId) ?? _title;
 
     return SizedBox(
       height: CARD_HEIGHT,
@@ -86,10 +84,8 @@ class TitleCard extends StatelessWidget {
     ];
 
     return Selector<TmdbRateslistService, TmdbTitle?>(
-      selector: (_, rateslistService) => rateslistService.titles.firstWhere(
-        (t) => t.tmdbId == tmdbTitle.tmdbId,
-        orElse: () => TmdbTitle.fromMap(title: {}),
-      ),
+      selector: (_, rateslistService) =>
+          rateslistService.getTitleByTmdbId(tmdbTitle.tmdbId),
       shouldRebuild: (prev, next) => prev?.rating != next?.rating,
       builder: (context, ratedTitle, _) {
         if (ratedTitle != null && ratedTitle.tmdbId > 0) {
