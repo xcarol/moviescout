@@ -43,7 +43,7 @@ class TitleCard extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => TitleDetails(
-                        title: TmdbTitle.fromMap(title: tmdbTitle.map),
+                        title: tmdbTitle,
                         tmdbListService: tmdbListService,
                       )),
             );

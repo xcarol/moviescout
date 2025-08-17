@@ -126,7 +126,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
         Localizations.localeOf(context),
       );
 
-      while (watchlistService.titles.isNotEmpty) {
+      while (watchlistService.isNotEmpty) {
         if (!context.mounted || _operationInProgress == false) {
           break;
         }
@@ -134,20 +134,20 @@ class _ImportIMDBState extends State<ImportIMDB> {
         setState(() {
           _resetTitlesMessage =
               AppLocalizations.of(context)!.resetWatchlistCount;
-          _resetTitlesCount = watchlistService.titles.length;
+          _resetTitlesCount = watchlistService.itemCount;
         });
 
-        try {
-          await watchlistService.updateWatchlistTitle(
-            userService.accountId,
-            userService.sessionId,
-            watchlistService.titles.first,
-            false,
-          );
-        } catch (error) {
-          watchlistService.titles.removeAt(0);
-          break;
-        }
+        // try {
+        //   await watchlistService.updateWatchlistTitle(
+        //     userService.accountId,
+        //     userService.sessionId,
+        //     watchlistService.titles.first,
+        //     false,
+        //   );
+        // } catch (error) {
+        //   watchlistService.titles.removeAt(0);
+        //   break;
+        // }
       }
 
       setState(() {
@@ -177,7 +177,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
         Localizations.localeOf(context),
       );
 
-      while (rateslistService.titles.isNotEmpty) {
+      while (rateslistService.isNotEmpty) {
         if (!context.mounted || _operationInProgress == false) {
           break;
         }
@@ -185,20 +185,20 @@ class _ImportIMDBState extends State<ImportIMDB> {
         setState(() {
           _resetTitlesMessage =
               AppLocalizations.of(context)!.resetRateslistCount;
-          _resetTitlesCount = rateslistService.titles.length;
+          _resetTitlesCount = rateslistService.itemCount;
         });
 
-        try {
-          await rateslistService.updateTitleRate(
-            userService.accountId,
-            userService.sessionId,
-            rateslistService.titles.first,
-            0,
-          );
-        } catch (error) {
-          rateslistService.titles.removeAt(0);
-          break;
-        }
+        // try {
+        //   await rateslistService.updateTitleRate(
+        //     userService.accountId,
+        //     userService.sessionId,
+        //     rateslistService.titles.first,
+        //     0,
+        //   );
+        // } catch (error) {
+        //   rateslistService.titles.removeAt(0);
+        //   break;
+        // }
       }
 
       setState(() {

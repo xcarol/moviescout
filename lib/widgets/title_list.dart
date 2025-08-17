@@ -109,11 +109,9 @@ class _TitleListState extends State<TitleList> {
   }
 
   void _retrieveGenresFromTitles() {
-    _genresList = widget.listService.titles
-        .expand((title) => title.genres)
-        .map((genre) => genre.name)
-        .toSet()
-        .toList();
+    setState(() {
+      _genresList = widget.listService.getListGenres();
+    });
   }
 
   void _retrieveUserProviders() {
@@ -193,40 +191,60 @@ class _TitleListState extends State<TitleList> {
         .toList();
   }
 
-  Widget _titleList(List<TmdbTitle> titles) {
-    return ChangeNotifierProvider.value(
+  Widget _titleList() {
+    return ChangeNotifierProvider<TmdbListService>.value(
       value: widget.listService,
-      child: Flexible(
-        child: ListView.builder(
-          key: const PageStorageKey('TitleListView'),
-          shrinkWrap: true,
-          itemCount: titles.length,
-          itemBuilder: (context, index) {
-            final TmdbTitle title = titles[index];
-            return Selector<TmdbListService, TmdbTitle?>(
-              selector: (_, service) => service.titles.firstWhere(
-                (title) => title.tmdbId == title.tmdbId,
-                orElse: () => title,
-              ),
-              builder: (_, tmdbTitle, __) {
-                final clampedScale = MediaQuery.of(context)
-                    .textScaler
-                    .scale(1.0)
-                    .clamp(1.0, 1.3);
+      child: Builder(
+        builder: (context) {
+          return Flexible(
+            child: ListView.builder(
+              key: const PageStorageKey('TitleListView'),
+              shrinkWrap: true,
+              itemCount:
+                  context.select<TmdbListService, int>((s) => s.itemCount) + 1,
+              itemBuilder: (context, index) {
+                final service =
+                    Provider.of<TmdbListService>(context, listen: false);
+                final int itemCount = service.loadedItemCount;
 
-                return MediaQuery(
-                  data: MediaQuery.of(context).copyWith(
-                    textScaler: TextScaler.linear(clampedScale),
-                  ),
-                  child: TitleCard(
-                    title: title,
-                    tmdbListService: widget.listService,
-                  ),
+                if (index >= itemCount) {
+                  service.loadNextPage();
+                  return service.isLoading
+                      ? const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      : const SizedBox.shrink();
+                }
+
+                final TmdbTitle? title = service.getItem(index);
+                if (title == null) {
+                  return const ListTile(title: Text('…'));
+                }
+
+                return Selector<TmdbListService, TmdbTitle?>(
+                  selector: (_, s) => s.getItem(index),
+                  builder: (_, tmdbTitle, __) {
+                    final clampedScale = MediaQuery.of(context)
+                        .textScaler
+                        .scale(1.0)
+                        .clamp(1.0, 1.3);
+
+                    return MediaQuery(
+                      data: MediaQuery.of(context).copyWith(
+                        textScaler: TextScaler.linear(clampedScale),
+                      ),
+                      child: TitleCard(
+                        title: title,
+                        tmdbListService: widget.listService,
+                      ),
+                    );
+                  },
                 );
               },
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -367,36 +385,36 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
-  List<TmdbTitle> _filterTitles() {
-    List<TmdbTitle> titles = widget.listService.titles;
+  // List<TmdbTitle> _filterTitles() {
+  //   List<TmdbTitle> titles = widget.listService.titles;
 
-    if (_selectedType != AppLocalizations.of(context)!.allTypes) {
-      titles = titles
-          .where((title) =>
-              (title.mediaType == 'movie' &&
-                  _selectedType == AppLocalizations.of(context)!.movies) ||
-              (title.mediaType == 'tv' &&
-                  _selectedType == AppLocalizations.of(context)!.tvshows))
-          .toList();
-    }
+  //   if (_selectedType != AppLocalizations.of(context)!.allTypes) {
+  //     titles = titles
+  //         .where((title) =>
+  //             (title.mediaType == 'movie' &&
+  //                 _selectedType == AppLocalizations.of(context)!.movies) ||
+  //             (title.mediaType == 'tv' &&
+  //                 _selectedType == AppLocalizations.of(context)!.tvshows))
+  //         .toList();
+  //   }
 
-    if (_textFilter.isNotEmpty) {
-      titles = titles
-          .where((title) =>
-              title.name.toLowerCase().contains(_textFilter.toLowerCase()))
-          .toList();
-    }
+  //   if (_textFilter.isNotEmpty) {
+  //     titles = titles
+  //         .where((title) =>
+  //             title.name.toLowerCase().contains(_textFilter.toLowerCase()))
+  //         .toList();
+  //   }
 
-    titles = _filterGenres(titles);
-    titles = _filterProviders(titles);
-    titles = _sortTitles(titles);
+  //   titles = _filterGenres(titles);
+  //   titles = _filterProviders(titles);
+  //   titles = _sortTitles(titles);
 
-    return titles;
-  }
+  //   return titles;
+  // }
 
   @override
   Widget build(BuildContext context) {
-    List<TmdbTitle> filteredTitles = _filterTitles();
+    final int itemCount = widget.listService.itemCount;
     return Expanded(
       child: Container(
         color: Theme.of(context).colorScheme.primary,
@@ -409,13 +427,13 @@ class _TitleListState extends State<TitleList> {
                 color: Theme.of(context).colorScheme.primaryContainer,
               ),
             ),
-            _infoLine(filteredTitles.length),
+            _infoLine(itemCount),
             Divider(
               height: 1,
               color: Theme.of(context).colorScheme.primaryContainer,
             ),
             if (_showFilters) _controlPanel(),
-            _titleList(filteredTitles),
+            _titleList(), // CANVI
           ],
         ),
       ),
