@@ -50,7 +50,7 @@ class _RatesListState extends State<RatesList> {
   Widget body() {
     return Consumer<TmdbRateslistService>(
       builder: (context, rateslistService, child) {
-        if (rateslistService.titles.isEmpty) {
+        if (rateslistService.isEmpty) {
           return emptyBody();
         } else {
           return rateslistBody();
