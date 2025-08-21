@@ -11,12 +11,11 @@ import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:provider/provider.dart';
 
-// ignore: constant_identifier_names
-const double CARD_HEIGHT = 160.0;
-
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
   final TmdbListService _tmdbListService;
+
+  static double cardHeight = 160.0;
 
   const TitleCard({
     super.key,
@@ -33,7 +32,7 @@ class TitleCard extends StatelessWidget {
         _tmdbListService.getTitleByTmdbId(_title.tmdbId) ?? _title;
 
     return SizedBox(
-      height: CARD_HEIGHT,
+      height: cardHeight,
       child: Card(
         margin: const EdgeInsets.only(bottom: 1),
         shape: RoundedRectangleBorder(),
