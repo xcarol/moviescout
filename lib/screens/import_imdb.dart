@@ -126,7 +126,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
         Localizations.localeOf(context),
       );
 
-      while (watchlistService.titles.isNotEmpty) {
+      while (watchlistService.isNotEmpty) {
         if (!context.mounted || _operationInProgress == false) {
           break;
         }
@@ -134,18 +134,24 @@ class _ImportIMDBState extends State<ImportIMDB> {
         setState(() {
           _resetTitlesMessage =
               AppLocalizations.of(context)!.resetWatchlistCount;
-          _resetTitlesCount = watchlistService.titles.length;
+          _resetTitlesCount = watchlistService.listTitleCount;
         });
 
         try {
+          TmdbTitle? title = watchlistService.getItem(0);
+          
+          if (title == null) {
+            throw Exception('Failed to retrieve watchlist title');
+          }
+
           await watchlistService.updateWatchlistTitle(
             userService.accountId,
             userService.sessionId,
-            watchlistService.titles.first,
+            title,
             false,
           );
         } catch (error) {
-          watchlistService.titles.removeAt(0);
+          SnackMessage.showSnackBar(error.toString());
           break;
         }
       }
@@ -177,7 +183,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
         Localizations.localeOf(context),
       );
 
-      while (rateslistService.titles.isNotEmpty) {
+      while (rateslistService.isNotEmpty) {
         if (!context.mounted || _operationInProgress == false) {
           break;
         }
@@ -185,18 +191,24 @@ class _ImportIMDBState extends State<ImportIMDB> {
         setState(() {
           _resetTitlesMessage =
               AppLocalizations.of(context)!.resetRateslistCount;
-          _resetTitlesCount = rateslistService.titles.length;
+          _resetTitlesCount = rateslistService.listTitleCount;
         });
 
         try {
+          TmdbTitle? title = rateslistService.getItem(0);
+
+          if (title == null) {
+            throw Exception('Failed to retrieve watchlist title');
+          }
+
           await rateslistService.updateTitleRate(
             userService.accountId,
             userService.sessionId,
-            rateslistService.titles.first,
+            title,
             0,
           );
         } catch (error) {
-          rateslistService.titles.removeAt(0);
+          SnackMessage.showSnackBar(error.toString());
           break;
         }
       }
@@ -484,7 +496,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
             return;
           }
 
-          final watchlistService = Provider.of<TmdbWatchlistService>(context, listen: false);
+          final watchlistService =
+              Provider.of<TmdbWatchlistService>(context, listen: false);
 
           updatedTitle.listName = watchlistService.listName;
           await watchlistService.updateWatchlistTitle(
@@ -575,7 +588,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
             return;
           }
 
-          final ratelistService = Provider.of<TmdbRateslistService>(context, listen: false);
+          final ratelistService =
+              Provider.of<TmdbRateslistService>(context, listen: false);
 
           updatedTitle.listName = ratelistService.listName;
           await ratelistService.updateTitleRate(
