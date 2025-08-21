@@ -64,6 +64,13 @@ class _TitleListState extends State<TitleList> {
     _filterByProviders =
         PreferencesService().prefs.getBool(_filterByProvidersPreferencesName) ??
             false;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.listService.loadedTitleCount == 0 &&
+          !widget.listService.isLoading) {
+        widget.listService.loadNextPage();
+      }
+    });
   }
 
   @override
@@ -109,11 +116,9 @@ class _TitleListState extends State<TitleList> {
   }
 
   void _retrieveGenresFromTitles() {
-    _genresList = widget.listService.titles
-        .expand((title) => title.genres)
-        .map((genre) => genre.name)
-        .toSet()
-        .toList();
+    setState(() {
+      _genresList = widget.listService.getListGenres();
+    });
   }
 
   void _retrieveUserProviders() {
@@ -130,103 +135,55 @@ class _TitleListState extends State<TitleList> {
     }
   }
 
-  List<TmdbTitle> _sortTitles(List<TmdbTitle> titles) {
-    final ascending = _isSortAsc ? 1 : -1;
-    final titlesToSort = titles;
-
-    final sortFunctions = {
-      AppLocalizations.of(context)!.sortAlphabetically:
-          (TmdbTitle a, TmdbTitle b) => a.name.compareTo(b.name),
-      AppLocalizations.of(context)!.sortRating: (TmdbTitle a, TmdbTitle b) =>
-          b.voteAverage.compareTo(a.voteAverage),
-      AppLocalizations.of(context)!.sortUserRating:
-          (TmdbTitle a, TmdbTitle b) => b.rating.compareTo(a.rating),
-      AppLocalizations.of(context)!.sortReleaseDate:
-          (TmdbTitle a, TmdbTitle b) => _compareReleaseDates(a, b),
-      AppLocalizations.of(context)!.sortRuntime: (TmdbTitle a, TmdbTitle b) =>
-          _compareRuntimes(a, b),
-    };
-
-    titlesToSort.sort(
-        (a, b) => ascending * (sortFunctions[_selectedSort]?.call(a, b) ?? 0));
-
-    return titlesToSort;
-  }
-
-  int _compareReleaseDates(TmdbTitle a, TmdbTitle b) {
-    final dateA = a.mediaType == 'movie' ? a.releaseDate : a.firstAirDate;
-    final dateB = b.mediaType == 'movie' ? b.releaseDate : b.firstAirDate;
-    return dateB.compareTo(dateA);
-  }
-
-  int _compareRuntimes(TmdbTitle a, TmdbTitle b) {
-    if (a.mediaType == 'movie' && b.mediaType == 'movie') {
-      return b.runtime.compareTo(a.runtime);
-    } else if (a.mediaType == 'movie') {
-      return -1;
-    } else if (b.mediaType == 'movie') {
-      return 1;
-    } else {
-      return b.numberOfEpisodes.compareTo(a.numberOfEpisodes);
-    }
-  }
-
-  List<TmdbTitle> _filterGenres(List<TmdbTitle> titles) {
-    if (_selectedGenres.isEmpty) {
-      return titles;
-    }
-
-    return titles
-        .where((title) =>
-            title.genres.any((genre) => _selectedGenres.contains(genre.name)))
-        .toList();
-  }
-
-  List<TmdbTitle> _filterProviders(List<TmdbTitle> titles) {
-    if (!_filterByProviders) {
-      return titles;
-    }
-
-    return titles
-        .where((title) => title.providers
-            .any((provider) => _providersList.contains(provider.name)))
-        .toList();
-  }
-
-  Widget _titleList(List<TmdbTitle> titles) {
-    return ChangeNotifierProvider.value(
+  Widget _titleList() {
+    return ChangeNotifierProvider<TmdbListService>.value(
       value: widget.listService,
-      child: Flexible(
-        child: ListView.builder(
-          key: const PageStorageKey('TitleListView'),
-          shrinkWrap: true,
-          itemCount: titles.length,
-          itemBuilder: (context, index) {
-            final TmdbTitle title = titles[index];
-            return Selector<TmdbListService, TmdbTitle?>(
-              selector: (_, service) => service.titles.firstWhere(
-                (title) => title.tmdbId == title.tmdbId,
-                orElse: () => title,
-              ),
-              builder: (_, tmdbTitle, __) {
-                final clampedScale = MediaQuery.of(context)
-                    .textScaler
-                    .scale(1.0)
-                    .clamp(1.0, 1.3);
+      child: Consumer<TmdbListService>(
+        builder: (context, service, _) {
+          return NotificationListener<ScrollNotification>(
+            onNotification: (scrollInfo) {
+              final metrics = scrollInfo.metrics;
+              final currentScroll = metrics.pixels;
 
-                return MediaQuery(
-                  data: MediaQuery.of(context).copyWith(
-                    textScaler: TextScaler.linear(clampedScale),
-                  ),
-                  child: TitleCard(
-                    title: title,
-                    tmdbListService: widget.listService,
-                  ),
-                );
-              },
-            );
-          },
-        ),
+              final itemHeight = TitleCard.cardHeight;
+              final firstVisibleIndex = (currentScroll / itemHeight).floor();
+              final visibleItemCount =
+                  (metrics.viewportDimension / itemHeight).ceil();
+              final lastVisibleIndex = firstVisibleIndex + visibleItemCount;
+
+              if (!service.isLoading &&
+                  service.hasMore &&
+                  lastVisibleIndex >= service.loadedTitleCount - 3) {
+                service.loadNextPage();
+              }
+              return false;
+            },
+            child: Flexible(
+              child: ListView.builder(
+                key: const PageStorageKey('TitleListView'),
+                shrinkWrap: true,
+                itemCount: service.loadedTitleCount,
+                itemBuilder: (context, index) {
+                  final title = service.getItem(index)!;
+                  final clampedScale = MediaQuery.of(context)
+                      .textScaler
+                      .scale(1.0)
+                      .clamp(1.0, 1.3);
+
+                  return MediaQuery(
+                    data: MediaQuery.of(context).copyWith(
+                      textScaler: TextScaler.linear(clampedScale),
+                    ),
+                    child: TitleCard(
+                      title: title,
+                      tmdbListService: widget.listService,
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -367,36 +324,9 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
-  List<TmdbTitle> _filterTitles() {
-    List<TmdbTitle> titles = widget.listService.titles;
-
-    if (_selectedType != AppLocalizations.of(context)!.allTypes) {
-      titles = titles
-          .where((title) =>
-              (title.mediaType == 'movie' &&
-                  _selectedType == AppLocalizations.of(context)!.movies) ||
-              (title.mediaType == 'tv' &&
-                  _selectedType == AppLocalizations.of(context)!.tvshows))
-          .toList();
-    }
-
-    if (_textFilter.isNotEmpty) {
-      titles = titles
-          .where((title) =>
-              title.name.toLowerCase().contains(_textFilter.toLowerCase()))
-          .toList();
-    }
-
-    titles = _filterGenres(titles);
-    titles = _filterProviders(titles);
-    titles = _sortTitles(titles);
-
-    return titles;
-  }
-
   @override
   Widget build(BuildContext context) {
-    List<TmdbTitle> filteredTitles = _filterTitles();
+    final int itemCount = widget.listService.listTitleCount;
     return Expanded(
       child: Container(
         color: Theme.of(context).colorScheme.primary,
@@ -409,13 +339,13 @@ class _TitleListState extends State<TitleList> {
                 color: Theme.of(context).colorScheme.primaryContainer,
               ),
             ),
-            _infoLine(filteredTitles.length),
+            _infoLine(itemCount),
             Divider(
               height: 1,
               color: Theme.of(context).colorScheme.primaryContainer,
             ),
             if (_showFilters) _controlPanel(),
-            _titleList(filteredTitles),
+            _titleList(),
           ],
         ),
       ),
