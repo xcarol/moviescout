@@ -110,4 +110,11 @@ class TmdbGenreService extends TmdbBaseService {
         .whereType<TmdbGenre>()
         .toList();
   }
+
+  List<int> getIdsFromNames(List<String> names) {
+    return _genreMap.entries
+        .where((entry) => names.contains(entry.value))
+        .map((entry) => entry.key)
+        .toList();
+  }
 }
