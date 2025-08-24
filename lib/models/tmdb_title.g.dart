@@ -17,55 +17,75 @@ const TmdbTitleSchema = CollectionSchema(
   name: r'TmdbTitle',
   id: 4353883779297965714,
   properties: {
-    r'flatrateProviderIds': PropertySchema(
+    r'effectiveReleaseDate': PropertySchema(
       id: 0,
+      name: r'effectiveReleaseDate',
+      type: IsarType.string,
+    ),
+    r'effectiveRuntime': PropertySchema(
+      id: 1,
+      name: r'effectiveRuntime',
+      type: IsarType.long,
+    ),
+    r'flatrateProviderIds': PropertySchema(
+      id: 2,
       name: r'flatrateProviderIds',
       type: IsarType.longList,
     ),
     r'genreIds': PropertySchema(
-      id: 1,
+      id: 3,
       name: r'genreIds',
       type: IsarType.longList,
     ),
     r'hashCode': PropertySchema(
-      id: 2,
+      id: 4,
       name: r'hashCode',
       type: IsarType.long,
     ),
+    r'isMovie': PropertySchema(
+      id: 5,
+      name: r'isMovie',
+      type: IsarType.bool,
+    ),
     r'lastUpdated': PropertySchema(
-      id: 3,
+      id: 6,
       name: r'lastUpdated',
       type: IsarType.string,
     ),
     r'listName': PropertySchema(
-      id: 4,
+      id: 7,
       name: r'listName',
       type: IsarType.string,
     ),
     r'mediaType': PropertySchema(
-      id: 5,
+      id: 8,
       name: r'mediaType',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 6,
+      id: 9,
       name: r'name',
       type: IsarType.string,
     ),
     r'rating': PropertySchema(
-      id: 7,
+      id: 10,
       name: r'rating',
       type: IsarType.double,
     ),
     r'tmdbId': PropertySchema(
-      id: 8,
+      id: 11,
       name: r'tmdbId',
       type: IsarType.long,
     ),
     r'tmdbJson': PropertySchema(
-      id: 9,
+      id: 12,
       name: r'tmdbJson',
       type: IsarType.string,
+    ),
+    r'voteAverage': PropertySchema(
+      id: 13,
+      name: r'voteAverage',
+      type: IsarType.double,
     )
   },
   estimateSize: _tmdbTitleEstimateSize,
@@ -115,6 +135,7 @@ int _tmdbTitleEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.effectiveReleaseDate.length * 3;
   bytesCount += 3 + object.flatrateProviderIds.length * 8;
   bytesCount += 3 + object.genreIds.length * 8;
   bytesCount += 3 + object.lastUpdated.length * 3;
@@ -131,16 +152,20 @@ void _tmdbTitleSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLongList(offsets[0], object.flatrateProviderIds);
-  writer.writeLongList(offsets[1], object.genreIds);
-  writer.writeLong(offsets[2], object.hashCode);
-  writer.writeString(offsets[3], object.lastUpdated);
-  writer.writeString(offsets[4], object.listName);
-  writer.writeString(offsets[5], object.mediaType);
-  writer.writeString(offsets[6], object.name);
-  writer.writeDouble(offsets[7], object.rating);
-  writer.writeLong(offsets[8], object.tmdbId);
-  writer.writeString(offsets[9], object.tmdbJson);
+  writer.writeString(offsets[0], object.effectiveReleaseDate);
+  writer.writeLong(offsets[1], object.effectiveRuntime);
+  writer.writeLongList(offsets[2], object.flatrateProviderIds);
+  writer.writeLongList(offsets[3], object.genreIds);
+  writer.writeLong(offsets[4], object.hashCode);
+  writer.writeBool(offsets[5], object.isMovie);
+  writer.writeString(offsets[6], object.lastUpdated);
+  writer.writeString(offsets[7], object.listName);
+  writer.writeString(offsets[8], object.mediaType);
+  writer.writeString(offsets[9], object.name);
+  writer.writeDouble(offsets[10], object.rating);
+  writer.writeLong(offsets[11], object.tmdbId);
+  writer.writeString(offsets[12], object.tmdbJson);
+  writer.writeDouble(offsets[13], object.voteAverage);
 }
 
 TmdbTitle _tmdbTitleDeserialize(
@@ -151,15 +176,17 @@ TmdbTitle _tmdbTitleDeserialize(
 ) {
   final object = TmdbTitle(
     id: id,
-    lastUpdated: reader.readString(offsets[3]),
-    listName: reader.readString(offsets[4]),
-    name: reader.readString(offsets[6]),
-    rating: reader.readDouble(offsets[7]),
-    tmdbId: reader.readLong(offsets[8]),
-    tmdbJson: reader.readString(offsets[9]),
+    lastUpdated: reader.readString(offsets[6]),
+    listName: reader.readString(offsets[7]),
+    name: reader.readString(offsets[9]),
+    rating: reader.readDouble(offsets[10]),
+    tmdbId: reader.readLong(offsets[11]),
+    tmdbJson: reader.readString(offsets[12]),
   );
-  object.flatrateProviderIds = reader.readLongList(offsets[0]) ?? [];
-  object.genreIds = reader.readLongList(offsets[1]) ?? [];
+  object.effectiveReleaseDate = reader.readString(offsets[0]);
+  object.effectiveRuntime = reader.readLong(offsets[1]);
+  object.flatrateProviderIds = reader.readLongList(offsets[2]) ?? [];
+  object.genreIds = reader.readLongList(offsets[3]) ?? [];
   return object;
 }
 
@@ -171,25 +198,33 @@ P _tmdbTitleDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLongList(offset) ?? []) as P;
+      return (reader.readString(offset)) as P;
     case 1:
-      return (reader.readLongList(offset) ?? []) as P;
-    case 2:
       return (reader.readLong(offset)) as P;
+    case 2:
+      return (reader.readLongList(offset) ?? []) as P;
     case 3:
-      return (reader.readString(offset)) as P;
+      return (reader.readLongList(offset) ?? []) as P;
     case 4:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 5:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 6:
       return (reader.readString(offset)) as P;
     case 7:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 8:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 9:
       return (reader.readString(offset)) as P;
+    case 10:
+      return (reader.readDouble(offset)) as P;
+    case 11:
+      return (reader.readLong(offset)) as P;
+    case 12:
+      return (reader.readString(offset)) as P;
+    case 13:
+      return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -429,6 +464,198 @@ extension TmdbTitleQueryWhere
 
 extension TmdbTitleQueryFilter
     on QueryBuilder<TmdbTitle, TmdbTitle, QFilterCondition> {
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      effectiveReleaseDateEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'effectiveReleaseDate',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      effectiveReleaseDateGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'effectiveReleaseDate',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      effectiveReleaseDateLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'effectiveReleaseDate',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      effectiveReleaseDateBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'effectiveReleaseDate',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      effectiveReleaseDateStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'effectiveReleaseDate',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      effectiveReleaseDateEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'effectiveReleaseDate',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      effectiveReleaseDateContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'effectiveReleaseDate',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      effectiveReleaseDateMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'effectiveReleaseDate',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      effectiveReleaseDateIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'effectiveReleaseDate',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      effectiveReleaseDateIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'effectiveReleaseDate',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      effectiveRuntimeEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'effectiveRuntime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      effectiveRuntimeGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'effectiveRuntime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      effectiveRuntimeLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'effectiveRuntime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      effectiveRuntimeBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'effectiveRuntime',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
       flatrateProviderIdsElementEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
@@ -820,6 +1047,16 @@ extension TmdbTitleQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> isMovieEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isMovie',
+        value: value,
       ));
     });
   }
@@ -1596,6 +1833,69 @@ extension TmdbTitleQueryFilter
       ));
     });
   }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> voteAverageEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'voteAverage',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      voteAverageGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'voteAverage',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> voteAverageLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'voteAverage',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> voteAverageBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'voteAverage',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
 }
 
 extension TmdbTitleQueryObject
@@ -1605,6 +1905,33 @@ extension TmdbTitleQueryLinks
     on QueryBuilder<TmdbTitle, TmdbTitle, QFilterCondition> {}
 
 extension TmdbTitleQuerySortBy on QueryBuilder<TmdbTitle, TmdbTitle, QSortBy> {
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy>
+      sortByEffectiveReleaseDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'effectiveReleaseDate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy>
+      sortByEffectiveReleaseDateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'effectiveReleaseDate', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByEffectiveRuntime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'effectiveRuntime', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy>
+      sortByEffectiveRuntimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'effectiveRuntime', Sort.desc);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.asc);
@@ -1614,6 +1941,18 @@ extension TmdbTitleQuerySortBy on QueryBuilder<TmdbTitle, TmdbTitle, QSortBy> {
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByHashCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByIsMovie() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMovie', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByIsMovieDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMovie', Sort.desc);
     });
   }
 
@@ -1700,10 +2039,49 @@ extension TmdbTitleQuerySortBy on QueryBuilder<TmdbTitle, TmdbTitle, QSortBy> {
       return query.addSortBy(r'tmdbJson', Sort.desc);
     });
   }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByVoteAverage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'voteAverage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByVoteAverageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'voteAverage', Sort.desc);
+    });
+  }
 }
 
 extension TmdbTitleQuerySortThenBy
     on QueryBuilder<TmdbTitle, TmdbTitle, QSortThenBy> {
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy>
+      thenByEffectiveReleaseDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'effectiveReleaseDate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy>
+      thenByEffectiveReleaseDateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'effectiveReleaseDate', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByEffectiveRuntime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'effectiveRuntime', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy>
+      thenByEffectiveRuntimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'effectiveRuntime', Sort.desc);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.asc);
@@ -1725,6 +2103,18 @@ extension TmdbTitleQuerySortThenBy
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByIsMovie() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMovie', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByIsMovieDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMovie', Sort.desc);
     });
   }
 
@@ -1811,10 +2201,36 @@ extension TmdbTitleQuerySortThenBy
       return query.addSortBy(r'tmdbJson', Sort.desc);
     });
   }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByVoteAverage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'voteAverage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByVoteAverageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'voteAverage', Sort.desc);
+    });
+  }
 }
 
 extension TmdbTitleQueryWhereDistinct
     on QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> {
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByEffectiveReleaseDate(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'effectiveReleaseDate',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByEffectiveRuntime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'effectiveRuntime');
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QDistinct>
       distinctByFlatrateProviderIds() {
     return QueryBuilder.apply(this, (query) {
@@ -1831,6 +2247,12 @@ extension TmdbTitleQueryWhereDistinct
   QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'hashCode');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByIsMovie() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isMovie');
     });
   }
 
@@ -1880,6 +2302,12 @@ extension TmdbTitleQueryWhereDistinct
       return query.addDistinctBy(r'tmdbJson', caseSensitive: caseSensitive);
     });
   }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByVoteAverage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'voteAverage');
+    });
+  }
 }
 
 extension TmdbTitleQueryProperty
@@ -1887,6 +2315,19 @@ extension TmdbTitleQueryProperty
   QueryBuilder<TmdbTitle, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, String, QQueryOperations>
+      effectiveReleaseDateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'effectiveReleaseDate');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, int, QQueryOperations> effectiveRuntimeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'effectiveRuntime');
     });
   }
 
@@ -1906,6 +2347,12 @@ extension TmdbTitleQueryProperty
   QueryBuilder<TmdbTitle, int, QQueryOperations> hashCodeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'hashCode');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, bool, QQueryOperations> isMovieProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isMovie');
     });
   }
 
@@ -1948,6 +2395,12 @@ extension TmdbTitleQueryProperty
   QueryBuilder<TmdbTitle, String, QQueryOperations> tmdbJsonProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'tmdbJson');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, double, QQueryOperations> voteAverageProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'voteAverage');
     });
   }
 }

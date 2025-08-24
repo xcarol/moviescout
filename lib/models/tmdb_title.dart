@@ -72,6 +72,14 @@ const statusCanceled = 'Canceled';
 const statusInProduction = 'In Production';
 const statusPlanned = 'Planned';
 
+class SortOption {
+  static const alphabetically = 'alphabetically';
+  static const rating = 'rating';
+  static const userRating = 'userRating';
+  static const releaseDate = 'releaseDate';
+  static const runtime = 'runtime';
+}
+
 @collection
 class TmdbTitle {
   @Index(unique: true)
@@ -90,6 +98,8 @@ class TmdbTitle {
   late String name;
   late String lastUpdated;
   late double rating;
+  late int effectiveRuntime;
+  late String effectiveReleaseDate;
   late List<int> genreIds;
   late List<int> flatrateProviderIds;
 
@@ -103,6 +113,8 @@ class TmdbTitle {
     required this.lastUpdated,
   })  : genreIds = <int>[],
         flatrateProviderIds = <int>[] {
+    effectiveReleaseDate = mediaType == 'movie' ? releaseDate : firstAirDate;
+    effectiveRuntime = mediaType == 'movie' ? runtime : numberOfEpisodes;
     _populateGenreIds();
     _populateFlatrateProviderIds();
   }
@@ -139,7 +151,8 @@ class TmdbTitle {
   void _populateFlatrateProviderIds() {
     flatrateProviderIds = <int>[];
 
-    for (var provider in TmdbProviders(providers: _tmdbTitle[_providers] ?? {}).flatrate) {
+    for (var provider
+        in TmdbProviders(providers: _tmdbTitle[_providers] ?? {}).flatrate) {
       if (!flatrateProviderIds.contains(provider.id)) {
         flatrateProviderIds.add(provider.id);
       }
@@ -166,7 +179,6 @@ class TmdbTitle {
     return _tmdbTitle;
   }
 
-  @ignore
   bool get isMovie {
     return _tmdbTitle[_title] != null;
   }
@@ -228,7 +240,6 @@ class TmdbTitle {
     return '';
   }
 
-  @ignore
   double get voteAverage {
     return _tmdbTitle[_vote_average] ?? 0.0;
   }
