@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 
@@ -46,12 +47,13 @@ class TmdbProviderService extends TmdbBaseService {
         }
 
         for (var provider in providers) {
-          _providerMap[provider['provider_id']] = {
-            'name': provider['provider_name'].toString(),
-            'logo_path': provider['logo_path'].toString(),
-            'enabled': PreferencesService()
+          _providerMap[provider[TmdbProvider.providerId]] = {
+            TmdbProvider.providerId: provider[TmdbProvider.providerId],
+            TmdbProvider.providerName: provider[TmdbProvider.providerName].toString(),
+            TmdbProvider.logoPathName: provider[TmdbProvider.logoPathName].toString(),
+            TmdbProvider.providerEnabled: PreferencesService()
                     .prefs
-                    .getString('provider_${provider['provider_id']}') ??
+                    .getString('provider_${provider[TmdbProvider.providerId]}') ??
                 'false',
           };
         }
@@ -77,12 +79,12 @@ class TmdbProviderService extends TmdbBaseService {
     providers
         .map((provider) => jsonDecode(provider) as Map<String, dynamic>)
         .forEach((provider) {
-      _providerMap[provider['provider_id']] = {
-        'name': provider['provider_name'].toString(),
-        'logo_path': provider['logo_path'].toString(),
-        'enabled': PreferencesService()
+      _providerMap[provider[TmdbProvider.providerId]] = {
+        TmdbProvider.providerName: provider[TmdbProvider.providerName].toString(),
+        TmdbProvider.logoPathName: provider[TmdbProvider.logoPathName].toString(),
+        TmdbProvider.providerEnabled: PreferencesService()
                 .prefs
-                .getString('provider_${provider['provider_id']}') ??
+                .getString('provider_${provider[TmdbProvider.providerId]}') ??
             'false',
       };
     });
@@ -106,7 +108,7 @@ class TmdbProviderService extends TmdbBaseService {
 
   void toggleProvider(int id, bool value) {
     if (_providerMap.containsKey(id)) {
-      _providerMap[id]!['enabled'] = value.toString();
+      _providerMap[id]![TmdbProvider.providerEnabled] = value.toString();
       PreferencesService().prefs.setString('provider_$id', value.toString());
     }
   }
