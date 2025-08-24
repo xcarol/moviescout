@@ -90,6 +90,8 @@ class TmdbTitle {
   late String name;
   late String lastUpdated;
   late double rating;
+  late List<int> genreIds;
+  late List<int> flatrateProviderIds;
 
   TmdbTitle({
     required this.id,
@@ -99,7 +101,11 @@ class TmdbTitle {
     required this.name,
     required this.rating,
     required this.lastUpdated,
-  });
+  })  : genreIds = <int>[],
+        flatrateProviderIds = <int>[] {
+    _populateGenreIds();
+    _populateFlatrateProviderIds();
+  }
 
   factory TmdbTitle.fromMap({required Map<dynamic, dynamic> title}) {
     return TmdbTitle(
@@ -113,6 +119,31 @@ class TmdbTitle {
           : 0.0,
       lastUpdated: title[_last_updated] ?? '1970-01-01',
     );
+  }
+
+  void _populateGenreIds() {
+    genreIds = <int>[];
+
+    if (_tmdbTitle[_genres] is List) {
+      for (var genre in _tmdbTitle[_genres]) {
+        if (genre[_id] != null &&
+            !(_tmdbTitle[_genre_ids] as List).contains(genre[_id])) {
+          (_tmdbTitle[_genre_ids] as List).add(genre[_id]);
+        }
+      }
+    }
+
+    genreIds = List.from(_tmdbTitle[_genre_ids] ?? []);
+  }
+
+  void _populateFlatrateProviderIds() {
+    flatrateProviderIds = <int>[];
+
+    for (var provider in TmdbProviders(providers: _tmdbTitle[_providers] ?? {}).flatrate) {
+      if (!flatrateProviderIds.contains(provider.id)) {
+        flatrateProviderIds.add(provider.id);
+      }
+    }
   }
 
   Map<String, dynamic> get _tmdbTitle {
@@ -155,7 +186,6 @@ class TmdbTitle {
     return _tmdbTitle[_tagline] ?? '';
   }
 
-  @ignore
   String get mediaType {
     return _tmdbTitle[_media_type] ?? '';
   }
@@ -205,20 +235,7 @@ class TmdbTitle {
 
   @ignore
   List<TmdbGenre> get genres {
-    if (_tmdbTitle[_genre_ids] == null) {
-      _tmdbTitle[_genre_ids] = <int>[];
-    }
-
-    if (_tmdbTitle[_genres] is List) {
-      for (var genre in _tmdbTitle[_genres]) {
-        if (genre[_id] != null &&
-            !(_tmdbTitle[_genre_ids] as List).contains(genre[_id])) {
-          (_tmdbTitle[_genre_ids] as List).add(genre[_id]);
-        }
-      }
-    }
-
-    return TmdbGenreService().getGenresFromIds(_tmdbTitle[_genre_ids]);
+    return TmdbGenreService().getGenresFromIds(genreIds);
   }
 
   @ignore

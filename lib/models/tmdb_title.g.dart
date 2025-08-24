@@ -17,38 +17,53 @@ const TmdbTitleSchema = CollectionSchema(
   name: r'TmdbTitle',
   id: 4353883779297965714,
   properties: {
-    r'hashCode': PropertySchema(
+    r'flatrateProviderIds': PropertySchema(
       id: 0,
+      name: r'flatrateProviderIds',
+      type: IsarType.longList,
+    ),
+    r'genreIds': PropertySchema(
+      id: 1,
+      name: r'genreIds',
+      type: IsarType.longList,
+    ),
+    r'hashCode': PropertySchema(
+      id: 2,
       name: r'hashCode',
       type: IsarType.long,
     ),
     r'lastUpdated': PropertySchema(
-      id: 1,
+      id: 3,
       name: r'lastUpdated',
       type: IsarType.string,
     ),
     r'listName': PropertySchema(
-      id: 2,
+      id: 4,
       name: r'listName',
       type: IsarType.string,
     ),
+    r'mediaType': PropertySchema(
+      id: 5,
+      name: r'mediaType',
+      type: IsarType.string,
+    ),
     r'name': PropertySchema(
-      id: 3,
+      id: 6,
       name: r'name',
       type: IsarType.string,
     ),
     r'rating': PropertySchema(
-      id: 4,
+      id: 7,
       name: r'rating',
       type: IsarType.double,
     ),
     r'tmdbId': PropertySchema(
-      id: 5,
+      id: 8,
       name: r'tmdbId',
       type: IsarType.long,
     ),
     r'tmdbJson': PropertySchema(
-      id: 6,
+      id: 9,
       name: r'tmdbJson',
       type: IsarType.string,
     )
@@ -100,8 +115,11 @@ int _tmdbTitleEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.flatrateProviderIds.length * 8;
+  bytesCount += 3 + object.genreIds.length * 8;
   bytesCount += 3 + object.lastUpdated.length * 3;
   bytesCount += 3 + object.listName.length * 3;
+  bytesCount += 3 + object.mediaType.length * 3;
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.tmdbJson.length * 3;
   return bytesCount;
@@ -113,13 +131,16 @@ void _tmdbTitleSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.hashCode);
-  writer.writeString(offsets[1], object.lastUpdated);
-  writer.writeString(offsets[2], object.listName);
-  writer.writeString(offsets[3], object.name);
-  writer.writeDouble(offsets[4], object.rating);
-  writer.writeLong(offsets[5], object.tmdbId);
-  writer.writeString(offsets[6], object.tmdbJson);
+  writer.writeLongList(offsets[0], object.flatrateProviderIds);
+  writer.writeLongList(offsets[1], object.genreIds);
+  writer.writeLong(offsets[2], object.hashCode);
+  writer.writeString(offsets[3], object.lastUpdated);
+  writer.writeString(offsets[4], object.listName);
+  writer.writeString(offsets[5], object.mediaType);
+  writer.writeString(offsets[6], object.name);
+  writer.writeDouble(offsets[7], object.rating);
+  writer.writeLong(offsets[8], object.tmdbId);
+  writer.writeString(offsets[9], object.tmdbJson);
 }
 
 TmdbTitle _tmdbTitleDeserialize(
@@ -130,13 +151,15 @@ TmdbTitle _tmdbTitleDeserialize(
 ) {
   final object = TmdbTitle(
     id: id,
-    lastUpdated: reader.readString(offsets[1]),
-    listName: reader.readString(offsets[2]),
-    name: reader.readString(offsets[3]),
-    rating: reader.readDouble(offsets[4]),
-    tmdbId: reader.readLong(offsets[5]),
-    tmdbJson: reader.readString(offsets[6]),
+    lastUpdated: reader.readString(offsets[3]),
+    listName: reader.readString(offsets[4]),
+    name: reader.readString(offsets[6]),
+    rating: reader.readDouble(offsets[7]),
+    tmdbId: reader.readLong(offsets[8]),
+    tmdbJson: reader.readString(offsets[9]),
   );
+  object.flatrateProviderIds = reader.readLongList(offsets[0]) ?? [];
+  object.genreIds = reader.readLongList(offsets[1]) ?? [];
   return object;
 }
 
@@ -148,18 +171,24 @@ P _tmdbTitleDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongList(offset) ?? []) as P;
     case 1:
-      return (reader.readString(offset)) as P;
+      return (reader.readLongList(offset) ?? []) as P;
     case 2:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 5:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 6:
+      return (reader.readString(offset)) as P;
+    case 7:
+      return (reader.readDouble(offset)) as P;
+    case 8:
+      return (reader.readLong(offset)) as P;
+    case 9:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -400,6 +429,295 @@ extension TmdbTitleQueryWhere
 
 extension TmdbTitleQueryFilter
     on QueryBuilder<TmdbTitle, TmdbTitle, QFilterCondition> {
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      flatrateProviderIdsElementEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'flatrateProviderIds',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      flatrateProviderIdsElementGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'flatrateProviderIds',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      flatrateProviderIdsElementLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'flatrateProviderIds',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      flatrateProviderIdsElementBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'flatrateProviderIds',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      flatrateProviderIdsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'flatrateProviderIds',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      flatrateProviderIdsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'flatrateProviderIds',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      flatrateProviderIdsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'flatrateProviderIds',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      flatrateProviderIdsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'flatrateProviderIds',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      flatrateProviderIdsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'flatrateProviderIds',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      flatrateProviderIdsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'flatrateProviderIds',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      genreIdsElementEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'genreIds',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      genreIdsElementGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'genreIds',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      genreIdsElementLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'genreIds',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      genreIdsElementBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'genreIds',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      genreIdsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'genreIds',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> genreIdsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'genreIds',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      genreIdsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'genreIds',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      genreIdsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'genreIds',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      genreIdsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'genreIds',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      genreIdsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'genreIds',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> hashCodeEqualTo(
       int value) {
     return QueryBuilder.apply(this, (query) {
@@ -766,6 +1084,138 @@ extension TmdbTitleQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'listName',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> mediaTypeEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mediaType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      mediaTypeGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'mediaType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> mediaTypeLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'mediaType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> mediaTypeBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'mediaType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> mediaTypeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'mediaType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> mediaTypeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'mediaType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> mediaTypeContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'mediaType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> mediaTypeMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'mediaType',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> mediaTypeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mediaType',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      mediaTypeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'mediaType',
         value: '',
       ));
     });
@@ -1191,6 +1641,18 @@ extension TmdbTitleQuerySortBy on QueryBuilder<TmdbTitle, TmdbTitle, QSortBy> {
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByMediaType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mediaType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByMediaTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mediaType', Sort.desc);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -1290,6 +1752,18 @@ extension TmdbTitleQuerySortThenBy
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByMediaType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mediaType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByMediaTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mediaType', Sort.desc);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -1341,6 +1815,19 @@ extension TmdbTitleQuerySortThenBy
 
 extension TmdbTitleQueryWhereDistinct
     on QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> {
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct>
+      distinctByFlatrateProviderIds() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'flatrateProviderIds');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByGenreIds() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'genreIds');
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'hashCode');
@@ -1358,6 +1845,13 @@ extension TmdbTitleQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'listName', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByMediaType(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'mediaType', caseSensitive: caseSensitive);
     });
   }
 
@@ -1396,6 +1890,19 @@ extension TmdbTitleQueryProperty
     });
   }
 
+  QueryBuilder<TmdbTitle, List<int>, QQueryOperations>
+      flatrateProviderIdsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'flatrateProviderIds');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, List<int>, QQueryOperations> genreIdsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'genreIds');
+    });
+  }
+
   QueryBuilder<TmdbTitle, int, QQueryOperations> hashCodeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'hashCode');
@@ -1411,6 +1918,12 @@ extension TmdbTitleQueryProperty
   QueryBuilder<TmdbTitle, String, QQueryOperations> listNameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'listName');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, String, QQueryOperations> mediaTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'mediaType');
     });
   }
 
