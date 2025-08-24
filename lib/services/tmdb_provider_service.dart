@@ -112,4 +112,11 @@ class TmdbProviderService extends TmdbBaseService {
       PreferencesService().prefs.setString('provider_$id', value.toString());
     }
   }
+
+  List<int> getIdsFromNames(List<String> names) {
+    return _providerMap.entries
+        .where((entry) => names.contains(entry.value[TmdbProvider.providerName]))
+        .map((entry) => entry.key)
+        .toList();
+  }
 }
