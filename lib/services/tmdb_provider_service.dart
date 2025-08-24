@@ -48,7 +48,7 @@ class TmdbProviderService extends TmdbBaseService {
 
         for (var provider in providers) {
           _providerMap[provider[TmdbProvider.providerId]] = {
-            TmdbProvider.providerId: provider[TmdbProvider.providerId],
+            TmdbProvider.providerId: provider[TmdbProvider.providerId].toString(),
             TmdbProvider.providerName: provider[TmdbProvider.providerName].toString(),
             TmdbProvider.logoPathName: provider[TmdbProvider.logoPathName].toString(),
             TmdbProvider.providerEnabled: PreferencesService()
