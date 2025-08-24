@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
@@ -28,15 +29,15 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
     List<Widget> providerWidgets = [];
 
     for (var provider in TmdbProviderService().providers.entries) {
-      String providerName = provider.value['name'] ?? '';
-      String logoPath = provider.value['logo_path'] ?? '';
+      String providerName = provider.value[TmdbProvider.providerName] ?? '';
+      String logoPath = provider.value[TmdbProvider.logoPathName] ?? '';
 
       if (providerName.isNotEmpty && logoPath.isNotEmpty) {
         providerWidgets.add(
           SwitchListTile(
             title: Text(providerName),
             activeColor: Theme.of(context).colorScheme.primary,
-            value: provider.value['enabled'] == 'true',
+            value: provider.value[TmdbProvider.providerEnabled] == 'true',
             onChanged: (value) => setState(() {
               TmdbProviderService().toggleProvider(provider.key, value);
             }),
