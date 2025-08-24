@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
@@ -28,7 +28,6 @@ class _TitleListState extends State<TitleList> {
   late String _filterByProvidersPreferencesName;
   String _selectedType = '';
   late List<String> _titleTypes;
-  late String _textFilter;
   String _selectedSort = '';
   late List<String> _titleSorts;
   List<String> _selectedGenres = [];
@@ -45,7 +44,6 @@ class _TitleListState extends State<TitleList> {
     _textFilterPreferencesName = '${widget.listService.listName}_TextFilter';
     _textFilterController.text =
         PreferencesService().prefs.getString(_textFilterPreferencesName) ?? '';
-    _textFilter = _textFilterController.text;
 
     _showFiltersPreferencesName = '${widget.listService.listName}_ShowFilters';
     _showFilters =
@@ -87,7 +85,6 @@ class _TitleListState extends State<TitleList> {
     if (!isCurrent && _searchFocusNode.hasFocus) {
       _searchFocusNode.unfocus();
     }
-    _textFilter = _textFilterController.text;
     _initilizeControlLocalizations();
     _retrieveGenresFromTitles();
     _retrieveUserProviders();
@@ -125,9 +122,12 @@ class _TitleListState extends State<TitleList> {
     _providersList = TmdbProviderService()
         .providers
         .keys
-        .where(
-            (id) => TmdbProviderService().providers[id]!['enabled'] == 'true')
-        .map((id) => TmdbProviderService().providers[id]!['name']!)
+        .where((id) =>
+            TmdbProviderService()
+                .providers[id]![TmdbProvider.providerEnabled] ==
+            'true')
+        .map((id) =>
+            TmdbProviderService().providers[id]![TmdbProvider.providerName]!)
         .toList();
 
     if (_providersList.isNotEmpty) {
@@ -189,46 +189,50 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _controlPanel() {
-    return Column(
-      children: [
-        TitleListControlPanel(
-          textFilterChanged: (newTextFilter) {
-            setState(() {
-              _textFilter = newTextFilter;
-            });
-            PreferencesService()
-                .prefs
-                .setString(_textFilterPreferencesName, newTextFilter);
-          },
-          textFilterController: _textFilterController,
-          selectedGenres: _selectedGenres.toList(),
-          genresList: _genresList,
-          genresChanged: (List<String> genresChanged) {
-            setState(() {
-              _selectedGenres = genresChanged.toList();
-            });
-            PreferencesService()
-                .prefs
-                .setStringList(_selectedGenresPreferencesName, _selectedGenres);
-          },
-          filterByProviders: _filterByProviders,
-          providersChanged: (bool providersChanged) {
-            setState(() {
-              _filterByProviders = providersChanged;
-            });
-            PreferencesService()
-                .prefs
-                .setBool(_filterByProvidersPreferencesName, _filterByProviders);
-          },
-          focusNode: _searchFocusNode,
-        ),
-        Container(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          child: Divider(
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
+    return Container(
+      color: Theme.of(context).colorScheme.primary,
+      child: Column(
+        children: [
+          TitleListControlPanel(
+            textFilterChanged: (newTextFilter) {
+              setState(() {
+                widget.listService.setTextFilter(newTextFilter);
+              });
+              PreferencesService()
+                  .prefs
+                  .setString(_textFilterPreferencesName, newTextFilter);
+            },
+            textFilterController: _textFilterController,
+            selectedGenres: _selectedGenres.toList(),
+            genresList: _genresList,
+            genresChanged: (List<String> genresChanged) {
+              setState(() {
+                _selectedGenres = genresChanged.toList();
+                widget.listService.setGenresFilter(_selectedGenres);
+              });
+              PreferencesService().prefs.setStringList(
+                  _selectedGenresPreferencesName, _selectedGenres);
+            },
+            filterByProviders: _filterByProviders,
+            providersChanged: (bool providersChanged) {
+              setState(() {
+                _filterByProviders = providersChanged;
+                widget.listService
+                    .setProvidersFilter(_filterByProviders, _providersList);
+              });
+              PreferencesService().prefs.setBool(
+                  _filterByProvidersPreferencesName, _filterByProviders);
+            },
+            focusNode: _searchFocusNode,
           ),
-        ),
-      ],
+          Container(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            child: Divider(
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -279,12 +283,23 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
+  void _filterTitlesType(String type) {
+    if (type == AppLocalizations.of(context)!.allTypes) {
+      widget.listService.setTypeFilter('');
+    } else if (type == AppLocalizations.of(context)!.movies) {
+      widget.listService.setTypeFilter('movie');
+    } else if (type == AppLocalizations.of(context)!.tvshows) {
+      widget.listService.setTypeFilter('tv');
+    }
+  }
+
   Widget _typeSelector() {
     return DropdownSelector(
       selectedOption: _selectedType,
       options: _titleTypes,
       onSelected: (value) => setState(() {
         _selectedType = value;
+        _filterTitlesType(value);
       }),
       arrowIcon: Icon(
         Icons.arrow_drop_down,
@@ -299,6 +314,7 @@ class _TitleListState extends State<TitleList> {
       options: _titleSorts,
       onSelected: (value) => setState(() {
         _selectedSort = value;
+        widget.listService.setSort(value, _isSortAsc);
       }),
       arrowIcon: _isSortAsc
           ? Icon(
@@ -326,10 +342,10 @@ class _TitleListState extends State<TitleList> {
 
   @override
   Widget build(BuildContext context) {
-    final int itemCount = widget.listService.listTitleCount;
+    final int itemCount = widget.listService.selectedTitleCount;
     return Expanded(
       child: Container(
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).colorScheme.onPrimaryContainer,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
