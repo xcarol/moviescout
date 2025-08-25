@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
+import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
@@ -308,13 +309,29 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
+  String _sortNameToOption(BuildContext context, String name) {
+    if (name == AppLocalizations.of(context)!.sortAlphabetically) {
+      return SortOption.alphabetically;
+    } else if (name == AppLocalizations.of(context)!.sortRating) {
+      return SortOption.rating;
+    } else if (name == AppLocalizations.of(context)!.sortUserRating) {
+      return SortOption.userRating;
+    } else if (name == AppLocalizations.of(context)!.sortReleaseDate) {
+      return SortOption.releaseDate;
+    } else if (name == AppLocalizations.of(context)!.sortRuntime) {
+      return SortOption.runtime;
+    } else {
+      return SortOption.alphabetically;
+    }
+  }
+
   Widget _sortSelector() {
     return DropdownSelector(
       selectedOption: _selectedSort,
       options: _titleSorts,
       onSelected: (value) => setState(() {
         _selectedSort = value;
-        widget.listService.setSort(value, _isSortAsc);
+        widget.listService.setSort(_sortNameToOption(context, value), _isSortAsc);
       }),
       arrowIcon: _isSortAsc
           ? Icon(
@@ -335,6 +352,8 @@ class _TitleListState extends State<TitleList> {
       onPressed: () {
         setState(() {
           _isSortAsc = !_isSortAsc;
+          widget.listService
+              .setSort(_sortNameToOption(context, _selectedSort), _isSortAsc);
         });
       },
     );
