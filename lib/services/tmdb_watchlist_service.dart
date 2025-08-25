@@ -63,6 +63,9 @@ class TmdbWatchlistService extends TmdbListService {
   Future<void> updateWatchlistTitle(
       String accountId, String sessionId, TmdbTitle title, bool add) async {
     try {
+      // Make sure title has the correct list name
+      title.listName = listName;
+      
       await updateTitle(accountId, sessionId, title, add,
           (String accountId, String sessionId) async {
         return _updateTitleInWatchlistToTmdb(
