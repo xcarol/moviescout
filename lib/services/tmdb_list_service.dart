@@ -5,6 +5,8 @@ import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
+import 'package:moviescout/services/tmdb_genre_service.dart';
+import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 
 class TmdbListService extends TmdbBaseService with ChangeNotifier {
@@ -19,6 +21,18 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   int _page = 0;
   final int _pageSize = 10;
   final _isar = IsarService.instance;
+  late QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> _query;
+  bool _anyFilterApplied = false;
+  int _filterRequestId = 0;
+  String _filterText = '';
+  String _filterMediaType = '';
+  List<int> _filterGenres = [];
+  List<int> _filterProviders = [];
+  bool _filterByProviders = false;
+  String _selectedSort = SortOption.alphabetically;
+  bool _isSortAsc = true;
+  int _selectedTitleCount = 0;
+  int get selectedTitleCount => _selectedTitleCount;
 
   TmdbListService(String listName, {List<TmdbTitle>? titles}) {
     _listName = listName;
@@ -31,7 +45,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       _lastUpdate = DateTime.now().toIso8601String();
     }
   }
-  
+
   void _setLastUpdate() {
     _lastUpdate = DateTime.now().toIso8601String();
     PreferencesService()
@@ -78,13 +92,17 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return _loadedTitles.length;
   }
 
+  void _clearLoadedTitles() {
+    _loadedTitles.clear();
+    _hasMore = true;
+    _page = 0;
+  }
+
   Future<void> _clearLocalList() async {
     await _isar.writeTxn(() async {
       await _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAll();
     });
-    _loadedTitles.clear();
-    _hasMore = true;
-    _page = 0;
+    _clearLoadedTitles();
     PreferencesService().prefs.remove('${_listName}_last_update');
   }
 
@@ -206,13 +224,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   Future<List<TmdbTitle>> _getPage({required int offset, required int limit}) {
-    return _isar.tmdbTitles
-        .filter()
-        .listNameEqualTo(_listName)
-        .sortByLastUpdatedDesc()
-        .offset(offset)
-        .limit(limit)
-        .findAll();
+    return _sortTitles(_query).offset(offset).limit(limit).findAll();
   }
 
   TmdbTitle? getItem(int position) {
@@ -225,11 +237,98 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return _loadedTitles[position];
   }
 
-  void setTextFilter(String filter) {}
-  void setGenresFilter(List<String> genres) {}
-  void setFilterByProviders(bool filterByProviders) {}
-  void setTypeFilter(String type) {}
-  void setSort(String sort, bool ascending) {}
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> _sortTitles(
+      QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> query) {
+    QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortedQuery;
+
+    switch (_selectedSort) {
+      case SortOption.rating:
+        sortedQuery = _isSortAsc
+            ? query.sortByVoteAverage()
+            : query.sortByVoteAverageDesc();
+        break;
+      case SortOption.userRating:
+        sortedQuery =
+            _isSortAsc ? query.sortByRating() : query.sortByRatingDesc();
+        break;
+      case SortOption.releaseDate:
+        sortedQuery = _isSortAsc
+            ? query.sortByEffectiveReleaseDate()
+            : query.sortByEffectiveReleaseDateDesc();
+        break;
+      case SortOption.runtime:
+        sortedQuery = _isSortAsc
+            ? query.sortByIsMovieDesc().thenByEffectiveRuntime()
+            : query.sortByIsMovieDesc().thenByEffectiveRuntimeDesc();
+        break;
+      case SortOption.alphabetically:
+      default:
+        sortedQuery = _isSortAsc ? query.sortByName() : query.sortByNameDesc();
+        break;
+    }
+
+    return sortedQuery;
+  }
+
+  void _filterTitles({bool force = false}) {
+    _query = _isar.tmdbTitles.filter().listNameEqualTo(_listName);
+
+    if (_filterText.isNotEmpty) {
+      _query = _query.nameContains(_filterText, caseSensitive: false);
+    }
+
+    if (_filterGenres.isNotEmpty) {
+      _query =
+          _query.anyOf(_filterGenres, (q, id) => q.genreIdsElementEqualTo(id));
+    }
+
+    if (_filterMediaType.isNotEmpty) {
+      _query = _query.mediaTypeEqualTo(_filterMediaType);
+    }
+
+    if (_filterByProviders && _filterProviders.isNotEmpty) {
+      _query = _query.anyOf(
+          _filterProviders, (q, id) => q.flatrateProviderIdsElementEqualTo(id));
+    }
+
+    _anyFilterApplied = true;
+    _selectedTitleCount = _query.countSync();
+    _clearLoadedTitles();
+    loadNextPage(force: force);
+  }
+
+  int get debounceMs {
+    if (_filterText.length < 2) return 400;
+    if (_filterText.length < 4) return 300;
+    return 200;
+  }
+
+  void setTextFilter(String filter) {
+    _filterText = filter;
+    _filterTitles(force: true);
+  }
+
+  void setGenresFilter(List<String> genres) {
+    _filterGenres = TmdbGenreService().getIdsFromNames(genres);
+    _filterTitles();
+  }
+
+  void setProvidersFilter(bool filterByProviders, List<String> providerList) {
+    _filterByProviders = filterByProviders;
+    _filterProviders = TmdbProviderService().getIdsFromNames(providerList);
+    _filterTitles();
+  }
+
+  void setTypeFilter(String type) {
+    _filterMediaType = type;
+    _filterTitles();
+  }
+
+  void setSort(String sort, bool ascending) {
+    _selectedSort = sort;
+    _isSortAsc = ascending;
+    _filterTitles(force: true);
+  }
 
   Future<void> updateTitle(
     String accountId,
@@ -245,7 +344,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     if (result.statusCode == 200 || result.statusCode == 201) {
       if (add) {
         await _updateLocalTitle(title);
-        _loadedTitles.add(title);
+        _filterTitles(force: true);
       } else {
         await _deleteLocalTitle(title);
         _loadedTitles.removeWhere((element) => element.tmdbId == title.tmdbId);
@@ -299,15 +398,31 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         .findFirstSync();
   }
 
-  Future<void> loadNextPage() async {
-    if (_isLoading || !_hasMore) return;
+  Future<void> loadNextPage({bool force = false}) async {
+    if ((_isLoading && !force) || !_hasMore) {
+      debugPrint(
+          'Load next page skipped: $_isLoading, $_hasMore filterText: $_filterText');
+      return;
+    }
 
     _isLoading = true;
     notifyListeners();
 
     try {
+      if (_anyFilterApplied == false) {
+        _filterTitles();
+      }
+      final currentRequestId = ++_filterRequestId;
       final titles =
           await _getPage(offset: _page * _pageSize, limit: _pageSize);
+
+      if (currentRequestId != _filterRequestId) {
+        debugPrint(
+            'Discarding outdated page load. currentRequestId: $currentRequestId, _filterRequestId: $_filterRequestId');
+        _isLoading = false;
+        return;
+      }
+
       _loadedTitles.addAll(titles);
       _page++;
       if (titles.length < _pageSize) {
