@@ -372,6 +372,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       } else {
         await _deleteLocalTitle(title);
         _loadedTitles.removeWhere((element) => element.tmdbId == title.tmdbId);
+        _selectedTitleCount--;
       }
       _setLastUpdate();
       notifyListeners();
