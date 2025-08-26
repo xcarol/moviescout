@@ -198,7 +198,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           TmdbTitle? title = rateslistService.getItem(0);
 
           if (title == null) {
-            throw Exception('Failed to retrieve watchlist title');
+            throw Exception('Failed to retrieve rateslist title');
           }
 
           await rateslistService.updateTitleRate(
