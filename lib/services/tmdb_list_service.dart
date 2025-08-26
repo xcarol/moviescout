@@ -78,9 +78,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   bool get listIsEmpty {
-    final titleCount =
-        _isar.tmdbTitles.filter().listNameEqualTo(_listName).countSync();
-    return titleCount == 0;
+    return listTitleCount == 0;
   }
 
   bool get listIsNotEmpty {
