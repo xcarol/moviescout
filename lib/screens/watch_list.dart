@@ -51,7 +51,7 @@ class _WatchListState extends State<WatchList> {
   Widget body() {
     return Consumer<TmdbWatchlistService>(
       builder: (context, watchlistService, child) {
-        if (watchlistService.isEmpty) {
+        if (watchlistService.listIsEmpty) {
           return emptyBody();
         } else {
           return watchlistBody();

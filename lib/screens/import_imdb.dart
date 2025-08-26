@@ -126,7 +126,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
         Localizations.localeOf(context),
       );
 
-      while (watchlistService.isNotEmpty) {
+      while (watchlistService.listIsNotEmpty) {
         if (!context.mounted || _operationInProgress == false) {
           break;
         }
@@ -139,7 +139,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
         try {
           TmdbTitle? title = watchlistService.getItem(0);
-          
+
           if (title == null) {
             throw Exception('Failed to retrieve watchlist title');
           }
@@ -183,7 +183,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
         Localizations.localeOf(context),
       );
 
-      while (rateslistService.isNotEmpty) {
+      while (rateslistService.listIsNotEmpty) {
         if (!context.mounted || _operationInProgress == false) {
           break;
         }
