@@ -41,9 +41,24 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
             DateTime.now().subtract(const Duration(hours: 2)).toIso8601String();
 
     if (titles != null) {
+      for (var title in titles) {
+        title.listName = _listName;
+      }
       _loadedTitles.addAll(titles);
+      _updateLocalTitles(titles);
+      _selectedTitleCount = titles.length;
       _lastUpdate = DateTime.now().toIso8601String();
     }
+  }
+
+  Future<void> _updateLocalTitles(List<TmdbTitle> titles) async {
+    _isar.writeTxn(() async {
+      await _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAll();
+      for (var title in titles) {
+        await _isar.tmdbTitles.put(title);
+      }
+    });
+    await _filterTitles(force: true);
   }
 
   void _setLastUpdate() {
@@ -62,14 +77,14 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     notifyListeners();
   }
 
-  bool get isEmpty {
+  bool get listIsEmpty {
     final titleCount =
         _isar.tmdbTitles.filter().listNameEqualTo(_listName).countSync();
     return titleCount == 0;
   }
 
-  bool get isNotEmpty {
-    return !isEmpty;
+  bool get listIsNotEmpty {
+    return !listIsEmpty;
   }
 
   int get listTitleCount {
@@ -115,7 +130,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     bool isUpToDate =
         DateTime.now().difference(DateTime.parse(_lastUpdate)).inHours < 10;
 
-    if (accountId.isEmpty || (isNotEmpty && isUpToDate)) {
+    if (accountId.isEmpty || (listIsNotEmpty && isUpToDate)) {
       return;
     }
 
@@ -123,23 +138,13 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     notifyListeners();
 
     try {
-      if (isNotEmpty) {
-        await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
+      if (listIsEmpty) {
+        await _retrieveFromServer(accountId, retrieveMovies, retrieveTvshows);
       } else {
-        List<TmdbTitle> titles = await _retrieveServerList(
-            accountId, retrieveMovies, retrieveTvshows);
-
-        for (var title in titles) {
-          TmdbTitle updatedTitle =
-              await TmdbTitleService().updateTitleDetails(title);
-          await _updateLocalTitle(updatedTitle);
-          _loadedTitles.add(updatedTitle);
-          notifyListeners();
-        }
-
-        _setLastUpdate();
+        await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
       }
 
+      _setLastUpdate();
       _isLoading = false;
       notifyListeners();
     } catch (error) {
@@ -171,6 +176,24 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
 
     return serverList;
+  }
+
+  Future<void> _retrieveFromServer(
+    String accountId,
+    Future<List> Function() retrieveMovies,
+    Future<List> Function() retrieveTvshows,
+  ) async {
+    List<TmdbTitle> titles =
+        await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
+
+    for (var title in titles) {
+      TmdbTitle updatedTitle =
+          await TmdbTitleService().updateTitleDetails(title);
+      await _updateLocalTitle(updatedTitle);
+      notifyListeners();
+    }
+
+    // await _filterTitles(force: true);
   }
 
   Future<void> _syncWithServer(
@@ -205,6 +228,10 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         }
       }
     });
+
+    if (titlesToAdd.isNotEmpty || idsToRemove.isNotEmpty) {
+      await _filterTitles(force: true);
+    }
   }
 
   Future<void> _updateLocalTitle(TmdbTitle title) async {
@@ -270,7 +297,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return sortedQuery;
   }
 
-  void _filterTitles({bool force = false}) {
+  Future<void> _filterTitles({bool force = false}) async {
     _query = _isar.tmdbTitles.filter().listNameEqualTo(_listName);
 
     if (_filterText.isNotEmpty) {
@@ -294,18 +321,16 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     _anyFilterApplied = true;
     _selectedTitleCount = _query.countSync();
     _clearLoadedTitles();
-    loadNextPage(force: force);
-  }
-
-  int get debounceMs {
-    if (_filterText.length < 2) return 400;
-    if (_filterText.length < 4) return 300;
-    return 200;
+    if (force) {
+      await loadNextPage(force: force);
+    }
   }
 
   void setTextFilter(String filter) {
     _filterText = filter;
-    _filterTitles(force: true);
+    if (_filterText.isEmpty) {
+      _filterTitles(force: true);
+    }
   }
 
   void setGenresFilter(List<String> genres) {
@@ -344,7 +369,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     if (result.statusCode == 200 || result.statusCode == 201) {
       if (add) {
         await _updateLocalTitle(title);
-        _filterTitles(force: true);
+        await _filterTitles(force: true);
       } else {
         await _deleteLocalTitle(title);
         _loadedTitles.removeWhere((element) => element.tmdbId == title.tmdbId);
@@ -399,26 +424,20 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   Future<void> loadNextPage({bool force = false}) async {
-    if ((_isLoading && !force) || !_hasMore) {
-      debugPrint(
-          'Load next page skipped: $_isLoading, $_hasMore filterText: $_filterText');
-      return;
-    }
+    if ((_isLoading && !force) || !_hasMore) return;
 
     _isLoading = true;
     notifyListeners();
 
     try {
       if (_anyFilterApplied == false) {
-        _filterTitles();
+        await _filterTitles();
       }
       final currentRequestId = ++_filterRequestId;
       final titles =
           await _getPage(offset: _page * _pageSize, limit: _pageSize);
 
       if (currentRequestId != _filterRequestId) {
-        debugPrint(
-            'Discarding outdated page load. currentRequestId: $currentRequestId, _filterRequestId: $_filterRequestId');
         _isLoading = false;
         return;
       }
