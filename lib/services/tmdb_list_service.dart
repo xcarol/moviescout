@@ -255,13 +255,14 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   TmdbTitle? getItem(int position) {
-    if (_loadedTitles.isEmpty) {
+    if (position < 0 || position >= listTitleCount) {
       return null;
     }
-    if (position < 0 || position >= _loadedTitles.length) {
-      return null;
-    }
-    return _loadedTitles[position];
+    return _isar.tmdbTitles
+        .filter()
+        .listNameEqualTo(_listName)
+        .offset(position)
+        .findFirstSync();
   }
 
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> _sortTitles(
