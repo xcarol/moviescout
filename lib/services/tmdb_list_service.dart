@@ -31,34 +31,41 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   bool _filterByProviders = false;
   String _selectedSort = SortOption.alphabetically;
   bool _isSortAsc = true;
-  int _selectedTitleCount = 0;
-  int get selectedTitleCount => _selectedTitleCount;
 
   TmdbListService(String listName, {List<TmdbTitle>? titles}) {
     _listName = listName;
     _lastUpdate =
         PreferencesService().prefs.getString('${_listName}_last_update') ??
             DateTime.now().subtract(const Duration(hours: 2)).toIso8601String();
+  }
 
-    if (titles != null) {
-      for (var title in titles) {
-        title.listName = _listName;
-      }
-      _loadedTitles.addAll(titles);
-      _updateLocalTitles(titles);
-      _selectedTitleCount = titles.length;
-      _lastUpdate = DateTime.now().toIso8601String();
+  Future<void> setLocalTitles(List<TmdbTitle> titles) async {
+    await _clearLocalList();
+
+    if (titles.isEmpty) {
+      notifyListeners();
+      return;
     }
+
+    for (var title in titles) {
+      title.listName = _listName;
+    }
+
+    _loadedTitles.addAll(titles);
+    await _updateLocalTitles(titles);
+    await _filterTitles(force: true);
+    _setLastUpdate();
   }
 
   Future<void> _updateLocalTitles(List<TmdbTitle> titles) async {
-    _isar.writeTxn(() async {
+    await _isar.writeTxn(() async {
       await _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAll();
       for (var title in titles) {
         await _isar.tmdbTitles.put(title);
       }
     });
-    await _filterTitles(force: true);
+
+    notifyListeners(); // només després que la DB estigui actualitzada
   }
 
   void _setLastUpdate() {
@@ -70,6 +77,14 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   bool get userRatingAvailable {
     return _loadedTitles.isNotEmpty && _loadedTitles.first.rating > 0.0;
+  }
+
+  void clearListSync() {
+    _isar.writeTxnSync(() {
+      _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAllSync();
+    });
+    _clearLoadedTitles();
+    PreferencesService().prefs.remove('${_listName}_last_update');
   }
 
   Future<void> clearList() async {
@@ -86,7 +101,15 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   int get listTitleCount {
-    return _isar.tmdbTitles.filter().listNameEqualTo(_listName).countSync();
+    try {
+      final count =
+          _isar.tmdbTitles.filter().listNameEqualTo(_listName).countSync();
+      debugPrint('List "$_listName" title count: $count');
+      return count;
+    } catch (e) {
+      debugPrint('Error getting list title count: $e');
+      return 0;
+    }
   }
 
   bool contains(TmdbTitle title) {
@@ -190,8 +213,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       await _updateLocalTitle(updatedTitle);
       notifyListeners();
     }
-
-    // await _filterTitles(force: true);
   }
 
   Future<void> _syncWithServer(
@@ -238,13 +259,27 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
 
     await _isar.writeTxn(() async {
+      debugPrint(
+          'Updating local title: ${title.id}, name: ${title.name}, listName: ${title.listName}');
       await _isar.tmdbTitles.put(title);
     });
   }
 
   Future<void> _deleteLocalTitle(TmdbTitle title) async {
     await _isar.writeTxn(() async {
-      await _isar.tmdbTitles.delete(title.id);
+      debugPrint(
+          'Deleting local title: ${title.id}, listName: ${title.listName}');
+      final countBefore =
+          await _isar.tmdbTitles.filter().listNameEqualTo(_listName).count();
+      await _isar.tmdbTitles
+          .filter()
+          .listNameEqualTo(_listName)
+          .tmdbIdEqualTo(title.tmdbId)
+          .deleteAll();
+      final countAfter =
+          await _isar.tmdbTitles.filter().listNameEqualTo(_listName).count();
+      debugPrint('Local title count before deletion: $countBefore');
+      debugPrint('Local title count after deletion: $countAfter');
     });
   }
 
@@ -253,14 +288,15 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   TmdbTitle? getItem(int position) {
-    if (position < 0 || position >= listTitleCount) {
+    if (position < 0 || position >= _loadedTitles.length) {
       return null;
     }
-    return _isar.tmdbTitles
-        .filter()
-        .listNameEqualTo(_listName)
-        .offset(position)
-        .findFirstSync();
+    try {
+      return _loadedTitles[position];
+    } catch (e) {
+      debugPrint('Error getting item at position $position: $e');
+      return null;
+    }
   }
 
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> _sortTitles(
@@ -318,7 +354,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
 
     _anyFilterApplied = true;
-    _selectedTitleCount = _query.countSync();
     _clearLoadedTitles();
     if (force) {
       await loadNextPage(force: force);
@@ -372,7 +407,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       } else {
         await _deleteLocalTitle(title);
         _loadedTitles.removeWhere((element) => element.tmdbId == title.tmdbId);
-        _selectedTitleCount--;
       }
       _setLastUpdate();
       notifyListeners();
@@ -429,6 +463,9 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
+    if (_listName == 'searchProvider') {
+      debugPrint('Loading searchProvider titles');
+    }
     try {
       if (_anyFilterApplied == false) {
         await _filterTitles();

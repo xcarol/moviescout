@@ -6,6 +6,7 @@ import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/widgets/title_list.dart';
+import 'package:provider/provider.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -17,12 +18,14 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   final FocusNode _searchFocusNode = FocusNode();
   late TextEditingController _controller;
-  late List<TmdbTitle> searchTitles = List.empty();
+  final TmdbListService _listService = TmdbListService('searchProvider');
+  late String _currentSearchTerm;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    _listService.clearListSync();
   }
 
   @override
@@ -43,24 +46,20 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: TmdbTitleService().updateTitles(searchTitles),
-      builder: (context, snapshot) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            searchBox(),
-            searchResults(),
-          ],
-        );
-      },
+    debugPrint('Building Search screen');
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        searchBox(),
+        searchResults(),
+      ],
     );
   }
 
   resetTitle() {
     _controller.clear();
     setState(() {
-      searchTitles = List.empty();
+      _listService.clearList();
     });
   }
 
@@ -115,18 +114,52 @@ class _SearchState extends State<Search> {
   }
 
   Widget searchResults() {
-    return TitleList(TmdbListService('searchProvider', titles: searchTitles));
+    debugPrint('Setting results: ${_listService.listTitleCount} titles found');
+
+    return ChangeNotifierProvider.value(
+      value: _listService,
+      child: Consumer<TmdbListService>(
+        builder: (context, listService, _) {
+          return TitleList(listService);
+        },
+      ),
+    );
   }
 
   void searchTitle(BuildContext context, String title) async {
+    _currentSearchTerm = title;
+    final term = title;
+
     try {
+      // cridem l’API de cerca
       final result = await TmdbSearchService()
-          .searchTitle(title, Localizations.localeOf(context));
-      setState(() {
-        searchTitles = result;
-      });
+          .searchTitle(term, Localizations.localeOf(context));
+
+      // si ja hi ha una cerca nova, descartem aquests resultats
+      if (_currentSearchTerm != term) {
+        debugPrint(
+            'Discarding results for "$term", new search term is "$_currentSearchTerm"');
+        return;
+      }
+
+      // actualitzem dades completes dels títols
+      await TmdbTitleService().updateTitles(result);
+
+      // només si segueix sent la cerca actual, actualitzem el servei i notificació
+      if (_currentSearchTerm == term) {
+        await _listService.setLocalTitles(result); // await completament
+        debugPrint(
+            'Search title: $term, results updated: ${result.length} titles found');
+
+        // reconstruïm la UI
+        if (mounted) {
+          setState(() {
+            // no cal tocar searchTitles si el Consumer ja utilitza _listService
+          });
+        }
+      }
     } catch (error) {
-      if (context.mounted) {
+      if (mounted) {
         SnackMessage.showSnackBar(error.toString());
       }
     }

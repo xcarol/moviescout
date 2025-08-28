@@ -165,7 +165,10 @@ class _TitleListState extends State<TitleList> {
                 shrinkWrap: true,
                 itemCount: service.loadedTitleCount,
                 itemBuilder: (context, index) {
-                  final title = service.getItem(index)!;
+                  final title = service.getItem(index);
+                  if (title == null) {
+                    return SizedBox.shrink();
+                  }
                   final clampedScale = MediaQuery.of(context)
                       .textScaler
                       .scale(1.0)
@@ -361,7 +364,11 @@ class _TitleListState extends State<TitleList> {
 
   @override
   Widget build(BuildContext context) {
-    final int itemCount = widget.listService.selectedTitleCount;
+    final int itemCount = widget.listService.listTitleCount;
+    if (widget.listService.listName == 'watchlist') {
+      debugPrint('Building WatchList title list, count: $itemCount');
+    }
+
     return Expanded(
       child: Container(
         color: Theme.of(context).colorScheme.onPrimaryContainer,
