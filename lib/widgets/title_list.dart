@@ -26,6 +26,7 @@ class _TitleListState extends State<TitleList> {
   late String _showFiltersPreferencesName;
   late String _textFilterPreferencesName;
   late String _selectedGenresPreferencesName;
+  late String _selectedTypePreferencesName;
   late String _filterByProvidersPreferencesName;
   String _selectedType = '';
   late List<String> _titleTypes;
@@ -51,6 +52,12 @@ class _TitleListState extends State<TitleList> {
         PreferencesService().prefs.getBool(_showFiltersPreferencesName) ??
             false;
 
+    _selectedTypePreferencesName =
+        '${widget.listService.listName}_SelectedType';
+    _selectedType =
+        PreferencesService().prefs.getString(_selectedTypePreferencesName) ??
+            '';
+
     _selectedGenresPreferencesName =
         '${widget.listService.listName}_SelectedGenres';
     _selectedGenres = PreferencesService()
@@ -64,10 +71,18 @@ class _TitleListState extends State<TitleList> {
         PreferencesService().prefs.getBool(_filterByProvidersPreferencesName) ??
             false;
 
+    _retrieveUserProviders();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.listService.loadedTitleCount == 0 &&
           !widget.listService.isLoading) {
-        widget.listService.loadNextPage();
+        widget.listService.setFilters(
+          text: _textFilterController.text,
+          type: _titleTypeToOption(_selectedType),
+          genres: _selectedGenres,
+          filterByProviders: _filterByProviders,
+          providerList: _providersList,
+        );
       }
     });
   }
@@ -165,7 +180,10 @@ class _TitleListState extends State<TitleList> {
                 shrinkWrap: true,
                 itemCount: service.loadedTitleCount,
                 itemBuilder: (context, index) {
-                  final title = service.getItem(index)!;
+                  final title = service.getItem(index);
+                  if (title == null) {
+                    return SizedBox.shrink();
+                  }
                   final clampedScale = MediaQuery.of(context)
                       .textScaler
                       .scale(1.0)
@@ -284,14 +302,16 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
-  void _filterTitlesType(String type) {
-    if (type == AppLocalizations.of(context)!.allTypes) {
-      widget.listService.setTypeFilter('');
-    } else if (type == AppLocalizations.of(context)!.movies) {
-      widget.listService.setTypeFilter('movie');
+  String _titleTypeToOption(String type) {
+    String selectedType = '';
+
+    if (type == AppLocalizations.of(context)!.movies) {
+      selectedType = 'movie';
     } else if (type == AppLocalizations.of(context)!.tvshows) {
-      widget.listService.setTypeFilter('tv');
+      selectedType = 'tv';
     }
+
+    return selectedType;
   }
 
   Widget _typeSelector() {
@@ -300,7 +320,10 @@ class _TitleListState extends State<TitleList> {
       options: _titleTypes,
       onSelected: (value) => setState(() {
         _selectedType = value;
-        _filterTitlesType(value);
+        widget.listService.setTypeFilter(_titleTypeToOption(value));
+        PreferencesService()
+            .prefs
+            .setString(_selectedTypePreferencesName, _selectedType);
       }),
       arrowIcon: Icon(
         Icons.arrow_drop_down,
@@ -331,7 +354,8 @@ class _TitleListState extends State<TitleList> {
       options: _titleSorts,
       onSelected: (value) => setState(() {
         _selectedSort = value;
-        widget.listService.setSort(_sortNameToOption(context, value), _isSortAsc);
+        widget.listService
+            .setSort(_sortNameToOption(context, value), _isSortAsc);
       }),
       arrowIcon: _isSortAsc
           ? Icon(
