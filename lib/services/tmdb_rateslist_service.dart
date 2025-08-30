@@ -31,8 +31,7 @@ class TmdbRateslistService extends TmdbListService {
     Locale locale, {
     bool notify = false,
   }) async {
-    retrieveList(accountId, notify: notify,
-        retrieveMovies: () async {
+    retrieveList(accountId, notify: notify, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
             _tmdbRateslistMovies
@@ -106,6 +105,7 @@ class TmdbRateslistService extends TmdbListService {
     int rating,
   ) async {
     try {
+      title.listName = listName;
       if (rating > 0) {
         title.updateRating(rating.toDouble());
       }
