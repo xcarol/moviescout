@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart'
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/screens/providers.dart';
+import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/theme_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
@@ -191,6 +192,9 @@ class AppDrawer extends StatelessWidget {
         error.toString(),
       );
     });
+
+    
+    PreferencesService().prefs.clear();
 
     await tmdbWatchlistService.clearList();
     await tmdbRateslistService.clearList();
