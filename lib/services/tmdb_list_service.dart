@@ -206,7 +206,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       TmdbTitle updatedTitle =
           await TmdbTitleService().updateTitleDetails(title);
       await _updateLocalTitle(updatedTitle);
-    notifyListeners();
+      notifyListeners();
     }
   }
 
