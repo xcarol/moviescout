@@ -39,26 +39,35 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     _lastUpdate =
         PreferencesService().prefs.getString('${_listName}_last_update') ??
             DateTime.now().subtract(const Duration(hours: 2)).toIso8601String();
+  }
 
-    if (titles != null) {
-      for (var title in titles) {
-        title.listName = _listName;
-      }
-      _loadedTitles.addAll(titles);
-      _updateLocalTitles(titles);
-      _selectedTitleCount = titles.length;
-      _lastUpdate = DateTime.now().toIso8601String();
+  Future<void> setLocalTitles(List<TmdbTitle> titles) async {
+    await _clearLocalList();
+
+    if (titles.isEmpty) {
+      notifyListeners();
+      return;
     }
+
+    for (var title in titles) {
+      title.listName = _listName;
+    }
+
+    _loadedTitles.addAll(titles);
+    await _updateLocalTitles(titles);
+    await _filterTitles();
+    _setLastUpdate();
   }
 
   Future<void> _updateLocalTitles(List<TmdbTitle> titles) async {
-    _isar.writeTxn(() async {
+    await _isar.writeTxn(() async {
       await _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAll();
       for (var title in titles) {
         await _isar.tmdbTitles.put(title);
       }
     });
-    await _filterTitles(force: true);
+
+    notifyListeners();
   }
 
   void _setLastUpdate() {
@@ -70,6 +79,14 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   bool get userRatingAvailable {
     return _loadedTitles.isNotEmpty && _loadedTitles.first.rating > 0.0;
+  }
+
+  void clearListSync() {
+    _isar.writeTxnSync(() {
+      _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAllSync();
+    });
+    _clearLoadedTitles();
+    PreferencesService().prefs.remove('${_listName}_last_update');
   }
 
   Future<void> clearList() async {
@@ -190,8 +207,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       await _updateLocalTitle(updatedTitle);
       notifyListeners();
     }
-
-    // await _filterTitles(force: true);
   }
 
   Future<void> _syncWithServer(
@@ -228,7 +243,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     });
 
     if (titlesToAdd.isNotEmpty || idsToRemove.isNotEmpty) {
-      await _filterTitles(force: true);
+      await _filterTitles();
     }
   }
 
@@ -244,7 +259,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   Future<void> _deleteLocalTitle(TmdbTitle title) async {
     await _isar.writeTxn(() async {
-      await _isar.tmdbTitles.delete(title.id);
+      await _isar.tmdbTitles
+          .filter()
+          .listNameEqualTo(_listName)
+          .tmdbIdEqualTo(title.tmdbId)
+          .deleteAll();
     });
   }
 
@@ -253,14 +272,15 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   TmdbTitle? getItem(int position) {
-    if (position < 0 || position >= listTitleCount) {
+    if (position < 0 || position >= _loadedTitles.length) {
       return null;
     }
-    return _isar.tmdbTitles
-        .filter()
-        .listNameEqualTo(_listName)
-        .offset(position)
-        .findFirstSync();
+    try {
+      return _loadedTitles[position];
+    } catch (e) {
+      debugPrint('Error getting item at position $position: $e');
+      return null;
+    }
   }
 
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> _sortTitles(
@@ -296,7 +316,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return sortedQuery;
   }
 
-  Future<void> _filterTitles({bool force = false}) async {
+  Future<void> _filterTitles() async {
     _query = _isar.tmdbTitles.filter().listNameEqualTo(_listName);
 
     if (_filterText.isNotEmpty) {
@@ -320,16 +340,26 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     _anyFilterApplied = true;
     _selectedTitleCount = _query.countSync();
     _clearLoadedTitles();
-    if (force) {
-      await loadNextPage(force: force);
-    }
+    await loadNextPage();
+  }
+
+  void setFilters(
+      {String text = '',
+      String type = '',
+      List<String> genres = const [],
+      bool filterByProviders = false,
+      List<String> providerList = const []}) {
+    _filterText = text;
+    _filterMediaType = type;
+    _filterGenres = TmdbGenreService().getIdsFromNames(genres);
+    _filterByProviders = filterByProviders;
+    _filterProviders = TmdbProviderService().getIdsFromNames(providerList);
+    _filterTitles();
   }
 
   void setTextFilter(String filter) {
     _filterText = filter;
-    if (_filterText.isEmpty) {
-      _filterTitles(force: true);
-    }
+    _filterTitles();
   }
 
   void setGenresFilter(List<String> genres) {
@@ -351,7 +381,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   void setSort(String sort, bool ascending) {
     _selectedSort = sort;
     _isSortAsc = ascending;
-    _filterTitles(force: true);
+    _filterTitles();
   }
 
   Future<void> updateTitle(
@@ -368,11 +398,10 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     if (result.statusCode == 200 || result.statusCode == 201) {
       if (add) {
         await _updateLocalTitle(title);
-        await _filterTitles(force: true);
+        await _filterTitles();
       } else {
         await _deleteLocalTitle(title);
         _loadedTitles.removeWhere((element) => element.tmdbId == title.tmdbId);
-        _selectedTitleCount--;
       }
       _setLastUpdate();
       notifyListeners();
@@ -423,15 +452,16 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         .findFirstSync();
   }
 
-  Future<void> loadNextPage({bool force = false}) async {
-    if ((_isLoading && !force) || !_hasMore) return;
+  Future<void> loadNextPage() async {
+    if ((_isLoading) || !_hasMore) return;
 
     _isLoading = true;
     notifyListeners();
 
     try {
       if (_anyFilterApplied == false) {
-        await _filterTitles();
+        _isLoading = false;
+        return _filterTitles();
       }
       final currentRequestId = ++_filterRequestId;
       final titles =
