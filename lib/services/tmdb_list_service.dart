@@ -14,8 +14,9 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   String _lastUpdate = '';
   final List<TmdbTitle> _loadedTitles = List.empty(growable: true);
   String get listName => _listName;
-  bool _isLoading = false;
-  bool get isLoading => _isLoading;
+  bool _isDbLoading = false;
+  bool _isServerLoading = false;
+  bool get isLoading => _isServerLoading;
   bool _hasMore = true;
   bool get hasMore => _hasMore;
   int _page = 0;
@@ -149,7 +150,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       return;
     }
 
-    _isLoading = true;
+    _isServerLoading = true;
     notifyListeners();
 
     try {
@@ -160,7 +161,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       }
 
       _setLastUpdate();
-      _isLoading = false;
+      _isServerLoading = false;
       notifyListeners();
     } catch (error) {
       SnackMessage.showSnackBar(
@@ -205,7 +206,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       TmdbTitle updatedTitle =
           await TmdbTitleService().updateTitleDetails(title);
       await _updateLocalTitle(updatedTitle);
-      notifyListeners();
+    notifyListeners();
     }
   }
 
@@ -453,14 +454,14 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   Future<void> loadNextPage() async {
-    if ((_isLoading) || !_hasMore) return;
+    if ((_isDbLoading) || !_hasMore) return;
 
-    _isLoading = true;
+    _isDbLoading = true;
     notifyListeners();
 
     try {
       if (_anyFilterApplied == false) {
-        _isLoading = false;
+        _isDbLoading = false;
         return _filterTitles();
       }
       final currentRequestId = ++_filterRequestId;
@@ -468,7 +469,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
           await _getPage(offset: _page * _pageSize, limit: _pageSize);
 
       if (currentRequestId != _filterRequestId) {
-        _isLoading = false;
+        _isDbLoading = false;
         return;
       }
 
@@ -478,7 +479,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         _hasMore = false;
       }
     } finally {
-      _isLoading = false;
+      _isDbLoading = false;
       notifyListeners();
     }
   }
