@@ -202,12 +202,15 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     List<TmdbTitle> titles =
         await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
 
+    await _filterTitles();
     for (var title in titles) {
       TmdbTitle updatedTitle =
           await TmdbTitleService().updateTitleDetails(title);
       await _updateLocalTitle(updatedTitle);
+      _selectedTitleCount = _query.countSync();
       notifyListeners();
     }
+    await _filterTitles();
   }
 
   Future<void> _syncWithServer(
