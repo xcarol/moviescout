@@ -184,7 +184,7 @@ With the mobile connected and developer option _Enable USB install_ ON
 SUBSYSTEM=="usb", ATTR{idVendor}=="18d1", MODE="0666", GROUP="plugdev"
 ```
 Check the `ATTR{idVendor}` corresponds with the ouput of `lsusb`.
-- Give read permissions if the file didn't erxist
+- Give read permissions if the file didn't exist
 `sudo chmod a+r /etc/udev/rules.d/51-android.rules`
 - Restart _udev_
 ```
