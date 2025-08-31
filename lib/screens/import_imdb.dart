@@ -4,10 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
+import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
+import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
@@ -124,7 +126,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
         Localizations.localeOf(context),
       );
 
-      while (watchlistService.titles.isNotEmpty) {
+      while (watchlistService.listIsNotEmpty) {
         if (!context.mounted || _operationInProgress == false) {
           break;
         }
@@ -132,18 +134,24 @@ class _ImportIMDBState extends State<ImportIMDB> {
         setState(() {
           _resetTitlesMessage =
               AppLocalizations.of(context)!.resetWatchlistCount;
-          _resetTitlesCount = watchlistService.titles.length;
+          _resetTitlesCount = watchlistService.listTitleCount;
         });
 
         try {
+          TmdbTitle? title = watchlistService.getItem(0);
+
+          if (title == null) {
+            throw Exception('Failed to retrieve watchlist title');
+          }
+
           await watchlistService.updateWatchlistTitle(
             userService.accountId,
             userService.sessionId,
-            watchlistService.titles.first,
+            title,
             false,
           );
         } catch (error) {
-          watchlistService.titles.removeAt(0);
+          SnackMessage.showSnackBar(error.toString());
           break;
         }
       }
@@ -175,7 +183,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
         Localizations.localeOf(context),
       );
 
-      while (rateslistService.titles.isNotEmpty) {
+      while (rateslistService.listIsNotEmpty) {
         if (!context.mounted || _operationInProgress == false) {
           break;
         }
@@ -183,18 +191,24 @@ class _ImportIMDBState extends State<ImportIMDB> {
         setState(() {
           _resetTitlesMessage =
               AppLocalizations.of(context)!.resetRateslistCount;
-          _resetTitlesCount = rateslistService.titles.length;
+          _resetTitlesCount = rateslistService.listTitleCount;
         });
 
         try {
+          TmdbTitle? title = rateslistService.getItem(0);
+
+          if (title == null) {
+            throw Exception('Failed to retrieve rateslist title');
+          }
+
           await rateslistService.updateTitleRate(
             userService.accountId,
             userService.sessionId,
-            rateslistService.titles.first,
+            title,
             0,
           );
         } catch (error) {
-          rateslistService.titles.removeAt(0);
+          SnackMessage.showSnackBar(error.toString());
           break;
         }
       }
@@ -475,11 +489,21 @@ class _ImportIMDBState extends State<ImportIMDB> {
             continue;
           }
 
-          await Provider.of<TmdbWatchlistService>(context, listen: false)
-              .updateWatchlistTitle(
+          TmdbTitle updatedTitle =
+              await TmdbTitleService().updateTitleDetails(titlesFromId.first);
+
+          if (!context.mounted) {
+            return;
+          }
+
+          final watchlistService =
+              Provider.of<TmdbWatchlistService>(context, listen: false);
+
+          updatedTitle.listName = watchlistService.listName;
+          await watchlistService.updateWatchlistTitle(
             tmdbUserService.accountId,
             tmdbUserService.sessionId,
-            titlesFromId.first,
+            updatedTitle,
             true,
           );
 
@@ -557,11 +581,21 @@ class _ImportIMDBState extends State<ImportIMDB> {
             continue;
           }
 
-          await Provider.of<TmdbRateslistService>(context, listen: false)
-              .updateTitleRate(
+          TmdbTitle updatedTitle =
+              await TmdbTitleService().updateTitleDetails(titlesFromId.first);
+
+          if (!context.mounted) {
+            return;
+          }
+
+          final ratelistService =
+              Provider.of<TmdbRateslistService>(context, listen: false);
+
+          updatedTitle.listName = ratelistService.listName;
+          await ratelistService.updateTitleRate(
             tmdbUserService.accountId,
             tmdbUserService.sessionId,
-            titlesFromId.first,
+            updatedTitle,
             imdbIds[index][rateIndex],
           );
 

@@ -122,7 +122,9 @@ class _TitleDetailsState extends State<TitleDetails> {
     links.add(
       GestureDetector(
         onTap: () {
-          launchUrlString('https://www.themoviedb.org/${title.mediaType}/${title.id}');
+          launchUrlString(
+            'https://www.themoviedb.org/${title.mediaType}/${title.tmdbId}',
+          );
         },
         child: SizedBox(
           height: 30,
@@ -244,7 +246,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         ),
         Consumer<TmdbRateslistService>(
           builder: (context, ratingService, child) {
-            final titleRating = ratingService.getRating(title.id);
+            final titleRating = ratingService.getRating(title.tmdbId);
 
             return Row(
               children: [
@@ -519,7 +521,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                 .map(
                   (titleRecommended) => FutureBuilder(
                     future: TmdbTitleService().updateTitleDetails(
-                      TmdbTitle(title: titleRecommended),
+                      TmdbTitle.fromMap(title: titleRecommended),
                     ),
                     builder: (context, snapshot) {
                       return Padding(

@@ -18,14 +18,10 @@ class TmdbRateslistService extends TmdbListService {
   TmdbRateslistService(super.listName);
 
   int getRating(int titleId) {
-    if (titles.isEmpty) {
-      // retrieveRateslist may not have been called yet
-      retreiveListFromLocal(notify: false);
+    TmdbTitle? title = getTitleByTmdbId(titleId);
+    if (title == null) {
+      return 0;
     }
-    TmdbTitle? title = titles.firstWhere(
-      (element) => element.id == titleId,
-      orElse: () => TmdbTitle(title: {}),
-    );
     return title.rating.toInt();
   }
 
@@ -34,10 +30,8 @@ class TmdbRateslistService extends TmdbListService {
     String sessionId,
     Locale locale, {
     bool notify = false,
-    bool forceUpdate = false,
   }) async {
-    retrieveList(accountId, notify: notify, updateTitles: forceUpdate,
-        retrieveMovies: () async {
+    retrieveList(accountId, notify: notify, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
             _tmdbRateslistMovies
@@ -111,13 +105,14 @@ class TmdbRateslistService extends TmdbListService {
     int rating,
   ) async {
     try {
+      title.listName = listName;
       if (rating > 0) {
-        title.rating = rating.toDouble();
+        title.updateRating(rating.toDouble());
       }
       await updateTitle(accountId, sessionId, title, rating > 0,
           (String accountId, String sessionId) async {
         return _updateTitleRateToTmdb(
-            accountId, sessionId, title.id, title.mediaType, rating);
+            accountId, sessionId, title.tmdbId, title.mediaType, rating);
       });
     } catch (error) {
       SnackMessage.showSnackBar(

@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:isar/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
@@ -19,10 +20,8 @@ class TmdbWatchlistService extends TmdbListService {
     String sessionId,
     Locale locale, {
     bool notify = false,
-    bool forceUpdate = false,
   }) async {
-    retrieveList(accountId, notify: notify, updateTitles: forceUpdate,
-        retrieveMovies: () async {
+    retrieveList(accountId, notify: notify, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
             _tmdbWatchlistMovies
@@ -64,10 +63,15 @@ class TmdbWatchlistService extends TmdbListService {
   Future<void> updateWatchlistTitle(
       String accountId, String sessionId, TmdbTitle title, bool add) async {
     try {
+      if (add) {
+        title.listName = listName;
+        title.id = Isar.autoIncrement;
+      }
+
       await updateTitle(accountId, sessionId, title, add,
           (String accountId, String sessionId) async {
         return _updateTitleInWatchlistToTmdb(
-            accountId, sessionId, title.id, title.mediaType, add);
+            accountId, sessionId, title.tmdbId, title.mediaType, add);
       });
     } catch (error) {
       SnackMessage.showSnackBar(

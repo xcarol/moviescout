@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/theme_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
@@ -45,6 +46,7 @@ void main() async {
 
   await dotenv.load(fileName: ".env");
   await PreferencesService().init();
+  await IsarService.init();
   await TmdbGenreService().init();
   await TmdbProviderService().init();
 

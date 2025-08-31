@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -48,7 +50,7 @@ class TmdbTitleService extends TmdbBaseService {
     }
 
     final result = await _retrieveTitleDetailsByLocale(
-      title.id,
+      title.tmdbId,
       mediaType,
       '${getLanguageCode()}-${getCountryCode()}',
     );
@@ -57,14 +59,14 @@ class TmdbTitleService extends TmdbBaseService {
       if (defaultTargetPlatform == TargetPlatform.android) {
         FirebaseCrashlytics.instance.recordError(
           Exception(
-            'Failed to retrieve title details for ${title.id} - ${result.statusCode} - ${result.body}',
+            'Failed to retrieve title details for ${title.tmdbId} - ${result.statusCode} - ${result.body}',
           ),
           null,
           reason: 'TmdbTitleService.updateTitleDetails',
         );
       } else {
         SnackMessage.showSnackBar(
-          'Failed to retrieve title details for ${title.id} - ${result.statusCode} - ${result.body}',
+          'Failed to retrieve title details for ${title.tmdbId} - ${result.statusCode} - ${result.body}',
         );
       }
       return title;
@@ -76,7 +78,7 @@ class TmdbTitleService extends TmdbBaseService {
 
     if (titleMap['overview'].isEmpty) {
       final result = await _retrieveTitleDetailsByLocale(
-        title.id,
+        title.tmdbId,
         mediaType,
         getCountryCode().toLowerCase(),
       );
@@ -92,7 +94,7 @@ class TmdbTitleService extends TmdbBaseService {
 
     if (titleMap['overview'].isEmpty) {
       final result = await _retrieveTitleDetailsByLocale(
-        title.id,
+        title.tmdbId,
         mediaType,
         'en-US',
       );
@@ -114,8 +116,9 @@ class TmdbTitleService extends TmdbBaseService {
     titleMap['providers'] =
         titleMap['watch/providers']?['results']?[getCountryCode()] ?? {};
     titleMap['recommendations'] = titleMap['recommendations']?['results'] ?? {};
+    titleMap['tmdbJson'] = jsonEncode(titleMap);
     titleMap['last_updated'] = DateTime.now().toIso8601String();
 
-    return title;
+    return TmdbTitle.fromMap(title: titleMap);
   }
 }

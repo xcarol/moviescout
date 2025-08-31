@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/widgets/title_list.dart';
+import 'package:provider/provider.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -17,12 +17,14 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   final FocusNode _searchFocusNode = FocusNode();
   late TextEditingController _controller;
-  late List<TmdbTitle> searchTitles = List.empty();
+  final TmdbListService _listService = TmdbListService('searchProvider');
+  late String _currentSearchTerm;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    _listService.clearListSync();
   }
 
   @override
@@ -43,24 +45,19 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: TmdbTitleService().updateTitles(searchTitles),
-      builder: (context, snapshot) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            searchBox(),
-            searchResults(),
-          ],
-        );
-      },
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        searchBox(),
+        searchResults(),
+      ],
     );
   }
 
-  resetTitle() {
+  _resetTitle() {
     _controller.clear();
     setState(() {
-      searchTitles = List.empty();
+      _listService.clearList();
     });
   }
 
@@ -90,7 +87,7 @@ class _SearchState extends State<Search> {
             suffixIconColor: textColor,
             suffixIcon: IconButton(
               icon: const Icon(Icons.clear),
-              onPressed: resetTitle,
+              onPressed: _resetTitle,
               tooltip: AppLocalizations.of(context)!.search,
             ),
             border: OutlineInputBorder(
@@ -115,18 +112,38 @@ class _SearchState extends State<Search> {
   }
 
   Widget searchResults() {
-    return TitleList(TmdbListService('searchProvider', titles: searchTitles));
+    return ChangeNotifierProvider.value(
+      value: _listService,
+      child: Consumer<TmdbListService>(
+        builder: (context, listService, _) {
+          return TitleList(listService);
+        },
+      ),
+    );
   }
 
   void searchTitle(BuildContext context, String title) async {
+    _currentSearchTerm = title;
+    final term = title;
+
     try {
       final result = await TmdbSearchService()
-          .searchTitle(title, Localizations.localeOf(context));
-      setState(() {
-        searchTitles = result;
-      });
+          .searchTitle(term, Localizations.localeOf(context));
+
+      if (_currentSearchTerm != term) {
+        return;
+      }
+
+      await TmdbTitleService().updateTitles(result);
+
+      if (_currentSearchTerm == term) {
+        await _listService.setLocalTitles(result);
+        if (mounted) {
+          setState(() {});
+        }
+      }
     } catch (error) {
-      if (context.mounted) {
+      if (mounted) {
         SnackMessage.showSnackBar(error.toString());
       }
     }

@@ -2,7 +2,7 @@
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/7487a433b43b4c8781d753122b470d5b)](https://app.codacy.com/gh/xcarol/moviescout/dashboard)
 
-Movie Scout is a movie and series tracker based on TMDB. Discover where your favorite titles are streaming and keep your personal watchlist up to date.  
+Movie Scout is a movie and series tracker based on TMDB. It focuses on _What I want to watch now_ instead of _Look what I have for you to watch_ apps.  
 
 **Key Features:**  
 
@@ -109,9 +109,17 @@ Followed this guide: [i18n|Flutter](https://docs.flutter.dev/ui/accessibility-an
 
 Run `flutter gen-l10n` to update the i18n generated files.  
 
-### Shared Preferences
+### Shared Preferences (deprecated)
 
-The shared preferences are located at: _~/.local/share/com.xicra.moviescout_ folder.  
+~~The shared preferences are located at: _~/.local/share/com.xicra.moviescout_ folder.~~  
+
+### Isar
+
+Shared Preferences are not intended for huge data and a list of 1000 titles may reach 70MB which is even to much to hold in memory.  
+
+Isar was adopted beacuse its easy to use and has power enough for the kind of queries needed by the app.
+
+**NOTE:** Each time TmdbTitle class changes its "Schema" i.e. the public attributes, the command `dart run build_runner build` has to be executed. It is also available running the script _flutter_tool.sh_  with _-i_ parameter
 
 ## Icons
 
@@ -164,3 +172,23 @@ it is worth comparing it with the same Overmaps file to imitate it as much as po
 - Build the bundle `flutter build appbundle --release`.
 - Go to: [Create an internal test version](https://play.google.com/console/u/0/developers/5602401961225582177/app/4972075179053080011/app-dashboard) to upload it.
 
+## Troubleshooting
+
+### adb cannot start a debug session with error: Access Denied  
+
+With the mobile connected and developer option _Enable USB install_ ON
+- Run `lsusb` to see the Android device. 
+- It will output something like `Bus 001 Device 005: ID 18d1:4ee2 Google Inc.` we need the ID, usually the `18d1`.
+- Create or open the file _/etc/udev/rules.d/51-android.rules_ and add
+```
+SUBSYSTEM=="usb", ATTR{idVendor}=="18d1", MODE="0666", GROUP="plugdev"
+```
+Check the `ATTR{idVendor}` corresponds with the ouput of `lsusb`.
+- Give read permissions if the file didn't erxist
+`sudo chmod a+r /etc/udev/rules.d/51-android.rules`
+- Restart _udev_
+```
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+Now the device should appear in the output of `adb devices` and debugger should be able to connect.  

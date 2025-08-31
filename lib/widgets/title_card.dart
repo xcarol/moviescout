@@ -11,12 +11,11 @@ import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:provider/provider.dart';
 
-// ignore: constant_identifier_names
-const double CARD_HEIGHT = 160.0;
-
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
   final TmdbListService _tmdbListService;
+
+  static double cardHeight = 160.0;
 
   const TitleCard({
     super.key,
@@ -29,13 +28,11 @@ class TitleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TmdbTitle tmdbTitle = _tmdbListService.titles.firstWhere(
-      (title) => title.id == _title.id,
-      orElse: () => _title,
-    );
+    TmdbTitle tmdbTitle =
+        _tmdbListService.getTitleByTmdbId(_title.tmdbId) ?? _title;
 
     return SizedBox(
-      height: CARD_HEIGHT,
+      height: cardHeight,
       child: Card(
         margin: const EdgeInsets.only(bottom: 1),
         shape: RoundedRectangleBorder(),
@@ -45,7 +42,7 @@ class TitleCard extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => TitleDetails(
-                        title: TmdbTitle(title: tmdbTitle.map),
+                        title: tmdbTitle,
                         tmdbListService: tmdbListService,
                       )),
             );
@@ -86,13 +83,11 @@ class TitleCard extends StatelessWidget {
     ];
 
     return Selector<TmdbRateslistService, TmdbTitle?>(
-      selector: (_, rateslistService) => rateslistService.titles.firstWhere(
-        (t) => t.id == tmdbTitle.id,
-        orElse: () => TmdbTitle(title: {}),
-      ),
+      selector: (_, rateslistService) =>
+          rateslistService.getTitleByTmdbId(tmdbTitle.tmdbId),
       shouldRebuild: (prev, next) => prev?.rating != next?.rating,
       builder: (context, ratedTitle, _) {
-        if (ratedTitle != null && ratedTitle.id > 0) {
+        if (ratedTitle != null && ratedTitle.tmdbId > 0) {
           children.addAll([
             const SizedBox(width: 20),
             Icon(Icons.star, color: customColors.ratedTitle),
