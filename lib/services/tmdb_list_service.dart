@@ -125,6 +125,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   void _clearLoadedTitles() {
     _loadedTitles.clear();
+    _anyFilterApplied = false;
     _hasMore = true;
     _page = 0;
   }
