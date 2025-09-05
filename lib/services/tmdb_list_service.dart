@@ -342,9 +342,9 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
           _filterProviders, (q, id) => q.flatrateProviderIdsElementEqualTo(id));
     }
 
+    _clearLoadedTitles();
     _anyFilterApplied = true;
     _selectedTitleCount = _query.countSync();
-    _clearLoadedTitles();
     await loadNextPage();
   }
 
