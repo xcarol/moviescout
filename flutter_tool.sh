@@ -10,7 +10,7 @@ show_help() {
   echo "  --flutterfire-config     Configurar Firebase amb flutterfire"
   echo "  --launcher-icons         Generar icones de l'app"
   echo "  -a, --install-apk        Instal·lar APK en un dispositiu connectat"
-  echo "  -d, --build-debug        Construir l'app Android (.aab)"
+  echo "  -d, --build-android      Construir l'app Android (.aab)"
   echo "  -g, --gen-l10n           Generar fitxers de localització"
   echo "  -i, --build-isar         Genera els fitxers d'esquema per Isar"
   echo "  -r, --build-release      Construir APK release"
@@ -22,7 +22,7 @@ run_firebase_login=false
 run_flutterfire_config=false
 run_gen_l10n=false
 run_launcher_icons=false
-run_build_debug=false
+run_build_android=false
 run_build_release=false
 run_build_isar=false
 run_wipe_cache=false
@@ -47,8 +47,8 @@ for arg in "$@"; do
     -a|--install-apk)
       run_install_apk=true
       ;;
-    -d|--build-debug)
-      run_build_debug=true
+    -d|--build-android)
+      run_build_android=true
       ;;
     -g|--gen-l10n)
       run_gen_l10n=true
@@ -94,7 +94,7 @@ if $run_launcher_icons; then
   dart run flutter_launcher_icons
 fi
 
-if $run_build_debug; then
+if $run_build_android; then
   echo "▶️ llegint versió de pubspec.yaml"
   version=$(grep '^version:' pubspec.yaml | awk '{print $2}')
 
