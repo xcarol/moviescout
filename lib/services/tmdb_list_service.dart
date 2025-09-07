@@ -440,13 +440,13 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return titles;
   }
 
-  List<String> getListGenres() {
+  Future<List<String>> getListGenres() async {
     if (_listGenres.isNotEmpty) {
       return _listGenres;
     }
 
     final titles =
-        _isar.tmdbTitles.filter().listNameEqualTo(_listName).findAllSync();
+        await _isar.tmdbTitles.filter().listNameEqualTo(_listName).findAll();
     _listGenres = titles
         .expand((t) => t.genres)
         .map((genre) => genre.name)

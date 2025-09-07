@@ -71,6 +71,7 @@ class _TitleListState extends State<TitleList> {
         PreferencesService().prefs.getBool(_filterByProvidersPreferencesName) ??
             false;
 
+    _initilizeControlLocalizations();
     _retrieveUserProviders();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -101,9 +102,6 @@ class _TitleListState extends State<TitleList> {
     if (!isCurrent && _searchFocusNode.hasFocus) {
       _searchFocusNode.unfocus();
     }
-    _initilizeControlLocalizations();
-    _retrieveGenresFromTitles();
-    _retrieveUserProviders();
   }
 
   void _initilizeControlLocalizations() {
@@ -128,9 +126,11 @@ class _TitleListState extends State<TitleList> {
     ];
   }
 
-  void _retrieveGenresFromTitles() {
+  void _retrieveGenresFromTitles() async {
+    final genres = await widget.listService.getListGenres();
+    if (!mounted) return;
     setState(() {
-      _genresList = widget.listService.getListGenres();
+      _genresList = genres;
     });
   }
 
@@ -208,6 +208,7 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _controlPanel() {
+    _retrieveGenresFromTitles();
     return Container(
       color: Theme.of(context).colorScheme.primary,
       child: Column(
