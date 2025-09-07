@@ -100,9 +100,9 @@ class TmdbProviderService extends TmdbBaseService {
   void _setLocaleProviders(Map<int, Map<String, String>> providers) {
     final providerList = providers.entries
         .map((entry) => jsonEncode({
-              'provider_id': entry.key,
-              'provider_name': entry.value['name'],
-              'logo_path': entry.value['logo_path'],
+              TmdbProvider.providerId: entry.key,
+              TmdbProvider.providerName: entry.value[TmdbProvider.providerName],
+              TmdbProvider.logoPathName: entry.value[TmdbProvider.logoPathName],
             }))
         .toList();
     PreferencesService().prefs.setStringList('providers', providerList);
