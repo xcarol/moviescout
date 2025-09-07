@@ -99,6 +99,8 @@ Useful _.vscode/launch.json_
 }
 ```
 
+Add `"flutterMode": "profile"` parameter for profiling.  
+
 On _MovieScout Web_ parameter `--web-port` is important to set it as the one defined at the [Authorized JavaScript origins](https://console.cloud.google.com/apis/credentials/oauthclient/522907829647-g3amo1mcfp0smq336kqsaf8826g3d418.apps.googleusercontent.com?inv=1&invt=AbpCsw&project=movie-scout-a6608)
 
 On _MovieScout Android_ parameter `--device-id` set the desired device name.  
