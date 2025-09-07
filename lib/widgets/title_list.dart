@@ -71,7 +71,6 @@ class _TitleListState extends State<TitleList> {
         PreferencesService().prefs.getBool(_filterByProvidersPreferencesName) ??
             false;
 
-    _initilizeControlLocalizations();
     _retrieveUserProviders();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -102,6 +101,7 @@ class _TitleListState extends State<TitleList> {
     if (!isCurrent && _searchFocusNode.hasFocus) {
       _searchFocusNode.unfocus();
     }
+    _initilizeControlLocalizations();
   }
 
   void _initilizeControlLocalizations() {
