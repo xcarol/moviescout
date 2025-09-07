@@ -34,6 +34,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   bool _isSortAsc = true;
   int _selectedTitleCount = 0;
   int get selectedTitleCount => _selectedTitleCount;
+  List<String> _listGenres = [];
 
   TmdbListService(String listName, {List<TmdbTitle>? titles}) {
     _listName = listName;
@@ -124,6 +125,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   void _clearLoadedTitles() {
+    _listGenres.clear();
     _loadedTitles.clear();
     _anyFilterApplied = false;
     _hasMore = true;
@@ -438,15 +440,19 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   List<String> getListGenres() {
+    if (_listGenres.isNotEmpty) {
+      return _listGenres;
+    }
+    
     final titles =
         _isar.tmdbTitles.filter().listNameEqualTo(_listName).findAllSync();
-    final List<String> genres = titles
+    _listGenres = titles
         .expand((t) => t.genres)
         .map((genre) => genre.name)
         .toSet()
         .toList();
-    genres.sort();
-    return genres;
+    _listGenres.sort();
+    return _listGenres;
   }
 
   TmdbTitle? getTitleByTmdbId(int tmdbId) {
