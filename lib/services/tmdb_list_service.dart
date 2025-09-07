@@ -127,6 +127,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   void _clearLoadedTitles() {
     _listGenres.clear();
     _loadedTitles.clear();
+    _selectedTitleCount = 0;
     _anyFilterApplied = false;
     _hasMore = true;
     _page = 0;
@@ -443,7 +444,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     if (_listGenres.isNotEmpty) {
       return _listGenres;
     }
-    
+
     final titles =
         _isar.tmdbTitles.filter().listNameEqualTo(_listName).findAllSync();
     _listGenres = titles
