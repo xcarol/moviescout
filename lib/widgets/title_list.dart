@@ -193,9 +193,18 @@ class _TitleListState extends State<TitleList> {
                     data: MediaQuery.of(context).copyWith(
                       textScaler: TextScaler.linear(clampedScale),
                     ),
-                    child: TitleCard(
-                      title: title,
-                      tmdbListService: widget.listService,
+                    child: Column(
+                      children: [
+                        TitleCard(
+                          title: title,
+                          tmdbListService: widget.listService,
+                        ),
+                        Divider(
+                          height: 1,
+                          color:
+                              Theme.of(context).colorScheme.primaryContainer,
+                        ),
+                      ],
                     ),
                   );
                 },
