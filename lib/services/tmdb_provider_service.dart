@@ -41,19 +41,21 @@ class TmdbProviderService extends TmdbBaseService {
             (jsonDecode((response.body)) as Map<String, dynamic>)['results'];
 
         if (providers.isEmpty ||
-            providers[0]['provider_id'] == null ||
-            providers[0]['provider_id'].runtimeType != int) {
+            providers[0][TmdbProvider.providerId] == null ||
+            providers[0][TmdbProvider.providerId].runtimeType != int) {
           throw Exception('Failed to load providers');
         }
 
         for (var provider in providers) {
           _providerMap[provider[TmdbProvider.providerId]] = {
-            TmdbProvider.providerId: provider[TmdbProvider.providerId].toString(),
-            TmdbProvider.providerName: provider[TmdbProvider.providerName].toString(),
-            TmdbProvider.logoPathName: provider[TmdbProvider.logoPathName].toString(),
-            TmdbProvider.providerEnabled: PreferencesService()
-                    .prefs
-                    .getString('provider_${provider[TmdbProvider.providerId]}') ??
+            TmdbProvider.providerId:
+                provider[TmdbProvider.providerId].toString(),
+            TmdbProvider.providerName:
+                provider[TmdbProvider.providerName].toString(),
+            TmdbProvider.logoPathName:
+                provider[TmdbProvider.logoPathName].toString(),
+            TmdbProvider.providerEnabled: PreferencesService().prefs.getString(
+                    'provider_${provider[TmdbProvider.providerId]}') ??
                 'false',
           };
         }
@@ -70,7 +72,8 @@ class TmdbProviderService extends TmdbBaseService {
     final providers =
         PreferencesService().prefs.getStringList('providers') ?? [];
     final String lastUpdated =
-        PreferencesService().prefs.getString('providers_updateTime') ?? DateTime(1970).toString();
+        PreferencesService().prefs.getString('providers_updateTime') ??
+            DateTime(1970).toString();
     bool isUpToDate =
         DateTime.now().difference(DateTime.parse(lastUpdated)).inDays < 7;
 
@@ -80,8 +83,10 @@ class TmdbProviderService extends TmdbBaseService {
         .map((provider) => jsonDecode(provider) as Map<String, dynamic>)
         .forEach((provider) {
       _providerMap[provider[TmdbProvider.providerId]] = {
-        TmdbProvider.providerName: provider[TmdbProvider.providerName].toString(),
-        TmdbProvider.logoPathName: provider[TmdbProvider.logoPathName].toString(),
+        TmdbProvider.providerName:
+            provider[TmdbProvider.providerName].toString(),
+        TmdbProvider.logoPathName:
+            provider[TmdbProvider.logoPathName].toString(),
         TmdbProvider.providerEnabled: PreferencesService()
                 .prefs
                 .getString('provider_${provider[TmdbProvider.providerId]}') ??
@@ -95,9 +100,9 @@ class TmdbProviderService extends TmdbBaseService {
   void _setLocaleProviders(Map<int, Map<String, String>> providers) {
     final providerList = providers.entries
         .map((entry) => jsonEncode({
-              'provider_id': entry.key,
-              'provider_name': entry.value['name'],
-              'logo_path': entry.value['logo_path'],
+              TmdbProvider.providerId: entry.key,
+              TmdbProvider.providerName: entry.value[TmdbProvider.providerName],
+              TmdbProvider.logoPathName: entry.value[TmdbProvider.logoPathName],
             }))
         .toList();
     PreferencesService().prefs.setStringList('providers', providerList);
@@ -115,7 +120,8 @@ class TmdbProviderService extends TmdbBaseService {
 
   List<int> getIdsFromNames(List<String> names) {
     return _providerMap.entries
-        .where((entry) => names.contains(entry.value[TmdbProvider.providerName]))
+        .where(
+            (entry) => names.contains(entry.value[TmdbProvider.providerName]))
         .map((entry) => entry.key)
         .toList();
   }

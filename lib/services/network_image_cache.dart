@@ -38,27 +38,51 @@ class NetworkImageCache extends StatelessWidget {
     return null;
   }
 
+  Widget _fadeIn(Widget child) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeIn,
+      builder: (context, value, widget) {
+        return Opacity(
+          opacity: value,
+          child: widget,
+        );
+      },
+      child: child,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _loadImage(imageUrl),
-        builder: (context, AsyncSnapshot<dynamic> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else {
-            final imageFile = snapshot.data;
-            return imageFile != null
-                ? Image.file(
-                    imageFile!,
-                    fit: fit,
-                    errorBuilder: errorBuilder,
-                  )
-                : Image.network(
-                    imageUrl,
-                    fit: fit,
-                    errorBuilder: errorBuilder,
-                  );
-          }
-        });
+      future: _loadImage(imageUrl),
+      builder: (context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return FutureBuilder(
+            future: Future.delayed(const Duration(milliseconds: 600)),
+            builder: (context, snap) {
+              if (snap.connectionState == ConnectionState.done) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return const SizedBox.shrink();
+            },
+          );
+        } else {
+          final imageFile = snapshot.data;
+          return imageFile != null
+              ? _fadeIn(Image.file(
+                  imageFile!,
+                  fit: fit,
+                  errorBuilder: errorBuilder,
+                ))
+              : _fadeIn(Image.network(
+                  imageUrl,
+                  fit: fit,
+                  errorBuilder: errorBuilder,
+                ));
+        }
+      },
+    );
   }
 }

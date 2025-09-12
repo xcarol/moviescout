@@ -102,8 +102,6 @@ class _TitleListState extends State<TitleList> {
       _searchFocusNode.unfocus();
     }
     _initilizeControlLocalizations();
-    _retrieveGenresFromTitles();
-    _retrieveUserProviders();
   }
 
   void _initilizeControlLocalizations() {
@@ -128,9 +126,11 @@ class _TitleListState extends State<TitleList> {
     ];
   }
 
-  void _retrieveGenresFromTitles() {
+  void _retrieveGenresFromTitles() async {
+    final genres = await widget.listService.getListGenres();
+    if (!mounted) return;
     setState(() {
-      _genresList = widget.listService.getListGenres();
+      _genresList = genres;
     });
   }
 
@@ -193,9 +193,18 @@ class _TitleListState extends State<TitleList> {
                     data: MediaQuery.of(context).copyWith(
                       textScaler: TextScaler.linear(clampedScale),
                     ),
-                    child: TitleCard(
-                      title: title,
-                      tmdbListService: widget.listService,
+                    child: Column(
+                      children: [
+                        TitleCard(
+                          title: title,
+                          tmdbListService: widget.listService,
+                        ),
+                        Divider(
+                          height: 1,
+                          color:
+                              Theme.of(context).colorScheme.primaryContainer,
+                        ),
+                      ],
                     ),
                   );
                 },
@@ -208,6 +217,7 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _controlPanel() {
+    _retrieveGenresFromTitles();
     return Container(
       color: Theme.of(context).colorScheme.primary,
       child: Column(

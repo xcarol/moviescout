@@ -34,7 +34,7 @@ class TitleCard extends StatelessWidget {
     return SizedBox(
       height: cardHeight,
       child: Card(
-        margin: const EdgeInsets.only(bottom: 1),
+        margin: const EdgeInsets.all(0),
         shape: RoundedRectangleBorder(),
         child: InkWell(
           onTap: () {

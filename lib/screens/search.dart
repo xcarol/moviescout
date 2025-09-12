@@ -45,12 +45,15 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        searchBox(),
-        searchResults(),
-      ],
+    return ChangeNotifierProvider.value(
+      value: _listService,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          searchBox(),
+          searchResults(),
+        ],
+      ),
     );
   }
 
@@ -112,13 +115,10 @@ class _SearchState extends State<Search> {
   }
 
   Widget searchResults() {
-    return ChangeNotifierProvider.value(
-      value: _listService,
-      child: Consumer<TmdbListService>(
-        builder: (context, listService, _) {
-          return TitleList(listService);
-        },
-      ),
+    return Consumer<TmdbListService>(
+      builder: (context, listService, _) {
+        return TitleList(listService);
+      },
     );
   }
 
@@ -138,9 +138,6 @@ class _SearchState extends State<Search> {
 
       if (_currentSearchTerm == term) {
         await _listService.setLocalTitles(result);
-        if (mounted) {
-          setState(() {});
-        }
       }
     } catch (error) {
       if (mounted) {
