@@ -26,7 +26,7 @@ class TmdbProvider {
   String get logoPath {
     if (_provider[logoPathName] != null) {
       return (_provider[logoPathName] as String).isNotEmpty
-          ? 'https://image.tmdb.org/t/p/w92${_provider[logoPathName]}'
+          ? 'https://image.tmdb.org/t/p/w45${_provider[logoPathName]}'
           : '';
     }
     return '';
