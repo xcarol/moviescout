@@ -1,3 +1,4 @@
+import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
@@ -46,9 +47,13 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
       }
     }
 
+    String norm(String s) => removeDiacritics(s.toLowerCase());
+
     providerWidgets.sort((a, b) {
       if (a is SwitchListTile && b is SwitchListTile) {
-        return (a.title as Text).data!.compareTo((b.title as Text).data!);
+        final at = (a.title as Text).data ?? '';
+        final bt = (b.title as Text).data ?? '';
+        return norm(at).compareTo(norm(bt));
       }
       return 0;
     });
