@@ -54,6 +54,7 @@
     "your_rate": "Tu valoración",
     "reset_rate": "Elimina tu valoración",
     "emptyRates": "Todavía no has valorado ningún título.",
+    "emptyDiscover": "Nada por aquí.",
     "watchlistTitle": "Por ver",
     "rateslistTitle": "Valoradas",
     "yes": "Sí",
@@ -72,7 +73,7 @@
     "recommended": "Recomendados",
     "providersTitle": "Proveedores de contenido",
     "providers": "Proveedores",
-    "filterByProviders": "Solo disponibles"
-,
-    "noProvidersAvailable": "No hay proveedores disponibles"
+    "filterByProviders": "Solo disponibles",
+    "noProvidersAvailable": "No hay proveedores disponibles",
+    "discoverlistTitle": "Descubre"
     }

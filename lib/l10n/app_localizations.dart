@@ -427,6 +427,12 @@ abstract class AppLocalizations {
   /// **'You have not been rated any title yet.'**
   String get emptyRates;
 
+  /// No description provided for @emptyDiscover.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here.'**
+  String get emptyDiscover;
+
   /// No description provided for @watchlistTitle.
   ///
   /// In en, this message translates to:
@@ -546,6 +552,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No providers available'**
   String get noProvidersAvailable;
+
+  /// No description provided for @discoverlistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover'**
+  String get discoverlistTitle;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
