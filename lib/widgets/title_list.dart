@@ -73,6 +73,8 @@ class _TitleListState extends State<TitleList> {
 
     _retrieveUserProviders();
 
+    widget.listService.addListener(_onTitlesUpdated);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.listService.loadedTitleCount == 0 &&
           !widget.listService.isLoading) {
@@ -89,6 +91,7 @@ class _TitleListState extends State<TitleList> {
 
   @override
   void dispose() {
+    widget.listService.removeListener(_onTitlesUpdated);
     _textFilterController.dispose();
     _searchFocusNode.dispose();
     super.dispose();
@@ -126,7 +129,7 @@ class _TitleListState extends State<TitleList> {
     ];
   }
 
-  void _retrieveGenresFromTitles() async {
+  void _onTitlesUpdated() async {
     final genres = await widget.listService.getListGenres();
     if (!mounted) return;
     setState(() {
@@ -201,8 +204,7 @@ class _TitleListState extends State<TitleList> {
                         ),
                         Divider(
                           height: 1,
-                          color:
-                              Theme.of(context).colorScheme.primaryContainer,
+                          color: Theme.of(context).colorScheme.primaryContainer,
                         ),
                       ],
                     ),
@@ -217,7 +219,6 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _controlPanel() {
-    _retrieveGenresFromTitles();
     return Container(
       color: Theme.of(context).colorScheme.primary,
       child: Column(
