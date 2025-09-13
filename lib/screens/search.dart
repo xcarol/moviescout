@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
@@ -134,10 +135,10 @@ class _SearchState extends State<Search> {
         return;
       }
 
-      await TmdbTitleService().updateTitles(result);
+      List<TmdbTitle> updatedTitles = await TmdbTitleService().updateTitles(result);
 
       if (_currentSearchTerm == term) {
-        await _listService.setLocalTitles(result);
+        await _listService.setLocalTitles(updatedTitles);
       }
     } catch (error) {
       if (mounted) {
