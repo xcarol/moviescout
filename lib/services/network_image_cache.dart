@@ -4,8 +4,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
 class NetworkImageCache extends StatelessWidget {
-  const NetworkImageCache(this.imageUrl,
-      {super.key, this.fit, this.errorBuilder});
+  NetworkImageCache(this.imageUrl,
+      {this.fit, this.errorBuilder}) : super(key: ValueKey(imageUrl));
 
   final String imageUrl;
   final BoxFit? fit;
