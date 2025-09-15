@@ -174,6 +174,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get emptyRates => 'Todavía no has valorado ningún título.';
 
   @override
+  String get emptyDiscover => 'Nada por aquí.';
+
+  @override
   String get watchlistTitle => 'Por ver';
 
   @override
@@ -232,4 +235,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get noProvidersAvailable => 'No hay proveedores disponibles';
+
+  @override
+  String get discoverlistTitle => 'Descubre';
 }

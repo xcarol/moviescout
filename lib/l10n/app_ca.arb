@@ -54,6 +54,7 @@
     "your_rate": "La teva valoració",
     "reset_rate": "Elimina la valoració",
     "emptyRates": "Encara no has valorat cap títol.",
+    "emptyDiscover": "No hi ha ningú per aquí.",
     "watchlistTitle": "Per veure",
     "rateslistTitle": "Valorades",
     "yes": "Sí",
@@ -73,5 +74,6 @@
     "providersTitle": "Proveidors de contingut",
     "providers": "Proveidors",
     "filterByProviders": "Només disponibles",
-    "noProvidersAvailable": "No hi ha proveidors disponibles"
+    "noProvidersAvailable": "No hi ha proveidors disponibles",
+    "discoverlistTitle": "Descobreix"
 }

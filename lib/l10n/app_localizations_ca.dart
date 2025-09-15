@@ -174,6 +174,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get emptyRates => 'Encara no has valorat cap títol.';
 
   @override
+  String get emptyDiscover => 'No hi ha ningú per aquí.';
+
+  @override
   String get watchlistTitle => 'Per veure';
 
   @override
@@ -232,4 +235,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get noProvidersAvailable => 'No hi ha proveidors disponibles';
+
+  @override
+  String get discoverlistTitle => 'Descobreix';
 }

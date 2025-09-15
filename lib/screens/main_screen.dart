@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:moviescout/models/custom_colors.dart';
+import 'package:moviescout/screens/discover_list.dart';
 import 'package:moviescout/screens/rates_list.dart';
 import 'package:moviescout/screens/watch_list.dart';
 import 'package:moviescout/widgets/app_bar.dart';
@@ -41,6 +43,7 @@ class _MainScreenState extends State<MainScreen> {
               children: [
                 WatchList(),
                 RatesList(),
+                DiscoverList(),
                 Search(),
               ],
             ),
@@ -73,6 +76,10 @@ class _MainScreenState extends State<MainScreen> {
               label: '',
             ),
             BottomNavigationBarItem(
+              icon: Icon(Symbols.wand_stars),
+              label: '',
+            ),
+            BottomNavigationBarItem(
               icon: Icon(Icons.search),
               label: '',
             ),
@@ -90,6 +97,8 @@ class _MainScreenState extends State<MainScreen> {
       case 1:
         return l10n.rateslistTitle;
       case 2:
+        return l10n.discoverlistTitle;
+      case 3:
         return l10n.search;
       default:
         return '';
