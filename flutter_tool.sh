@@ -8,8 +8,8 @@ show_help() {
   echo "Opcions disponibles:"
   echo "  --firebase-login         Fer login a Firebase"
   echo "  --flutterfire-config     Configurar Firebase amb flutterfire"
-  echo "  --launcher-icons         Generar icones de l'app"
   echo "  -a, --install-apk        Instal·lar APK en un dispositiu connectat"
+  echo "  -b, --build-assets       Generar els asssets (icones i splash) de l'app"
   echo "  -d, --build-android      Construir l'app Android (.aab)"
   echo "  -g, --gen-l10n           Generar fitxers de localització"
   echo "  -i, --build-isar         Genera els fitxers d'esquema per Isar"
@@ -21,7 +21,7 @@ show_help() {
 run_firebase_login=false
 run_flutterfire_config=false
 run_gen_l10n=false
-run_launcher_icons=false
+run_build_assets=false
 run_build_android=false
 run_build_release=false
 run_build_isar=false
@@ -41,8 +41,8 @@ for arg in "$@"; do
     --flutterfire-config)
       run_flutterfire_config=true
       ;;
-    --launcher-icons)
-      run_launcher_icons=true
+    -b|--build-assets)
+      run_build_assets=true
       ;;
     -a|--install-apk)
       run_install_apk=true
@@ -89,9 +89,11 @@ if $run_gen_l10n; then
   flutter gen-l10n
 fi
 
-if $run_launcher_icons; then
+if $run_build_assets; then
   echo "▶️ dart run flutter_launcher_icons"
   dart run flutter_launcher_icons
+  echo "▶️ dart run flutter_native_splash:create"
+  dart run flutter_native_splash:create
 fi
 
 if $run_build_android; then
