@@ -277,6 +277,15 @@ class TmdbTitle {
   }
 
   @ignore
+  bool get isOnAir {
+    if (_tmdbTitle[_status] == null) {
+      return false;
+    }
+    return _tmdbTitle[_status] == statusInProduction ||
+        _tmdbTitle[_status] == statusPlanned;
+  }
+
+  @ignore
   String get firstAirDate {
     return _tmdbTitle[_first_air_date] ?? '';
   }
