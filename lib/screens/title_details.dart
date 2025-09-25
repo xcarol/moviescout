@@ -228,6 +228,10 @@ class _TitleDetailsState extends State<TitleDetails> {
 
   Widget _rating(TmdbTitle title) {
     if (title.voteAverage == 0) {
+      if (DateTime.parse(title.firstAirDate).isAfter(DateTime.now())) {
+        return Text(AppLocalizations.of(context)!.notReleasedYet);
+      }
+
       return const SizedBox();
     }
 

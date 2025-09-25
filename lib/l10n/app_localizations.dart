@@ -558,6 +558,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Discover'**
   String get discoverlistTitle;
+
+  /// No description provided for @notReleasedYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not release yet'**
+  String get notReleasedYet;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

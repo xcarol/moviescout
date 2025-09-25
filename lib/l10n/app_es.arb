@@ -75,5 +75,6 @@
     "providers": "Proveedores",
     "filterByProviders": "Solo disponibles",
     "noProvidersAvailable": "No hay proveedores disponibles",
-    "discoverlistTitle": "Descubre"
-    }
+    "discoverlistTitle": "Descubre",
+    "notReleasedYet": "Todavia no se ha estrenado"
+}

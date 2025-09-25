@@ -238,4 +238,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get discoverlistTitle => 'Descubre';
+
+  @override
+  String get notReleasedYet => 'Todavia no se ha estrenado';
 }

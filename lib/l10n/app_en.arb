@@ -75,5 +75,6 @@
     "providers": "Providers",
     "filterByProviders": "Only available",
     "noProvidersAvailable": "No providers available",
-    "discoverlistTitle": "Discover"
+    "discoverlistTitle": "Discover",
+    "notReleasedYet": "Not release yet"
 }
