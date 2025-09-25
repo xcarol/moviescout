@@ -75,5 +75,6 @@
     "providers": "Proveidors",
     "filterByProviders": "Només disponibles",
     "noProvidersAvailable": "No hi ha proveidors disponibles",
-    "discoverlistTitle": "Descobreix"
+    "discoverlistTitle": "Descobreix",
+    "notReleasedYet": "Encara no s'ha estrenat"
 }
