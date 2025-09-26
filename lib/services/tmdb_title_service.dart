@@ -11,7 +11,7 @@ const String _tmdbDetails =
     '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders%2Crecommendations&language={LOCALE}';
 
 class TmdbTitleService extends TmdbBaseService {
-  _retrieveTitleDetailsByLocale(
+  Future<dynamic> _retrieveTitleDetailsByLocale(
     int id,
     String mediaType,
     String locale,
@@ -92,6 +92,7 @@ class TmdbTitleService extends TmdbBaseService {
         final details = body(result);
         if (details['overview'].isNotEmpty) {
           titleMap['title'] = details['title'];
+          titleMap['name'] = details['name'];
           titleMap['overview'] = details['overview'];
         }
       }
@@ -108,6 +109,7 @@ class TmdbTitleService extends TmdbBaseService {
         final details = body(result);
         if (details['overview'].isNotEmpty) {
           titleMap['title'] = details['title'];
+          titleMap['name'] = details['name'];
           titleMap['overview'] = details['overview'];
         }
       }
