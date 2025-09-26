@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -15,16 +16,31 @@ class TmdbBaseService {
   String accessToken = '';
   static int _requestCount = 0;
 
+  static Locale _empowerMonirizedLanguages() {
+    final systemLocale = PlatformDispatcher.instance.locale;
+
+    Locale appLocale;
+    if (systemLocale.languageCode == 'ca' && systemLocale.countryCode == null) {
+      // Replace 'ES' with the desired country code (AD, FR, IT, etc.)
+      appLocale = const Locale('ca', 'ES');
+      // Add other minorized languages without country code if needed
+    } else {
+      appLocale = systemLocale;
+    }
+
+    return appLocale;
+  }
+
   dynamic body(response) {
     return jsonDecode(response.body);
   }
 
   String getCountryCode() {
-    return PlatformDispatcher.instance.locale.countryCode ?? "US";
+    return _empowerMonirizedLanguages().countryCode ?? "US";
   }
 
   String getLanguageCode() {
-    return PlatformDispatcher.instance.locale.languageCode;
+    return _empowerMonirizedLanguages().languageCode;
   }
 
   Future<dynamic> get(String query,
