@@ -12,6 +12,9 @@ const String _baseUrlv4 = 'https://api.themoviedb.org/4/';
 const String _baseUrlv3 = 'https://api.themoviedb.org/3/';
 
 const int _maxRequestsCount = 40;
+const int _initialDelayMs = 200;
+const int _maxDelayMs = 5000;
+
 class TmdbBaseService {
   String accessToken = '';
   static int _requestCount = 0;
@@ -51,17 +54,22 @@ class TmdbBaseService {
         : accessToken;
     final uri = Uri.parse('$baseUrl$query');
 
-    const int maxRetries = 3;
-    const Duration retryDelay = Duration(milliseconds: 200);
+    const Duration initialDelay = Duration(milliseconds: _initialDelayMs);
+    const Duration maxDelay = Duration(milliseconds: _maxDelayMs);
+    Duration delay = initialDelay;
+
+    Duration updatedDelay() =>
+        (delay * 2).compareTo(maxDelay) < 0 ? delay * 2 : maxDelay;
 
     while (_requestCount >= _maxRequestsCount) {
-      await Future.delayed(retryDelay);
+      await Future.delayed(initialDelay);
     }
 
     _requestCount++;
-    for (int attempt = 0; attempt < maxRetries; attempt++) {
+
+    while (true) {
       try {
-        // Running in a browser http.get doesn't return a resonse for a non valid (2xx) server response.
+        // Running in a browser http.get doesn't return a response for a non valid (2xx) server response.
         // It sends an exception instead. Use android for debugging.
         final response = await http.get(uri, headers: {
           'Content-Type': 'application/json',
@@ -69,29 +77,34 @@ class TmdbBaseService {
           'Authorization': 'Bearer $token',
         });
 
-        if (response.statusCode == 429 && attempt < maxRetries - 1) {
-          debugPrint(
-            'TmdbBaseService get Rate limit exceeded. Attempt ${attempt + 1} of $maxRetries. Retrying in ${retryDelay.inSeconds} seconds...',
-          );
-          await Future.delayed(retryDelay);
-          continue;
-        }
-
         if (response.statusCode == 429) {
           debugPrint(
-            'TmdbBaseService get Rate limit exceeded. Please try again later.',
+            'TmdbBaseService get Rate limit exceeded. Retrying in ${delay.inSeconds} seconds...',
           );
+          await Future.delayed(delay);
+          delay = updatedDelay();
+          continue;
         }
 
         _requestCount--;
         return response;
+      } on http.ClientException catch (error) {
+        debugPrint(
+            'ClientException: retrying in ${delay.inSeconds} seconds...');
+        await Future.delayed(delay);
+        delay = updatedDelay();
+      } on SocketException catch (error) {
+        debugPrint(
+            'SocketException: retrying in ${delay.inSeconds} seconds...');
+        await Future.delayed(delay);
+        delay = updatedDelay();
       } on HandshakeException catch (e) {
-        debugPrint('TmdbBaseService get HandshakeException: $e');
-        if (attempt < maxRetries - 1) {
-          await Future.delayed(retryDelay);
-          continue;
-        }
+        debugPrint(
+            'HandshakeException: retrying in ${delay.inSeconds} seconds...');
+        await Future.delayed(delay);
+        delay = updatedDelay();
       } catch (error) {
+        _requestCount--;
         if (Platform.isAndroid) {
           final message = 'TmdbBaseService get Error: ${error.toString()}';
           FirebaseCrashlytics.instance.recordFlutterError(
@@ -100,13 +113,9 @@ class TmdbBaseService {
         } else {
           debugPrint('TmdbBaseService get Error: ${error.toString()}');
         }
-        _requestCount--;
         rethrow;
       }
     }
-    _requestCount--;
-
-    throw HttpException('TmdbBaseService get Error: Too many retries');
   }
 
   Future<dynamic> post(String endpoint, Map<String, dynamic> body,

@@ -134,6 +134,7 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
   }
 
   Future<Map> login() async {
+    PreferencesService().prefs.clear();
     return _startLogin();
   }
 
@@ -141,9 +142,7 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     accessToken = '';
     _accountId = '';
     user = null;
-    PreferencesService().prefs.remove('accessToken');
-    PreferencesService().prefs.remove('accountId');
-    PreferencesService().prefs.remove('sessionId');
+    PreferencesService().prefs.clear();
     notifyListeners();
   }
 }
