@@ -36,18 +36,22 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   int get selectedTitleCount => _selectedTitleCount;
   List<String> _listGenres = [];
 
+  static const defaultLastUpdate = 24; // hours
+  static const updateTimeout = 10; // hours
+
   TmdbListService(String listName, {List<TmdbTitle>? titles}) {
     _listName = listName;
     _lastUpdate =
         PreferencesService().prefs.getString('${_listName}_last_update') ??
-            DateTime.now().subtract(const Duration(hours: 2)).toIso8601String();
+            DateTime.now()
+                .subtract(const Duration(hours: defaultLastUpdate))
+                .toIso8601String();
   }
 
   Future<void> setLocalTitles(List<TmdbTitle> titles) async {
     await _clearLocalList();
 
     if (titles.isEmpty) {
-      notifyListeners();
       return;
     }
 
@@ -58,6 +62,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     await _updateLocalTitles(titles);
     await _filterTitles();
     _setLastUpdate();
+    notifyListeners();
   }
 
   Future<void> _updateLocalTitles(List<TmdbTitle> titles) async {
@@ -67,8 +72,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         await _isar.tmdbTitles.put(title);
       }
     });
-
-    notifyListeners();
   }
 
   void _setLastUpdate() {
@@ -147,7 +150,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     required Future<List> Function() retrieveTvshows,
   }) async {
     bool isUpToDate =
-        DateTime.now().difference(DateTime.parse(_lastUpdate)).inHours < 10;
+        DateTime.now().difference(DateTime.parse(_lastUpdate)).inHours <
+            updateTimeout;
 
     if (accountId.isEmpty || (listIsNotEmpty && isUpToDate)) {
       return;
@@ -164,12 +168,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       }
 
       _setLastUpdate();
+    } catch (error) {
+      SnackMessage.showSnackBar('List $_listName ERROR: $error');
+    } finally {
       _isServerLoading = false;
       notifyListeners();
-    } catch (error) {
-      SnackMessage.showSnackBar(
-        'Error retrieving $_listName: $error',
-      );
     }
   }
 
@@ -211,7 +214,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
           await TmdbTitleService().updateTitleDetails(title);
       await _updateLocalTitle(updatedTitle);
       _selectedTitleCount = _query.countSync();
-      notifyListeners();
     }
     await _filterTitles();
   }
@@ -435,7 +437,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       }
     } while (page++ < pages);
 
-    notifyListeners();
     return titles;
   }
 
