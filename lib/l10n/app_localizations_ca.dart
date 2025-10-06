@@ -241,4 +241,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get notReleasedYet => 'Encara no s\'ha estrenat';
+
+  @override
+  String get unknownDuration => 'Duració no especificada.';
 }

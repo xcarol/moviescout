@@ -76,5 +76,6 @@
     "filterByProviders": "Only available",
     "noProvidersAvailable": "No providers available",
     "discoverlistTitle": "Discover",
-    "notReleasedYet": "Not release yet"
+    "notReleasedYet": "Not release yet",
+    "unknownDuration": "Runtime not specified."
 }
