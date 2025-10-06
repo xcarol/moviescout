@@ -241,4 +241,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notReleasedYet => 'Not release yet';
+
+  @override
+  String get unknownDuration => 'Runtime not specified.';
 }

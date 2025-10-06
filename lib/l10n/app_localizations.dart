@@ -564,6 +564,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not release yet'**
   String get notReleasedYet;
+
+  /// No description provided for @unknownDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Runtime not specified.'**
+  String get unknownDuration;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

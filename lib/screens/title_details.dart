@@ -401,7 +401,9 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   String _duration(TmdbTitle title) {
-    return title.duration;
+    return title.duration.isNotEmpty
+        ? title.duration
+        : AppLocalizations.of(context)!.unknownDuration;
   }
 
   Text _description(TmdbTitle title) {

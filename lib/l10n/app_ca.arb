@@ -76,5 +76,6 @@
     "filterByProviders": "Només disponibles",
     "noProvidersAvailable": "No hi ha proveidors disponibles",
     "discoverlistTitle": "Descobreix",
-    "notReleasedYet": "Encara no s'ha estrenat"
+    "notReleasedYet": "Encara no s'ha estrenat",
+    "unknownDuration": "Duració no especificada."
 }
