@@ -88,17 +88,17 @@ class TmdbBaseService {
 
         _requestCount--;
         return response;
-      } on http.ClientException catch (error) {
+      } on http.ClientException {
         debugPrint(
             'ClientException: retrying in ${delay.inSeconds} seconds...');
         await Future.delayed(delay);
         delay = updatedDelay();
-      } on SocketException catch (error) {
+      } on SocketException {
         debugPrint(
             'SocketException: retrying in ${delay.inSeconds} seconds...');
         await Future.delayed(delay);
         delay = updatedDelay();
-      } on HandshakeException catch (e) {
+      } on HandshakeException {
         debugPrint(
             'HandshakeException: retrying in ${delay.inSeconds} seconds...');
         await Future.delayed(delay);
