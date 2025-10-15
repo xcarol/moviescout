@@ -71,7 +71,7 @@ class _TitleListState extends State<TitleList> {
         PreferencesService().prefs.getBool(_filterByProvidersPreferencesName) ??
             false;
 
-    _retrieveUserProviders();
+    _providersList = _retrieveUserProviders();
 
     widget.listService.addListener(_onTitlesUpdated);
 
@@ -131,14 +131,17 @@ class _TitleListState extends State<TitleList> {
 
   void _onTitlesUpdated() async {
     final genres = await widget.listService.getListGenres();
+    final providers = _retrieveUserProviders();
+
     if (!mounted) return;
     setState(() {
       _genresList = genres;
+      _providersList = providers;
     });
   }
 
-  void _retrieveUserProviders() {
-    _providersList = TmdbProviderService()
+  List<String> _retrieveUserProviders() {
+    List<String> providers = TmdbProviderService()
         .providers
         .keys
         .where((id) =>
@@ -149,9 +152,11 @@ class _TitleListState extends State<TitleList> {
             TmdbProviderService().providers[id]![TmdbProvider.providerName]!)
         .toList();
 
-    if (_providersList.isNotEmpty) {
-      _providersList.sort((a, b) => a.compareTo(b));
+    if (providers.isNotEmpty) {
+      providers.sort((a, b) => a.compareTo(b));
     }
+
+    return providers;
   }
 
   Widget _titleList() {
