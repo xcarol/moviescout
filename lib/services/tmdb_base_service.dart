@@ -152,6 +152,38 @@ class TmdbBaseService {
     }
   }
 
+  Future<dynamic> put(
+    String endpoint,
+    Map<String, dynamic> body, {
+    ApiVersion version = ApiVersion.v3,
+    String accessToken = '',
+  }) async {
+    try {
+      final String baseUrl = version == ApiVersion.v3 ? _baseUrlv3 : _baseUrlv4;
+      final token = accessToken.isEmpty || version == ApiVersion.v3
+          ? dotenv.env['TMDB_API_RAT']
+          : accessToken;
+      final uri = Uri.parse('$baseUrl/$endpoint');
+
+      return http.put(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(body),
+      );
+    } catch (error) {
+      final message = 'TmdbBaseService put Error: ${error.toString()}';
+      if (Platform.isAndroid) {
+        FirebaseCrashlytics.instance
+            .recordFlutterError(FlutterErrorDetails(exception: ([message])));
+      }
+      throw HttpException(message);
+    }
+  }
+
   Future<dynamic> delete(
     String endpoint,
     Map<String, dynamic> body, {
