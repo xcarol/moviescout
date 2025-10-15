@@ -24,7 +24,7 @@ class _WatchListState extends State<WatchList> {
 
   Future<void> _loadData() async {
     final userService = Provider.of<TmdbUserService>(context, listen: false);
-    await userService.setup();
+    userService.setup();
 
     if (mounted) {
       final watchlistService =

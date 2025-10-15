@@ -26,7 +26,7 @@ class _RatesListState extends State<RatesList> {
     final rateslistService =
         Provider.of<TmdbRateslistService>(context, listen: false);
 
-    await userService.setup();
+    userService.setup();
 
     if (mounted) {
       await rateslistService.retrieveRateslist(
