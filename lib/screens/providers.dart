@@ -37,7 +37,7 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
         providerWidgets.add(
           SwitchListTile(
             title: Text(providerName),
-            activeColor: Theme.of(context).colorScheme.primary,
+            activeThumbColor: Theme.of(context).colorScheme.primary,
             value: provider.value[TmdbProvider.providerEnabled] == 'true',
             onChanged: (value) => setState(() {
               TmdbProviderService().toggleProvider(provider.key, value);
