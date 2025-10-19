@@ -40,8 +40,7 @@ class _TitleListState extends State<TitleList> {
   List<String> _providersList = [];
   late TextEditingController _textFilterController;
   bool _isUpdatingFilters = false;
-
-
+  
   @override
   void initState() {
     super.initState();
@@ -82,13 +81,7 @@ class _TitleListState extends State<TitleList> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (widget.listService.loadedTitleCount == 0 &&
           !widget.listService.isLoading) {
-        await widget.listService.setFilters(
-          text: _textFilterController.text,
-          type: _titleTypeToOption(_selectedType),
-          genres: _selectedGenres,
-          filterByProviders: _filterByProviders,
-          providerList: _providersList,
-        );
+        await _setupFilters();
       }
     });
   }
@@ -133,6 +126,22 @@ class _TitleListState extends State<TitleList> {
     ];
   }
 
+  Future<void> _setupFilters() async {
+    _isUpdatingFilters = true;
+    try {
+      await widget.listService.setFilters(
+        text: _textFilterController.text,
+        type: _titleTypeToOption(_selectedType),
+        genres: _selectedGenres,
+        filterByProviders: _filterByProviders,
+        providerList: _providersList,
+      );
+      _isUpdatingFilters = false;
+    } finally {
+      _isUpdatingFilters = false;
+    }
+  }
+
   void _onTitlesUpdated() async {
     if (_isUpdatingFilters) return;
 
@@ -155,19 +164,7 @@ class _TitleListState extends State<TitleList> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted || !widget.listService.isLoading) {
-        _isUpdatingFilters = true;
-        try {
-          await widget.listService.setFilters(
-            text: _textFilterController.text,
-            type: _titleTypeToOption(_selectedType),
-            genres: _selectedGenres,
-            filterByProviders: _filterByProviders,
-            providerList: _providersList,
-          );
-          _isUpdatingFilters = false;
-        } finally {
-          _isUpdatingFilters = false;
-        }
+        await _setupFilters();
       }
     });
   }
