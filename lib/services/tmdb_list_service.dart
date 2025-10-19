@@ -352,18 +352,18 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     await loadNextPage();
   }
 
-  void setFilters(
+  Future<void> setFilters(
       {String text = '',
       String type = '',
       List<String> genres = const [],
       bool filterByProviders = false,
-      List<String> providerList = const []}) {
+      List<String> providerList = const []}) async {
     _filterText = text;
     _filterMediaType = type;
     _filterGenres = TmdbGenreService().getIdsFromNames(genres);
     _filterByProviders = filterByProviders;
     _filterProviders = TmdbProviderService().getIdsFromNames(providerList);
-    _filterTitles();
+    await _filterTitles();
   }
 
   void setTextFilter(String filter) {
