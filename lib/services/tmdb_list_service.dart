@@ -445,8 +445,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       return _listGenres;
     }
 
-    final titles =
-        await _isar.tmdbTitles.filter().listNameEqualTo(_listName).findAll();
+    final titles = await _query.findAll();
+
     _listGenres = titles
         .expand((t) => t.genres)
         .map((genre) => genre.name)
