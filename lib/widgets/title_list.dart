@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
+import 'package:collection/collection.dart' show ListEquality;
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -37,6 +39,8 @@ class _TitleListState extends State<TitleList> {
   late bool _filterByProviders = false;
   List<String> _providersList = [];
   late TextEditingController _textFilterController;
+  bool _isUpdatingFilters = false;
+
 
   @override
   void initState() {
@@ -75,10 +79,10 @@ class _TitleListState extends State<TitleList> {
 
     widget.listService.addListener(_onTitlesUpdated);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (widget.listService.loadedTitleCount == 0 &&
           !widget.listService.isLoading) {
-        widget.listService.setFilters(
+        await widget.listService.setFilters(
           text: _textFilterController.text,
           type: _titleTypeToOption(_selectedType),
           genres: _selectedGenres,
@@ -130,13 +134,41 @@ class _TitleListState extends State<TitleList> {
   }
 
   void _onTitlesUpdated() async {
+    if (_isUpdatingFilters) return;
+
+    final listEquals = const ListEquality().equals;
     final genres = await widget.listService.getListGenres();
     final providers = _retrieveUserProviders();
+
+    if (genres.isEmpty) return;
+
+    if (listEquals(genres, _genresList) &&
+        listEquals(providers, _providersList)) {
+      return;
+    }
 
     if (!mounted) return;
     setState(() {
       _genresList = genres;
       _providersList = providers;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted || !widget.listService.isLoading) {
+        _isUpdatingFilters = true;
+        try {
+          await widget.listService.setFilters(
+            text: _textFilterController.text,
+            type: _titleTypeToOption(_selectedType),
+            genres: _selectedGenres,
+            filterByProviders: _filterByProviders,
+            providerList: _providersList,
+          );
+          _isUpdatingFilters = false;
+        } finally {
+          _isUpdatingFilters = false;
+        }
+      }
     });
   }
 
