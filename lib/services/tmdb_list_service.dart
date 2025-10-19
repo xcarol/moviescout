@@ -453,7 +453,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         .toSet()
         .toList();
     _listGenres.sort();
-    return _listGenres;
+    return [..._listGenres];
   }
 
   TmdbTitle? getTitleByTmdbId(int tmdbId) {
