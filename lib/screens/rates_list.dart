@@ -14,6 +14,8 @@ class RatesList extends StatefulWidget {
 
 class _RatesListState extends State<RatesList> {
   late Future<void> _init;
+  late TmdbRateslistService _rateslistService;
+  late Widget _rateslistWidget;
 
   @override
   void initState() {
@@ -23,13 +25,18 @@ class _RatesListState extends State<RatesList> {
 
   Future<void> _loadData() async {
     final userService = Provider.of<TmdbUserService>(context, listen: false);
-    final rateslistService =
-        Provider.of<TmdbRateslistService>(context, listen: false);
 
     userService.setup();
 
+    _rateslistService =
+        Provider.of<TmdbRateslistService>(context, listen: false);
+    _rateslistWidget = TitleList(
+      _rateslistService,
+      key: ValueKey('rateslist'),
+    );
+
     if (mounted) {
-      await rateslistService.retrieveRateslist(
+      await _rateslistService.retrieveRateslist(
         userService.accountId,
         userService.sessionId,
         Localizations.localeOf(context),
@@ -81,9 +88,7 @@ class _RatesListState extends State<RatesList> {
   Widget rateslistBody() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        TitleList(Provider.of<TmdbRateslistService>(context, listen: false)),
-      ],
+      children: <Widget>[_rateslistWidget],
     );
   }
 }

@@ -15,6 +15,8 @@ class WatchList extends StatefulWidget {
 
 class _WatchListState extends State<WatchList> {
   late Future<void> _init;
+  late TmdbWatchlistService _watchlistService;
+  late Widget _watchlistWidget;
 
   @override
   void initState() {
@@ -26,11 +28,15 @@ class _WatchListState extends State<WatchList> {
     final userService = Provider.of<TmdbUserService>(context, listen: false);
     userService.setup();
 
-    if (mounted) {
-      final watchlistService =
-          Provider.of<TmdbWatchlistService>(context, listen: false);
+    _watchlistService =
+        Provider.of<TmdbWatchlistService>(context, listen: false);
+    _watchlistWidget = TitleList(
+      _watchlistService,
+      key: ValueKey('watchlist'),
+    );
 
-      await watchlistService.retrieveWatchlist(
+    if (mounted) {
+      await _watchlistService.retrieveWatchlist(
         userService.accountId,
         userService.sessionId,
         Localizations.localeOf(context),
@@ -116,9 +122,7 @@ class _WatchListState extends State<WatchList> {
   Widget watchlistBody() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        TitleList(Provider.of<TmdbWatchlistService>(context, listen: false)),
-      ],
+      children: <Widget>[_watchlistWidget],
     );
   }
 }
