@@ -45,6 +45,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
             DateTime.now()
                 .subtract(const Duration(hours: defaultLastUpdate))
                 .toIso8601String();
+    _query = _isar.tmdbTitles.filter().listNameEqualTo(_listName);
   }
 
   Future<void> setLocalTitles(List<TmdbTitle> titles) async {
