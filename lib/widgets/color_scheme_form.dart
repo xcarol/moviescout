@@ -80,9 +80,6 @@ class ColorSchemeForm extends Dialog {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                // contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                // visualDensity: VisualDensity.compact,
-                // dense: true,
                 tileColor: colorScheme.primary,
                 fillColor: WidgetStateProperty.all(colorScheme.onPrimary),
                 overlayColor: WidgetStateProperty.all(colorScheme.primary),

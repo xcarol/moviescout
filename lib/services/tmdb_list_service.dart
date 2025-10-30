@@ -6,7 +6,6 @@ import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
-import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 
 class TmdbListService extends TmdbBaseService with ChangeNotifier {
@@ -28,7 +27,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   String _filterText = '';
   String _filterMediaType = '';
   List<int> _filterGenres = [];
-  List<int> _filterProviders = [];
+  List<int> _filterProvidersIds = [];
   bool _filterByProviders = false;
   String _selectedSort = SortOption.alphabetically;
   bool _isSortAsc = true;
@@ -46,6 +45,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
             DateTime.now()
                 .subtract(const Duration(hours: defaultLastUpdate))
                 .toIso8601String();
+    _query = _isar.tmdbTitles.filter().listNameEqualTo(_listName);
   }
 
   Future<void> setLocalTitles(List<TmdbTitle> titles) async {
@@ -341,9 +341,9 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       _query = _query.mediaTypeEqualTo(_filterMediaType);
     }
 
-    if (_filterByProviders && _filterProviders.isNotEmpty) {
-      _query = _query.anyOf(
-          _filterProviders, (q, id) => q.flatrateProviderIdsElementEqualTo(id));
+    if (_filterByProviders && _filterProvidersIds.isNotEmpty) {
+      _query = _query.anyOf(_filterProvidersIds,
+          (q, id) => q.flatrateProviderIdsElementEqualTo(id));
     }
 
     _clearLoadedTitles();
@@ -352,18 +352,18 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     await loadNextPage();
   }
 
-  void setFilters(
+  Future<void> setFilters(
       {String text = '',
       String type = '',
       List<String> genres = const [],
       bool filterByProviders = false,
-      List<String> providerList = const []}) {
+      List<int> providerListIds = const []}) async {
     _filterText = text;
     _filterMediaType = type;
     _filterGenres = TmdbGenreService().getIdsFromNames(genres);
     _filterByProviders = filterByProviders;
-    _filterProviders = TmdbProviderService().getIdsFromNames(providerList);
-    _filterTitles();
+    _filterProvidersIds = providerListIds;
+    await _filterTitles();
   }
 
   void setTextFilter(String filter) {
@@ -376,9 +376,9 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     _filterTitles();
   }
 
-  void setProvidersFilter(bool filterByProviders, List<String> providerList) {
+  void setProvidersFilter(bool filterByProviders, List<int> providerIds) {
     _filterByProviders = filterByProviders;
-    _filterProviders = TmdbProviderService().getIdsFromNames(providerList);
+    _filterProvidersIds = providerIds;
     _filterTitles();
   }
 
@@ -445,15 +445,15 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       return _listGenres;
     }
 
-    final titles =
-        await _isar.tmdbTitles.filter().listNameEqualTo(_listName).findAll();
+    final titles = await _query.findAll();
+
     _listGenres = titles
         .expand((t) => t.genres)
         .map((genre) => genre.name)
         .toSet()
         .toList();
     _listGenres.sort();
-    return _listGenres;
+    return [..._listGenres];
   }
 
   TmdbTitle? getTitleByTmdbId(int tmdbId) {

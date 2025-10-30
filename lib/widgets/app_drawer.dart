@@ -187,7 +187,7 @@ class AppDrawer extends StatelessWidget {
         Provider.of<TmdbRateslistService>(context, listen: false);
     final logoutSuccessText = AppLocalizations.of(context)!.logoutSuccess;
 
-    await tmdbUserService.logout().catchError((error) {
+    await tmdbUserService.logout(context).catchError((error) {
       SnackMessage.showSnackBar(
         error.toString(),
       );

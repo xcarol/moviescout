@@ -5,6 +5,7 @@ import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
+import 'package:provider/provider.dart';
 
 class ProvidersScreen extends StatefulWidget {
   const ProvidersScreen({super.key});
@@ -29,7 +30,11 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
   Widget _body(BuildContext context) {
     List<Widget> providerWidgets = [];
 
-    for (var provider in TmdbProviderService().providers.entries) {
+    final providerService =
+        Provider.of<TmdbProviderService>(context, listen: false);
+    final map = providerService.providers;
+
+    for (var provider in map.entries) {
       String providerName = provider.value[TmdbProvider.providerName] ?? '';
       String logoPath = provider.value[TmdbProvider.logoPathName] ?? '';
 
@@ -37,10 +42,10 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
         providerWidgets.add(
           SwitchListTile(
             title: Text(providerName),
-            activeColor: Theme.of(context).colorScheme.primary,
+            activeThumbColor: Theme.of(context).colorScheme.primary,
             value: provider.value[TmdbProvider.providerEnabled] == 'true',
             onChanged: (value) => setState(() {
-              TmdbProviderService().toggleProvider(provider.key, value);
+              providerService.toggleProvider(provider.key, value);
             }),
           ),
         );

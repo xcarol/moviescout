@@ -13,6 +13,7 @@ class TmdbGenreService extends TmdbBaseService {
   TmdbGenreService._internal();
 
   final Map<int, String> _genreMap = {};
+  List<String> get defaultGenresList => _genreMap.values.toList();
   bool _isLoaded = false;
 
   bool get isLoaded => _isLoaded;
@@ -23,7 +24,7 @@ class TmdbGenreService extends TmdbBaseService {
 
     _genreMap.clear();
 
-    if (_getLocaleGenres()) {
+    if (_getLocalGenres()) {
       _isLoaded = true;
       return;
     }
@@ -69,13 +70,14 @@ class TmdbGenreService extends TmdbBaseService {
     }
 
     _isLoaded = true;
-    _setLocaleGenres(_genreMap);
+    _setLocalGenres(_genreMap);
   }
 
-  bool _getLocaleGenres() {
+  bool _getLocalGenres() {
     final genres = PreferencesService().prefs.getStringList('genres') ?? [];
     final String lastUpdated =
-        PreferencesService().prefs.getString('genres_updateTime') ?? DateTime(1970).toString();
+        PreferencesService().prefs.getString('genres_updateTime') ??
+            DateTime(1970).toString();
     bool isUpToDate =
         DateTime.now().difference(DateTime.parse(lastUpdated)).inDays < 7;
 
@@ -90,7 +92,7 @@ class TmdbGenreService extends TmdbBaseService {
     return true;
   }
 
-  void _setLocaleGenres(Map<int, String> genres) {
+  void _setLocalGenres(Map<int, String> genres) {
     final genreList = genres.entries
         .map((entry) => jsonEncode({'id': entry.key, 'name': entry.value}))
         .toList();

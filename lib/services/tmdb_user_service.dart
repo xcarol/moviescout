@@ -1,6 +1,10 @@
 import 'dart:convert';
 
+// ignore: unnecessary_import
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:moviescout/services/tmdb_provider_service.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
@@ -10,49 +14,60 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
 
   String _accountId = '';
   String _sessionId = '';
+  String _accessToken = '';
   String? _requestToken;
   Map? user;
 
-  bool get isUserLoggedIn => accessToken.isNotEmpty;
+  bool get isUserLoggedIn => _accessToken.isNotEmpty;
   String get accountId => _accountId;
   String get sessionId => _sessionId;
+  String get accessToken => _accessToken;
+
+  Future<void> _setupUserDetails() async {
+    if (user != null) return;
+
+    user = await _getUserDetails();
+    notifyListeners();
+  }
 
   Future<void> setup() async {
-    accessToken = PreferencesService().prefs.getString('accessToken') ?? '';
-    if (accessToken.isNotEmpty) {
+    if (isUserLoggedIn) return;
+
+    _accessToken = PreferencesService().prefs.getString('accessToken') ?? '';
+    if (_accessToken.isNotEmpty) {
       _accountId = PreferencesService().prefs.getString('accountId') ?? '';
       _sessionId = PreferencesService().prefs.getString('sessionId') ?? '';
       if (_accountId.isNotEmpty) {
-        user = await _getUserDetails();
+        await _setupUserDetails();
       }
     }
   }
 
   Future<Map> completeLogin() async {
-    if (_requestToken != null) {
-      int status = await _exchangeToken(_requestToken!);
-      if (status != 200) {
-        return {
-          'success': false,
-          'message': 'Error $status in completeLogin with token $_requestToken',
-        };
-      }
-      status = await _getSession();
-      if (status != 200) {
-        return {
-          'success': false,
-          'message': 'Error $status in completeLogin with token $_requestToken',
-        };
-      }
-      user = await _getUserDetails();
-      notifyListeners();
-      return {'success': true};
+    if (_requestToken == null) {
+      return {'success': false, 'message': 'Error: _requestToken is null'};
     }
 
-    return {
-      'success': false,
-      'message': 'Error: _requestToken is null',
-    };
+    int status = await _exchangeToken(_requestToken!);
+    if (status != 200) {
+      return {
+        'success': false,
+        'message': 'Error $status in _exchangeToken with token $_requestToken',
+      };
+    }
+
+    status = await _getSession();
+    if (status != 200) {
+      return {
+        'success': false,
+        'message': 'Error $status in _getSession (convert/4)',
+      };
+    }
+
+    await _setupUserDetails();
+    notifyListeners();
+
+    return {'success': true};
   }
 
   Future<int> _getSession() async {
@@ -75,15 +90,20 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
 
   Future<int> _exchangeToken(String requestToken) async {
     final response = await post(
-        '/auth/access_token', {'request_token': requestToken},
-        version: ApiVersion.v4);
+      '/auth/access_token',
+      {'request_token': requestToken},
+      version: ApiVersion.v4,
+    );
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
-      accessToken = json['access_token'];
-      _accountId = json['account_id'];
-      PreferencesService().prefs.setString('accessToken', accessToken);
-      PreferencesService().prefs.setString('accountId', _accountId);
+      final accessToken = json['access_token'];
+      final accountId = json['account_id'];
+
+      _accessToken = accessToken;
+      _accountId = accountId;
+      PreferencesService().prefs.setString('accessToken', _accessToken);
+      PreferencesService().prefs.setString('accountId', accountId);
     }
 
     return response.statusCode;
@@ -138,10 +158,14 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     return _startLogin();
   }
 
-  Future<void> logout() async {
-    accessToken = '';
+  Future<void> logout(BuildContext context) async {
     _accountId = '';
+    _sessionId = '';
+    _accessToken = '';
     user = null;
+    final providerService =
+        Provider.of<TmdbProviderService>(context, listen: false);
+    providerService.clearProvidersStatus();
     PreferencesService().prefs.clear();
     notifyListeners();
   }

@@ -16,7 +16,6 @@ const int _initialDelayMs = 200;
 const int _maxDelayMs = 5000;
 
 class TmdbBaseService {
-  String accessToken = '';
   static int _requestCount = 0;
 
   static Locale _empowerMonirizedLanguages() {
@@ -46,8 +45,11 @@ class TmdbBaseService {
     return _empowerMonirizedLanguages().languageCode;
   }
 
-  Future<dynamic> get(String query,
-      {ApiVersion version = ApiVersion.v3}) async {
+  Future<dynamic> get(
+    String query, {
+    ApiVersion version = ApiVersion.v3,
+    String accessToken = '',
+  }) async {
     final String baseUrl = version == ApiVersion.v3 ? _baseUrlv3 : _baseUrlv4;
     final token = accessToken.isEmpty || version == ApiVersion.v3
         ? dotenv.env['TMDB_API_RAT']
@@ -88,17 +90,17 @@ class TmdbBaseService {
 
         _requestCount--;
         return response;
-      } on http.ClientException catch (error) {
+      } on http.ClientException {
         debugPrint(
             'ClientException: retrying in ${delay.inSeconds} seconds...');
         await Future.delayed(delay);
         delay = updatedDelay();
-      } on SocketException catch (error) {
+      } on SocketException {
         debugPrint(
             'SocketException: retrying in ${delay.inSeconds} seconds...');
         await Future.delayed(delay);
         delay = updatedDelay();
-      } on HandshakeException catch (e) {
+      } on HandshakeException {
         debugPrint(
             'HandshakeException: retrying in ${delay.inSeconds} seconds...');
         await Future.delayed(delay);
@@ -118,8 +120,12 @@ class TmdbBaseService {
     }
   }
 
-  Future<dynamic> post(String endpoint, Map<String, dynamic> body,
-      {ApiVersion version = ApiVersion.v3}) async {
+  Future<dynamic> post(
+    String endpoint,
+    Map<String, dynamic> body, {
+    ApiVersion version = ApiVersion.v3,
+    String accessToken = '',
+  }) async {
     try {
       final String baseUrl = version == ApiVersion.v3 ? _baseUrlv3 : _baseUrlv4;
       final token = accessToken.isEmpty || version == ApiVersion.v3
@@ -146,8 +152,44 @@ class TmdbBaseService {
     }
   }
 
-  Future<dynamic> delete(String endpoint, Map<String, dynamic> body,
-      {ApiVersion version = ApiVersion.v3}) async {
+  Future<dynamic> put(
+    String endpoint,
+    Map<String, dynamic> body, {
+    ApiVersion version = ApiVersion.v3,
+    String accessToken = '',
+  }) async {
+    try {
+      final String baseUrl = version == ApiVersion.v3 ? _baseUrlv3 : _baseUrlv4;
+      final token = accessToken.isEmpty || version == ApiVersion.v3
+          ? dotenv.env['TMDB_API_RAT']
+          : accessToken;
+      final uri = Uri.parse('$baseUrl/$endpoint');
+
+      return http.put(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(body),
+      );
+    } catch (error) {
+      final message = 'TmdbBaseService put Error: ${error.toString()}';
+      if (Platform.isAndroid) {
+        FirebaseCrashlytics.instance
+            .recordFlutterError(FlutterErrorDetails(exception: ([message])));
+      }
+      throw HttpException(message);
+    }
+  }
+
+  Future<dynamic> delete(
+    String endpoint,
+    Map<String, dynamic> body, {
+    ApiVersion version = ApiVersion.v3,
+    String accessToken = '',
+  }) async {
     try {
       final String baseUrl = version == ApiVersion.v3 ? _baseUrlv3 : _baseUrlv4;
       final token = accessToken.isEmpty || version == ApiVersion.v3

@@ -14,6 +14,8 @@ class DiscoverList extends StatefulWidget {
 
 class _DiscoverListState extends State<DiscoverList> {
   late Future<void> _init;
+  late TmdbDiscoverlistService _discoverlistService;
+  late Widget _discoverlistWidget;
 
   @override
   void initState() {
@@ -23,13 +25,17 @@ class _DiscoverListState extends State<DiscoverList> {
 
   Future<void> _loadData() async {
     final userService = Provider.of<TmdbUserService>(context, listen: false);
-    await userService.setup();
+    userService.setup();
+
+    _discoverlistService =
+        Provider.of<TmdbDiscoverlistService>(context, listen: false);
+    _discoverlistWidget = TitleList(
+      _discoverlistService,
+      key: ValueKey('discoverlist'),
+    );
 
     if (mounted) {
-      final discoverlistService =
-          Provider.of<TmdbDiscoverlistService>(context, listen: false);
-
-      await discoverlistService.retrieveDiscoverlist(
+      await _discoverlistService.retrieveDiscoverlist(
         userService.accountId,
         userService.sessionId,
         Localizations.localeOf(context),
@@ -63,7 +69,8 @@ class _DiscoverListState extends State<DiscoverList> {
     List<Widget> children = [];
 
     if (Provider.of<TmdbUserService>(context, listen: false).isUserLoggedIn &&
-        Provider.of<TmdbDiscoverlistService>(context, listen: false).isLoading) {
+        Provider.of<TmdbDiscoverlistService>(context, listen: false)
+            .isLoading) {
       children.add(const CircularProgressIndicator());
     } else {
       children.add(Text(AppLocalizations.of(context)!.emptyDiscover,
@@ -81,9 +88,7 @@ class _DiscoverListState extends State<DiscoverList> {
   Widget discoverlistBody() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        TitleList(Provider.of<TmdbDiscoverlistService>(context, listen: false)),
-      ],
+      children: <Widget>[_discoverlistWidget],
     );
   }
 }

@@ -49,15 +49,21 @@ void main() async {
   await PreferencesService().init();
   await IsarService.init();
   await TmdbGenreService().init();
-  await TmdbProviderService().init();
 
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => ThemeService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
+      ChangeNotifierProxyProvider<TmdbUserService, TmdbProviderService>(
+        create: (_) => TmdbProviderService(),
+        update: (_, userService, providerService) => providerService!
+          ..setup(userService.accountId, userService.sessionId,
+              userService.accessToken),
+      ),
       ChangeNotifierProvider(create: (_) => TmdbWatchlistService('watchlist')),
       ChangeNotifierProvider(create: (_) => TmdbRateslistService('rateslist')),
-      ChangeNotifierProvider(create: (_) => TmdbDiscoverlistService('discoverlist')),
+      ChangeNotifierProvider(
+          create: (_) => TmdbDiscoverlistService('discoverlist')),
     ],
     child: const MyApp(),
   ));
