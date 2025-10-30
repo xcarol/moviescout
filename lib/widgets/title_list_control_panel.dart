@@ -101,7 +101,7 @@ class TitleListControlPanel extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         Switch(
-          activeColor: Theme.of(context).colorScheme.onPrimary,
+          activeThumbColor: Theme.of(context).colorScheme.onPrimary,
           value: filterByProviders,
           onChanged: (value) {
             providersChanged(value);
