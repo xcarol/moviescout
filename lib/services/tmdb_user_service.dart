@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+// ignore: unnecessary_import
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
@@ -18,12 +21,12 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
   bool get isUserLoggedIn => _accessToken.isNotEmpty;
   String get accountId => _accountId;
   String get sessionId => _sessionId;
+  String get accessToken => _accessToken;
 
   Future<void> _setupUserDetails() async {
     if (user != null) return;
-    
+
     user = await _getUserDetails();
-    await TmdbProviderService().setup(_accountId, _sessionId, _accessToken);
     notifyListeners();
   }
 
@@ -155,12 +158,14 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     return _startLogin();
   }
 
-  Future<void> logout() async {
+  Future<void> logout(BuildContext context) async {
     _accountId = '';
     _sessionId = '';
     _accessToken = '';
     user = null;
-    TmdbProviderService().clearProvidersStatus();
+    final providerService =
+        Provider.of<TmdbProviderService>(context, listen: false);
+    providerService.clearProvidersStatus();
     PreferencesService().prefs.clear();
     notifyListeners();
   }
