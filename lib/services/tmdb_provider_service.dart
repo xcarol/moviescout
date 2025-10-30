@@ -14,66 +14,53 @@ const String _tmdbLists = '/list/{LIST_ID}';
 const String _providersListName = 'providers';
 
 class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
-  static final TmdbProviderService _instance = TmdbProviderService._internal();
-  factory TmdbProviderService() => _instance;
-  TmdbProviderService._internal();
-
   final Map<int, Map<String, String>> _providerMap = {};
   Map<int, Map<String, String>> get providers => _providerMap;
-  bool _isLoaded = false;
+  bool _isInitialized = false;
+  bool _isInitializing = false;
   String _accessToken = '';
   String _listId = '';
   String _accountId = '';
   String _sessionId = '';
 
-  bool get isLoaded => _isLoaded;
-  Future<void> init() async {
-    if (_isLoaded) return;
+  bool get isInitialized => _isInitialized;
 
-    _providerMap.clear();
-
-    if (_getLocalProviders()) {
-      _isLoaded = true;
-      return;
-    }
-
+  Future<void> _retrieveProviders() async {
     List<String> providerUrls = [_tmdbMovieProviders, _tmdbTvProviders];
 
     for (String url in providerUrls) {
-      dynamic response = await get(url
+      final response = await get(url
           .replaceFirst('{LOCALE}', '${getLanguageCode()}-${getCountryCode()}')
           .replaceFirst('{COUNTRY}', getCountryCode()));
 
-      if (response.statusCode == 200) {
-        List<dynamic> providers =
-            (jsonDecode((response.body)) as Map<String, dynamic>)['results'];
+      if (response.statusCode != 200) {
+        throw Exception(
+            'Failed to load providers: ${response.statusCode} ${response.reasonPhrase}');
+      }
+      List<dynamic> providers = (jsonDecode(response.body)
+          as Map<String, dynamic>)['results'] as List<dynamic>;
 
-        if (providers.isEmpty ||
-            providers[0][TmdbProvider.providerId] == null ||
-            providers[0][TmdbProvider.providerId].runtimeType != int) {
-          throw Exception('Failed to load providers');
-        }
+      if (providers.isEmpty ||
+          providers[0][TmdbProvider.providerId] == null ||
+          providers[0][TmdbProvider.providerId].runtimeType != int) {
+        throw Exception('Failed to load providers (invalid payload)');
+      }
 
-        for (var provider in providers) {
-          _providerMap[provider[TmdbProvider.providerId]] = {
-            TmdbProvider.providerId:
-                provider[TmdbProvider.providerId].toString(),
-            TmdbProvider.providerName:
-                provider[TmdbProvider.providerName].toString(),
-            TmdbProvider.logoPathName:
-                provider[TmdbProvider.logoPathName].toString(),
-          };
-        }
-      } else {
-        throw Exception('Failed to load providers: ${response.statusCode}'
-            ' ${response.reasonPhrase}');
+      for (var provider in providers) {
+        _providerMap[provider[TmdbProvider.providerId]] = {
+          TmdbProvider.providerId: provider[TmdbProvider.providerId].toString(),
+          TmdbProvider.providerName:
+              provider[TmdbProvider.providerName].toString(),
+          TmdbProvider.logoPathName:
+              provider[TmdbProvider.logoPathName].toString(),
+          TmdbProvider.providerEnabled: 'false',
+        };
       }
     }
-    _isLoaded = true;
-    _setLocalProviders(_providerMap);
   }
 
   void clearProvidersStatus() {
+    _isInitialized = false;
     for (var entry in _providerMap.entries) {
       entry.value[TmdbProvider.providerEnabled] = 'false';
     }
@@ -81,10 +68,36 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
 
   Future<void> setup(
       String accountId, String sessionId, String accessToken) async {
-    _accountId = accountId;
-    _sessionId = sessionId;
-    _accessToken = accessToken;
+    if (_isInitialized || _isInitializing) return;
 
+    if (accountId.isEmpty || sessionId.isEmpty || accessToken.isEmpty) {
+      return;
+    }
+
+    try {
+      _isInitializing = true;
+      
+      _accountId = accountId;
+      _sessionId = sessionId;
+      _accessToken = accessToken;
+
+      _providerMap.clear();
+
+      if (_getLocalProviders() == false) {
+        await _retrieveProviders();
+        await _retrieveUserProviders();
+        _setLocalProviders(_providerMap);
+      }
+    } catch (e) {
+      debugPrint('Error in TmdbProviderService setup: $e');
+    } finally {
+      _isInitialized = true;
+      _isInitializing = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _retrieveUserProviders() async {
     _listId = PreferencesService().prefs.getString('providerListId') ?? '';
     if (_listId.isEmpty) {
       await _retrieveServerProvidersListId();
@@ -106,12 +119,7 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
       return;
     }
 
-    try {
-      _stringToProviders(data['description']);
-    } catch (e) {
-      // User can change content through TMDB web, ignore errors
-      return;
-    }
+    _stringToProviders(data['description']);
   }
 
   Future<bool> _retrieveServerProvidersListId() async {
@@ -132,8 +140,8 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
     return false;
   }
 
-  Future<void> _createServerProviderList() async {
-    if (_listId.isNotEmpty) return;
+  Future<void> _createServerProviderList({bool forced = false}) async {
+    if (_listId.isNotEmpty && !forced) return;
 
     const String myurl = 'list';
     const Map<String, dynamic> mybody = {
@@ -196,6 +204,19 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
       version: ApiVersion.v4,
       accessToken: _accessToken,
     );
+
+    if (response.statusCode == 404) {
+      await _createServerProviderList(forced: true);
+      final newurl = 'list/$_listId';
+      final retryResponse = await put(
+        newurl,
+        body,
+        version: ApiVersion.v4,
+        accessToken: _accessToken,
+      );
+      return retryResponse.statusCode == 201;
+    }
+
     return response.statusCode == 201;
   }
 
@@ -210,14 +231,19 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
 
     if (providers.isEmpty || !isUpToDate) return false;
 
+    _listId = PreferencesService().prefs.getString('providerListId') ?? '';
+
     providers
         .map((provider) => jsonDecode(provider) as Map<String, dynamic>)
         .forEach((provider) {
       _providerMap[provider[TmdbProvider.providerId]] = {
+        TmdbProvider.providerId: provider[TmdbProvider.providerId].toString(),
         TmdbProvider.providerName:
             provider[TmdbProvider.providerName].toString(),
         TmdbProvider.logoPathName:
             provider[TmdbProvider.logoPathName].toString(),
+        TmdbProvider.providerEnabled:
+            provider[TmdbProvider.providerEnabled].toString(),
       };
     });
 
@@ -230,6 +256,8 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
               TmdbProvider.providerId: entry.key,
               TmdbProvider.providerName: entry.value[TmdbProvider.providerName],
               TmdbProvider.logoPathName: entry.value[TmdbProvider.logoPathName],
+              TmdbProvider.providerEnabled:
+                  entry.value[TmdbProvider.providerEnabled],
             }))
         .toList();
     PreferencesService().prefs.setStringList('providers', providerList);
@@ -238,14 +266,20 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
         .setString('providers_updateTime', DateTime.now().toString());
   }
 
-  void toggleProvider(int id, bool value) {
+  void toggleProvider(int id, bool value) async {
     if (_providerMap.containsKey(id)) {
       _providerMap[id]![TmdbProvider.providerEnabled] = value.toString();
-      _updateProvidersToServer();
+      await _updateProvidersToServer();
+      _setLocalProviders(_providerMap);
+      notifyListeners();
     }
   }
 
   List<int> getIdsFromNames(List<String> names) {
+    if (names.isEmpty) {
+      return [];
+    }
+
     return _providerMap.entries
         .where(
             (entry) => names.contains(entry.value[TmdbProvider.providerName]))
