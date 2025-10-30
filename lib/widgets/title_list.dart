@@ -37,10 +37,10 @@ class _TitleListState extends State<TitleList> {
   List<String> _selectedGenres = [];
   List<String> _genresList = [];
   late bool _filterByProviders = false;
-  List<String> _providersList = [];
+  List<int> _providerListIds = [];
   late TextEditingController _textFilterController;
   bool _isUpdatingFilters = false;
-  
+
   @override
   void initState() {
     super.initState();
@@ -74,15 +74,9 @@ class _TitleListState extends State<TitleList> {
         PreferencesService().prefs.getBool(_filterByProvidersPreferencesName) ??
             false;
 
-    _providersList = _retrieveUserProviders();
-
     widget.listService.addListener(_onTitlesUpdated);
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (widget.listService.loadedTitleCount == 0 &&
-          !widget.listService.isLoading) {
-        await _setupFilters();
-      }
+      _onTitlesUpdated();
     });
   }
 
@@ -127,19 +121,15 @@ class _TitleListState extends State<TitleList> {
   }
 
   Future<void> _setupFilters() async {
-    _isUpdatingFilters = true;
     try {
       await widget.listService.setFilters(
         text: _textFilterController.text,
         type: _titleTypeToOption(_selectedType),
         genres: _selectedGenres,
         filterByProviders: _filterByProviders,
-        providerList: _providersList,
+        providerListIds: _providerListIds,
       );
-      _isUpdatingFilters = false;
-    } finally {
-      _isUpdatingFilters = false;
-    }
+    } catch (_) {}
   }
 
   void _onTitlesUpdated() async {
@@ -147,45 +137,40 @@ class _TitleListState extends State<TitleList> {
 
     final listEquals = const ListEquality().equals;
     final genres = await widget.listService.getListGenres();
-    final providers = _retrieveUserProviders();
 
     if (genres.isEmpty) return;
 
-    if (listEquals(genres, _genresList) &&
-        listEquals(providers, _providersList)) {
+    if (listEquals(genres, _genresList)) {
       return;
     }
 
     if (!mounted) return;
     setState(() {
       _genresList = genres;
-      _providersList = providers;
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted || !widget.listService.isLoading) {
+        _isUpdatingFilters = true;
         await _setupFilters();
+        _isUpdatingFilters = false;
       }
     });
   }
 
-  List<String> _retrieveUserProviders() {
-    List<String> providers = TmdbProviderService()
-        .providers
-        .keys
-        .where((id) =>
-            TmdbProviderService()
-                .providers[id]![TmdbProvider.providerEnabled] ==
-            'true')
-        .map((id) =>
-            TmdbProviderService().providers[id]![TmdbProvider.providerName]!)
-        .toList();
-
-    if (providers.isNotEmpty) {
-      providers.sort((a, b) => a.compareTo(b));
+  List<int> _retrieveUserProviders(TmdbProviderService providerService) {
+    if (providerService.isInitialized == false) {
+      return [];
     }
 
-    return providers;
+    final map = providerService.providers;
+
+    final enabledProviders = map.entries
+        .where((entry) => entry.value[TmdbProvider.providerEnabled] == 'true')
+        .map((entry) => int.parse(entry.value[TmdbProvider.providerId]!))
+        .toList();
+
+    return enabledProviders;
   }
 
   Widget _titleList() {
@@ -282,7 +267,7 @@ class _TitleListState extends State<TitleList> {
               setState(() {
                 _filterByProviders = providersChanged;
                 widget.listService
-                    .setProvidersFilter(_filterByProviders, _providersList);
+                    .setProvidersFilter(_filterByProviders, _providerListIds);
               });
               PreferencesService().prefs.setBool(
                   _filterByProvidersPreferencesName, _filterByProviders);
@@ -430,29 +415,43 @@ class _TitleListState extends State<TitleList> {
 
   @override
   Widget build(BuildContext context) {
-    final int itemCount = widget.listService.selectedTitleCount;
-    return Expanded(
-      child: Container(
-        color: Theme.of(context).colorScheme.onPrimaryContainer,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
-              child: Divider(
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
+    return Consumer<TmdbProviderService>(
+      builder: (context, providerService, _) {
+        final providerList = _retrieveUserProviders(providerService);
+
+        if (!const ListEquality().equals(providerList, _providerListIds)) {
+          _providerListIds = providerList;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            widget.listService
+                .setProvidersFilter(_filterByProviders, _providerListIds);
+          });
+        }
+
+        final int itemCount = widget.listService.selectedTitleCount;
+        return Expanded(
+          child: Container(
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  child: Divider(
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                ),
+                _infoLine(itemCount),
+                Divider(
+                  height: 1,
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                ),
+                if (_showFilters) _controlPanel(),
+                _titleList(),
+              ],
             ),
-            _infoLine(itemCount),
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.primaryContainer,
-            ),
-            if (_showFilters) _controlPanel(),
-            _titleList(),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
