@@ -156,7 +156,7 @@ Setup this file in the path _./android_:
     keyAlias=upload  
     storeFile=/home/xcarol/workspace/moviescout/upload-keystore.jks (Stored in BitWarden with the name _Android signing_)  
 
-### Check android gradle.build
+### Check app > build.gradle
 
 This attribute shuld be like this
 ```
