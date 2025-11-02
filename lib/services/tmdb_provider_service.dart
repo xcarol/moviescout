@@ -76,7 +76,7 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
 
     try {
       _isInitializing = true;
-      
+
       _accountId = accountId;
       _sessionId = sessionId;
       _accessToken = accessToken;
@@ -151,12 +151,14 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
       'public': false,
     };
 
-    await post(
-      myurl,
-      mybody,
-      version: ApiVersion.v4,
-      accessToken: _accessToken,
-    ).then((response) {
+    try {
+      final response = await post(
+        myurl,
+        mybody,
+        version: ApiVersion.v4,
+        accessToken: _accessToken,
+      );
+
       if (response.statusCode == 201) {
         final json = jsonDecode(response.body);
         final String listId = json['id'].toString();
@@ -166,9 +168,9 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
         debugPrint('Error creating provider list: ${response.statusCode}'
             ' ${response.reasonPhrase}');
       }
-    }).catchError((error) {
-      debugPrint('Error: $error');
-    });
+    } catch (error) {
+      debugPrint('Error creating provider list: $error');
+    }
   }
 
   String _providersToString() {
@@ -198,26 +200,31 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
       'description': _providersToString(),
     };
 
-    final response = await put(
-      url,
-      body,
-      version: ApiVersion.v4,
-      accessToken: _accessToken,
-    );
-
-    if (response.statusCode == 404) {
-      await _createServerProviderList(forced: true);
-      final newurl = 'list/$_listId';
-      final retryResponse = await put(
-        newurl,
+    try {
+      final response = await put(
+        url,
         body,
         version: ApiVersion.v4,
         accessToken: _accessToken,
       );
-      return retryResponse.statusCode == 201;
-    }
 
-    return response.statusCode == 201;
+      if (response.statusCode == 404) {
+        await _createServerProviderList(forced: true);
+        final newurl = 'list/$_listId';
+        final retryResponse = await put(
+          newurl,
+          body,
+          version: ApiVersion.v4,
+          accessToken: _accessToken,
+        );
+        return retryResponse.statusCode == 201;
+      }
+
+      return response.statusCode == 201;
+    } catch (error) {
+      debugPrint('Error updating providers to server: $error');
+      return false;
+    }
   }
 
   bool _getLocalProviders() {
