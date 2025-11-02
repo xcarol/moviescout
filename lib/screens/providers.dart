@@ -15,55 +15,49 @@ class ProvidersScreen extends StatefulWidget {
 }
 
 class _ProvidersScreenState extends State<ProvidersScreen> {
+  bool _providersChanged = false;
+  List<MapEntry<int, Map<String, String>>> _sortedProviders = [];
+
+  String _normalize(String s) => removeDiacritics(s.toLowerCase());
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MainAppBar(
-        context: context,
-        title: AppLocalizations.of(context)!.providersTitle,
-      ),
-      drawer: AppDrawer(),
-      body: Center(child: _body(context)),
-    );
-  }
-
-  Widget _body(BuildContext context) {
-    List<Widget> providerWidgets = [];
-
     final providerService =
         Provider.of<TmdbProviderService>(context, listen: false);
     final map = providerService.providers;
 
-    for (var provider in map.entries) {
-      String providerName = provider.value[TmdbProvider.providerName] ?? '';
-      String logoPath = provider.value[TmdbProvider.logoPathName] ?? '';
-
-      if (providerName.isNotEmpty && logoPath.isNotEmpty) {
-        providerWidgets.add(
-          SwitchListTile(
-            title: Text(providerName),
-            activeThumbColor: Theme.of(context).colorScheme.primary,
-            value: provider.value[TmdbProvider.providerEnabled] == 'true',
-            onChanged: (value) => setState(() {
-              providerService.toggleProvider(provider.key, value);
-            }),
-          ),
-        );
-      }
+    if (_sortedProviders.isEmpty) {
+      _sortedProviders = map.entries.where((entry) {
+        String providerName = entry.value[TmdbProvider.providerName] ?? '';
+        String logoPath = entry.value[TmdbProvider.logoPathName] ?? '';
+        return providerName.isNotEmpty && logoPath.isNotEmpty;
+      }).toList()
+        ..sort((a, b) {
+          final aName = a.value[TmdbProvider.providerName] ?? '';
+          final bName = b.value[TmdbProvider.providerName] ?? '';
+          return _normalize(aName).compareTo(_normalize(bName));
+        });
     }
 
-    String norm(String s) => removeDiacritics(s.toLowerCase());
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (_providersChanged && didPop) {
+          providerService.applyProvidersFilter();
+        }
+      },
+      child: Scaffold(
+        appBar: MainAppBar(
+          context: context,
+          title: AppLocalizations.of(context)!.providersTitle,
+        ),
+        drawer: AppDrawer(),
+        body: Center(child: _body(context, providerService)),
+      ),
+    );
+  }
 
-    providerWidgets.sort((a, b) {
-      if (a is SwitchListTile && b is SwitchListTile) {
-        final at = (a.title as Text).data ?? '';
-        final bt = (b.title as Text).data ?? '';
-        return norm(at).compareTo(norm(bt));
-      }
-      return 0;
-    });
-
-    if (providerWidgets.isEmpty) {
+  Widget _body(BuildContext context, TmdbProviderService providerService) {
+    if (_sortedProviders.isEmpty) {
       return Center(
         child: Text(AppLocalizations.of(context)!.noProvidersAvailable),
       );
@@ -73,7 +67,19 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
       scrollDirection: Axis.vertical,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: providerWidgets,
+        children: _sortedProviders
+            .map(
+              (provider) => SwitchListTile(
+                title: Text(provider.value[TmdbProvider.providerName] ?? ''),
+                activeThumbColor: Theme.of(context).colorScheme.primary,
+                value: provider.value[TmdbProvider.providerEnabled] == 'true',
+                onChanged: (value) => setState(() {
+                  providerService.toggleProvider(provider.key, value);
+                  _providersChanged = true;
+                }),
+              ),
+            )
+            .toList(),
       ),
     );
   }
