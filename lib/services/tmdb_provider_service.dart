@@ -273,13 +273,16 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
         .setString('providers_updateTime', DateTime.now().toString());
   }
 
-  void toggleProvider(int id, bool value) async {
+  void toggleProvider(int id, bool value) {
     if (_providerMap.containsKey(id)) {
       _providerMap[id]![TmdbProvider.providerEnabled] = value.toString();
-      await _updateProvidersToServer();
+      _updateProvidersToServer();
       _setLocalProviders(_providerMap);
-      notifyListeners();
     }
+  }
+
+  void applyProvidersFilter() {
+    notifyListeners();
   }
 
   List<int> getIdsFromNames(List<String> names) {
