@@ -33,6 +33,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   bool _isSortAsc = true;
   int _selectedTitleCount = 0;
   int get selectedTitleCount => _selectedTitleCount;
+  int get loadedTitleCount => _loadedTitles.length;
   List<String> _listGenres = [];
   ValueNotifier<List<String>> listGenres = ValueNotifier([]);
 
@@ -64,7 +65,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     await _filterTitles();
     _setLastUpdate();
     _updateListGenres();
-    notifyListeners();
   }
 
   Future<void> _updateLocalTitles(List<TmdbTitle> titles) async {
@@ -124,10 +124,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return true;
   }
 
-  int get loadedTitleCount {
-    return _loadedTitles.length;
-  }
-
   void _clearLoadedTitles({bool clearGenreCache = false}) {
     if (clearGenreCache) {
       _listGenres.clear();
@@ -162,7 +158,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
 
     _isServerLoading = true;
-    notifyListeners();
 
     try {
       if (listIsEmpty) {
@@ -176,7 +171,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       SnackMessage.showSnackBar('List $_listName ERROR: $error');
     } finally {
       _isServerLoading = false;
-      notifyListeners();
     }
   }
 
@@ -473,7 +467,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     if ((_isDbLoading) || !_hasMore) return;
 
     _isDbLoading = true;
-    notifyListeners();
 
     try {
       if (_anyFilterApplied == false) {
