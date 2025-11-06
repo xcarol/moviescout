@@ -136,7 +136,7 @@ class _TitleListState extends State<TitleList> {
     if (_isUpdatingFilters) return;
 
     final listEquals = const ListEquality().equals;
-    final genres = await widget.listService.getListGenres();
+    final genres = widget.listService.listGenres.value;
 
     if (genres.isEmpty) return;
 
@@ -238,50 +238,55 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _controlPanel() {
-    return Container(
-      color: Theme.of(context).colorScheme.primary,
-      child: Column(
-        children: [
-          TitleListControlPanel(
-            textFilterChanged: (newTextFilter) {
-              setState(() {
-                widget.listService.setTextFilter(newTextFilter);
-              });
-              PreferencesService()
-                  .prefs
-                  .setString(_textFilterPreferencesName, newTextFilter);
-            },
-            textFilterController: _textFilterController,
-            selectedGenres: _selectedGenres.toList(),
-            genresList: _genresList,
-            genresChanged: (List<String> genresChanged) {
-              setState(() {
-                _selectedGenres = genresChanged.toList();
-                widget.listService.setGenresFilter(_selectedGenres);
-              });
-              PreferencesService().prefs.setStringList(
-                  _selectedGenresPreferencesName, _selectedGenres);
-            },
-            filterByProviders: _filterByProviders,
-            providersChanged: (bool providersChanged) {
-              setState(() {
-                _filterByProviders = providersChanged;
-                widget.listService
-                    .setProvidersFilter(_filterByProviders, _providerListIds);
-              });
-              PreferencesService().prefs.setBool(
-                  _filterByProvidersPreferencesName, _filterByProviders);
-            },
-            focusNode: _searchFocusNode,
+    return ValueListenableBuilder(
+      valueListenable: widget.listService.listGenres,
+      builder: (context, genres, child) {
+        return Container(
+          color: Theme.of(context).colorScheme.primary,
+          child: Column(
+            children: [
+              TitleListControlPanel(
+                textFilterChanged: (newTextFilter) {
+                  setState(() {
+                    widget.listService.setTextFilter(newTextFilter);
+                  });
+                  PreferencesService()
+                      .prefs
+                      .setString(_textFilterPreferencesName, newTextFilter);
+                },
+                textFilterController: _textFilterController,
+                selectedGenres: _selectedGenres.toList(),
+                genresList: genres,
+                genresChanged: (List<String> genresChanged) {
+                  setState(() {
+                    _selectedGenres = genresChanged.toList();
+                    widget.listService.setGenresFilter(_selectedGenres);
+                  });
+                  PreferencesService().prefs.setStringList(
+                      _selectedGenresPreferencesName, _selectedGenres);
+                },
+                filterByProviders: _filterByProviders,
+                providersChanged: (bool providersChanged) {
+                  setState(() {
+                    _filterByProviders = providersChanged;
+                    widget.listService.setProvidersFilter(
+                        _filterByProviders, _providerListIds);
+                  });
+                  PreferencesService().prefs.setBool(
+                      _filterByProvidersPreferencesName, _filterByProviders);
+                },
+                focusNode: _searchFocusNode,
+              ),
+              Container(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                child: Divider(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
+              ),
+            ],
           ),
-          Container(
-            color: Theme.of(context).colorScheme.primaryContainer,
-            child: Divider(
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
