@@ -34,6 +34,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   int _selectedTitleCount = 0;
   int get selectedTitleCount => _selectedTitleCount;
   List<String> _listGenres = [];
+  ValueNotifier<List<String>> listGenres = ValueNotifier([]);
 
   static const defaultLastUpdate = 24; // hours
   static const updateTimeout = 10; // hours
@@ -62,6 +63,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     await _updateLocalTitles(titles);
     await _filterTitles();
     _setLastUpdate();
+    _updateListGenres();
     notifyListeners();
   }
 
@@ -89,7 +91,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     _isar.writeTxnSync(() {
       _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAllSync();
     });
-    _clearLoadedTitles();
+    _clearLoadedTitles(clearGenreCache: true);
     PreferencesService().prefs.remove('${_listName}_last_update');
   }
 
@@ -126,8 +128,10 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return _loadedTitles.length;
   }
 
-  void _clearLoadedTitles() {
-    _listGenres.clear();
+  void _clearLoadedTitles({bool clearGenreCache = false}) {
+    if (clearGenreCache) {
+      _listGenres.clear();
+    }
     _loadedTitles.clear();
     _selectedTitleCount = 0;
     _anyFilterApplied = false;
@@ -139,7 +143,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     await _isar.writeTxn(() async {
       await _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAll();
     });
-    _clearLoadedTitles();
+    _clearLoadedTitles(clearGenreCache: true);
     PreferencesService().prefs.remove('${_listName}_last_update');
   }
 
@@ -208,6 +212,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     List<TmdbTitle> titles =
         await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
 
+    _updateListGenres();
     await _filterTitles();
     for (var title in titles) {
       TmdbTitle updatedTitle =
@@ -252,6 +257,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     });
 
     if (titlesToAdd.isNotEmpty || idsToRemove.isNotEmpty) {
+      _updateListGenres();
       await _filterTitles();
     }
   }
@@ -346,7 +352,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
           (q, id) => q.flatrateProviderIdsElementEqualTo(id));
     }
 
-    _clearLoadedTitles();
+    _clearLoadedTitles(clearGenreCache: false);
     _anyFilterApplied = true;
     _selectedTitleCount = _query.countSync();
     await loadNextPage();
@@ -413,6 +419,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         _loadedTitles.removeWhere((element) => element.tmdbId == title.tmdbId);
       }
       _setLastUpdate();
+      _updateListGenres();
       notifyListeners();
     } else {
       throw Exception(
@@ -440,20 +447,18 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return titles;
   }
 
-  Future<List<String>> getListGenres() async {
-    if (_listGenres.isNotEmpty) {
-      return _listGenres;
-    }
+  void _updateListGenres() {
+    _listGenres.clear();
+    final genreSets = _isar.tmdbTitles
+        .filter()
+        .listNameEqualTo(_listName)
+        .genreIdsProperty()
+        .findAllSync();
 
-    final titles = await _query.findAll();
-
-    _listGenres = titles
-        .expand((t) => t.genres)
-        .map((genre) => genre.name)
-        .toSet()
-        .toList();
+    final uniqueGenres = genreSets.expand((ids) => ids).toSet().toList();
+    _listGenres = TmdbGenreService().getNamesFromIds(uniqueGenres);
     _listGenres.sort();
-    return [..._listGenres];
+    listGenres.value = [..._listGenres];
   }
 
   TmdbTitle? getTitleByTmdbId(int tmdbId) {
@@ -491,6 +496,9 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       }
     } finally {
       _isDbLoading = false;
+      if (_listGenres.isEmpty) {
+        _updateListGenres();
+      }
       notifyListeners();
     }
   }
