@@ -113,6 +113,13 @@ class TmdbGenreService extends TmdbBaseService {
         .toList();
   }
 
+  List<String> getNamesFromIds(List<dynamic> ids) {
+    return ids
+        .map((id) => _genreMap.containsKey(id) ? _genreMap[id]! : null)
+        .whereType<String>()
+        .toList();
+  }
+
   List<int> getIdsFromNames(List<String> names) {
     return _genreMap.entries
         .where((entry) => names.contains(entry.value))
