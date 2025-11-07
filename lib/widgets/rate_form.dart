@@ -30,9 +30,9 @@ class RateForm extends Dialog {
             mainAxisSize: MainAxisSize.min,
             children: [
               Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                if (rating.value > 0)
+                if (value > 0)
                   Text(
-                    '${AppLocalizations.of(context)!.your_rate}: ${rating.value}',
+                    '${AppLocalizations.of(context)!.your_rate}: $value',
                   )
                 else
                   Text('${AppLocalizations.of(context)!.your_rate}: '),

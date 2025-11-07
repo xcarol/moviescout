@@ -35,13 +35,13 @@ class _WatchListState extends State<WatchList> {
       key: ValueKey('watchlist'),
     );
 
-    if (mounted) {
-      await _watchlistService.retrieveWatchlist(
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _watchlistService.retrieveWatchlist(
         userService.accountId,
         userService.sessionId,
         Localizations.localeOf(context),
       );
-    }
+    });
   }
 
   @override

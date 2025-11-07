@@ -35,11 +35,9 @@ class _TitleListState extends State<TitleList> {
   String _selectedSort = '';
   late List<String> _titleSorts;
   List<String> _selectedGenres = [];
-  List<String> _genresList = [];
   late bool _filterByProviders = false;
   List<int> _providerListIds = [];
   late TextEditingController _textFilterController;
-  bool _isUpdatingFilters = false;
 
   @override
   void initState() {
@@ -74,15 +72,13 @@ class _TitleListState extends State<TitleList> {
         PreferencesService().prefs.getBool(_filterByProvidersPreferencesName) ??
             false;
 
-    widget.listService.addListener(_onTitlesUpdated);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _onTitlesUpdated();
+      _setupFilters();
     });
   }
 
   @override
   void dispose() {
-    widget.listService.removeListener(_onTitlesUpdated);
     _textFilterController.dispose();
     _searchFocusNode.dispose();
     super.dispose();
@@ -130,32 +126,6 @@ class _TitleListState extends State<TitleList> {
         providerListIds: _providerListIds,
       );
     } catch (_) {}
-  }
-
-  void _onTitlesUpdated() async {
-    if (_isUpdatingFilters) return;
-
-    final listEquals = const ListEquality().equals;
-    final genres = widget.listService.listGenres.value;
-
-    if (genres.isEmpty) return;
-
-    if (listEquals(genres, _genresList)) {
-      return;
-    }
-
-    if (!mounted) return;
-    setState(() {
-      _genresList = genres;
-    });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted || !widget.listService.isLoading) {
-        _isUpdatingFilters = true;
-        await _setupFilters();
-        _isUpdatingFilters = false;
-      }
-    });
   }
 
   List<int> _retrieveUserProviders(TmdbProviderService providerService) {
