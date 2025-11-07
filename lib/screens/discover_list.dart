@@ -34,13 +34,13 @@ class _DiscoverListState extends State<DiscoverList> {
       key: ValueKey('discoverlist'),
     );
 
-    if (mounted) {
-      await _discoverlistService.retrieveDiscoverlist(
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _discoverlistService.retrieveDiscoverlist(
         userService.accountId,
         userService.sessionId,
         Localizations.localeOf(context),
       );
-    }
+    });
   }
 
   @override

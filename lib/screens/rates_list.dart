@@ -35,13 +35,13 @@ class _RatesListState extends State<RatesList> {
       key: ValueKey('rateslist'),
     );
 
-    if (mounted) {
-      await _rateslistService.retrieveRateslist(
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _rateslistService.retrieveRateslist(
         userService.accountId,
         userService.sessionId,
         Localizations.localeOf(context),
       );
-    }
+    });
   }
 
   @override
