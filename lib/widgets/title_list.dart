@@ -260,50 +260,56 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
-  Widget _infoLine(int count) {
-    return Container(
-      color: Theme.of(context).colorScheme.onPrimaryContainer,
-      padding: EdgeInsets.symmetric(horizontal: 4),
-      child: Row(
-        children: [
-          Text(
-            count.toString(),
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontSize: 16,
-            ),
-          ),
-          _typeSelector(),
-          const SizedBox(width: 8),
-          if (widget.listService.isLoading)
-            SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2.0,
-              ),
-            ),
-          const Spacer(),
-          Row(
+  Widget _infoLine() {
+    return ValueListenableBuilder(
+      valueListenable: widget.listService.selectedTitleCount,
+      builder: (context, count, child) {
+        return Container(
+          color: Theme.of(context).colorScheme.onPrimaryContainer,
+          padding: EdgeInsets.symmetric(horizontal: 4),
+          child: Row(
             children: [
-              _sortSelector(),
-              _swapSortButton(context),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    _showFilters = !_showFilters;
-                    PreferencesService()
-                        .prefs
-                        .setBool(_showFiltersPreferencesName, _showFilters);
-                  });
-                },
-                icon: Icon(
-                    _showFilters ? Icons.filter_list_off : Icons.filter_list),
+              Text(
+                count.toString(),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 16,
+                ),
+              ),
+              _typeSelector(),
+              const SizedBox(width: 8),
+              if (widget.listService.isLoading)
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.0,
+                  ),
+                ),
+              const Spacer(),
+              Row(
+                children: [
+                  _sortSelector(),
+                  _swapSortButton(context),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _showFilters = !_showFilters;
+                        PreferencesService()
+                            .prefs
+                            .setBool(_showFiltersPreferencesName, _showFilters);
+                      });
+                    },
+                    icon: Icon(_showFilters
+                        ? Icons.filter_list_off
+                        : Icons.filter_list),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -402,7 +408,6 @@ class _TitleListState extends State<TitleList> {
           });
         }
 
-        final int itemCount = widget.listService.selectedTitleCount;
         return Expanded(
           child: Container(
             color: Theme.of(context).colorScheme.onPrimaryContainer,
@@ -415,7 +420,7 @@ class _TitleListState extends State<TitleList> {
                     color: Theme.of(context).colorScheme.primaryContainer,
                   ),
                 ),
-                _infoLine(itemCount),
+                _infoLine(),
                 Divider(
                   height: 1,
                   color: Theme.of(context).colorScheme.primaryContainer,

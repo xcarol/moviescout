@@ -31,8 +31,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   bool _filterByProviders = false;
   String _selectedSort = SortOption.alphabetically;
   bool _isSortAsc = true;
-  int _selectedTitleCount = 0;
-  int get selectedTitleCount => _selectedTitleCount;
+  ValueNotifier<int> selectedTitleCount = ValueNotifier(0);
   int get loadedTitleCount => _loadedTitles.length;
   List<String> _listGenres = [];
   ValueNotifier<List<String>> listGenres = ValueNotifier([]);
@@ -129,7 +128,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       _listGenres.clear();
     }
     _loadedTitles.clear();
-    _selectedTitleCount = 0;
+    selectedTitleCount.value = 0;
     _anyFilterApplied = false;
     _hasMore = true;
     _page = 0;
@@ -212,7 +211,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       TmdbTitle updatedTitle =
           await TmdbTitleService().updateTitleDetails(title);
       await _updateLocalTitle(updatedTitle);
-      _selectedTitleCount = _query.countSync();
+      selectedTitleCount.value = _query.countSync();
     }
     await _filterTitles();
   }
@@ -348,7 +347,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
     _clearLoadedTitles(clearGenreCache: false);
     _anyFilterApplied = true;
-    _selectedTitleCount = _query.countSync();
+    selectedTitleCount.value = _query.countSync();
     await loadNextPage();
   }
 
