@@ -4,9 +4,11 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/screens/discover_list.dart';
 import 'package:moviescout/screens/rates_list.dart';
 import 'package:moviescout/screens/watch_list.dart';
+import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import 'search.dart';
 
 class MainScreen extends StatefulWidget {
@@ -18,6 +20,20 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+  
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    TmdbUserService userService =
+        Provider.of<TmdbUserService>(context, listen: true);
+
+    if (userService.isUserLoggedIn == true) {
+      _currentIndex = 0;
+    } else {
+      _currentIndex = 2;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
