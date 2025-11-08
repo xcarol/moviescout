@@ -180,8 +180,14 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     Future<List> Function() retrieveTvshows,
   ) async {
     List<TmdbTitle> serverList = List.empty(growable: true);
-    List movies = await retrieveMovies();
-    List tv = await retrieveTvshows();
+
+    final results = await Future.wait([
+      retrieveMovies(),
+      retrieveTvshows(),
+    ]);
+
+    final movies = results[0];
+    final tv = results[1];
 
     for (var element in movies) {
       element['list_name'] = _listName;
