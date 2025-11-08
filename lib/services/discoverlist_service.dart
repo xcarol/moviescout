@@ -14,7 +14,7 @@ class TmdbDiscoverlistService extends TmdbListService {
     Locale locale, {
     bool notify = false,
   }) async {
-    retrieveList(accountId, notify: notify, retrieveMovies: () async {
+    retrieveList(accountId.isEmpty ? 'nouserid' : accountId, notify: notify, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         if (page > 2) {
           return (statusCode: 200, body: '{}');

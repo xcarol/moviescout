@@ -34,13 +34,15 @@ class _DiscoverListState extends State<DiscoverList> {
       key: ValueKey('discoverlist'),
     );
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _discoverlistService.retrieveDiscoverlist(
-        userService.accountId,
-        userService.sessionId,
-        Localizations.localeOf(context),
-      );
-    });
+    if (_discoverlistService.listIsEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _discoverlistService.retrieveDiscoverlist(
+          userService.accountId,
+          userService.sessionId,
+          Localizations.localeOf(context),
+        );
+      });
+    }
   }
 
   @override
@@ -56,7 +58,7 @@ class _DiscoverListState extends State<DiscoverList> {
   Widget body() {
     return Consumer<TmdbDiscoverlistService>(
       builder: (context, discoverlistService, child) {
-        if (discoverlistService.listIsEmpty) {
+        if (discoverlistService.listIsEmpty && !discoverlistService.isLoading) {
           return emptyBody();
         } else {
           return discoverlistBody();

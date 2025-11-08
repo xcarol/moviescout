@@ -65,7 +65,6 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     }
 
     await _setupUserDetails();
-    notifyListeners();
 
     return {'success': true};
   }
