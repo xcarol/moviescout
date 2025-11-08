@@ -56,7 +56,7 @@ class _DiscoverListState extends State<DiscoverList> {
   Widget body() {
     return Consumer<TmdbDiscoverlistService>(
       builder: (context, discoverlistService, child) {
-        if (discoverlistService.listIsEmpty) {
+        if (discoverlistService.listIsEmpty && !discoverlistService.isLoading) {
           return emptyBody();
         } else {
           return discoverlistBody();
