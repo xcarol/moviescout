@@ -165,6 +165,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
       }
 
+      _updateListGenres();
       _setLastUpdate();
     } catch (error) {
       SnackMessage.showSnackBar('List $_listName ERROR: $error');
@@ -202,17 +203,27 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     Future<List> Function() retrieveMovies,
     Future<List> Function() retrieveTvshows,
   ) async {
+    await _clearLocalList();
+
     List<TmdbTitle> titles =
         await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
 
-    _updateListGenres();
-    await _filterTitles();
-    for (var title in titles) {
-      TmdbTitle updatedTitle =
-          await TmdbTitleService().updateTitleDetails(title);
-      await _updateLocalTitle(updatedTitle);
+    const batchSize = 10;
+    for (var i = 0; i < titles.length; i += batchSize) {
+      final batch = titles.skip(i).take(batchSize);
+
+      final updated = await Future.wait(
+          batch.map((t) => TmdbTitleService().updateTitleDetails(t)));
+
+      await _isar.writeTxn(() async {
+        await _isar.tmdbTitles.putAll(updated);
+      });
+
       selectedTitleCount.value = _query.countSync();
+
+      await Future.delayed(Duration.zero);
     }
+
     await _filterTitles();
   }
 
