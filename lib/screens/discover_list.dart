@@ -58,7 +58,8 @@ class _DiscoverListState extends State<DiscoverList> {
   Widget body() {
     return Consumer<TmdbDiscoverlistService>(
       builder: (context, discoverlistService, child) {
-        if (discoverlistService.listIsEmpty && !discoverlistService.isLoading) {
+        if (discoverlistService.listIsEmpty &&
+            !discoverlistService.isLoading.value) {
           return emptyBody();
         } else {
           return discoverlistBody();
@@ -68,21 +69,13 @@ class _DiscoverListState extends State<DiscoverList> {
   }
 
   Widget emptyBody() {
-    List<Widget> children = [];
-
-    if (Provider.of<TmdbUserService>(context, listen: false).isUserLoggedIn &&
-        Provider.of<TmdbDiscoverlistService>(context, listen: false)
-            .isLoading) {
-      children.add(const CircularProgressIndicator());
-    } else {
-      children.add(Text(AppLocalizations.of(context)!.emptyDiscover,
-          textAlign: TextAlign.center));
-    }
-
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: children,
+        children: [
+          Text(AppLocalizations.of(context)!.emptyDiscover,
+              textAlign: TextAlign.center)
+        ],
       ),
     );
   }

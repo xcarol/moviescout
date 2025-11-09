@@ -57,7 +57,7 @@ class _WatchListState extends State<WatchList> {
   Widget body() {
     return Consumer<TmdbWatchlistService>(
       builder: (context, watchlistService, child) {
-        if (watchlistService.listIsEmpty && !watchlistService.isLoading) {
+        if (watchlistService.listIsEmpty && !watchlistService.isLoading.value) {
           return emptyBody();
         } else {
           return watchlistBody();
@@ -70,16 +70,12 @@ class _WatchListState extends State<WatchList> {
     List<Widget> children = [];
 
     if (Provider.of<TmdbUserService>(context, listen: false).isUserLoggedIn) {
-      if (Provider.of<TmdbWatchlistService>(context, listen: false).isLoading) {
-        children.add(const CircularProgressIndicator());
-      } else {
-        children.add(
-          Text(
-            AppLocalizations.of(context)!.messageEmptyList,
-            textAlign: TextAlign.center,
-          ),
-        );
-      }
+      children.add(
+        Text(
+          AppLocalizations.of(context)!.messageEmptyList,
+          textAlign: TextAlign.center,
+        ),
+      );
     } else {
       children.add(
         Text(
