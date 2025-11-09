@@ -14,8 +14,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   final List<TmdbTitle> _loadedTitles = List.empty(growable: true);
   String get listName => _listName;
   bool _isDbLoading = false;
-  bool _isServerLoading = false;
-  bool get isLoading => _isServerLoading;
+  ValueNotifier<bool> isLoading = ValueNotifier(false);
   bool _hasMore = true;
   bool get hasMore => _hasMore;
   int _page = 0;
@@ -156,7 +155,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       return;
     }
 
-    _isServerLoading = true;
+    isLoading.value = true;
 
     try {
       if (listIsEmpty) {
@@ -165,11 +164,12 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
       }
 
+      _updateListGenres();
       _setLastUpdate();
     } catch (error) {
       SnackMessage.showSnackBar('List $_listName ERROR: $error');
     } finally {
-      _isServerLoading = false;
+      isLoading.value = false;
     }
   }
 
@@ -179,8 +179,14 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     Future<List> Function() retrieveTvshows,
   ) async {
     List<TmdbTitle> serverList = List.empty(growable: true);
-    List movies = await retrieveMovies();
-    List tv = await retrieveTvshows();
+
+    final results = await Future.wait([
+      retrieveMovies(),
+      retrieveTvshows(),
+    ]);
+
+    final movies = results[0];
+    final tv = results[1];
 
     for (var element in movies) {
       element['list_name'] = _listName;
@@ -202,17 +208,27 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     Future<List> Function() retrieveMovies,
     Future<List> Function() retrieveTvshows,
   ) async {
+    await _clearLocalList();
+
     List<TmdbTitle> titles =
         await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
 
-    _updateListGenres();
-    await _filterTitles();
-    for (var title in titles) {
-      TmdbTitle updatedTitle =
-          await TmdbTitleService().updateTitleDetails(title);
-      await _updateLocalTitle(updatedTitle);
+    const batchSize = 10;
+    for (var i = 0; i < titles.length; i += batchSize) {
+      final batch = titles.skip(i).take(batchSize);
+
+      final updated = await Future.wait(
+          batch.map((t) => TmdbTitleService().updateTitleDetails(t)));
+
+      await _isar.writeTxn(() async {
+        await _isar.tmdbTitles.putAll(updated);
+      });
+
       selectedTitleCount.value = _query.countSync();
+
+      await Future.delayed(Duration.zero);
     }
+
     await _filterTitles();
   }
 

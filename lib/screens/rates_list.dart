@@ -57,7 +57,7 @@ class _RatesListState extends State<RatesList> {
   Widget body() {
     return Consumer<TmdbRateslistService>(
       builder: (context, rateslistService, child) {
-        if (rateslistService.listIsEmpty && !rateslistService.isLoading) {
+        if (rateslistService.listIsEmpty && !rateslistService.isLoading.value) {
           return emptyBody();
         } else {
           return rateslistBody();
@@ -67,20 +67,13 @@ class _RatesListState extends State<RatesList> {
   }
 
   Widget emptyBody() {
-    List<Widget> children = [];
-
-    if (Provider.of<TmdbUserService>(context, listen: false).isUserLoggedIn &&
-        Provider.of<TmdbRateslistService>(context, listen: false).isLoading) {
-      children.add(const CircularProgressIndicator());
-    } else {
-      children.add(Text(AppLocalizations.of(context)!.emptyRates,
-          textAlign: TextAlign.center));
-    }
-
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: children,
+        children: [
+          Text(AppLocalizations.of(context)!.emptyRates,
+              textAlign: TextAlign.center)
+        ],
       ),
     );
   }
