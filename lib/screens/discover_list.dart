@@ -25,7 +25,6 @@ class _DiscoverListState extends State<DiscoverList> {
 
   Future<void> _loadData() async {
     final userService = Provider.of<TmdbUserService>(context, listen: false);
-    userService.setup();
 
     _discoverlistService =
         Provider.of<TmdbDiscoverlistService>(context, listen: false);

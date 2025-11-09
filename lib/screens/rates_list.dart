@@ -26,8 +26,6 @@ class _RatesListState extends State<RatesList> {
   Future<void> _loadData() async {
     final userService = Provider.of<TmdbUserService>(context, listen: false);
 
-    userService.setup();
-
     _rateslistService =
         Provider.of<TmdbRateslistService>(context, listen: false);
     _rateslistWidget = TitleList(

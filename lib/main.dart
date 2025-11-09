@@ -99,6 +99,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeService>(context);
     themeProvider.setupTheme();
+    final userService = Provider.of<TmdbUserService>(context, listen: false);
+    userService.setup();
 
     return MaterialApp(
       localizationsDelegates: const [
