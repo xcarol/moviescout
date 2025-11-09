@@ -159,7 +159,7 @@ class _TitleListState extends State<TitleList> {
                   (metrics.viewportDimension / itemHeight).ceil();
               final lastVisibleIndex = firstVisibleIndex + visibleItemCount;
 
-              if (!service.isLoading &&
+              if (!service.isLoading.value &&
                   service.hasMore &&
                   lastVisibleIndex >= service.loadedTitleCount - 3) {
                 service.loadNextPage();
@@ -261,55 +261,61 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _infoLine() {
-    return ValueListenableBuilder(
-      valueListenable: widget.listService.selectedTitleCount,
-      builder: (context, count, child) {
-        return Container(
-          color: Theme.of(context).colorScheme.onPrimaryContainer,
-          padding: EdgeInsets.symmetric(horizontal: 4),
-          child: Row(
-            children: [
-              Text(
+    return Container(
+      color: Theme.of(context).colorScheme.onPrimaryContainer,
+      padding: EdgeInsets.symmetric(horizontal: 4),
+      child: Row(
+        children: [
+          ValueListenableBuilder(
+            valueListenable: widget.listService.selectedTitleCount,
+            builder: (context, count, child) {
+              return Text(
                 count.toString(),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: 16,
                 ),
-              ),
-              _typeSelector(),
-              const SizedBox(width: 8),
-              if (widget.listService.isLoading)
-                SizedBox(
+              );
+            },
+          ),
+          _typeSelector(),
+          const SizedBox(width: 8),
+          ValueListenableBuilder(
+            valueListenable: widget.listService.isLoading,
+            builder: (context, isLoading, child) {
+              if (isLoading) {
+                return SizedBox(
                   width: 24,
                   height: 24,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.0,
                   ),
-                ),
-              const Spacer(),
-              Row(
-                children: [
-                  _sortSelector(),
-                  _swapSortButton(context),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _showFilters = !_showFilters;
-                        PreferencesService()
-                            .prefs
-                            .setBool(_showFiltersPreferencesName, _showFilters);
-                      });
-                    },
-                    icon: Icon(_showFilters
-                        ? Icons.filter_list_off
-                        : Icons.filter_list),
-                  ),
-                ],
+                );
+              }
+              return SizedBox.shrink();
+            },
+          ),
+          const Spacer(),
+          Row(
+            children: [
+              _sortSelector(),
+              _swapSortButton(context),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _showFilters = !_showFilters;
+                    PreferencesService()
+                        .prefs
+                        .setBool(_showFiltersPreferencesName, _showFilters);
+                  });
+                },
+                icon: Icon(
+                    _showFilters ? Icons.filter_list_off : Icons.filter_list),
               ),
             ],
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
