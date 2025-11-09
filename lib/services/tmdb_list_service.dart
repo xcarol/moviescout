@@ -14,8 +14,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   final List<TmdbTitle> _loadedTitles = List.empty(growable: true);
   String get listName => _listName;
   bool _isDbLoading = false;
-  bool _isServerLoading = false;
-  bool get isLoading => _isServerLoading;
+  ValueNotifier<bool> isLoading = ValueNotifier(false);
   bool _hasMore = true;
   bool get hasMore => _hasMore;
   int _page = 0;
@@ -156,7 +155,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       return;
     }
 
-    _isServerLoading = true;
+    isLoading.value = true;
 
     try {
       if (listIsEmpty) {
@@ -170,7 +169,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     } catch (error) {
       SnackMessage.showSnackBar('List $_listName ERROR: $error');
     } finally {
-      _isServerLoading = false;
+      isLoading.value = false;
     }
   }
 
