@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -5,7 +6,6 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/network_image_cache.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
@@ -356,10 +356,10 @@ class _TitleDetailsState extends State<TitleDetails> {
     return SizedBox(
       height: bannerHeight,
       width: double.infinity,
-      child: NetworkImageCache(
-        image,
+      child: CachedNetworkImage(
+        imageUrl: image,
         fit: BoxFit.fill,
-        errorBuilder: (context, error, stackTrace) {
+        errorWidget: (context, error, stackTrace) {
           return Image.asset(
             isMovie ? 'assets/movie_poster.png' : 'assets/tvshow_poster.png',
             fit: BoxFit.fitWidth,
@@ -477,10 +477,10 @@ class _TitleDetailsState extends State<TitleDetails> {
         child: SizedBox(
           width: 30,
           height: 30,
-          child: NetworkImageCache(
-            provider.logoPath,
+          child: CachedNetworkImage(
+            imageUrl: provider.logoPath,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
+            errorWidget: (context, error, stackTrace) {
               return SvgPicture.asset(
                 'assets/movie.svg',
                 fit: BoxFit.cover,

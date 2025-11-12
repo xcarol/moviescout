@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/foundation.dart'
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/screens/providers.dart';
-import 'package:moviescout/services/network_image_cache.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/theme_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
@@ -46,9 +46,9 @@ class AppDrawer extends StatelessWidget {
     var user = Provider.of<TmdbUserService>(context).user;
     ImageProvider<Object>? userImage = user != null
         ? user['avatar']['tmdb'] != null && user['avatar']['tmdb'].isNotEmpty
-            ? NetworkImage(
+            ? CachedNetworkImageProvider(
                 'https://image.tmdb.org/t/p/w185/${user['avatar']['tmdb']['avatar_path']}')
-            : NetworkImage(
+            : CachedNetworkImageProvider(
                 'https://www.gravatar.com/avatar/${user['avatar']['gravatar']['hash']}?s=200')
         : AssetImage('assets/anonymous.png');
     var userName = user != null
@@ -193,10 +193,8 @@ class AppDrawer extends StatelessWidget {
         error.toString(),
       );
     });
-
     
     PreferencesService().prefs.clear();
-    NetworkImageCache.clearCache();
 
     await tmdbWatchlistService.clearList();
     await tmdbRateslistService.clearList();
