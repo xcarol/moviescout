@@ -26,7 +26,6 @@ class _WatchListState extends State<WatchList> {
 
   Future<void> _loadData() async {
     final userService = Provider.of<TmdbUserService>(context, listen: false);
-    userService.setup();
 
     _watchlistService =
         Provider.of<TmdbWatchlistService>(context, listen: false);
@@ -55,9 +54,11 @@ class _WatchListState extends State<WatchList> {
   }
 
   Widget body() {
-    return Consumer<TmdbWatchlistService>(
-      builder: (context, watchlistService, child) {
-        if (watchlistService.listIsEmpty && !watchlistService.isLoading.value) {
+    return Selector<TmdbWatchlistService, bool>(
+      selector: (_, service) => service.listIsEmpty && !service.isLoading.value,
+      shouldRebuild: (prev, next) => prev != next,
+      builder: (context, isEmpty, child) {
+        if (isEmpty) {
           return emptyBody();
         } else {
           return watchlistBody();

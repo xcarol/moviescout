@@ -31,33 +31,35 @@ class TitleCard extends StatelessWidget {
     TmdbTitle tmdbTitle =
         _tmdbListService.getTitleByTmdbId(_title.tmdbId) ?? _title;
 
-    return SizedBox(
-      height: cardHeight,
-      child: Card(
-        margin: const EdgeInsets.all(0),
-        shape: RoundedRectangleBorder(),
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => TitleDetails(
-                        title: tmdbTitle,
-                        tmdbListService: tmdbListService,
-                      )),
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
-                  child: titlePoster(tmdbTitle.posterPath),
-                ),
-                const SizedBox(width: 10),
-                _titleDetails(context, tmdbTitle),
-              ],
+    return RepaintBoundary(
+      child: SizedBox(
+        height: cardHeight,
+        child: Card(
+          margin: const EdgeInsets.all(0),
+          shape: RoundedRectangleBorder(),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TitleDetails(
+                          title: tmdbTitle,
+                          tmdbListService: tmdbListService,
+                        )),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
+                    child: titlePoster(tmdbTitle.posterPath),
+                  ),
+                  const SizedBox(width: 10),
+                  _titleDetails(context, tmdbTitle),
+                ],
+              ),
             ),
           ),
         ),

@@ -25,7 +25,6 @@ class _DiscoverListState extends State<DiscoverList> {
 
   Future<void> _loadData() async {
     final userService = Provider.of<TmdbUserService>(context, listen: false);
-    userService.setup();
 
     _discoverlistService =
         Provider.of<TmdbDiscoverlistService>(context, listen: false);
@@ -56,10 +55,11 @@ class _DiscoverListState extends State<DiscoverList> {
   }
 
   Widget body() {
-    return Consumer<TmdbDiscoverlistService>(
-      builder: (context, discoverlistService, child) {
-        if (discoverlistService.listIsEmpty &&
-            !discoverlistService.isLoading.value) {
+    return Selector<TmdbDiscoverlistService, bool>(
+      selector: (_, service) => service.listIsEmpty && !service.isLoading.value,
+      shouldRebuild: (prev, next) => prev != next,
+      builder: (context, isEmpty, child) {
+        if (isEmpty) {
           return emptyBody();
         } else {
           return discoverlistBody();
