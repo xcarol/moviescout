@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -46,9 +47,9 @@ class AppDrawer extends StatelessWidget {
     var user = Provider.of<TmdbUserService>(context).user;
     ImageProvider<Object>? userImage = user != null
         ? user['avatar']['tmdb'] != null && user['avatar']['tmdb'].isNotEmpty
-            ? NetworkImage(
+            ? CachedNetworkImageProvider(
                 'https://image.tmdb.org/t/p/w185/${user['avatar']['tmdb']['avatar_path']}')
-            : NetworkImage(
+            : CachedNetworkImageProvider(
                 'https://www.gravatar.com/avatar/${user['avatar']['gravatar']['hash']}?s=200')
         : AssetImage('assets/anonymous.png');
     var userName = user != null
@@ -193,7 +194,6 @@ class AppDrawer extends StatelessWidget {
         error.toString(),
       );
     });
-
     
     PreferencesService().prefs.clear();
     NetworkImageCache.clearCache();
