@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
@@ -5,7 +6,6 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
-import 'package:moviescout/services/network_image_cache.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
@@ -123,10 +123,10 @@ class TitleCard extends StatelessWidget {
 
     return AspectRatio(
       aspectRatio: 2 / 3,
-      child: NetworkImageCache(
-        posterPath,
+      child: CachedNetworkImage(
+        imageUrl: posterPath,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
+        errorWidget: (context, error, stackTrace) {
           return SvgPicture.asset(
             'assets/movie.svg',
             fit: BoxFit.contain,
@@ -248,10 +248,10 @@ class TitleCard extends StatelessWidget {
         child: SizedBox(
           width: 30,
           height: 30,
-          child: NetworkImageCache(
-            provider.logoPath,
+          child: CachedNetworkImage(
+            imageUrl: provider.logoPath,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
+            errorWidget: (context, error, stackTrace) {
               return SvgPicture.asset(
                 'assets/movie.svg',
                 fit: BoxFit.cover,
