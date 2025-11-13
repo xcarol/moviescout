@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
@@ -10,6 +11,20 @@ import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:provider/provider.dart';
+
+
+class CustomCacheManager {
+  static const key = 'customCacheKey';
+  static CacheManager instance = CacheManager(
+    Config(
+      key,
+      stalePeriod: const Duration(days: 30),
+      maxNrOfCacheObjects: 500,
+      repo: JsonCacheInfoRepository(databaseName: key),
+      fileService: HttpFileService(),
+    ),
+  );
+}
 
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
@@ -125,7 +140,10 @@ class TitleCard extends StatelessWidget {
       aspectRatio: 2 / 3,
       child: CachedNetworkImage(
         imageUrl: posterPath,
+        cacheManager: CustomCacheManager.instance,
         fit: BoxFit.cover,
+        memCacheHeight: 300,
+        memCacheWidth: 200,
         errorWidget: (context, error, stackTrace) {
           return SvgPicture.asset(
             'assets/movie.svg',
