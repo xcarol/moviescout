@@ -33,6 +33,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_localizations:
     sdk: flutter
+  flutter_cache_manager: ^3.4.0
   intl: any
   firebase_core: ^3.11.0
   firebase_crashlytics: ^4.3.0
