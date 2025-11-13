@@ -170,6 +170,7 @@ class _TitleListState extends State<TitleList> {
               child: ListView.builder(
                 key: const PageStorageKey('TitleListView'),
                 shrinkWrap: true,
+                cacheExtent: 2000.0,
                 itemCount: service.loadedTitleCount,
                 itemBuilder: (context, index) {
                   final title = service.getItem(index);
