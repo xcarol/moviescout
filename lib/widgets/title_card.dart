@@ -12,7 +12,6 @@ import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:provider/provider.dart';
 
-
 class CustomCacheManager {
   static const key = 'customCacheKey';
   static CacheManager instance = CacheManager(
@@ -144,6 +143,10 @@ class TitleCard extends StatelessWidget {
         fit: BoxFit.cover,
         memCacheHeight: 300,
         memCacheWidth: 200,
+        fadeInDuration: Duration.zero,
+        fadeOutDuration: Duration.zero,
+        placeholderFadeInDuration: Duration.zero,
+        cacheKey: posterPath,
         errorWidget: (context, error, stackTrace) {
           return SvgPicture.asset(
             'assets/movie.svg',
@@ -269,6 +272,12 @@ class TitleCard extends StatelessWidget {
           child: CachedNetworkImage(
             imageUrl: provider.logoPath,
             fit: BoxFit.cover,
+            memCacheHeight: 30,
+            memCacheWidth: 30,
+            fadeInDuration: Duration.zero,
+            fadeOutDuration: Duration.zero,
+            placeholderFadeInDuration: Duration.zero,
+            cacheKey: provider.logoPath,
             errorWidget: (context, error, stackTrace) {
               return SvgPicture.asset(
                 'assets/movie.svg',
