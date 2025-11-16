@@ -17,73 +17,78 @@ const TmdbTitleSchema = CollectionSchema(
   name: r'TmdbTitle',
   id: 4353883779297965714,
   properties: {
-    r'effectiveReleaseDate': PropertySchema(
+    r'dateRated': PropertySchema(
       id: 0,
+      name: r'dateRated',
+      type: IsarType.dateTime,
+    ),
+    r'effectiveReleaseDate': PropertySchema(
+      id: 1,
       name: r'effectiveReleaseDate',
       type: IsarType.string,
     ),
     r'effectiveRuntime': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'effectiveRuntime',
       type: IsarType.long,
     ),
     r'flatrateProviderIds': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'flatrateProviderIds',
       type: IsarType.longList,
     ),
     r'genreIds': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'genreIds',
       type: IsarType.longList,
     ),
     r'hashCode': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'hashCode',
       type: IsarType.long,
     ),
     r'isMovie': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'isMovie',
       type: IsarType.bool,
     ),
     r'lastUpdated': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'lastUpdated',
       type: IsarType.string,
     ),
     r'listName': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'listName',
       type: IsarType.string,
     ),
     r'mediaType': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'mediaType',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'name',
       type: IsarType.string,
     ),
     r'rating': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'rating',
       type: IsarType.double,
     ),
     r'tmdbId': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'tmdbId',
       type: IsarType.long,
     ),
     r'tmdbJson': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'tmdbJson',
       type: IsarType.string,
     ),
     r'voteAverage': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'voteAverage',
       type: IsarType.double,
     )
@@ -152,20 +157,21 @@ void _tmdbTitleSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.effectiveReleaseDate);
-  writer.writeLong(offsets[1], object.effectiveRuntime);
-  writer.writeLongList(offsets[2], object.flatrateProviderIds);
-  writer.writeLongList(offsets[3], object.genreIds);
-  writer.writeLong(offsets[4], object.hashCode);
-  writer.writeBool(offsets[5], object.isMovie);
-  writer.writeString(offsets[6], object.lastUpdated);
-  writer.writeString(offsets[7], object.listName);
-  writer.writeString(offsets[8], object.mediaType);
-  writer.writeString(offsets[9], object.name);
-  writer.writeDouble(offsets[10], object.rating);
-  writer.writeLong(offsets[11], object.tmdbId);
-  writer.writeString(offsets[12], object.tmdbJson);
-  writer.writeDouble(offsets[13], object.voteAverage);
+  writer.writeDateTime(offsets[0], object.dateRated);
+  writer.writeString(offsets[1], object.effectiveReleaseDate);
+  writer.writeLong(offsets[2], object.effectiveRuntime);
+  writer.writeLongList(offsets[3], object.flatrateProviderIds);
+  writer.writeLongList(offsets[4], object.genreIds);
+  writer.writeLong(offsets[5], object.hashCode);
+  writer.writeBool(offsets[6], object.isMovie);
+  writer.writeString(offsets[7], object.lastUpdated);
+  writer.writeString(offsets[8], object.listName);
+  writer.writeString(offsets[9], object.mediaType);
+  writer.writeString(offsets[10], object.name);
+  writer.writeDouble(offsets[11], object.rating);
+  writer.writeLong(offsets[12], object.tmdbId);
+  writer.writeString(offsets[13], object.tmdbJson);
+  writer.writeDouble(offsets[14], object.voteAverage);
 }
 
 TmdbTitle _tmdbTitleDeserialize(
@@ -175,18 +181,19 @@ TmdbTitle _tmdbTitleDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = TmdbTitle(
+    dateRated: reader.readDateTime(offsets[0]),
     id: id,
-    lastUpdated: reader.readString(offsets[6]),
-    listName: reader.readString(offsets[7]),
-    name: reader.readString(offsets[9]),
-    rating: reader.readDouble(offsets[10]),
-    tmdbId: reader.readLong(offsets[11]),
-    tmdbJson: reader.readString(offsets[12]),
+    lastUpdated: reader.readString(offsets[7]),
+    listName: reader.readString(offsets[8]),
+    name: reader.readString(offsets[10]),
+    rating: reader.readDouble(offsets[11]),
+    tmdbId: reader.readLong(offsets[12]),
+    tmdbJson: reader.readString(offsets[13]),
   );
-  object.effectiveReleaseDate = reader.readString(offsets[0]);
-  object.effectiveRuntime = reader.readLong(offsets[1]);
-  object.flatrateProviderIds = reader.readLongList(offsets[2]) ?? [];
-  object.genreIds = reader.readLongList(offsets[3]) ?? [];
+  object.effectiveReleaseDate = reader.readString(offsets[1]);
+  object.effectiveRuntime = reader.readLong(offsets[2]);
+  object.flatrateProviderIds = reader.readLongList(offsets[3]) ?? [];
+  object.genreIds = reader.readLongList(offsets[4]) ?? [];
   return object;
 }
 
@@ -198,19 +205,19 @@ P _tmdbTitleDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 1:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readLongList(offset) ?? []) as P;
+      return (reader.readLong(offset)) as P;
     case 3:
       return (reader.readLongList(offset) ?? []) as P;
     case 4:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongList(offset) ?? []) as P;
     case 5:
-      return (reader.readBool(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 6:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 7:
       return (reader.readString(offset)) as P;
     case 8:
@@ -218,12 +225,14 @@ P _tmdbTitleDeserializeProp<P>(
     case 9:
       return (reader.readString(offset)) as P;
     case 10:
-      return (reader.readDouble(offset)) as P;
-    case 11:
-      return (reader.readLong(offset)) as P;
-    case 12:
       return (reader.readString(offset)) as P;
+    case 11:
+      return (reader.readDouble(offset)) as P;
+    case 12:
+      return (reader.readLong(offset)) as P;
     case 13:
+      return (reader.readString(offset)) as P;
+    case 14:
       return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -464,6 +473,60 @@ extension TmdbTitleQueryWhere
 
 extension TmdbTitleQueryFilter
     on QueryBuilder<TmdbTitle, TmdbTitle, QFilterCondition> {
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> dateRatedEqualTo(
+      DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dateRated',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      dateRatedGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dateRated',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> dateRatedLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dateRated',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> dateRatedBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dateRated',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
       effectiveReleaseDateEqualTo(
     String value, {
@@ -1905,6 +1968,18 @@ extension TmdbTitleQueryLinks
     on QueryBuilder<TmdbTitle, TmdbTitle, QFilterCondition> {}
 
 extension TmdbTitleQuerySortBy on QueryBuilder<TmdbTitle, TmdbTitle, QSortBy> {
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByDateRated() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateRated', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByDateRatedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateRated', Sort.desc);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy>
       sortByEffectiveReleaseDate() {
     return QueryBuilder.apply(this, (query) {
@@ -2055,6 +2130,18 @@ extension TmdbTitleQuerySortBy on QueryBuilder<TmdbTitle, TmdbTitle, QSortBy> {
 
 extension TmdbTitleQuerySortThenBy
     on QueryBuilder<TmdbTitle, TmdbTitle, QSortThenBy> {
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByDateRated() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateRated', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByDateRatedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateRated', Sort.desc);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy>
       thenByEffectiveReleaseDate() {
     return QueryBuilder.apply(this, (query) {
@@ -2217,6 +2304,12 @@ extension TmdbTitleQuerySortThenBy
 
 extension TmdbTitleQueryWhereDistinct
     on QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> {
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByDateRated() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'dateRated');
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByEffectiveReleaseDate(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2315,6 +2408,12 @@ extension TmdbTitleQueryProperty
   QueryBuilder<TmdbTitle, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, DateTime, QQueryOperations> dateRatedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'dateRated');
     });
   }
 

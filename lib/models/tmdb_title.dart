@@ -78,6 +78,7 @@ class SortOption {
   static const userRating = 'userRating';
   static const releaseDate = 'releaseDate';
   static const runtime = 'runtime';
+  static const dateRated = 'dateRated';
 }
 
 @collection
@@ -98,6 +99,7 @@ class TmdbTitle {
   late String name;
   late String lastUpdated;
   late double rating;
+  late DateTime dateRated;
   late int effectiveRuntime;
   late String effectiveReleaseDate;
   late List<int> genreIds;
@@ -110,6 +112,7 @@ class TmdbTitle {
     required this.listName,
     required this.name,
     required this.rating,
+    required this.dateRated,
     required this.lastUpdated,
   })  : genreIds = <int>[],
         flatrateProviderIds = <int>[] {
@@ -129,6 +132,10 @@ class TmdbTitle {
       rating: title[_account_rating] is Map
           ? title[_account_rating][_account_rating_value] ?? 0.0
           : 0.0,
+      dateRated: title[_account_rating] is Map &&
+              title[_account_rating][_account_rating_date] != null
+          ? DateTime.parse(title[_account_rating][_account_rating_date])
+          : DateTime.fromMillisecondsSinceEpoch(0),
       lastUpdated: title[_last_updated] ?? '1970-01-01',
     );
   }
@@ -263,6 +270,7 @@ class TmdbTitle {
     };
 
     rating = value;
+    dateRated = DateTime.now();
 
     tmdbJson = jsonEncode(map);
     _tmdbMapCache = map;
