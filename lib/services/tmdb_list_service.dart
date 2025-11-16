@@ -85,6 +85,12 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return _loadedTitles.isNotEmpty && _loadedTitles.first.rating > 0.0;
   }
 
+  bool get userRatedDateAvailable {
+    return _loadedTitles.isNotEmpty &&
+        _loadedTitles.first.dateRated
+            .isAfter(DateTime.fromMillisecondsSinceEpoch(0));
+  }
+
   void clearListSync() {
     _isar.writeTxnSync(() {
       _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAllSync();
@@ -320,6 +326,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       case SortOption.userRating:
         sortedQuery =
             _isSortAsc ? query.sortByRating() : query.sortByRatingDesc();
+        break;
+      case SortOption.dateRated:
+        sortedQuery = _isSortAsc
+            ? query.sortByDateRated()
+            : query.sortByDateRatedDesc();
         break;
       case SortOption.releaseDate:
         sortedQuery = _isSortAsc
