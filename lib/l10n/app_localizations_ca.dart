@@ -144,16 +144,19 @@ class AppLocalizationsCa extends AppLocalizations {
   String get sortAlphabetically => 'Alfabètic';
 
   @override
-  String get sortRating => 'Puntuació';
+  String get sortRating => 'Valoració';
 
   @override
-  String get sortUserRating => 'Puntuació (Meva)';
+  String get sortUserRating => 'Valoració (Meva)';
 
   @override
   String get sortReleaseDate => 'Data d\'estrena';
 
   @override
   String get sortRuntime => 'Duració';
+
+  @override
+  String get sortDateRated => 'Data de valoració';
 
   @override
   String get genres => 'Gèneres';
