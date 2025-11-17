@@ -23,6 +23,7 @@ class TitleList extends StatefulWidget {
 
 class _TitleListState extends State<TitleList> {
   final FocusNode _searchFocusNode = FocusNode();
+  final ScrollController _scrollController = ScrollController();
   bool _isSortAsc = true;
   late bool _showFilters;
   late String _showFiltersPreferencesName;
@@ -84,6 +85,7 @@ class _TitleListState extends State<TitleList> {
     widget.listService.removeListener(_onListServiceChanged);
     _textFilterController.dispose();
     _searchFocusNode.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -181,39 +183,44 @@ class _TitleListState extends State<TitleList> {
               return false;
             },
             child: Flexible(
-              child: ListView.builder(
-                key: const PageStorageKey('TitleListView'),
-                shrinkWrap: true,
-                cacheExtent: 2000.0,
-                itemCount: service.loadedTitleCount,
-                itemBuilder: (context, index) {
-                  final title = service.getItem(index);
-                  if (title == null) {
-                    return SizedBox.shrink();
-                  }
-                  final clampedScale = MediaQuery.of(context)
-                      .textScaler
-                      .scale(1.0)
-                      .clamp(1.0, 1.3);
+              child: Scrollbar(
+                controller: _scrollController,
+                child: ListView.builder(
+                  key: const PageStorageKey('TitleListView'),
+                  controller: _scrollController,
+                  shrinkWrap: true,
+                  cacheExtent: 2000.0,
+                  itemCount: service.loadedTitleCount,
+                  itemBuilder: (context, index) {
+                    final title = service.getItem(index);
+                    if (title == null) {
+                      return SizedBox.shrink();
+                    }
+                    final clampedScale = MediaQuery.of(context)
+                        .textScaler
+                        .scale(1.0)
+                        .clamp(1.0, 1.3);
 
-                  return MediaQuery(
-                    data: MediaQuery.of(context).copyWith(
-                      textScaler: TextScaler.linear(clampedScale),
-                    ),
-                    child: Column(
-                      children: [
-                        TitleCard(
-                          title: title,
-                          tmdbListService: widget.listService,
-                        ),
-                        Divider(
-                          height: 1,
-                          color: Theme.of(context).colorScheme.primaryContainer,
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                    return MediaQuery(
+                      data: MediaQuery.of(context).copyWith(
+                        textScaler: TextScaler.linear(clampedScale),
+                      ),
+                      child: Column(
+                        children: [
+                          TitleCard(
+                            title: title,
+                            tmdbListService: widget.listService,
+                          ),
+                          Divider(
+                            height: 1,
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           );
