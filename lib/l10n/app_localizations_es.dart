@@ -156,6 +156,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sortRuntime => 'Duración';
 
   @override
+  String get sortDateRated => 'Fecha de valoración';
+
+  @override
   String get genres => 'Géneros';
 
   @override

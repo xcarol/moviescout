@@ -72,6 +72,8 @@ class _TitleListState extends State<TitleList> {
         PreferencesService().prefs.getBool(_filterByProvidersPreferencesName) ??
             false;
 
+    widget.listService.addListener(_onListServiceChanged);
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _setupFilters();
     });
@@ -79,6 +81,7 @@ class _TitleListState extends State<TitleList> {
 
   @override
   void dispose() {
+    widget.listService.removeListener(_onListServiceChanged);
     _textFilterController.dispose();
     _searchFocusNode.dispose();
     super.dispose();
@@ -94,26 +97,37 @@ class _TitleListState extends State<TitleList> {
     _initilizeControlLocalizations();
   }
 
+  void _onListServiceChanged() {
+    if (mounted) {
+      _initilizeControlLocalizations();
+    }
+  }
+
   void _initilizeControlLocalizations() {
-    final localizations = AppLocalizations.of(context)!;
-    if (_selectedType.isEmpty) {
-      _selectedType = localizations.allTypes;
-    }
-    _titleTypes = [
-      localizations.allTypes,
-      localizations.movies,
-      localizations.tvshows,
-    ];
-    if (_selectedSort.isEmpty) {
-      _selectedSort = localizations.sortAlphabetically;
-    }
-    _titleSorts = [
-      localizations.sortAlphabetically,
-      localizations.sortRating,
-      if (widget.listService.userRatingAvailable) localizations.sortUserRating,
-      localizations.sortReleaseDate,
-      localizations.sortRuntime,
-    ];
+    setState(() {
+      final localizations = AppLocalizations.of(context)!;
+      if (_selectedType.isEmpty) {
+        _selectedType = localizations.allTypes;
+      }
+      _titleTypes = [
+        localizations.allTypes,
+        localizations.movies,
+        localizations.tvshows,
+      ];
+      if (_selectedSort.isEmpty) {
+        _selectedSort = localizations.sortAlphabetically;
+      }
+      _titleSorts = [
+        localizations.sortAlphabetically,
+        localizations.sortRating,
+        if (widget.listService.userRatingAvailable)
+          localizations.sortUserRating,
+        if (widget.listService.userRatedDateAvailable)
+          localizations.sortDateRated,
+        localizations.sortReleaseDate,
+        localizations.sortRuntime,
+      ];
+    });
   }
 
   Future<void> _setupFilters() async {
@@ -357,6 +371,8 @@ class _TitleListState extends State<TitleList> {
       return SortOption.rating;
     } else if (name == AppLocalizations.of(context)!.sortUserRating) {
       return SortOption.userRating;
+    } else if (name == AppLocalizations.of(context)!.sortDateRated) {
+      return SortOption.dateRated;
     } else if (name == AppLocalizations.of(context)!.sortReleaseDate) {
       return SortOption.releaseDate;
     } else if (name == AppLocalizations.of(context)!.sortRuntime) {
