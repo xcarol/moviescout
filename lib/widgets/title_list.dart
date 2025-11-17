@@ -317,24 +317,27 @@ class _TitleListState extends State<TitleList> {
               return SizedBox.shrink();
             },
           ),
-          const Spacer(),
-          Row(
-            children: [
-              _sortSelector(),
-              _swapSortButton(context),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    _showFilters = !_showFilters;
-                    PreferencesService()
-                        .prefs
-                        .setBool(_showFiltersPreferencesName, _showFilters);
-                  });
-                },
-                icon: Icon(
-                    _showFilters ? Icons.filter_list_off : Icons.filter_list),
-              ),
-            ],
+
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              reverse: true,
+              child: _sortSelector(),
+            ),
+          ),
+
+          _swapSortButton(context),
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _showFilters = !_showFilters;
+                PreferencesService()
+                    .prefs
+                    .setBool(_showFiltersPreferencesName, _showFilters);
+              });
+            },
+            icon:
+                Icon(_showFilters ? Icons.filter_list_off : Icons.filter_list),
           ),
         ],
       ),
