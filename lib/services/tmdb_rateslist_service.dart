@@ -28,10 +28,8 @@ class TmdbRateslistService extends TmdbListService {
   Future<void> retrieveRateslist(
     String accountId,
     String sessionId,
-    Locale locale, {
-    bool notify = false,
-  }) async {
-    retrieveList(accountId, notify: notify, retrieveMovies: () async {
+    Locale locale) async {
+    retrieveList(accountId, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
             _tmdbRateslistMovies

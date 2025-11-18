@@ -63,13 +63,11 @@ class _LoginState extends State<Login> {
           userService.accountId,
           userService.sessionId,
           Localizations.localeOf(context),
-          notify: true,
         );
         rateslistService.retrieveRateslist(
           userService.accountId,
           userService.sessionId,
           Localizations.localeOf(context),
-          notify: true,
         );
       }
 

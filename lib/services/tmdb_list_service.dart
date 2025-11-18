@@ -149,7 +149,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   Future<void> retrieveList(
     String accountId, {
-    required bool notify,
     required Future<List> Function() retrieveMovies,
     required Future<List> Function() retrieveTvshows,
   }) async {

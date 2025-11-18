@@ -11,10 +11,8 @@ class TmdbDiscoverlistService extends TmdbListService {
   Future<void> retrieveDiscoverlist(
     String accountId,
     String sessionId,
-    Locale locale, {
-    bool notify = false,
-  }) async {
-    retrieveList(accountId.isEmpty ? 'nouserid' : accountId, notify: notify, retrieveMovies: () async {
+    Locale locale) async {
+    retrieveList(accountId.isEmpty ? 'nouserid' : accountId, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         if (page > 2) {
           return (statusCode: 200, body: '{}');
