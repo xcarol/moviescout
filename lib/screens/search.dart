@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
-import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/widgets/title_list.dart';
 import 'package:provider/provider.dart';
 
@@ -18,14 +16,18 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   final FocusNode _searchFocusNode = FocusNode();
   late TextEditingController _controller;
-  final TmdbListService _listService = TmdbListService('searchProvider');
-  late String _currentSearchTerm;
+  final TmdbSearchService _searchService = TmdbSearchService('searchProvider');
+  late Widget _searchWidget;
 
   @override
   void initState() {
     super.initState();
+    _searchWidget = TitleList(
+      _searchService,
+      key: ValueKey('watchlist'),
+    );
     _controller = TextEditingController();
-    _listService.clearListSync();
+    _searchService.clearListSync();
   }
 
   @override
@@ -47,7 +49,7 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
-      value: _listService,
+      value: _searchService,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -61,7 +63,7 @@ class _SearchState extends State<Search> {
   _resetTitle() {
     _controller.clear();
     setState(() {
-      _listService.clearList();
+      _searchService.clearList();
     });
   }
 
@@ -107,7 +109,7 @@ class _SearchState extends State<Search> {
               borderSide: BorderSide(color: borderColor, width: 2),
             ),
           ),
-          onChanged: (title) {
+          onSubmitted: (title) {
             searchTitle(context, title);
           },
         ),
@@ -116,30 +118,19 @@ class _SearchState extends State<Search> {
   }
 
   Widget searchResults() {
-    return Consumer<TmdbListService>(
+    return Consumer<TmdbSearchService>(
       builder: (context, listService, _) {
-        return TitleList(listService);
+        return _searchWidget;
       },
     );
   }
 
   void searchTitle(BuildContext context, String title) async {
-    _currentSearchTerm = title;
     final term = title;
 
     try {
-      final result = await TmdbSearchService()
-          .searchTitle(term, Localizations.localeOf(context));
-
-      if (_currentSearchTerm != term) {
-        return;
-      }
-
-      List<TmdbTitle> updatedTitles = await TmdbTitleService().updateTitles(result);
-
-      if (_currentSearchTerm == term) {
-        await _listService.setLocalTitles(updatedTitles);
-      }
+      await _searchService.retrieveSearchlist(
+          anonymousAccountId, term, Localizations.localeOf(context));
     } catch (error) {
       if (mounted) {
         SnackMessage.showSnackBar(error.toString());
