@@ -82,36 +82,48 @@ class _SearchState extends State<Search> {
             selectionColor: textColor.withValues(alpha: 0.5),
           ),
         ),
-        child: TextField(
-          controller: _controller,
-          focusNode: _searchFocusNode,
-          style: TextStyle(color: textColor),
-          cursorColor: borderColor,
-          decoration: InputDecoration(
-            hintText: AppLocalizations.of(context)!.search,
-            hintStyle: TextStyle(color: textColor),
-            suffixIconColor: textColor,
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.clear),
-              onPressed: _resetTitle,
-              tooltip: AppLocalizations.of(context)!.search,
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _controller,
+                focusNode: _searchFocusNode,
+                style: TextStyle(color: textColor),
+                cursorColor: borderColor,
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context)!.search,
+                  hintStyle: TextStyle(color: textColor),
+                  suffixIconColor: textColor,
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: _resetTitle,
+                    tooltip: AppLocalizations.of(context)!.search,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    borderSide: BorderSide(color: borderColor),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    borderSide: BorderSide(color: borderColor),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    borderSide: BorderSide(color: borderColor, width: 2),
+                  ),
+                ),
+                onSubmitted: (title) {
+                  searchTitle(context, title);
+                },
+              ),
             ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5),
-              borderSide: BorderSide(color: borderColor),
+            const SizedBox(width: 8),
+            IconButton(
+              color: Theme.of(context).colorScheme.onPrimary,
+              onPressed: () => searchTitle(context, _controller.text),
+              icon: const Icon(Icons.search),
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5),
-              borderSide: BorderSide(color: borderColor),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5),
-              borderSide: BorderSide(color: borderColor, width: 2),
-            ),
-          ),
-          onSubmitted: (title) {
-            searchTitle(context, title);
-          },
+          ],
         ),
       ),
     );
