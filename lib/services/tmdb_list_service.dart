@@ -48,32 +48,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     _query = _isar.tmdbTitles.filter().listNameEqualTo(_listName);
   }
 
-  Future<void> setLocalTitles(List<TmdbTitle> titles) async {
-    await _clearLocalList();
-
-    if (titles.isEmpty) {
-      return;
-    }
-
-    for (var title in titles) {
-      title.listName = _listName;
-    }
-
-    await _updateLocalTitles(titles);
-    await _filterTitles();
-    _setLastUpdate();
-    _updateListGenres();
-  }
-
-  Future<void> _updateLocalTitles(List<TmdbTitle> titles) async {
-    await _isar.writeTxn(() async {
-      await _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAll();
-      for (var title in titles) {
-        await _isar.tmdbTitles.put(title);
-      }
-    });
-  }
-
   void _setLastUpdate() {
     _lastUpdate = DateTime.now().toIso8601String();
     PreferencesService()
@@ -149,7 +123,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   Future<void> retrieveList(
     String accountId, {
-    required bool notify,
     required Future<List> Function() retrieveMovies,
     required Future<List> Function() retrieveTvshows,
   }) async {

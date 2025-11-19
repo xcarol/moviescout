@@ -15,6 +15,8 @@ const int _maxRequestsCount = 40;
 const int _initialDelayMs = 200;
 const int _maxDelayMs = 5000;
 
+const String anonymousAccountId = 'anonymousAccountId';
+
 class TmdbBaseService {
   static int _requestCount = 0;
 

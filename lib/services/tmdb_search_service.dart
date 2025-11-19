@@ -1,14 +1,34 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/tmdb_base_service.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 
-const String _tmdbSearch =
-    '/search/multi?query={SEARCH}&page=1&language={LOCALE}';
+const int maxSearchMovies = 20;
+const int maxSearchTvShows = 20;
+
+const String _tmdbSearchMovies =
+    '/search/movie?query={SEARCH}&page={PAGE}&language={LOCALE}';
+
+const String _tmdbSearchTvShows =
+    '/search/tv?query={SEARCH}&page={PAGE}&language={LOCALE}';
 
 const String _tmdbFindByID =
     '/find/{ID}?language={LOCALE}&external_source=imdb_id';
 
-class TmdbSearchService extends TmdbBaseService {
+class TmdbSearchService extends TmdbListService {
+  TmdbSearchService(super.listName);
+
+  Future<dynamic> searchImdbTitle(
+    String imdbId,
+    Locale locale,
+  ) async {
+    return get(
+      _tmdbFindByID.replaceFirst('{ID}', imdbId).replaceFirst(
+          '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+    );
+  }
+
   List<TmdbTitle> fromImdbIdToTitle(Map response) {
     List<TmdbTitle> titles = [];
     for (var key in response.keys) {
@@ -26,47 +46,74 @@ class TmdbSearchService extends TmdbBaseService {
     return titles;
   }
 
-  Future<List<TmdbTitle>> _titlesList(Map response, Locale locale) async {
-    List<TmdbTitle> titles = [];
-    final totalResults = response['total_results'] ?? 0;
-
-    for (int count = 0; count < totalResults && count < 10; count += 1) {
-      Map title = response['results'][count];
-      if (title['media_type'] != 'movie' && title['media_type'] != 'tv') {
-        continue;
-      }
-      titles.add(TmdbTitle.fromMap(title: response['results'][count]));
-    }
-
-    return titles;
+  dynamic _lastPage(int page) {
+    return (
+      statusCode: 200,
+      body: '{"page":%d,"total_pages":%d}'.replaceAll('%d', page.toString())
+    );
   }
 
-  Future<List<TmdbTitle>> searchTitle(
-    String search,
-    Locale locale,
-  ) async {
-    if (search.trim().isEmpty || search.trim().length < 3) {
-      return [];
+  int _totalPagesFromResponse(dynamic response, int maxOfType) {
+    final Map responseBody = body(response);
+    if (responseBody['results'] != null) {
+      final resultsPerPage = (responseBody['results'] as List).length;
+      return max((maxOfType / resultsPerPage).toInt(), 1);
     }
-
-    final result = await get(
-      _tmdbSearch.replaceFirst('{SEARCH}', search).replaceFirst(
-          '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-    );
-    if (result.statusCode == 200) {
-      return _titlesList(body(result), locale);
-    }
-    throw Exception(
-        'Failed to search title. Response code: ${result.statusCode}');
+    return 0;
   }
 
-  Future<dynamic> searchImdbTitle(
-    String imdbId,
-    Locale locale,
-  ) async {
-    return get(
-      _tmdbFindByID.replaceFirst('{ID}', imdbId).replaceFirst(
-          '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-    );
+  Future<void> retrieveSearchlist(
+      String accountId, String searchTerm, Locale locale) async {
+    int totalMoviePages = 0;
+    int totalTvShowPages = 0;
+
+    retrieveList(accountId, retrieveMovies: () async {
+      return getTitlesFromServer((int page) async {
+        if (totalMoviePages > 0 && page > totalMoviePages) {
+          return _lastPage(page);
+        }
+        dynamic response = await get(
+          _tmdbSearchMovies
+              .replaceFirst('{PAGE}', page.toString())
+              .replaceFirst('{SEARCH}', searchTerm)
+              .replaceFirst(
+                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+        );
+
+        if (totalMoviePages > 0) {
+          return response;
+        }
+
+        if (response.statusCode == 200) {
+          totalMoviePages = _totalPagesFromResponse(response, maxSearchMovies);
+        }
+
+        return response;
+      });
+    }, retrieveTvshows: () async {
+      return getTitlesFromServer((int page) async {
+        if (totalTvShowPages > 0 && page > totalTvShowPages) {
+          return _lastPage(page);
+        }
+
+        dynamic response = await get(
+          _tmdbSearchTvShows
+              .replaceFirst('{PAGE}', page.toString())
+              .replaceFirst('{SEARCH}', searchTerm)
+              .replaceFirst(
+                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+        );
+
+        if (totalTvShowPages > 0) {
+          return response;
+        }
+
+        if (response.statusCode == 200) {
+          totalTvShowPages = _totalPagesFromResponse(response, maxSearchTvShows);
+        }
+
+        return response;
+      });
+    });
   }
 }
