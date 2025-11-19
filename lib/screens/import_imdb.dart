@@ -39,6 +39,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
   late String _resetTitlesMessage = '';
   late int _resetTitlesCount = 0;
 
+  final String searchServiceListName = 'importImdb';
+
   @override
   void initState() {
     super.initState();
@@ -451,7 +453,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           .toList();
 
       final tmdbBaseService = TmdbBaseService();
-      final tmdbSearchService = TmdbSearchService();
+      final tmdbSearchService = TmdbSearchService(searchServiceListName);
       final TmdbUserService tmdbUserService =
           Provider.of<TmdbUserService>(context, listen: false);
 
@@ -473,7 +475,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           if (!context.mounted) {
             return;
           }
-          List titlesFromId = TmdbSearchService()
+          List titlesFromId = tmdbSearchService
               .fromImdbIdToTitle(tmdbBaseService.body(searchResult));
 
           if (titlesFromId.isEmpty) {
@@ -544,7 +546,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           .toList();
 
       final tmdbBaseService = TmdbBaseService();
-      final tmdbSearchService = TmdbSearchService();
+      final tmdbSearchService = TmdbSearchService(searchServiceListName);
       final tmdbUserService =
           Provider.of<TmdbUserService>(context, listen: false);
 
@@ -566,7 +568,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           if (!context.mounted) {
             return;
           }
-          List titlesFromId = TmdbSearchService()
+          List titlesFromId = tmdbSearchService
               .fromImdbIdToTitle(tmdbBaseService.body(searchResult));
 
           if (titlesFromId.isEmpty) {
