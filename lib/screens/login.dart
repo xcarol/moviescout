@@ -3,6 +3,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
 import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:app_links/app_links.dart';
@@ -54,6 +55,8 @@ class _LoginState extends State<Login> {
         Provider.of<TmdbWatchlistService>(context, listen: false);
     TmdbRateslistService rateslistService =
         Provider.of<TmdbRateslistService>(context, listen: false);
+    TmdbProviderService providerService =
+        Provider.of<TmdbProviderService>(context, listen: false);
 
     Map result = await userService.completeLogin();
 
@@ -69,6 +72,8 @@ class _LoginState extends State<Login> {
           userService.sessionId,
           Localizations.localeOf(context),
         );
+        providerService.setup(userService.accountId, userService.sessionId,
+            userService.accessToken);
       }
 
       SnackMessage.showSnackBar(loginSuccessMessage);
