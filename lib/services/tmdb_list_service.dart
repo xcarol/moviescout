@@ -301,9 +301,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
             _isSortAsc ? query.sortByRating() : query.sortByRatingDesc();
         break;
       case SortOption.dateRated:
-        sortedQuery = _isSortAsc
-            ? query.sortByDateRated()
-            : query.sortByDateRatedDesc();
+        sortedQuery =
+            _isSortAsc ? query.sortByDateRated() : query.sortByDateRatedDesc();
         break;
       case SortOption.releaseDate:
         sortedQuery = _isSortAsc
@@ -386,9 +385,24 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     _filterTitles();
   }
 
+  bool _computeSortDirection(String sort, bool ascending) {
+    switch (sort) {
+      case SortOption.alphabetically:
+        return ascending;
+      case SortOption.rating:
+      case SortOption.userRating:
+      case SortOption.releaseDate:
+      case SortOption.dateRated:
+      case SortOption.runtime:
+        return !ascending;
+      default:
+        return ascending;
+    }
+  }
+
   void setSort(String sort, bool ascending) {
     _selectedSort = sort;
-    _isSortAsc = ascending;
+    _isSortAsc = _computeSortDirection(sort, ascending);
     _filterTitles();
   }
 
