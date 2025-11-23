@@ -8,7 +8,7 @@ import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 
 const String _tmdbDetails =
-    '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders%2Crecommendations&language={LOCALE}';
+    '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders%2Crecommendations%2Ccredits&language={LOCALE}';
 
 class TmdbTitleService extends TmdbBaseService {
   Future<dynamic> _retrieveTitleDetailsByLocale(
