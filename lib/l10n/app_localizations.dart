@@ -576,6 +576,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Runtime not specified.'**
   String get unknownDuration;
+
+  /// No description provided for @credits.
+  ///
+  /// In en, this message translates to:
+  /// **'Creditos'**
+  String get credits;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

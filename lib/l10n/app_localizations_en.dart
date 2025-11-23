@@ -247,4 +247,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unknownDuration => 'Runtime not specified.';
+
+  @override
+  String get credits => 'Creditos';
 }

@@ -78,5 +78,6 @@
     "noProvidersAvailable": "No hay proveedores disponibles",
     "discoverlistTitle": "Descubre",
     "notReleasedYet": "Todavia no se ha estrenado",
-    "unknownDuration": "Duración no especificada."
+    "unknownDuration": "Duración no especificada.",
+    "credits": "Credits"
 }

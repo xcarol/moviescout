@@ -247,4 +247,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get unknownDuration => 'Duración no especificada.';
+
+  @override
+  String get credits => 'Credits';
 }
