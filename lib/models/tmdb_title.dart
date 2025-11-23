@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 // ignore_for_file: constant_identifier_names, unused_element
 
 import 'package:moviescout/models/tmdb_genre.dart';
+import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_providers.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
 
@@ -59,6 +60,10 @@ const _number_of_seasons = 'number_of_seasons';
 const _original_name = 'original_name';
 const _seasons = 'seasons';
 const _type = 'type';
+
+// People
+const _credits = 'credits';
+const _cast = 'cast';
 
 // Custom
 const _listName = 'list_name';
@@ -352,5 +357,25 @@ class TmdbTitle {
   @ignore
   String get imdbId {
     return _tmdbTitle[_imdb_id] ?? '';
+  }
+
+  @ignore
+  List<TmdbPerson> get cast {
+    List<TmdbPerson> castPeople = [];
+
+    if (_tmdbTitle[_credits] != null && _tmdbTitle[_credits][_cast] is List) {
+      for (dynamic person in _tmdbTitle[_credits][_cast]) {
+        castPeople.add(TmdbPerson(
+            tmdbJson: jsonEncode(person),
+            tmdbId: person[PersonAttributes.id],
+            name: person[PersonAttributes.name],
+            knownForDepartment: person[PersonAttributes.known_for_department],
+            gender: person[PersonAttributes.gender],
+            originalName: person[PersonAttributes.original_name],
+            profilePath: person[PersonAttributes.profile_path] ?? '',
+            character: person[PersonAttributes.character]));
+      }
+    }
+    return castPeople;
   }
 }
