@@ -88,6 +88,7 @@ flutter:
     - .env
     - assets/movie.svg
     - assets/account.svg
+    - assets/person.svg
     - assets/movie_poster.png
     - assets/tvshow_poster.png
     - assets/imdb-logo.png
