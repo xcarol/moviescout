@@ -70,4 +70,8 @@ class TmdbPerson {
         ? 'https://image.tmdb.org/t/p/original$profilePath'
         : '';
   }
+
+  Map get map {
+    return jsonDecode(tmdbJson);
+  }
 }
