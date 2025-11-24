@@ -369,6 +369,7 @@ class TmdbTitle {
             tmdbJson: jsonEncode(person),
             tmdbId: person[PersonAttributes.id],
             name: person[PersonAttributes.name],
+            lastUpdated: DateTime.now().toIso8601String(),
             knownForDepartment: person[PersonAttributes.known_for_department],
             gender: person[PersonAttributes.gender],
             originalName: person[PersonAttributes.original_name],
