@@ -79,5 +79,10 @@
     "discoverlistTitle": "Discover",
     "notReleasedYet": "Not release yet",
     "unknownDuration": "Runtime not specified.",
-    "credits": "Creditos"
+    "credits": "Creditos",
+    "originalName": "Nombre original",
+    "birthDate": "Birthdate",
+    "deathDate": "Deathdate",
+    "placeOfBirth": "Lugar de nacimiento",
+    "years": "Años"
 }

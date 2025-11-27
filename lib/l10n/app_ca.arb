@@ -79,5 +79,10 @@
     "discoverlistTitle": "Descobreix",
     "notReleasedYet": "Encara no s'ha estrenat",
     "unknownDuration": "Duració no especificada.",
-    "credits": "Credits"
+    "credits": "Credits",
+    "originalName": "Nom original",
+    "birthDate": "Data de naixement",
+    "deathDate": "Data de defunció",
+    "placeOfBirth": "Lloc de neixament",
+    "years": "Anys"
 }

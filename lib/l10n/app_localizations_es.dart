@@ -250,4 +250,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get credits => 'Credits';
+
+  @override
+  String get originalName => 'Original name';
+
+  @override
+  String get birthDate => 'Fecha de nacimiento';
+
+  @override
+  String get deathDate => 'Fecha de defunción';
+
+  @override
+  String get placeOfBirth => 'Place of birth';
+
+  @override
+  String get years => 'Years';
 }

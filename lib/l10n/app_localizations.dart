@@ -582,6 +582,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Creditos'**
   String get credits;
+
+  /// No description provided for @originalName.
+  ///
+  /// In en, this message translates to:
+  /// **'Nombre original'**
+  String get originalName;
+
+  /// No description provided for @birthDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Birthdate'**
+  String get birthDate;
+
+  /// No description provided for @deathDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Deathdate'**
+  String get deathDate;
+
+  /// No description provided for @placeOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Lugar de nacimiento'**
+  String get placeOfBirth;
+
+  /// No description provided for @years.
+  ///
+  /// In en, this message translates to:
+  /// **'Años'**
+  String get years;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
