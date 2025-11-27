@@ -366,15 +366,24 @@ class TmdbTitle {
     if (_tmdbTitle[_credits] != null && _tmdbTitle[_credits][_cast] is List) {
       for (dynamic person in _tmdbTitle[_credits][_cast]) {
         castPeople.add(TmdbPerson(
-            tmdbJson: jsonEncode(person),
-            tmdbId: person[PersonAttributes.id],
-            name: person[PersonAttributes.name],
-            lastUpdated: DateTime.now().toIso8601String(),
-            knownForDepartment: person[PersonAttributes.known_for_department],
-            gender: person[PersonAttributes.gender],
-            originalName: person[PersonAttributes.original_name],
-            profilePath: person[PersonAttributes.profile_path] ?? '',
-            character: person[PersonAttributes.character]));
+          tmdbJson: jsonEncode(person),
+          tmdbId: person[PersonAttributes.id],
+          name: person[PersonAttributes.name],
+          lastUpdated: DateTime.now().toIso8601String(),
+          knownForDepartment: person[PersonAttributes.known_for_department],
+          gender: person[PersonAttributes.gender],
+          originalName: person[PersonAttributes.original_name],
+          profilePath: person[PersonAttributes.profile_path] ?? '',
+          character: person[PersonAttributes.character],
+          biography: person[PersonAttributes.biography] ?? '',
+          birthday: person[PersonAttributes.birthday] ?? '',
+          deathday: person[PersonAttributes.deathday] ?? '',
+          imdbId: person[PersonAttributes.imdb_id] ?? '',
+          placeOfBirth: person[PersonAttributes.place_of_birth] ?? '',
+          combinedCredits: CombinedCredits.fromMap(
+              person[PersonAttributes.combined_credits] ?? {}),
+          homepage: person[PersonAttributes.homepage] ?? '',
+        ));
       }
     }
     return castPeople;
