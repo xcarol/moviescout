@@ -8,7 +8,7 @@ import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 
 const String _tmdbDetails =
-    '/person/{ID}?append_to_response=movie%2Fcredits%2Ctv%2Fcredits&language={LOCALE}';
+    '/person/{ID}?append_to_response=combined_credits&language={LOCALE}';
 
 class TmdbPersonService extends TmdbBaseService {
   Future<dynamic> _retrievePersonDetailsByLocale(

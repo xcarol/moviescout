@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_person.dart';
+import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/widgets/title_card.dart';
 
 // ignore: constant_identifier_names
@@ -27,7 +28,15 @@ class PersonChip extends Card {
         color: Theme.of(context).extension<CustomColors>()!.chipCardBackground,
         margin: const EdgeInsets.all(0),
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PersonDetails(
+                        person: TmdbPerson.fromMap(person: _person.map),
+                      )),
+            );
+          },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -41,7 +50,9 @@ class PersonChip extends Card {
                 ),
               ),
               const SizedBox(width: 10),
-              Row(children: [_details(context, _person)],),
+              Row(
+                children: [_details(context, _person)],
+              ),
             ],
           ),
         ),
