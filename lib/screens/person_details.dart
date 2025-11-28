@@ -51,18 +51,18 @@ class _PersonDetailsState extends State<PersonDetails> {
     );
   }
 
-  _detailsBody(TmdbPerson title) {
+  _detailsBody(TmdbPerson person) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _banner(title),
+        _banner(person),
         const SizedBox(height: 20),
-        _details(title),
+        _details(person),
         const SizedBox(height: 20),
-        _description(title),
+        _description(person),
         const SizedBox(height: 10),
         const Divider(),
-        _externalLinks(title),
+        _externalLinks(person),
         const Divider(),
       ],
     );
@@ -229,15 +229,15 @@ class _PersonDetailsState extends State<PersonDetails> {
     );
   }
 
-  Widget _details(TmdbPerson title) {
+  Widget _details(TmdbPerson person) {
     return Padding(
       padding: EdgeInsets.only(left: 5, right: 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _characterNameAndActing(title),
+          _characterNameAndActing(person),
           const SizedBox(height: 10),
-          _characterDetails(title),
+          _characterDetails(person),
         ],
       ),
     );
@@ -280,13 +280,13 @@ class _PersonDetailsState extends State<PersonDetails> {
     );
   }
 
-  Widget _description(TmdbPerson title) {
+  Widget _description(TmdbPerson person) {
     return Padding(
       padding: EdgeInsets.only(left: 5, right: 5, top: 10),
       child: Text(
-        title.biography.isEmpty
+        person.biography.isEmpty
             ? AppLocalizations.of(context)!.missingDescription
-            : title.biography,
+            : person.biography,
       ),
     );
   }
