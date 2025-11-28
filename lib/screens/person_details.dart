@@ -215,7 +215,7 @@ class _PersonDetailsState extends State<PersonDetails> {
           child: SizedBox(
             height: 30,
             child: Image.asset(
-              'assets/tvshow_poster.png',
+              'assets/person_web.png',
               fit: BoxFit.cover,
             ),
           ),

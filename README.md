@@ -140,6 +140,10 @@ TMDB_API_RAT=apiReadAccessTokenGotFromTmdb
 ``` 
 NOTICE! As stated in the [TMDB API Documentation about Providers](https://developer.themoviedb.org/reference/movie-watch-providers), the data source is [**JustWatch**](https://www.justwatch.com/).  
 
+## Assets
+
+Images like tvshow_poster.png are created with [Cool Text](https://cooltext.com/) tool using [FUN](https://cooltext.com/Logo-Design-Fun) text style.  
+
 ## Flutter tool box
 
 Use the shell script `./flutter_tool.sh` to execute most used commands in the project.  
