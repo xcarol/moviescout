@@ -47,12 +47,14 @@ class PersonAttributes {
 
 class Credit {
   final int id;
+  final String mediaType;
 
-  Credit({required this.id});
+  Credit({required this.id, required this.mediaType});
 
   factory Credit.fromMap(Map<String, dynamic> map) {
     return Credit(
       id: map[PersonAttributes.id] ?? 0,
+      mediaType: map['media_type'] ?? '',
     );
   }
 }
