@@ -268,4 +268,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get filmography => 'Filmografía';
+
+  @override
+  String get userRated => 'Títulos valorados';
 }

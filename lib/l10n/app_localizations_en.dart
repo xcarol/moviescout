@@ -268,4 +268,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get filmography => 'Filmography';
+
+  @override
+  String get userRated => 'Rated titles';
 }

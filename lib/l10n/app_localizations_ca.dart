@@ -268,4 +268,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get filmography => 'Filmografia';
+
+  @override
+  String get userRated => 'Títols valorats';
 }

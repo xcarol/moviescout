@@ -618,6 +618,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Filmography'**
   String get filmography;
+
+  /// No description provided for @userRated.
+  ///
+  /// In en, this message translates to:
+  /// **'Rated titles'**
+  String get userRated;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
