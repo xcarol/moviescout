@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/screens/person_details.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
 
 // ignore: constant_identifier_names
@@ -13,11 +14,13 @@ const double CARD_WIDTH = 200.0;
 
 class PersonChip extends Card {
   final TmdbPerson _person;
+  final TmdbListService _tmdbListService;
 
   const PersonChip({
     super.key,
     required person,
-  }) : _person = person;
+    required tmdbListService,
+  }) : _person = person, _tmdbListService = tmdbListService;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +37,7 @@ class PersonChip extends Card {
               MaterialPageRoute(
                   builder: (context) => PersonDetails(
                         person: TmdbPerson.fromMap(person: _person.map),
+                        tmdbListService: _tmdbListService,
                       )),
             );
           },

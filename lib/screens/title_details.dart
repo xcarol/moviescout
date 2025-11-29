@@ -505,7 +505,10 @@ class _TitleDetailsState extends State<TitleDetails> {
       data: MediaQuery.of(context).copyWith(
         textScaler: TextScaler.linear(clampedScale),
       ),
-      child: PersonChip(person: tmdbPerson),
+      child: PersonChip(
+        person: tmdbPerson,
+        tmdbListService: widget._tmdbListService,
+      ),
     );
   }
 
