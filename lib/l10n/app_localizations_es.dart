@@ -265,4 +265,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get years => 'Years';
+
+  @override
+  String get filmography => 'Filmografía';
 }

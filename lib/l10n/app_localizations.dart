@@ -612,6 +612,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Años'**
   String get years;
+
+  /// No description provided for @filmography.
+  ///
+  /// In en, this message translates to:
+  /// **'Filmography'**
+  String get filmography;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

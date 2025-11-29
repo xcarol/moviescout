@@ -265,4 +265,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get years => 'Anys';
+
+  @override
+  String get filmography => 'Filmografia';
 }

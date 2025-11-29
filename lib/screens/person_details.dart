@@ -6,18 +6,25 @@ import 'package:intl/intl.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/tmdb_person.dart';
+import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_person_service.dart';
+import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
+import 'package:moviescout/widgets/title_chip.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class PersonDetails extends StatefulWidget {
   final TmdbPerson _person;
+  final TmdbListService _tmdbListService;
 
   const PersonDetails({
     super.key,
     required TmdbPerson person,
-  }) : _person = person;
+    required TmdbListService tmdbListService,
+  })  : _person = person,
+        _tmdbListService = tmdbListService;
 
   @override
   State<PersonDetails> createState() => _PersonDetailsState();
@@ -64,6 +71,8 @@ class _PersonDetailsState extends State<PersonDetails> {
         const Divider(),
         _externalLinks(person),
         const Divider(),
+        const SizedBox(height: 10),
+        _credits(person),
       ],
     );
   }
@@ -303,5 +312,65 @@ class _PersonDetailsState extends State<PersonDetails> {
       ),
       Text(person.placeOfBirth),
     ]);
+  }
+
+  Widget _titleChip(BuildContext context, TmdbTitle tmdbTitle) {
+    final clampedScale =
+        MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.3);
+
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        textScaler: TextScaler.linear(clampedScale),
+      ),
+      child: TitleChip(
+        title: tmdbTitle,
+        tmdbListService: widget._tmdbListService,
+      ),
+    );
+  }
+
+  Widget _credits(TmdbPerson person) {
+    if (person.combinedCredits.cast.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.filmography,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        const SizedBox(height: 10),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: person.combinedCredits.cast.take(10)
+                .map(
+                  (titleRecommended) => FutureBuilder(
+                    future: TmdbTitleService().updateTitleDetails(
+                      TmdbTitle.fromMap(title: {
+                        'id': titleRecommended.id,
+                        'media_type': titleRecommended.mediaType
+                      }),
+                    ),
+                    builder: (context, snapshot) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: snapshot.connectionState != ConnectionState.done
+                            ? Center(child: CircularProgressIndicator())
+                            : _titleChip(
+                                context,
+                                snapshot.data as TmdbTitle,
+                              ),
+                      );
+                    },
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      ],
+    );
   }
 }
