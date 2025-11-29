@@ -150,7 +150,7 @@ class TmdbTitle {
 
     if (_tmdbTitle[_genres] is List) {
       for (var genre in _tmdbTitle[_genres]) {
-        if (genre[_id] != null &&
+        if (genre[_id] != null && _tmdbTitle[_genre_ids] != null &&
             !(_tmdbTitle[_genre_ids] as List).contains(genre[_id])) {
           (_tmdbTitle[_genre_ids] as List).add(genre[_id]);
         }
