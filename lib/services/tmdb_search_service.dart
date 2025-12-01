@@ -57,7 +57,9 @@ class TmdbSearchService extends TmdbListService {
     final Map responseBody = body(response);
     if (responseBody['results'] != null) {
       final resultsPerPage = (responseBody['results'] as List).length;
-      return max((maxOfType / resultsPerPage).toInt(), 1);
+      if (resultsPerPage > 0) {
+        return max((maxOfType / resultsPerPage).toInt(), 1);
+      }
     }
     return 0;
   }
@@ -109,7 +111,8 @@ class TmdbSearchService extends TmdbListService {
         }
 
         if (response.statusCode == 200) {
-          totalTvShowPages = _totalPagesFromResponse(response, maxSearchTvShows);
+          totalTvShowPages =
+              _totalPagesFromResponse(response, maxSearchTvShows);
         }
 
         return response;
