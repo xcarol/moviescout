@@ -355,7 +355,9 @@ class _PersonDetailsState extends State<PersonDetails> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: person.combinedCredits.cast.take(10).map(
+            children: person.combinedCredits.cast
+                .take(10)
+                .map(
                   (titleRecommended) => FutureBuilder(
                     future: TmdbTitleService().updateTitleDetails(
                       TmdbTitle.fromMap(title: {
