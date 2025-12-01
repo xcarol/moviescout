@@ -141,6 +141,7 @@ class _SearchState extends State<Search> {
     final term = title;
 
     try {
+      _resetTitle();
       await _searchService.retrieveSearchlist(
           anonymousAccountId, term, Localizations.localeOf(context));
     } catch (error) {
