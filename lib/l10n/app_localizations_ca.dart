@@ -249,7 +249,10 @@ class AppLocalizationsCa extends AppLocalizations {
   String get unknownDuration => 'Duració no especificada.';
 
   @override
-  String get credits => 'Credits';
+  String get credits => 'Crèdits';
+
+  @override
+  String get ratedCredits => 'Crèdits valorats';
 
   @override
   String get originalName => 'Nom original';
@@ -265,10 +268,4 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get years => 'Anys';
-
-  @override
-  String get filmography => 'Filmografia';
-
-  @override
-  String get userRated => 'Títols valorats';
 }

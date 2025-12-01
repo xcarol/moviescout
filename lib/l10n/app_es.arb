@@ -79,12 +79,11 @@
     "discoverlistTitle": "Descubre",
     "notReleasedYet": "Todavia no se ha estrenado",
     "unknownDuration": "Duración no especificada.",
-    "credits": "Credits",
-    "originalName": "Original name",
+    "credits": "Creditos",
+    "ratedCredits": "Creditos valorados",
+    "originalName": "Nombre original",
     "birthDate": "Fecha de nacimiento",
     "deathDate": "Fecha de defunción",
-    "placeOfBirth": "Place of birth",
-    "years": "Years",
-    "filmography": "Filmografía",
-    "userRated": "Títulos valorados"
+    "placeOfBirth": "Lugar de nacimiento",
+    "years": "Años"
 }

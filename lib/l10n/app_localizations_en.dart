@@ -249,10 +249,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unknownDuration => 'Runtime not specified.';
 
   @override
-  String get credits => 'Creditos';
+  String get credits => 'Credits';
 
   @override
-  String get originalName => 'Nombre original';
+  String get ratedCredits => 'Rated credits';
+
+  @override
+  String get originalName => 'Original name';
 
   @override
   String get birthDate => 'Birthdate';
@@ -261,14 +264,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deathDate => 'Deathdate';
 
   @override
-  String get placeOfBirth => 'Lugar de nacimiento';
+  String get placeOfBirth => 'Place of birth';
 
   @override
-  String get years => 'Años';
-
-  @override
-  String get filmography => 'Filmography';
-
-  @override
-  String get userRated => 'Rated titles';
+  String get years => 'Years';
 }

@@ -80,9 +80,9 @@ class _PersonDetailsState extends State<PersonDetails> {
         _externalLinks(person),
         const Divider(),
         const SizedBox(height: 10),
-        _credits(person, userRatedTitles),
+        _credits(person),
         const SizedBox(height: 30),
-        _userRated(person, userRatedTitles),
+        _ratedCredits(person, userRatedTitles),
       ],
     );
   }
@@ -339,7 +339,7 @@ class _PersonDetailsState extends State<PersonDetails> {
     );
   }
 
-  Widget _credits(TmdbPerson person, List<Credit> userRatedTitles) {
+  Widget _credits(TmdbPerson person) {
     if (person.combinedCredits.cast.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -348,18 +348,14 @@ class _PersonDetailsState extends State<PersonDetails> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)!.filmography,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          AppLocalizations.of(context)!.credits,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         const SizedBox(height: 10),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: person.combinedCredits.cast
-                .where((titleRecommended) => !userRatedTitles
-                    .any((ratedTitle) => ratedTitle.id == titleRecommended.id))
-                .take(10)
-                .map(
+            children: person.combinedCredits.cast.take(10).map(
                   (titleRecommended) => FutureBuilder(
                     future: TmdbTitleService().updateTitleDetails(
                       TmdbTitle.fromMap(title: {
@@ -387,7 +383,7 @@ class _PersonDetailsState extends State<PersonDetails> {
     );
   }
 
-  Widget _userRated(TmdbPerson person, List<Credit> userRatedTitles) {
+  Widget _ratedCredits(TmdbPerson person, List<Credit> userRatedTitles) {
     if (userRatedTitles.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -396,8 +392,8 @@ class _PersonDetailsState extends State<PersonDetails> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)!.userRated,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          AppLocalizations.of(context)!.ratedCredits,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         const SizedBox(height: 10),
         SingleChildScrollView(

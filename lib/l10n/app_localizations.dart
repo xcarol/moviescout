@@ -580,13 +580,19 @@ abstract class AppLocalizations {
   /// No description provided for @credits.
   ///
   /// In en, this message translates to:
-  /// **'Creditos'**
+  /// **'Credits'**
   String get credits;
+
+  /// No description provided for @ratedCredits.
+  ///
+  /// In en, this message translates to:
+  /// **'Rated credits'**
+  String get ratedCredits;
 
   /// No description provided for @originalName.
   ///
   /// In en, this message translates to:
-  /// **'Nombre original'**
+  /// **'Original name'**
   String get originalName;
 
   /// No description provided for @birthDate.
@@ -604,26 +610,14 @@ abstract class AppLocalizations {
   /// No description provided for @placeOfBirth.
   ///
   /// In en, this message translates to:
-  /// **'Lugar de nacimiento'**
+  /// **'Place of birth'**
   String get placeOfBirth;
 
   /// No description provided for @years.
   ///
   /// In en, this message translates to:
-  /// **'Años'**
+  /// **'Years'**
   String get years;
-
-  /// No description provided for @filmography.
-  ///
-  /// In en, this message translates to:
-  /// **'Filmography'**
-  String get filmography;
-
-  /// No description provided for @userRated.
-  ///
-  /// In en, this message translates to:
-  /// **'Rated titles'**
-  String get userRated;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
