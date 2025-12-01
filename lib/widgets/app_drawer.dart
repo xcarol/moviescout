@@ -2,13 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/screens/providers.dart';
-import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/theme_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
@@ -44,13 +44,18 @@ class AppDrawer extends StatelessWidget {
 
   Widget _userProfileTile(BuildContext context) {
     var user = Provider.of<TmdbUserService>(context).user;
-    ImageProvider<Object>? userImage = user != null
-        ? user['avatar']['tmdb'] != null && user['avatar']['tmdb'].isNotEmpty
-            ? CachedNetworkImageProvider(
-                'https://image.tmdb.org/t/p/w185/${user['avatar']['tmdb']['avatar_path']}')
-            : CachedNetworkImageProvider(
-                'https://www.gravatar.com/avatar/${user['avatar']['gravatar']['hash']}?s=200')
-        : AssetImage('assets/anonymous.png');
+
+    ImageProvider<Object>? userImage;
+
+    if (user != null) {
+      userImage = user['avatar']['tmdb'] != null &&
+              user['avatar']['tmdb'].isNotEmpty
+          ? CachedNetworkImageProvider(
+              'https://image.tmdb.org/t/p/w185/${user['avatar']['tmdb']['avatar_path']}')
+          : CachedNetworkImageProvider(
+              'https://www.gravatar.com/avatar/${user['avatar']['gravatar']['hash']}?s=200');
+    }
+
     var userName = user != null
         ? user['name'].toString().isNotEmpty
             ? user['name']
@@ -58,9 +63,17 @@ class AppDrawer extends StatelessWidget {
         : AppLocalizations.of(context)!.anonymousUser;
 
     return UserAccountsDrawerHeader(
-      currentAccountPicture: CircleAvatar(
-        backgroundImage: userImage,
-      ),
+      currentAccountPicture: user != null
+          ? CircleAvatar(
+              backgroundImage: userImage,
+            )
+          : CircleAvatar(
+              child: SvgPicture.asset(
+                'assets/account.svg',
+                width: 80,
+                height: 80,
+              ),
+            ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onSurface,
       ),
@@ -193,8 +206,6 @@ class AppDrawer extends StatelessWidget {
         error.toString(),
       );
     });
-    
-    PreferencesService().prefs.clear();
 
     await tmdbWatchlistService.clearList();
     await tmdbRateslistService.clearList();

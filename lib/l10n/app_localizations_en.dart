@@ -247,4 +247,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unknownDuration => 'Runtime not specified.';
+
+  @override
+  String get credits => 'Credits';
+
+  @override
+  String get ratedCredits => 'Rated credits';
+
+  @override
+  String get originalName => 'Original name';
+
+  @override
+  String get birthDate => 'Birthdate';
+
+  @override
+  String get deathDate => 'Deathdate';
+
+  @override
+  String get placeOfBirth => 'Place of birth';
+
+  @override
+  String get years => 'Years';
 }

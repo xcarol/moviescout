@@ -247,4 +247,25 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get unknownDuration => 'Duración no especificada.';
+
+  @override
+  String get credits => 'Creditos';
+
+  @override
+  String get ratedCredits => 'Creditos valorados';
+
+  @override
+  String get originalName => 'Nombre original';
+
+  @override
+  String get birthDate => 'Fecha de nacimiento';
+
+  @override
+  String get deathDate => 'Fecha de defunción';
+
+  @override
+  String get placeOfBirth => 'Lugar de nacimiento';
+
+  @override
+  String get years => 'Años';
 }

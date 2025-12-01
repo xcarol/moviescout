@@ -78,5 +78,12 @@
     "noProvidersAvailable": "No providers available",
     "discoverlistTitle": "Discover",
     "notReleasedYet": "Not release yet",
-    "unknownDuration": "Runtime not specified."
+    "unknownDuration": "Runtime not specified.",
+    "credits": "Credits",
+    "ratedCredits": "Rated credits",
+    "originalName": "Original name",
+    "birthDate": "Birthdate",
+    "deathDate": "Deathdate",
+    "placeOfBirth": "Place of birth",
+    "years": "Years"
 }

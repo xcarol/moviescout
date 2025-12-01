@@ -78,5 +78,12 @@
     "noProvidersAvailable": "No hay proveedores disponibles",
     "discoverlistTitle": "Descubre",
     "notReleasedYet": "Todavia no se ha estrenado",
-    "unknownDuration": "Duración no especificada."
+    "unknownDuration": "Duración no especificada.",
+    "credits": "Creditos",
+    "ratedCredits": "Creditos valorados",
+    "originalName": "Nombre original",
+    "birthDate": "Fecha de nacimiento",
+    "deathDate": "Fecha de defunción",
+    "placeOfBirth": "Lugar de nacimiento",
+    "years": "Años"
 }

@@ -4,6 +4,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_genre.dart';
+import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
@@ -12,6 +13,7 @@ import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
+import 'package:moviescout/widgets/person_chip.dart';
 import 'package:moviescout/widgets/rate_form.dart';
 import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
@@ -187,6 +189,8 @@ class _TitleDetailsState extends State<TitleDetails> {
           _providers(title),
           const SizedBox(height: 30),
           _recommended(title),
+          const SizedBox(height: 30),
+          _cast(title),
         ],
       ),
     );
@@ -493,6 +497,21 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
+  Widget _personChip(BuildContext context, TmdbPerson tmdbPerson) {
+    final clampedScale =
+        MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.3);
+
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        textScaler: TextScaler.linear(clampedScale),
+      ),
+      child: PersonChip(
+        person: tmdbPerson,
+        tmdbListService: widget._tmdbListService,
+      ),
+    );
+  }
+
   Widget _titleChip(BuildContext context, TmdbTitle tmdbTitle) {
     final clampedScale =
         MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.3);
@@ -505,6 +524,33 @@ class _TitleDetailsState extends State<TitleDetails> {
         title: tmdbTitle,
         tmdbListService: widget._tmdbListService,
       ),
+    );
+  }
+
+  Widget _cast(TmdbTitle title) {
+    if (title.cast.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.credits,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        const SizedBox(height: 10),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: title.cast
+                .map((person) => Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: _personChip(context, person)))
+                .toList(),
+          ),
+        ),
+      ],
     );
   }
 

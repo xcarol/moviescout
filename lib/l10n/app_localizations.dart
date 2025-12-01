@@ -576,6 +576,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Runtime not specified.'**
   String get unknownDuration;
+
+  /// No description provided for @credits.
+  ///
+  /// In en, this message translates to:
+  /// **'Credits'**
+  String get credits;
+
+  /// No description provided for @ratedCredits.
+  ///
+  /// In en, this message translates to:
+  /// **'Rated credits'**
+  String get ratedCredits;
+
+  /// No description provided for @originalName.
+  ///
+  /// In en, this message translates to:
+  /// **'Original name'**
+  String get originalName;
+
+  /// No description provided for @birthDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Birthdate'**
+  String get birthDate;
+
+  /// No description provided for @deathDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Deathdate'**
+  String get deathDate;
+
+  /// No description provided for @placeOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Place of birth'**
+  String get placeOfBirth;
+
+  /// No description provided for @years.
+  ///
+  /// In en, this message translates to:
+  /// **'Years'**
+  String get years;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -78,5 +78,12 @@
     "noProvidersAvailable": "No hi ha proveidors disponibles",
     "discoverlistTitle": "Descobreix",
     "notReleasedYet": "Encara no s'ha estrenat",
-    "unknownDuration": "Duració no especificada."
+    "unknownDuration": "Duració no especificada.",
+    "credits": "Crèdits",
+    "ratedCredits": "Crèdits valorats",
+    "originalName": "Nom original",
+    "birthDate": "Data de naixement",
+    "deathDate": "Data de defunció",
+    "placeOfBirth": "Lloc de neixament",
+    "years": "Anys"
 }
