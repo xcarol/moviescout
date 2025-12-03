@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:isar/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/isar_service.dart';
+import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 
@@ -14,6 +15,17 @@ class TmdbDiscoverlistService extends TmdbListService {
 
   Future<void> retrieveDiscoverlist(
       String accountId, String sessionId, Locale locale) async {
+    final lastUpdate =
+        PreferencesService().prefs.getString('${listName}_last_update') ??
+            DateTime.now().subtract(const Duration(days: 8)).toIso8601String();
+
+    final isUpToDate =
+        DateTime.now().difference(DateTime.parse(lastUpdate)).inDays < 7;
+
+    if (listIsNotEmpty && isUpToDate) {
+      return;
+    }
+
     retrieveList(accountId.isEmpty ? anonymousAccountId : accountId,
         retrieveMovies: () async {
       return _getDiscoveryTitles(
