@@ -33,15 +33,13 @@ class _DiscoverListState extends State<DiscoverList> {
       key: ValueKey('discoverlist'),
     );
 
-    if (_discoverlistService.listIsEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _discoverlistService.retrieveDiscoverlist(
-          userService.accountId,
-          userService.sessionId,
-          Localizations.localeOf(context),
-        );
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _discoverlistService.retrieveDiscoverlist(
+        userService.accountId,
+        userService.sessionId,
+        Localizations.localeOf(context),
+      );
+    });
   }
 
   @override
