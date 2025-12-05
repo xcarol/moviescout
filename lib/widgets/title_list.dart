@@ -288,19 +288,7 @@ class _TitleListState extends State<TitleList> {
       padding: EdgeInsets.symmetric(horizontal: 4),
       child: Row(
         children: [
-          ValueListenableBuilder(
-            valueListenable: widget.listService.selectedTitleCount,
-            builder: (context, count, child) {
-              return Text(
-                count.toString(),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 16,
-                ),
-              );
-            },
-          ),
-          _typeSelector(),
+          ..._buildTypeAndCountWidgets(),
           const SizedBox(width: 8),
           ValueListenableBuilder(
             valueListenable: widget.listService.isLoading,
@@ -317,7 +305,6 @@ class _TitleListState extends State<TitleList> {
               return SizedBox.shrink();
             },
           ),
-
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -325,7 +312,6 @@ class _TitleListState extends State<TitleList> {
               child: _sortSelector(),
             ),
           ),
-
           _swapSortButton(context),
           IconButton(
             onPressed: () {
@@ -356,22 +342,52 @@ class _TitleListState extends State<TitleList> {
     return selectedType;
   }
 
-  Widget _typeSelector() {
-    return DropdownSelector(
-      selectedOption: _selectedType,
-      options: _titleTypes,
-      onSelected: (value) => setState(() {
-        _selectedType = value;
-        widget.listService.setTypeFilter(_titleTypeToOption(value));
-        PreferencesService()
-            .prefs
-            .setString(_selectedTypePreferencesName, _selectedType);
-      }),
-      arrowIcon: Icon(
-        Icons.arrow_drop_down,
-        color: Theme.of(context).colorScheme.primary,
-      ),
-    );
+  List<Widget> _buildTypeAndCountWidgets() {
+    final selectedType = _titleTypeToOption(_selectedType);
+    final textColor = selectedType == ''
+        ? Theme.of(context).colorScheme.primary
+        : Theme.of(context).colorScheme.onPrimary;
+    final backgroundColor = selectedType == ''
+        ? Theme.of(context).colorScheme.onPrimary
+        : Theme.of(context).colorScheme.primary;
+
+    return [
+      DropdownSelector(
+        backgroundColor: backgroundColor,
+        textStyle: TextStyle(
+          color: textColor,
+          fontSize: 16,
+          backgroundColor: backgroundColor,
+        ),
+        borderRadius: BorderRadius.circular(5),
+        leading: ValueListenableBuilder(
+          valueListenable: widget.listService.selectedTitleCount,
+          builder: (context, count, child) {
+            return Text(
+              count.toString(),
+              style: TextStyle(
+                color: textColor,
+                fontSize: 16,
+                backgroundColor: backgroundColor,
+              ),
+            );
+          },
+        ),
+        selectedOption: _selectedType,
+        options: _titleTypes,
+        onSelected: (value) => setState(() {
+          _selectedType = value;
+          widget.listService.setTypeFilter(selectedType);
+          PreferencesService()
+              .prefs
+              .setString(_selectedTypePreferencesName, _selectedType);
+        }),
+        arrowIcon: Icon(
+          Icons.arrow_drop_down,
+          color: textColor,
+        ),
+      )
+    ];
   }
 
   String _sortNameToOption(BuildContext context, String name) {
