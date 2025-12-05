@@ -283,6 +283,10 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _infoLine() {
+    final anyFilterActive = _selectedGenres.isNotEmpty ||
+        _filterByProviders ||
+        _textFilterController.text.isNotEmpty;
+
     return Container(
       color: Theme.of(context).colorScheme.onPrimaryContainer,
       padding: EdgeInsets.symmetric(horizontal: 4),
@@ -314,6 +318,14 @@ class _TitleListState extends State<TitleList> {
           ),
           _swapSortButton(context),
           IconButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                anyFilterActive
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.onPrimary,
+              ),
+              visualDensity: VisualDensity.compact,
+            ),
             onPressed: () {
               setState(() {
                 _showFilters = !_showFilters;
@@ -322,8 +334,12 @@ class _TitleListState extends State<TitleList> {
                     .setBool(_showFiltersPreferencesName, _showFilters);
               });
             },
-            icon:
-                Icon(_showFilters ? Icons.filter_list_off : Icons.filter_list),
+            icon: Icon(
+              _showFilters ? Icons.filter_list_off : Icons.filter_list,
+              color: anyFilterActive
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context).colorScheme.primary,
+            ),
           ),
         ],
       ),
