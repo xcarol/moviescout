@@ -11,21 +11,18 @@ Widget watchlistButton(
   BuildContext context,
   TmdbTitle title,
 ) {
-  TmdbUserService userService =
-      Provider.of<TmdbUserService>(context, listen: false);
+  return Consumer2<TmdbWatchlistService, TmdbUserService>(
+    builder: (_, watchlistService, userService, __) {
+      if (!userService.isUserLoggedIn) {
+        return IconButton(
+          icon: const Icon(Icons.highlight_off),
+          onPressed: () {
+            SnackMessage.showSnackBar(
+                AppLocalizations.of(context)!.signInToWatchlist);
+          },
+        );
+      }
 
-  if (userService.user == null) {
-    return IconButton(
-      icon: const Icon(Icons.highlight_off),
-      onPressed: () {
-        SnackMessage.showSnackBar(
-            AppLocalizations.of(context)!.signInToWatchlist);
-      },
-    );
-  }
-
-  return Consumer<TmdbWatchlistService>(
-    builder: (_, watchlistService, __) {
       bool isInWatchlist = watchlistService.contains(title);
 
       return IconButton(
