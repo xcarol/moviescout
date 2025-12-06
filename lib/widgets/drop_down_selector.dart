@@ -10,6 +10,7 @@ class DropdownSelector extends StatelessWidget {
   final BoxBorder? border;
   final BorderRadiusGeometry? borderRadius;
   final Widget Function(BuildContext, String, bool, VoidCallback)? itemBuilder;
+  final Widget? leading;
 
   const DropdownSelector({
     super.key,
@@ -22,6 +23,7 @@ class DropdownSelector extends StatelessWidget {
     this.border,
     this.borderRadius,
     this.itemBuilder,
+    this.leading,
   });
 
   @override
@@ -56,6 +58,10 @@ class DropdownSelector extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (leading != null) ...[
+                  leading!,
+                  const SizedBox(width: 8),
+                ],
                 Text(selectedOption, style: effectiveTextStyle),
                 effectiveArrowIcon,
               ],
