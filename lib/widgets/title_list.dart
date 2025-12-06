@@ -319,10 +319,28 @@ class _TitleListState extends State<TitleList> {
           _swapSortButton(context),
           IconButton(
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
-                anyFilterActive
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.onPrimary,
+              backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                (Set<WidgetState> states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    return anyFilterActive
+                        ? Theme.of(context).colorScheme.primary.withValues(
+                              alpha: 0.8,
+                            )
+                        : Theme.of(context).colorScheme.onPrimary.withValues(
+                              alpha: 0.8,
+                            );
+                  }
+                  return anyFilterActive
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.onPrimary;
+                },
+              ),
+              foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                (Set<WidgetState> states) {
+                  return anyFilterActive
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.primary;
+                },
               ),
               visualDensity: VisualDensity.compact,
             ),
@@ -336,9 +354,6 @@ class _TitleListState extends State<TitleList> {
             },
             icon: Icon(
               _showFilters ? Icons.filter_list_off : Icons.filter_list,
-              color: anyFilterActive
-                  ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.primary,
             ),
           ),
         ],

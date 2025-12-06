@@ -88,12 +88,6 @@ class ColorSchemeForm extends Dialog {
                 controlAffinity: ListTileControlAffinity.trailing,
                 value: item,
                 selected: scheme.value == item,
-                groupValue: scheme.value,
-                onChanged: (value) {
-                  if (value != null) {
-                    scheme.value = value;
-                  }
-                },
               ),
             );
             schemeWidgets.add(
@@ -101,34 +95,46 @@ class ColorSchemeForm extends Dialog {
             );
           }
 
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Column(children: schemeWidgets),
-              const SizedBox(height: 20),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(AppLocalizations.of(context)!.cancel)),
-                TextButton(
-                    onPressed: () {
-                      onSubmit(scheme.value ==
-                              AppLocalizations.of(context)!.defaultScheme
-                          ? ThemeSchemes.defaultScheme
-                          : scheme.value ==
-                                  AppLocalizations.of(context)!.blackScheme
-                              ? ThemeSchemes.blackScheme
-                              : scheme.value ==
-                                      AppLocalizations.of(context)!.blueScheme
-                                  ? ThemeSchemes.blueScheme
-                                  : ThemeSchemes.redScheme);
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(AppLocalizations.of(context)!.select)),
-              ]),
-            ],
+          return RadioGroup<String>(
+            groupValue: scheme.value,
+            onChanged: (value) {
+              if (value != null) {
+                scheme.value = value;
+              }
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Column(children: schemeWidgets),
+                const SizedBox(height: 20),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(AppLocalizations.of(context)!.cancel)),
+                      TextButton(
+                          onPressed: () {
+                            onSubmit(scheme.value ==
+                                    AppLocalizations.of(context)!.defaultScheme
+                                ? ThemeSchemes.defaultScheme
+                                : scheme.value ==
+                                        AppLocalizations.of(context)!
+                                            .blackScheme
+                                    ? ThemeSchemes.blackScheme
+                                    : scheme.value ==
+                                            AppLocalizations.of(context)!
+                                                .blueScheme
+                                        ? ThemeSchemes.blueScheme
+                                        : ThemeSchemes.redScheme);
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(AppLocalizations.of(context)!.select)),
+                    ]),
+              ],
+            ),
           );
         },
       ),

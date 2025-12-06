@@ -45,9 +45,9 @@ class ThemeService with ChangeNotifier {
   ScrollbarThemeData get lightScrollbarTheme => ScrollbarThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.dragged)) {
-            return _lightColorScheme.primary.withOpacity(0.8);
+            return _lightColorScheme.primary.withValues(alpha: 0.8);
           }
-          return _lightColorScheme.primary.withOpacity(0.5);
+          return _lightColorScheme.primary.withValues(alpha: 0.5);
         }),
         thickness: WidgetStateProperty.all(5.0),
         radius: const Radius.circular(8),
@@ -59,9 +59,9 @@ class ThemeService with ChangeNotifier {
   ScrollbarThemeData get darkScrollbarTheme => ScrollbarThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.dragged)) {
-            return _darkColorScheme.primary.withOpacity(0.8);
+            return _darkColorScheme.primary.withValues(alpha: 0.8);
           }
-          return _darkColorScheme.primary.withOpacity(0.5);
+          return _darkColorScheme.primary.withValues(alpha: 0.5);
         }),
         thickness: WidgetStateProperty.all(5.0),
         radius: const Radius.circular(8),
