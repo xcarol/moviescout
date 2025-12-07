@@ -70,6 +70,7 @@ const _listName = 'list_name';
 const _last_updated = 'last_updated';
 const _media_type = 'media_type';
 const _providers = 'providers';
+const _added_order = 'added_order';
 
 const statusEnded = 'Ended';
 const statusReturning = 'Returning Series';
@@ -109,6 +110,7 @@ class TmdbTitle {
   late String effectiveReleaseDate;
   late List<int> genreIds;
   late List<int> flatrateProviderIds;
+  late int addedOrder;
 
   TmdbTitle({
     required this.id,
@@ -119,6 +121,7 @@ class TmdbTitle {
     required this.rating,
     required this.dateRated,
     required this.lastUpdated,
+    required this.addedOrder,
   })  : genreIds = <int>[],
         flatrateProviderIds = <int>[] {
     effectiveReleaseDate = mediaType == 'movie' ? releaseDate : firstAirDate;
@@ -142,6 +145,7 @@ class TmdbTitle {
           ? DateTime.parse(title[_account_rating][_account_rating_date])
           : DateTime.fromMillisecondsSinceEpoch(0),
       lastUpdated: title[_last_updated] ?? '1970-01-01',
+      addedOrder: title[_added_order] ?? 0,
     );
   }
 
