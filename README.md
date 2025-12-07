@@ -174,9 +174,15 @@ it is worth comparing it with the same Overmaps file to imitate it as much as po
 
 ### Publishing a new version for internal test
 
-- Modify the last (build) number in _version: 1.0.0+**X**_ at the _pubspec.yaml_ file before building the new .aab bundle.
-- Build the bundle `flutter build appbundle --release`.
-- Go to: [Create an internal test version](https://play.google.com/console/u/0/developers/5602401961225582177/app/4972075179053080011/app-dashboard) to upload it.
+- Create a new branch with the version number (e.g. `git checkout -b release/1.6.3`)
+- In the _pubspec.yaml_ file modify the last (build) number in _version: 1.6.3+**X**_ by adding 1 to it.
+- Commit changes and publish the new branch to GitHub
+- Got to GitHub [Releases](https://github.com/xcarol/moviescout/releases) and create a new release:
+  - Click on _Draft a new release_
+  - Click on _Tag_ button and type in the version number (e.g. `1.6.3+20`) and click on _Create new tag_
+  - Click on _Generate release notes_ and then click on _Publish release_
+- Build the bundle `./flutter_tool.sh -d`.
+- Go to: [Create an internal test version](https://play.google.com/console/u/0/developers/5602401961225582177/app/4972075179053080011/app-dashboard) crate a new version and upload the bundle (`./build/app/outputs/bundle/release/app-release.aab`).
 
 ## Troubleshooting
 
