@@ -393,7 +393,7 @@ class _TitleListState extends State<TitleList> {
         options: _titleTypes,
         onSelected: (value) => setState(() {
           _selectedType = value;
-          widget.listService.setTypeFilter(selectedType);
+          widget.listService.setTypeFilter(_titleTypeToOption(value));
           PreferencesService()
               .prefs
               .setString(_selectedTypePreferencesName, _selectedType);
