@@ -231,16 +231,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recommended => 'Recommended';
 
   @override
-  String get providersTitle => 'Content providers';
+  String get providersTitle => 'Content platforms';
 
   @override
-  String get providers => 'Providers';
+  String get providers => 'Platforms';
 
   @override
   String get filterByProviders => 'Only available';
 
   @override
-  String get noProvidersAvailable => 'No providers available';
+  String get noProvidersAvailable => 'No platforms available';
 
   @override
   String get discoverlistTitle => 'Discover';
