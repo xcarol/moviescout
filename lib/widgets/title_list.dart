@@ -332,7 +332,7 @@ class _TitleListState extends State<TitleList> {
           _swapSortButton(context),
           IconButton(
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
+              backgroundColor: WidgetStateProperty.all(
                 anyFilterActive
                     ? Theme.of(context).colorScheme.primary
                     : Theme.of(context).colorScheme.onPrimary,
