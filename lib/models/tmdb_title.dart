@@ -85,6 +85,7 @@ class SortOption {
   static const releaseDate = 'releaseDate';
   static const runtime = 'runtime';
   static const dateRated = 'dateRated';
+  static const addedOrder = 'addedOrder';
 }
 
 @collection
