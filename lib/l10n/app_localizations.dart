@@ -397,6 +397,12 @@ abstract class AppLocalizations {
   /// **'Rated date'**
   String get sortDateRated;
 
+  /// No description provided for @sortAddedOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Added date'**
+  String get sortAddedOrder;
+
   /// No description provided for @genres.
   ///
   /// In en, this message translates to:
@@ -538,13 +544,13 @@ abstract class AppLocalizations {
   /// No description provided for @providersTitle.
   ///
   /// In en, this message translates to:
-  /// **'Content providers'**
+  /// **'Content platforms'**
   String get providersTitle;
 
   /// No description provided for @providers.
   ///
   /// In en, this message translates to:
-  /// **'Providers'**
+  /// **'Platforms'**
   String get providers;
 
   /// No description provided for @filterByProviders.
@@ -556,7 +562,7 @@ abstract class AppLocalizations {
   /// No description provided for @noProvidersAvailable.
   ///
   /// In en, this message translates to:
-  /// **'No providers available'**
+  /// **'No platforms available'**
   String get noProvidersAvailable;
 
   /// No description provided for @discoverlistTitle.

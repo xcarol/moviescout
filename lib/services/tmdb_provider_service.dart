@@ -111,6 +111,7 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
 
     if (response.statusCode != 200) {
       // List may not exist yet
+      PreferencesService().prefs.setString('providerListId', '');
       return;
     }
 

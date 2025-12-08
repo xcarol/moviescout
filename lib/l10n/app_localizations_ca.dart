@@ -159,6 +159,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get sortDateRated => 'Data de valoració';
 
   @override
+  String get sortAddedOrder => 'Data d\'addició';
+
+  @override
   String get genres => 'Gèneres';
 
   @override
@@ -228,16 +231,16 @@ class AppLocalizationsCa extends AppLocalizations {
   String get recommended => 'Recomanats';
 
   @override
-  String get providersTitle => 'Proveidors de contingut';
+  String get providersTitle => 'Plataformes de contingut';
 
   @override
-  String get providers => 'Proveidors';
+  String get providers => 'Plataformes';
 
   @override
   String get filterByProviders => 'Només disponibles';
 
   @override
-  String get noProvidersAvailable => 'No hi ha proveidors disponibles';
+  String get noProvidersAvailable => 'No hi ha plataformes disponibles';
 
   @override
   String get discoverlistTitle => 'Descobreix';
