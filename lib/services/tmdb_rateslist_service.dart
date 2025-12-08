@@ -8,9 +8,9 @@ import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 
 const String _tmdbRateslistMovies =
-    'account/{ACCOUNT_ID}/movie/rated?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}';
+    'account/{ACCOUNT_ID}/movie/rated?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
 const String _tmdbRateslistTv =
-    'account/{ACCOUNT_ID}/tv/rated?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}';
+    'account/{ACCOUNT_ID}/tv/rated?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
 const String _rateMovie = 'movie/{ID}/rating?session_id={SESSION_ID}';
 const String _rateTv = 'tv/{ID}/rating?session_id={SESSION_ID}';
 
