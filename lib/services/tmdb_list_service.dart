@@ -167,15 +167,19 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     final movies = results[0];
     final tv = results[1];
 
-    for (var element in movies) {
+    for (int i = 0; i < movies.length; i++) {
+      var element = movies[i];
       element['list_name'] = _listName;
       element['media_type'] = 'movie';
+      element['added_order'] = i;
       serverList.add(TmdbTitle.fromMap(title: element));
     }
 
-    for (var element in tv) {
+    for (int i = 0; i < tv.length; i++) {
+      var element = tv[i];
       element['list_name'] = _listName;
       element['media_type'] = 'tv';
+      element['added_order'] = i;
       serverList.add(TmdbTitle.fromMap(title: element));
     }
 
