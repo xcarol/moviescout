@@ -397,6 +397,12 @@ abstract class AppLocalizations {
   /// **'Rated date'**
   String get sortDateRated;
 
+  /// No description provided for @sortAddedOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Added date'**
+  String get sortAddedOrder;
+
   /// No description provided for @genres.
   ///
   /// In en, this message translates to:

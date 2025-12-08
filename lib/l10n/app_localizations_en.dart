@@ -159,6 +159,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sortDateRated => 'Rated date';
 
   @override
+  String get sortAddedOrder => 'Added date';
+
+  @override
   String get genres => 'Genres';
 
   @override

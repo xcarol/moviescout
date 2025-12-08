@@ -49,6 +49,7 @@
     "sortReleaseDate": "Release date",
     "sortRuntime": "Runtime",
     "sortDateRated": "Rated date",
+    "sortAddedOrder": "Added date",
     "genres": "Genres",
     "titles": "Titles",
     "rate": "Rate",

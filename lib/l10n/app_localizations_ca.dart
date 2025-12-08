@@ -159,6 +159,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get sortDateRated => 'Data de valoració';
 
   @override
+  String get sortAddedOrder => 'Data d\'addició';
+
+  @override
   String get genres => 'Gèneres';
 
   @override
