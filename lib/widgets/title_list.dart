@@ -128,6 +128,7 @@ class _TitleListState extends State<TitleList> {
           localizations.sortDateRated,
         localizations.sortReleaseDate,
         localizations.sortRuntime,
+        localizations.sortAddedOrder,
       ];
     });
   }
@@ -419,6 +420,8 @@ class _TitleListState extends State<TitleList> {
       return SortOption.releaseDate;
     } else if (name == AppLocalizations.of(context)!.sortRuntime) {
       return SortOption.runtime;
+    } else if (name == AppLocalizations.of(context)!.sortAddedOrder) {
+      return SortOption.addedOrder;
     } else {
       return SortOption.alphabetically;
     }
