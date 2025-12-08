@@ -318,6 +318,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
             ? query.sortByIsMovieDesc().thenByEffectiveRuntime()
             : query.sortByIsMovieDesc().thenByEffectiveRuntimeDesc();
         break;
+      case SortOption.addedOrder:
+        sortedQuery = _isSortAsc
+            ? query.sortByAddedOrder()
+            : query.sortByAddedOrderDesc();
+        break;
       case SortOption.alphabetically:
       default:
         sortedQuery = _isSortAsc ? query.sortByName() : query.sortByNameDesc();
