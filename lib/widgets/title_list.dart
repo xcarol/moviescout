@@ -30,7 +30,9 @@ class _TitleListState extends State<TitleList> {
   late String _textFilterPreferencesName;
   late String _selectedGenresPreferencesName;
   late String _selectedTypePreferencesName;
+  late String _selectedSortPreferencesName;
   late String _filterByProvidersPreferencesName;
+  late String _sortPreferencesName;
   String _selectedType = '';
   late List<String> _titleTypes;
   String _selectedSort = '';
@@ -72,6 +74,16 @@ class _TitleListState extends State<TitleList> {
     _filterByProviders =
         PreferencesService().prefs.getBool(_filterByProvidersPreferencesName) ??
             false;
+
+    _sortPreferencesName = '${widget.listService.listName}_Sort';
+    _isSortAsc =
+        PreferencesService().prefs.getBool(_sortPreferencesName) ?? true;
+
+    _selectedSortPreferencesName =
+        '${widget.listService.listName}_SelectedSort';
+    _selectedSort =
+        PreferencesService().prefs.getString(_selectedSortPreferencesName) ??
+            '';
 
     widget.listService.addListener(_onListServiceChanged);
 
@@ -433,6 +445,9 @@ class _TitleListState extends State<TitleList> {
       options: _titleSorts,
       onSelected: (value) => setState(() {
         _selectedSort = value;
+        PreferencesService()
+            .prefs
+            .setString(_selectedSortPreferencesName, _selectedSort);
         widget.listService
             .setSort(_sortNameToOption(context, value), _isSortAsc);
       }),
@@ -455,6 +470,7 @@ class _TitleListState extends State<TitleList> {
       onPressed: () {
         setState(() {
           _isSortAsc = !_isSortAsc;
+          PreferencesService().prefs.setBool(_sortPreferencesName, _isSortAsc);
           widget.listService
               .setSort(_sortNameToOption(context, _selectedSort), _isSortAsc);
         });
