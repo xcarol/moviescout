@@ -65,17 +65,28 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
             .isAfter(DateTime.fromMillisecondsSinceEpoch(0));
   }
 
+  void _resetServiceStateAfterClear() {
+    _clearLoadedTitles(clearGenreCache: true);
+    PreferencesService().prefs.remove('${_listName}_last_update');
+    notifyListeners();
+  }
+
   void clearListSync() {
     _isar.writeTxnSync(() {
       _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAllSync();
     });
-    _clearLoadedTitles(clearGenreCache: true);
-    PreferencesService().prefs.remove('${_listName}_last_update');
+    _resetServiceStateAfterClear();
+  }
+
+  Future<void> _clearLocalList() async {
+    await _isar.writeTxn(() async {
+      await _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAll();
+    });
+    _resetServiceStateAfterClear();
   }
 
   Future<void> clearList() async {
     await _clearLocalList();
-    notifyListeners();
   }
 
   bool get listIsEmpty {
@@ -111,14 +122,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     _anyFilterApplied = false;
     _hasMore = true;
     _page = 0;
-  }
-
-  Future<void> _clearLocalList() async {
-    await _isar.writeTxn(() async {
-      await _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAll();
-    });
-    _clearLoadedTitles(clearGenreCache: true);
-    PreferencesService().prefs.remove('${_listName}_last_update');
   }
 
   Future<void> retrieveList(
