@@ -60,11 +60,11 @@ class _SearchState extends State<Search> {
     );
   }
 
-  _resetTitle() {
-    _controller.clear();
-    setState(() {
-      _searchService.clearList();
-    });
+  _resetTitle({bool clearText = false}) {
+    if (clearText) {
+      _controller.clear();
+    }
+    _searchService.clearListSync();
   }
 
   Widget searchBox() {
@@ -96,7 +96,7 @@ class _SearchState extends State<Search> {
                   suffixIconColor: textColor,
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.clear),
-                    onPressed: _resetTitle,
+                    onPressed: () => _resetTitle(clearText: true),
                     tooltip: AppLocalizations.of(context)!.search,
                   ),
                   border: OutlineInputBorder(
