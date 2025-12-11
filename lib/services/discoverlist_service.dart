@@ -21,7 +21,8 @@ class TmdbDiscoverlistService extends TmdbListService {
             DateTime.now().subtract(const Duration(days: 8)).toIso8601String();
 
     final isUpToDate =
-        DateTime.now().difference(DateTime.parse(lastUpdate)).inDays < 7;
+        DateTime.now().difference(DateTime.parse(lastUpdate)).inDays <
+            DateTime.daysPerWeek;
 
     if (listIsNotEmpty && isUpToDate && !forceUpdate) {
       return;
