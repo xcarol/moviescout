@@ -14,7 +14,8 @@ class TmdbDiscoverlistService extends TmdbListService {
   TmdbDiscoverlistService(super.listName);
 
   Future<void> retrieveDiscoverlist(
-      String accountId, String sessionId, Locale locale) async {
+      String accountId, String sessionId, Locale locale,
+      {bool forceUpdate = false}) async {
     final lastUpdate =
         PreferencesService().prefs.getString('${listName}_last_update') ??
             DateTime.now().subtract(const Duration(days: 8)).toIso8601String();
@@ -22,9 +23,11 @@ class TmdbDiscoverlistService extends TmdbListService {
     final isUpToDate =
         DateTime.now().difference(DateTime.parse(lastUpdate)).inDays < 7;
 
-    if (listIsNotEmpty && isUpToDate) {
+    if (listIsNotEmpty && isUpToDate && !forceUpdate) {
       return;
     }
+
+    clearListSync();
 
     retrieveList(accountId.isEmpty ? anonymousAccountId : accountId,
         retrieveMovies: () async {
@@ -38,38 +41,43 @@ class TmdbDiscoverlistService extends TmdbListService {
 
   Future<List> _getDiscoveryTitles(String accountId, String sessionId,
       Locale locale, String mediaType, String popularEndpoint) async {
-    final isar = IsarService.instance;
-    final ratedTitles = await isar.tmdbTitles
-        .filter()
-        .ratingGreaterThan(0)
-        .and()
-        .mediaTypeEqualTo(mediaType)
-        .sortByRatingDesc()
-        .findAll();
-
-    final watchlistTitles = await isar.tmdbTitles
-        .filter()
-        .listNameEqualTo('watchlist')
-        .and()
-        .mediaTypeEqualTo(mediaType)
-        .findAll();
-
-    final Set<int> ratedIds = ratedTitles.map((t) => t.tmdbId).toSet();
-    final Set<int> watchlistIds = watchlistTitles.map((t) => t.tmdbId).toSet();
     final List<dynamic> recommendations = [];
     final Set<int> addedIds = {};
 
-    // Exclude titles already in watchlist
-    addedIds.addAll(watchlistIds);
+    if (accountId.isNotEmpty) {
+      final isar = IsarService.instance;
+      final ratedTitles = await isar.tmdbTitles
+          .filter()
+          .ratingGreaterThan(0)
+          .and()
+          .mediaTypeEqualTo(mediaType)
+          .sortByRatingDesc()
+          .findAll();
 
-    for (final title in ratedTitles) {
-      if (recommendations.length >= 40) break;
-      for (final rec in title.recommendations) {
+      final watchlistTitles = await isar.tmdbTitles
+          .filter()
+          .listNameEqualTo('watchlist')
+          .and()
+          .mediaTypeEqualTo(mediaType)
+          .findAll();
+
+      final Set<int> ratedIds = ratedTitles.map((t) => t.tmdbId).toSet();
+      final Set<int> watchlistIds =
+          watchlistTitles.map((t) => t.tmdbId).toSet();
+
+      // Exclude titles already in watchlist and rated
+      addedIds.addAll(watchlistIds);
+      addedIds.addAll(ratedIds);
+
+      for (final title in ratedTitles) {
         if (recommendations.length >= 40) break;
-        final recId = rec['id'];
-        if (!ratedIds.contains(recId) && !addedIds.contains(recId)) {
-          recommendations.add(rec);
-          addedIds.add(recId);
+        for (final rec in title.recommendations) {
+          if (recommendations.length >= 40) break;
+          final recId = rec['id'];
+          if (!addedIds.contains(recId)) {
+            recommendations.add(rec);
+            addedIds.add(recId);
+          }
         }
       }
     }
@@ -91,7 +99,7 @@ class TmdbDiscoverlistService extends TmdbListService {
       for (final title in popularTitles) {
         if (recommendations.length >= 40) break;
         final id = title['id'];
-        if (!ratedIds.contains(id) && !addedIds.contains(id)) {
+        if (!addedIds.contains(id)) {
           recommendations.add(title);
           addedIds.add(id);
         }
