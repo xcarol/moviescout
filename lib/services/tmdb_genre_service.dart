@@ -79,7 +79,8 @@ class TmdbGenreService extends TmdbBaseService {
         PreferencesService().prefs.getString('genres_updateTime') ??
             DateTime(1970).toString();
     bool isUpToDate =
-        DateTime.now().difference(DateTime.parse(lastUpdated)).inDays < 7;
+        DateTime.now().difference(DateTime.parse(lastUpdated)).inDays <
+            DateTime.daysPerWeek;
 
     if (genres.isEmpty || !isUpToDate) return false;
 

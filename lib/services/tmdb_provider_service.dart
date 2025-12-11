@@ -235,7 +235,8 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
         PreferencesService().prefs.getString('providers_updateTime') ??
             DateTime(1970).toString();
     bool isUpToDate =
-        DateTime.now().difference(DateTime.parse(lastUpdated)).inDays < 7;
+        DateTime.now().difference(DateTime.parse(lastUpdated)).inDays <
+            DateTime.daysPerWeek;
 
     if (providers.isEmpty || !isUpToDate) return false;
 
