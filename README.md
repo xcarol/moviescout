@@ -176,7 +176,7 @@ it is worth comparing it with the same Overmaps file to imitate it as much as po
 
 - Create a new branch with the version number (e.g. `git checkout -b release/1.6.3`)
 - In the _pubspec.yaml_ file modify the last (build) number in _version: 1.6.3+**X**_ by adding 1 to it.
-- Commit changes and publish the new branch to GitHub
+- Commit changes, publish and merge the new branch to GitHub
 - Got to GitHub [Releases](https://github.com/xcarol/moviescout/releases) and create a new release:
   - Click on _Draft a new release_
   - Click on _Tag_ button and type in the version number (e.g. `1.6.3+20`) and click on _Create new tag_
