@@ -255,7 +255,8 @@ class _TitleDetailsState extends State<TitleDetails> {
         ),
         Consumer<TmdbRateslistService>(
           builder: (context, ratingService, child) {
-            final titleRating = ratingService.getRating(title.tmdbId);
+            final titleRating =
+                ratingService.getRating(title.tmdbId, title.mediaType);
 
             return Row(
               children: [

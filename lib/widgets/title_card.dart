@@ -43,7 +43,8 @@ class TitleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TmdbTitle tmdbTitle =
-        _tmdbListService.getTitleByTmdbId(_title.tmdbId) ?? _title;
+        _tmdbListService.getTitleByTmdbId(_title.tmdbId, _title.mediaType) ??
+            _title;
 
     return RepaintBoundary(
       child: SizedBox(
@@ -99,8 +100,8 @@ class TitleCard extends StatelessWidget {
     ];
 
     return Selector<TmdbRateslistService, TmdbTitle?>(
-      selector: (_, rateslistService) =>
-          rateslistService.getTitleByTmdbId(tmdbTitle.tmdbId),
+      selector: (_, rateslistService) => rateslistService.getTitleByTmdbId(
+          tmdbTitle.tmdbId, tmdbTitle.mediaType),
       shouldRebuild: (prev, next) => prev?.rating != next?.rating,
       builder: (context, ratedTitle, _) {
         if (ratedTitle != null && ratedTitle.tmdbId > 0) {

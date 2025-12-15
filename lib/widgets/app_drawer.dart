@@ -203,6 +203,7 @@ class AppDrawer extends StatelessWidget {
     final tmdbDiscoverlistService =
         Provider.of<TmdbDiscoverlistService>(context, listen: false);
     final logoutSuccessText = AppLocalizations.of(context)!.logoutSuccess;
+    final userLocale = Localizations.localeOf(context);
 
     await tmdbUserService.logout(context).catchError((error) {
       SnackMessage.showSnackBar(
@@ -213,11 +214,14 @@ class AppDrawer extends StatelessWidget {
     await tmdbWatchlistService.clearList();
     await tmdbRateslistService.clearList();
     await tmdbDiscoverlistService.clearList();
-    if (context.mounted) {
-      await tmdbDiscoverlistService.retrieveDiscoverlist(
-          '', '', Localizations.localeOf(context),
-          forceUpdate: true);
-    }
+
+    await tmdbDiscoverlistService.retrieveDiscoverlist(
+      '',
+      '',
+      userLocale,
+      forceUpdate: true,
+    );
+
     SnackMessage.showSnackBar(logoutSuccessText);
   }
 }

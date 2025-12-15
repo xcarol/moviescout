@@ -53,24 +53,18 @@ class _SearchState extends State<Search> {
 
   void _onFocusChanged() {
     if (_searchFocusNode.hasFocus) {
-      // Only show if we have text
       if (_controller.text.isNotEmpty) {
         _showOverlay();
       }
     }
-    // Do NOT remove overlay here on focus loss.
-    // This allows interactions with the overlay (which causes focus loss) to complete.
-    // We handle closing via TapRegion.
   }
 
   void _onSearchChanged() {
     final text = _controller.text;
 
-    // Manage overlay
     if (text.isNotEmpty && _searchFocusNode.hasFocus) {
       _showOverlay();
     } else {
-      // If we cleared the text, remove overlay
       if (text.isEmpty) {
         _removeOverlay();
       }
@@ -84,10 +78,6 @@ class _SearchState extends State<Search> {
         final bestMatch = suggestions.first;
         if (bestMatch.toLowerCase().startsWith(text.toLowerCase()) &&
             bestMatch.length > text.length) {
-          // Identify the casing of the user's input to preserve it if we wanted,
-          // but typically autocomplete completes with the stored casing.
-          // We must respect the case of the stored history item.
-
           _controller.value = TextEditingValue(
             text: bestMatch,
             selection: TextSelection(
@@ -95,8 +85,6 @@ class _SearchState extends State<Search> {
               extentOffset: bestMatch.length,
             ),
           );
-          // Update _previousText to the new value to avoid re-triggering logic loop
-          // although strict equality check at start handles it too.
         }
       }
     }
@@ -106,7 +94,6 @@ class _SearchState extends State<Search> {
   void _showOverlay() {
     final text = _controller.text;
     final suggestions = _historyService.getSuggestions(text);
-    // Filter out if the only suggestion is exactly what is typed (case insensitive check)
     _overlaySuggestions = suggestions
         .where((s) => s.toLowerCase() != text.toLowerCase())
         .take(5)
@@ -184,7 +171,6 @@ class _SearchState extends State<Search> {
       value: _searchService,
       child: GestureDetector(
         onTap: () {
-          // If we tap strictly on the background column, close overlay and unfocus
           _removeOverlay();
           _searchFocusNode.unfocus();
         },
@@ -293,7 +279,6 @@ class _SearchState extends State<Search> {
     final term = title;
 
     if (term.isNotEmpty) {
-      // Add to history without awaiting to not block UI
       _historyService.add(term);
     }
 

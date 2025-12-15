@@ -64,7 +64,8 @@ class _PersonDetailsState extends State<PersonDetails> {
     final tmdbRateslistService =
         Provider.of<TmdbRateslistService>(context, listen: false);
     final userRatedTitles = person.combinedCredits.cast
-        .where((title) => tmdbRateslistService.getRating(title.id) != 0)
+        .where((title) =>
+            tmdbRateslistService.getRating(title.id, title.mediaType) != 0)
         .toList();
 
     return Column(
