@@ -17,8 +17,8 @@ const String _rateTv = 'tv/{ID}/rating?session_id={SESSION_ID}';
 class TmdbRateslistService extends TmdbListService {
   TmdbRateslistService(super.listName);
 
-  int getRating(int titleId) {
-    TmdbTitle? title = getTitleByTmdbId(titleId);
+  int getRating(int titleId, String mediaType) {
+    TmdbTitle? title = getTitleByTmdbId(titleId, mediaType);
     if (title == null) {
       return 0;
     }

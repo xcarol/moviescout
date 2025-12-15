@@ -22,7 +22,8 @@ class TitleChip extends TitleCard {
   @override
   Widget build(BuildContext context) {
     TmdbTitle tmdbTitle =
-        tmdbListService.getTitleByTmdbId(_title.tmdbId) ?? _title;
+        tmdbListService.getTitleByTmdbId(_title.tmdbId, _title.mediaType) ??
+            _title;
 
     return SizedBox(
       height: CARD_HEIGHT,

@@ -480,11 +480,12 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     listGenres.value = [..._listGenres];
   }
 
-  TmdbTitle? getTitleByTmdbId(int tmdbId) {
+  TmdbTitle? getTitleByTmdbId(int tmdbId, String mediaType) {
     return _isar.tmdbTitles
         .filter()
         .listNameEqualTo(_listName)
         .tmdbIdEqualTo(tmdbId)
+        .mediaTypeEqualTo(mediaType)
         .findFirstSync();
   }
 
