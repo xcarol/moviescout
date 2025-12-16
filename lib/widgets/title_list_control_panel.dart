@@ -48,6 +48,13 @@ class TitleListControlPanel extends StatelessWidget {
   }
 
   Widget _genresSelector(BuildContext context, Function genresChanged) {
+    final foregroundColor = selectedGenres.isNotEmpty
+        ? Theme.of(context).colorScheme.primary
+        : Theme.of(context).colorScheme.onPrimary;
+    final backgroundColor = selectedGenres.isNotEmpty
+        ? Theme.of(context).colorScheme.onPrimary
+        : Theme.of(context).colorScheme.primary;
+
     return DropdownSelector(
       selectedOption: AppLocalizations.of(context)!.genres,
       options: genresList,
@@ -74,13 +81,13 @@ class TitleListControlPanel extends StatelessWidget {
       },
       arrowIcon: Icon(
         Icons.arrow_drop_down,
-        color: Theme.of(context).colorScheme.onPrimary,
+        color: foregroundColor,
       ),
       textStyle: TextStyle(
         fontSize: 16,
-        color: Theme.of(context).colorScheme.onPrimary,
+        color: foregroundColor,
       ),
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: backgroundColor,
       border: Border.all(
         color: Theme.of(context).colorScheme.onPrimary,
       ),
