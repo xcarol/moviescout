@@ -146,7 +146,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
       }
 
-      _updateListGenres();
+      await _updateListGenres();
+
       _setLastUpdate();
     } catch (error) {
       SnackMessage.showSnackBar('List $_listName ERROR: $error');
@@ -252,7 +253,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     });
 
     if (titlesToAdd.isNotEmpty || idsToRemove.isNotEmpty) {
-      _updateListGenres();
+      await _updateListGenres();
       await _filterTitles();
     }
   }
@@ -438,7 +439,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         _loadedTitles.removeWhere((element) => element.tmdbId == title.tmdbId);
       }
       _setLastUpdate();
-      _updateListGenres();
+      await _updateListGenres();
+
       notifyListeners();
     } else {
       throw Exception(
@@ -466,13 +468,13 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return titles;
   }
 
-  void _updateListGenres() {
+  Future<void> _updateListGenres() async {
     _listGenres.clear();
-    final genreSets = _isar.tmdbTitles
+    final genreSets = await _isar.tmdbTitles
         .filter()
         .listNameEqualTo(_listName)
         .genreIdsProperty()
-        .findAllSync();
+        .findAll();
 
     final uniqueGenres = genreSets.expand((ids) => ids).toSet().toList();
     _listGenres = TmdbGenreService().getNamesFromIds(uniqueGenres);
@@ -516,7 +518,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     } finally {
       _isDbLoading = false;
       if (_listGenres.isEmpty) {
-        _updateListGenres();
+        await _updateListGenres();
       }
       notifyListeners();
     }

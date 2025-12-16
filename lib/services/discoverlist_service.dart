@@ -70,15 +70,23 @@ class TmdbDiscoverlistService extends TmdbListService {
       addedIds.addAll(watchlistIds);
       addedIds.addAll(ratedIds);
 
-      for (final title in ratedTitles) {
+      final List<dynamic> allRecommendations = [];
+      for (final title in ratedTitles.take(50)) {
+        allRecommendations.addAll(title.recommendations);
+      }
+
+      allRecommendations.sort((a, b) {
+        final double voteA = (a['vote_average'] as num?)?.toDouble() ?? 0.0;
+        final double voteB = (b['vote_average'] as num?)?.toDouble() ?? 0.0;
+        return voteB.compareTo(voteA);
+      });
+
+      for (final rec in allRecommendations) {
         if (recommendations.length >= 40) break;
-        for (final rec in title.recommendations) {
-          if (recommendations.length >= 40) break;
-          final recId = rec['id'];
-          if (!addedIds.contains(recId)) {
-            recommendations.add(rec);
-            addedIds.add(recId);
-          }
+        final recId = rec['id'];
+        if (!addedIds.contains(recId)) {
+          recommendations.add(rec);
+          addedIds.add(recId);
         }
       }
     }
