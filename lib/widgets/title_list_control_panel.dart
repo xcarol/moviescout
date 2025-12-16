@@ -134,7 +134,7 @@ class TitleListControlPanel extends StatelessWidget {
         child: TextField(
           controller: textFilterController,
           focusNode: focusNode,
-          style: TextStyle(color: textColor, fontSize: 14),
+          style: TextStyle(color: textColor, fontSize: 14, fontWeight: FontWeight.bold),
           cursorColor: borderColor,
           cursorHeight: 16,
           decoration: InputDecoration(
