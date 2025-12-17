@@ -33,6 +33,7 @@ class TmdbTitleService extends TmdbBaseService {
         DateTime.daysPerWeek;
   }
 
+  //TODO: Delete
   Future<List<TmdbTitle>> updateTitles(List<TmdbTitle> titles) async {
     List<TmdbTitle> updatedTitles = [];
 
@@ -77,55 +78,54 @@ class TmdbTitleService extends TmdbBaseService {
       return title;
     }
 
-    final Map titleMap = title.map;
+    final details = body(result);
+    title.mergeFromMap(details);
 
-    titleMap.addAll(body(result));
-
-    if (titleMap['overview'].isEmpty) {
-      final result = await _retrieveTitleDetailsByLocale(
+    if (title.overview.isEmpty) {
+      final fallbackResult = await _retrieveTitleDetailsByLocale(
         title.tmdbId,
         mediaType,
         getCountryCode().toLowerCase(),
       );
 
-      if (result.statusCode == 200) {
-        final details = body(result);
-        if (details['overview'].isNotEmpty) {
-          titleMap['title'] = details['title'];
-          titleMap['name'] = details['name'];
-          titleMap['overview'] = details['overview'];
-        }
+      if (fallbackResult.statusCode == 200) {
+        title.mergeFromMap(body(fallbackResult));
       }
     }
 
-    if (titleMap['overview'].isEmpty) {
-      final result = await _retrieveTitleDetailsByLocale(
+    if (title.overview.isEmpty) {
+      final enResult = await _retrieveTitleDetailsByLocale(
         title.tmdbId,
         mediaType,
         'en-US',
       );
 
-      if (result.statusCode == 200) {
-        final details = body(result);
-        if (details['overview'].isNotEmpty) {
-          titleMap['title'] = details['title'];
-          titleMap['name'] = details['name'];
-          titleMap['overview'] = details['overview'];
-        }
+      if (enResult.statusCode == 200) {
+        title.mergeFromMap(body(enResult));
       }
     }
 
     if (mediaType == 'tv') {
-      titleMap['imdb_id'] = titleMap['external_ids']?['imdb_id'] ?? '';
+      final externalIds = details['external_ids'];
+      if (externalIds != null && externalIds['imdb_id'] != null) {
+        title.imdbId = externalIds['imdb_id'];
+      }
     }
 
-    titleMap['media_type'] = mediaType;
-    titleMap['providers'] =
-        titleMap['watch/providers']?['results']?[getCountryCode()] ?? {};
-    titleMap['recommendations'] = titleMap['recommendations']?['results'] ?? {};
-    titleMap['tmdbJson'] = jsonEncode(titleMap);
-    titleMap['last_updated'] = DateTime.now().toIso8601String();
+    final providersMap =
+        details['watch/providers']?['results']?[getCountryCode()] ?? {};
+    title.providersJson = jsonEncode(providersMap);
 
-    return TmdbTitle.fromMap(title: titleMap);
+    // Process recommendations
+    if (details['recommendations'] != null &&
+        details['recommendations']['results'] != null) {
+      title.recommendationsJson =
+          jsonEncode(details['recommendations']['results']);
+    }
+
+    title.mediaType = mediaType;
+    title.lastUpdated = DateTime.now().toIso8601String();
+
+    return title;
   }
 }

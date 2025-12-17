@@ -37,7 +37,7 @@ class TitleChip extends TitleCard {
               context,
               MaterialPageRoute(
                   builder: (context) => TitleDetails(
-                        title: TmdbTitle.fromMap(title: tmdbTitle.map),
+                        title: tmdbTitle,
                         tmdbListService: tmdbListService,
                       )),
             );
