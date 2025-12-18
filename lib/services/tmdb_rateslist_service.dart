@@ -6,6 +6,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/utils/api_constants.dart';
 
 const String _tmdbRateslistMovies =
     'account/{ACCOUNT_ID}/movie/rated?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
@@ -61,13 +62,13 @@ class TmdbRateslistService extends TmdbListService {
     int rate,
   ) async {
     if (rate > 0) {
-      if (mediaType == 'movie') {
+      if (mediaType == ApiConstants.movie) {
         return post(
             _rateMovie
                 .replaceFirst('{ID}', id.toString())
                 .replaceFirst('{SESSION_ID}', sessionId),
             {'value': rate});
-      } else if (mediaType == 'tv') {
+      } else if (mediaType == ApiConstants.tv) {
         return post(
             _rateTv
                 .replaceFirst('{ID}', id.toString())
@@ -75,15 +76,15 @@ class TmdbRateslistService extends TmdbListService {
             {'value': rate});
       }
       HttpException(
-          'Invalid media type: $mediaType. Expected "movie" or "tv".');
+          'Invalid media type: $mediaType. Expected "${ApiConstants.movie}" or "${ApiConstants.tv}".');
     } else {
-      if (mediaType == 'movie') {
+      if (mediaType == ApiConstants.movie) {
         return delete(
             _rateMovie
                 .replaceFirst('{ID}', id.toString())
                 .replaceFirst('{SESSION_ID}', sessionId),
             {});
-      } else if (mediaType == 'tv') {
+      } else if (mediaType == ApiConstants.tv) {
         return delete(
             _rateTv
                 .replaceFirst('{ID}', id.toString())
@@ -91,7 +92,7 @@ class TmdbRateslistService extends TmdbListService {
             {});
       }
       HttpException(
-          'Invalid media type: $mediaType. Expected "movie" or "tv".');
+          'Invalid media type: $mediaType. Expected "${ApiConstants.movie}" or "${ApiConstants.tv}".');
     }
   }
 

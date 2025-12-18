@@ -1,7 +1,8 @@
+import 'package:moviescout/utils/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchHistoryService {
-  static const String _key = 'search_history';
+  static const String _key = AppConstants.searchHistory;
   static const int _maxHistory = 40;
 
   List<String> _history = [];

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 enum ThemeSchemes {
   defaultScheme,
@@ -23,7 +24,7 @@ class ThemeService with ChangeNotifier {
   ThemeSchemes _currentScheme = ThemeSchemes.values.firstWhere(
     (e) =>
         e.name ==
-        (PreferencesService().prefs.getString('ThemeScheme') ??
+        (PreferencesService().prefs.getString(AppConstants.themeScheme) ??
             ThemeSchemes.defaultScheme.name),
     orElse: () => ThemeSchemes.defaultScheme,
   );
@@ -158,7 +159,9 @@ class ThemeService with ChangeNotifier {
         _currentScheme = ThemeSchemes.redScheme;
         break;
     }
-    PreferencesService().prefs.setString('ThemeScheme', _currentScheme.name);
+    PreferencesService()
+        .prefs
+        .setString(AppConstants.themeScheme, _currentScheme.name);
     notifyListeners();
   }
 

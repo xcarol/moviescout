@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/utils/api_constants.dart';
 
 const int maxSearchMovies = 20;
 const int maxSearchTvShows = 20;
@@ -32,12 +33,12 @@ class TmdbSearchService extends TmdbListService {
   List<TmdbTitle> fromImdbIdToTitle(Map response) {
     List<TmdbTitle> titles = [];
     for (var key in response.keys) {
-      if (key == 'movie_results') {
+      if (key == ApiConstants.movieResults) {
         for (var movie in response[key]) {
           titles.add(TmdbTitle.fromMap(title: movie));
         }
       }
-      if (key == 'tv_results') {
+      if (key == ApiConstants.tvResults) {
         for (var tv in response[key]) {
           titles.add(TmdbTitle.fromMap(title: tv));
         }

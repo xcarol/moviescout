@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/preferences_service.dart';
@@ -7,6 +6,8 @@ import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
+import 'package:moviescout/utils/api_constants.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 class TmdbListService extends TmdbBaseService with ChangeNotifier {
   String _listName = '';
@@ -44,16 +45,17 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   TmdbListService(String listName, this.repository, this.preferencesService,
       {List<TmdbTitle>? titles}) {
     _listName = listName;
-    _lastUpdate =
-        preferencesService.prefs.getString('${_listName}_last_update') ??
-            DateTime.now()
-                .subtract(const Duration(hours: defaultLastUpdate))
-                .toIso8601String();
+    _lastUpdate = preferencesService.prefs
+            .getString('$_listName${AppConstants.lastUpdateSuffix}') ??
+        DateTime.now()
+            .subtract(const Duration(hours: defaultLastUpdate))
+            .toIso8601String();
   }
 
   void _setLastUpdate() {
     _lastUpdate = DateTime.now().toIso8601String();
-    preferencesService.prefs.setString('${_listName}_last_update', _lastUpdate);
+    preferencesService.prefs
+        .setString('$_listName${AppConstants.lastUpdateSuffix}', _lastUpdate);
   }
 
   bool get userRatingAvailable {
@@ -68,7 +70,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   void _resetServiceStateAfterClear() {
     _clearLoadedTitles(clearGenreCache: true);
-    preferencesService.prefs.remove('${_listName}_last_update');
+    preferencesService.prefs
+        .remove('$_listName${AppConstants.lastUpdateSuffix}');
     notifyListeners();
   }
 
@@ -165,7 +168,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     for (int i = 0; i < movies.length; i++) {
       var element = movies[i];
       element['list_name'] = _listName;
-      element['media_type'] = 'movie';
+      element['media_type'] = ApiConstants.movie;
       element['added_order'] = i;
       serverList.add(TmdbTitle.fromMap(title: element));
     }
@@ -173,7 +176,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     for (int i = 0; i < tv.length; i++) {
       var element = tv[i];
       element['list_name'] = _listName;
-      element['media_type'] = 'tv';
+      element['media_type'] = ApiConstants.tv;
       element['added_order'] = i;
       serverList.add(TmdbTitle.fromMap(title: element));
     }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
@@ -52,7 +53,7 @@ class TmdbTitleService extends TmdbBaseService {
 
     String mediaType = title.mediaType;
     if (mediaType == '') {
-      mediaType = title.isMovie ? 'movie' : 'tv';
+      mediaType = title.isMovie ? ApiConstants.movie : ApiConstants.tv;
     }
 
     final result = await _retrieveTitleDetailsByLocale(
@@ -105,7 +106,7 @@ class TmdbTitleService extends TmdbBaseService {
       }
     }
 
-    if (mediaType == 'tv') {
+    if (mediaType == ApiConstants.tv) {
       final externalIds = details['external_ids'];
       if (externalIds != null && externalIds['imdb_id'] != null) {
         title.imdbId = externalIds['imdb_id'];

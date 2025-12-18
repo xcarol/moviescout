@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:isar/isar.dart';
+import 'package:moviescout/utils/api_constants.dart';
 
 // ignore_for_file: constant_identifier_names, unused_element
 
@@ -188,16 +189,17 @@ class TmdbTitle {
   }) {
     // Fallback logic if not set during init (though fromMap should handle it)
     if (effectiveReleaseDate.isEmpty) {
-      effectiveReleaseDate = mediaType == 'movie' ? releaseDate : firstAirDate;
+      effectiveReleaseDate =
+          mediaType == ApiConstants.movie ? releaseDate : firstAirDate;
     }
     if (effectiveRuntime == 0) {
-      effectiveRuntime = mediaType == 'movie' ? runtime : numberOfEpisodes;
+      effectiveRuntime =
+          mediaType == ApiConstants.movie ? runtime : numberOfEpisodes;
     }
   }
 
   factory TmdbTitle.fromMap({required Map<dynamic, dynamic> title}) {
-    final mediaType = title[_media_type] ??
-        'movie'; // Default to movie if unknown? Or check structure
+    final mediaType = title[_media_type] ?? ApiConstants.movie;
 
     final releaseDate = title[_release_date] ?? '';
     final firstAirDate = title[_first_air_date] ?? '';
@@ -205,8 +207,9 @@ class TmdbTitle {
     final numberOfEpisodes = title[_number_of_episodes] ?? 0;
 
     final effectiveReleaseDate =
-        mediaType == 'movie' ? releaseDate : firstAirDate;
-    final effectiveRuntime = mediaType == 'movie' ? runtime : numberOfEpisodes;
+        mediaType == ApiConstants.movie ? releaseDate : firstAirDate;
+    final effectiveRuntime =
+        mediaType == ApiConstants.movie ? runtime : numberOfEpisodes;
 
     final genreIds = <int>[];
     if (title[_genres] is List) {
@@ -319,15 +322,11 @@ class TmdbTitle {
   // Getters that format or retrieve from internal fields
 
   bool get isMovie => name.isEmpty
-      ? (mediaType == 'movie')
-      : (mediaType == 'movie' ||
-          (mediaType.isEmpty &&
-              name.isNotEmpty &&
-              originalName.isNotEmpty)); // Fallback logic might be simpler
-  // Simplified:
-  // bool get isMovie => mediaType == 'movie'; // Assuming mediaType is always correctly set by fromMap
+      ? (mediaType == ApiConstants.movie)
+      : (mediaType == ApiConstants.movie ||
+          (mediaType.isEmpty && name.isNotEmpty && originalName.isNotEmpty));
 
-  bool get isSerie => mediaType == 'tv';
+  bool get isSerie => mediaType == ApiConstants.tv;
 
   bool get isOnAir => status == statusInProduction || status == statusPlanned;
 
@@ -408,8 +407,7 @@ class TmdbTitle {
     String duration = '';
 
     if (effectiveRuntime > 0) {
-      // Using pre-calculated
-      if (mediaType == 'movie') {
+      if (mediaType == ApiConstants.movie) {
         int hours = (effectiveRuntime / 60).floor().toInt();
         int minutes = effectiveRuntime - hours * 60;
         if (hours > 0) duration = '${hours}h ';
@@ -419,6 +417,15 @@ class TmdbTitle {
       }
     }
     return duration;
+  }
+
+  @ignore
+  String get titleLink {
+    if (mediaType == ApiConstants.movie) {
+      return 'https://www.themoviedb.org/movie/$tmdbId';
+    } else {
+      return 'https://www.themoviedb.org/tv/$tmdbId';
+    }
   }
 
   void mergeFromMap(Map<String, dynamic> data) {
@@ -497,10 +504,12 @@ class TmdbTitle {
     }
 
     if (effectiveReleaseDate.isEmpty) {
-      effectiveReleaseDate = mediaType == 'movie' ? releaseDate : firstAirDate;
+      effectiveReleaseDate =
+          mediaType == ApiConstants.movie ? releaseDate : firstAirDate;
     }
     if (effectiveRuntime == 0) {
-      effectiveRuntime = mediaType == 'movie' ? runtime : numberOfEpisodes;
+      effectiveRuntime =
+          mediaType == ApiConstants.movie ? runtime : numberOfEpisodes;
     }
 
     if (data[_credits] != null) {
@@ -526,9 +535,6 @@ class TmdbTitle {
 
     lastUpdated = DateTime.now().toIso8601String();
   }
-
-  @ignore
-  // Map<String, dynamic> get map => toMap();
 
   Map<String, dynamic> toMap() {
     return {

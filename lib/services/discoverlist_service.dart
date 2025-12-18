@@ -2,8 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:isar/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/isar_service.dart';
-import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/utils/api_constants.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 const String _tmdbPopularlistMovies =
     'movie/popular?page={PAGE}&language={LOCALE}';
@@ -16,9 +17,9 @@ class TmdbDiscoverlistService extends TmdbListService {
   Future<void> retrieveDiscoverlist(
       String accountId, String sessionId, Locale locale,
       {bool forceUpdate = false}) async {
-    final lastUpdate =
-        preferencesService.prefs.getString('${listName}_last_update') ??
-            DateTime.now().subtract(const Duration(days: 8)).toIso8601String();
+    final lastUpdate = preferencesService.prefs
+            .getString('$listName${AppConstants.lastUpdateSuffix}') ??
+        DateTime.now().subtract(const Duration(days: 8)).toIso8601String();
 
     final isUpToDate =
         DateTime.now().difference(DateTime.parse(lastUpdate)).inDays <
@@ -30,13 +31,14 @@ class TmdbDiscoverlistService extends TmdbListService {
 
     clearListSync();
 
-    retrieveList(accountId.isEmpty ? anonymousAccountId : accountId,
+    retrieveList(
+        accountId.isEmpty ? AppConstants.anonymousAccountId : accountId,
         retrieveMovies: () async {
-      return _getDiscoveryTitles(
-          accountId, sessionId, locale, 'movie', _tmdbPopularlistMovies);
+      return _getDiscoveryTitles(accountId, sessionId, locale,
+          ApiConstants.movie, _tmdbPopularlistMovies);
     }, retrieveTvshows: () async {
       return _getDiscoveryTitles(
-          accountId, sessionId, locale, 'tv', _tmdbPopularlistTv);
+          accountId, sessionId, locale, ApiConstants.tv, _tmdbPopularlistTv);
     });
   }
 
@@ -57,7 +59,7 @@ class TmdbDiscoverlistService extends TmdbListService {
 
       final watchlistTitles = await isar.tmdbTitles
           .filter()
-          .listNameEqualTo('watchlist')
+          .listNameEqualTo(AppConstants.watchlist)
           .and()
           .mediaTypeEqualTo(mediaType)
           .findAll();

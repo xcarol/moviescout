@@ -5,6 +5,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
+import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/widgets/drop_down_selector.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/title_list_control_panel.dart';
@@ -253,8 +254,8 @@ class _TitleListState extends State<TitleList> {
 
   String _titleTypeToOption(String type) {
     final localizations = AppLocalizations.of(context);
-    if (type == localizations?.movies) return 'movie';
-    if (type == localizations?.tvshows) return 'tv';
+    if (type == localizations?.movies) return ApiConstants.movie;
+    if (type == localizations?.tvshows) return ApiConstants.tv;
     return '';
   }
 

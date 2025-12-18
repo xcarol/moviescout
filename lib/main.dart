@@ -18,6 +18,7 @@ import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
@@ -68,13 +69,13 @@ void main() async {
       ),
       ChangeNotifierProvider(
           create: (_) => TmdbWatchlistService(
-              'watchlist', repository, preferencesService)),
+              AppConstants.watchlist, repository, preferencesService)),
       ChangeNotifierProvider(
           create: (_) => TmdbRateslistService(
-              'rateslist', repository, preferencesService)),
+              AppConstants.rateslist, repository, preferencesService)),
       ChangeNotifierProvider(
           create: (_) => TmdbDiscoverlistService(
-              'discoverlist', repository, preferencesService)),
+              AppConstants.discoverlist, repository, preferencesService)),
     ],
     child: const MyApp(),
   ));

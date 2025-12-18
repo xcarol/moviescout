@@ -3,6 +3,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/utils/api_constants.dart';
 
 class TitleListController with ChangeNotifier {
   final TmdbListService listService;
@@ -227,9 +228,9 @@ class TitleListController with ChangeNotifier {
     if (localizations == null) return '';
 
     if (type == localizations.movies) {
-      return 'movie';
+      return ApiConstants.movie;
     } else if (type == localizations.tvshows) {
-      return 'tv';
+      return ApiConstants.tv;
     }
     return '';
   }
