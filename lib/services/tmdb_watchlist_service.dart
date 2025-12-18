@@ -13,12 +13,11 @@ const String _updateWatchlistTitle =
     'account/{ACCOUNT_ID}/watchlist?session_id={SESSION_ID}';
 
 class TmdbWatchlistService extends TmdbListService {
-  TmdbWatchlistService(super.listName);
+  TmdbWatchlistService(
+      super.listName, super.repository, super.preferencesService);
 
   Future<void> retrieveWatchlist(
-    String accountId,
-    String sessionId,
-    Locale locale) async {
+      String accountId, String sessionId, Locale locale) async {
     retrieveList(accountId, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(

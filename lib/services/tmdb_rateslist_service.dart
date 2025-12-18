@@ -15,7 +15,8 @@ const String _rateMovie = 'movie/{ID}/rating?session_id={SESSION_ID}';
 const String _rateTv = 'tv/{ID}/rating?session_id={SESSION_ID}';
 
 class TmdbRateslistService extends TmdbListService {
-  TmdbRateslistService(super.listName);
+  TmdbRateslistService(
+      super.listName, super.repository, super.preferencesService);
 
   int getRating(int titleId, String mediaType) {
     TmdbTitle? title = getTitleByTmdbId(titleId, mediaType);
@@ -26,9 +27,7 @@ class TmdbRateslistService extends TmdbListService {
   }
 
   Future<void> retrieveRateslist(
-    String accountId,
-    String sessionId,
-    Locale locale) async {
+      String accountId, String sessionId, Locale locale) async {
     retrieveList(accountId, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(

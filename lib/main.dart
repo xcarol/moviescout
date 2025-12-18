@@ -20,6 +20,7 @@ import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
+import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/screens/main_screen.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -50,8 +51,13 @@ void main() async {
   await IsarService.init();
   await TmdbGenreService().init();
 
+  final repository = TmdbTitleRepository();
+  final preferencesService = PreferencesService();
+
   runApp(MultiProvider(
     providers: [
+      Provider.value(value: repository),
+      Provider.value(value: preferencesService),
       ChangeNotifierProvider(create: (_) => ThemeService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
       ChangeNotifierProxyProvider<TmdbUserService, TmdbProviderService>(
@@ -60,10 +66,15 @@ void main() async {
           ..setup(userService.accountId, userService.sessionId,
               userService.accessToken),
       ),
-      ChangeNotifierProvider(create: (_) => TmdbWatchlistService('watchlist')),
-      ChangeNotifierProvider(create: (_) => TmdbRateslistService('rateslist')),
       ChangeNotifierProvider(
-          create: (_) => TmdbDiscoverlistService('discoverlist')),
+          create: (_) => TmdbWatchlistService(
+              'watchlist', repository, preferencesService)),
+      ChangeNotifierProvider(
+          create: (_) => TmdbRateslistService(
+              'rateslist', repository, preferencesService)),
+      ChangeNotifierProvider(
+          create: (_) => TmdbDiscoverlistService(
+              'discoverlist', repository, preferencesService)),
     ],
     child: const MyApp(),
   ));

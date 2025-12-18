@@ -12,6 +12,8 @@ import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
+import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
@@ -453,7 +455,11 @@ class _ImportIMDBState extends State<ImportIMDB> {
           .toList();
 
       final tmdbBaseService = TmdbBaseService();
-      final tmdbSearchService = TmdbSearchService(searchServiceListName);
+      final tmdbSearchService = TmdbSearchService(
+        searchServiceListName,
+        context.read<TmdbTitleRepository>(),
+        context.read<PreferencesService>(),
+      );
       final TmdbUserService tmdbUserService =
           Provider.of<TmdbUserService>(context, listen: false);
 
@@ -546,7 +552,11 @@ class _ImportIMDBState extends State<ImportIMDB> {
           .toList();
 
       final tmdbBaseService = TmdbBaseService();
-      final tmdbSearchService = TmdbSearchService(searchServiceListName);
+      final tmdbSearchService = TmdbSearchService(
+        searchServiceListName,
+        context.read<TmdbTitleRepository>(),
+        context.read<PreferencesService>(),
+      );
       final tmdbUserService =
           Provider.of<TmdbUserService>(context, listen: false);
 

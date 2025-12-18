@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:isar/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/isar_service.dart';
-import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 
@@ -11,13 +10,14 @@ const String _tmdbPopularlistMovies =
 const String _tmdbPopularlistTv = 'tv/popular?page={PAGE}&language={LOCALE}';
 
 class TmdbDiscoverlistService extends TmdbListService {
-  TmdbDiscoverlistService(super.listName);
+  TmdbDiscoverlistService(
+      super.listName, super.repository, super.preferencesService);
 
   Future<void> retrieveDiscoverlist(
       String accountId, String sessionId, Locale locale,
       {bool forceUpdate = false}) async {
     final lastUpdate =
-        PreferencesService().prefs.getString('${listName}_last_update') ??
+        preferencesService.prefs.getString('${listName}_last_update') ??
             DateTime.now().subtract(const Duration(days: 8)).toIso8601String();
 
     final isUpToDate =

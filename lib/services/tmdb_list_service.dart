@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/preferences_service.dart';
@@ -18,7 +19,10 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   bool get hasMore => _hasMore;
   int _page = 0;
   final int _pageSize = 10;
-  final _repository = TmdbTitleRepository();
+  @protected
+  final TmdbTitleRepository repository;
+  @protected
+  final PreferencesService preferencesService;
 
   bool _anyFilterApplied = false;
   int _filterRequestId = 0;
@@ -37,10 +41,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   static const defaultLastUpdate = 24; // hours
   static const updateTimeout = 10; // hours
 
-  TmdbListService(String listName, {List<TmdbTitle>? titles}) {
+  TmdbListService(String listName, this.repository, this.preferencesService,
+      {List<TmdbTitle>? titles}) {
     _listName = listName;
     _lastUpdate =
-        PreferencesService().prefs.getString('${_listName}_last_update') ??
+        preferencesService.prefs.getString('${_listName}_last_update') ??
             DateTime.now()
                 .subtract(const Duration(hours: defaultLastUpdate))
                 .toIso8601String();
@@ -48,9 +53,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   void _setLastUpdate() {
     _lastUpdate = DateTime.now().toIso8601String();
-    PreferencesService()
-        .prefs
-        .setString('${_listName}_last_update', _lastUpdate);
+    preferencesService.prefs.setString('${_listName}_last_update', _lastUpdate);
   }
 
   bool get userRatingAvailable {
@@ -65,17 +68,17 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   void _resetServiceStateAfterClear() {
     _clearLoadedTitles(clearGenreCache: true);
-    PreferencesService().prefs.remove('${_listName}_last_update');
+    preferencesService.prefs.remove('${_listName}_last_update');
     notifyListeners();
   }
 
   void clearListSync() {
-    _repository.clearListSync(_listName);
+    repository.clearListSync(_listName);
     _resetServiceStateAfterClear();
   }
 
   Future<void> _clearLocalList() async {
-    await _repository.clearList(_listName);
+    await repository.clearList(_listName);
     _resetServiceStateAfterClear();
   }
 
@@ -92,11 +95,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   int get listTitleCount {
-    return _repository.countTitlesSync(_listName);
+    return repository.countTitlesSync(_listName);
   }
 
   bool contains(TmdbTitle title) {
-    return _repository.getTitleByTmdbId(
+    return repository.getTitleByTmdbId(
             _listName, title.tmdbId, title.mediaType) !=
         null;
   }
@@ -195,10 +198,10 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       final updated = await Future.wait(
           batch.map((t) => TmdbTitleService().updateTitleDetails(t)));
 
-      await _repository.saveTitles(updated);
+      await repository.saveTitles(updated);
 
       selectedTitleCount.value =
-          _repository.countTitlesFiltered(listName: _listName);
+          repository.countTitlesFiltered(listName: _listName);
 
       await Future.delayed(Duration.zero);
     }
@@ -215,7 +218,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
     final serverIds = serverList.map((t) => t.tmdbId).toSet();
 
-    final localIds = await _repository.getAllTmdbIds(_listName);
+    final localIds = await repository.getAllTmdbIds(_listName);
     final localIdSet = localIds.toSet();
 
     final idsToAdd = serverIds.difference(localIdSet);
@@ -224,11 +227,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     final idsToRemove = localIdSet.difference(serverIds);
 
     if (titlesToAdd.isNotEmpty) {
-      await _repository.saveTitles(titlesToAdd);
+      await repository.saveTitles(titlesToAdd);
     }
 
     if (idsToRemove.isNotEmpty) {
-      await _repository.deleteTitles(_listName, idsToRemove.toList());
+      await repository.deleteTitles(_listName, idsToRemove.toList());
     }
 
     if (titlesToAdd.isNotEmpty || idsToRemove.isNotEmpty) {
@@ -242,11 +245,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       return;
     }
 
-    await _repository.saveTitle(title);
+    await repository.saveTitle(title);
   }
 
   Future<void> _deleteLocalTitle(TmdbTitle title) async {
-    await _repository.deleteTitle(_listName, title.tmdbId);
+    await repository.deleteTitle(_listName, title.tmdbId);
   }
 
   TmdbTitle? getItem(int position) {
@@ -266,7 +269,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
     _anyFilterApplied = true;
 
-    selectedTitleCount.value = _repository.countTitlesFiltered(
+    selectedTitleCount.value = repository.countTitlesFiltered(
       listName: _listName,
       filterText: _filterText,
       filterMediaType: _filterMediaType,
@@ -384,7 +387,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   Future<void> _updateListGenres() async {
     _listGenres.clear();
-    final genreSets = await _repository.getAllGenreIds(_listName);
+    final genreSets = await repository.getAllGenreIds(_listName);
 
     final uniqueGenres = genreSets.expand((ids) => ids).toSet().toList();
     _listGenres = TmdbGenreService().getNamesFromIds(uniqueGenres);
@@ -393,7 +396,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   TmdbTitle? getTitleByTmdbId(int tmdbId, String mediaType) {
-    return _repository.getTitleByTmdbId(_listName, tmdbId, mediaType);
+    return repository.getTitleByTmdbId(_listName, tmdbId, mediaType);
   }
 
   Future<void> loadNextPage() async {
@@ -408,7 +411,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       }
       final currentRequestId = ++_filterRequestId;
 
-      final titles = await _repository.getTitles(
+      final titles = await repository.getTitles(
         listName: _listName,
         filterText: _filterText,
         filterMediaType: _filterMediaType,
