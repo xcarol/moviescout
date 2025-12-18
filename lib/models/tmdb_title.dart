@@ -140,7 +140,7 @@ class TmdbTitle {
   late List<int> flatrateProviderIds;
   late List<String> originCountry;
 
-  // Complex objects stored as JSON strings for now to preserve structure without full embedded migration
+  // Complex objects stored as JSON strings
   late String? creditsJson;
   late String? providersJson;
   late String? seasonsJson;
@@ -187,7 +187,6 @@ class TmdbTitle {
     this.recommendationsJson,
     this.nextEpisodeToAirJson,
   }) {
-    // Fallback logic if not set during init (though fromMap should handle it)
     if (effectiveReleaseDate.isEmpty) {
       effectiveReleaseDate =
           mediaType == ApiConstants.movie ? releaseDate : firstAirDate;
@@ -215,21 +214,17 @@ class TmdbTitle {
     if (title[_genres] is List) {
       for (var genre in title[_genres]) {
         if (genre[_id] != null) {
-          // We could also populate a secondary list if we don't trust genre_ids key
         }
       }
     }
-    // Prefer the explicit genre_ids list if available
     if (title[_genre_ids] != null) {
       genreIds.addAll(List<int>.from(title[_genre_ids]));
     } else if (title[_genres] is List) {
-      // Extract from object list
       for (var genre in title[_genres]) {
         if (genre is Map && genre[_id] != null) genreIds.add(genre[_id]);
       }
     }
 
-    // Providers logic
     final providersJson =
         title[_providers] != null ? jsonEncode(title[_providers]) : null;
     final flatrateProviderIds = <int>[];
@@ -301,7 +296,6 @@ class TmdbTitle {
   int get hashCode => tmdbId.hashCode;
 
   void copyFrom(TmdbTitle other) {
-    // Manually updating fields from another instance
     name = other.name;
     originalName = other.originalName;
     overview = other.overview;
@@ -309,17 +303,12 @@ class TmdbTitle {
     voteAverage = other.voteAverage;
     posterPathSuffix = other.posterPathSuffix;
     backdropPathSuffix = other.backdropPathSuffix;
-    // ... complete copy logic if needed for mutable updates in place
-    // But ideally we replace the object in Isar.
-    // For now, minimal set:
     lastUpdated = other.lastUpdated;
     creditsJson = other.creditsJson;
     providersJson = other.providersJson;
     seasonsJson = other.seasonsJson;
     recommendationsJson = other.recommendationsJson;
   }
-
-  // Getters that format or retrieve from internal fields
 
   bool get isMovie => name.isEmpty
       ? (mediaType == ApiConstants.movie)
@@ -346,7 +335,6 @@ class TmdbTitle {
   void updateRating(double value) {
     rating = value;
     dateRated = DateTime.now();
-    // No longer updating tmdbJson
   }
 
   @ignore
@@ -516,7 +504,6 @@ class TmdbTitle {
       creditsJson = jsonEncode(data[_credits]);
     }
 
-    // Handle pre-processed providers key
     if (data['providers'] != null) {
       providersJson = jsonEncode(data['providers']);
     } else if (data[_providers] != null) {

@@ -13,6 +13,5 @@ class AppConstants {
   static const String themeScheme = 'ThemeScheme';
 
   // Other
-  static const String anonymousAccountId =
-      'anonymous'; // Found in discoverlist_service.dart
+  static const String anonymousAccountId = 'anonymous';
 }

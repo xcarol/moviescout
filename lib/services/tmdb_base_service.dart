@@ -25,9 +25,7 @@ class TmdbBaseService {
 
     Locale appLocale;
     if (systemLocale.languageCode == 'ca' && systemLocale.countryCode == null) {
-      // Replace 'ES' with the desired country code (AD, FR, IT, etc.)
       appLocale = const Locale('ca', 'ES');
-      // Add other minorized languages without country code if needed
     } else {
       appLocale = systemLocale;
     }

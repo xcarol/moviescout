@@ -297,7 +297,6 @@ class _TitleListState extends State<TitleList> {
 
               if (!const ListEquality()
                   .equals(providerList, _controller.providerListIds)) {
-                // Schedule update
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   _controller.setProviderListIds(providerList);
                 });

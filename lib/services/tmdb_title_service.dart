@@ -117,7 +117,6 @@ class TmdbTitleService extends TmdbBaseService {
         details['watch/providers']?['results']?[getCountryCode()] ?? {};
     title.providersJson = jsonEncode(providersMap);
 
-    // Process recommendations
     if (details['recommendations'] != null &&
         details['recommendations']['results'] != null) {
       title.recommendationsJson =

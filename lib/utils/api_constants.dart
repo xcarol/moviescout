@@ -1,4 +1,5 @@
 class ApiConstants {
+  // Entities
   static const String movie = 'movie';
   static const String tv = 'tv';
   static const String person = 'person';

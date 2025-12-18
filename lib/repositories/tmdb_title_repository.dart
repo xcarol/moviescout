@@ -86,7 +86,6 @@ class TmdbTitleRepository {
         .findAll();
   }
 
-  // Complex query handling
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> buildQuery({
     required String listName,
     String filterText = '',

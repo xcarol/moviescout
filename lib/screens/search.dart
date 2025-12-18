@@ -187,7 +187,6 @@ class _SearchState extends State<Search> {
             TapRegion(
               groupId: _searchGroupId,
               onTapOutside: (event) {
-                // Close overlay and unfocus if tapping outside both searchbox and overlay
                 _removeOverlay();
                 _searchFocusNode.unfocus();
               },
