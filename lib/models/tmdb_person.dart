@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:moviescout/models/tmdb_title.dart';
 
 // ignore_for_file: constant_identifier_names, unused_element
 
@@ -54,7 +55,7 @@ class Credit {
   factory Credit.fromMap(Map<String, dynamic> map) {
     return Credit(
       id: map[PersonAttributes.id] ?? 0,
-      mediaType: map['media_type'] ?? '',
+      mediaType: map[TmdbTitleFields.mediaType] ?? '',
     );
   }
 }

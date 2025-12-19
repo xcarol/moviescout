@@ -78,14 +78,16 @@ class TmdbDiscoverlistService extends TmdbListService {
       }
 
       allRecommendations.sort((a, b) {
-        final double voteA = (a['vote_average'] as num?)?.toDouble() ?? 0.0;
-        final double voteB = (b['vote_average'] as num?)?.toDouble() ?? 0.0;
+        final double voteA =
+            (a[TmdbTitleFields.voteAverage] as num?)?.toDouble() ?? 0.0;
+        final double voteB =
+            (b[TmdbTitleFields.voteAverage] as num?)?.toDouble() ?? 0.0;
         return voteB.compareTo(voteA);
       });
 
       for (final rec in allRecommendations) {
         if (recommendations.length >= 40) break;
-        final recId = rec['id'];
+        final recId = rec[TmdbTitleFields.id];
         if (!addedIds.contains(recId)) {
           recommendations.add(rec);
           addedIds.add(recId);
@@ -109,7 +111,7 @@ class TmdbDiscoverlistService extends TmdbListService {
 
       for (final title in popularTitles) {
         if (recommendations.length >= 40) break;
-        final id = title['id'];
+        final id = title[TmdbTitleFields.id];
         if (!addedIds.contains(id)) {
           recommendations.add(title);
           addedIds.add(id);
