@@ -7,12 +7,12 @@ import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
+import 'package:moviescout/services/update_manager.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class TmdbListService extends TmdbBaseService with ChangeNotifier {
   String _listName = '';
-  String _lastUpdate = '';
   final List<TmdbTitle> _loadedTitles = List.empty(growable: true);
   String get listName => _listName;
   bool _isDbLoading = false;
@@ -40,23 +40,27 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   List<String> _listGenres = [];
   ValueNotifier<List<String>> listGenres = ValueNotifier([]);
 
-  static const defaultLastUpdate = 24; // hours
-  static const updateTimeout = 10; // hours
-
   TmdbListService(String listName, this.repository, this.preferencesService,
       {List<TmdbTitle>? titles}) {
     _listName = listName;
-    _lastUpdate = preferencesService.prefs
-            .getString('$_listName${AppConstants.lastUpdateSuffix}') ??
-        DateTime.now()
-            .subtract(const Duration(hours: defaultLastUpdate))
-            .toIso8601String();
+  }
+
+  @protected
+  Duration get cacheTimeout {
+    if (_listName == AppConstants.watchlist) {
+      return UpdateManager.watchlistTimeout;
+    }
+    if (_listName == AppConstants.rateslist) {
+      return UpdateManager.rateslistTimeout;
+    }
+    if (_listName == AppConstants.discoverlist) {
+      return UpdateManager.discoverlistTimeout;
+    }
+    return const Duration(days: 1);
   }
 
   void _setLastUpdate() {
-    _lastUpdate = DateTime.now().toIso8601String();
-    preferencesService.prefs
-        .setString('$_listName${AppConstants.lastUpdateSuffix}', _lastUpdate);
+    UpdateManager().updateLastUpdate(_listName);
   }
 
   bool get userRatingAvailable {
@@ -71,8 +75,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   void _resetServiceStateAfterClear() {
     _clearLoadedTitles(clearGenreCache: true);
-    preferencesService.prefs
-        .remove('$_listName${AppConstants.lastUpdateSuffix}');
+    UpdateManager().removeLastUpdate(_listName);
     notifyListeners();
   }
 
@@ -123,12 +126,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     String accountId, {
     required Future<List> Function() retrieveMovies,
     required Future<List> Function() retrieveTvshows,
+    bool forceUpdate = false,
   }) async {
-    bool isUpToDate =
-        DateTime.now().difference(DateTime.parse(_lastUpdate)).inHours <
-            updateTimeout;
+    bool isUpToDate = UpdateManager().isUpToDate(_listName, cacheTimeout);
 
-    if (accountId.isEmpty || (listIsNotEmpty && isUpToDate)) {
+    if (accountId.isEmpty || (listIsNotEmpty && isUpToDate && !forceUpdate)) {
       return;
     }
 

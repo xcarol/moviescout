@@ -3,6 +3,7 @@ import 'package:isar/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/update_manager.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -17,13 +18,7 @@ class TmdbDiscoverlistService extends TmdbListService {
   Future<void> retrieveDiscoverlist(
       String accountId, String sessionId, Locale locale,
       {bool forceUpdate = false}) async {
-    final lastUpdate = preferencesService.prefs
-            .getString('$listName${AppConstants.lastUpdateSuffix}') ??
-        DateTime.now().subtract(const Duration(days: 8)).toIso8601String();
-
-    final isUpToDate =
-        DateTime.now().difference(DateTime.parse(lastUpdate)).inDays <
-            DateTime.daysPerWeek;
+    final isUpToDate = UpdateManager().isDiscoverlistUpToDate();
 
     if (listIsNotEmpty && isUpToDate && !forceUpdate) {
       return;
@@ -33,7 +28,7 @@ class TmdbDiscoverlistService extends TmdbListService {
 
     retrieveList(
         accountId.isEmpty ? AppConstants.anonymousAccountId : accountId,
-        retrieveMovies: () async {
+        forceUpdate: forceUpdate, retrieveMovies: () async {
       return _getDiscoveryTitles(accountId, sessionId, locale,
           ApiConstants.movie, _tmdbPopularlistMovies);
     }, retrieveTvshows: () async {
