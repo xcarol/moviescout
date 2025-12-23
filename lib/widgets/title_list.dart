@@ -11,6 +11,7 @@ import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/title_list_control_panel.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/widgets/title_list_controller.dart';
+import 'package:moviescout/models/title_list_theme.dart';
 
 class TitleList extends StatefulWidget {
   final TmdbListService listService;
@@ -83,6 +84,9 @@ class _TitleListState extends State<TitleList> {
                         .scale(1.0)
                         .clamp(1.0, 1.3);
 
+                    final titleTheme =
+                        Theme.of(context).extension<TitleListTheme>()!;
+
                     return MediaQuery(
                       data: MediaQuery.of(context).copyWith(
                         textScaler: TextScaler.linear(clampedScale),
@@ -95,8 +99,7 @@ class _TitleListState extends State<TitleList> {
                           ),
                           Divider(
                             height: 1,
-                            color:
-                                Theme.of(context).colorScheme.primaryContainer,
+                            color: titleTheme.listDividerColor,
                           ),
                         ],
                       ),
@@ -115,8 +118,9 @@ class _TitleListState extends State<TitleList> {
     return ValueListenableBuilder(
       valueListenable: widget.listService.listGenres,
       builder: (context, genres, child) {
+        final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
         return Container(
-          color: Theme.of(context).colorScheme.primary,
+          color: titleTheme.controlPanelBackground,
           child: Column(
             children: [
               TitleListControlPanel(
@@ -136,9 +140,9 @@ class _TitleListState extends State<TitleList> {
                 focusNode: _controller.searchFocusNode,
               ),
               Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
+                color: titleTheme.controlPanelInternalBackground,
                 child: Divider(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  color: titleTheme.controlPanelDividerColor,
                 ),
               ),
             ],
@@ -153,8 +157,10 @@ class _TitleListState extends State<TitleList> {
         _controller.filterByProviders ||
         _controller.textFilterController.text.isNotEmpty;
 
+    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+
     return Container(
-      color: Theme.of(context).colorScheme.onPrimaryContainer,
+      color: titleTheme.infoLineBackground,
       padding: EdgeInsets.symmetric(horizontal: 4),
       child: Row(
         children: [
@@ -187,8 +193,8 @@ class _TitleListState extends State<TitleList> {
             style: ButtonStyle(
               backgroundColor: WidgetStateProperty.all(
                 anyFilterActive
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.onPrimary,
+                    ? titleTheme.infoLineActiveFilterBackground
+                    : titleTheme.infoLineInactiveFilterBackground,
               ),
               visualDensity: VisualDensity.compact,
             ),
@@ -200,8 +206,8 @@ class _TitleListState extends State<TitleList> {
                   ? Icons.filter_list_off
                   : Icons.filter_list,
               color: anyFilterActive
-                  ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.primary,
+                  ? titleTheme.infoLineActiveFilterForeground
+                  : titleTheme.infoLineInactiveFilterForeground,
             ),
           ),
         ],
@@ -210,14 +216,15 @@ class _TitleListState extends State<TitleList> {
   }
 
   List<Widget> _buildTypeAndCountWidgets() {
+    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
     final typeOption = _titleTypeToOption(_controller.selectedType);
 
     final textColor = typeOption == ''
-        ? Theme.of(context).colorScheme.primary
-        : Theme.of(context).colorScheme.onPrimary;
+        ? titleTheme.infoLineInactiveFilterForeground
+        : titleTheme.infoLineActiveFilterForeground;
     final backgroundColor = typeOption == ''
-        ? Theme.of(context).colorScheme.onPrimary
-        : Theme.of(context).colorScheme.primary;
+        ? titleTheme.infoLineInactiveFilterBackground
+        : titleTheme.infoLineActiveFilterBackground;
 
     return [
       DropdownSelector(
@@ -260,6 +267,7 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _sortSelector() {
+    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
     return DropdownSelector(
       selectedOption: _controller.selectedSort,
       options: _controller.titleSorts,
@@ -267,18 +275,19 @@ class _TitleListState extends State<TitleList> {
       arrowIcon: _controller.isSortAsc
           ? Icon(
               Icons.arrow_drop_down,
-              color: Theme.of(context).colorScheme.primary,
+              color: titleTheme.sortArrowColor,
             )
           : Icon(
               Icons.arrow_drop_up,
-              color: Theme.of(context).colorScheme.primary,
+              color: titleTheme.sortArrowColor,
             ),
     );
   }
 
   Widget _swapSortButton(BuildContext context) {
+    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
     return IconButton(
-      color: Theme.of(context).colorScheme.primary,
+      color: titleTheme.swapSortIconColor,
       icon: Icon(Icons.swap_vert),
       onPressed: () {
         _controller.toggleSortDirection(context);
@@ -291,6 +300,7 @@ class _TitleListState extends State<TitleList> {
     return ListenableBuilder(
         listenable: _controller,
         builder: (context, child) {
+          final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
           return Consumer<TmdbProviderService>(
             builder: (context, providerService, _) {
               final providerList = _retrieveUserProviders(providerService);
@@ -304,20 +314,20 @@ class _TitleListState extends State<TitleList> {
 
               return Expanded(
                 child: Container(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  color: titleTheme.listBackground,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        color: titleTheme.listBackground,
                         child: Divider(
-                          color: Theme.of(context).colorScheme.primaryContainer,
+                          color: titleTheme.listDividerColor,
                         ),
                       ),
                       _infoLine(),
                       Divider(
                         height: 1,
-                        color: Theme.of(context).colorScheme.primaryContainer,
+                        color: titleTheme.listDividerColor,
                       ),
                       if (_controller.showFilters) _controlPanel(),
                       _titleList(),

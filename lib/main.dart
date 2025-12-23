@@ -131,14 +131,20 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         brightness: Brightness.light,
         colorScheme: themeProvider.lightColorScheme,
         scrollbarTheme: themeProvider.lightScrollbarTheme,
-        extensions: <ThemeExtension<dynamic>>[themeProvider.lightCustomColors],
+        extensions: <ThemeExtension<dynamic>>[
+          themeProvider.lightCustomColors,
+          themeProvider.lightTitleListTheme,
+        ],
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
         colorScheme: themeProvider.darkColorScheme,
         scrollbarTheme: themeProvider.darkScrollbarTheme,
-        extensions: <ThemeExtension<dynamic>>[themeProvider.darkCustomColors],
+        extensions: <ThemeExtension<dynamic>>[
+          themeProvider.darkCustomColors,
+          themeProvider.darkTitleListTheme,
+        ],
       ),
       themeMode: ThemeMode.system,
       title: 'Movie Scout',
