@@ -43,9 +43,13 @@ class TitleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TmdbTitle tmdbTitle =
-        _tmdbListService.getTitleByTmdbId(_title.tmdbId, _title.mediaType) ??
-            _title;
+    TmdbTitle tmdbTitle = _title;
+
+    if (_title.listName != _tmdbListService.listName) {
+      tmdbTitle =
+          _tmdbListService.getTitleByTmdbId(_title.tmdbId, _title.mediaType) ??
+              _title;
+    }
 
     return RepaintBoundary(
       child: SizedBox(

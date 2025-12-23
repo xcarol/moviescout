@@ -178,14 +178,14 @@ class TmdbTitleRepository {
     return sortedQuery.offset(offset).limit(limit).findAll();
   }
 
-  int countTitlesFiltered({
+  Future<int> countTitlesFiltered({
     required String listName,
     String filterText = '',
     String filterMediaType = '',
     List<int> filterGenres = const [],
     bool filterByProviders = false,
     List<int> filterProvidersIds = const [],
-  }) {
+  }) async {
     final query = buildQuery(
       listName: listName,
       filterText: filterText,
@@ -194,6 +194,6 @@ class TmdbTitleRepository {
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
     );
-    return query.countSync();
+    return query.count();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -11,7 +12,7 @@ class IsarService {
     _isar = await Isar.open(
       [TmdbTitleSchema],
       directory: dir.path,
-      inspector: true,
+      inspector: kDebugMode,
     );
   }
 

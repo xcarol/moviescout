@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
@@ -204,7 +205,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       await repository.saveTitles(updated);
 
       selectedTitleCount.value =
-          repository.countTitlesFiltered(listName: _listName);
+          await repository.countTitlesFiltered(listName: _listName);
 
       await Future.delayed(Duration.zero);
     }
@@ -272,7 +273,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
     _anyFilterApplied = true;
 
-    selectedTitleCount.value = repository.countTitlesFiltered(
+    selectedTitleCount.value = await repository.countTitlesFiltered(
       listName: _listName,
       filterText: _filterText,
       filterMediaType: _filterMediaType,
@@ -399,6 +400,10 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   TmdbTitle? getTitleByTmdbId(int tmdbId, String mediaType) {
+    final memoryTitle = _loadedTitles.firstWhereOrNull(
+        (t) => t.tmdbId == tmdbId && t.mediaType == mediaType);
+    if (memoryTitle != null) return memoryTitle;
+
     return repository.getTitleByTmdbId(_listName, tmdbId, mediaType);
   }
 
