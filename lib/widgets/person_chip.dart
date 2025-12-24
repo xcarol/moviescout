@@ -117,9 +117,9 @@ class PersonChip extends Card {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            _characterName(tmdbPerson.character, maxLines: 2),
-            const SizedBox(height: 5),
             Text(tmdbPerson.name),
+            const SizedBox(height: 5),
+            _characterName(tmdbPerson.character, maxLines: 2),
           ],
         ),
       ),
