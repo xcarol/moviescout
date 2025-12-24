@@ -276,7 +276,7 @@ class _PersonDetailsState extends State<PersonDetails> {
   }
 
   Widget _banner(TmdbPerson person) {
-    double posterWidth = min(MediaQuery.of(context).size.width, 100);
+    double posterWidth = min(MediaQuery.of(context).size.width, 200);
     String image = person.posterPath.isNotEmpty ? person.posterPath : '';
 
     return Padding(
