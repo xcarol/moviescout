@@ -21,6 +21,8 @@ version: 1.6.6+23
 environment:
   sdk: ^3.6.0
 
+isar_version: &isar_version 3.3.0
+
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
 # consider running `flutter pub upgrade --major-versions`. Alternatively,
@@ -52,12 +54,10 @@ dependencies:
   app_links: ^6.4.0
   file_picker: ^10.1.2
   csv: ^6.0.0
-  isar:
-    hosted: https://pub.isar-community.dev
-    version: ^3.1.8
-  isar_flutter_libs:
-    hosted: https://pub.isar-community.dev
-    version: ^3.1.8
+  isar_community: 
+    version: *isar_version
+  isar_community_flutter_libs:
+    version: *isar_version
   diacritic: ^0.1.6
   material_symbols_icons: ^4.2873.0
   flutter_native_splash: ^2.4.6
@@ -69,10 +69,9 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_launcher_icons: ^0.14.3
   build_runner: ^2.4.13
-  isar_generator:
-    hosted: https://pub.isar-community.dev
-    version: ^3.1.8
-  
+  isar_community_generator: 
+    version: *isar_version
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

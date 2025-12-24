@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';

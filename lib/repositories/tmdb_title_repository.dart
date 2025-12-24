@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/isar_service.dart';
 

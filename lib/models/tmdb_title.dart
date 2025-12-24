@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:moviescout/utils/api_constants.dart';
 
 // ignore_for_file: constant_identifier_names, unused_element

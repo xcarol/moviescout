@@ -12,7 +12,7 @@ import firebase_core
 import firebase_crashlytics
 import firebase_database
 import google_sign_in_ios
-import isar_flutter_libs
+import isar_community_flutter_libs
 import path_provider_foundation
 import shared_preferences_foundation
 import sqflite_darwin

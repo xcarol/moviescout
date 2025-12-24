@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
