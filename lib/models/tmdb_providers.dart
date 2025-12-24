@@ -10,7 +10,7 @@ class TmdbProviders {
   const TmdbProviders({required Map<dynamic, dynamic> providers})
       : _providers = providers;
 
-  List<TmdbProvider> _providerList(type) {
+  List<TmdbProvider> _providerList(String type) {
     List<TmdbProvider> providerList = List.empty(growable: true);
 
     if (_providers[type] == null) {

@@ -193,7 +193,7 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  _logout(BuildContext context) async {
+  void _logout(BuildContext context) async {
     final tmdbUserService =
         Provider.of<TmdbUserService>(context, listen: false);
     final tmdbWatchlistService =

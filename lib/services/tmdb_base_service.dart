@@ -33,7 +33,7 @@ class TmdbBaseService {
     return appLocale;
   }
 
-  dynamic body(response) {
+  dynamic body(http.Response response) {
     return jsonDecode(response.body);
   }
 

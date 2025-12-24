@@ -202,7 +202,7 @@ class _SearchState extends State<Search> {
     );
   }
 
-  _resetTitle({bool clearText = false}) {
+  void _resetTitle({bool clearText = false}) {
     if (clearText) {
       _controller.clear();
       _previousText = '';

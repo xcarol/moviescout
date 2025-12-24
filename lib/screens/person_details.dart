@@ -60,7 +60,7 @@ class _PersonDetailsState extends State<PersonDetails> {
     );
   }
 
-  _detailsBody(TmdbPerson person) {
+  Widget _detailsBody(TmdbPerson person) {
     final tmdbRateslistService =
         Provider.of<TmdbRateslistService>(context, listen: false);
     final userRatedTitles = person.combinedCredits.cast

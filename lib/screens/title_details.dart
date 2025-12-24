@@ -63,7 +63,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  _detailsBody(TmdbTitle title) {
+  Widget _detailsBody(TmdbTitle title) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [

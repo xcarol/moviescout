@@ -78,7 +78,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
     );
   }
 
-  _resetText() {
+  void _resetText() {
     _filenameController.clear();
     setState(() {
       _importId = -1;
@@ -110,7 +110,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
     ).then((value) => value ?? false);
   }
 
-  _resetWatchlist(BuildContext context) async {
+  void _resetWatchlist(BuildContext context) async {
     final confirm = await _confirmationDialog(
       context,
       AppLocalizations.of(context)!.imdbResetWatchlistConfirmation,
@@ -167,7 +167,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
     }
   }
 
-  _resetRatings(BuildContext context) async {
+  void _resetRatings(BuildContext context) async {
     final confirm = await _confirmationDialog(
       context,
       AppLocalizations.of(context)!.imdbResetRateslistConfirmation,
@@ -258,7 +258,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
     }
   }
 
-  _importPanel() {
+  Widget _importPanel() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16.0),
@@ -344,7 +344,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
     );
   }
 
-  _importResultsCell({double? width = 0, Widget child = const SizedBox()}) {
+  Widget _importResultsCell({double? width = 0, Widget child = const SizedBox()}) {
     return Container(
       width: width,
       margin: const EdgeInsets.only(bottom: 8.0),
@@ -376,7 +376,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
     );
   }
 
-  _importResults() {
+  Widget _importResults() {
     return Expanded(
       child: ListView.builder(
         key: const PageStorageKey('ImdbListView'),
@@ -444,7 +444,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
     );
   }
 
-  _importWatchlist(BuildContext context) async {
+  void _importWatchlist(BuildContext context) async {
     try {
       setState(() {
         _operationInProgress = true;
@@ -540,7 +540,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
     }
   }
 
-  _importRateslist(BuildContext context) async {
+  void _importRateslist(BuildContext context) async {
     const int idIndex = 0, rateIndex = 1;
     try {
       setState(() {
