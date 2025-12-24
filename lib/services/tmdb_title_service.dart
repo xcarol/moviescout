@@ -34,18 +34,6 @@ class TmdbTitleService extends TmdbBaseService {
         DateTime.daysPerWeek;
   }
 
-  //TODO: Delete
-  Future<List<TmdbTitle>> updateTitles(List<TmdbTitle> titles) async {
-    List<TmdbTitle> updatedTitles = [];
-
-    for (TmdbTitle title in titles) {
-      final updatedTitle = await updateTitleDetails(title);
-      updatedTitles.add(updatedTitle);
-    }
-
-    return updatedTitles;
-  }
-
   Future<TmdbTitle> updateTitleDetails(TmdbTitle title) async {
     if (isUpToDate(title)) {
       return title;
