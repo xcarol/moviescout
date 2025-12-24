@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:isar/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -44,32 +45,46 @@ class TmdbDiscoverlistService extends TmdbListService {
 
     if (accountId.isNotEmpty) {
       final isar = IsarService.instance;
-      final ratedTitles = await isar.tmdbTitles
+
+      final ratedIds = await isar.tmdbTitles
           .filter()
-          .ratingGreaterThan(0)
+          .listNameEqualTo(AppConstants.rateslist)
           .and()
           .mediaTypeEqualTo(mediaType)
-          .sortByRatingDesc()
+          .tmdbIdProperty()
           .findAll();
 
-      final watchlistTitles = await isar.tmdbTitles
+      final watchlistIds = await isar.tmdbTitles
           .filter()
           .listNameEqualTo(AppConstants.watchlist)
           .and()
           .mediaTypeEqualTo(mediaType)
+          .tmdbIdProperty()
           .findAll();
 
-      final Set<int> ratedIds = ratedTitles.map((t) => t.tmdbId).toSet();
-      final Set<int> watchlistIds =
-          watchlistTitles.map((t) => t.tmdbId).toSet();
-
-      // Exclude titles already in watchlist and rated
-      addedIds.addAll(watchlistIds);
       addedIds.addAll(ratedIds);
+      addedIds.addAll(watchlistIds);
+
+      final recommendationJsons = await isar.tmdbTitles
+          .filter()
+          .group((q) => q
+              .listNameEqualTo(AppConstants.rateslist)
+              .or()
+              .listNameEqualTo(AppConstants.watchlist))
+          .and()
+          .mediaTypeEqualTo(mediaType)
+          .sortByRatingDesc()
+          .limit(50)
+          .recommendationsJsonProperty()
+          .findAll();
 
       final List<dynamic> allRecommendations = [];
-      for (final title in ratedTitles.take(50)) {
-        allRecommendations.addAll(title.recommendations);
+      for (final jsonStr in recommendationJsons) {
+        if (jsonStr != null && jsonStr.isNotEmpty) {
+          try {
+            allRecommendations.addAll(jsonDecode(jsonStr));
+          } catch (_) {}
+        }
       }
 
       allRecommendations.sort((a, b) {
