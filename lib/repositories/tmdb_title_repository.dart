@@ -61,6 +61,15 @@ class TmdbTitleRepository {
     return _isar.tmdbTitles.filter().listNameEqualTo(listName).countSync();
   }
 
+  int getMaxAddedOrderSync(String listName) {
+    final title = _isar.tmdbTitles
+        .filter()
+        .listNameEqualTo(listName)
+        .sortByAddedOrderDesc()
+        .findFirstSync();
+    return title?.addedOrder ?? -1;
+  }
+
   TmdbTitle? getTitleByTmdbId(String listName, int tmdbId, String mediaType) {
     return _isar.tmdbTitles
         .filter()

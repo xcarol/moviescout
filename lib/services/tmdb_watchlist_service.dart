@@ -63,6 +63,7 @@ class TmdbWatchlistService extends TmdbListService {
       if (add) {
         title.listName = listName;
         title.id = Isar.autoIncrement;
+        title.addedOrder = repository.getMaxAddedOrderSync(listName) + 1;
       }
 
       await updateTitle(accountId, sessionId, title, add,

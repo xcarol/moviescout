@@ -170,20 +170,25 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     final movies = results[0];
     final tv = results[1];
 
-    for (int i = 0; i < movies.length; i++) {
-      var element = movies[i];
-      element[TmdbTitleFields.listName] = _listName;
-      element[TmdbTitleFields.mediaType] = ApiConstants.movie;
-      element[TmdbTitleFields.addedOrder] = i;
-      serverList.add(TmdbTitle.fromMap(title: element));
-    }
+    int movieIdx = 0;
+    int tvIdx = 0;
+    int globalIdx = 0;
 
-    for (int i = 0; i < tv.length; i++) {
-      var element = tv[i];
-      element[TmdbTitleFields.listName] = _listName;
-      element[TmdbTitleFields.mediaType] = ApiConstants.tv;
-      element[TmdbTitleFields.addedOrder] = i;
-      serverList.add(TmdbTitle.fromMap(title: element));
+    while (movieIdx < movies.length || tvIdx < tv.length) {
+      if (movieIdx < movies.length) {
+        var element = movies[movieIdx++];
+        element[TmdbTitleFields.listName] = _listName;
+        element[TmdbTitleFields.mediaType] = ApiConstants.movie;
+        element[TmdbTitleFields.addedOrder] = globalIdx++;
+        serverList.add(TmdbTitle.fromMap(title: element));
+      }
+      if (tvIdx < tv.length) {
+        var element = tv[tvIdx++];
+        element[TmdbTitleFields.listName] = _listName;
+        element[TmdbTitleFields.mediaType] = ApiConstants.tv;
+        element[TmdbTitleFields.addedOrder] = globalIdx++;
+        serverList.add(TmdbTitle.fromMap(title: element));
+      }
     }
 
     return serverList;
@@ -235,6 +240,10 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     final idsToRemove = localIdSet.difference(serverIds);
 
     if (titlesToAdd.isNotEmpty) {
+      int currentMax = repository.getMaxAddedOrderSync(_listName);
+      for (var title in titlesToAdd) {
+        title.addedOrder = ++currentMax;
+      }
       await repository.saveTitles(titlesToAdd);
     }
 
@@ -332,6 +341,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       case SortOption.releaseDate:
       case SortOption.dateRated:
       case SortOption.runtime:
+      case SortOption.addedOrder:
         return !ascending;
       default:
         return ascending;
