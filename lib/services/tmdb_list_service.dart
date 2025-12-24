@@ -64,13 +64,15 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   bool get userRatingAvailable {
-    return _loadedTitles.isNotEmpty && _loadedTitles.first.rating > 0.0;
+    return _listName == AppConstants.rateslist ||
+        (_loadedTitles.isNotEmpty && _loadedTitles.first.rating > 0.0);
   }
 
   bool get userRatedDateAvailable {
-    return _loadedTitles.isNotEmpty &&
-        _loadedTitles.first.dateRated
-            .isAfter(DateTime.fromMillisecondsSinceEpoch(0));
+    return _listName == AppConstants.rateslist ||
+        (_loadedTitles.isNotEmpty &&
+            _loadedTitles.first.dateRated
+                .isAfter(DateTime.fromMillisecondsSinceEpoch(0)));
   }
 
   void _resetServiceStateAfterClear() {
