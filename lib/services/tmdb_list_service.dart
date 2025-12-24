@@ -1,16 +1,18 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/isar_service.dart';
+import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
+import 'package:moviescout/services/update_manager.dart';
+import 'package:moviescout/utils/api_constants.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 class TmdbListService extends TmdbBaseService with ChangeNotifier {
   String _listName = '';
-  String _lastUpdate = '';
   final List<TmdbTitle> _loadedTitles = List.empty(growable: true);
   String get listName => _listName;
   bool _isDbLoading = false;
@@ -19,8 +21,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   bool get hasMore => _hasMore;
   int _page = 0;
   final int _pageSize = 10;
-  final _isar = IsarService.instance;
-  late QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> _query;
+  @protected
+  final TmdbTitleRepository repository;
+  @protected
+  final PreferencesService preferencesService;
+
   bool _anyFilterApplied = false;
   int _filterRequestId = 0;
   String _filterText = '';
@@ -35,53 +40,54 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   List<String> _listGenres = [];
   ValueNotifier<List<String>> listGenres = ValueNotifier([]);
 
-  static const defaultLastUpdate = 24; // hours
-  static const updateTimeout = 10; // hours
-
-  TmdbListService(String listName, {List<TmdbTitle>? titles}) {
+  TmdbListService(String listName, this.repository, this.preferencesService,
+      {List<TmdbTitle>? titles}) {
     _listName = listName;
-    _lastUpdate =
-        PreferencesService().prefs.getString('${_listName}_last_update') ??
-            DateTime.now()
-                .subtract(const Duration(hours: defaultLastUpdate))
-                .toIso8601String();
-    _query = _isar.tmdbTitles.filter().listNameEqualTo(_listName);
+  }
+
+  @protected
+  Duration get cacheTimeout {
+    if (_listName == AppConstants.watchlist) {
+      return UpdateManager.watchlistTimeout;
+    }
+    if (_listName == AppConstants.rateslist) {
+      return UpdateManager.rateslistTimeout;
+    }
+    if (_listName == AppConstants.discoverlist) {
+      return UpdateManager.discoverlistTimeout;
+    }
+    return const Duration(days: 1);
   }
 
   void _setLastUpdate() {
-    _lastUpdate = DateTime.now().toIso8601String();
-    PreferencesService()
-        .prefs
-        .setString('${_listName}_last_update', _lastUpdate);
+    UpdateManager().updateLastUpdate(_listName);
   }
 
   bool get userRatingAvailable {
-    return _loadedTitles.isNotEmpty && _loadedTitles.first.rating > 0.0;
+    return _listName == AppConstants.rateslist ||
+        (_loadedTitles.isNotEmpty && _loadedTitles.first.rating > 0.0);
   }
 
   bool get userRatedDateAvailable {
-    return _loadedTitles.isNotEmpty &&
-        _loadedTitles.first.dateRated
-            .isAfter(DateTime.fromMillisecondsSinceEpoch(0));
+    return _listName == AppConstants.rateslist ||
+        (_loadedTitles.isNotEmpty &&
+            _loadedTitles.first.dateRated
+                .isAfter(DateTime.fromMillisecondsSinceEpoch(0)));
   }
 
   void _resetServiceStateAfterClear() {
     _clearLoadedTitles(clearGenreCache: true);
-    PreferencesService().prefs.remove('${_listName}_last_update');
+    UpdateManager().removeLastUpdate(_listName);
     notifyListeners();
   }
 
   void clearListSync() {
-    _isar.writeTxnSync(() {
-      _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAllSync();
-    });
+    repository.clearListSync(_listName);
     _resetServiceStateAfterClear();
   }
 
   Future<void> _clearLocalList() async {
-    await _isar.writeTxn(() async {
-      await _isar.tmdbTitles.filter().listNameEqualTo(_listName).deleteAll();
-    });
+    await repository.clearList(_listName);
     _resetServiceStateAfterClear();
   }
 
@@ -98,19 +104,13 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   int get listTitleCount {
-    return _isar.tmdbTitles.filter().listNameEqualTo(_listName).countSync();
+    return repository.countTitlesSync(_listName);
   }
 
   bool contains(TmdbTitle title) {
-    if (_isar.tmdbTitles
-            .filter()
-            .listNameEqualTo(_listName)
-            .tmdbIdEqualTo(title.tmdbId)
-            .findFirstSync() ==
-        null) {
-      return false;
-    }
-    return true;
+    return repository.getTitleByTmdbId(
+            _listName, title.tmdbId, title.mediaType) !=
+        null;
   }
 
   void _clearLoadedTitles({bool clearGenreCache = false}) {
@@ -128,12 +128,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     String accountId, {
     required Future<List> Function() retrieveMovies,
     required Future<List> Function() retrieveTvshows,
+    bool forceUpdate = false,
   }) async {
-    bool isUpToDate =
-        DateTime.now().difference(DateTime.parse(_lastUpdate)).inHours <
-            updateTimeout;
+    bool isUpToDate = UpdateManager().isUpToDate(_listName, cacheTimeout);
 
-    if (accountId.isEmpty || (listIsNotEmpty && isUpToDate)) {
+    if (accountId.isEmpty || (listIsNotEmpty && isUpToDate && !forceUpdate)) {
       return;
     }
 
@@ -171,20 +170,25 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     final movies = results[0];
     final tv = results[1];
 
-    for (int i = 0; i < movies.length; i++) {
-      var element = movies[i];
-      element['list_name'] = _listName;
-      element['media_type'] = 'movie';
-      element['added_order'] = i;
-      serverList.add(TmdbTitle.fromMap(title: element));
-    }
+    int movieIdx = 0;
+    int tvIdx = 0;
+    int globalIdx = 0;
 
-    for (int i = 0; i < tv.length; i++) {
-      var element = tv[i];
-      element['list_name'] = _listName;
-      element['media_type'] = 'tv';
-      element['added_order'] = i;
-      serverList.add(TmdbTitle.fromMap(title: element));
+    while (movieIdx < movies.length || tvIdx < tv.length) {
+      if (movieIdx < movies.length) {
+        var element = movies[movieIdx++];
+        element[TmdbTitleFields.listName] = _listName;
+        element[TmdbTitleFields.mediaType] = ApiConstants.movie;
+        element[TmdbTitleFields.addedOrder] = globalIdx++;
+        serverList.add(TmdbTitle.fromMap(title: element));
+      }
+      if (tvIdx < tv.length) {
+        var element = tv[tvIdx++];
+        element[TmdbTitleFields.listName] = _listName;
+        element[TmdbTitleFields.mediaType] = ApiConstants.tv;
+        element[TmdbTitleFields.addedOrder] = globalIdx++;
+        serverList.add(TmdbTitle.fromMap(title: element));
+      }
     }
 
     return serverList;
@@ -207,11 +211,10 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       final updated = await Future.wait(
           batch.map((t) => TmdbTitleService().updateTitleDetails(t)));
 
-      await _isar.writeTxn(() async {
-        await _isar.tmdbTitles.putAll(updated);
-      });
+      await repository.saveTitles(updated);
 
-      selectedTitleCount.value = _query.countSync();
+      selectedTitleCount.value =
+          await repository.countTitlesFiltered(listName: _listName);
 
       await Future.delayed(Duration.zero);
     }
@@ -228,11 +231,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
     final serverIds = serverList.map((t) => t.tmdbId).toSet();
 
-    final localIds = await _isar.tmdbTitles
-        .where()
-        .listNameEqualTo(_listName)
-        .tmdbIdProperty()
-        .findAll();
+    final localIds = await repository.getAllTmdbIds(_listName);
     final localIdSet = localIds.toSet();
 
     final idsToAdd = serverIds.difference(localIdSet);
@@ -240,17 +239,17 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         serverList.where((t) => idsToAdd.contains(t.tmdbId)).toList();
     final idsToRemove = localIdSet.difference(serverIds);
 
-    await _isar.writeTxn(() async {
-      if (titlesToAdd.isNotEmpty) {
-        await _isar.tmdbTitles.putAll(titlesToAdd);
+    if (titlesToAdd.isNotEmpty) {
+      int currentMax = repository.getMaxAddedOrderSync(_listName);
+      for (var title in titlesToAdd) {
+        title.addedOrder = ++currentMax;
       }
+      await repository.saveTitles(titlesToAdd);
+    }
 
-      if (idsToRemove.isNotEmpty) {
-        for (final id in idsToRemove) {
-          await _isar.tmdbTitles.filter().tmdbIdEqualTo(id).deleteAll();
-        }
-      }
-    });
+    if (idsToRemove.isNotEmpty) {
+      await repository.deleteTitles(_listName, idsToRemove.toList());
+    }
 
     if (titlesToAdd.isNotEmpty || idsToRemove.isNotEmpty) {
       await _updateListGenres();
@@ -263,23 +262,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       return;
     }
 
-    await _isar.writeTxn(() async {
-      await _isar.tmdbTitles.put(title);
-    });
+    await repository.saveTitle(title);
   }
 
   Future<void> _deleteLocalTitle(TmdbTitle title) async {
-    await _isar.writeTxn(() async {
-      await _isar.tmdbTitles
-          .filter()
-          .listNameEqualTo(_listName)
-          .tmdbIdEqualTo(title.tmdbId)
-          .deleteAll();
-    });
-  }
-
-  Future<List<TmdbTitle>> _getPage({required int offset, required int limit}) {
-    return _sortTitles(_query).offset(offset).limit(limit).findAll();
+    await repository.deleteTitle(_listName, title.tmdbId);
   }
 
   TmdbTitle? getItem(int position) {
@@ -294,72 +281,19 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
   }
 
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> _sortTitles(
-      QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> query) {
-    QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortedQuery;
-
-    switch (_selectedSort) {
-      case SortOption.rating:
-        sortedQuery = _isSortAsc
-            ? query.sortByVoteAverage()
-            : query.sortByVoteAverageDesc();
-        break;
-      case SortOption.userRating:
-        sortedQuery =
-            _isSortAsc ? query.sortByRating() : query.sortByRatingDesc();
-        break;
-      case SortOption.dateRated:
-        sortedQuery =
-            _isSortAsc ? query.sortByDateRated() : query.sortByDateRatedDesc();
-        break;
-      case SortOption.releaseDate:
-        sortedQuery = _isSortAsc
-            ? query.sortByEffectiveReleaseDate()
-            : query.sortByEffectiveReleaseDateDesc();
-        break;
-      case SortOption.runtime:
-        sortedQuery = _isSortAsc
-            ? query.sortByIsMovieDesc().thenByEffectiveRuntime()
-            : query.sortByIsMovieDesc().thenByEffectiveRuntimeDesc();
-        break;
-      case SortOption.addedOrder:
-        sortedQuery = _isSortAsc
-            ? query.sortByAddedOrder()
-            : query.sortByAddedOrderDesc();
-        break;
-      case SortOption.alphabetically:
-      default:
-        sortedQuery = _isSortAsc ? query.sortByName() : query.sortByNameDesc();
-        break;
-    }
-
-    return sortedQuery;
-  }
-
   Future<void> _filterTitles() async {
-    _query = _isar.tmdbTitles.filter().listNameEqualTo(_listName);
-
-    if (_filterText.isNotEmpty) {
-      _query = _query.nameContains(_filterText, caseSensitive: false);
-    }
-
-    if (_filterGenres.isNotEmpty) {
-      _query =
-          _query.anyOf(_filterGenres, (q, id) => q.genreIdsElementEqualTo(id));
-    }
-
-    if (_filterMediaType.isNotEmpty) {
-      _query = _query.mediaTypeEqualTo(_filterMediaType);
-    }
-
-    if (_filterByProviders && _filterProvidersIds.isNotEmpty) {
-      _query = _query.anyOf(_filterProvidersIds,
-          (q, id) => q.flatrateProviderIdsElementEqualTo(id));
-    }
-
     _clearLoadedTitles(clearGenreCache: false);
+
     _anyFilterApplied = true;
-    selectedTitleCount.value = _query.countSync();
+
+    selectedTitleCount.value = await repository.countTitlesFiltered(
+      listName: _listName,
+      filterText: _filterText,
+      filterMediaType: _filterMediaType,
+      filterGenres: _filterGenres,
+      filterByProviders: _filterByProviders,
+      filterProvidersIds: _filterProvidersIds,
+    );
     await loadNextPage();
   }
 
@@ -407,6 +341,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       case SortOption.releaseDate:
       case SortOption.dateRated:
       case SortOption.runtime:
+      case SortOption.addedOrder:
         return !ascending;
       default:
         return ascending;
@@ -470,11 +405,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   Future<void> _updateListGenres() async {
     _listGenres.clear();
-    final genreSets = await _isar.tmdbTitles
-        .filter()
-        .listNameEqualTo(_listName)
-        .genreIdsProperty()
-        .findAll();
+    final genreSets = await repository.getAllGenreIds(_listName);
 
     final uniqueGenres = genreSets.expand((ids) => ids).toSet().toList();
     _listGenres = TmdbGenreService().getNamesFromIds(uniqueGenres);
@@ -483,12 +414,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   TmdbTitle? getTitleByTmdbId(int tmdbId, String mediaType) {
-    return _isar.tmdbTitles
-        .filter()
-        .listNameEqualTo(_listName)
-        .tmdbIdEqualTo(tmdbId)
-        .mediaTypeEqualTo(mediaType)
-        .findFirstSync();
+    final memoryTitle = _loadedTitles.firstWhereOrNull(
+        (t) => t.tmdbId == tmdbId && t.mediaType == mediaType);
+    if (memoryTitle != null) return memoryTitle;
+
+    return repository.getTitleByTmdbId(_listName, tmdbId, mediaType);
   }
 
   Future<void> loadNextPage() async {
@@ -502,8 +432,19 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         return _filterTitles();
       }
       final currentRequestId = ++_filterRequestId;
-      final titles =
-          await _getPage(offset: _page * _pageSize, limit: _pageSize);
+
+      final titles = await repository.getTitles(
+        listName: _listName,
+        filterText: _filterText,
+        filterMediaType: _filterMediaType,
+        filterGenres: _filterGenres,
+        filterByProviders: _filterByProviders,
+        filterProvidersIds: _filterProvidersIds,
+        sortOption: _selectedSort,
+        sortAscending: _isSortAsc,
+        offset: _page * _pageSize,
+        limit: _pageSize,
+      );
 
       if (currentRequestId != _filterRequestId) {
         _isDbLoading = false;

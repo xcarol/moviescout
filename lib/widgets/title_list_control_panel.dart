@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/widgets/drop_down_selector.dart';
+import 'package:moviescout/models/title_list_theme.dart';
 
 typedef MenuEntry = DropdownMenuEntry<String>;
 
@@ -48,12 +49,13 @@ class TitleListControlPanel extends StatelessWidget {
   }
 
   Widget _genresSelector(BuildContext context, Function genresChanged) {
+    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
     final foregroundColor = selectedGenres.isNotEmpty
-        ? Theme.of(context).colorScheme.primary
-        : Theme.of(context).colorScheme.onPrimary;
+        ? titleTheme.controlPanelActiveFilterForeground
+        : titleTheme.controlPanelInactiveFilterForeground;
     final backgroundColor = selectedGenres.isNotEmpty
-        ? Theme.of(context).colorScheme.onPrimary
-        : Theme.of(context).colorScheme.primary;
+        ? titleTheme.controlPanelActiveFilterBackground
+        : titleTheme.controlPanelInactiveFilterBackground;
 
     return DropdownSelector(
       selectedOption: AppLocalizations.of(context)!.genres,
@@ -89,13 +91,14 @@ class TitleListControlPanel extends StatelessWidget {
       ),
       backgroundColor: backgroundColor,
       border: Border.all(
-        color: Theme.of(context).colorScheme.onPrimary,
+        color: titleTheme.controlPanelForeground,
       ),
       borderRadius: BorderRadius.circular(5),
     );
   }
 
   Widget _providersSelector(BuildContext context, bool filterByProviders) {
+    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -103,12 +106,12 @@ class TitleListControlPanel extends StatelessWidget {
           AppLocalizations.of(context)!.filterByProviders,
           style: TextStyle(
             fontSize: 16,
-            color: Theme.of(context).colorScheme.onPrimary,
+            color: titleTheme.controlPanelForeground,
           ),
         ),
         const SizedBox(width: 8),
         Switch(
-          activeThumbColor: Theme.of(context).colorScheme.onPrimary,
+          activeThumbColor: titleTheme.controlPanelForeground,
           value: filterByProviders,
           onChanged: (value) {
             providersChanged(value);
@@ -119,46 +122,44 @@ class TitleListControlPanel extends StatelessWidget {
   }
 
   Widget _textFilter(BuildContext context, String hintText) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textColor = colorScheme.onPrimary;
-    final borderColor = colorScheme.onPrimary;
+    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
 
     return SizedBox(
       height: 26,
       child: Theme(
         data: Theme.of(context).copyWith(
           textSelectionTheme: TextSelectionThemeData(
-            selectionColor: textColor.withValues(alpha: 0.5),
+            selectionColor: titleTheme.searchSelectionColor,
           ),
         ),
         child: TextField(
           controller: textFilterController,
           focusNode: focusNode,
           style: TextStyle(
-              color: textColor,
+              color: titleTheme.controlPanelForeground,
               fontSize: 14,
               fontWeight: textFilterController.text.isEmpty
                   ? FontWeight.normal
                   : FontWeight.bold),
-          cursorColor: borderColor,
+          cursorColor: titleTheme.searchCursorColor,
           cursorHeight: 16,
           decoration: InputDecoration(
             isDense: true,
             hintText: hintText,
-            hintStyle: TextStyle(color: textColor),
-            suffixIconColor: textColor,
+            hintStyle: TextStyle(color: titleTheme.searchHintColor),
+            suffixIconColor: titleTheme.controlPanelForeground,
             contentPadding: const EdgeInsets.symmetric(horizontal: 5),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(5),
-              borderSide: BorderSide(color: borderColor),
+              borderSide: BorderSide(color: titleTheme.controlPanelForeground),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(5),
-              borderSide: BorderSide(color: borderColor),
+              borderSide: BorderSide(color: titleTheme.controlPanelForeground),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(5),
-              borderSide: BorderSide(color: borderColor),
+              borderSide: BorderSide(color: titleTheme.controlPanelForeground),
             ),
             suffixIcon: GestureDetector(
               child: Icon(Icons.clear),

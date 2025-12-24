@@ -25,9 +25,7 @@ class TmdbBaseService {
 
     Locale appLocale;
     if (systemLocale.languageCode == 'ca' && systemLocale.countryCode == null) {
-      // Replace 'ES' with the desired country code (AD, FR, IT, etc.)
       appLocale = const Locale('ca', 'ES');
-      // Add other minorized languages without country code if needed
     } else {
       appLocale = systemLocale;
     }
@@ -35,7 +33,7 @@ class TmdbBaseService {
     return appLocale;
   }
 
-  dynamic body(response) {
+  dynamic body(http.Response response) {
     return jsonDecode(response.body);
   }
 
@@ -71,7 +69,10 @@ class TmdbBaseService {
 
     _requestCount++;
 
-    while (true) {
+    int retryCount = 0;
+    const int maxRetries = 5;
+
+    while (retryCount < maxRetries) {
       try {
         // Running in a browser http.get doesn't return a response for a non valid (2xx) server response.
         // It sends an exception instead. Use android for debugging.
@@ -87,6 +88,7 @@ class TmdbBaseService {
           );
           await Future.delayed(delay);
           delay = updatedDelay();
+          retryCount++;
           continue;
         }
 
@@ -97,16 +99,19 @@ class TmdbBaseService {
             'ClientException: retrying in ${delay.inSeconds} seconds...');
         await Future.delayed(delay);
         delay = updatedDelay();
+        retryCount++;
       } on SocketException {
         debugPrint(
             'SocketException: retrying in ${delay.inSeconds} seconds...');
         await Future.delayed(delay);
         delay = updatedDelay();
+        retryCount++;
       } on HandshakeException {
         debugPrint(
             'HandshakeException: retrying in ${delay.inSeconds} seconds...');
         await Future.delayed(delay);
         delay = updatedDelay();
+        retryCount++;
       } catch (error) {
         _requestCount--;
         if (Platform.isAndroid) {
@@ -120,6 +125,9 @@ class TmdbBaseService {
         rethrow;
       }
     }
+    _requestCount--;
+    throw HttpException(
+        'TmdbBaseService get failed after $maxRetries retries for $uri');
   }
 
   Future<dynamic> post(

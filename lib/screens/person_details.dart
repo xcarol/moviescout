@@ -60,7 +60,7 @@ class _PersonDetailsState extends State<PersonDetails> {
     );
   }
 
-  _detailsBody(TmdbPerson person) {
+  Widget _detailsBody(TmdbPerson person) {
     final tmdbRateslistService =
         Provider.of<TmdbRateslistService>(context, listen: false);
     final userRatedTitles = person.combinedCredits.cast
@@ -276,7 +276,7 @@ class _PersonDetailsState extends State<PersonDetails> {
   }
 
   Widget _banner(TmdbPerson person) {
-    double posterWidth = min(MediaQuery.of(context).size.width, 100);
+    double posterWidth = min(MediaQuery.of(context).size.width, 200);
     String image = person.posterPath.isNotEmpty ? person.posterPath : '';
 
     return Padding(
@@ -362,8 +362,8 @@ class _PersonDetailsState extends State<PersonDetails> {
                   (titleRecommended) => FutureBuilder(
                     future: TmdbTitleService().updateTitleDetails(
                       TmdbTitle.fromMap(title: {
-                        'id': titleRecommended.id,
-                        'media_type': titleRecommended.mediaType
+                        TmdbTitleFields.id: titleRecommended.id,
+                        TmdbTitleFields.mediaType: titleRecommended.mediaType
                       }),
                     ),
                     builder: (context, snapshot) {
@@ -407,8 +407,8 @@ class _PersonDetailsState extends State<PersonDetails> {
                   (titleRecommended) => FutureBuilder(
                     future: TmdbTitleService().updateTitleDetails(
                       TmdbTitle.fromMap(title: {
-                        'id': titleRecommended.id,
-                        'media_type': titleRecommended.mediaType
+                        TmdbTitleFields.id: titleRecommended.id,
+                        TmdbTitleFields.mediaType: titleRecommended.mediaType
                       }),
                     ),
                     builder: (context, snapshot) {

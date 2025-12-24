@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
+import 'package:moviescout/services/update_manager.dart';
 
 const String _tmdbMovieGenres = 'genre/movie/list?language={LOCALE}';
 const String _tmdbTvGenres = 'genre/tv/list?language={LOCALE}';
@@ -75,12 +76,7 @@ class TmdbGenreService extends TmdbBaseService {
 
   bool _getLocalGenres() {
     final genres = PreferencesService().prefs.getStringList('genres') ?? [];
-    final String lastUpdated =
-        PreferencesService().prefs.getString('genres_updateTime') ??
-            DateTime(1970).toString();
-    bool isUpToDate =
-        DateTime.now().difference(DateTime.parse(lastUpdated)).inDays <
-            DateTime.daysPerWeek;
+    bool isUpToDate = UpdateManager().isGenresUpToDate();
 
     if (genres.isEmpty || !isUpToDate) return false;
 
@@ -98,9 +94,7 @@ class TmdbGenreService extends TmdbBaseService {
         .map((entry) => jsonEncode({'id': entry.key, 'name': entry.value}))
         .toList();
     PreferencesService().prefs.setStringList('genres', genreList);
-    PreferencesService()
-        .prefs
-        .setString('genres_updateTime', DateTime.now().toString());
+    UpdateManager().updateGenresLastUpdate();
   }
 
   String? getName(int id) => _genreMap[id];

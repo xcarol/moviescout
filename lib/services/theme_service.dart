@@ -2,7 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/custom_colors.dart';
+import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 enum ThemeSchemes {
   defaultScheme,
@@ -23,7 +25,7 @@ class ThemeService with ChangeNotifier {
   ThemeSchemes _currentScheme = ThemeSchemes.values.firstWhere(
     (e) =>
         e.name ==
-        (PreferencesService().prefs.getString('ThemeScheme') ??
+        (PreferencesService().prefs.getString(AppConstants.themeScheme) ??
             ThemeSchemes.defaultScheme.name),
     orElse: () => ThemeSchemes.defaultScheme,
   );
@@ -32,15 +34,21 @@ class ThemeService with ChangeNotifier {
 
   ColorScheme _lightColorScheme = lightColorSchemeDefault;
   CustomColors _lightCustomColors = lightCustomColorsDefault;
+  TitleListTheme _lightTitleListTheme =
+      _createTitleListTheme(lightColorSchemeDefault);
 
   ColorScheme get lightColorScheme => _lightColorScheme;
   CustomColors get lightCustomColors => _lightCustomColors;
+  TitleListTheme get lightTitleListTheme => _lightTitleListTheme;
 
   ColorScheme _darkColorScheme = darkColorSchemeDefault;
   CustomColors _darkCustomColors = darkCustomColorsDefault;
+  TitleListTheme _darkTitleListTheme =
+      _createTitleListTheme(darkColorSchemeDefault);
 
   ColorScheme get darkColorScheme => _darkColorScheme;
   CustomColors get darkCustomColors => _darkCustomColors;
+  TitleListTheme get darkTitleListTheme => _darkTitleListTheme;
 
   ScrollbarThemeData get lightScrollbarTheme => ScrollbarThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
@@ -115,8 +123,35 @@ class ThemeService with ChangeNotifier {
   ) {
     _lightColorScheme = lightColorScheme;
     _lightCustomColors = lightCustomColors;
+    _lightTitleListTheme = _createTitleListTheme(lightColorScheme);
     _darkColorScheme = darkColorScheme;
     _darkCustomColors = darkCustomColors;
+    _darkTitleListTheme = _createTitleListTheme(darkColorScheme);
+  }
+
+  static TitleListTheme _createTitleListTheme(ColorScheme colorScheme) {
+    return TitleListTheme(
+      listBackground: colorScheme.onPrimaryContainer,
+      listDividerColor: colorScheme.primaryContainer,
+      controlPanelBackground: colorScheme.primary,
+      controlPanelInternalBackground: colorScheme.primaryContainer,
+      controlPanelDividerColor: colorScheme.onPrimaryContainer,
+      controlPanelForeground: colorScheme.onPrimary,
+      infoLineBackground: colorScheme.onPrimaryContainer,
+      infoLineActiveFilterBackground: colorScheme.primary,
+      infoLineActiveFilterForeground: colorScheme.onPrimary,
+      infoLineInactiveFilterBackground: colorScheme.onPrimary,
+      infoLineInactiveFilterForeground: colorScheme.primary,
+      controlPanelActiveFilterBackground: colorScheme.onPrimary,
+      controlPanelActiveFilterForeground: colorScheme.primary,
+      controlPanelInactiveFilterBackground: colorScheme.primary,
+      controlPanelInactiveFilterForeground: colorScheme.onPrimary,
+      searchCursorColor: colorScheme.onPrimary,
+      searchHintColor: colorScheme.onPrimary,
+      searchSelectionColor: colorScheme.onPrimary.withValues(alpha: 0.5),
+      sortArrowColor: colorScheme.primary,
+      swapSortIconColor: colorScheme.primary,
+    );
   }
 
   void setColorScheme(ThemeSchemes scheme) {
@@ -158,7 +193,9 @@ class ThemeService with ChangeNotifier {
         _currentScheme = ThemeSchemes.redScheme;
         break;
     }
-    PreferencesService().prefs.setString('ThemeScheme', _currentScheme.name);
+    PreferencesService()
+        .prefs
+        .setString(AppConstants.themeScheme, _currentScheme.name);
     notifyListeners();
   }
 

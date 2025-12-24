@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
@@ -13,12 +13,11 @@ const String _updateWatchlistTitle =
     'account/{ACCOUNT_ID}/watchlist?session_id={SESSION_ID}';
 
 class TmdbWatchlistService extends TmdbListService {
-  TmdbWatchlistService(super.listName);
+  TmdbWatchlistService(
+      super.listName, super.repository, super.preferencesService);
 
   Future<void> retrieveWatchlist(
-    String accountId,
-    String sessionId,
-    Locale locale) async {
+      String accountId, String sessionId, Locale locale) async {
     retrieveList(accountId, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
@@ -64,6 +63,7 @@ class TmdbWatchlistService extends TmdbListService {
       if (add) {
         title.listName = listName;
         title.id = Isar.autoIncrement;
+        title.addedOrder = repository.getMaxAddedOrderSync(listName) + 1;
       }
 
       await updateTitle(accountId, sessionId, title, add,

@@ -63,7 +63,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  _detailsBody(TmdbTitle title) {
+  Widget _detailsBody(TmdbTitle title) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -108,7 +108,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                     style: const TextStyle(
                         fontSize: 12, fontStyle: FontStyle.italic),
                   ),
-                  Text(title.originCountry),
+                  Text(title.originCountry.join(', ')),
                 ]),
               ],
             ),

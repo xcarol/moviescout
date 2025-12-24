@@ -18,8 +18,10 @@ import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
+import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/screens/main_screen.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -50,8 +52,13 @@ void main() async {
   await IsarService.init();
   await TmdbGenreService().init();
 
+  final repository = TmdbTitleRepository();
+  final preferencesService = PreferencesService();
+
   runApp(MultiProvider(
     providers: [
+      Provider.value(value: repository),
+      Provider.value(value: preferencesService),
       ChangeNotifierProvider(create: (_) => ThemeService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
       ChangeNotifierProxyProvider<TmdbUserService, TmdbProviderService>(
@@ -60,10 +67,15 @@ void main() async {
           ..setup(userService.accountId, userService.sessionId,
               userService.accessToken),
       ),
-      ChangeNotifierProvider(create: (_) => TmdbWatchlistService('watchlist')),
-      ChangeNotifierProvider(create: (_) => TmdbRateslistService('rateslist')),
       ChangeNotifierProvider(
-          create: (_) => TmdbDiscoverlistService('discoverlist')),
+          create: (_) => TmdbWatchlistService(
+              AppConstants.watchlist, repository, preferencesService)),
+      ChangeNotifierProvider(
+          create: (_) => TmdbRateslistService(
+              AppConstants.rateslist, repository, preferencesService)),
+      ChangeNotifierProvider(
+          create: (_) => TmdbDiscoverlistService(
+              AppConstants.discoverlist, repository, preferencesService)),
     ],
     child: const MyApp(),
   ));
@@ -119,14 +131,20 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         brightness: Brightness.light,
         colorScheme: themeProvider.lightColorScheme,
         scrollbarTheme: themeProvider.lightScrollbarTheme,
-        extensions: <ThemeExtension<dynamic>>[themeProvider.lightCustomColors],
+        extensions: <ThemeExtension<dynamic>>[
+          themeProvider.lightCustomColors,
+          themeProvider.lightTitleListTheme,
+        ],
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
         colorScheme: themeProvider.darkColorScheme,
         scrollbarTheme: themeProvider.darkScrollbarTheme,
-        extensions: <ThemeExtension<dynamic>>[themeProvider.darkCustomColors],
+        extensions: <ThemeExtension<dynamic>>[
+          themeProvider.darkCustomColors,
+          themeProvider.darkTitleListTheme,
+        ],
       ),
       themeMode: ThemeMode.system,
       title: 'Movie Scout',

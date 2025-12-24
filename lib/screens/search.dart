@@ -5,6 +5,8 @@ import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/widgets/title_list.dart';
+import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/services/preferences_service.dart';
 import 'package:provider/provider.dart';
 
 class Search extends StatefulWidget {
@@ -17,7 +19,7 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   final FocusNode _searchFocusNode = FocusNode();
   late TextEditingController _controller;
-  final TmdbSearchService _searchService = TmdbSearchService('searchProvider');
+  late TmdbSearchService _searchService;
   final SearchHistoryService _historyService = SearchHistoryService();
   late Widget _searchWidget;
   String _previousText = '';
@@ -30,6 +32,11 @@ class _SearchState extends State<Search> {
   @override
   void initState() {
     super.initState();
+    _searchService = TmdbSearchService(
+      'searchProvider',
+      context.read<TmdbTitleRepository>(),
+      context.read<PreferencesService>(),
+    );
     _searchWidget = TitleList(
       _searchService,
       key: ValueKey('watchlist'),
@@ -180,7 +187,6 @@ class _SearchState extends State<Search> {
             TapRegion(
               groupId: _searchGroupId,
               onTapOutside: (event) {
-                // Close overlay and unfocus if tapping outside both searchbox and overlay
                 _removeOverlay();
                 _searchFocusNode.unfocus();
               },
@@ -196,7 +202,7 @@ class _SearchState extends State<Search> {
     );
   }
 
-  _resetTitle({bool clearText = false}) {
+  void _resetTitle({bool clearText = false}) {
     if (clearText) {
       _controller.clear();
       _previousText = '';

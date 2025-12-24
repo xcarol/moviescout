@@ -6,6 +6,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
@@ -42,9 +43,13 @@ class TitleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TmdbTitle tmdbTitle =
-        _tmdbListService.getTitleByTmdbId(_title.tmdbId, _title.mediaType) ??
-            _title;
+    TmdbTitle tmdbTitle = _title;
+
+    if (_title.listName != _tmdbListService.listName) {
+      tmdbTitle =
+          _tmdbListService.getTitleByTmdbId(_title.tmdbId, _title.mediaType) ??
+              _title;
+    }
 
     return RepaintBoundary(
       child: SizedBox(
@@ -228,7 +233,7 @@ class TitleCard extends StatelessWidget {
   }
 
   String _titleType(BuildContext context, String mediaType) {
-    return mediaType == 'movie'
+    return mediaType == ApiConstants.movie
         ? AppLocalizations.of(context)!.movie
         : AppLocalizations.of(context)!.tvShow;
   }
