@@ -115,6 +115,7 @@ class TmdbTitleService extends TmdbBaseService {
 
     final providersMap =
         details['watch/providers']?['results']?[getCountryCode()] ?? {};
+    TmdbTitle.updateProviderIds(title, providersMap);
     title.providersJson = jsonEncode(providersMap);
 
     if (details['recommendations'] != null &&

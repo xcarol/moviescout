@@ -212,34 +212,7 @@ class TmdbTitle {
     final effectiveRuntime =
         mediaType == ApiConstants.movie ? runtime : numberOfEpisodes;
 
-    final genreIds = <int>[];
-    if (title[TmdbTitleFields.genres] is List) {
-      for (var genre in title[TmdbTitleFields.genres]) {
-        if (genre[TmdbTitleFields.id] != null) {}
-      }
-    }
-    if (title[TmdbTitleFields.genreIds] != null) {
-      genreIds.addAll(List<int>.from(title[TmdbTitleFields.genreIds]));
-    } else if (title[TmdbTitleFields.genres] is List) {
-      for (var genre in title[TmdbTitleFields.genres]) {
-        if (genre is Map && genre[TmdbTitleFields.id] != null) {
-          genreIds.add(genre[TmdbTitleFields.id]);
-        }
-      }
-    }
-
-    final providersJson = title[TmdbTitleFields.providers] != null
-        ? jsonEncode(title[TmdbTitleFields.providers])
-        : null;
-    final flatrateProviderIds = <int>[];
-    if (title[TmdbTitleFields.providers] != null) {
-      final provs = TmdbProviders(providers: title[TmdbTitleFields.providers]);
-      for (var p in provs.flatrate) {
-        flatrateProviderIds.add(p.id);
-      }
-    }
-
-    return TmdbTitle(
+    final titleObj = TmdbTitle(
       id: Isar.autoIncrement,
       tmdbId: title[TmdbTitleFields.id] ?? 0,
       listName: title[TmdbTitleFields.listName] ?? '',
@@ -283,15 +256,17 @@ class TmdbTitle {
       effectiveRuntime: effectiveRuntime,
       effectiveReleaseDate: effectiveReleaseDate,
       addedOrder: title[TmdbTitleFields.addedOrder] ?? 0,
-      genreIds: genreIds,
-      flatrateProviderIds: flatrateProviderIds,
+      genreIds: [],
+      flatrateProviderIds: [],
       originCountry: title[TmdbTitleFields.originCountry] is List
           ? List<String>.from(title[TmdbTitleFields.originCountry])
           : [],
       creditsJson: title[TmdbTitleFields.credits] != null
           ? jsonEncode(title[TmdbTitleFields.credits])
           : null,
-      providersJson: providersJson,
+      providersJson: title[TmdbTitleFields.providers] != null
+          ? jsonEncode(title[TmdbTitleFields.providers])
+          : null,
       seasonsJson: title[TmdbTitleFields.seasons] != null
           ? jsonEncode(title[TmdbTitleFields.seasons])
           : null,
@@ -302,6 +277,12 @@ class TmdbTitle {
           ? jsonEncode(title[TmdbTitleFields.nextEpisodeToAir])
           : null,
     );
+
+    updateGenreIds(titleObj, title[TmdbTitleFields.genres],
+        title[TmdbTitleFields.genreIds]);
+    updateProviderIds(titleObj, title[TmdbTitleFields.providers]);
+
+    return titleObj;
   }
 
   @override
@@ -320,6 +301,8 @@ class TmdbTitle {
     posterPathSuffix = other.posterPathSuffix;
     backdropPathSuffix = other.backdropPathSuffix;
     lastUpdated = other.lastUpdated;
+    genreIds = List<int>.from(other.genreIds);
+    flatrateProviderIds = List<int>.from(other.flatrateProviderIds);
     creditsJson = other.creditsJson;
     providersJson = other.providersJson;
     seasonsJson = other.seasonsJson;
@@ -537,7 +520,36 @@ class TmdbTitle {
       nextEpisodeToAirJson = jsonEncode(data[TmdbTitleFields.nextEpisodeToAir]);
     }
 
+    updateGenreIds(
+        this, data[TmdbTitleFields.genres], data[TmdbTitleFields.genreIds]);
+    updateProviderIds(
+        this, data['providers'] ?? data[TmdbTitleFields.providers]);
+
     lastUpdated = DateTime.now().toIso8601String();
+  }
+
+  static void updateGenreIds(
+      TmdbTitle title, dynamic genres, dynamic genreIdsList) {
+    final ids = <int>[];
+    if (genreIdsList is List) {
+      ids.addAll(List<int>.from(genreIdsList));
+    } else if (genres is List) {
+      for (var genre in genres) {
+        if (genre is Map && genre[TmdbTitleFields.id] != null) {
+          ids.add(genre[TmdbTitleFields.id]);
+        }
+      }
+    }
+    if (ids.isNotEmpty) {
+      title.genreIds = ids;
+    }
+  }
+
+  static void updateProviderIds(TmdbTitle title, dynamic providers) {
+    if (providers is Map) {
+      final provs = TmdbProviders(providers: providers);
+      title.flatrateProviderIds = provs.flatrate.map((p) => p.id).toList();
+    }
   }
 
   Map<String, dynamic> toMap() {
