@@ -223,5 +223,9 @@ class AppDrawer extends StatelessWidget {
     );
 
     SnackMessage.showSnackBar(logoutSuccessText);
+
+    if (context.mounted) {
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    }
   }
 }
