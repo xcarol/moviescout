@@ -188,7 +188,6 @@ class _SearchState extends State<Search> {
               groupId: _searchGroupId,
               onTapOutside: (event) {
                 _removeOverlay();
-                _searchFocusNode.unfocus();
               },
               child: CompositedTransformTarget(
                 link: _layerLink,
@@ -224,6 +223,7 @@ class _SearchState extends State<Search> {
         data: Theme.of(context).copyWith(
           textSelectionTheme: TextSelectionThemeData(
             selectionColor: textColor.withValues(alpha: 0.5),
+            selectionHandleColor: textColor,
           ),
         ),
         child: Row(

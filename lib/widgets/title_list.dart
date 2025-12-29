@@ -72,6 +72,8 @@ class _TitleListState extends State<TitleList> {
                   key: const PageStorageKey('TitleListView'),
                   controller: _controller.scrollController,
                   shrinkWrap: true,
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   itemCount: service.loadedTitleCount,
                   itemBuilder: (context, index) {
                     final title = service.getItem(index);
