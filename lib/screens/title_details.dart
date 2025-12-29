@@ -231,13 +231,15 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   Widget _rating(TmdbTitle title) {
-    if (title.voteAverage == 0) {
-      if (title.firstAirDate.isNotEmpty &&
-          DateTime.parse(title.firstAirDate).isAfter(DateTime.now())) {
-        return Text(AppLocalizations.of(context)!.notReleasedYet);
-      }
+    String titleVoteAverage = '-.-';
 
-      return const SizedBox();
+    if (title.firstAirDate.isNotEmpty &&
+        DateTime.parse(title.firstAirDate).isAfter(DateTime.now())) {
+      return Text(AppLocalizations.of(context)!.notReleasedYet);
+    }
+
+    if (title.voteAverage > 0) {
+      titleVoteAverage = title.voteAverage.toStringAsFixed(2);
     }
 
     return Column(
@@ -250,7 +252,7 @@ class _TitleDetailsState extends State<TitleDetails> {
               color: Theme.of(context).colorScheme.onSurface,
             ),
             const SizedBox(width: 5),
-            Text(title.voteAverage.toStringAsFixed(2)),
+            Text(titleVoteAverage),
           ],
         ),
         Consumer<TmdbRateslistService>(
