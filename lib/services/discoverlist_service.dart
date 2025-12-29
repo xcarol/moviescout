@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
 import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -106,7 +107,10 @@ class TmdbDiscoverlistService extends TmdbListService {
     if (recommendations.length < 40) {
       final popularTitles = await getTitlesFromServer((int page) async {
         if (page > 2) {
-          return (statusCode: 200, body: '{}');
+          return http.Response(
+            '{"page":%d,"total_pages":%d}'.replaceAll('%d', page.toString()),
+            200,
+          );
         }
 
         return get(popularEndpoint
