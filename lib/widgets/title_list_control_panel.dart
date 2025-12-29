@@ -130,6 +130,7 @@ class TitleListControlPanel extends StatelessWidget {
         data: Theme.of(context).copyWith(
           textSelectionTheme: TextSelectionThemeData(
             selectionColor: titleTheme.searchSelectionColor,
+            selectionHandleColor: titleTheme.searchCursorColor,
           ),
         ),
         child: TextField(

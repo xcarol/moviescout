@@ -224,6 +224,7 @@ class _SearchState extends State<Search> {
         data: Theme.of(context).copyWith(
           textSelectionTheme: TextSelectionThemeData(
             selectionColor: textColor.withValues(alpha: 0.5),
+            selectionHandleColor: textColor,
           ),
         ),
         child: Row(
