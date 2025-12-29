@@ -188,7 +188,6 @@ class _SearchState extends State<Search> {
               groupId: _searchGroupId,
               onTapOutside: (event) {
                 _removeOverlay();
-                _searchFocusNode.unfocus();
               },
               child: CompositedTransformTarget(
                 link: _layerLink,
