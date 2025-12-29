@@ -25,8 +25,6 @@ class TmdbDiscoverlistService extends TmdbListService {
       return;
     }
 
-    clearListSync();
-
     retrieveList(
         accountId.isEmpty ? AppConstants.anonymousAccountId : accountId,
         forceUpdate: forceUpdate, retrieveMovies: () async {

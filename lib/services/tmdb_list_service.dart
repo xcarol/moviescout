@@ -282,6 +282,10 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   Future<void> _filterTitles() async {
+    while (_isDbLoading) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+
     _clearLoadedTitles(clearGenreCache: false);
 
     _anyFilterApplied = true;
@@ -453,7 +457,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
       _loadedTitles.addAll(titles);
       _page++;
-      if (titles.length < _pageSize) {
+      if (titles.length < _pageSize && !isLoading.value) {
         _hasMore = false;
       }
     } finally {
