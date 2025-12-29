@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
@@ -48,9 +49,9 @@ class TmdbSearchService extends TmdbListService {
   }
 
   dynamic _lastPage(int page) {
-    return (
-      statusCode: 200,
-      body: '{"page":%d,"total_pages":%d}'.replaceAll('%d', page.toString())
+    return http.Response(
+      '{"page":%d,"total_pages":%d}'.replaceAll('%d', page.toString()),
+      200,
     );
   }
 
