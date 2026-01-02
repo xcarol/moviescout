@@ -97,7 +97,7 @@ class PersonChip extends Card {
     );
   }
 
-  Text _characterName(String name, {int maxLines = 1}) {
+  Text _personName(String name, {int maxLines = 1}) {
     return Text(
       name,
       style: const TextStyle(
@@ -117,9 +117,9 @@ class PersonChip extends Card {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text(tmdbPerson.name),
+            _personName(tmdbPerson.name, maxLines: 2),
             const SizedBox(height: 5),
-            _characterName(tmdbPerson.character, maxLines: 2),
+            Text(tmdbPerson.character, maxLines: 2),
           ],
         ),
       ),
