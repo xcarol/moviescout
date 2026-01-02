@@ -258,6 +258,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get crew => 'Crew';
 
   @override
+  String get seeThemAll => 'See them all';
+
+  @override
   String get ratedCredits => 'Rated credits';
 
   @override

@@ -258,6 +258,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get crew => 'Equip';
 
   @override
+  String get seeThemAll => 'Veure-ho tot';
+
+  @override
   String get ratedCredits => 'Crèdits valorats';
 
   @override

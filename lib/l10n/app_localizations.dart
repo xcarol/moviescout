@@ -595,6 +595,12 @@ abstract class AppLocalizations {
   /// **'Crew'**
   String get crew;
 
+  /// No description provided for @seeThemAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See them all'**
+  String get seeThemAll;
+
   /// No description provided for @ratedCredits.
   ///
   /// In en, this message translates to:

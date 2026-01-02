@@ -258,6 +258,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get crew => 'Equipo';
 
   @override
+  String get seeThemAll => 'Ver todo';
+
+  @override
   String get ratedCredits => 'Creditos valorados';
 
   @override
