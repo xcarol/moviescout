@@ -5,7 +5,6 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
-import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/widgets/drop_down_selector.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/title_list_control_panel.dart';
@@ -218,7 +217,8 @@ class _TitleListState extends State<TitleList> {
 
   List<Widget> _buildTypeAndCountWidgets() {
     final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
-    final typeOption = _titleTypeToOption(_controller.selectedType);
+    final localizations = AppLocalizations.of(context)!;
+    final typeOption = _controller.selectedType;
 
     final textColor = typeOption == ''
         ? titleTheme.infoLineInactiveFilterForeground
@@ -249,7 +249,7 @@ class _TitleListState extends State<TitleList> {
             );
           },
         ),
-        selectedOption: _controller.selectedType,
+        selectedOption: _controller.getSelectedTypeLabel(localizations),
         options: _controller.titleTypes,
         onSelected: (value) => _controller.setSelectedType(context, value),
         arrowIcon: Icon(
@@ -260,17 +260,11 @@ class _TitleListState extends State<TitleList> {
     ];
   }
 
-  String _titleTypeToOption(String type) {
-    final localizations = AppLocalizations.of(context);
-    if (type == localizations?.movies) return ApiConstants.movie;
-    if (type == localizations?.tvshows) return ApiConstants.tv;
-    return '';
-  }
-
   Widget _sortSelector() {
     final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+    final localizations = AppLocalizations.of(context)!;
     return DropdownSelector(
-      selectedOption: _controller.selectedSort,
+      selectedOption: _controller.getSelectedSortLabel(localizations),
       options: _controller.titleSorts,
       onSelected: (value) => _controller.setSelectedSort(context, value),
       arrowIcon: _controller.isSortAsc
@@ -291,7 +285,7 @@ class _TitleListState extends State<TitleList> {
       color: titleTheme.swapSortIconColor,
       icon: Icon(Icons.swap_vert),
       onPressed: () {
-        _controller.toggleSortDirection(context);
+        _controller.toggleSortDirection();
       },
     );
   }
