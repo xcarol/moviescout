@@ -583,11 +583,17 @@ abstract class AppLocalizations {
   /// **'Runtime not specified.'**
   String get unknownDuration;
 
-  /// No description provided for @credits.
+  /// No description provided for @cast.
   ///
   /// In en, this message translates to:
-  /// **'Credits'**
-  String get credits;
+  /// **'Cast'**
+  String get cast;
+
+  /// No description provided for @crew.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew'**
+  String get crew;
 
   /// No description provided for @ratedCredits.
   ///

@@ -349,7 +349,7 @@ class _PersonDetailsState extends State<PersonDetails> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)!.credits,
+          AppLocalizations.of(context)!.cast,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         const SizedBox(height: 10),

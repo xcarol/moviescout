@@ -252,7 +252,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unknownDuration => 'Runtime not specified.';
 
   @override
-  String get credits => 'Credits';
+  String get cast => 'Cast';
+
+  @override
+  String get crew => 'Crew';
 
   @override
   String get ratedCredits => 'Rated credits';

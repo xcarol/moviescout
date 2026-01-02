@@ -539,7 +539,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)!.credits,
+          AppLocalizations.of(context)!.cast,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         const SizedBox(height: 10),
