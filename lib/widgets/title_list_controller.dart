@@ -48,6 +48,12 @@ class TitleListController with ChangeNotifier {
   List<String> get titleTypes => _titleTypes;
   List<String> get titleSorts => _titleSorts;
 
+  String getSelectedSortLabel(AppLocalizations localizations) =>
+      _optionToSortName(localizations, _selectedSort);
+
+  String getSelectedTypeLabel(AppLocalizations localizations) =>
+      _optionToTypeName(localizations, _selectedType);
+
   @override
   void dispose() {
     listService.removeListener(_onListServiceChanged);
@@ -59,17 +65,13 @@ class TitleListController with ChangeNotifier {
 
   void initializeControlLocalizations(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    if (_selectedType.isEmpty) {
-      _selectedType = localizations.allTypes;
-    }
+
     _titleTypes = [
       localizations.allTypes,
       localizations.movies,
       localizations.tvshows,
     ];
-    if (_selectedSort.isEmpty) {
-      _selectedSort = localizations.sortAlphabetically;
-    }
+
     _titleSorts = [
       localizations.sortAlphabetically,
       localizations.sortRating,
@@ -117,40 +119,42 @@ class TitleListController with ChangeNotifier {
 
   void setProviderListIds(List<int> providerIds) {
     _providerListIds = providerIds;
-
-    setupFilters();
+    listService.setProvidersFilter(_filterByProviders, _providerListIds);
   }
 
   Future<void> setupFilters() async {
     try {
       await listService.setFilters(
         text: textFilterController.text,
-        type: _titleTypeToOption(_selectedType),
+        type: _selectedType,
         genres: _selectedGenres,
         filterByProviders: _filterByProviders,
         providerListIds: _providerListIds,
+        sort: _selectedSort,
+        ascending: _isSortAsc,
       );
     } catch (_) {}
   }
 
-  void setSelectedSort(BuildContext context, String value) {
-    _selectedSort = value;
+  void setSelectedSort(BuildContext context, String localizedValue) {
+    final sortOption = _sortNameToOption(context, localizedValue);
+    _selectedSort = sortOption;
     PreferencesService()
         .prefs
         .setString(_selectedSortPreferencesName, _selectedSort);
-    listService.setSort(_sortNameToOption(context, value), _isSortAsc);
+    listService.setSort(_selectedSort, _isSortAsc);
     notifyListeners();
   }
 
-  void setSelectedType(BuildContext context, String value) {
-    final localizations = AppLocalizations.of(context);
-
-    _selectedType = value;
+  void setSelectedType(BuildContext context, String localizedValue) {
+    final localizations = AppLocalizations.of(context)!;
+    final typeOption = _titleTypeToOption(localizedValue, localizations);
+    _selectedType = typeOption;
     PreferencesService()
         .prefs
         .setString(_selectedTypePreferencesName, _selectedType);
 
-    listService.setTypeFilter(_titleTypeToOption(value, localizations));
+    listService.setTypeFilter(_selectedType);
     notifyListeners();
   }
 
@@ -167,10 +171,10 @@ class TitleListController with ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleSortDirection(BuildContext context) {
+  void toggleSortDirection() {
     _isSortAsc = !_isSortAsc;
     PreferencesService().prefs.setBool(_sortPreferencesName, _isSortAsc);
-    listService.setSort(_sortNameToOption(context, _selectedSort), _isSortAsc);
+    listService.setSort(_selectedSort, _isSortAsc);
     notifyListeners();
   }
 
@@ -196,7 +200,8 @@ class TitleListController with ChangeNotifier {
     _filterByProviders =
         prefs.getBool(_filterByProvidersPreferencesName) ?? false;
     _isSortAsc = prefs.getBool(_sortPreferencesName) ?? true;
-    _selectedSort = prefs.getString(_selectedSortPreferencesName) ?? '';
+    _selectedSort = prefs.getString(_selectedSortPreferencesName) ??
+        SortOption.alphabetically;
   }
 
   void _onListServiceChanged() {
@@ -225,13 +230,41 @@ class TitleListController with ChangeNotifier {
   }
 
   String _titleTypeToOption(String type, [AppLocalizations? localizations]) {
-    if (localizations == null) return '';
+    if (localizations == null) return type;
 
     if (type == localizations.movies) {
       return ApiConstants.movie;
     } else if (type == localizations.tvshows) {
       return ApiConstants.tv;
     }
-    return '';
+    return type == localizations.allTypes ? '' : type;
+  }
+
+  String _optionToTypeName(AppLocalizations localizations, String option) {
+    if (option == ApiConstants.movie) {
+      return localizations.movies;
+    } else if (option == ApiConstants.tv) {
+      return localizations.tvshows;
+    }
+    return localizations.allTypes;
+  }
+
+  String _optionToSortName(AppLocalizations localizations, String option) {
+    if (option == SortOption.alphabetically) {
+      return localizations.sortAlphabetically;
+    } else if (option == SortOption.rating) {
+      return localizations.sortRating;
+    } else if (option == SortOption.userRating) {
+      return localizations.sortUserRating;
+    } else if (option == SortOption.dateRated) {
+      return localizations.sortDateRated;
+    } else if (option == SortOption.releaseDate) {
+      return localizations.sortReleaseDate;
+    } else if (option == SortOption.runtime) {
+      return localizations.sortRuntime;
+    } else if (option == SortOption.addedOrder) {
+      return localizations.sortAddedOrder;
+    }
+    return localizations.sortAlphabetically;
   }
 }
