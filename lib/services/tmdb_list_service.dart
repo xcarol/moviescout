@@ -306,12 +306,16 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       String type = '',
       List<String> genres = const [],
       bool filterByProviders = false,
-      List<int> providerListIds = const []}) async {
+      List<int> providerListIds = const [],
+      String sort = SortOption.alphabetically,
+      bool ascending = true}) async {
     _filterText = text;
     _filterMediaType = type;
     _filterGenres = TmdbGenreService().getIdsFromNames(genres);
     _filterByProviders = filterByProviders;
     _filterProvidersIds = providerListIds;
+    _selectedSort = sort;
+    _isSortAsc = _computeSortDirection(sort, ascending);
     await _filterTitles();
   }
 
