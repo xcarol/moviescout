@@ -7,6 +7,8 @@ import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/screens/person_details.dart';
+import 'package:moviescout/screens/person_list.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
@@ -538,9 +540,27 @@ class _TitleDetailsState extends State<TitleDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          AppLocalizations.of(context)!.cast,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.recommended,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PersonList(title: title)),
+                );
+              },
+              child: Text(
+                AppLocalizations.of(context)!.seeThemAll,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 10),
         SingleChildScrollView(
