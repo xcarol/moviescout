@@ -252,10 +252,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get unknownDuration => 'Duración no especificada.';
 
   @override
-  String get cast => 'Creditos';
+  String get cast => 'Elenco';
 
   @override
-  String get crew => 'Equipo';
+  String get crew => 'Equipo técnico';
 
   @override
   String get seeThemAll => 'Ver todo';

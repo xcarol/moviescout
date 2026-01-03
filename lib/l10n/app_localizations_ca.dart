@@ -252,10 +252,10 @@ class AppLocalizationsCa extends AppLocalizations {
   String get unknownDuration => 'Duració no especificada.';
 
   @override
-  String get cast => 'Crèdits';
+  String get cast => 'Repartiment';
 
   @override
-  String get crew => 'Equip';
+  String get crew => 'Equip tècnic';
 
   @override
   String get seeThemAll => 'Veure-ho tot';
