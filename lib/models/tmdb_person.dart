@@ -36,6 +36,7 @@ class PersonAttributes {
   static const original_name = 'original_name';
   static const profile_path = 'profile_path';
   static const character = 'character';
+  static const job = 'job';
   static const biography = 'biography';
   static const birthday = 'birthday';
   static const deathday = 'deathday';
@@ -44,6 +45,7 @@ class PersonAttributes {
   static const homepage = 'homepage';
   static const combined_credits = 'combined_credits';
   static const cast = 'cast';
+  static const crew = 'crew';
 }
 
 class Credit {
@@ -84,6 +86,7 @@ class TmdbPerson {
   late String originalName;
   late String profilePath;
   late String character;
+  late String job;
   late String biography;
   late String birthday;
   late String deathday;
@@ -102,6 +105,7 @@ class TmdbPerson {
     required this.originalName,
     required this.profilePath,
     required this.character,
+    required this.job,
     required this.biography,
     required this.birthday,
     required this.deathday,
@@ -120,8 +124,9 @@ class TmdbPerson {
         knownForDepartment: person[PersonAttributes.known_for_department],
         gender: person[PersonAttributes.gender],
         originalName: person[PersonAttributes.original_name],
-        profilePath: person[PersonAttributes.profile_path],
-        character: person[PersonAttributes.character],
+        profilePath: person[PersonAttributes.profile_path] ?? '',
+        character: person[PersonAttributes.character] ?? '',
+        job: person[PersonAttributes.job] ?? '',
         biography: person[PersonAttributes.biography] ?? '',
         birthday: person[PersonAttributes.birthday] ?? '',
         deathday: person[PersonAttributes.deathday] ?? '',

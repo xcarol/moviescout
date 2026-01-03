@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart' show ListEquality;
-import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
-import 'package:moviescout/widgets/drop_down_selector.dart';
 import 'package:moviescout/widgets/title_card.dart';
+import 'package:moviescout/widgets/title_list_info_line.dart';
 import 'package:moviescout/widgets/title_list_control_panel.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/widgets/title_list_controller.dart';
@@ -152,144 +151,6 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
-  Widget _infoLine() {
-    final anyFilterActive = _controller.selectedGenres.isNotEmpty ||
-        _controller.filterByProviders ||
-        _controller.textFilterController.text.isNotEmpty;
-
-    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
-
-    return Container(
-      color: titleTheme.infoLineBackground,
-      padding: EdgeInsets.symmetric(horizontal: 4),
-      child: Row(
-        children: [
-          ..._buildTypeAndCountWidgets(),
-          const SizedBox(width: 8),
-          ValueListenableBuilder(
-            valueListenable: widget.listService.isLoading,
-            builder: (context, isLoading, child) {
-              if (isLoading) {
-                return SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.0,
-                  ),
-                );
-              }
-              return SizedBox.shrink();
-            },
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              reverse: true,
-              child: _sortSelector(),
-            ),
-          ),
-          _swapSortButton(context),
-          IconButton(
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all(
-                anyFilterActive
-                    ? titleTheme.infoLineActiveFilterBackground
-                    : titleTheme.infoLineInactiveFilterBackground,
-              ),
-              visualDensity: VisualDensity.compact,
-            ),
-            onPressed: () {
-              _controller.toggleFilters();
-            },
-            icon: Icon(
-              _controller.showFilters
-                  ? Icons.filter_list_off
-                  : Icons.filter_list,
-              color: anyFilterActive
-                  ? titleTheme.infoLineActiveFilterForeground
-                  : titleTheme.infoLineInactiveFilterForeground,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  List<Widget> _buildTypeAndCountWidgets() {
-    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
-    final localizations = AppLocalizations.of(context)!;
-    final typeOption = _controller.selectedType;
-
-    final textColor = typeOption == ''
-        ? titleTheme.infoLineInactiveFilterForeground
-        : titleTheme.infoLineActiveFilterForeground;
-    final backgroundColor = typeOption == ''
-        ? titleTheme.infoLineInactiveFilterBackground
-        : titleTheme.infoLineActiveFilterBackground;
-
-    return [
-      DropdownSelector(
-        backgroundColor: backgroundColor,
-        textStyle: TextStyle(
-          color: textColor,
-          fontSize: 16,
-          backgroundColor: backgroundColor,
-        ),
-        borderRadius: BorderRadius.circular(5),
-        leading: ValueListenableBuilder(
-          valueListenable: widget.listService.selectedTitleCount,
-          builder: (context, count, child) {
-            return Text(
-              count.toString(),
-              style: TextStyle(
-                color: textColor,
-                fontSize: 16,
-                backgroundColor: backgroundColor,
-              ),
-            );
-          },
-        ),
-        selectedOption: _controller.getSelectedTypeLabel(localizations),
-        options: _controller.titleTypes,
-        onSelected: (value) => _controller.setSelectedType(context, value),
-        arrowIcon: Icon(
-          Icons.arrow_drop_down,
-          color: textColor,
-        ),
-      )
-    ];
-  }
-
-  Widget _sortSelector() {
-    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
-    final localizations = AppLocalizations.of(context)!;
-    return DropdownSelector(
-      selectedOption: _controller.getSelectedSortLabel(localizations),
-      options: _controller.titleSorts,
-      onSelected: (value) => _controller.setSelectedSort(context, value),
-      arrowIcon: _controller.isSortAsc
-          ? Icon(
-              Icons.arrow_drop_down,
-              color: titleTheme.sortArrowColor,
-            )
-          : Icon(
-              Icons.arrow_drop_up,
-              color: titleTheme.sortArrowColor,
-            ),
-    );
-  }
-
-  Widget _swapSortButton(BuildContext context) {
-    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
-    return IconButton(
-      color: titleTheme.swapSortIconColor,
-      icon: Icon(Icons.swap_vert),
-      onPressed: () {
-        _controller.toggleSortDirection();
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -319,7 +180,10 @@ class _TitleListState extends State<TitleList> {
                           color: titleTheme.listDividerColor,
                         ),
                       ),
-                      _infoLine(),
+                      TitleListInfoLine(
+                        controller: _controller,
+                        listService: widget.listService,
+                      ),
                       Divider(
                         height: 1,
                         color: titleTheme.listDividerColor,

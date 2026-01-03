@@ -128,7 +128,11 @@ class PersonCard extends StatelessWidget {
           children: [
             _personName(tmdbPerson.name, maxLines: 2),
             const SizedBox(height: 5),
-            Text(tmdbPerson.character, maxLines: 2),
+            if (tmdbPerson.character.isNotEmpty) const SizedBox(height: 5),
+            if (tmdbPerson.character.isNotEmpty)
+              Text(tmdbPerson.character, maxLines: 2),
+            if (tmdbPerson.job.isNotEmpty) const SizedBox(height: 5),
+            if (tmdbPerson.job.isNotEmpty) Text(tmdbPerson.job, maxLines: 2),
           ],
         ),
       ),
