@@ -4,15 +4,15 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 
-class PersonList extends StatefulWidget {
+class TitlePeopleList extends StatefulWidget {
   final TmdbTitle title;
-  const PersonList({super.key, required this.title});
+  const TitlePeopleList({super.key, required this.title});
 
   @override
-  State<PersonList> createState() => _PersonListState();
+  State<TitlePeopleList> createState() => _TitlePeopleListState();
 }
 
-class _PersonListState extends State<PersonList> {
+class _TitlePeopleListState extends State<TitlePeopleList> {
   late Widget _personlistWidget;
 
   @override
@@ -22,10 +22,6 @@ class _PersonListState extends State<PersonList> {
   }
 
   void _loadData() {
-    // _personlistWidget = TitleList(
-    //   _personlistService,
-    //   key: ValueKey('personlist'),
-    // );
     _personlistWidget = const SizedBox.shrink();
   }
 
