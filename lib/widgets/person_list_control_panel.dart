@@ -32,7 +32,7 @@ class PersonListControlPanel extends StatelessWidget {
               onChanged: onTextChanged,
               style: TextStyle(color: titleTheme.controlPanelForeground),
               decoration: InputDecoration(
-                hintText: localizations.search,
+                hintText: localizations.searchPerson,
                 hintStyle: TextStyle(color: titleTheme.searchHintColor),
                 prefixIcon: Icon(Icons.search,
                     color: titleTheme.controlPanelForeground),

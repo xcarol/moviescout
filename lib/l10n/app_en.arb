@@ -6,6 +6,7 @@
     "messageEmptyTmdb": "Connect to TMDb",
     "search": "Search for a title",
     "searchTitle": "Search",
+    "searchPerson": "Search for somebody",
     "back": "Back",
     "username": "User name",
     "password": "Password",
