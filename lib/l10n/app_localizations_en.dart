@@ -30,6 +30,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchTitle => 'Search';
 
   @override
+  String get searchPerson => 'Search for somebody';
+
+  @override
   String get back => 'Back';
 
   @override
@@ -277,4 +280,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get years => 'Years';
+
+  @override
+  String get job => 'Job';
+
+  @override
+  String get department => 'Department';
 }

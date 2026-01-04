@@ -139,6 +139,12 @@ abstract class AppLocalizations {
   /// **'Search'**
   String get searchTitle;
 
+  /// No description provided for @searchPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for somebody'**
+  String get searchPerson;
+
   /// No description provided for @back.
   ///
   /// In en, this message translates to:
@@ -636,6 +642,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Years'**
   String get years;
+
+  /// No description provided for @job.
+  ///
+  /// In en, this message translates to:
+  /// **'Job'**
+  String get job;
+
+  /// No description provided for @department.
+  ///
+  /// In en, this message translates to:
+  /// **'Department'**
+  String get department;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -9,11 +9,13 @@ import 'package:moviescout/services/tmdb_list_service.dart';
 
 class PersonList extends StatefulWidget {
   final List<TmdbPerson> people;
+  final String type;
   final TmdbListService listService;
 
   const PersonList({
     super.key,
     required this.people,
+    required this.type,
     required this.listService,
   });
 
@@ -27,7 +29,7 @@ class _PersonListState extends State<PersonList> {
   @override
   void initState() {
     super.initState();
-    _controller = PersonListController(widget.people);
+    _controller = PersonListController(widget.people, widget.type);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _controller.initializeControlLocalizations(context);
     });

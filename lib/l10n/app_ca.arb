@@ -88,5 +88,7 @@
     "birthDate": "Data de naixement",
     "deathDate": "Data de defunció",
     "placeOfBirth": "Lloc de neixament",
-    "years": "Anys"
+    "years": "Anys",
+    "job": "Càrrec",
+    "department": "Departament"
 }

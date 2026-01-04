@@ -88,5 +88,7 @@
     "birthDate": "Fecha de nacimiento",
     "deathDate": "Fecha de defunción",
     "placeOfBirth": "Lugar de nacimiento",
-    "years": "Años"
+    "years": "Años",
+    "job": "Cargo",
+    "department": "Departamento"
 }

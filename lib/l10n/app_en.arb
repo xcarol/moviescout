@@ -88,5 +88,7 @@
     "birthDate": "Birthdate",
     "deathDate": "Deathdate",
     "placeOfBirth": "Place of birth",
-    "years": "Years"
+    "years": "Years",
+    "job": "Job",
+    "department": "Department"
 }

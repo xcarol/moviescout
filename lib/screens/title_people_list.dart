@@ -41,6 +41,7 @@ class _TitlePeopleListState extends State<TitlePeopleList> {
       drawer: AppDrawer(),
       body: PersonList(
         people: people,
+        type: widget.type,
         listService: widget.tmdbListService,
       ),
     );

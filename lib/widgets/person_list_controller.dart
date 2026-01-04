@@ -5,6 +5,8 @@ import 'package:moviescout/l10n/app_localizations.dart';
 class PersonSortOption {
   static const name = 'name';
   static const department = 'department';
+  static const job = 'job';
+  static const original = 'original';
 }
 
 class PersonListController with ChangeNotifier {
@@ -15,12 +17,13 @@ class PersonListController with ChangeNotifier {
   final FocusNode searchFocusNode = FocusNode();
   final ScrollController scrollController = ScrollController();
 
+  final String type;
   bool _isSortAsc = true;
   bool _showFilters = false;
-  String _selectedSort = PersonSortOption.name;
+  String _selectedSort = PersonSortOption.original;
   List<String> _personSorts = [];
 
-  PersonListController(this.fullList) {
+  PersonListController(this.fullList, this.type) {
     textFilterController = TextEditingController();
     _filteredList = List.from(fullList);
     _applyFilters();
@@ -35,30 +38,48 @@ class PersonListController with ChangeNotifier {
 
   void initializeControlLocalizations(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    _personSorts = [
-      localizations.sortAlphabetically,
-      localizations
-          .cast, // Using 'cast' to represent department-based sorting for now
-    ];
+    if (type == PersonAttributes.cast) {
+      _personSorts = [
+        localizations.cast,
+        localizations.sortAlphabetically,
+      ];
+    } else {
+      _personSorts = [
+        localizations.cast,
+        localizations.sortAlphabetically,
+        localizations.job,
+        localizations.department,
+      ];
+    }
+    _applyFilters();
     notifyListeners();
   }
 
   String getSelectedSortLabel(AppLocalizations localizations) {
-    if (_selectedSort == PersonSortOption.name) {
-      return localizations.sortAlphabetically;
+    switch (_selectedSort) {
+      case PersonSortOption.name:
+        return localizations.sortAlphabetically;
+      case PersonSortOption.department:
+        return localizations.department;
+      case PersonSortOption.job:
+        return localizations.job;
+      case PersonSortOption.original:
+        return localizations.cast;
+      default:
+        return localizations.sortAlphabetically;
     }
-    if (_selectedSort == PersonSortOption.department) {
-      return localizations.cast;
-    }
-    return localizations.sortAlphabetically;
   }
 
   void setSelectedSort(BuildContext context, String localizedValue) {
     final localizations = AppLocalizations.of(context)!;
     if (localizedValue == localizations.sortAlphabetically) {
       _selectedSort = PersonSortOption.name;
-    } else if (localizedValue == localizations.cast) {
+    } else if (localizedValue == localizations.department) {
       _selectedSort = PersonSortOption.department;
+    } else if (localizedValue == localizations.job) {
+      _selectedSort = PersonSortOption.job;
+    } else if (localizedValue == localizations.cast) {
+      _selectedSort = PersonSortOption.original;
     }
     _applyFilters();
     notifyListeners();
@@ -94,9 +115,14 @@ class PersonListController with ChangeNotifier {
         result = a.name.compareTo(b.name);
       } else if (_selectedSort == PersonSortOption.department) {
         result = a.knownForDepartment.compareTo(b.knownForDepartment);
-        if (result == 0) {
-          result = a.name.compareTo(b.name);
-        }
+      } else if (_selectedSort == PersonSortOption.job) {
+        result = a.job.compareTo(b.job);
+      } else if (_selectedSort == PersonSortOption.original) {
+        result = fullList.indexOf(a).compareTo(fullList.indexOf(b));
+      }
+
+      if (result == 0 && _selectedSort != PersonSortOption.original) {
+        result = a.name.compareTo(b.name);
       }
       return _isSortAsc ? result : -result;
     });
