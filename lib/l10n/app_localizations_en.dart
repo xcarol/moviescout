@@ -30,6 +30,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchTitle => 'Search';
 
   @override
+  String get searchPerson => 'Search for somebody';
+
+  @override
   String get back => 'Back';
 
   @override
@@ -252,7 +255,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unknownDuration => 'Runtime not specified.';
 
   @override
-  String get credits => 'Credits';
+  String get cast => 'Cast';
+
+  @override
+  String get crew => 'Crew';
+
+  @override
+  String get seeThemAll => 'See them all';
 
   @override
   String get ratedCredits => 'Rated credits';
@@ -271,4 +280,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get years => 'Years';
+
+  @override
+  String get job => 'Job';
+
+  @override
+  String get department => 'Department';
 }

@@ -5,6 +5,7 @@
     "messageEmptyOptions": "También puedes",
     "messageEmptyTmdb": "Connectarte a TMDb",
     "search": "Busca un título",
+    "searchPerson": "Busca alguien",
     "searchTitle": "Búsqueda",
     "back": "Atrás",
     "username": "Usuario",
@@ -80,11 +81,15 @@
     "discoverlistTitle": "Descubre",
     "notReleasedYet": "Todavia no se ha estrenado",
     "unknownDuration": "Duración no especificada.",
-    "credits": "Creditos",
+    "cast": "Elenco",
+    "crew": "Equipo técnico",
+    "seeThemAll": "Ver todo",
     "ratedCredits": "Creditos valorados",
     "originalName": "Nombre original",
     "birthDate": "Fecha de nacimiento",
     "deathDate": "Fecha de defunción",
     "placeOfBirth": "Lugar de nacimiento",
-    "years": "Años"
+    "years": "Años",
+    "job": "Cargo",
+    "department": "Departamento"
 }

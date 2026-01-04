@@ -6,6 +6,7 @@
     "messageEmptyTmdb": "Connect to TMDb",
     "search": "Search for a title",
     "searchTitle": "Search",
+    "searchPerson": "Search for somebody",
     "back": "Back",
     "username": "User name",
     "password": "Password",
@@ -80,11 +81,15 @@
     "discoverlistTitle": "Discover",
     "notReleasedYet": "Not release yet",
     "unknownDuration": "Runtime not specified.",
-    "credits": "Credits",
+    "cast": "Cast",
+    "crew": "Crew",
+    "seeThemAll": "See them all",
     "ratedCredits": "Rated credits",
     "originalName": "Original name",
     "birthDate": "Birthdate",
     "deathDate": "Deathdate",
     "placeOfBirth": "Place of birth",
-    "years": "Years"
+    "years": "Years",
+    "job": "Job",
+    "department": "Department"
 }

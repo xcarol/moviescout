@@ -139,6 +139,12 @@ abstract class AppLocalizations {
   /// **'Search'**
   String get searchTitle;
 
+  /// No description provided for @searchPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for somebody'**
+  String get searchPerson;
+
   /// No description provided for @back.
   ///
   /// In en, this message translates to:
@@ -583,11 +589,23 @@ abstract class AppLocalizations {
   /// **'Runtime not specified.'**
   String get unknownDuration;
 
-  /// No description provided for @credits.
+  /// No description provided for @cast.
   ///
   /// In en, this message translates to:
-  /// **'Credits'**
-  String get credits;
+  /// **'Cast'**
+  String get cast;
+
+  /// No description provided for @crew.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew'**
+  String get crew;
+
+  /// No description provided for @seeThemAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See them all'**
+  String get seeThemAll;
 
   /// No description provided for @ratedCredits.
   ///
@@ -624,6 +642,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Years'**
   String get years;
+
+  /// No description provided for @job.
+  ///
+  /// In en, this message translates to:
+  /// **'Job'**
+  String get job;
+
+  /// No description provided for @department.
+  ///
+  /// In en, this message translates to:
+  /// **'Department'**
+  String get department;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

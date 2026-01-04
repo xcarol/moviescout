@@ -7,6 +7,7 @@ import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
@@ -190,7 +191,9 @@ class _TitleDetailsState extends State<TitleDetails> {
           const SizedBox(height: 30),
           _recommended(title),
           const SizedBox(height: 30),
-          _cast(title),
+          _castAndCrew(title, PersonAttributes.cast),
+          const SizedBox(height: 30),
+          _castAndCrew(title, PersonAttributes.crew),
         ],
       ),
     );
@@ -530,26 +533,63 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  Widget _cast(TmdbTitle title) {
-    if (title.cast.isEmpty) {
+  Widget _castAndCrew(TmdbTitle title, String type) {
+    if (type == PersonAttributes.cast && title.cast.isEmpty) {
       return const SizedBox.shrink();
+    }
+
+    if (type == PersonAttributes.crew && title.crew.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    List<TmdbPerson> people;
+    if (type == PersonAttributes.cast) {
+      people = title.cast;
+    } else {
+      people = title.crew;
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          AppLocalizations.of(context)!.credits,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              type == PersonAttributes.cast
+                  ? AppLocalizations.of(context)!.cast
+                  : AppLocalizations.of(context)!.crew,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TitlePeopleList(
+                            title: title,
+                            type: type,
+                            tmdbListService: widget._tmdbListService,
+                          )),
+                );
+              },
+              child: Text(
+                AppLocalizations.of(context)!.seeThemAll,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 10),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: title.cast
+            children: people
                 .map((person) => Padding(
                     padding: const EdgeInsets.only(right: 10),
                     child: _personChip(context, person)))
+                .take(20)
                 .toList(),
           ),
         ),

@@ -20,7 +20,8 @@ class PersonChip extends Card {
     super.key,
     required person,
     required tmdbListService,
-  }) : _person = person, _tmdbListService = tmdbListService;
+  })  : _person = person,
+        _tmdbListService = tmdbListService;
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +98,7 @@ class PersonChip extends Card {
     );
   }
 
-  Text _characterName(String name, {int maxLines = 1}) {
+  Text _personName(String name, {int maxLines = 1}) {
     return Text(
       name,
       style: const TextStyle(
@@ -117,9 +118,13 @@ class PersonChip extends Card {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text(tmdbPerson.name),
+            _personName(tmdbPerson.name, maxLines: 2),
             const SizedBox(height: 5),
-            _characterName(tmdbPerson.character, maxLines: 2),
+            if (tmdbPerson.character.isNotEmpty) const SizedBox(height: 5),
+            if (tmdbPerson.character.isNotEmpty)
+              Text(tmdbPerson.character, maxLines: 2),
+            if (tmdbPerson.job.isNotEmpty) const SizedBox(height: 5),
+            if (tmdbPerson.job.isNotEmpty) Text(tmdbPerson.job, maxLines: 2),
           ],
         ),
       ),

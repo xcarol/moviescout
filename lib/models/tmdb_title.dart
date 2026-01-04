@@ -375,7 +375,8 @@ class TmdbTitle {
         gender: person[PersonAttributes.gender],
         originalName: person[PersonAttributes.original_name],
         profilePath: person[PersonAttributes.profile_path] ?? '',
-        character: person[PersonAttributes.character],
+        character: person[PersonAttributes.character] ?? '',
+        job: person[PersonAttributes.job] ?? '',
         biography: person[PersonAttributes.biography] ?? '',
         birthday: person[PersonAttributes.birthday] ?? '',
         deathday: person[PersonAttributes.deathday] ?? '',
@@ -387,6 +388,39 @@ class TmdbTitle {
       ));
     }
     return castPeople;
+  }
+
+  @ignore
+  List<TmdbPerson> get crew {
+    if (creditsJson == null) return [];
+
+    final creditsMap = jsonDecode(creditsJson!);
+    if (creditsMap[PersonAttributes.crew] is! List) return [];
+
+    List<TmdbPerson> crewPeople = [];
+    for (dynamic person in creditsMap[PersonAttributes.crew]) {
+      crewPeople.add(TmdbPerson(
+        tmdbJson: jsonEncode(person),
+        tmdbId: person[PersonAttributes.id],
+        name: person[PersonAttributes.name],
+        lastUpdated: '1970-01-01',
+        knownForDepartment: person[PersonAttributes.known_for_department],
+        gender: person[PersonAttributes.gender],
+        originalName: person[PersonAttributes.original_name],
+        profilePath: person[PersonAttributes.profile_path] ?? '',
+        character: person[PersonAttributes.character] ?? '',
+        job: person[PersonAttributes.job] ?? '',
+        biography: person[PersonAttributes.biography] ?? '',
+        birthday: person[PersonAttributes.birthday] ?? '',
+        deathday: person[PersonAttributes.deathday] ?? '',
+        imdbId: person[PersonAttributes.imdb_id] ?? '',
+        placeOfBirth: person[PersonAttributes.place_of_birth] ?? '',
+        combinedCredits: CombinedCredits.fromMap(
+            person[PersonAttributes.combined_credits] ?? {}),
+        homepage: person[PersonAttributes.homepage] ?? '',
+      ));
+    }
+    return crewPeople;
   }
 
   @ignore

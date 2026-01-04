@@ -5,6 +5,7 @@
     "messageEmptyOptions": "També pots",
     "messageEmptyTmdb": "Connectar-te a TMDb",
     "search": "Cerca un títol",
+    "searchPerson": "Cerca algú",
     "searchTitle": "Cerca",
     "back": "Enrere",
     "username": "Usuari",
@@ -80,11 +81,15 @@
     "discoverlistTitle": "Descobreix",
     "notReleasedYet": "Encara no s'ha estrenat",
     "unknownDuration": "Duració no especificada.",
-    "credits": "Crèdits",
+    "cast": "Repartiment",
+    "crew": "Equip tècnic",
+    "seeThemAll": "Veure-ho tot",
     "ratedCredits": "Crèdits valorats",
     "originalName": "Nom original",
     "birthDate": "Data de naixement",
     "deathDate": "Data de defunció",
     "placeOfBirth": "Lloc de neixament",
-    "years": "Anys"
+    "years": "Anys",
+    "job": "Càrrec",
+    "department": "Departament"
 }
