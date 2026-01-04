@@ -36,7 +36,7 @@ class _TitlePeopleListState extends State<TitlePeopleList> {
     return Scaffold(
       appBar: MainAppBar(
         context: context,
-        title: '${widget.title.name} $titleType',
+        title: '${widget.title.name} - $titleType',
       ),
       drawer: AppDrawer(),
       body: PersonList(
