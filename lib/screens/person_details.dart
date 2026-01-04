@@ -255,7 +255,7 @@ class _PersonDetailsState extends State<PersonDetails> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _characterNameAndActing(person),
+          _characterNameAndDepartment(person),
           const SizedBox(height: 10),
           _characterDetails(person),
         ],
@@ -263,7 +263,7 @@ class _PersonDetailsState extends State<PersonDetails> {
     );
   }
 
-  Widget _characterNameAndActing(TmdbPerson person) {
+  Widget _characterNameAndDepartment(TmdbPerson person) {
     if (person.name.isEmpty) {
       return const SizedBox.shrink();
     }
