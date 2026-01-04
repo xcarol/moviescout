@@ -183,7 +183,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emptyRates => 'You have not been rated any title yet.';
 
   @override
-  String get emptyDiscover => 'Nothing here.';
+  String get emptyList => 'Nothing here.';
 
   @override
   String get watchlistTitle => 'Watchlist';

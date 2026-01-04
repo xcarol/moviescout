@@ -445,11 +445,11 @@ abstract class AppLocalizations {
   /// **'You have not been rated any title yet.'**
   String get emptyRates;
 
-  /// No description provided for @emptyDiscover.
+  /// No description provided for @emptyList.
   ///
   /// In en, this message translates to:
   /// **'Nothing here.'**
-  String get emptyDiscover;
+  String get emptyList;
 
   /// No description provided for @watchlistTitle.
   ///

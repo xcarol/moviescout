@@ -183,7 +183,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get emptyRates => 'Encara no has valorat cap títol.';
 
   @override
-  String get emptyDiscover => 'No hi ha ningú per aquí.';
+  String get emptyList => 'No hi ha ningú per aquí.';
 
   @override
   String get watchlistTitle => 'Per veure';
