@@ -79,7 +79,7 @@ class PersonCard extends StatelessWidget {
       return AspectRatio(
         aspectRatio: 2 / 3,
         child: SvgPicture.asset(
-          'assets/movie.svg',
+          'assets/person.svg',
           fit: BoxFit.contain,
         ),
       );
@@ -99,7 +99,7 @@ class PersonCard extends StatelessWidget {
         cacheKey: posterPath,
         errorWidget: (context, error, stackTrace) {
           return SvgPicture.asset(
-            'assets/movie.svg',
+            'assets/person.svg',
             fit: BoxFit.contain,
           );
         },
