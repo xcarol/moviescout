@@ -119,6 +119,32 @@ class PersonCard extends StatelessWidget {
     );
   }
 
+  Widget _personRoleDetails(TmdbPerson tmdbPerson) {
+    final List<String> roles = [];
+    if (tmdbPerson.character.isNotEmpty) {
+      roles.add(tmdbPerson.character);
+    } else {
+      if (tmdbPerson.job.isNotEmpty) {
+        roles.add(tmdbPerson.job);
+      }
+      if (tmdbPerson.knownForDepartment.isNotEmpty) {
+        roles.add(tmdbPerson.knownForDepartment);
+      }
+    }
+
+    if (roles.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 5),
+        ...roles.map((role) => Text(role, maxLines: 2)).toList(),
+      ],
+    );
+  }
+
   Widget _personDetails(BuildContext context, TmdbPerson tmdbPerson) {
     return Expanded(
       child: Padding(
@@ -127,12 +153,7 @@ class PersonCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _personName(tmdbPerson.name, maxLines: 2),
-            const SizedBox(height: 5),
-            if (tmdbPerson.character.isNotEmpty) const SizedBox(height: 5),
-            if (tmdbPerson.character.isNotEmpty)
-              Text(tmdbPerson.character, maxLines: 2),
-            if (tmdbPerson.job.isNotEmpty) const SizedBox(height: 5),
-            if (tmdbPerson.job.isNotEmpty) Text(tmdbPerson.job, maxLines: 2),
+            _personRoleDetails(tmdbPerson),
           ],
         ),
       ),
