@@ -21,32 +21,59 @@ class PersonListControlPanel extends StatelessWidget {
 
     return Container(
       color: titleTheme.controlPanelBackground,
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(4.0),
       child: Column(
         children: [
           SizedBox(
-            height: 36,
-            child: TextField(
-              controller: textFilterController,
-              focusNode: focusNode,
-              onChanged: onTextChanged,
-              style: TextStyle(color: titleTheme.controlPanelForeground),
-              decoration: InputDecoration(
-                hintText: localizations.searchPerson,
-                hintStyle: TextStyle(color: titleTheme.searchHintColor),
-                prefixIcon: Icon(Icons.search,
-                    color: titleTheme.controlPanelForeground),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    textFilterController.clear();
-                    onTextChanged('');
-                  },
+            height: 26,
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                textSelectionTheme: TextSelectionThemeData(
+                  selectionColor: titleTheme.searchSelectionColor,
+                  selectionHandleColor: titleTheme.searchCursorColor,
                 ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
+              ),
+              child: TextField(
+                controller: textFilterController,
+                focusNode: focusNode,
+                style: TextStyle(
+                    color: titleTheme.controlPanelForeground,
+                    fontSize: 14,
+                    fontWeight: textFilterController.text.isEmpty
+                        ? FontWeight.normal
+                        : FontWeight.bold),
+                cursorColor: titleTheme.searchCursorColor,
+                cursorHeight: 16,
+                decoration: InputDecoration(
+                  isDense: true,
+                  hintText: localizations.searchPerson,
+                  hintStyle: TextStyle(color: titleTheme.searchHintColor),
+                  suffixIconColor: titleTheme.controlPanelForeground,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 5),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    borderSide:
+                        BorderSide(color: titleTheme.controlPanelForeground),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    borderSide:
+                        BorderSide(color: titleTheme.controlPanelForeground),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    borderSide:
+                        BorderSide(color: titleTheme.controlPanelForeground),
+                  ),
+                  suffixIcon: GestureDetector(
+                    child: Icon(Icons.clear),
+                    onTap: () {
+                      textFilterController.clear();
+                      onTextChanged('');
+                    },
+                  ),
                 ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                onChanged: onTextChanged,
               ),
             ),
           ),
