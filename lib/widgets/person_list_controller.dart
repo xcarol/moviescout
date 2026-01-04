@@ -106,7 +106,9 @@ class PersonListController with ChangeNotifier {
     _filteredList = fullList.where((p) {
       return p.name.toLowerCase().contains(text) ||
           p.originalName.toLowerCase().contains(text) ||
-          p.character.toLowerCase().contains(text);
+          p.character.toLowerCase().contains(text) ||
+          p.job.toLowerCase().contains(text) ||
+          p.knownForDepartment.toLowerCase().contains(text);
     }).toList();
 
     _filteredList.sort((a, b) {
