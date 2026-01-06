@@ -161,6 +161,7 @@ class TitleListController with ChangeNotifier {
   void setTextFilter(String value) {
     PreferencesService().prefs.setString(_textFilterPreferencesName, value);
     listService.setTextFilter(value);
+    notifyListeners();
   }
 
   void toggleFilters() {
