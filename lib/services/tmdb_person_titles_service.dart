@@ -56,9 +56,7 @@ class TmdbPersonTitlesService extends TmdbListService {
 
     anyFilterApplied = true;
 
-    // Apply filtering to _allTitles
     final filtered = _allTitles.where((title) {
-      // Text filter
       if (filterText.isNotEmpty) {
         final query = filterText.toLowerCase();
         if (!title.name.toLowerCase().contains(query) &&
@@ -68,20 +66,14 @@ class TmdbPersonTitlesService extends TmdbListService {
         }
       }
 
-      // Media type filter
       if (filterMediaType.isNotEmpty && title.mediaType != filterMediaType) {
         return false;
       }
-
-      // Genre filter
       if (filterGenres.isNotEmpty) {
         if (!title.genreIds.any((id) => filterGenres.contains(id))) {
           return false;
         }
       }
-
-      // Provider filter (not really applicable here as credits usually don't have provider info initially,
-      // but we'll follow the logic if available)
       if (filterByProviders && filterProvidersIds.isNotEmpty) {
         if (title.flatrateProviderIds.isEmpty) {
           return false;
@@ -95,7 +87,6 @@ class TmdbPersonTitlesService extends TmdbListService {
       return true;
     }).toList();
 
-    // Apply sorting
     filtered.sort((a, b) {
       int cmp;
       switch (selectedSort) {
@@ -126,11 +117,9 @@ class TmdbPersonTitlesService extends TmdbListService {
       return isSortAsc ? cmp : -cmp;
     });
 
-    // Update total count
     selectedTitleCount.value = filtered.length;
     _filteredTitles = filtered;
 
-    // Initial pagination
     await loadNextPageInternal();
   }
 
@@ -146,7 +135,6 @@ class TmdbPersonTitlesService extends TmdbListService {
     }
   }
 
-  // Helper for pagination
   Future<void> loadNextPageInternal() async {
     if (!hasMoreVal) return;
 

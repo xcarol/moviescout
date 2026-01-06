@@ -3,30 +3,6 @@ import 'package:moviescout/models/tmdb_title.dart';
 
 // ignore_for_file: constant_identifier_names, unused_element
 
-// Used fields
-//
-// "id": 17697
-// "name": "John Krasinski"
-// "known_for_department": "Acting",
-// "gender": 2,
-// "original_name": "John Krasinski"
-// "profile_path": "/pmVGDb6Yl6OyFcHVGbu1EYNfyFK.jpg"
-// "character": "Jack Silva"
-// "biography": ""
-// "birthday": "1979-10-20"
-// "deathday": null
-// "imdb_id": "nm1024677"
-// "place_of_birth": "Boston, Massachusetts, USA"
-// "homepage": null
-//
-// Unused fields
-// "adult": false
-// "cast_id": 0
-// "credit_id": "554d6669c3a36824310033be"
-// "order": 0
-// "popularity": 5.0091
-// "also_known_as": List (7 items)
-
 class PersonAttributes {
   static const id = 'id';
   static const last_updated = 'last_updated';
