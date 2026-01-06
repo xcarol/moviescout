@@ -66,6 +66,9 @@ class TmdbTitleFields {
   // People
   static const String credits = 'credits';
   static const String cast = 'cast';
+  static const String character = 'character';
+  static const String job = 'job';
+  static const String department = 'department';
 
   // Custom
   static const String listName = 'list_name';
@@ -148,6 +151,13 @@ class TmdbTitle {
   late String? seasonsJson;
   late String? recommendationsJson;
   late String? nextEpisodeToAirJson;
+
+  @ignore
+  String character = '';
+  @ignore
+  String job = '';
+  @ignore
+  String department = '';
 
   TmdbTitle({
     required this.id,
@@ -277,6 +287,10 @@ class TmdbTitle {
           ? jsonEncode(title[TmdbTitleFields.nextEpisodeToAir])
           : null,
     );
+
+    titleObj.character = title[TmdbTitleFields.character] ?? '';
+    titleObj.job = title[TmdbTitleFields.job] ?? '';
+    titleObj.department = title[TmdbTitleFields.department] ?? '';
 
     updateGenreIds(titleObj, title[TmdbTitleFields.genres],
         title[TmdbTitleFields.genreIds]);
@@ -632,6 +646,9 @@ class TmdbTitle {
       TmdbTitleFields.nextEpisodeToAir: nextEpisodeToAirJson != null
           ? jsonDecode(nextEpisodeToAirJson!)
           : null,
+      TmdbTitleFields.character: character,
+      TmdbTitleFields.job: job,
+      TmdbTitleFields.department: department,
     };
   }
 }
