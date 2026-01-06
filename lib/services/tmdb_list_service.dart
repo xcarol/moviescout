@@ -12,87 +12,106 @@ import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class TmdbListService extends TmdbBaseService with ChangeNotifier {
-  String _listName = '';
-  final List<TmdbTitle> _loadedTitles = List.empty(growable: true);
-  String get listName => _listName;
-  bool _isDbLoading = false;
+  @protected
+  String listNameVal = '';
+  @protected
+  final List<TmdbTitle> loadedTitlesVal = List.empty(growable: true);
+  String get listName => listNameVal;
+  @protected
+  bool isDbLoading = false;
   ValueNotifier<bool> isLoading = ValueNotifier(false);
-  bool _hasMore = true;
-  bool get hasMore => _hasMore;
-  int _page = 0;
-  final int _pageSize = 10;
+  @protected
+  bool hasMoreVal = true;
+  bool get hasMore => hasMoreVal;
+  @protected
+  int pageVal = 0;
+  @protected
+  final int pageSizeVal = 10;
   @protected
   final TmdbTitleRepository repository;
   @protected
   final PreferencesService preferencesService;
 
-  bool _anyFilterApplied = false;
-  int _filterRequestId = 0;
-  String _filterText = '';
-  String _filterMediaType = '';
-  List<int> _filterGenres = [];
-  List<int> _filterProvidersIds = [];
-  bool _filterByProviders = false;
-  String _selectedSort = SortOption.alphabetically;
-  bool _isSortAsc = true;
+  @protected
+  bool anyFilterApplied = false;
+  @protected
+  int filterRequestId = 0;
+  @protected
+  String filterText = '';
+  @protected
+  String filterMediaType = '';
+  @protected
+  List<int> filterGenres = [];
+  @protected
+  List<int> filterProvidersIds = [];
+  @protected
+  bool filterByProviders = false;
+  @protected
+  String selectedSort = SortOption.alphabetically;
+  @protected
+  bool isSortAsc = true;
   ValueNotifier<int> selectedTitleCount = ValueNotifier(0);
-  int get loadedTitleCount => _loadedTitles.length;
-  List<String> _listGenres = [];
+  int get loadedTitleCount => loadedTitlesVal.length;
+  @protected
+  List<String> listGenresVal = [];
   ValueNotifier<List<String>> listGenres = ValueNotifier([]);
 
   TmdbListService(String listName, this.repository, this.preferencesService,
       {List<TmdbTitle>? titles}) {
-    _listName = listName;
+    listNameVal = listName;
   }
 
   @protected
   Duration get cacheTimeout {
-    if (_listName == AppConstants.watchlist) {
+    if (listNameVal == AppConstants.watchlist) {
       return UpdateManager.watchlistTimeout;
     }
-    if (_listName == AppConstants.rateslist) {
+    if (listNameVal == AppConstants.rateslist) {
       return UpdateManager.rateslistTimeout;
     }
-    if (_listName == AppConstants.discoverlist) {
+    if (listNameVal == AppConstants.discoverlist) {
       return UpdateManager.discoverlistTimeout;
     }
     return const Duration(days: 1);
   }
 
-  void _setLastUpdate() {
-    UpdateManager().updateLastUpdate(_listName);
+  @protected
+  void setLastUpdate() {
+    UpdateManager().updateLastUpdate(listNameVal);
   }
 
   bool get userRatingAvailable {
-    return _listName == AppConstants.rateslist ||
-        (_loadedTitles.isNotEmpty && _loadedTitles.first.rating > 0.0);
+    return listNameVal == AppConstants.rateslist ||
+        (loadedTitlesVal.isNotEmpty && loadedTitlesVal.first.rating > 0.0);
   }
 
   bool get userRatedDateAvailable {
-    return _listName == AppConstants.rateslist ||
-        (_loadedTitles.isNotEmpty &&
-            _loadedTitles.first.dateRated
+    return listNameVal == AppConstants.rateslist ||
+        (loadedTitlesVal.isNotEmpty &&
+            loadedTitlesVal.first.dateRated
                 .isAfter(DateTime.fromMillisecondsSinceEpoch(0)));
   }
 
-  void _resetServiceStateAfterClear() {
-    _clearLoadedTitles(clearGenreCache: true);
-    UpdateManager().removeLastUpdate(_listName);
+  @protected
+  void resetServiceStateAfterClear() {
+    clearLoadedTitles(clearGenreCache: true);
+    UpdateManager().removeLastUpdate(listNameVal);
     notifyListeners();
   }
 
   void clearListSync() {
-    repository.clearListSync(_listName);
-    _resetServiceStateAfterClear();
+    repository.clearListSync(listNameVal);
+    resetServiceStateAfterClear();
   }
 
-  Future<void> _clearLocalList() async {
-    await repository.clearList(_listName);
-    _resetServiceStateAfterClear();
+  @protected
+  Future<void> clearLocalList() async {
+    await repository.clearList(listNameVal);
+    resetServiceStateAfterClear();
   }
 
   Future<void> clearList() async {
-    await _clearLocalList();
+    await clearLocalList();
   }
 
   bool get listIsEmpty {
@@ -104,24 +123,25 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   int get listTitleCount {
-    return repository.countTitlesSync(_listName);
+    return repository.countTitlesSync(listNameVal);
   }
 
   bool contains(TmdbTitle title) {
     return repository.getTitleByTmdbId(
-            _listName, title.tmdbId, title.mediaType) !=
+            listNameVal, title.tmdbId, title.mediaType) !=
         null;
   }
 
-  void _clearLoadedTitles({bool clearGenreCache = false}) {
+  @protected
+  void clearLoadedTitles({bool clearGenreCache = false}) {
     if (clearGenreCache) {
-      _listGenres.clear();
+      listGenresVal.clear();
     }
-    _loadedTitles.clear();
+    loadedTitlesVal.clear();
     selectedTitleCount.value = 0;
-    _anyFilterApplied = false;
-    _hasMore = true;
-    _page = 0;
+    anyFilterApplied = false;
+    hasMoreVal = true;
+    pageVal = 0;
   }
 
   Future<void> retrieveList(
@@ -130,7 +150,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     required Future<List> Function() retrieveTvshows,
     bool forceUpdate = false,
   }) async {
-    bool isUpToDate = UpdateManager().isUpToDate(_listName, cacheTimeout);
+    bool isUpToDate = UpdateManager().isUpToDate(listNameVal, cacheTimeout);
 
     if (accountId.isEmpty || (listIsNotEmpty && isUpToDate && !forceUpdate)) {
       return;
@@ -140,16 +160,16 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
     try {
       if (listIsEmpty) {
-        await _retrieveFromServer(accountId, retrieveMovies, retrieveTvshows);
+        await retrieveFromServer(accountId, retrieveMovies, retrieveTvshows);
       } else {
-        await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
+        await syncWithServer(accountId, retrieveMovies, retrieveTvshows);
       }
 
-      await _updateListGenres();
+      await updateListGenres();
 
-      _setLastUpdate();
+      setLastUpdate();
     } catch (error) {
-      SnackMessage.showSnackBar('List $_listName ERROR: $error');
+      SnackMessage.showSnackBar('List $listNameVal ERROR: $error');
     } finally {
       isLoading.value = false;
     }
@@ -177,14 +197,14 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     while (movieIdx < movies.length || tvIdx < tv.length) {
       if (movieIdx < movies.length) {
         var element = movies[movieIdx++];
-        element[TmdbTitleFields.listName] = _listName;
+        element[TmdbTitleFields.listName] = listNameVal;
         element[TmdbTitleFields.mediaType] = ApiConstants.movie;
         element[TmdbTitleFields.addedOrder] = globalIdx++;
         serverList.add(TmdbTitle.fromMap(title: element));
       }
       if (tvIdx < tv.length) {
         var element = tv[tvIdx++];
-        element[TmdbTitleFields.listName] = _listName;
+        element[TmdbTitleFields.listName] = listNameVal;
         element[TmdbTitleFields.mediaType] = ApiConstants.tv;
         element[TmdbTitleFields.addedOrder] = globalIdx++;
         serverList.add(TmdbTitle.fromMap(title: element));
@@ -194,12 +214,13 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return serverList;
   }
 
-  Future<void> _retrieveFromServer(
+  @protected
+  Future<void> retrieveFromServer(
     String accountId,
     Future<List> Function() retrieveMovies,
     Future<List> Function() retrieveTvshows,
   ) async {
-    await _clearLocalList();
+    await clearLocalList();
 
     List<TmdbTitle> titles =
         await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
@@ -214,15 +235,16 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       await repository.saveTitles(updated);
 
       selectedTitleCount.value =
-          await repository.countTitlesFiltered(listName: _listName);
+          await repository.countTitlesFiltered(listName: listNameVal);
 
       await Future.delayed(Duration.zero);
     }
 
-    await _filterTitles();
+    await filterTitles();
   }
 
-  Future<void> _syncWithServer(
+  @protected
+  Future<void> syncWithServer(
     String accountId,
     Future<List> Function() retrieveMovies,
     Future<List> Function() retrieveTvshows,
@@ -231,7 +253,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
     final serverIds = serverList.map((t) => t.tmdbId).toSet();
 
-    final localIds = await repository.getAllTmdbIds(_listName);
+    final localIds = await repository.getAllTmdbIds(listNameVal);
     final localIdSet = localIds.toSet();
 
     final idsToAdd = serverIds.difference(localIdSet);
@@ -240,7 +262,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     final idsToRemove = localIdSet.difference(serverIds);
 
     if (titlesToAdd.isNotEmpty) {
-      int currentMax = repository.getMaxAddedOrderSync(_listName);
+      int currentMax = repository.getMaxAddedOrderSync(listNameVal);
       for (var title in titlesToAdd) {
         title.addedOrder = ++currentMax;
       }
@@ -248,16 +270,17 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
 
     if (idsToRemove.isNotEmpty) {
-      await repository.deleteTitles(_listName, idsToRemove.toList());
+      await repository.deleteTitles(listNameVal, idsToRemove.toList());
     }
 
     if (titlesToAdd.isNotEmpty || idsToRemove.isNotEmpty) {
-      await _updateListGenres();
-      await _filterTitles();
+      await updateListGenres();
+      await filterTitles();
     }
   }
 
-  Future<void> _updateLocalTitle(TmdbTitle title) async {
+  @protected
+  Future<void> updateLocalTitle(TmdbTitle title) async {
     if (title.listName.isEmpty) {
       return;
     }
@@ -265,38 +288,40 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     await repository.saveTitle(title);
   }
 
-  Future<void> _deleteLocalTitle(TmdbTitle title) async {
-    await repository.deleteTitle(_listName, title.tmdbId);
+  @protected
+  Future<void> deleteLocalTitle(TmdbTitle title) async {
+    await repository.deleteTitle(listNameVal, title.tmdbId);
   }
 
   TmdbTitle? getItem(int position) {
-    if (position < 0 || position >= _loadedTitles.length) {
+    if (position < 0 || position >= loadedTitlesVal.length) {
       return null;
     }
     try {
-      return _loadedTitles[position];
+      return loadedTitlesVal[position];
     } catch (e) {
       debugPrint('Error getting item at position $position: $e');
       return null;
     }
   }
 
-  Future<void> _filterTitles() async {
-    while (_isDbLoading) {
+  @protected
+  Future<void> filterTitles() async {
+    while (isDbLoading) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
 
-    _clearLoadedTitles(clearGenreCache: false);
+    clearLoadedTitles(clearGenreCache: false);
 
-    _anyFilterApplied = true;
+    anyFilterApplied = true;
 
     selectedTitleCount.value = await repository.countTitlesFiltered(
-      listName: _listName,
-      filterText: _filterText,
-      filterMediaType: _filterMediaType,
-      filterGenres: _filterGenres,
-      filterByProviders: _filterByProviders,
-      filterProvidersIds: _filterProvidersIds,
+      listName: listNameVal,
+      filterText: filterText,
+      filterMediaType: filterMediaType,
+      filterGenres: filterGenres,
+      filterByProviders: filterByProviders,
+      filterProvidersIds: filterProvidersIds,
     );
     await loadNextPage();
   }
@@ -309,38 +334,39 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       List<int> providerListIds = const [],
       String sort = SortOption.alphabetically,
       bool ascending = true}) async {
-    _filterText = text;
-    _filterMediaType = type;
-    _filterGenres = TmdbGenreService().getIdsFromNames(genres);
-    _filterByProviders = filterByProviders;
-    _filterProvidersIds = providerListIds;
-    _selectedSort = sort;
-    _isSortAsc = _computeSortDirection(sort, ascending);
-    await _filterTitles();
+    filterText = text;
+    filterMediaType = type;
+    filterGenres = TmdbGenreService().getIdsFromNames(genres);
+    filterByProviders = filterByProviders;
+    filterProvidersIds = providerListIds;
+    selectedSort = sort;
+    isSortAsc = computeSortDirection(sort, ascending);
+    await filterTitles();
   }
 
   void setTextFilter(String filter) {
-    _filterText = filter;
-    _filterTitles();
+    filterText = filter;
+    filterTitles();
   }
 
   void setGenresFilter(List<String> genres) {
-    _filterGenres = TmdbGenreService().getIdsFromNames(genres);
-    _filterTitles();
+    filterGenres = TmdbGenreService().getIdsFromNames(genres);
+    filterTitles();
   }
 
   void setProvidersFilter(bool filterByProviders, List<int> providerIds) {
-    _filterByProviders = filterByProviders;
-    _filterProvidersIds = providerIds;
-    _filterTitles();
+    this.filterByProviders = filterByProviders;
+    filterProvidersIds = providerIds;
+    filterTitles();
   }
 
   void setTypeFilter(String type) {
-    _filterMediaType = type;
-    _filterTitles();
+    filterMediaType = type;
+    filterTitles();
   }
 
-  bool _computeSortDirection(String sort, bool ascending) {
+  @protected
+  bool computeSortDirection(String sort, bool ascending) {
     switch (sort) {
       case SortOption.alphabetically:
         return ascending;
@@ -357,9 +383,9 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   void setSort(String sort, bool ascending) {
-    _selectedSort = sort;
-    _isSortAsc = _computeSortDirection(sort, ascending);
-    _filterTitles();
+    selectedSort = sort;
+    isSortAsc = computeSortDirection(sort, ascending);
+    filterTitles();
   }
 
   Future<void> updateTitle(
@@ -375,14 +401,15 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     final result = await updateTitleToServer(accountId, sessionId);
     if (result.statusCode == 200 || result.statusCode == 201) {
       if (add) {
-        await _updateLocalTitle(title);
-        await _filterTitles();
+        await updateLocalTitle(title);
+        await filterTitles();
       } else {
-        await _deleteLocalTitle(title);
-        _loadedTitles.removeWhere((element) => element.tmdbId == title.tmdbId);
+        await deleteLocalTitle(title);
+        loadedTitlesVal
+            .removeWhere((element) => element.tmdbId == title.tmdbId);
       }
-      _setLastUpdate();
-      await _updateListGenres();
+      setLastUpdate();
+      await updateListGenres();
 
       notifyListeners();
     } else {
@@ -411,63 +438,64 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return titles;
   }
 
-  Future<void> _updateListGenres() async {
-    _listGenres.clear();
-    final genreSets = await repository.getAllGenreIds(_listName);
+  @protected
+  Future<void> updateListGenres() async {
+    listGenresVal.clear();
+    final genreSets = await repository.getAllGenreIds(listNameVal);
 
     final uniqueGenres = genreSets.expand((ids) => ids).toSet().toList();
-    _listGenres = TmdbGenreService().getNamesFromIds(uniqueGenres);
-    _listGenres.sort();
-    listGenres.value = [..._listGenres];
+    listGenresVal = TmdbGenreService().getNamesFromIds(uniqueGenres);
+    listGenresVal.sort();
+    listGenres.value = [...listGenresVal];
   }
 
   TmdbTitle? getTitleByTmdbId(int tmdbId, String mediaType) {
-    final memoryTitle = _loadedTitles.firstWhereOrNull(
+    final memoryTitle = loadedTitlesVal.firstWhereOrNull(
         (t) => t.tmdbId == tmdbId && t.mediaType == mediaType);
     if (memoryTitle != null) return memoryTitle;
 
-    return repository.getTitleByTmdbId(_listName, tmdbId, mediaType);
+    return repository.getTitleByTmdbId(listNameVal, tmdbId, mediaType);
   }
 
   Future<void> loadNextPage() async {
-    if ((_isDbLoading) || !_hasMore) return;
+    if ((isDbLoading) || !hasMoreVal) return;
 
-    _isDbLoading = true;
+    isDbLoading = true;
 
     try {
-      if (_anyFilterApplied == false) {
-        _isDbLoading = false;
-        return _filterTitles();
+      if (anyFilterApplied == false) {
+        isDbLoading = false;
+        return filterTitles();
       }
-      final currentRequestId = ++_filterRequestId;
+      final currentRequestId = ++filterRequestId;
 
       final titles = await repository.getTitles(
-        listName: _listName,
-        filterText: _filterText,
-        filterMediaType: _filterMediaType,
-        filterGenres: _filterGenres,
-        filterByProviders: _filterByProviders,
-        filterProvidersIds: _filterProvidersIds,
-        sortOption: _selectedSort,
-        sortAscending: _isSortAsc,
-        offset: _page * _pageSize,
-        limit: _pageSize,
+        listName: listNameVal,
+        filterText: filterText,
+        filterMediaType: filterMediaType,
+        filterGenres: filterGenres,
+        filterByProviders: filterByProviders,
+        filterProvidersIds: filterProvidersIds,
+        sortOption: selectedSort,
+        sortAscending: isSortAsc,
+        offset: pageVal * pageSizeVal,
+        limit: pageSizeVal,
       );
 
-      if (currentRequestId != _filterRequestId) {
-        _isDbLoading = false;
+      if (currentRequestId != filterRequestId) {
+        isDbLoading = false;
         return;
       }
 
-      _loadedTitles.addAll(titles);
-      _page++;
-      if (titles.length < _pageSize && !isLoading.value) {
-        _hasMore = false;
+      loadedTitlesVal.addAll(titles);
+      pageVal++;
+      if (titles.length < pageSizeVal && !isLoading.value) {
+        hasMoreVal = false;
       }
     } finally {
-      _isDbLoading = false;
-      if (_listGenres.isEmpty) {
-        await _updateListGenres();
+      isDbLoading = false;
+      if (listGenresVal.isEmpty) {
+        await updateListGenres();
       }
       notifyListeners();
     }

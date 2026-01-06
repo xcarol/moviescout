@@ -21,7 +21,6 @@ class TitleListController with ChangeNotifier {
   List<String> _titleTypes = [];
   List<String> _titleSorts = [];
 
-  // Preference Keys
   late final String _showFiltersPreferencesName;
   late final String _textFilterPreferencesName;
   late final String _selectedGenresPreferencesName;
@@ -37,7 +36,6 @@ class TitleListController with ChangeNotifier {
     listService.addListener(_onListServiceChanged);
   }
 
-  // Getters
   bool get isSortAsc => _isSortAsc;
   bool get showFilters => _showFilters;
   String get selectedType => _selectedType;
@@ -161,6 +159,7 @@ class TitleListController with ChangeNotifier {
   void setTextFilter(String value) {
     PreferencesService().prefs.setString(_textFilterPreferencesName, value);
     listService.setTextFilter(value);
+    notifyListeners();
   }
 
   void toggleFilters() {
@@ -178,7 +177,6 @@ class TitleListController with ChangeNotifier {
     notifyListeners();
   }
 
-  // Private Methods
   void _initPreferencesNames() {
     _textFilterPreferencesName = '${listService.listName}_TextFilter';
     _showFiltersPreferencesName = '${listService.listName}_ShowFilters';

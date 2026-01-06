@@ -108,7 +108,7 @@ class _DiscoverListState extends State<DiscoverList> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(AppLocalizations.of(context)!.emptyDiscover,
+          Text(AppLocalizations.of(context)!.emptyList,
               textAlign: TextAlign.center)
         ],
       ),

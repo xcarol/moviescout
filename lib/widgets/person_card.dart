@@ -140,7 +140,7 @@ class PersonCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 5),
-        ...roles.map((role) => Text(role, maxLines: 2)).toList(),
+        ...roles.map((role) => Text(role, maxLines: 2)),
       ],
     );
   }
