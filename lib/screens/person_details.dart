@@ -14,6 +14,7 @@ import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/title_chip.dart';
+import 'package:moviescout/screens/person_titles.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -65,7 +66,7 @@ class _PersonDetailsState extends State<PersonDetails> {
         Provider.of<TmdbRateslistService>(context, listen: false);
     final userRatedTitles = person.combinedCredits.cast
         .where((title) =>
-            tmdbRateslistService.getRating(title.id, title.mediaType) != 0)
+            tmdbRateslistService.getRating(title.tmdbId, title.mediaType) != 0)
         .toList();
 
     return Column(
@@ -82,6 +83,8 @@ class _PersonDetailsState extends State<PersonDetails> {
         const Divider(),
         const SizedBox(height: 10),
         _credits(person),
+        const SizedBox(height: 10),
+        _crewCredits(person),
         const SizedBox(height: 30),
         _ratedCredits(person, userRatedTitles),
       ],
@@ -348,9 +351,25 @@ class _PersonDetailsState extends State<PersonDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          AppLocalizations.of(context)!.cast,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.cast,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PersonTitles(person: person),
+                  ),
+                );
+              },
+              child: Text(AppLocalizations.of(context)!.seeThemAll),
+            ),
+          ],
         ),
         const SizedBox(height: 10),
         SingleChildScrollView(
@@ -362,7 +381,7 @@ class _PersonDetailsState extends State<PersonDetails> {
                   (titleRecommended) => FutureBuilder(
                     future: TmdbTitleService().updateTitleDetails(
                       TmdbTitle.fromMap(title: {
-                        TmdbTitleFields.id: titleRecommended.id,
+                        TmdbTitleFields.id: titleRecommended.tmdbId,
                         TmdbTitleFields.mediaType: titleRecommended.mediaType
                       }),
                     ),
@@ -386,7 +405,69 @@ class _PersonDetailsState extends State<PersonDetails> {
     );
   }
 
-  Widget _ratedCredits(TmdbPerson person, List<Credit> userRatedTitles) {
+  Widget _crewCredits(TmdbPerson person) {
+    if (person.combinedCredits.crew.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.crew,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PersonTitles(person: person),
+                  ),
+                );
+              },
+              child: Text(AppLocalizations.of(context)!.seeThemAll),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: person.combinedCredits.crew
+                .take(10)
+                .map(
+                  (titleRecommended) => FutureBuilder(
+                    future: TmdbTitleService().updateTitleDetails(
+                      TmdbTitle.fromMap(title: {
+                        TmdbTitleFields.id: titleRecommended.tmdbId,
+                        TmdbTitleFields.mediaType: titleRecommended.mediaType
+                      }),
+                    ),
+                    builder: (context, snapshot) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: snapshot.connectionState != ConnectionState.done
+                            ? Center(child: CircularProgressIndicator())
+                            : _titleChip(
+                                context,
+                                snapshot.data as TmdbTitle,
+                              ),
+                      );
+                    },
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _ratedCredits(TmdbPerson person, List<TmdbTitle> userRatedTitles) {
     if (userRatedTitles.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -407,7 +488,7 @@ class _PersonDetailsState extends State<PersonDetails> {
                   (titleRecommended) => FutureBuilder(
                     future: TmdbTitleService().updateTitleDetails(
                       TmdbTitle.fromMap(title: {
-                        TmdbTitleFields.id: titleRecommended.id,
+                        TmdbTitleFields.id: titleRecommended.tmdbId,
                         TmdbTitleFields.mediaType: titleRecommended.mediaType
                       }),
                     ),
