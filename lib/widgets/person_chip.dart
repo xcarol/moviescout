@@ -8,11 +8,11 @@ import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
 
 // ignore: constant_identifier_names
-const double CARD_HEIGHT = 400.0;
+const double CARD_HEIGHT = 420.0;
 // ignore: constant_identifier_names
 const double CARD_WIDTH = 200.0;
 
-class PersonChip extends Card {
+class PersonChip extends StatelessWidget {
   final TmdbPerson _person;
   final TmdbListService _tmdbListService;
 
@@ -43,7 +43,7 @@ class PersonChip extends Card {
             );
           },
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               SizedBox(
                 child: ClipRRect(
@@ -54,10 +54,8 @@ class PersonChip extends Card {
                   child: _poster(_person.posterPath),
                 ),
               ),
-              const SizedBox(width: 10),
-              Row(
-                children: [_details(context, _person)],
-              ),
+              const SizedBox(height: 10),
+              _details(context, _person),
             ],
           ),
         ),
@@ -111,22 +109,22 @@ class PersonChip extends Card {
   }
 
   Widget _details(BuildContext context, TmdbPerson tmdbPerson) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            _personName(tmdbPerson.name, maxLines: 2),
-            const SizedBox(height: 5),
-            if (tmdbPerson.character.isNotEmpty) const SizedBox(height: 5),
-            if (tmdbPerson.character.isNotEmpty)
-              Text(tmdbPerson.character, maxLines: 2),
-            if (tmdbPerson.job.isNotEmpty) const SizedBox(height: 5),
-            if (tmdbPerson.job.isNotEmpty) Text(tmdbPerson.job, maxLines: 2),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          _personName(tmdbPerson.name, maxLines: 2),
+          const SizedBox(height: 5),
+          if (tmdbPerson.character.isNotEmpty) const SizedBox(height: 5),
+          if (tmdbPerson.character.isNotEmpty)
+            Text(tmdbPerson.character,
+                overflow: TextOverflow.ellipsis, maxLines: 2),
+          if (tmdbPerson.job.isNotEmpty) const SizedBox(height: 5),
+          if (tmdbPerson.job.isNotEmpty)
+            Text(tmdbPerson.job, overflow: TextOverflow.ellipsis, maxLines: 2),
+        ],
       ),
     );
   }
