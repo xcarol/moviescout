@@ -48,31 +48,22 @@ class PersonAttributes {
   static const crew = 'crew';
 }
 
-class Credit {
-  final int id;
-  final String mediaType;
-
-  Credit({required this.id, required this.mediaType});
-
-  factory Credit.fromMap(Map<String, dynamic> map) {
-    return Credit(
-      id: map[PersonAttributes.id] ?? 0,
-      mediaType: map[TmdbTitleFields.mediaType] ?? '',
-    );
-  }
-}
-
 class CombinedCredits {
-  final List<Credit> cast;
+  final List<TmdbTitle> cast;
+  final List<TmdbTitle> crew;
 
-  CombinedCredits({required this.cast});
+  CombinedCredits({required this.cast, required this.crew});
 
   factory CombinedCredits.fromMap(Map<String, dynamic> map) {
     final castList = (map[PersonAttributes.cast] as List?)
-            ?.map((c) => Credit.fromMap(c))
+            ?.map((c) => TmdbTitle.fromMap(title: c))
             .toList() ??
         [];
-    return CombinedCredits(cast: castList);
+    final crewList = (map[PersonAttributes.crew] as List?)
+            ?.map((c) => TmdbTitle.fromMap(title: c))
+            .toList() ??
+        [];
+    return CombinedCredits(cast: castList, crew: crewList);
   }
 }
 
