@@ -405,7 +405,6 @@ class TmdbTitle {
     List<TmdbPerson> castPeople = [];
     for (dynamic person in creditsMap[TmdbTitleFields.cast]) {
       castPeople.add(TmdbPerson(
-        tmdbJson: jsonEncode(person),
         tmdbId: person[PersonAttributes.id],
         name: person[PersonAttributes.name],
         lastUpdated: '1970-01-01',
@@ -438,7 +437,6 @@ class TmdbTitle {
     List<TmdbPerson> crewPeople = [];
     for (dynamic person in creditsMap[PersonAttributes.crew]) {
       crewPeople.add(TmdbPerson(
-        tmdbJson: jsonEncode(person),
         tmdbId: person[PersonAttributes.id],
         name: person[PersonAttributes.name],
         lastUpdated: '1970-01-01',

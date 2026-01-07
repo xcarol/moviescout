@@ -41,10 +41,16 @@ class CombinedCredits {
         [];
     return CombinedCredits(cast: castList, crew: crewList);
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      PersonAttributes.cast: cast.map((x) => x.toMap()).toList(),
+      PersonAttributes.crew: crew.map((x) => x.toMap()).toList(),
+    };
+  }
 }
 
 class TmdbPerson {
-  late String tmdbJson;
   late int tmdbId;
   late String name;
   late String lastUpdated;
@@ -63,7 +69,6 @@ class TmdbPerson {
   late CombinedCredits combinedCredits;
 
   TmdbPerson({
-    required this.tmdbJson,
     required this.tmdbId,
     required this.name,
     required this.lastUpdated,
@@ -84,7 +89,6 @@ class TmdbPerson {
 
   factory TmdbPerson.fromMap({required Map<dynamic, dynamic> person}) {
     return TmdbPerson(
-        tmdbJson: jsonEncode(person),
         tmdbId: person[PersonAttributes.id] ?? 0,
         name: person[PersonAttributes.name],
         lastUpdated: person[PersonAttributes.last_updated] ?? '1970-01-01',
@@ -110,7 +114,24 @@ class TmdbPerson {
         : '';
   }
 
-  Map get map {
-    return jsonDecode(tmdbJson);
+  Map<String,dynamic> toMap() {
+    return {
+      PersonAttributes.id: tmdbId,
+      PersonAttributes.name: name,
+      PersonAttributes.last_updated: lastUpdated,
+      PersonAttributes.known_for_department: knownForDepartment,
+      PersonAttributes.gender: gender,
+      PersonAttributes.original_name: originalName,
+      PersonAttributes.profile_path: profilePath,
+      PersonAttributes.character: character,
+      PersonAttributes.job: job,
+      PersonAttributes.biography: biography,
+      PersonAttributes.birthday: birthday,
+      PersonAttributes.deathday: deathday,
+      PersonAttributes.imdb_id: imdbId,
+      PersonAttributes.place_of_birth: placeOfBirth,
+      PersonAttributes.homepage: homepage,
+      PersonAttributes.combined_credits: combinedCredits.toMap(),
+    };
   }
 }
