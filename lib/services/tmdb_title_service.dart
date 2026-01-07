@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -67,10 +65,33 @@ class TmdbTitleService extends TmdbBaseService {
       return title;
     }
 
-    final details = body(result);
-    title.mergeFromMap(details);
+    final Map<String, dynamic> titleMap = title.toMap();
+    final Map<String, dynamic> details = body(result);
 
-    if (title.overview.isEmpty) {
+    titleMap.addAll(details);
+
+    final providersMap =
+        details['watch/providers']?['results']?[getCountryCode()] ?? {};
+    titleMap[TmdbTitleFields.providers] = providersMap;
+
+    if (details['recommendations'] != null &&
+        details['recommendations']['results'] != null) {
+      titleMap[TmdbTitleFields.recommendations] =
+          details['recommendations']['results'];
+    }
+
+    if (details['credits'] != null) {
+      titleMap[TmdbTitleFields.credits] = details['credits'];
+    }
+
+    if (mediaType == ApiConstants.tv) {
+      final externalIds = details['external_ids'];
+      if (externalIds != null && externalIds['imdb_id'] != null) {
+        titleMap[TmdbTitleFields.imdbId] = externalIds['imdb_id'];
+      }
+    }
+
+    if ((titleMap[TmdbTitleFields.overview] ?? '').isEmpty) {
       final fallbackResult = await _retrieveTitleDetailsByLocale(
         title.tmdbId,
         mediaType,
@@ -78,11 +99,11 @@ class TmdbTitleService extends TmdbBaseService {
       );
 
       if (fallbackResult.statusCode == 200) {
-        title.mergeFromMap(body(fallbackResult));
+        _applyLocaleFallback(titleMap, body(fallbackResult), mediaType);
       }
     }
 
-    if (title.overview.isEmpty) {
+    if ((titleMap[TmdbTitleFields.overview] ?? '').isEmpty) {
       final enResult = await _retrieveTitleDetailsByLocale(
         title.tmdbId,
         mediaType,
@@ -90,31 +111,40 @@ class TmdbTitleService extends TmdbBaseService {
       );
 
       if (enResult.statusCode == 200) {
-        title.mergeFromMap(body(enResult));
+        _applyLocaleFallback(titleMap, body(enResult), mediaType);
       }
     }
 
-    if (mediaType == ApiConstants.tv) {
-      final externalIds = details['external_ids'];
-      if (externalIds != null && externalIds['imdb_id'] != null) {
-        title.imdbId = externalIds['imdb_id'];
+    titleMap[TmdbTitleFields.mediaType] = mediaType;
+    titleMap[TmdbTitleFields.lastUpdated] = DateTime.now().toIso8601String();
+
+    return TmdbTitle.fromMap(title: titleMap);
+  }
+
+  void _applyLocaleFallback(Map<String, dynamic> titleMap,
+      Map<String, dynamic> fallback, String mediaType) {
+    final String fallbackOverview = fallback[TmdbTitleFields.overview] ?? '';
+
+    if (fallbackOverview.isNotEmpty) {
+      titleMap[TmdbTitleFields.overview] = fallbackOverview;
+
+      if (mediaType == ApiConstants.movie) {
+        if (fallback[TmdbTitleFields.title] != null) {
+          titleMap[TmdbTitleFields.title] = fallback[TmdbTitleFields.title];
+        }
+        if (fallback[TmdbTitleFields.originalTitle] != null) {
+          titleMap[TmdbTitleFields.originalTitle] =
+              fallback[TmdbTitleFields.originalTitle];
+        }
+      } else {
+        if (fallback[TmdbTitleFields.name] != null) {
+          titleMap[TmdbTitleFields.name] = fallback[TmdbTitleFields.name];
+        }
+        if (fallback[TmdbTitleFields.originalName] != null) {
+          titleMap[TmdbTitleFields.originalName] =
+              fallback[TmdbTitleFields.originalName];
+        }
       }
     }
-
-    final providersMap =
-        details['watch/providers']?['results']?[getCountryCode()] ?? {};
-    TmdbTitle.updateProviderIds(title, providersMap);
-    title.providersJson = jsonEncode(providersMap);
-
-    if (details['recommendations'] != null &&
-        details['recommendations']['results'] != null) {
-      title.recommendationsJson =
-          jsonEncode(details['recommendations']['results']);
-    }
-
-    title.mediaType = mediaType;
-    title.lastUpdated = DateTime.now().toIso8601String();
-
-    return title;
   }
 }
