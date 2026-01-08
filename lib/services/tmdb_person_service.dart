@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_person.dart';
@@ -58,7 +56,7 @@ class TmdbPersonService extends TmdbBaseService {
       return person;
     }
 
-    final Map personMap = person.map;
+    final Map personMap = person.toMap();
 
     personMap.addAll(body(result));
 
@@ -90,7 +88,6 @@ class TmdbPersonService extends TmdbBaseService {
       }
     }
 
-    personMap['tmdbJson'] = jsonEncode(personMap);
     personMap['last_updated'] = DateTime.now().toIso8601String();
 
     return TmdbPerson.fromMap(person: personMap);

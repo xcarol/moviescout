@@ -37,7 +37,7 @@ class PersonChip extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => PersonDetails(
-                        person: TmdbPerson.fromMap(person: _person.map),
+                        person: TmdbPerson.fromMap(person: _person.toMap()),
                         tmdbListService: _tmdbListService,
                       )),
             );

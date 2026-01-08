@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -67,10 +65,25 @@ class TmdbTitleService extends TmdbBaseService {
       return title;
     }
 
-    final details = body(result);
-    title.mergeFromMap(details);
+    final Map<String, dynamic> details = body(result);
 
-    if (title.overview.isEmpty) {
+    details[TmdbTitleFields.providers] =
+        details['watch/providers']?['results']?[getCountryCode()] ?? {};
+
+    if (details['recommendations'] != null &&
+        details['recommendations']['results'] != null) {
+      details[TmdbTitleFields.recommendations] =
+          details['recommendations']['results'];
+    }
+
+    if (mediaType == ApiConstants.tv) {
+      final externalIds = details['external_ids'];
+      if (externalIds != null && externalIds['imdb_id'] != null) {
+        details[TmdbTitleFields.imdbId] = externalIds['imdb_id'];
+      }
+    }
+
+    if ((details[TmdbTitleFields.overview] ?? '').isEmpty) {
       final fallbackResult = await _retrieveTitleDetailsByLocale(
         title.tmdbId,
         mediaType,
@@ -78,11 +91,11 @@ class TmdbTitleService extends TmdbBaseService {
       );
 
       if (fallbackResult.statusCode == 200) {
-        title.mergeFromMap(body(fallbackResult));
+        _mergeFallback(details, body(fallbackResult), mediaType);
       }
     }
 
-    if (title.overview.isEmpty) {
+    if ((details[TmdbTitleFields.overview] ?? '').isEmpty) {
       final enResult = await _retrieveTitleDetailsByLocale(
         title.tmdbId,
         mediaType,
@@ -90,31 +103,42 @@ class TmdbTitleService extends TmdbBaseService {
       );
 
       if (enResult.statusCode == 200) {
-        title.mergeFromMap(body(enResult));
+        _mergeFallback(details, body(enResult), mediaType);
       }
     }
 
-    if (mediaType == ApiConstants.tv) {
-      final externalIds = details['external_ids'];
-      if (externalIds != null && externalIds['imdb_id'] != null) {
-        title.imdbId = externalIds['imdb_id'];
-      }
-    }
+    details[TmdbTitleFields.mediaType] = mediaType;
+    details[TmdbTitleFields.lastUpdated] = DateTime.now().toIso8601String();
 
-    final providersMap =
-        details['watch/providers']?['results']?[getCountryCode()] ?? {};
-    TmdbTitle.updateProviderIds(title, providersMap);
-    title.providersJson = jsonEncode(providersMap);
-
-    if (details['recommendations'] != null &&
-        details['recommendations']['results'] != null) {
-      title.recommendationsJson =
-          jsonEncode(details['recommendations']['results']);
-    }
-
-    title.mediaType = mediaType;
-    title.lastUpdated = DateTime.now().toIso8601String();
+    title.fillFromMap(details);
 
     return title;
+  }
+
+  void _mergeFallback(Map<String, dynamic> target,
+      Map<String, dynamic> fallback, String mediaType) {
+    final String fallbackOverview = fallback[TmdbTitleFields.overview] ?? '';
+
+    if (fallbackOverview.isNotEmpty) {
+      target[TmdbTitleFields.overview] = fallbackOverview;
+
+      if (mediaType == ApiConstants.movie) {
+        if (fallback[TmdbTitleFields.title] != null) {
+          target[TmdbTitleFields.title] = fallback[TmdbTitleFields.title];
+        }
+        if (fallback[TmdbTitleFields.originalTitle] != null) {
+          target[TmdbTitleFields.originalTitle] =
+              fallback[TmdbTitleFields.originalTitle];
+        }
+      } else {
+        if (fallback[TmdbTitleFields.name] != null) {
+          target[TmdbTitleFields.name] = fallback[TmdbTitleFields.name];
+        }
+        if (fallback[TmdbTitleFields.originalName] != null) {
+          target[TmdbTitleFields.originalName] =
+              fallback[TmdbTitleFields.originalName];
+        }
+      }
+    }
   }
 }

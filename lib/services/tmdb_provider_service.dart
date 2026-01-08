@@ -110,7 +110,7 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
         accessToken: _accessToken);
 
     if (response.statusCode != 200) {
-      // List may not exist yet
+      // Reset list ID to retry on next setup.
       PreferencesService().prefs.setString('providerListId', '');
       return;
     }

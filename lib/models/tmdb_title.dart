@@ -210,93 +210,15 @@ class TmdbTitle {
   }
 
   factory TmdbTitle.fromMap({required Map<dynamic, dynamic> title}) {
-    final mediaType = title[TmdbTitleFields.mediaType] ?? ApiConstants.movie;
-
-    final releaseDate = title[TmdbTitleFields.releaseDate] ?? '';
-    final firstAirDate = title[TmdbTitleFields.firstAirDate] ?? '';
-    final runtime = title[TmdbTitleFields.runtime] ?? 0;
-    final numberOfEpisodes = title[TmdbTitleFields.numberOfEpisodes] ?? 0;
-
-    final effectiveReleaseDate =
-        mediaType == ApiConstants.movie ? releaseDate : firstAirDate;
-    final effectiveRuntime =
-        mediaType == ApiConstants.movie ? runtime : numberOfEpisodes;
-
-    final titleObj = TmdbTitle(
+    return TmdbTitle(
       id: Isar.autoIncrement,
       tmdbId: title[TmdbTitleFields.id] ?? 0,
       listName: title[TmdbTitleFields.listName] ?? '',
-      name: title[TmdbTitleFields.name] ?? title[TmdbTitleFields.title] ?? '',
-      originalName: title[TmdbTitleFields.originalName] ??
-          title[TmdbTitleFields.originalTitle] ??
-          '',
-      originalLanguage: title[TmdbTitleFields.originalLanguage] ?? '',
-      overview: title[TmdbTitleFields.overview] ?? '',
-      tagline: title[TmdbTitleFields.tagline] ?? '',
-      status: title[TmdbTitleFields.status] ?? '',
-      mediaType: mediaType,
-      imdbId: title[TmdbTitleFields.imdbId] ?? '',
-      posterPathSuffix: title[TmdbTitleFields.posterPath],
-      backdropPathSuffix: title[TmdbTitleFields.backdropPath],
-      releaseDate: releaseDate,
-      firstAirDate: firstAirDate,
-      lastAirDate: title[TmdbTitleFields.lastAirDate] ?? '',
-      lastUpdated: title[TmdbTitleFields.lastUpdated] ?? '1970-01-01',
-      voteAverage: (title[TmdbTitleFields.voteAverage] ?? 0).toDouble(),
-      voteCount: title[TmdbTitleFields.voteCount] ?? 0,
-      rating: title[TmdbTitleFields.accountRating] is Map
-          ? (title[TmdbTitleFields.accountRating]
-                      [TmdbTitleFields.accountRatingValue] ??
-                  0.0)
-              .toDouble()
-          : 0.0,
-      dateRated: title[TmdbTitleFields.accountRating] is Map &&
-              title[TmdbTitleFields.accountRating]
-                      [TmdbTitleFields.accountRatingDate] !=
-                  null
-          ? DateTime.parse(title[TmdbTitleFields.accountRating]
-              [TmdbTitleFields.accountRatingDate])
-          : DateTime.fromMillisecondsSinceEpoch(0),
-      runtime: runtime,
-      numberOfEpisodes: numberOfEpisodes,
-      numberOfSeasons: title[TmdbTitleFields.numberOfSeasons] ?? 0,
-      popularity: (title[TmdbTitleFields.popularity] ?? 0).toDouble(),
-      budget: title[TmdbTitleFields.budget] ?? 0,
-      revenue: title[TmdbTitleFields.revenue] ?? 0,
-      effectiveRuntime: effectiveRuntime,
-      effectiveReleaseDate: effectiveReleaseDate,
-      addedOrder: title[TmdbTitleFields.addedOrder] ?? 0,
-      genreIds: [],
-      flatrateProviderIds: [],
-      originCountry: title[TmdbTitleFields.originCountry] is List
-          ? List<String>.from(title[TmdbTitleFields.originCountry])
-          : [],
-      creditsJson: title[TmdbTitleFields.credits] != null
-          ? jsonEncode(title[TmdbTitleFields.credits])
-          : null,
-      providersJson: title[TmdbTitleFields.providers] != null
-          ? jsonEncode(title[TmdbTitleFields.providers])
-          : null,
-      seasonsJson: title[TmdbTitleFields.seasons] != null
-          ? jsonEncode(title[TmdbTitleFields.seasons])
-          : null,
-      recommendationsJson: title[TmdbTitleFields.recommendations] != null
-          ? jsonEncode(title[TmdbTitleFields.recommendations])
-          : null,
-      nextEpisodeToAirJson: title[TmdbTitleFields.nextEpisodeToAir] != null
-          ? jsonEncode(title[TmdbTitleFields.nextEpisodeToAir])
-          : null,
-    );
-
-    titleObj.character = title[TmdbTitleFields.character] ?? '';
-    titleObj.job = title[TmdbTitleFields.job] ?? '';
-    titleObj.department = title[TmdbTitleFields.department] ?? '';
-
-    updateGenreIds(titleObj, title[TmdbTitleFields.genres],
-        title[TmdbTitleFields.genreIds]);
-    updateProviderIds(titleObj, title[TmdbTitleFields.providers]);
-
-    return titleObj;
+      name: '',
+      lastUpdated: '1970-01-01',
+      dateRated: DateTime.fromMillisecondsSinceEpoch(0),
+      addedOrder: 0,
+    )..fillFromMap(title);
   }
 
   @override
@@ -306,21 +228,159 @@ class TmdbTitle {
   @override
   int get hashCode => tmdbId.hashCode;
 
-  void copyFrom(TmdbTitle other) {
-    name = other.name;
-    originalName = other.originalName;
-    overview = other.overview;
-    rating = other.rating;
-    voteAverage = other.voteAverage;
-    posterPathSuffix = other.posterPathSuffix;
-    backdropPathSuffix = other.backdropPathSuffix;
-    lastUpdated = other.lastUpdated;
-    genreIds = List<int>.from(other.genreIds);
-    flatrateProviderIds = List<int>.from(other.flatrateProviderIds);
-    creditsJson = other.creditsJson;
-    providersJson = other.providersJson;
-    seasonsJson = other.seasonsJson;
-    recommendationsJson = other.recommendationsJson;
+  void fillFromMap(Map<dynamic, dynamic> title) {
+    if (title[TmdbTitleFields.id] != null) {
+      tmdbId = title[TmdbTitleFields.id];
+    }
+    if (title[TmdbTitleFields.listName] != null) {
+      listName = title[TmdbTitleFields.listName];
+    }
+
+    final mediaTypeVal = title[TmdbTitleFields.mediaType] ?? mediaType;
+    mediaType = mediaTypeVal;
+
+    if (title[TmdbTitleFields.name] != null ||
+        title[TmdbTitleFields.title] != null) {
+      name = title[TmdbTitleFields.name] ?? title[TmdbTitleFields.title] ?? '';
+    }
+
+    if (title[TmdbTitleFields.originalName] != null ||
+        title[TmdbTitleFields.originalTitle] != null) {
+      originalName = title[TmdbTitleFields.originalName] ??
+          title[TmdbTitleFields.originalTitle] ??
+          '';
+    }
+
+    originalLanguage =
+        title[TmdbTitleFields.originalLanguage] ?? originalLanguage;
+    overview = title[TmdbTitleFields.overview] ?? overview;
+    tagline = title[TmdbTitleFields.tagline] ?? tagline;
+    status = title[TmdbTitleFields.status] ?? status;
+    imdbId = title[TmdbTitleFields.imdbId] ?? imdbId;
+
+    if (title.containsKey(TmdbTitleFields.posterPath)) {
+      posterPathSuffix = title[TmdbTitleFields.posterPath];
+    }
+    if (title.containsKey(TmdbTitleFields.backdropPath)) {
+      backdropPathSuffix = title[TmdbTitleFields.backdropPath];
+    }
+
+    releaseDate = title[TmdbTitleFields.releaseDate] ?? releaseDate;
+    firstAirDate = title[TmdbTitleFields.firstAirDate] ?? firstAirDate;
+    lastAirDate = title[TmdbTitleFields.lastAirDate] ?? lastAirDate;
+    lastUpdated = title[TmdbTitleFields.lastUpdated] ?? lastUpdated;
+
+    voteAverage =
+        (title[TmdbTitleFields.voteAverage] ?? voteAverage).toDouble();
+    voteCount = title[TmdbTitleFields.voteCount] ?? voteCount;
+
+    if (title[TmdbTitleFields.accountRating] is Map) {
+      rating = (title[TmdbTitleFields.accountRating]
+                  [TmdbTitleFields.accountRatingValue] ??
+              rating)
+          .toDouble();
+      if (title[TmdbTitleFields.accountRating]
+              [TmdbTitleFields.accountRatingDate] !=
+          null) {
+        dateRated = DateTime.parse(title[TmdbTitleFields.accountRating]
+            [TmdbTitleFields.accountRatingDate]);
+      }
+    }
+
+    runtime = title[TmdbTitleFields.runtime] ?? runtime;
+    numberOfEpisodes =
+        title[TmdbTitleFields.numberOfEpisodes] ?? numberOfEpisodes;
+    numberOfSeasons = title[TmdbTitleFields.numberOfSeasons] ?? numberOfSeasons;
+    popularity = (title[TmdbTitleFields.popularity] ?? popularity).toDouble();
+    budget = title[TmdbTitleFields.budget] ?? budget;
+    revenue = title[TmdbTitleFields.revenue] ?? revenue;
+    addedOrder = title[TmdbTitleFields.addedOrder] ?? addedOrder;
+
+    effectiveReleaseDate =
+        mediaType == ApiConstants.movie ? releaseDate : firstAirDate;
+    effectiveRuntime =
+        mediaType == ApiConstants.movie ? runtime : numberOfEpisodes;
+
+    if (title[TmdbTitleFields.originCountry] is List) {
+      originCountry = List<String>.from(title[TmdbTitleFields.originCountry]);
+    }
+
+    if (title[TmdbTitleFields.credits] != null) {
+      creditsJson = jsonEncode(title[TmdbTitleFields.credits]);
+    }
+    if (title[TmdbTitleFields.providers] != null) {
+      providersJson = jsonEncode(title[TmdbTitleFields.providers]);
+    }
+    if (title[TmdbTitleFields.seasons] != null) {
+      seasonsJson = jsonEncode(title[TmdbTitleFields.seasons]);
+    }
+    if (title[TmdbTitleFields.recommendations] != null) {
+      recommendationsJson = jsonEncode(title[TmdbTitleFields.recommendations]);
+    }
+    if (title[TmdbTitleFields.nextEpisodeToAir] != null) {
+      nextEpisodeToAirJson =
+          jsonEncode(title[TmdbTitleFields.nextEpisodeToAir]);
+    }
+
+    character = title[TmdbTitleFields.character] ?? character;
+    job = title[TmdbTitleFields.job] ?? job;
+    department = title[TmdbTitleFields.department] ?? department;
+
+    updateGenreIds(
+        this, title[TmdbTitleFields.genres], title[TmdbTitleFields.genreIds]);
+    updateProviderIds(this, title[TmdbTitleFields.providers]);
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      TmdbTitleFields.id: tmdbId,
+      TmdbTitleFields.listName: listName,
+      TmdbTitleFields.name: name,
+      TmdbTitleFields.title: name,
+      TmdbTitleFields.originalName: originalName,
+      TmdbTitleFields.originalTitle: originalName,
+      TmdbTitleFields.originalLanguage: originalLanguage,
+      TmdbTitleFields.overview: overview,
+      TmdbTitleFields.tagline: tagline,
+      TmdbTitleFields.status: status,
+      TmdbTitleFields.mediaType: mediaType,
+      TmdbTitleFields.imdbId: imdbId,
+      TmdbTitleFields.posterPath: posterPathSuffix,
+      TmdbTitleFields.backdropPath: backdropPathSuffix,
+      TmdbTitleFields.releaseDate: releaseDate,
+      TmdbTitleFields.firstAirDate: firstAirDate,
+      TmdbTitleFields.lastAirDate: lastAirDate,
+      TmdbTitleFields.lastUpdated: lastUpdated,
+      TmdbTitleFields.voteAverage: voteAverage,
+      TmdbTitleFields.voteCount: voteCount,
+      TmdbTitleFields.accountRating: {
+        TmdbTitleFields.accountRatingValue: rating,
+        TmdbTitleFields.accountRatingDate: dateRated.toIso8601String(),
+      },
+      TmdbTitleFields.runtime: runtime,
+      TmdbTitleFields.numberOfEpisodes: numberOfEpisodes,
+      TmdbTitleFields.numberOfSeasons: numberOfSeasons,
+      TmdbTitleFields.popularity: popularity,
+      TmdbTitleFields.budget: budget,
+      TmdbTitleFields.revenue: revenue,
+      TmdbTitleFields.addedOrder: addedOrder,
+      TmdbTitleFields.genreIds: genreIds,
+      TmdbTitleFields.originCountry: originCountry,
+      TmdbTitleFields.credits:
+          creditsJson != null ? jsonDecode(creditsJson!) : null,
+      TmdbTitleFields.providers:
+          providersJson != null ? jsonDecode(providersJson!) : null,
+      TmdbTitleFields.seasons:
+          seasonsJson != null ? jsonDecode(seasonsJson!) : null,
+      TmdbTitleFields.recommendations:
+          recommendationsJson != null ? jsonDecode(recommendationsJson!) : null,
+      TmdbTitleFields.nextEpisodeToAir: nextEpisodeToAirJson != null
+          ? jsonDecode(nextEpisodeToAirJson!)
+          : null,
+      TmdbTitleFields.character: character,
+      TmdbTitleFields.job: job,
+      TmdbTitleFields.department: department,
+    };
   }
 
   bool get isMovie => name.isEmpty
@@ -381,7 +441,6 @@ class TmdbTitle {
     List<TmdbPerson> castPeople = [];
     for (dynamic person in creditsMap[TmdbTitleFields.cast]) {
       castPeople.add(TmdbPerson(
-        tmdbJson: jsonEncode(person), // legacy TmdbPerson still uses json
         tmdbId: person[PersonAttributes.id],
         name: person[PersonAttributes.name],
         lastUpdated: '1970-01-01',
@@ -414,7 +473,6 @@ class TmdbTitle {
     List<TmdbPerson> crewPeople = [];
     for (dynamic person in creditsMap[PersonAttributes.crew]) {
       crewPeople.add(TmdbPerson(
-        tmdbJson: jsonEncode(person),
         tmdbId: person[PersonAttributes.id],
         name: person[PersonAttributes.name],
         lastUpdated: '1970-01-01',
@@ -463,119 +521,6 @@ class TmdbTitle {
     }
   }
 
-  void mergeFromMap(Map<String, dynamic> data) {
-    if (data[TmdbTitleFields.posterPath] != null) {
-      posterPathSuffix = data[TmdbTitleFields.posterPath];
-    }
-    if (data[TmdbTitleFields.backdropPath] != null) {
-      backdropPathSuffix = data[TmdbTitleFields.backdropPath];
-    }
-
-    if (data[TmdbTitleFields.name] != null) {
-      name = data[TmdbTitleFields.name];
-    } else if (data[TmdbTitleFields.title] != null) {
-      name = data[TmdbTitleFields.title];
-    }
-
-    if (data[TmdbTitleFields.originalName] != null) {
-      originalName = data[TmdbTitleFields.originalName];
-    } else if (data[TmdbTitleFields.originalTitle] != null) {
-      originalName = data[TmdbTitleFields.originalTitle];
-    }
-
-    if (data[TmdbTitleFields.runtime] != null) {
-      runtime = data[TmdbTitleFields.runtime];
-    }
-    if (data[TmdbTitleFields.overview] != null &&
-        (data[TmdbTitleFields.overview] as String).isNotEmpty) {
-      overview = data[TmdbTitleFields.overview];
-    }
-    if (data[TmdbTitleFields.tagline] != null) {
-      tagline = data[TmdbTitleFields.tagline];
-    }
-    if (data[TmdbTitleFields.status] != null) {
-      status = data[TmdbTitleFields.status];
-    }
-    if (data[TmdbTitleFields.imdbId] != null) {
-      imdbId = data[TmdbTitleFields.imdbId];
-    }
-
-    if (data[TmdbTitleFields.releaseDate] != null) {
-      releaseDate = data[TmdbTitleFields.releaseDate];
-    }
-    if (data[TmdbTitleFields.firstAirDate] != null) {
-      firstAirDate = data[TmdbTitleFields.firstAirDate];
-    }
-    if (data[TmdbTitleFields.lastAirDate] != null) {
-      lastAirDate = data[TmdbTitleFields.lastAirDate];
-    }
-
-    if (data[TmdbTitleFields.voteAverage] != null) {
-      voteAverage = (data[TmdbTitleFields.voteAverage] as num).toDouble();
-    }
-    if (data[TmdbTitleFields.voteCount] != null) {
-      voteCount = data[TmdbTitleFields.voteCount];
-    }
-    if (data[TmdbTitleFields.popularity] != null) {
-      popularity = (data[TmdbTitleFields.popularity] as num).toDouble();
-    }
-    if (data[TmdbTitleFields.budget] != null) {
-      budget = data[TmdbTitleFields.budget];
-    }
-    if (data[TmdbTitleFields.revenue] != null) {
-      revenue = data[TmdbTitleFields.revenue];
-    }
-    if (data[TmdbTitleFields.numberOfEpisodes] != null) {
-      numberOfEpisodes = data[TmdbTitleFields.numberOfEpisodes];
-    }
-    if (data[TmdbTitleFields.numberOfSeasons] != null) {
-      numberOfSeasons = data[TmdbTitleFields.numberOfSeasons];
-    }
-
-    if (data[TmdbTitleFields.mediaType] != null) {
-      mediaType = data[TmdbTitleFields.mediaType];
-    }
-    if (data[TmdbTitleFields.originCountry] is List) {
-      originCountry = List<String>.from(data[TmdbTitleFields.originCountry]);
-    }
-
-    if (effectiveReleaseDate.isEmpty) {
-      effectiveReleaseDate =
-          mediaType == ApiConstants.movie ? releaseDate : firstAirDate;
-    }
-    if (effectiveRuntime == 0) {
-      effectiveRuntime =
-          mediaType == ApiConstants.movie ? runtime : numberOfEpisodes;
-    }
-
-    if (data[TmdbTitleFields.credits] != null) {
-      creditsJson = jsonEncode(data[TmdbTitleFields.credits]);
-    }
-
-    if (data['providers'] != null) {
-      providersJson = jsonEncode(data['providers']);
-    } else if (data[TmdbTitleFields.providers] != null) {
-      providersJson = jsonEncode(data[TmdbTitleFields.providers]);
-    }
-
-    if (data[TmdbTitleFields.seasons] != null) {
-      seasonsJson = jsonEncode(data[TmdbTitleFields.seasons]);
-    }
-    if (data[TmdbTitleFields.recommendations] != null) {
-      recommendationsJson = jsonEncode(data[TmdbTitleFields.recommendations]);
-    }
-    if (data[TmdbTitleFields.nextEpisodeToAir] != null) {
-      nextEpisodeToAirJson = jsonEncode(data[TmdbTitleFields.nextEpisodeToAir]);
-    }
-
-    updateGenreIds(
-        this, data[TmdbTitleFields.genres], data[TmdbTitleFields.genreIds]);
-    updateProviderIds(
-        this, data['providers'] ?? data[TmdbTitleFields.providers]);
-
-    lastUpdated = DateTime.now().toIso8601String();
-  }
-
   static void updateGenreIds(
       TmdbTitle title, dynamic genres, dynamic genreIdsList) {
     final ids = <int>[];
@@ -598,57 +543,5 @@ class TmdbTitle {
       final provs = TmdbProviders(providers: providers);
       title.flatrateProviderIds = provs.flatrate.map((p) => p.id).toList();
     }
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      TmdbTitleFields.id: tmdbId,
-      TmdbTitleFields.listName: listName,
-      TmdbTitleFields.name: name,
-      TmdbTitleFields.title: name,
-      TmdbTitleFields.originalName: originalName,
-      TmdbTitleFields.originalTitle: originalName,
-      TmdbTitleFields.originalLanguage: originalLanguage,
-      TmdbTitleFields.overview: overview,
-      TmdbTitleFields.tagline: tagline,
-      TmdbTitleFields.status: status,
-      TmdbTitleFields.mediaType: mediaType,
-      TmdbTitleFields.imdbId: imdbId,
-      TmdbTitleFields.posterPath: posterPathSuffix,
-      TmdbTitleFields.backdropPath: backdropPathSuffix,
-      TmdbTitleFields.releaseDate: releaseDate,
-      TmdbTitleFields.firstAirDate: firstAirDate,
-      TmdbTitleFields.lastAirDate: lastAirDate,
-      TmdbTitleFields.lastUpdated: lastUpdated,
-      TmdbTitleFields.voteAverage: voteAverage,
-      TmdbTitleFields.voteCount: voteCount,
-      TmdbTitleFields.accountRating: {
-        TmdbTitleFields.accountRatingValue: rating,
-        TmdbTitleFields.accountRatingDate: dateRated.toIso8601String(),
-      },
-      TmdbTitleFields.runtime: runtime,
-      TmdbTitleFields.numberOfEpisodes: numberOfEpisodes,
-      TmdbTitleFields.numberOfSeasons: numberOfSeasons,
-      TmdbTitleFields.popularity: popularity,
-      TmdbTitleFields.budget: budget,
-      TmdbTitleFields.revenue: revenue,
-      TmdbTitleFields.addedOrder: addedOrder,
-      TmdbTitleFields.genreIds: genreIds,
-      TmdbTitleFields.originCountry: originCountry,
-      TmdbTitleFields.credits:
-          creditsJson != null ? jsonDecode(creditsJson!) : null,
-      TmdbTitleFields.providers:
-          providersJson != null ? jsonDecode(providersJson!) : null,
-      TmdbTitleFields.seasons:
-          seasonsJson != null ? jsonDecode(seasonsJson!) : null,
-      TmdbTitleFields.recommendations:
-          recommendationsJson != null ? jsonDecode(recommendationsJson!) : null,
-      TmdbTitleFields.nextEpisodeToAir: nextEpisodeToAirJson != null
-          ? jsonDecode(nextEpisodeToAirJson!)
-          : null,
-      TmdbTitleFields.character: character,
-      TmdbTitleFields.job: job,
-      TmdbTitleFields.department: department,
-    };
   }
 }

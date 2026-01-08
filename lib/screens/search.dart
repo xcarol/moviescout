@@ -27,6 +27,9 @@ class _SearchState extends State<Search> {
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
   final String _searchGroupId = 'search_overlay_group';
+  final double _searchHorizontalPadding = 8.0;
+  final double _searchVerticalPadding = 16.0;
+  final double _overlayHeightOffset = 65.0;
   List<String> _overlaySuggestions = [];
 
   @override
@@ -119,12 +122,12 @@ class _SearchState extends State<Search> {
     _overlayEntry = OverlayEntry(
       builder: (context) {
         return Positioned(
-          width: MediaQuery.of(context).size.width -
-              32, // Adjust based on padding (16*2)
+          width:
+              MediaQuery.of(context).size.width - _searchHorizontalPadding * 2,
           child: CompositedTransformFollower(
             link: _layerLink,
             showWhenUnlinked: false,
-            offset: const Offset(0.0, 60.0), // Height of search box approx
+            offset: Offset(_searchHorizontalPadding, _overlayHeightOffset),
             child: TapRegion(
               groupId: _searchGroupId,
               child: Material(
@@ -218,7 +221,10 @@ class _SearchState extends State<Search> {
     return Container(
       color: Theme.of(context).colorScheme.primary,
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+      padding: EdgeInsets.symmetric(
+        horizontal: _searchHorizontalPadding,
+        vertical: _searchVerticalPadding,
+      ),
       child: Theme(
         data: Theme.of(context).copyWith(
           textSelectionTheme: TextSelectionThemeData(
