@@ -65,33 +65,25 @@ class TmdbTitleService extends TmdbBaseService {
       return title;
     }
 
-    final Map<String, dynamic> titleMap = title.toMap();
     final Map<String, dynamic> details = body(result);
 
-    titleMap.addAll(details);
-
-    final providersMap =
+    details[TmdbTitleFields.providers] =
         details['watch/providers']?['results']?[getCountryCode()] ?? {};
-    titleMap[TmdbTitleFields.providers] = providersMap;
 
     if (details['recommendations'] != null &&
         details['recommendations']['results'] != null) {
-      titleMap[TmdbTitleFields.recommendations] =
+      details[TmdbTitleFields.recommendations] =
           details['recommendations']['results'];
-    }
-
-    if (details['credits'] != null) {
-      titleMap[TmdbTitleFields.credits] = details['credits'];
     }
 
     if (mediaType == ApiConstants.tv) {
       final externalIds = details['external_ids'];
       if (externalIds != null && externalIds['imdb_id'] != null) {
-        titleMap[TmdbTitleFields.imdbId] = externalIds['imdb_id'];
+        details[TmdbTitleFields.imdbId] = externalIds['imdb_id'];
       }
     }
 
-    if ((titleMap[TmdbTitleFields.overview] ?? '').isEmpty) {
+    if ((details[TmdbTitleFields.overview] ?? '').isEmpty) {
       final fallbackResult = await _retrieveTitleDetailsByLocale(
         title.tmdbId,
         mediaType,
@@ -99,11 +91,11 @@ class TmdbTitleService extends TmdbBaseService {
       );
 
       if (fallbackResult.statusCode == 200) {
-        _applyLocaleFallback(titleMap, body(fallbackResult), mediaType);
+        _mergeFallback(details, body(fallbackResult), mediaType);
       }
     }
 
-    if ((titleMap[TmdbTitleFields.overview] ?? '').isEmpty) {
+    if ((details[TmdbTitleFields.overview] ?? '').isEmpty) {
       final enResult = await _retrieveTitleDetailsByLocale(
         title.tmdbId,
         mediaType,
@@ -111,37 +103,39 @@ class TmdbTitleService extends TmdbBaseService {
       );
 
       if (enResult.statusCode == 200) {
-        _applyLocaleFallback(titleMap, body(enResult), mediaType);
+        _mergeFallback(details, body(enResult), mediaType);
       }
     }
 
-    titleMap[TmdbTitleFields.mediaType] = mediaType;
-    titleMap[TmdbTitleFields.lastUpdated] = DateTime.now().toIso8601String();
+    details[TmdbTitleFields.mediaType] = mediaType;
+    details[TmdbTitleFields.lastUpdated] = DateTime.now().toIso8601String();
 
-    return TmdbTitle.fromMap(title: titleMap);
+    title.fillFromMap(details);
+
+    return title;
   }
 
-  void _applyLocaleFallback(Map<String, dynamic> titleMap,
+  void _mergeFallback(Map<String, dynamic> target,
       Map<String, dynamic> fallback, String mediaType) {
     final String fallbackOverview = fallback[TmdbTitleFields.overview] ?? '';
 
     if (fallbackOverview.isNotEmpty) {
-      titleMap[TmdbTitleFields.overview] = fallbackOverview;
+      target[TmdbTitleFields.overview] = fallbackOverview;
 
       if (mediaType == ApiConstants.movie) {
         if (fallback[TmdbTitleFields.title] != null) {
-          titleMap[TmdbTitleFields.title] = fallback[TmdbTitleFields.title];
+          target[TmdbTitleFields.title] = fallback[TmdbTitleFields.title];
         }
         if (fallback[TmdbTitleFields.originalTitle] != null) {
-          titleMap[TmdbTitleFields.originalTitle] =
+          target[TmdbTitleFields.originalTitle] =
               fallback[TmdbTitleFields.originalTitle];
         }
       } else {
         if (fallback[TmdbTitleFields.name] != null) {
-          titleMap[TmdbTitleFields.name] = fallback[TmdbTitleFields.name];
+          target[TmdbTitleFields.name] = fallback[TmdbTitleFields.name];
         }
         if (fallback[TmdbTitleFields.originalName] != null) {
-          titleMap[TmdbTitleFields.originalName] =
+          target[TmdbTitleFields.originalName] =
               fallback[TmdbTitleFields.originalName];
         }
       }
