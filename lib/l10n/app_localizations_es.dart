@@ -174,6 +174,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get rate => 'Valora';
 
   @override
+  String get rate_date => 'Fecha de valoración';
+
+  @override
   String get your_rate => 'Tu valoración';
 
   @override
