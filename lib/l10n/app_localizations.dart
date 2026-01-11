@@ -103,6 +103,30 @@ abstract class AppLocalizations {
   /// **'Movie Scout'**
   String get appTitle;
 
+  /// No description provided for @catalan.
+  ///
+  /// In en, this message translates to:
+  /// **'Català'**
+  String get catalan;
+
+  /// No description provided for @spanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Español'**
+  String get spanish;
+
+  /// No description provided for @english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// No description provided for @selectLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a language'**
+  String get selectLanguage;
+
   /// No description provided for @messageEmptyList.
   ///
   /// In en, this message translates to:

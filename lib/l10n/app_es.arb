@@ -1,5 +1,9 @@
 {
     "appTitle": "Movie Scout",
+    "catalan": "Català",
+    "spanish": "Español",
+    "english": "English",
+    "selectLanguage": "Selecciona un idioma",
     "messageEmptyList": "Aún no se ha seleccionado ninguna película.",
     "messageEmptySearch": "Puedes hacer una búsqueda utilizando la lupa de la barra inferior.",
     "messageEmptyOptions": "También puedes",

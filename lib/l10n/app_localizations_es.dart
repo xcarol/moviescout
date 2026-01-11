@@ -12,6 +12,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'Movie Scout';
 
   @override
+  String get catalan => 'Català';
+
+  @override
+  String get spanish => 'Español';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get selectLanguage => 'Selecciona un idioma';
+
+  @override
   String get messageEmptyList => 'Aún no se ha seleccionado ninguna película.';
 
   @override
