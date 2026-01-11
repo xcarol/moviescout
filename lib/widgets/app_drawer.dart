@@ -15,6 +15,7 @@ import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/color_scheme_form.dart';
+import 'package:moviescout/widgets/language_form.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -35,6 +36,7 @@ class AppDrawer extends StatelessWidget {
             _importImdbTile(context),
           if (isUserLoggedIn) _providersTile(context),
           _colorSchemeTile(context),
+          _languageTile(context),
           _aboutTile(context),
           const Divider(),
           _userSessionTile(context, isUserLoggedIn),
@@ -131,6 +133,31 @@ class AppDrawer extends StatelessWidget {
               currentScheme: themeProvider.currentScheme,
               onSubmit: (ThemeSchemes schemeName) {
                 themeProvider.setColorScheme(schemeName);
+              },
+            );
+          },
+        ),
+      },
+    );
+  }
+
+  Widget _languageTile(BuildContext context) {
+    final userLocale = Localizations.localeOf(context);
+
+    return ListTile(
+      leading: Icon(Icons.language),
+      title: Text(
+        AppLocalizations.of(context)!.selectLanguage,
+      ),
+      onTap: () => {
+        Navigator.of(context).pop(),
+        showDialog(
+          context: context,
+          builder: (context) {
+            return LanguageForm(
+              currentLanguage: userLocale.languageCode,
+              onSubmit: (String languageName) {
+                
               },
             );
           },
