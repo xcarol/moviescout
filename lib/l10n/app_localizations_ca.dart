@@ -174,6 +174,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get rate => 'Valora';
 
   @override
+  String get rate_date => 'Data de valoració';
+
+  @override
   String get your_rate => 'La teva valoració';
 
   @override

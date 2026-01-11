@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 
 class RateForm extends Dialog {
@@ -6,10 +7,12 @@ class RateForm extends Dialog {
       {super.key,
       required this.onSubmit,
       required this.title,
-      this.initialRate});
+      this.initialRate,
+      this.initialDate});
 
   final String title;
   final int? initialRate;
+  final DateTime? initialDate;
   final Function(int) onSubmit;
 
   @override
@@ -28,19 +31,22 @@ class RateForm extends Dialog {
         builder: (context, value, child) {
           return Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 if (value > 0)
                   Text(
                     '${AppLocalizations.of(context)!.your_rate}: $value',
-                  )
-                else
-                  Text('${AppLocalizations.of(context)!.your_rate}: '),
+                  ),
+                if (initialDate != null &&
+                    !initialDate!.isAtSameMomentAs(
+                        DateTime.fromMillisecondsSinceEpoch(0)))
+                  Text(
+                      '${AppLocalizations.of(context)!.rate_date}: ${DateFormat.yMMMMd(Localizations.localeOf(context).toLanguageTag()).format(initialDate!)}'),
               ]),
               const SizedBox(height: 20),
               Wrap(
-                alignment: WrapAlignment.center,
-                runAlignment: WrapAlignment.center,
+                alignment: WrapAlignment.start,
                 children: List.generate(10, (index) {
                   return IconButton(
                     icon: rating.value >= index + 1

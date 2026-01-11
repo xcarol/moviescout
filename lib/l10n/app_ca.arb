@@ -54,6 +54,7 @@
     "genres": "Gèneres",
     "titles": "Títols",
     "rate": "Valora",
+    "rate_date": "Data de valoració",
     "your_rate": "La teva valoració",
     "reset_rate": "Elimina la valoració",
     "emptyRates": "Encara no has valorat cap títol.",

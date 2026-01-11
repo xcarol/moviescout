@@ -427,6 +427,12 @@ abstract class AppLocalizations {
   /// **'Rate'**
   String get rate;
 
+  /// No description provided for @rate_date.
+  ///
+  /// In en, this message translates to:
+  /// **'Rated date'**
+  String get rate_date;
+
   /// No description provided for @your_rate.
   ///
   /// In en, this message translates to:

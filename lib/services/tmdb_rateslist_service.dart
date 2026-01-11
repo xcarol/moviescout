@@ -27,6 +27,14 @@ class TmdbRateslistService extends TmdbListService {
     return title.rating.toInt();
   }
 
+  DateTime getRatingDate(int titleId, String mediaType) {
+    TmdbTitle? title = getTitleByTmdbId(titleId, mediaType);
+    if (title == null) {
+      return DateTime.fromMillisecondsSinceEpoch(0);
+    }
+    return title.dateRated;
+  }
+
   Future<void> retrieveRateslist(
       String accountId, String sessionId, Locale locale) async {
     retrieveList(accountId, retrieveMovies: () async {
