@@ -262,6 +262,8 @@ class _TitleDetailsState extends State<TitleDetails> {
           builder: (context, ratingService, child) {
             final titleRating =
                 ratingService.getRating(title.tmdbId, title.mediaType);
+            final titleRatingDate =
+                ratingService.getRatingDate(title.tmdbId, title.mediaType);
 
             return Row(
               children: [
@@ -298,6 +300,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                       return RateForm(
                         title: title.name,
                         initialRate: titleRating,
+                        initialDate: titleRatingDate,
                         onSubmit: (int rating) {
                           Provider.of<TmdbRateslistService>(context,
                                   listen: false)
