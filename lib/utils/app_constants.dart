@@ -11,6 +11,17 @@ class AppConstants {
   static const String searchHistory = 'search_history';
   static const String themeMode = 'theme_mode';
   static const String themeScheme = 'ThemeScheme';
+  static const String language = 'language';
+
+  static const String catalan = 'ca-ES';
+  static const String spanish = 'es-ES';
+  static const String english = 'en-US';
+
+  static const List<String> supportedLanguages = [
+    catalan,
+    spanish,
+    english,
+  ];
 
   // Other
   static const String anonymousAccountId = 'anonymous';

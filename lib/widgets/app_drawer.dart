@@ -10,11 +10,14 @@ import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/screens/providers.dart';
 import 'package:moviescout/services/discoverlist_service.dart';
+import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/theme_service.dart';
+import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/widgets/color_scheme_form.dart';
+import 'package:moviescout/widgets/language_form.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -35,6 +38,7 @@ class AppDrawer extends StatelessWidget {
             _importImdbTile(context),
           if (isUserLoggedIn) _providersTile(context),
           _colorSchemeTile(context),
+          _languageTile(context),
           _aboutTile(context),
           const Divider(),
           _userSessionTile(context, isUserLoggedIn),
@@ -135,6 +139,54 @@ class AppDrawer extends StatelessWidget {
             );
           },
         ),
+      },
+    );
+  }
+
+  Widget _languageTile(BuildContext context) {
+    final languageProvider = Provider.of<LanguageService>(context);
+
+    return ListTile(
+      leading: const Icon(Icons.language),
+      title: Text(
+        AppLocalizations.of(context)!.selectLanguage,
+      ),
+      onTap: () async {
+        final String? selectedLanguage = await showDialog<String>(
+          context: context,
+          builder: (context) {
+            return LanguageForm(
+              currentLanguage: languageProvider.currentLanguage,
+            );
+          },
+        );
+
+        if (selectedLanguage != null &&
+            selectedLanguage != languageProvider.currentLanguage) {
+          languageProvider.setLanguage(selectedLanguage);
+          await TmdbGenreService().reload();
+
+          if (context.mounted) {
+            Navigator.of(context).pop();
+
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text(AppLocalizations.of(context)!.languageChangeTitle),
+                content:
+                    Text(AppLocalizations.of(context)!.languageChangeContent),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        } else if (context.mounted) {
+          Navigator.of(context).pop();
+        }
       },
     );
   }

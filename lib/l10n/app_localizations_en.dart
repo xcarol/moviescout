@@ -12,6 +12,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Movie Scout';
 
   @override
+  String get catalan => 'Català';
+
+  @override
+  String get spanish => 'Español';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get selectLanguage => 'Select the language';
+
+  @override
   String get messageEmptyList => 'No films slected yet.';
 
   @override
@@ -289,4 +301,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get department => 'Department';
+
+  @override
+  String get languageChangeTitle => 'Language Change';
+
+  @override
+  String get languageChangeContent => 'You have changed the application language. In order for titles to be updated to the new language, you need to log out and log back in.';
 }

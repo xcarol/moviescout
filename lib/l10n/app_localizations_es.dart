@@ -12,6 +12,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'Movie Scout';
 
   @override
+  String get catalan => 'Català';
+
+  @override
+  String get spanish => 'Español';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get selectLanguage => 'Selecciona el idioma';
+
+  @override
   String get messageEmptyList => 'Aún no se ha seleccionado ninguna película.';
 
   @override
@@ -289,4 +301,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get department => 'Departamento';
+
+  @override
+  String get languageChangeTitle => 'Cambio de idioma';
+
+  @override
+  String get languageChangeContent => 'Has cambiado el idioma de la aplicación. Para que los títulos se actualicen al nuevo idioma, es necesario que cierres la sesión y vuelvas a entrar.';
 }

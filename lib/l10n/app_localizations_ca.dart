@@ -12,6 +12,18 @@ class AppLocalizationsCa extends AppLocalizations {
   String get appTitle => 'Movie Scout';
 
   @override
+  String get catalan => 'Català';
+
+  @override
+  String get spanish => 'Español';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get selectLanguage => 'Selecciona l\'idioma';
+
+  @override
   String get messageEmptyList => 'Encara no s\'ha escollit cap pel·lícula.';
 
   @override
@@ -289,4 +301,10 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get department => 'Departament';
+
+  @override
+  String get languageChangeTitle => 'Canvi d\'idioma';
+
+  @override
+  String get languageChangeContent => 'Has canviat l\'idioma de l\'aplicació. Perquè els títols s\'actualitzin al nou idioma, cal que tanquis la sessió i tornis a entrar.';
 }

@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:moviescout/services/language_service.dart';
 
 enum ApiVersion { v3, v4 }
 
@@ -20,29 +20,16 @@ const String anonymousAccountId = 'anonymousAccountId';
 class TmdbBaseService {
   static int _requestCount = 0;
 
-  static Locale _empowerMonirizedLanguages() {
-    final systemLocale = PlatformDispatcher.instance.locale;
-
-    Locale appLocale;
-    if (systemLocale.languageCode == 'ca' && systemLocale.countryCode == null) {
-      appLocale = const Locale('ca', 'ES');
-    } else {
-      appLocale = systemLocale;
-    }
-
-    return appLocale;
-  }
-
   dynamic body(http.Response response) {
     return jsonDecode(response.body);
   }
 
   String getCountryCode() {
-    return _empowerMonirizedLanguages().countryCode ?? "US";
+    return LanguageService().locale.countryCode ?? "US";
   }
 
   String getLanguageCode() {
-    return _empowerMonirizedLanguages().languageCode;
+    return LanguageService().locale.languageCode;
   }
 
   Future<dynamic> get(

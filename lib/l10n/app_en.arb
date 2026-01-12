@@ -1,5 +1,9 @@
 {
     "appTitle": "Movie Scout",
+    "catalan": "Català",
+    "spanish": "Español",
+    "english": "English",
+    "selectLanguage": "Select the language",
     "messageEmptyList": "No films slected yet.",
     "messageEmptySearch": "You can do a search by using the magnifying glass in the bottom bar.",
     "messageEmptyOptions": "You can also",
@@ -92,5 +96,7 @@
     "placeOfBirth": "Place of birth",
     "years": "Years",
     "job": "Job",
-    "department": "Department"
+    "department": "Department",
+    "languageChangeTitle": "Language Change",
+    "languageChangeContent": "You have changed the application language. In order for titles to be updated to the new language, you need to log out and log back in."
 }
