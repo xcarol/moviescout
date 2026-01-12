@@ -41,14 +41,14 @@ class TmdbGenreService extends TmdbBaseService {
         if (genres.isEmpty ||
             genres[0]['name'] == null ||
             genres[0]['name'].isEmpty) {
-          response = await await get(
+          response = await get(
               url.replaceFirst('{LOCALE}', getCountryCode().toLowerCase()));
 
           if (response.statusCode == 200) {
             genres =
                 (jsonDecode((response.body)) as Map<String, dynamic>)['genres'];
             if (genres[0]['name'].isEmpty) {
-              response = await await get(url.replaceFirst('{LOCALE}', 'en'));
+              response = await get(url.replaceFirst('{LOCALE}', 'en'));
 
               if (response.statusCode == 200) {
                 genres = (jsonDecode((response.body))
@@ -72,6 +72,13 @@ class TmdbGenreService extends TmdbBaseService {
 
     _isLoaded = true;
     _setLocalGenres(_genreMap);
+  }
+
+  Future<void> reload() async {
+    _isLoaded = false;
+    await PreferencesService().prefs.remove('genres');
+    await UpdateManager().removeLastUpdate('genres');
+    await init();
   }
 
   bool _getLocalGenres() {
