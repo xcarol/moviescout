@@ -124,7 +124,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectLanguage.
   ///
   /// In en, this message translates to:
-  /// **'Select a language'**
+  /// **'Select the language'**
   String get selectLanguage;
 
   /// No description provided for @messageEmptyList.
@@ -684,6 +684,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Department'**
   String get department;
+
+  /// No description provided for @languageChangeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Language Change'**
+  String get languageChangeTitle;
+
+  /// No description provided for @languageChangeContent.
+  ///
+  /// In en, this message translates to:
+  /// **'You have changed the application language. In order for titles to be updated to the new language, you need to log out and log back in.'**
+  String get languageChangeContent;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

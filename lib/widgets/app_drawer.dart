@@ -10,7 +10,9 @@ import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/screens/providers.dart';
 import 'package:moviescout/services/discoverlist_service.dart';
+import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/theme_service.dart';
+import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
@@ -142,26 +144,49 @@ class AppDrawer extends StatelessWidget {
   }
 
   Widget _languageTile(BuildContext context) {
-    final userLocale = Localizations.localeOf(context);
+    final languageProvider = Provider.of<LanguageService>(context);
 
     return ListTile(
-      leading: Icon(Icons.language),
+      leading: const Icon(Icons.language),
       title: Text(
         AppLocalizations.of(context)!.selectLanguage,
       ),
-      onTap: () => {
-        Navigator.of(context).pop(),
-        showDialog(
+      onTap: () async {
+        final String? selectedLanguage = await showDialog<String>(
           context: context,
           builder: (context) {
             return LanguageForm(
-              currentLanguage: userLocale.languageCode,
-              onSubmit: (String languageName) {
-                
-              },
+              currentLanguage: languageProvider.currentLanguage,
             );
           },
-        ),
+        );
+
+        if (selectedLanguage != null &&
+            selectedLanguage != languageProvider.currentLanguage) {
+          languageProvider.setLanguage(selectedLanguage);
+          await TmdbGenreService().reload();
+
+          if (context.mounted) {
+            Navigator.of(context).pop();
+
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text(AppLocalizations.of(context)!.languageChangeTitle),
+                content:
+                    Text(AppLocalizations.of(context)!.languageChangeContent),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        } else if (context.mounted) {
+          Navigator.of(context).pop();
+        }
       },
     );
   }

@@ -3,7 +3,7 @@
     "catalan": "Català",
     "spanish": "Español",
     "english": "English",
-    "selectLanguage": "Selecciona un idioma",
+    "selectLanguage": "Selecciona el idioma",
     "messageEmptyList": "Aún no se ha seleccionado ninguna película.",
     "messageEmptySearch": "Puedes hacer una búsqueda utilizando la lupa de la barra inferior.",
     "messageEmptyOptions": "También puedes",
@@ -96,5 +96,7 @@
     "placeOfBirth": "Lugar de nacimiento",
     "years": "Años",
     "job": "Cargo",
-    "department": "Departamento"
+    "department": "Departamento",
+    "languageChangeTitle": "Cambio de idioma",
+    "languageChangeContent": "Has cambiado el idioma de la aplicación. Para que los títulos se actualicen al nuevo idioma, es necesario que cierres la sesión y vuelvas a entrar."
 }

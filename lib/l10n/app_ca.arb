@@ -3,7 +3,7 @@
     "catalan": "Català",
     "spanish": "Español",
     "english": "English",
-    "selectLanguage": "Selecciona un idioma",
+    "selectLanguage": "Selecciona l'idioma",
     "messageEmptyList": "Encara no s'ha escollit cap pel·lícula.",
     "messageEmptySearch": "Pots fer una cerca utilitzant la lupa de la barra inferior.",
     "messageEmptyOptions": "També pots",
@@ -96,5 +96,7 @@
     "placeOfBirth": "Lloc de neixament",
     "years": "Anys",
     "job": "Càrrec",
-    "department": "Departament"
+    "department": "Departament",
+    "languageChangeTitle": "Canvi d'idioma",
+    "languageChangeContent": "Has canviat l'idioma de l'aplicació. Perquè els títols s'actualitzin al nou idioma, cal que tanquis la sessió i tornis a entrar."
 }

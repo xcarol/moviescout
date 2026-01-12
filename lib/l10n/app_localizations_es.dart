@@ -21,7 +21,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get english => 'English';
 
   @override
-  String get selectLanguage => 'Selecciona un idioma';
+  String get selectLanguage => 'Selecciona el idioma';
 
   @override
   String get messageEmptyList => 'Aún no se ha seleccionado ninguna película.';
@@ -301,4 +301,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get department => 'Departamento';
+
+  @override
+  String get languageChangeTitle => 'Cambio de idioma';
+
+  @override
+  String get languageChangeContent => 'Has cambiado el idioma de la aplicación. Para que los títulos se actualicen al nuevo idioma, es necesario que cierres la sesión y vuelvas a entrar.';
 }
