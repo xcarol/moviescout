@@ -12,6 +12,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/services/discoverlist_service.dart';
 import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/theme_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
@@ -60,6 +61,7 @@ void main() async {
       Provider.value(value: repository),
       Provider.value(value: preferencesService),
       ChangeNotifierProvider(create: (_) => ThemeService()),
+      ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
       ChangeNotifierProxyProvider<TmdbUserService, TmdbProviderService>(
         create: (_) => TmdbProviderService(),
@@ -110,6 +112,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeService>(context);
+    final languageProvider = Provider.of<LanguageService>(context);
     themeProvider.setupTheme();
     final userService = Provider.of<TmdbUserService>(context, listen: false);
     userService.setup();
@@ -121,11 +124,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('ca', 'ES'),
-        Locale('en', 'US'),
-        Locale('es', 'ES'),
-      ],
+      supportedLocales: AppConstants.supportedLanguages
+          .map((e) => LanguageService.parseLocale(e))
+          .toList(),
+      locale: languageProvider.locale,
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
