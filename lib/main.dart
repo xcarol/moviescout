@@ -25,6 +25,7 @@ import 'package:moviescout/firebase_options.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/screens/main_screen.dart';
 import 'package:moviescout/services/deep_link_service.dart';
+import 'package:moviescout/utils/person_translator.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -53,6 +54,7 @@ void main() async {
   await PreferencesService().init();
   await IsarService.init();
   await TmdbGenreService().init();
+  await PersonTranslator.init();
 
   final repository = TmdbTitleRepository();
   final preferencesService = PreferencesService();

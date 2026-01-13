@@ -1,4 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/utils/person_translator.dart';
 
 // ignore_for_file: constant_identifier_names, unused_element
 
@@ -113,7 +115,7 @@ class TmdbPerson {
         : '';
   }
 
-  Map<String,dynamic> toMap() {
+  Map<String, dynamic> toMap() {
     return {
       PersonAttributes.id: tmdbId,
       PersonAttributes.name: name,
@@ -132,5 +134,17 @@ class TmdbPerson {
       PersonAttributes.homepage: homepage,
       PersonAttributes.combined_credits: combinedCredits.toMap(),
     };
+  }
+}
+
+extension TmdbPersonTranslation on TmdbPerson {
+  String localizedJob(BuildContext context) {
+    final locale = Localizations.localeOf(context).languageCode;
+    return PersonTranslator.translateJob(job, locale);
+  }
+
+  String localizedDepartment(BuildContext context) {
+    final locale = Localizations.localeOf(context).languageCode;
+    return PersonTranslator.translateDepartment(knownForDepartment, locale);
   }
 }

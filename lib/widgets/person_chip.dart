@@ -123,7 +123,8 @@ class PersonChip extends StatelessWidget {
                 overflow: TextOverflow.ellipsis, maxLines: 2),
           if (tmdbPerson.job.isNotEmpty) const SizedBox(height: 5),
           if (tmdbPerson.job.isNotEmpty)
-            Text(tmdbPerson.job, overflow: TextOverflow.ellipsis, maxLines: 2),
+            Text(tmdbPerson.localizedJob(context),
+                overflow: TextOverflow.ellipsis, maxLines: 2),
         ],
       ),
     );

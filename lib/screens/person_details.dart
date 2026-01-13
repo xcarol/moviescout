@@ -279,7 +279,7 @@ class _PersonDetailsState extends State<PersonDetails> {
     }
 
     return Text(
-      '${person.name} - ${person.knownForDepartment}',
+      '${person.name} - ${person.localizedDepartment(context)}',
       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
       textAlign: TextAlign.start,
     );
