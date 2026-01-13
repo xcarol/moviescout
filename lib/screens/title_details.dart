@@ -19,7 +19,7 @@ import 'package:moviescout/widgets/rate_form.dart';
 import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TitleDetails extends StatefulWidget {
   final TmdbTitle _title;
@@ -125,8 +125,11 @@ class _TitleDetailsState extends State<TitleDetails> {
     links.add(
       GestureDetector(
         onTap: () {
-          launchUrlString(
-            'https://www.themoviedb.org/${title.mediaType}/${title.tmdbId}',
+          launchUrl(
+            Uri.parse(
+              'https://www.themoviedb.org/${title.mediaType}/${title.tmdbId}',
+            ),
+            mode: LaunchMode.inAppWebView,
           );
         },
         child: SizedBox(
@@ -144,7 +147,10 @@ class _TitleDetailsState extends State<TitleDetails> {
       links.add(
         GestureDetector(
           onTap: () {
-            launchUrlString('https://www.imdb.com/title/${title.imdbId}');
+            launchUrl(
+              Uri.parse('https://www.imdb.com/title/${title.imdbId}'),
+              mode: LaunchMode.inAppWebView,
+            );
           },
           child: SizedBox(
             height: 30,

@@ -16,7 +16,7 @@ import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/screens/person_titles.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PersonDetails extends StatefulWidget {
   final TmdbPerson _person;
@@ -196,8 +196,9 @@ class _PersonDetailsState extends State<PersonDetails> {
     links.add(
       GestureDetector(
         onTap: () {
-          launchUrlString(
-            'https://www.themoviedb.org/person/${person.tmdbId}',
+          launchUrl(
+            Uri.parse('https://www.themoviedb.org/person/${person.tmdbId}'),
+            mode: LaunchMode.inAppWebView,
           );
         },
         child: SizedBox(
@@ -215,7 +216,10 @@ class _PersonDetailsState extends State<PersonDetails> {
       links.add(
         GestureDetector(
           onTap: () {
-            launchUrlString('https://www.imdb.com/name/${person.imdbId}');
+            launchUrl(
+              Uri.parse('https://www.imdb.com/name/${person.imdbId}'),
+              mode: LaunchMode.inAppWebView,
+            );
           },
           child: SizedBox(
             height: 30,
@@ -233,7 +237,10 @@ class _PersonDetailsState extends State<PersonDetails> {
       links.add(
         GestureDetector(
           onTap: () {
-            launchUrlString(person.homepage);
+            launchUrl(
+              Uri.parse(person.homepage),
+              mode: LaunchMode.inAppWebView,
+            );
           },
           child: SizedBox(
             height: 30,
