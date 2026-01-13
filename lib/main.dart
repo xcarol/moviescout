@@ -24,6 +24,7 @@ import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/screens/main_screen.dart';
+import 'package:moviescout/services/deep_link_service.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -95,6 +96,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
+    final watchlistService =
+        Provider.of<TmdbWatchlistService>(context, listen: false);
+    DeepLinkService().init(watchlistService);
   }
 
   @override
@@ -152,6 +157,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       title: 'Movie Scout',
       home: const MainScreen(),
       scaffoldMessengerKey: scaffoldMessengerKey,
+      navigatorKey: DeepLinkService().navigatorKey,
       builder: (context, child) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           final theme = Theme.of(context);

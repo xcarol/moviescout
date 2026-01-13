@@ -11,4 +11,8 @@ class ApiConstants {
   // Versions
   static const String versionV3 = '3';
   static const String versionV4 = '4';
+
+  // Hosts
+  static const String tmdbHost = 'www.themoviedb.org';
+  static const String tmdbHostAlternative = 'themoviedb.org';
 }
