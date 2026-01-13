@@ -119,16 +119,16 @@ class PersonCard extends StatelessWidget {
     );
   }
 
-  Widget _personRoleDetails(TmdbPerson tmdbPerson) {
+  Widget _personRoleDetails(BuildContext context, TmdbPerson tmdbPerson) {
     final List<String> roles = [];
     if (tmdbPerson.character.isNotEmpty) {
       roles.add(tmdbPerson.character);
     } else {
       if (tmdbPerson.job.isNotEmpty) {
-        roles.add(tmdbPerson.job);
+        roles.add(tmdbPerson.localizedJob(context));
       }
       if (tmdbPerson.knownForDepartment.isNotEmpty) {
-        roles.add(tmdbPerson.knownForDepartment);
+        roles.add(tmdbPerson.localizedDepartment(context));
       }
     }
 
@@ -153,7 +153,7 @@ class PersonCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _personName(tmdbPerson.name, maxLines: 2),
-            _personRoleDetails(tmdbPerson),
+            _personRoleDetails(context, tmdbPerson),
           ],
         ),
       ),

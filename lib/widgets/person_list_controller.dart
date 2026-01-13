@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/utils/person_translator.dart';
 
 class PersonSortOption {
   static const name = 'name';
@@ -22,6 +23,7 @@ class PersonListController with ChangeNotifier {
   bool _showFilters = false;
   String _selectedSort = PersonSortOption.original;
   List<String> _personSorts = [];
+  String _languageCode = 'en';
 
   PersonListController(this.fullList, this.type) {
     textFilterController = TextEditingController();
@@ -51,6 +53,7 @@ class PersonListController with ChangeNotifier {
         localizations.department,
       ];
     }
+    _languageCode = Localizations.localeOf(context).languageCode;
     _applyFilters();
     notifyListeners();
   }
@@ -104,11 +107,14 @@ class PersonListController with ChangeNotifier {
   void _applyFilters() {
     final text = textFilterController.text.toLowerCase();
     _filteredList = fullList.where((p) {
+      final localizedJob = PersonTranslator.translateJob(p.job, _languageCode);
+      final localizedDept = PersonTranslator.translateDepartment(
+          p.knownForDepartment, _languageCode);
       return p.name.toLowerCase().contains(text) ||
           p.originalName.toLowerCase().contains(text) ||
           p.character.toLowerCase().contains(text) ||
-          p.job.toLowerCase().contains(text) ||
-          p.knownForDepartment.toLowerCase().contains(text);
+          localizedJob.toLowerCase().contains(text) ||
+          localizedDept.toLowerCase().contains(text);
     }).toList();
 
     _filteredList.sort((a, b) {
@@ -116,9 +122,13 @@ class PersonListController with ChangeNotifier {
       if (_selectedSort == PersonSortOption.name) {
         result = a.name.compareTo(b.name);
       } else if (_selectedSort == PersonSortOption.department) {
-        result = a.knownForDepartment.compareTo(b.knownForDepartment);
+        result = PersonTranslator.translateDepartment(
+                a.knownForDepartment, _languageCode)
+            .compareTo(PersonTranslator.translateDepartment(
+                b.knownForDepartment, _languageCode));
       } else if (_selectedSort == PersonSortOption.job) {
-        result = a.job.compareTo(b.job);
+        result = PersonTranslator.translateJob(a.job, _languageCode)
+            .compareTo(PersonTranslator.translateJob(b.job, _languageCode));
       } else if (_selectedSort == PersonSortOption.original) {
         result = fullList.indexOf(a).compareTo(fullList.indexOf(b));
       }
