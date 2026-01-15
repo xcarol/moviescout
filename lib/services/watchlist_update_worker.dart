@@ -17,15 +17,34 @@ void callbackDispatcher() {
       final repository = TmdbTitleRepository();
       final titleService = TmdbTitleService();
 
-      final watchlistTitles = await repository.getTitles(
-        listName: AppConstants.watchlist,
-        limit: 1000,
-      );
+      int page = 0;
+      const int pageSize = 50;
+      bool hasMore = true;
 
-      for (final title in watchlistTitles) {
-        if (!TmdbTitleService.isUpToDate(title)) {
-          await titleService.updateTitleDetails(title);
-          await repository.saveTitle(title);
+      while (hasMore) {
+        final watchlistTitles = await repository.getTitles(
+          listName: AppConstants.watchlist,
+          offset: page * pageSize,
+          limit: pageSize,
+        );
+
+        if (watchlistTitles.isEmpty) {
+          hasMore = false;
+          break;
+        }
+
+        for (final title in watchlistTitles) {
+          if (!TmdbTitleService.isUpToDate(title)) {
+            await titleService.updateTitleDetails(title);
+            await repository.saveTitle(title);
+            await Future.delayed(const Duration(milliseconds: 200));
+          }
+        }
+
+        page++;
+        // Safety break if needed, but pagination should handle it
+        if (watchlistTitles.length < pageSize) {
+          hasMore = false;
         }
       }
 
