@@ -26,6 +26,8 @@ import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/screens/main_screen.dart';
 import 'package:moviescout/services/deep_link_service.dart';
 import 'package:moviescout/utils/person_translator.dart';
+import 'package:workmanager/workmanager.dart';
+import 'package:moviescout/services/watchlist_update_worker.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -55,6 +57,23 @@ void main() async {
   await IsarService.init();
   await TmdbGenreService().init();
   await PersonTranslator.init();
+
+  if (defaultTargetPlatform == TargetPlatform.android ||
+      defaultTargetPlatform == TargetPlatform.iOS) {
+    await Workmanager().initialize(
+      callbackDispatcher,
+      isInDebugMode: kDebugMode,
+    );
+    await Workmanager().registerPeriodicTask(
+      "watchlistUpdateTask",
+      "updateWatchlistProviders",
+      frequency: const Duration(hours: 24),
+      existingWorkPolicy: ExistingWorkPolicy.keep,
+      constraints: Constraints(
+        networkType: NetworkType.connected,
+      ),
+    );
+  }
 
   final repository = TmdbTitleRepository();
   final preferencesService = PreferencesService();
