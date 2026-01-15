@@ -38,8 +38,6 @@ class DeepLinkService {
   }
 
   void _handleDeepLink(Uri uri) {
-    debugPrint('Deep link received: $uri');
-
     String? type;
     String? id;
 

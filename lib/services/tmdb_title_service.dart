@@ -29,7 +29,7 @@ class TmdbTitleService extends TmdbBaseService {
               DateTime.parse(title.lastUpdated),
             )
             .inDays <
-        DateTime.daysPerWeek;
+        3;
   }
 
   Future<TmdbTitle> updateTitleDetails(TmdbTitle title) async {
