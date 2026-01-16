@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:isar_community/isar.dart';
 import 'package:moviescout/utils/api_constants.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 // ignore_for_file: constant_identifier_names, unused_element
 
@@ -389,6 +390,10 @@ class TmdbTitle {
           (mediaType.isEmpty && name.isNotEmpty && originalName.isNotEmpty));
 
   bool get isSerie => mediaType == ApiConstants.tv;
+
+  bool get isSeenOnly => rating == AppConstants.seenRating;
+  bool get isRated => rating > AppConstants.seenRating;
+  bool get hasRating => rating > 0.0;
 
   bool get isOnAir => status == statusInProduction || status == statusPlanned;
 
