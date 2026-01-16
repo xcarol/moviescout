@@ -1,6 +1,8 @@
 import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/isar_service.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 class TmdbTitleRepository {
   final _isar = IsarService.instance;
@@ -102,6 +104,7 @@ class TmdbTitleRepository {
     List<int> filterGenres = const [],
     bool filterByProviders = false,
     List<int> filterProvidersIds = const [],
+    RatingFilter filterRating = RatingFilter.all,
   }) {
     var query = _isar.tmdbTitles.filter().listNameEqualTo(listName);
 
@@ -121,6 +124,12 @@ class TmdbTitleRepository {
     if (filterByProviders && filterProvidersIds.isNotEmpty) {
       query = query.anyOf(filterProvidersIds,
           (q, id) => q.flatrateProviderIdsElementEqualTo(id));
+    }
+
+    if (filterRating == RatingFilter.rated) {
+      query = query.ratingGreaterThan(AppConstants.seenRating);
+    } else if (filterRating == RatingFilter.seenOnly) {
+      query = query.ratingEqualTo(AppConstants.seenRating);
     }
 
     return query;
@@ -169,6 +178,7 @@ class TmdbTitleRepository {
     List<int> filterProvidersIds = const [],
     String sortOption = SortOption.alphabetically,
     bool sortAscending = true,
+    RatingFilter filterRating = RatingFilter.all,
     int offset = 0,
     int limit = 10,
   }) {
@@ -179,6 +189,7 @@ class TmdbTitleRepository {
       filterGenres: filterGenres,
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
+      filterRating: filterRating,
     );
 
     final sortedQuery = applySort(
@@ -194,6 +205,7 @@ class TmdbTitleRepository {
     List<int> filterGenres = const [],
     bool filterByProviders = false,
     List<int> filterProvidersIds = const [],
+    RatingFilter filterRating = RatingFilter.all,
   }) async {
     final query = buildQuery(
       listName: listName,
@@ -202,6 +214,7 @@ class TmdbTitleRepository {
       filterGenres: filterGenres,
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
+      filterRating: filterRating,
     );
     return query.count();
   }

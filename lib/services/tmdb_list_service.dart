@@ -11,6 +11,8 @@ import 'package:moviescout/services/update_manager.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
+enum RatingFilter { all, rated, seenOnly }
+
 class TmdbListService extends TmdbBaseService with ChangeNotifier {
   @protected
   String listNameVal = '';
@@ -50,6 +52,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   String selectedSort = SortOption.alphabetically;
   @protected
   bool isSortAsc = true;
+  @protected
+  RatingFilter filterRating = RatingFilter.all;
   ValueNotifier<int> selectedTitleCount = ValueNotifier(0);
   int get loadedTitleCount => loadedTitlesVal.length;
   @protected
@@ -322,6 +326,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       filterGenres: filterGenres,
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
+      filterRating: filterRating,
     );
     await loadNextPage();
   }
@@ -332,13 +337,15 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       List<String> genres = const [],
       bool filterByProviders = false,
       List<int> providerListIds = const [],
+      RatingFilter ratingFilter = RatingFilter.all,
       String sort = SortOption.alphabetically,
       bool ascending = true}) async {
     filterText = text;
     filterMediaType = type;
     filterGenres = TmdbGenreService().getIdsFromNames(genres);
-    filterByProviders = filterByProviders;
+    this.filterByProviders = filterByProviders;
     filterProvidersIds = providerListIds;
+    filterRating = ratingFilter;
     selectedSort = sort;
     isSortAsc = computeSortDirection(sort, ascending);
     await filterTitles();
@@ -362,6 +369,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   void setTypeFilter(String type) {
     filterMediaType = type;
+    filterTitles();
+  }
+
+  void setRatingFilter(RatingFilter filter) {
+    filterRating = filter;
     filterTitles();
   }
 
@@ -478,6 +490,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         filterProvidersIds: filterProvidersIds,
         sortOption: selectedSort,
         sortAscending: isSortAsc,
+        filterRating: filterRating,
         offset: pageVal * pageSizeVal,
         limit: pageSizeVal,
       );
