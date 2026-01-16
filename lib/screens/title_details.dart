@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
@@ -19,6 +20,7 @@ import 'package:moviescout/widgets/rate_form.dart';
 import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:provider/provider.dart';
+import 'package:moviescout/utils/app_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TitleDetails extends StatefulWidget {
@@ -280,9 +282,11 @@ class _TitleDetailsState extends State<TitleDetails> {
                 const SizedBox(width: 5),
                 if (ratingService.contains(title))
                   Padding(
-                    padding: EdgeInsets.only(right: 10),
+                    padding: const EdgeInsets.only(right: 10),
                     child: Text(
-                      '$titleRating',
+                      titleRating == AppConstants.seenRating
+                          ? AppLocalizations.of(context)!.seen
+                          : '$titleRating',
                       style: TextStyle(
                         color: Theme.of(context)
                             .extension<CustomColors>()!
@@ -307,7 +311,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                         title: title.name,
                         initialRate: titleRating,
                         initialDate: titleRatingDate,
-                        onSubmit: (int rating) {
+                        onSubmit: (double rating) {
                           Provider.of<TmdbRateslistService>(context,
                                   listen: false)
                               .updateTitleRate(
@@ -323,6 +327,57 @@ class _TitleDetailsState extends State<TitleDetails> {
                     },
                   ),
                   child: Text(AppLocalizations.of(context)!.rate),
+                ),
+                const SizedBox(width: 10),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    side: BorderSide(
+                      color: titleRating > AppConstants.seenRating
+                          ? Theme.of(context).disabledColor
+                          : (titleRating == AppConstants.seenRating
+                              ? Theme.of(context)
+                                  .extension<CustomColors>()!
+                                  .ratedTitle
+                              : Theme.of(context).colorScheme.primary),
+                      width: 1,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  onPressed: titleRating > AppConstants.seenRating
+                      ? null // Disabled if rated
+                      : () {
+                          final newRating =
+                              titleRating == AppConstants.seenRating
+                                  ? 0.0
+                                  : AppConstants.seenRating;
+                          Provider.of<TmdbRateslistService>(context,
+                                  listen: false)
+                              .updateTitleRate(
+                            Provider.of<TmdbUserService>(context, listen: false)
+                                .accountId,
+                            Provider.of<TmdbUserService>(context, listen: false)
+                                .sessionId,
+                            title,
+                            newRating,
+                          );
+                        },
+                  child: Tooltip(
+                    message: titleRating == AppConstants.seenRating
+                        ? AppLocalizations.of(context)!.seen
+                        : AppLocalizations.of(context)!.markAsSeen,
+                    child: Icon(
+                      titleRating > 0 ? Symbols.done_outline : Symbols.check,
+                      color: titleRating > 0
+                          ? (titleRating > AppConstants.seenRating
+                              ? Theme.of(context).disabledColor
+                              : Theme.of(context)
+                                  .extension<CustomColors>()!
+                                  .ratedTitle)
+                          : Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
                 ),
               ],
             );

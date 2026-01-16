@@ -10,6 +10,7 @@ import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:provider/provider.dart';
 
@@ -110,15 +111,24 @@ class TitleCard extends StatelessWidget {
       shouldRebuild: (prev, next) => prev?.rating != next?.rating,
       builder: (context, ratedTitle, _) {
         if (ratedTitle != null && ratedTitle.tmdbId > 0) {
-          children.addAll([
-            const SizedBox(width: 20),
-            Icon(Icons.star, color: customColors.ratedTitle),
-            const SizedBox(width: 5),
-            Text(
-              ratedTitle.rating.toStringAsFixed(0),
-              style: TextStyle(color: customColors.ratedTitle),
-            ),
-          ]);
+          children.add(const SizedBox(width: 20));
+          if (ratedTitle.rating == AppConstants.seenRating) {
+            children.add(
+              Text(
+                AppLocalizations.of(context)!.seen,
+                style: TextStyle(color: customColors.ratedTitle),
+              ),
+            );
+          } else {
+            children.addAll([
+              Icon(Icons.star, color: customColors.ratedTitle),
+              const SizedBox(width: 5),
+              Text(
+                ratedTitle.rating.toStringAsFixed(0),
+                style: TextStyle(color: customColors.ratedTitle),
+              ),
+            ]);
+          }
         }
 
         if (extraWidgets != null) {
