@@ -13,6 +13,7 @@ class AppConstants {
   static const String themeMode = 'theme_mode';
   static const String themeScheme = 'ThemeScheme';
   static const String language = 'language';
+  static const String lastBackgroundRun = 'last_background_run';
 
   static const String catalan = 'ca-ES';
   static const String spanish = 'es-ES';
