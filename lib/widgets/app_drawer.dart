@@ -232,10 +232,11 @@ class AppDrawer extends StatelessWidget {
     final String? lastRunStr =
         PreferencesService().prefs.getString(AppConstants.lastBackgroundRun);
 
-    if (lastRunStr == null) return const SizedBox.shrink();
-
-    final DateTime lastRun = DateTime.parse(lastRunStr).toLocal();
-    final String formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(lastRun);
+    String formattedDate = 'null';
+    if (lastRunStr != null) {
+      final DateTime lastRun = DateTime.parse(lastRunStr).toLocal();
+      formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(lastRun);
+    }
 
     return ListTile(
       dense: true,
