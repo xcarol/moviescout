@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform;
+    show TargetPlatform, defaultTargetPlatform, kDebugMode;
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/screens/providers.dart';
@@ -20,6 +20,9 @@ import 'package:moviescout/widgets/color_scheme_form.dart';
 import 'package:moviescout/widgets/language_form.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/snack_bar.dart';
+import 'package:intl/intl.dart';
+import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -40,6 +43,7 @@ class AppDrawer extends StatelessWidget {
           _colorSchemeTile(context),
           _languageTile(context),
           _aboutTile(context),
+          if (kDebugMode) _lastBackgroundUpdateTile(context),
           const Divider(),
           _userSessionTile(context, isUserLoggedIn),
         ],
@@ -221,6 +225,25 @@ class AppDrawer extends StatelessWidget {
         )
       ],
       child: Text(AppLocalizations.of(context)!.about),
+    );
+  }
+
+  Widget _lastBackgroundUpdateTile(BuildContext context) {
+    final String? lastRunStr =
+        PreferencesService().prefs.getString(AppConstants.lastBackgroundRun);
+
+    if (lastRunStr == null) return const SizedBox.shrink();
+
+    final DateTime lastRun = DateTime.parse(lastRunStr).toLocal();
+    final String formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(lastRun);
+
+    return ListTile(
+      dense: true,
+      leading: const Icon(Icons.history, size: 20),
+      title: Text(
+        '${AppConstants.lastBackgroundRun}: $formattedDate',
+        style: Theme.of(context).textTheme.bodySmall,
+      ),
     );
   }
 
