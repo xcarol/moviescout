@@ -3,7 +3,9 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 class TitleListController with ChangeNotifier {
   final TmdbListService listService;
@@ -17,6 +19,7 @@ class TitleListController with ChangeNotifier {
   String _selectedSort = '';
   List<String> _selectedGenres = [];
   bool _filterByProviders = false;
+  RatingFilter _ratingFilter = RatingFilter.rated;
   List<int> _providerListIds = [];
   List<String> _titleTypes = [];
   List<String> _titleSorts = [];
@@ -27,6 +30,7 @@ class TitleListController with ChangeNotifier {
   late final String _selectedTypePreferencesName;
   late final String _selectedSortPreferencesName;
   late final String _filterByProvidersPreferencesName;
+  late final String _ratingFilterPreferencesName;
   late final String _sortPreferencesName;
 
   TitleListController(this.listService) {
@@ -42,9 +46,16 @@ class TitleListController with ChangeNotifier {
   String get selectedSort => _selectedSort;
   List<String> get selectedGenres => _selectedGenres;
   bool get filterByProviders => _filterByProviders;
+  RatingFilter get ratingFilter => _ratingFilter;
   List<int> get providerListIds => _providerListIds;
   List<String> get titleTypes => _titleTypes;
   List<String> get titleSorts => _titleSorts;
+
+  RatingFilter get _defaultRatingFilter =>
+      (listService.listName == AppConstants.rateslist ||
+              listService is TmdbRateslistService)
+          ? RatingFilter.rated
+          : RatingFilter.all;
 
   String getSelectedSortLabel(AppLocalizations localizations) =>
       _optionToSortName(localizations, _selectedSort);
@@ -128,6 +139,7 @@ class TitleListController with ChangeNotifier {
         genres: _selectedGenres,
         filterByProviders: _filterByProviders,
         providerListIds: _providerListIds,
+        ratingFilter: _ratingFilter,
         sort: _selectedSort,
         ascending: _isSortAsc,
       );
@@ -177,6 +189,15 @@ class TitleListController with ChangeNotifier {
     notifyListeners();
   }
 
+  void setRatingFilter(RatingFilter value) {
+    _ratingFilter = value;
+    PreferencesService()
+        .prefs
+        .setInt(_ratingFilterPreferencesName, value.index);
+    listService.setRatingFilter(value);
+    notifyListeners();
+  }
+
   void _initPreferencesNames() {
     _textFilterPreferencesName = '${listService.listName}_TextFilter';
     _showFiltersPreferencesName = '${listService.listName}_ShowFilters';
@@ -186,6 +207,7 @@ class TitleListController with ChangeNotifier {
         '${listService.listName}_FilterByProviders';
     _sortPreferencesName = '${listService.listName}_Sort';
     _selectedSortPreferencesName = '${listService.listName}_SelectedSort';
+    _ratingFilterPreferencesName = '${listService.listName}_RatingFilter';
   }
 
   void _loadPreferences() {
@@ -200,6 +222,9 @@ class TitleListController with ChangeNotifier {
     _isSortAsc = prefs.getBool(_sortPreferencesName) ?? true;
     _selectedSort = prefs.getString(_selectedSortPreferencesName) ??
         SortOption.alphabetically;
+    _ratingFilter = RatingFilter.values[
+        prefs.getInt(_ratingFilterPreferencesName) ??
+            _defaultRatingFilter.index];
   }
 
   void _onListServiceChanged() {
