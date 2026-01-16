@@ -48,6 +48,11 @@ void callbackDispatcher() {
         }
       }
 
+      await PreferencesService().prefs.setString(
+            AppConstants.lastBackgroundRun,
+            DateTime.now().toIso8601String(),
+          );
+
       return Future.value(true);
     } catch (e) {
       return Future.value(false);
