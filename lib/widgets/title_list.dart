@@ -10,6 +10,8 @@ import 'package:moviescout/widgets/title_list_control_panel.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/widgets/title_list_controller.dart';
 import 'package:moviescout/models/title_list_theme.dart';
+import 'package:moviescout/widgets/rating_filter_tabs.dart';
+import 'package:moviescout/services/tmdb_rateslist_service.dart';
 
 class TitleList extends StatefulWidget {
   final TmdbListService listService;
@@ -137,6 +139,9 @@ class _TitleListState extends State<TitleList> {
                   _controller.setFilterByProviders(providersChanged);
                 },
                 focusNode: _controller.searchFocusNode,
+                ratingFilter: widget.listService is TmdbRateslistService
+                    ? RatingFilterTabs(controller: _controller)
+                    : null,
               ),
               Container(
                 color: titleTheme.controlPanelInternalBackground,

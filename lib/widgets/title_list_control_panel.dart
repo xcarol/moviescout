@@ -14,6 +14,7 @@ class TitleListControlPanel extends StatelessWidget {
   final bool filterByProviders;
   final Function providersChanged;
   final FocusNode focusNode;
+  final Widget? ratingFilter;
 
   const TitleListControlPanel({
     super.key,
@@ -25,10 +26,12 @@ class TitleListControlPanel extends StatelessWidget {
     required this.filterByProviders,
     required this.providersChanged,
     required this.focusNode,
+    this.ratingFilter,
   });
 
   @override
   Widget build(BuildContext context) {
+    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
     return Container(
       padding: const EdgeInsets.all(4.0),
       child: Column(
@@ -43,6 +46,15 @@ class TitleListControlPanel extends StatelessWidget {
             ],
           ),
           _textFilter(context, AppLocalizations.of(context)!.search),
+          if (ratingFilter != null)
+            Container(
+              color: titleTheme.controlPanelForeground.withValues(alpha: 0.2),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [ratingFilter!],
+              ),
+            ),
         ],
       ),
     );

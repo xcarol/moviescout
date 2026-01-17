@@ -5,8 +5,6 @@ import 'package:moviescout/widgets/list_info_line.dart';
 import 'package:moviescout/widgets/drop_down_selector.dart';
 import 'package:moviescout/widgets/title_list_controller.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
-import 'package:moviescout/services/tmdb_rateslist_service.dart';
-import 'package:moviescout/widgets/rating_filter_tabs.dart';
 
 class TitleListInfoLine extends StatelessWidget {
   final TitleListController controller;
@@ -77,10 +75,6 @@ class TitleListInfoLine extends StatelessWidget {
           color: textColor,
         ),
       ),
-      if (listService is TmdbRateslistService) ...[
-        const SizedBox(width: 8),
-        RatingFilterTabs(controller: controller),
-      ],
     ];
   }
 
