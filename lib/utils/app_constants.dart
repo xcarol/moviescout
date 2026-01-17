@@ -5,6 +5,7 @@ class AppConstants {
   static const String discoverlist = 'discoverlist';
   static const String importImdb = 'importImdb';
   static const String searchProvider = 'searchProvider';
+  static const double seenRating = 0.5;
 
   // Preference Keys
   static const String lastUpdateSuffix = '_last_update';

@@ -11,14 +11,14 @@ class RateForm extends Dialog {
       this.initialDate});
 
   final String title;
-  final int? initialRate;
+  final double? initialRate;
   final DateTime? initialDate;
-  final Function(int) onSubmit;
+  final Function(double) onSubmit;
 
   @override
   Widget build(BuildContext context) {
     String rate = AppLocalizations.of(context)!.rate;
-    ValueNotifier<int> rating = ValueNotifier(initialRate ?? 0);
+    ValueNotifier<double> rating = ValueNotifier(initialRate ?? 0.0);
 
     return AlertDialog(
       title: Text(
@@ -36,7 +36,7 @@ class RateForm extends Dialog {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 if (value > 0)
                   Text(
-                    '${AppLocalizations.of(context)!.your_rate}: $value',
+                    '${AppLocalizations.of(context)!.your_rate}: ${value.toInt()}',
                   ),
                 if (initialDate != null &&
                     !initialDate!.isAtSameMomentAs(
@@ -53,7 +53,7 @@ class RateForm extends Dialog {
                         ? Icon(Icons.star)
                         : Icon(Icons.star_border),
                     onPressed: () {
-                      rating.value = index + 1;
+                      rating.value = (index + 1).toDouble();
                     },
                   );
                 }),
@@ -62,7 +62,7 @@ class RateForm extends Dialog {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 TextButton(
                     onPressed: () {
-                      onSubmit(0);
+                      onSubmit(0.0);
                       Navigator.of(context).pop();
                     },
                     child: Text(AppLocalizations.of(context)!.reset_rate)),

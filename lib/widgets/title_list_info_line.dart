@@ -74,7 +74,7 @@ class TitleListInfoLine extends StatelessWidget {
           Icons.arrow_drop_down,
           color: textColor,
         ),
-      )
+      ),
     ];
   }
 

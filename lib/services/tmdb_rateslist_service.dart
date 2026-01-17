@@ -17,14 +17,16 @@ const String _rateTv = 'tv/{ID}/rating?session_id={SESSION_ID}';
 
 class TmdbRateslistService extends TmdbListService {
   TmdbRateslistService(
-      super.listName, super.repository, super.preferencesService);
+      super.listName, super.repository, super.preferencesService) {
+    filterRating = RatingFilter.rated;
+  }
 
-  int getRating(int titleId, String mediaType) {
+  double getRating(int titleId, String mediaType) {
     TmdbTitle? title = getTitleByTmdbId(titleId, mediaType);
     if (title == null) {
-      return 0;
+      return 0.0;
     }
-    return title.rating.toInt();
+    return title.rating;
   }
 
   DateTime getRatingDate(int titleId, String mediaType) {
@@ -67,7 +69,7 @@ class TmdbRateslistService extends TmdbListService {
     String sessionId,
     int id,
     String mediaType,
-    int rate,
+    double rate,
   ) async {
     if (rate > 0) {
       if (mediaType == ApiConstants.movie) {
@@ -108,7 +110,7 @@ class TmdbRateslistService extends TmdbListService {
     String accountId,
     String sessionId,
     TmdbTitle title,
-    int rating,
+    double rating,
   ) async {
     try {
       title.listName = listName;
