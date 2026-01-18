@@ -114,7 +114,14 @@ class TmdbTitleRepository {
     }
 
     if (filterText.isNotEmpty) {
-      query = query.nameContains(filterText, caseSensitive: false);
+      query = query
+          .nameContains(filterText, caseSensitive: false)
+          .or()
+          .originalNameContains(filterText, caseSensitive: false)
+          .or()
+          .overviewContains(filterText, caseSensitive: false)
+          .or()
+          .taglineContains(filterText, caseSensitive: false);
     }
 
     if (filterGenres.isNotEmpty) {
