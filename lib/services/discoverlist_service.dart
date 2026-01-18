@@ -26,7 +26,7 @@ class TmdbDiscoverlistService extends TmdbListService {
       return;
     }
 
-    clearListSync();
+    await clearList();
 
     retrieveList(
         accountId.isEmpty ? AppConstants.anonymousAccountId : accountId,
