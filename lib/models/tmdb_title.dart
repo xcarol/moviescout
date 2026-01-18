@@ -77,6 +77,7 @@ class TmdbTitleFields {
   static const String mediaType = 'media_type';
   static const String providers = 'providers';
   static const String addedOrder = 'added_order';
+  static const String isPinned = 'is_pinned';
 }
 
 const statusEnded = 'Ended';
@@ -140,6 +141,7 @@ class TmdbTitle {
   late int effectiveRuntime;
   late String effectiveReleaseDate;
   late int addedOrder;
+  late bool isPinned;
 
   // Lists (Simple)
   late List<int> genreIds;
@@ -199,6 +201,7 @@ class TmdbTitle {
     this.seasonsJson,
     this.recommendationsJson,
     this.nextEpisodeToAirJson,
+    this.isPinned = false,
   }) {
     if (effectiveReleaseDate.isEmpty) {
       effectiveReleaseDate =
@@ -219,6 +222,7 @@ class TmdbTitle {
       lastUpdated: '1970-01-01',
       dateRated: DateTime.fromMillisecondsSinceEpoch(0),
       addedOrder: 0,
+      isPinned: title[TmdbTitleFields.isPinned] ?? false,
     )..fillFromMap(title);
   }
 
@@ -296,6 +300,7 @@ class TmdbTitle {
     budget = title[TmdbTitleFields.budget] ?? budget;
     revenue = title[TmdbTitleFields.revenue] ?? revenue;
     addedOrder = title[TmdbTitleFields.addedOrder] ?? addedOrder;
+    isPinned = title[TmdbTitleFields.isPinned] ?? isPinned;
 
     effectiveReleaseDate =
         mediaType == ApiConstants.movie ? releaseDate : firstAirDate;
@@ -365,6 +370,7 @@ class TmdbTitle {
       TmdbTitleFields.budget: budget,
       TmdbTitleFields.revenue: revenue,
       TmdbTitleFields.addedOrder: addedOrder,
+      TmdbTitleFields.isPinned: isPinned,
       TmdbTitleFields.genreIds: genreIds,
       TmdbTitleFields.originCountry: originCountry,
       TmdbTitleFields.credits:
