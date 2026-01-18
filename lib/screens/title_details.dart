@@ -19,6 +19,7 @@ import 'package:moviescout/widgets/person_chip.dart';
 import 'package:moviescout/widgets/rate_form.dart';
 import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
+import 'package:moviescout/widgets/pin_button.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -236,7 +237,13 @@ class _TitleDetailsState extends State<TitleDetails> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text('${_releaseDates(title)} - ${_duration(title)}'),
-        watchlistButton(context, title),
+        Row(
+          children: [
+            pinButton(context, title),
+            const SizedBox(width: 8),
+            watchlistButton(context, title),
+          ],
+        ),
       ],
     );
   }

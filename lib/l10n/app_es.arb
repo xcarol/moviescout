@@ -102,5 +102,9 @@
     "job": "Cargo",
     "department": "Departamento",
     "languageChangeTitle": "Cambio de idioma",
-    "languageChangeContent": "Has cambiado el idioma de la aplicación. Para que los títulos se actualicen al nuevo idioma, es necesario que cierres la sesión y vuelvas a entrar."
+    "languageChangeContent": "Has cambiado el idioma de la aplicación. Para que los títulos se actualicen al nuevo idioma, es necesario que cierres la sesión y vuelvas a entrar.",
+    "watchingNow": "Mirando ahora",
+    "pinLimitReached": "Has alcanzado el límite de 5 títulos fijados.",
+    "pin": "Fijar",
+    "unpin": "Desfijar"
 }

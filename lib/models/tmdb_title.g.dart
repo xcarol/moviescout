@@ -72,163 +72,183 @@ const TmdbTitleSchema = CollectionSchema(
       name: r'genreIds',
       type: IsarType.longList,
     ),
-    r'hashCode': PropertySchema(
+    r'hasRating': PropertySchema(
       id: 11,
+      name: r'hasRating',
+      type: IsarType.bool,
+    ),
+    r'hashCode': PropertySchema(
+      id: 12,
       name: r'hashCode',
       type: IsarType.long,
     ),
     r'imdbId': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'imdbId',
       type: IsarType.string,
     ),
     r'isMovie': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'isMovie',
       type: IsarType.bool,
     ),
     r'isOnAir': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'isOnAir',
       type: IsarType.bool,
     ),
+    r'isPinned': PropertySchema(
+      id: 16,
+      name: r'isPinned',
+      type: IsarType.bool,
+    ),
+    r'isRated': PropertySchema(
+      id: 17,
+      name: r'isRated',
+      type: IsarType.bool,
+    ),
+    r'isSeenOnly': PropertySchema(
+      id: 18,
+      name: r'isSeenOnly',
+      type: IsarType.bool,
+    ),
     r'isSerie': PropertySchema(
-      id: 15,
+      id: 19,
       name: r'isSerie',
       type: IsarType.bool,
     ),
     r'lastAirDate': PropertySchema(
-      id: 16,
+      id: 20,
       name: r'lastAirDate',
       type: IsarType.string,
     ),
     r'lastUpdated': PropertySchema(
-      id: 17,
+      id: 21,
       name: r'lastUpdated',
       type: IsarType.string,
     ),
     r'listName': PropertySchema(
-      id: 18,
+      id: 22,
       name: r'listName',
       type: IsarType.string,
     ),
     r'mediaType': PropertySchema(
-      id: 19,
+      id: 23,
       name: r'mediaType',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 20,
+      id: 24,
       name: r'name',
       type: IsarType.string,
     ),
     r'nextEpisodeToAirJson': PropertySchema(
-      id: 21,
+      id: 25,
       name: r'nextEpisodeToAirJson',
       type: IsarType.string,
     ),
     r'numberOfEpisodes': PropertySchema(
-      id: 22,
+      id: 26,
       name: r'numberOfEpisodes',
       type: IsarType.long,
     ),
     r'numberOfSeasons': PropertySchema(
-      id: 23,
+      id: 27,
       name: r'numberOfSeasons',
       type: IsarType.long,
     ),
     r'originCountry': PropertySchema(
-      id: 24,
+      id: 28,
       name: r'originCountry',
       type: IsarType.stringList,
     ),
     r'originalLanguage': PropertySchema(
-      id: 25,
+      id: 29,
       name: r'originalLanguage',
       type: IsarType.string,
     ),
     r'originalName': PropertySchema(
-      id: 26,
+      id: 30,
       name: r'originalName',
       type: IsarType.string,
     ),
     r'overview': PropertySchema(
-      id: 27,
+      id: 31,
       name: r'overview',
       type: IsarType.string,
     ),
     r'popularity': PropertySchema(
-      id: 28,
+      id: 32,
       name: r'popularity',
       type: IsarType.double,
     ),
     r'posterPath': PropertySchema(
-      id: 29,
+      id: 33,
       name: r'posterPath',
       type: IsarType.string,
     ),
     r'posterPathSuffix': PropertySchema(
-      id: 30,
+      id: 34,
       name: r'posterPathSuffix',
       type: IsarType.string,
     ),
     r'providersJson': PropertySchema(
-      id: 31,
+      id: 35,
       name: r'providersJson',
       type: IsarType.string,
     ),
     r'rating': PropertySchema(
-      id: 32,
+      id: 36,
       name: r'rating',
       type: IsarType.double,
     ),
     r'recommendationsJson': PropertySchema(
-      id: 33,
+      id: 37,
       name: r'recommendationsJson',
       type: IsarType.string,
     ),
     r'releaseDate': PropertySchema(
-      id: 34,
+      id: 38,
       name: r'releaseDate',
       type: IsarType.string,
     ),
     r'revenue': PropertySchema(
-      id: 35,
+      id: 39,
       name: r'revenue',
       type: IsarType.long,
     ),
     r'runtime': PropertySchema(
-      id: 36,
+      id: 40,
       name: r'runtime',
       type: IsarType.long,
     ),
     r'seasonsJson': PropertySchema(
-      id: 37,
+      id: 41,
       name: r'seasonsJson',
       type: IsarType.string,
     ),
     r'status': PropertySchema(
-      id: 38,
+      id: 42,
       name: r'status',
       type: IsarType.string,
     ),
     r'tagline': PropertySchema(
-      id: 39,
+      id: 43,
       name: r'tagline',
       type: IsarType.string,
     ),
     r'tmdbId': PropertySchema(
-      id: 40,
+      id: 44,
       name: r'tmdbId',
       type: IsarType.long,
     ),
     r'voteAverage': PropertySchema(
-      id: 41,
+      id: 45,
       name: r'voteAverage',
       type: IsarType.double,
     ),
     r'voteCount': PropertySchema(
-      id: 42,
+      id: 46,
       name: r'voteCount',
       type: IsarType.long,
     )
@@ -367,38 +387,42 @@ void _tmdbTitleSerialize(
   writer.writeString(offsets[8], object.firstAirDate);
   writer.writeLongList(offsets[9], object.flatrateProviderIds);
   writer.writeLongList(offsets[10], object.genreIds);
-  writer.writeLong(offsets[11], object.hashCode);
-  writer.writeString(offsets[12], object.imdbId);
-  writer.writeBool(offsets[13], object.isMovie);
-  writer.writeBool(offsets[14], object.isOnAir);
-  writer.writeBool(offsets[15], object.isSerie);
-  writer.writeString(offsets[16], object.lastAirDate);
-  writer.writeString(offsets[17], object.lastUpdated);
-  writer.writeString(offsets[18], object.listName);
-  writer.writeString(offsets[19], object.mediaType);
-  writer.writeString(offsets[20], object.name);
-  writer.writeString(offsets[21], object.nextEpisodeToAirJson);
-  writer.writeLong(offsets[22], object.numberOfEpisodes);
-  writer.writeLong(offsets[23], object.numberOfSeasons);
-  writer.writeStringList(offsets[24], object.originCountry);
-  writer.writeString(offsets[25], object.originalLanguage);
-  writer.writeString(offsets[26], object.originalName);
-  writer.writeString(offsets[27], object.overview);
-  writer.writeDouble(offsets[28], object.popularity);
-  writer.writeString(offsets[29], object.posterPath);
-  writer.writeString(offsets[30], object.posterPathSuffix);
-  writer.writeString(offsets[31], object.providersJson);
-  writer.writeDouble(offsets[32], object.rating);
-  writer.writeString(offsets[33], object.recommendationsJson);
-  writer.writeString(offsets[34], object.releaseDate);
-  writer.writeLong(offsets[35], object.revenue);
-  writer.writeLong(offsets[36], object.runtime);
-  writer.writeString(offsets[37], object.seasonsJson);
-  writer.writeString(offsets[38], object.status);
-  writer.writeString(offsets[39], object.tagline);
-  writer.writeLong(offsets[40], object.tmdbId);
-  writer.writeDouble(offsets[41], object.voteAverage);
-  writer.writeLong(offsets[42], object.voteCount);
+  writer.writeBool(offsets[11], object.hasRating);
+  writer.writeLong(offsets[12], object.hashCode);
+  writer.writeString(offsets[13], object.imdbId);
+  writer.writeBool(offsets[14], object.isMovie);
+  writer.writeBool(offsets[15], object.isOnAir);
+  writer.writeBool(offsets[16], object.isPinned);
+  writer.writeBool(offsets[17], object.isRated);
+  writer.writeBool(offsets[18], object.isSeenOnly);
+  writer.writeBool(offsets[19], object.isSerie);
+  writer.writeString(offsets[20], object.lastAirDate);
+  writer.writeString(offsets[21], object.lastUpdated);
+  writer.writeString(offsets[22], object.listName);
+  writer.writeString(offsets[23], object.mediaType);
+  writer.writeString(offsets[24], object.name);
+  writer.writeString(offsets[25], object.nextEpisodeToAirJson);
+  writer.writeLong(offsets[26], object.numberOfEpisodes);
+  writer.writeLong(offsets[27], object.numberOfSeasons);
+  writer.writeStringList(offsets[28], object.originCountry);
+  writer.writeString(offsets[29], object.originalLanguage);
+  writer.writeString(offsets[30], object.originalName);
+  writer.writeString(offsets[31], object.overview);
+  writer.writeDouble(offsets[32], object.popularity);
+  writer.writeString(offsets[33], object.posterPath);
+  writer.writeString(offsets[34], object.posterPathSuffix);
+  writer.writeString(offsets[35], object.providersJson);
+  writer.writeDouble(offsets[36], object.rating);
+  writer.writeString(offsets[37], object.recommendationsJson);
+  writer.writeString(offsets[38], object.releaseDate);
+  writer.writeLong(offsets[39], object.revenue);
+  writer.writeLong(offsets[40], object.runtime);
+  writer.writeString(offsets[41], object.seasonsJson);
+  writer.writeString(offsets[42], object.status);
+  writer.writeString(offsets[43], object.tagline);
+  writer.writeLong(offsets[44], object.tmdbId);
+  writer.writeDouble(offsets[45], object.voteAverage);
+  writer.writeLong(offsets[46], object.voteCount);
 }
 
 TmdbTitle _tmdbTitleDeserialize(
@@ -419,33 +443,34 @@ TmdbTitle _tmdbTitleDeserialize(
     flatrateProviderIds: reader.readLongList(offsets[9]) ?? const [],
     genreIds: reader.readLongList(offsets[10]) ?? const [],
     id: id,
-    imdbId: reader.readStringOrNull(offsets[12]) ?? '',
-    lastAirDate: reader.readStringOrNull(offsets[16]) ?? '',
-    lastUpdated: reader.readString(offsets[17]),
-    listName: reader.readString(offsets[18]),
-    mediaType: reader.readStringOrNull(offsets[19]) ?? '',
-    name: reader.readString(offsets[20]),
-    nextEpisodeToAirJson: reader.readStringOrNull(offsets[21]),
-    numberOfEpisodes: reader.readLongOrNull(offsets[22]) ?? 0,
-    numberOfSeasons: reader.readLongOrNull(offsets[23]) ?? 0,
-    originCountry: reader.readStringList(offsets[24]) ?? const [],
-    originalLanguage: reader.readStringOrNull(offsets[25]) ?? '',
-    originalName: reader.readStringOrNull(offsets[26]) ?? '',
-    overview: reader.readStringOrNull(offsets[27]) ?? '',
-    popularity: reader.readDoubleOrNull(offsets[28]) ?? 0.0,
-    posterPathSuffix: reader.readStringOrNull(offsets[30]),
-    providersJson: reader.readStringOrNull(offsets[31]),
-    rating: reader.readDoubleOrNull(offsets[32]) ?? 0.0,
-    recommendationsJson: reader.readStringOrNull(offsets[33]),
-    releaseDate: reader.readStringOrNull(offsets[34]) ?? '',
-    revenue: reader.readLongOrNull(offsets[35]) ?? 0,
-    runtime: reader.readLongOrNull(offsets[36]) ?? 0,
-    seasonsJson: reader.readStringOrNull(offsets[37]),
-    status: reader.readStringOrNull(offsets[38]) ?? '',
-    tagline: reader.readStringOrNull(offsets[39]) ?? '',
-    tmdbId: reader.readLong(offsets[40]),
-    voteAverage: reader.readDoubleOrNull(offsets[41]) ?? 0.0,
-    voteCount: reader.readLongOrNull(offsets[42]) ?? 0,
+    imdbId: reader.readStringOrNull(offsets[13]) ?? '',
+    isPinned: reader.readBoolOrNull(offsets[16]) ?? false,
+    lastAirDate: reader.readStringOrNull(offsets[20]) ?? '',
+    lastUpdated: reader.readString(offsets[21]),
+    listName: reader.readString(offsets[22]),
+    mediaType: reader.readStringOrNull(offsets[23]) ?? '',
+    name: reader.readString(offsets[24]),
+    nextEpisodeToAirJson: reader.readStringOrNull(offsets[25]),
+    numberOfEpisodes: reader.readLongOrNull(offsets[26]) ?? 0,
+    numberOfSeasons: reader.readLongOrNull(offsets[27]) ?? 0,
+    originCountry: reader.readStringList(offsets[28]) ?? const [],
+    originalLanguage: reader.readStringOrNull(offsets[29]) ?? '',
+    originalName: reader.readStringOrNull(offsets[30]) ?? '',
+    overview: reader.readStringOrNull(offsets[31]) ?? '',
+    popularity: reader.readDoubleOrNull(offsets[32]) ?? 0.0,
+    posterPathSuffix: reader.readStringOrNull(offsets[34]),
+    providersJson: reader.readStringOrNull(offsets[35]),
+    rating: reader.readDoubleOrNull(offsets[36]) ?? 0.0,
+    recommendationsJson: reader.readStringOrNull(offsets[37]),
+    releaseDate: reader.readStringOrNull(offsets[38]) ?? '',
+    revenue: reader.readLongOrNull(offsets[39]) ?? 0,
+    runtime: reader.readLongOrNull(offsets[40]) ?? 0,
+    seasonsJson: reader.readStringOrNull(offsets[41]),
+    status: reader.readStringOrNull(offsets[42]) ?? '',
+    tagline: reader.readStringOrNull(offsets[43]) ?? '',
+    tmdbId: reader.readLong(offsets[44]),
+    voteAverage: reader.readDoubleOrNull(offsets[45]) ?? 0.0,
+    voteCount: reader.readLongOrNull(offsets[46]) ?? 0,
   );
   return object;
 }
@@ -480,68 +505,76 @@ P _tmdbTitleDeserializeProp<P>(
     case 10:
       return (reader.readLongList(offset) ?? const []) as P;
     case 11:
-      return (reader.readLong(offset)) as P;
-    case 12:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 13:
       return (reader.readBool(offset)) as P;
+    case 12:
+      return (reader.readLong(offset)) as P;
+    case 13:
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 14:
       return (reader.readBool(offset)) as P;
     case 15:
       return (reader.readBool(offset)) as P;
     case 16:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     case 17:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 18:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 19:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (reader.readBool(offset)) as P;
     case 20:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 21:
-      return (reader.readStringOrNull(offset)) as P;
-    case 22:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 23:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 24:
-      return (reader.readStringList(offset) ?? const []) as P;
-    case 25:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 26:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 27:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 28:
-      return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
-    case 29:
       return (reader.readString(offset)) as P;
+    case 22:
+      return (reader.readString(offset)) as P;
+    case 23:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 24:
+      return (reader.readString(offset)) as P;
+    case 25:
+      return (reader.readStringOrNull(offset)) as P;
+    case 26:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    case 27:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    case 28:
+      return (reader.readStringList(offset) ?? const []) as P;
+    case 29:
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 30:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 31:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 32:
       return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
     case 33:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 34:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 35:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 36:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
+      return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
     case 37:
       return (reader.readStringOrNull(offset)) as P;
     case 38:
       return (reader.readStringOrNull(offset) ?? '') as P;
     case 39:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 40:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 41:
-      return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 42:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 43:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 44:
+      return (reader.readLong(offset)) as P;
+    case 45:
+      return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
+    case 46:
       return (reader.readLongOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2000,6 +2033,16 @@ extension TmdbTitleQueryFilter
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> hasRatingEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hasRating',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> hashCodeEqualTo(
       int value) {
     return QueryBuilder.apply(this, (query) {
@@ -2251,6 +2294,36 @@ extension TmdbTitleQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isOnAir',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> isPinnedEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isPinned',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> isRatedEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isRated',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> isSeenOnlyEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isSeenOnly',
         value: value,
       ));
     });
@@ -5484,6 +5557,18 @@ extension TmdbTitleQuerySortBy on QueryBuilder<TmdbTitle, TmdbTitle, QSortBy> {
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByHasRating() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hasRating', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByHasRatingDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hasRating', Sort.desc);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.asc);
@@ -5529,6 +5614,42 @@ extension TmdbTitleQuerySortBy on QueryBuilder<TmdbTitle, TmdbTitle, QSortBy> {
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByIsOnAirDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isOnAir', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByIsPinned() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isPinned', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByIsPinnedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isPinned', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByIsRated() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isRated', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByIsRatedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isRated', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByIsSeenOnly() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSeenOnly', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByIsSeenOnlyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSeenOnly', Sort.desc);
     });
   }
 
@@ -5977,6 +6098,18 @@ extension TmdbTitleQuerySortThenBy
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByHasRating() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hasRating', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByHasRatingDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hasRating', Sort.desc);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.asc);
@@ -6034,6 +6167,42 @@ extension TmdbTitleQuerySortThenBy
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByIsOnAirDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isOnAir', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByIsPinned() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isPinned', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByIsPinnedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isPinned', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByIsRated() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isRated', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByIsRatedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isRated', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByIsSeenOnly() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSeenOnly', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByIsSeenOnlyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSeenOnly', Sort.desc);
     });
   }
 
@@ -6444,6 +6613,12 @@ extension TmdbTitleQueryWhereDistinct
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByHasRating() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hasRating');
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'hashCode');
@@ -6466,6 +6641,24 @@ extension TmdbTitleQueryWhereDistinct
   QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByIsOnAir() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isOnAir');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByIsPinned() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isPinned');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByIsRated() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isRated');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByIsSeenOnly() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isSeenOnly');
     });
   }
 
@@ -6737,6 +6930,12 @@ extension TmdbTitleQueryProperty
     });
   }
 
+  QueryBuilder<TmdbTitle, bool, QQueryOperations> hasRatingProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hasRating');
+    });
+  }
+
   QueryBuilder<TmdbTitle, int, QQueryOperations> hashCodeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'hashCode');
@@ -6758,6 +6957,24 @@ extension TmdbTitleQueryProperty
   QueryBuilder<TmdbTitle, bool, QQueryOperations> isOnAirProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isOnAir');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, bool, QQueryOperations> isPinnedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isPinned');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, bool, QQueryOperations> isRatedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isRated');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, bool, QQueryOperations> isSeenOnlyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isSeenOnly');
     });
   }
 

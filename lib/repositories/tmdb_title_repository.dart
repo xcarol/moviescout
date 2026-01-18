@@ -105,8 +105,13 @@ class TmdbTitleRepository {
     bool filterByProviders = false,
     List<int> filterProvidersIds = const [],
     RatingFilter filterRating = RatingFilter.all,
+    bool? pinned,
   }) {
     var query = _isar.tmdbTitles.filter().listNameEqualTo(listName);
+
+    if (pinned != null) {
+      query = query.isPinnedEqualTo(pinned);
+    }
 
     if (filterText.isNotEmpty) {
       query = query.nameContains(filterText, caseSensitive: false);
@@ -179,6 +184,7 @@ class TmdbTitleRepository {
     String sortOption = SortOption.alphabetically,
     bool sortAscending = true,
     RatingFilter filterRating = RatingFilter.all,
+    bool? pinned,
     int offset = 0,
     int limit = 10,
   }) {
@@ -190,6 +196,7 @@ class TmdbTitleRepository {
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
       filterRating: filterRating,
+      pinned: pinned,
     );
 
     final sortedQuery = applySort(
@@ -206,6 +213,7 @@ class TmdbTitleRepository {
     bool filterByProviders = false,
     List<int> filterProvidersIds = const [],
     RatingFilter filterRating = RatingFilter.all,
+    bool? pinned,
   }) async {
     final query = buildQuery(
       listName: listName,
@@ -215,6 +223,7 @@ class TmdbTitleRepository {
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
       filterRating: filterRating,
+      pinned: pinned,
     );
     return query.count();
   }

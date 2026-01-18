@@ -35,7 +35,7 @@ class RatingFilterTabs extends StatelessWidget {
           indicatorSize: TabBarIndicatorSize.tab,
           indicator: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: ratedTitleColor.withOpacity(0.2),
+            color: ratedTitleColor.withValues(alpha: 0.2),
           ),
           dividerColor: Colors.transparent,
           labelColor: ratedTitleColor,

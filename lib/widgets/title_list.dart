@@ -12,6 +12,9 @@ import 'package:moviescout/widgets/title_list_controller.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/widgets/rating_filter_tabs.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
+import 'package:moviescout/widgets/pinned_title_chip.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 class TitleList extends StatefulWidget {
   final TmdbListService listService;
@@ -55,63 +58,59 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _titleList() {
-    return ChangeNotifierProvider<TmdbListService>.value(
-      value: widget.listService,
-      child: Consumer<TmdbListService>(
-        builder: (context, service, _) {
-          return NotificationListener<ScrollNotification>(
-            onNotification: (scrollInfo) {
-              _controller.onScrollNotification(
-                  scrollInfo, TitleCard.cardHeight);
-              return false;
-            },
-            child: Flexible(
-              child: Scrollbar(
+    return Consumer<TmdbListService>(
+      builder: (context, service, _) {
+        return NotificationListener<ScrollNotification>(
+          onNotification: (scrollInfo) {
+            _controller.onScrollNotification(scrollInfo, TitleCard.cardHeight);
+            return false;
+          },
+          child: Flexible(
+            child: Scrollbar(
+              controller: _controller.scrollController,
+              child: ListView.builder(
+                key: const PageStorageKey('TitleListView'),
                 controller: _controller.scrollController,
-                child: ListView.builder(
-                  key: const PageStorageKey('TitleListView'),
-                  controller: _controller.scrollController,
-                  shrinkWrap: true,
-                  keyboardDismissBehavior:
-                      ScrollViewKeyboardDismissBehavior.onDrag,
-                  itemCount: service.loadedTitleCount,
-                  itemBuilder: (context, index) {
-                    final title = service.getItem(index);
-                    if (title == null) {
-                      return SizedBox.shrink();
-                    }
-                    final clampedScale = MediaQuery.of(context)
-                        .textScaler
-                        .scale(1.0)
-                        .clamp(1.0, 1.3);
+                shrinkWrap: true,
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                itemCount: service.loadedTitleCount,
+                itemBuilder: (context, index) {
+                  final title = service.getItem(index);
+                  if (title == null) {
+                    return SizedBox.shrink();
+                  }
+                  final clampedScale = MediaQuery.of(context)
+                      .textScaler
+                      .scale(1.0)
+                      .clamp(1.0, 1.3);
 
-                    final titleTheme =
-                        Theme.of(context).extension<TitleListTheme>()!;
+                  final titleTheme =
+                      Theme.of(context).extension<TitleListTheme>()!;
 
-                    return MediaQuery(
-                      data: MediaQuery.of(context).copyWith(
-                        textScaler: TextScaler.linear(clampedScale),
-                      ),
-                      child: Column(
-                        children: [
-                          TitleCard(
-                            title: title,
-                            tmdbListService: widget.listService,
-                          ),
-                          Divider(
-                            height: 1,
-                            color: titleTheme.listDividerColor,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                  return MediaQuery(
+                    data: MediaQuery.of(context).copyWith(
+                      textScaler: TextScaler.linear(clampedScale),
+                    ),
+                    child: Column(
+                      children: [
+                        TitleCard(
+                          title: title,
+                          tmdbListService: widget.listService,
+                        ),
+                        Divider(
+                          height: 1,
+                          color: titleTheme.listDividerColor,
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -156,6 +155,56 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
+  Widget _pinnedTitlesRow() {
+    return Consumer<TmdbListService>(
+      builder: (context, service, _) {
+        if (service.pinnedTitles.isEmpty ||
+            service.listName != AppConstants.watchlist) {
+          return const SizedBox.shrink();
+        }
+
+        final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+
+        return Container(
+          color: titleTheme.listBackground,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.only(left: 12.0, top: 8.0, bottom: 4.0),
+                child: Text(
+                  AppLocalizations.of(context)!.watchingNow,
+                  style: TextStyle(
+                    color: titleTheme.listDividerColor.withValues(alpha: 0.7),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: PinnedTitleChip.cardHeight,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  itemCount: service.pinnedTitles.length,
+                  itemBuilder: (context, index) {
+                    return PinnedTitleChip(
+                      title: service.pinnedTitles[index],
+                      listService: service,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 8.0),
+              Divider(height: 1, color: titleTheme.listDividerColor),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -174,28 +223,32 @@ class _TitleListState extends State<TitleList> {
               }
 
               return Expanded(
-                child: Container(
-                  color: titleTheme.listBackground,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        color: titleTheme.listBackground,
-                        child: Divider(
+                child: ChangeNotifierProvider<TmdbListService>.value(
+                  value: widget.listService,
+                  child: Container(
+                    color: titleTheme.listBackground,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          color: titleTheme.listBackground,
+                          child: Divider(
+                            color: titleTheme.listDividerColor,
+                          ),
+                        ),
+                        TitleListInfoLine(
+                          controller: _controller,
+                          listService: widget.listService,
+                        ),
+                        Divider(
+                          height: 1,
                           color: titleTheme.listDividerColor,
                         ),
-                      ),
-                      TitleListInfoLine(
-                        controller: _controller,
-                        listService: widget.listService,
-                      ),
-                      Divider(
-                        height: 1,
-                        color: titleTheme.listDividerColor,
-                      ),
-                      if (_controller.showFilters) _controlPanel(),
-                      _titleList(),
-                    ],
+                        if (_controller.showFilters) _controlPanel(),
+                        _pinnedTitlesRow(),
+                        _titleList(),
+                      ],
+                    ),
                   ),
                 ),
               );
