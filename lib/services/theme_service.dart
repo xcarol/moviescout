@@ -215,6 +215,7 @@ class ThemeService with ChangeNotifier {
     inWatchlist: Color.fromARGB(0xFF, 0xFF, 0xC5, 0x00),
     notInWatchlist: Colors.grey,
     ratedTitle: Color.fromARGB(0xFF, 0xFF, 0xC5, 0x00),
+    pinnedTitle: Colors.amber,
     selected: Color.fromARGB(0xFF, 0xd3, 0x9a, 0x54),
     notSelected: Colors.grey,
     chipCardBackground: Color.fromARGB(0xFF, 0x30, 0x25, 0x1B),
@@ -240,6 +241,7 @@ class ThemeService with ChangeNotifier {
     inWatchlist: Colors.orange,
     notInWatchlist: Colors.blueGrey,
     ratedTitle: Colors.orange,
+    pinnedTitle: Colors.amber,
     selected: Colors.orange,
     notSelected: Colors.blueGrey,
     chipCardBackground: Colors.grey.shade200,
@@ -261,6 +263,7 @@ class ThemeService with ChangeNotifier {
     inWatchlist: Colors.amber,
     notInWatchlist: Colors.grey,
     ratedTitle: Colors.amber,
+    pinnedTitle: Colors.amber,
     selected: Colors.white,
     notSelected: Colors.grey,
     chipCardBackground: Colors.grey.shade900,
@@ -322,6 +325,7 @@ class ThemeService with ChangeNotifier {
     inWatchlist: Colors.orange,
     notInWatchlist: Colors.grey,
     ratedTitle: Colors.orange,
+    pinnedTitle: Colors.amber,
     selected: Colors.orange,
     notSelected: Colors.grey,
     chipCardBackground: Color.from(
@@ -388,6 +392,7 @@ class ThemeService with ChangeNotifier {
     inWatchlist: Colors.amber,
     notInWatchlist: Colors.grey,
     ratedTitle: Colors.amber,
+    pinnedTitle: Colors.amber,
     selected: Colors.amber,
     notSelected: Colors.grey,
     chipCardBackground: Color.from(
@@ -454,6 +459,7 @@ class ThemeService with ChangeNotifier {
     inWatchlist: Colors.red,
     notInWatchlist: Colors.grey,
     ratedTitle: Colors.red,
+    pinnedTitle: Colors.amber,
     selected: Colors.red,
     notSelected: Colors.grey,
     chipCardBackground: Color.from(
@@ -520,6 +526,7 @@ class ThemeService with ChangeNotifier {
     inWatchlist: Colors.orange,
     notInWatchlist: Colors.grey,
     ratedTitle: Colors.orange,
+    pinnedTitle: Colors.amber,
     selected: Colors.orange,
     notSelected: Colors.grey,
     chipCardBackground: Color.from(
