@@ -102,5 +102,9 @@
     "job": "Job",
     "department": "Department",
     "languageChangeTitle": "Language Change",
-    "languageChangeContent": "You have changed the application language. In order for titles to be updated to the new language, you need to log out and log back in."
+    "languageChangeContent": "You have changed the application language. In order for titles to be updated to the new language, you need to log out and log back in.",
+    "watchingNow": "Watching now",
+    "pinLimitReached": "You have reached the limit of 5 pinned titles.",
+    "pin": "Pin",
+    "unpin": "Unpin"
 }

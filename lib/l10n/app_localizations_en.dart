@@ -27,8 +27,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageEmptyList => 'No films slected yet.';
 
   @override
-  String get messageEmptySearch =>
-      'You can do a search by using the magnifying glass in the bottom bar.';
+  String get messageEmptySearch => 'You can do a search by using the magnifying glass in the bottom bar.';
 
   @override
   String get messageEmptyOptions => 'You can also';
@@ -124,12 +123,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get imdbConfirmationTitle => 'WARNING';
 
   @override
-  String get imdbResetWatchlistConfirmation =>
-      'Do you really want to reset Watchlist?';
+  String get imdbResetWatchlistConfirmation => 'Do you really want to reset Watchlist?';
 
   @override
-  String get imdbResetRateslistConfirmation =>
-      'Do you really want to reset Ratings?';
+  String get imdbResetRateslistConfirmation => 'Do you really want to reset Ratings?';
 
   @override
   String get resetWatchlistCount => 'Watchlist titles: ';
@@ -201,9 +198,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emptyRates => 'You have not been rated any title yet.';
 
   @override
-  String get emptyList => 'Nothing here.';
-
-  @override
   String get seen => 'Seen';
 
   @override
@@ -214,6 +208,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get seenOnly => 'Seen';
+
+  @override
+  String get emptyList => 'Nothing here.';
 
   @override
   String get watchlistTitle => 'Watchlist';
@@ -321,6 +318,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageChangeTitle => 'Language Change';
 
   @override
-  String get languageChangeContent =>
-      'You have changed the application language. In order for titles to be updated to the new language, you need to log out and log back in.';
+  String get languageChangeContent => 'You have changed the application language. In order for titles to be updated to the new language, you need to log out and log back in.';
+
+  @override
+  String get watchingNow => 'Watching now';
+
+  @override
+  String get pinLimitReached => 'You have reached the limit of 5 pinned titles.';
+
+  @override
+  String get pin => 'Pin';
+
+  @override
+  String get unpin => 'Unpin';
 }
