@@ -18,6 +18,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   String listNameVal = '';
   @protected
   final List<TmdbTitle> loadedTitlesVal = List.empty(growable: true);
+  @protected
+  final List<TmdbTitle> pinnedTitlesVal = List.empty(growable: true);
   String get listName => listNameVal;
   @protected
   bool isDbLoading = false;
@@ -56,6 +58,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   RatingFilter filterRating = RatingFilter.all;
   ValueNotifier<int> selectedTitleCount = ValueNotifier(0);
   int get loadedTitleCount => loadedTitlesVal.length;
+  List<TmdbTitle> get pinnedTitles => pinnedTitlesVal;
   @protected
   List<String> listGenresVal = [];
   ValueNotifier<List<String>> listGenres = ValueNotifier([]);
@@ -142,6 +145,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       listGenresVal.clear();
     }
     loadedTitlesVal.clear();
+    pinnedTitlesVal.clear();
     selectedTitleCount.value = 0;
     anyFilterApplied = false;
     hasMoreVal = true;
@@ -319,6 +323,22 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
     anyFilterApplied = true;
 
+    if (listNameVal == AppConstants.watchlist) {
+      pinnedTitlesVal.addAll(await repository.getTitles(
+        listName: listNameVal,
+        filterText: filterText,
+        filterMediaType: filterMediaType,
+        filterGenres: filterGenres,
+        filterByProviders: filterByProviders,
+        filterProvidersIds: filterProvidersIds,
+        sortOption: selectedSort,
+        sortAscending: isSortAsc,
+        filterRating: filterRating,
+        pinned: true,
+        limit: 10, // Max 5 pinned, but we fetch a bit more just in case
+      ));
+    }
+
     selectedTitleCount.value = await repository.countTitlesFiltered(
       listName: listNameVal,
       filterText: filterText,
@@ -327,7 +347,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
       filterRating: filterRating,
+      pinned: listNameVal == AppConstants.watchlist ? false : null,
     );
+    if (listNameVal == AppConstants.watchlist) {
+      selectedTitleCount.value += pinnedTitlesVal.length;
+    }
     await loadNextPage();
   }
 
@@ -491,6 +515,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         sortOption: selectedSort,
         sortAscending: isSortAsc,
         filterRating: filterRating,
+        pinned: listNameVal == AppConstants.watchlist ? false : null,
         offset: pageVal * pageSizeVal,
         limit: pageSizeVal,
       );

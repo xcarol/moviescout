@@ -7,6 +7,7 @@ import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 const String _tmdbRateslistMovies =
     'account/{ACCOUNT_ID}/movie/rated?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
@@ -116,6 +117,14 @@ class TmdbRateslistService extends TmdbListService {
       title.listName = listName;
       if (rating > 0) {
         title.updateRating(rating.toDouble());
+
+        // Unpin from watchlist if exists
+        final watchlistTitle = repository.getTitleByTmdbId(
+            AppConstants.watchlist, title.tmdbId, title.mediaType);
+        if (watchlistTitle != null && watchlistTitle.isPinned) {
+          watchlistTitle.isPinned = false;
+          await repository.saveTitle(watchlistTitle);
+        }
       }
       await updateTitle(accountId, sessionId, title, rating > 0,
           (String accountId, String sessionId) async {

@@ -77,4 +77,23 @@ class TmdbWatchlistService extends TmdbListService {
       );
     }
   }
+
+  Future<void> togglePin(TmdbTitle title, {String? limitReachedMessage}) async {
+    if (!title.isPinned) {
+      final pinnedCount = await repository.countTitlesFiltered(
+        listName: listName,
+        pinned: true,
+      );
+      if (pinnedCount >= 5) {
+        if (limitReachedMessage != null) {
+          SnackMessage.showSnackBar(limitReachedMessage);
+        }
+        return;
+      }
+    }
+
+    title.isPinned = !title.isPinned;
+    await repository.saveTitle(title);
+    await filterTitles();
+  }
 }
