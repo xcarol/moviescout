@@ -65,7 +65,7 @@ class TmdbTitleFields {
   static const String type = 'type';
 
   // People
-  static const String credits = 'credits';
+  static const String credits = 'aggregate_credits';
   static const String cast = 'cast';
   static const String character = 'character';
   static const String job = 'job';
