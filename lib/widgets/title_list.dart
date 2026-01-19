@@ -27,6 +27,7 @@ class TitleList extends StatefulWidget {
 
 class _TitleListState extends State<TitleList> {
   late final TitleListController _controller;
+  bool _isPinnedSectionExpanded = true;
 
   @override
   void initState() {
@@ -170,32 +171,54 @@ class _TitleListState extends State<TitleList> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding:
-                    const EdgeInsets.only(left: 12.0, top: 8.0, bottom: 4.0),
-                child: Text(
-                  AppLocalizations.of(context)!.watchingNow,
-                  style: TextStyle(
-                    color: titleTheme.listDividerColor.withValues(alpha: 0.7),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    _isPinnedSectionExpanded = !_isPinnedSectionExpanded;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      left: 12.0, top: 8.0, bottom: 4.0, right: 12.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.watchingNow,
+                        style: TextStyle(
+                          color: titleTheme.listDividerColor
+                              .withValues(alpha: 0.7),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        _isPinnedSectionExpanded
+                            ? Icons.arrow_drop_up
+                            : Icons.arrow_drop_down,
+                        color:
+                            titleTheme.listDividerColor.withValues(alpha: 0.7),
+                        size: 20,
+                      ),
+                    ],
                   ),
                 ),
               ),
-              SizedBox(
-                height: PinnedTitleChip.cardHeight,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  itemCount: service.pinnedTitles.length,
-                  itemBuilder: (context, index) {
-                    return PinnedTitleChip(
-                      title: service.pinnedTitles[index],
-                      listService: service,
-                    );
-                  },
+              if (_isPinnedSectionExpanded)
+                SizedBox(
+                  height: PinnedTitleChip.cardHeight,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    itemCount: service.pinnedTitles.length,
+                    itemBuilder: (context, index) {
+                      return PinnedTitleChip(
+                        title: service.pinnedTitles[index],
+                        listService: service,
+                      );
+                    },
+                  ),
                 ),
-              ),
               const SizedBox(height: 8.0),
               Divider(height: 1, color: titleTheme.listDividerColor),
             ],
