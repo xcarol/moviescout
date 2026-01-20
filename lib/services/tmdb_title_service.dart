@@ -9,14 +9,29 @@ import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 const String _tmdbDetails =
     '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders%2Crecommendations%2Caggregate_credits&language={LOCALE}';
 
+const String _tmdbBrief = '/{MEDIA_TYPE}/{ID}?language={LOCALE}';
+
 class TmdbTitleService extends TmdbBaseService {
-  Future<dynamic> _retrieveTitleDetailsByLocale(
+  Future<dynamic> _retrieveTitleDetails(
     int id,
     String mediaType,
     String locale,
   ) async {
     return get(
       _tmdbDetails
+          .replaceFirst('{MEDIA_TYPE}', mediaType)
+          .replaceFirst('{ID}', id.toString())
+          .replaceFirst('{LOCALE}', locale),
+    );
+  }
+
+  Future<dynamic> _retrieveTitleBrief(
+    int id,
+    String mediaType,
+    String locale,
+  ) async {
+    return get(
+      _tmdbBrief
           .replaceFirst('{MEDIA_TYPE}', mediaType)
           .replaceFirst('{ID}', id.toString())
           .replaceFirst('{LOCALE}', locale),
@@ -42,7 +57,7 @@ class TmdbTitleService extends TmdbBaseService {
       mediaType = title.isMovie ? ApiConstants.movie : ApiConstants.tv;
     }
 
-    final result = await _retrieveTitleDetailsByLocale(
+    final result = await _retrieveTitleDetails(
       title.tmdbId,
       mediaType,
       '${getLanguageCode()}-${getCountryCode()}',
@@ -84,7 +99,7 @@ class TmdbTitleService extends TmdbBaseService {
     }
 
     if ((details[TmdbTitleFields.overview] ?? '').isEmpty) {
-      final fallbackResult = await _retrieveTitleDetailsByLocale(
+      final fallbackResult = await _retrieveTitleBrief(
         title.tmdbId,
         mediaType,
         getCountryCode().toLowerCase(),
@@ -96,7 +111,7 @@ class TmdbTitleService extends TmdbBaseService {
     }
 
     if ((details[TmdbTitleFields.overview] ?? '').isEmpty) {
-      final enResult = await _retrieveTitleDetailsByLocale(
+      final enResult = await _retrieveTitleBrief(
         title.tmdbId,
         mediaType,
         'en-US',
