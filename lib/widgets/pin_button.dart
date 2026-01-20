@@ -34,7 +34,7 @@ Widget pinButton(
           size: 20,
           color: isPinned
               ? Theme.of(context).extension<CustomColors>()!.pinnedTitle
-              : Theme.of(context).disabledColor,
+              : Theme.of(context).extension<CustomColors>()!.notSelected,
         ),
         tooltip: isPinned
             ? AppLocalizations.of(context)!.unpin
