@@ -319,12 +319,14 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       await Future.delayed(const Duration(milliseconds: 50));
     }
 
+    final currentRequestId = ++filterRequestId;
+
     clearLoadedTitles(clearGenreCache: false);
 
     anyFilterApplied = true;
 
     if (listNameVal == AppConstants.watchlist) {
-      pinnedTitlesVal.addAll(await repository.getTitles(
+      final pinnedTitles = await repository.getTitles(
         listName: listNameVal,
         filterText: filterText,
         filterMediaType: filterMediaType,
@@ -336,7 +338,14 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         filterRating: filterRating,
         pinned: true,
         limit: 10, // Max 5 pinned, but we fetch a bit more just in case
-      ));
+      );
+
+      if (currentRequestId != filterRequestId) {
+        return;
+      }
+
+      pinnedTitlesVal.clear();
+      pinnedTitlesVal.addAll(pinnedTitles);
     }
 
     selectedTitleCount.value = await repository.countTitlesFiltered(
