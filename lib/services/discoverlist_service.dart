@@ -135,4 +135,8 @@ class TmdbDiscoverlistService extends TmdbListService {
 
     return recommendations;
   }
+
+  void refresh() {
+    filterTitles();
+  }
 }

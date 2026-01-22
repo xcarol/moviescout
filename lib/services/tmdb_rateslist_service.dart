@@ -117,6 +117,7 @@ class TmdbRateslistService extends TmdbListService {
       title.listName = listName;
       if (rating > 0) {
         title.updateRating(rating.toDouble());
+        title.isPinned = false;
 
         // Unpin from watchlist if exists
         final watchlistTitle = repository.getTitleByTmdbId(

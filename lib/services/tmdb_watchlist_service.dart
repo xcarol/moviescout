@@ -64,6 +64,7 @@ class TmdbWatchlistService extends TmdbListService {
         title.listName = listName;
         title.id = Isar.autoIncrement;
         title.addedOrder = repository.getMaxAddedOrderSync(listName) + 1;
+        title.isPinned = false;
       }
 
       await updateTitle(accountId, sessionId, title, add,
@@ -95,5 +96,9 @@ class TmdbWatchlistService extends TmdbListService {
     title.isPinned = !title.isPinned;
     await repository.saveTitle(title);
     await filterTitles();
+  }
+
+  void refresh() {
+    filterTitles();
   }
 }
