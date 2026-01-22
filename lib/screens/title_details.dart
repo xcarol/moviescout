@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:isar_community/isar.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,6 +9,8 @@ import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/repositories/tmdb_title_repository.dart'
+    show TmdbTitleRepository;
 import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
@@ -45,7 +48,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     String appTitle = widget._title.name;
 
     return FutureBuilder(
-      future: TmdbTitleService().updateTitleDetails(widget._title),
+      future: _updatedTitle(),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Scaffold(
@@ -65,6 +68,19 @@ class _TitleDetailsState extends State<TitleDetails> {
         );
       },
     );
+  }
+
+  Future<TmdbTitle> _updatedTitle() async {
+    final String lastUpdated = widget._title.lastUpdated;
+    final TmdbTitle title =
+        await TmdbTitleService().updateTitleDetails(widget._title);
+    
+    if (lastUpdated != title.lastUpdated && title.id != Isar.autoIncrement) {
+      final repository = TmdbTitleRepository();
+      await repository.saveTitle(title);
+    }
+    
+    return title;
   }
 
   Widget _detailsBody(TmdbTitle title) {
