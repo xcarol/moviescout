@@ -92,14 +92,29 @@ void main() async {
               userService.accessToken),
       ),
       ChangeNotifierProvider(
-          create: (_) => TmdbWatchlistService(
-              AppConstants.watchlist, repository, preferencesService)),
-      ChangeNotifierProvider(
           create: (_) => TmdbRateslistService(
               AppConstants.rateslist, repository, preferencesService)),
-      ChangeNotifierProvider(
-          create: (_) => TmdbDiscoverlistService(
-              AppConstants.discoverlist, repository, preferencesService)),
+      ChangeNotifierProxyProvider<TmdbRateslistService, TmdbWatchlistService>(
+        create: (_) => TmdbWatchlistService(
+            AppConstants.watchlist, repository, preferencesService),
+        update: (_, rateslistService, watchlistService) {
+          rateslistService.removeListener(watchlistService!.refresh);
+          rateslistService.addListener(watchlistService.refresh);
+          return watchlistService;
+        },
+      ),
+      ChangeNotifierProxyProvider2<TmdbRateslistService, TmdbWatchlistService,
+          TmdbDiscoverlistService>(
+        create: (_) => TmdbDiscoverlistService(
+            AppConstants.discoverlist, repository, preferencesService),
+        update: (_, rateslistService, watchlistService, discoverlistService) {
+          rateslistService.removeListener(discoverlistService!.refresh);
+          watchlistService.removeListener(discoverlistService.refresh);
+          rateslistService.addListener(discoverlistService.refresh);
+          watchlistService.addListener(discoverlistService.refresh);
+          return discoverlistService;
+        },
+      ),
     ],
     child: const MyApp(),
   ));

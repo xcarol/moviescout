@@ -96,4 +96,8 @@ class TmdbWatchlistService extends TmdbListService {
     await repository.saveTitle(title);
     await filterTitles();
   }
+
+  void refresh() {
+    filterTitles();
+  }
 }
