@@ -314,6 +314,28 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   @protected
+  Future<List<TmdbTitle>> _fetchTitles({
+    int offset = 0,
+    int? limit,
+    bool? pinned,
+  }) {
+    return repository.getTitles(
+      listName: listNameVal,
+      filterText: filterText,
+      filterMediaType: filterMediaType,
+      filterGenres: filterGenres,
+      filterByProviders: filterByProviders,
+      filterProvidersIds: filterProvidersIds,
+      sortOption: selectedSort,
+      sortAscending: isSortAsc,
+      filterRating: filterRating,
+      pinned: pinned,
+      offset: offset,
+      limit: limit ?? pageSizeVal,
+    );
+  }
+
+  @protected
   Future<void> filterTitles() async {
     while (isDbLoading) {
       await Future.delayed(const Duration(milliseconds: 50));
@@ -326,19 +348,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     anyFilterApplied = true;
 
     if (listNameVal == AppConstants.watchlist) {
-      final pinnedTitles = await repository.getTitles(
-        listName: listNameVal,
-        filterText: filterText,
-        filterMediaType: filterMediaType,
-        filterGenres: filterGenres,
-        filterByProviders: filterByProviders,
-        filterProvidersIds: filterProvidersIds,
-        sortOption: selectedSort,
-        sortAscending: isSortAsc,
-        filterRating: filterRating,
-        pinned: true,
-        limit: 10, // Max 5 pinned, but we fetch a bit more just in case
-      );
+      final pinnedTitles = await _fetchTitles(limit: 10, pinned: true);
 
       if (currentRequestId != filterRequestId) {
         return;
@@ -348,7 +358,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       pinnedTitlesVal.addAll(pinnedTitles);
     }
 
-    selectedTitleCount.value = await repository.countTitlesFiltered(
+    final count = await repository.countTitlesFiltered(
       listName: listNameVal,
       filterText: filterText,
       filterMediaType: filterMediaType,
@@ -358,9 +368,14 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       filterRating: filterRating,
       pinned: listNameVal == AppConstants.watchlist ? false : null,
     );
-    if (listNameVal == AppConstants.watchlist) {
-      selectedTitleCount.value += pinnedTitlesVal.length;
+
+    if (currentRequestId != filterRequestId) {
+      return;
     }
+
+    selectedTitleCount.value = count +
+        (listNameVal == AppConstants.watchlist ? pinnedTitlesVal.length : 0);
+
     await loadNextPage();
   }
 
@@ -447,12 +462,12 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     if (result.statusCode == 200 || result.statusCode == 201) {
       if (add) {
         await updateLocalTitle(title);
-        await filterTitles();
       } else {
         await deleteLocalTitle(title);
         loadedTitlesVal
             .removeWhere((element) => element.tmdbId == title.tmdbId);
       }
+      await filterTitles();
       setLastUpdate();
       await updateListGenres();
 
@@ -509,28 +524,16 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
     try {
       if (anyFilterApplied == false) {
-        isDbLoading = false;
         return filterTitles();
       }
       final currentRequestId = ++filterRequestId;
 
-      final titles = await repository.getTitles(
-        listName: listNameVal,
-        filterText: filterText,
-        filterMediaType: filterMediaType,
-        filterGenres: filterGenres,
-        filterByProviders: filterByProviders,
-        filterProvidersIds: filterProvidersIds,
-        sortOption: selectedSort,
-        sortAscending: isSortAsc,
-        filterRating: filterRating,
+      final titles = await _fetchTitles(
         pinned: listNameVal == AppConstants.watchlist ? false : null,
         offset: pageVal * pageSizeVal,
-        limit: pageSizeVal,
       );
 
       if (currentRequestId != filterRequestId) {
-        isDbLoading = false;
         return;
       }
 
