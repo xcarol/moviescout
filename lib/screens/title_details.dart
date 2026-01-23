@@ -73,7 +73,7 @@ class _TitleDetailsState extends State<TitleDetails> {
   Future<TmdbTitle> _updatedTitle() async {
     final String lastUpdated = widget._title.lastUpdated;
     final TmdbTitle title =
-        await TmdbTitleService().updateTitleDetails(widget._title);
+        await TmdbTitleService().updateTitleDetails(widget._title, force: true);
     
     if (lastUpdated != title.lastUpdated && title.id != Isar.autoIncrement) {
       final repository = TmdbTitleRepository();
