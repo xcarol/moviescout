@@ -47,8 +47,8 @@ class TmdbTitleService extends TmdbBaseService {
         3;
   }
 
-  Future<TmdbTitle> updateTitleDetails(TmdbTitle title) async {
-    if (isUpToDate(title)) {
+  Future<TmdbTitle> updateTitleDetails(TmdbTitle title, {bool force = false}) async {
+    if (!force && isUpToDate(title)) {
       return title;
     }
 
