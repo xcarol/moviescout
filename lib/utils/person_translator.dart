@@ -27,16 +27,34 @@ class PersonTranslator {
   }
 
   static String translateDepartment(String dept, String languageCode) {
+    if (dept.isEmpty) return dept;
     final fullLocale = AppConstants.supportedLanguages.firstWhere(
         (l) => l.startsWith(languageCode),
         orElse: () => languageCode);
+
+    if (dept.contains(',')) {
+      return dept
+          .split(',')
+          .map((d) => d.trim())
+          .map((d) => _deptMappings[fullLocale]?[d] ?? d)
+          .join(', ');
+    }
     return _deptMappings[fullLocale]?[dept] ?? dept;
   }
 
   static String translateJob(String job, String languageCode) {
+    if (job.isEmpty) return job;
     final fullLocale = AppConstants.supportedLanguages.firstWhere(
         (l) => l.startsWith(languageCode),
         orElse: () => languageCode);
+
+    if (job.contains(',')) {
+      return job
+          .split(',')
+          .map((j) => j.trim())
+          .map((j) => _jobMappings[fullLocale]?[j] ?? j)
+          .join(', ');
+    }
     return _jobMappings[fullLocale]?[job] ?? job;
   }
 }

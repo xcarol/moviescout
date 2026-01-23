@@ -23,6 +23,8 @@ class PersonAttributes {
   static const combined_credits = 'combined_credits';
   static const cast = 'cast';
   static const crew = 'crew';
+  static const roles = 'roles';
+  static const jobs = 'jobs';
 }
 
 class CombinedCredits {

@@ -65,7 +65,8 @@ class TmdbTitleFields {
   static const String type = 'type';
 
   // People
-  static const String credits = 'aggregate_credits';
+  static const String credits = 'credits';
+  static const String aggregateCredits = 'aggregate_credits';
   static const String cast = 'cast';
   static const String character = 'character';
   static const String job = 'job';
@@ -311,8 +312,10 @@ class TmdbTitle {
       originCountry = List<String>.from(title[TmdbTitleFields.originCountry]);
     }
 
-    if (title[TmdbTitleFields.credits] != null) {
-      creditsJson = jsonEncode(title[TmdbTitleFields.credits]);
+    if (title[TmdbTitleFields.credits] != null ||
+        title[TmdbTitleFields.aggregateCredits] != null) {
+      creditsJson = jsonEncode(title[TmdbTitleFields.credits] ??
+          title[TmdbTitleFields.aggregateCredits]);
     }
     if (title[TmdbTitleFields.providers] != null) {
       providersJson = jsonEncode(title[TmdbTitleFields.providers]);
@@ -451,6 +454,16 @@ class TmdbTitle {
 
     List<TmdbPerson> castPeople = [];
     for (dynamic person in creditsMap[TmdbTitleFields.cast]) {
+      String character = '';
+      if (person[PersonAttributes.roles] is List) {
+        character = (person[PersonAttributes.roles] as List)
+            .map((r) => r[PersonAttributes.character] ?? '')
+            .where((c) => c.toString().isNotEmpty)
+            .join(', ');
+      } else {
+        character = person[PersonAttributes.character] ?? '';
+      }
+
       castPeople.add(TmdbPerson(
         tmdbId: person[PersonAttributes.id],
         name: person[PersonAttributes.name],
@@ -459,7 +472,7 @@ class TmdbTitle {
         gender: person[PersonAttributes.gender],
         originalName: person[PersonAttributes.original_name],
         profilePath: person[PersonAttributes.profile_path] ?? '',
-        character: person[PersonAttributes.character] ?? '',
+        character: character,
         job: person[PersonAttributes.job] ?? '',
         biography: person[PersonAttributes.biography] ?? '',
         birthday: person[PersonAttributes.birthday] ?? '',
@@ -483,6 +496,16 @@ class TmdbTitle {
 
     List<TmdbPerson> crewPeople = [];
     for (dynamic person in creditsMap[PersonAttributes.crew]) {
+      String job = '';
+      if (person[PersonAttributes.jobs] is List) {
+        job = (person[PersonAttributes.jobs] as List)
+            .map((j) => j[PersonAttributes.job] ?? '')
+            .where((j) => j.toString().isNotEmpty)
+            .join(', ');
+      } else {
+        job = person[PersonAttributes.job] ?? '';
+      }
+
       crewPeople.add(TmdbPerson(
         tmdbId: person[PersonAttributes.id],
         name: person[PersonAttributes.name],
@@ -492,7 +515,7 @@ class TmdbTitle {
         originalName: person[PersonAttributes.original_name],
         profilePath: person[PersonAttributes.profile_path] ?? '',
         character: person[PersonAttributes.character] ?? '',
-        job: person[PersonAttributes.job] ?? '',
+        job: job,
         biography: person[PersonAttributes.biography] ?? '',
         birthday: person[PersonAttributes.birthday] ?? '',
         deathday: person[PersonAttributes.deathday] ?? '',
