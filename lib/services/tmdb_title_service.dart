@@ -7,7 +7,7 @@ import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 
 const String _tmdbDetails =
-    '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders%2Crecommendations%2Caggregate_credits&language={LOCALE}';
+    '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders%2Crecommendations%2C{CREDITS_TYPE}&language={LOCALE}';
 
 const String _tmdbBrief = '/{MEDIA_TYPE}/{ID}?language={LOCALE}';
 
@@ -17,11 +17,16 @@ class TmdbTitleService extends TmdbBaseService {
     String mediaType,
     String locale,
   ) async {
+    final creditsType = mediaType == ApiConstants.movie
+        ? TmdbTitleFields.credits
+        : TmdbTitleFields.aggregateCredits;
+
     return get(
       _tmdbDetails
           .replaceFirst('{MEDIA_TYPE}', mediaType)
           .replaceFirst('{ID}', id.toString())
-          .replaceFirst('{LOCALE}', locale),
+          .replaceFirst('{LOCALE}', locale)
+          .replaceFirst('{CREDITS_TYPE}', creditsType),
     );
   }
 
@@ -47,7 +52,8 @@ class TmdbTitleService extends TmdbBaseService {
         3;
   }
 
-  Future<TmdbTitle> updateTitleDetails(TmdbTitle title, {bool force = false}) async {
+  Future<TmdbTitle> updateTitleDetails(TmdbTitle title,
+      {bool force = false}) async {
     if (!force && isUpToDate(title)) {
       return title;
     }
