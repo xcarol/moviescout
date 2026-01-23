@@ -63,6 +63,7 @@ dependencies:
   flutter_native_splash: ^2.4.6
   cached_network_image: ^3.4.1
   workmanager: ^0.6.0
+  flutter_local_notifications: ^18.0.0
 
 dev_dependencies:
   flutter_test:

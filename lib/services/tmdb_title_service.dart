@@ -43,8 +43,8 @@ class TmdbTitleService extends TmdbBaseService {
             .difference(
               DateTime.parse(title.lastUpdated),
             )
-            .inDays <
-        3;
+            .inHours <
+        12;
   }
 
   Future<TmdbTitle> updateTitleDetails(TmdbTitle title) async {

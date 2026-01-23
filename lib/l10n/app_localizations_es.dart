@@ -331,4 +331,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get unpin => 'Desfijar';
+
+  @override
+  String get notificationTitle => '¡Ya disponible!';
+
+  @override
+  String notificationBody(Object title) {
+    return '$title ya está disponible en una de tus plataformas.';
+  }
 }

@@ -28,6 +28,7 @@ import 'package:moviescout/services/deep_link_service.dart';
 import 'package:moviescout/utils/person_translator.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/services/watchlist_update_worker.dart';
+import 'package:moviescout/services/notification_service.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -57,6 +58,7 @@ void main() async {
   await IsarService.init();
   await TmdbGenreService().init();
   await PersonTranslator.init();
+  await NotificationService().init();
 
   if (defaultTargetPlatform == TargetPlatform.android ||
       defaultTargetPlatform == TargetPlatform.iOS) {
