@@ -331,4 +331,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unpin => 'Unpin';
+
+  @override
+  String get selectRegion => 'Select region';
+
+  @override
+  String get regionAuto => 'Automatic detection (IP)';
+
+  @override
+  String get regionSpain => 'Spain';
+
+  @override
+  String get regionUSA => 'USA';
+
+  @override
+  String get regionUK => 'UK';
+
+  @override
+  String get regionFrance => 'France';
+
+  @override
+  String get regionGermany => 'Germany';
+
+  @override
+  String get regionItaly => 'Italy';
 }

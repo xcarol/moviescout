@@ -744,6 +744,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unpin'**
   String get unpin;
+
+  /// No description provided for @selectRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Select region'**
+  String get selectRegion;
+
+  /// No description provided for @regionAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic detection (IP)'**
+  String get regionAuto;
+
+  /// No description provided for @regionSpain.
+  ///
+  /// In en, this message translates to:
+  /// **'Spain'**
+  String get regionSpain;
+
+  /// No description provided for @regionUSA.
+  ///
+  /// In en, this message translates to:
+  /// **'USA'**
+  String get regionUSA;
+
+  /// No description provided for @regionUK.
+  ///
+  /// In en, this message translates to:
+  /// **'UK'**
+  String get regionUK;
+
+  /// No description provided for @regionFrance.
+  ///
+  /// In en, this message translates to:
+  /// **'France'**
+  String get regionFrance;
+
+  /// No description provided for @regionGermany.
+  ///
+  /// In en, this message translates to:
+  /// **'Germany'**
+  String get regionGermany;
+
+  /// No description provided for @regionItaly.
+  ///
+  /// In en, this message translates to:
+  /// **'Italy'**
+  String get regionItaly;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -331,4 +331,28 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get unpin => 'Desfixar';
+
+  @override
+  String get selectRegion => 'Selecciona la regió';
+
+  @override
+  String get regionAuto => 'Detecció automàtica (IP)';
+
+  @override
+  String get regionSpain => 'Espanya';
+
+  @override
+  String get regionUSA => 'Estats Units';
+
+  @override
+  String get regionUK => 'Regne Unit';
+
+  @override
+  String get regionFrance => 'França';
+
+  @override
+  String get regionGermany => 'Alemanya';
+
+  @override
+  String get regionItaly => 'Itàlia';
 }

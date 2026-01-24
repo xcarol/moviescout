@@ -106,5 +106,13 @@
     "watchingNow": "Watching now",
     "pinLimitReached": "You have reached the limit of 5 pinned titles.",
     "pin": "Pin",
-    "unpin": "Unpin"
+    "unpin": "Unpin",
+    "selectRegion": "Select region",
+    "regionAuto": "Automatic detection (IP)",
+    "regionSpain": "Spain",
+    "regionUSA": "USA",
+    "regionUK": "UK",
+    "regionFrance": "France",
+    "regionGermany": "Germany",
+    "regionItaly": "Italy"
 }

@@ -106,5 +106,13 @@
     "watchingNow": "Mirant ara",
     "pinLimitReached": "Has arribat al límit de 5 títols fixats.",
     "pin": "Fixar",
-    "unpin": "Desfixar"
+    "unpin": "Desfixar",
+    "selectRegion": "Selecciona la regió",
+    "regionAuto": "Detecció automàtica (IP)",
+    "regionSpain": "Espanya",
+    "regionUSA": "Estats Units",
+    "regionUK": "Regne Unit",
+    "regionFrance": "França",
+    "regionGermany": "Alemanya",
+    "regionItaly": "Itàlia"
 }

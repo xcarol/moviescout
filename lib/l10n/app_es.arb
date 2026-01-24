@@ -106,5 +106,13 @@
     "watchingNow": "Mirando ahora",
     "pinLimitReached": "Has alcanzado el límite de 5 títulos fijados.",
     "pin": "Fijar",
-    "unpin": "Desfijar"
+    "unpin": "Desfijar",
+    "selectRegion": "Selecciona la región",
+    "regionAuto": "Detección automática (IP)",
+    "regionSpain": "España",
+    "regionUSA": "Estados Unidos",
+    "regionUK": "Reino Unido",
+    "regionFrance": "Francia",
+    "regionGermany": "Alemania",
+    "regionItaly": "Italia"
 }

@@ -167,11 +167,12 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     isLoading.value = true;
 
     try {
-      if (listIsEmpty) {
-        await retrieveFromServer(accountId, retrieveMovies, retrieveTvshows);
-      } else {
-        await syncWithServer(accountId, retrieveMovies, retrieveTvshows);
-      }
+      await _syncWithServer(
+        accountId,
+        retrieveMovies,
+        retrieveTvshows,
+        forceUpdate: forceUpdate,
+      );
 
       await updateListGenres();
 
@@ -223,68 +224,69 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   @protected
-  Future<void> retrieveFromServer(
+  Future<void> _syncWithServer(
     String accountId,
     Future<List> Function() retrieveMovies,
-    Future<List> Function() retrieveTvshows,
-  ) async {
-    await clearLocalList();
+    Future<List> Function() retrieveTvshows, {
+    bool forceUpdate = false,
+  }) async {
+    final bool isInitialLoad = listIsEmpty;
 
-    List<TmdbTitle> titles =
+    if (isInitialLoad) {
+      await clearLocalList();
+    }
+
+    List<TmdbTitle> serverList =
         await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
 
-    const batchSize = 10;
-    for (var i = 0; i < titles.length; i += batchSize) {
-      final batch = titles.skip(i).take(batchSize);
+    if (isInitialLoad) {
+      await repository.saveTitles(serverList);
+    } else {
+      final serverIds = serverList.map((t) => t.tmdbId).toSet();
+      final localIds = await repository.getAllTmdbIds(listNameVal);
+      final localIdSet = localIds.toSet();
 
-      final updated = await Future.wait(
-          batch.map((t) => TmdbTitleService().updateTitleDetails(t)));
+      final idsToAdd = serverIds.difference(localIdSet);
+      final titlesToAdd =
+          serverList.where((t) => idsToAdd.contains(t.tmdbId)).toList();
+      final idsToRemove = localIdSet.difference(serverIds);
 
-      await repository.saveTitles(updated);
+      if (titlesToAdd.isNotEmpty) {
+        int currentMax = repository.getMaxAddedOrderSync(listNameVal);
+        for (var title in titlesToAdd) {
+          title.addedOrder = ++currentMax;
+        }
+        await repository.saveTitles(titlesToAdd);
+      }
 
-      selectedTitleCount.value =
-          await repository.countTitlesFiltered(listName: listNameVal);
+      if (idsToRemove.isNotEmpty) {
+        await repository.deleteTitles(listNameVal, idsToRemove.toList());
+      }
+    }
 
-      await Future.delayed(Duration.zero);
+    // Update details for titles that need it:
+    // 1. All titles if forceUpdate or isInitialLoad
+    // 2. Only newly added titles if normal sync (to ensure they have providers/details)
+    if (forceUpdate || isInitialLoad) {
+      final totalCount = listTitleCount;
+      const batchSize = 10;
+
+      for (var i = 0; i < totalCount; i += batchSize) {
+        final batch = await repository.getTitles(
+          listName: listNameVal,
+          offset: i,
+          limit: batchSize,
+        );
+
+        final updated = await Future.wait(batch.map((t) =>
+            TmdbTitleService().updateTitleDetails(t, force: forceUpdate)));
+
+        await repository.saveTitles(updated);
+        await Future.delayed(Duration.zero);
+      }
     }
 
     await filterTitles();
-  }
-
-  @protected
-  Future<void> syncWithServer(
-    String accountId,
-    Future<List> Function() retrieveMovies,
-    Future<List> Function() retrieveTvshows,
-  ) async {
-    List<TmdbTitle> serverList =
-        await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
-    final serverIds = serverList.map((t) => t.tmdbId).toSet();
-
-    final localIds = await repository.getAllTmdbIds(listNameVal);
-    final localIdSet = localIds.toSet();
-
-    final idsToAdd = serverIds.difference(localIdSet);
-    final titlesToAdd =
-        serverList.where((t) => idsToAdd.contains(t.tmdbId)).toList();
-    final idsToRemove = localIdSet.difference(serverIds);
-
-    if (titlesToAdd.isNotEmpty) {
-      int currentMax = repository.getMaxAddedOrderSync(listNameVal);
-      for (var title in titlesToAdd) {
-        title.addedOrder = ++currentMax;
-      }
-      await repository.saveTitles(titlesToAdd);
-    }
-
-    if (idsToRemove.isNotEmpty) {
-      await repository.deleteTitles(listNameVal, idsToRemove.toList());
-    }
-
-    if (titlesToAdd.isNotEmpty || idsToRemove.isNotEmpty) {
-      await updateListGenres();
-      await filterTitles();
-    }
   }
 
   @protected
