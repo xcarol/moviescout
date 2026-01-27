@@ -64,10 +64,12 @@ void callbackDispatcher() {
             final enabledProviderSet = enabledProviderIds.toSet();
             final wasAvailable =
                 oldProviders.intersection(enabledProviderSet).isNotEmpty;
+            final int oldNumberOfSeasons = title.numberOfSeasons;
 
             await titleService.updateTitleDetails(title);
             await repository.saveTitle(title);
 
+            // Check for new availability
             if (!wasAvailable) {
               final newProviders = title.flatrateProviderIds.toSet();
               final isAvailable =
@@ -82,6 +84,19 @@ void callbackDispatcher() {
                   payload: '${title.mediaType}|${title.tmdbId}',
                 );
               }
+            }
+
+            // Check for new TV season
+            if (title.isSerie &&
+                title.numberOfSeasons > oldNumberOfSeasons &&
+                oldNumberOfSeasons > 0) {
+              await NotificationService().showNotification(
+                id: title.tmdbId + 1000000, // Offset to avoid ID collision
+                title: localizations.notificationNewSeasonTitle,
+                body: localizations.notificationNewSeasonBody(title.name),
+                imageUrl: title.posterPath,
+                payload: '${title.mediaType}|${title.tmdbId}',
+              );
             }
 
             await Future.delayed(const Duration(milliseconds: 200));
