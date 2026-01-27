@@ -331,4 +331,20 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get unpin => 'Desfixar';
+
+  @override
+  String get notificationTitle => 'Ja disponible!';
+
+  @override
+  String notificationBody(Object title) {
+    return '$title ja està disponible en una de les teves plataformes.';
+  }
+
+  @override
+  String get notificationNewSeasonTitle => 'Nova temporada!';
+
+  @override
+  String notificationNewSeasonBody(Object title) {
+    return 'Nova temporada de $title disponible.';
+  }
 }

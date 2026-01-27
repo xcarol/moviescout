@@ -36,7 +36,7 @@
     "imdbImportCount": "Títulos importados correctamente",
     "imdbResetWatchlist":"ELIMINAR PARA VER",
     "imdbResetRateslist":"ELIMINAR VALORACIONES",
-    "imdbConfirmationTitle": "ATENCIÓN",
+    "imdbConfirmationTitle": "ATENCIÓ",
     "imdbResetWatchlistConfirmation": "¿Seguro que quieres eliminar los títulos Para Ver?",
     "imdbResetRateslistConfirmation": "¿Seguro que quieres eliminar las Valoraciones?",
     "resetWatchlistCount": "Títulos para ver: ",
@@ -84,7 +84,7 @@
     "aboutGithub": "Visita el proyecto en ",
     "recommended": "Recomendados",
     "providersTitle": "Plataformas de contenido",
-    "providers": "Plataformas",
+    "providers": "Platforms",
     "filterByProviders": "Solo disponibles",
     "noProvidersAvailable": "No hay plataformas disponibles",
     "discoverlistTitle": "Descubre",
@@ -106,5 +106,9 @@
     "watchingNow": "Mirando ahora",
     "pinLimitReached": "Has alcanzado el límite de 5 títulos fijados.",
     "pin": "Fijar",
-    "unpin": "Desfijar"
+    "unpin": "Desfijar",
+    "notificationTitle": "¡Ya disponible!",
+    "notificationBody": "{title} ya está disponible en una de tus plataformas.",
+    "notificationNewSeasonTitle": "¡Nueva temporada!",
+    "notificationNewSeasonBody": "Nueva temporada de {title} disponible."
 }

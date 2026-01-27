@@ -106,5 +106,9 @@
     "watchingNow": "Mirant ara",
     "pinLimitReached": "Has arribat al límit de 5 títols fixats.",
     "pin": "Fixar",
-    "unpin": "Desfixar"
+    "unpin": "Desfixar",
+    "notificationTitle": "Ja disponible!",
+    "notificationBody": "{title} ja està disponible en una de les teves plataformes.",
+    "notificationNewSeasonTitle": "Nova temporada!",
+    "notificationNewSeasonBody": "Nova temporada de {title} disponible."
 }

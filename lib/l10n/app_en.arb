@@ -106,5 +106,9 @@
     "watchingNow": "Watching now",
     "pinLimitReached": "You have reached the limit of 5 pinned titles.",
     "pin": "Pin",
-    "unpin": "Unpin"
+    "unpin": "Unpin",
+    "notificationTitle": "Now available!",
+    "notificationBody": "{title} is now available on one of your platforms.",
+    "notificationNewSeasonTitle": "New season!",
+    "notificationNewSeasonBody": "New season of {title} available."
 }

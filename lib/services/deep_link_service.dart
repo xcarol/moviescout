@@ -67,6 +67,10 @@ class DeepLinkService {
     }
   }
 
+  void navigateTo(String type, int tmdbId) {
+    _navigate(type, tmdbId.toString());
+  }
+
   void _navigate(String type, String id) {
     final idClean = id.split('-').first;
     final tmdbId = int.tryParse(idClean);

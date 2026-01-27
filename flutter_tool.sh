@@ -94,6 +94,17 @@ if $run_build_assets; then
   dart run flutter_launcher_icons
   echo "▶️ dart run flutter_native_splash:create"
   dart run flutter_native_splash:create
+
+  echo "▶️ Custom: Deploying notification icons"
+  mkdir -p android/app/src/main/res/drawable-mdpi android/app/src/main/res/drawable-hdpi android/app/src/main/res/drawable-xhdpi android/app/src/main/res/drawable-xxhdpi android/app/src/main/res/drawable-xxxhdpi
+  # Use \cp to bypass absolute aliases like 'cp -i'
+  \cp assets/notification-icon.png android/app/src/main/res/drawable/ic_notification.png
+  \cp assets/notification-icon.png android/app/src/main/res/drawable-mdpi/ic_notification.png
+  \cp assets/notification-icon.png android/app/src/main/res/drawable-hdpi/ic_notification.png
+  \cp assets/notification-icon.png android/app/src/main/res/drawable-xhdpi/ic_notification.png
+  \cp assets/notification-icon.png android/app/src/main/res/drawable-xxhdpi/ic_notification.png
+  \cp assets/notification-icon.png android/app/src/main/res/drawable-xxxhdpi/ic_notification.png
+  echo "✅ Notification icons deployed"
 fi
 
 if $run_build_android; then
