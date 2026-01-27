@@ -120,7 +120,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get imdbResetRateslist => 'ELIMINAR VALORACIONES';
 
   @override
-  String get imdbConfirmationTitle => 'ATENCIÓN';
+  String get imdbConfirmationTitle => 'ATENCIÓ';
 
   @override
   String get imdbResetWatchlistConfirmation => '¿Seguro que quieres eliminar los títulos Para Ver?';
@@ -338,5 +338,13 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String notificationBody(Object title) {
     return '$title ya está disponible en una de tus plataformas.';
+  }
+
+  @override
+  String get notificationNewSeasonTitle => '¡Nueva temporada!';
+
+  @override
+  String notificationNewSeasonBody(Object title) {
+    return 'Se ha estrenado una nueva temporada de $title.';
   }
 }

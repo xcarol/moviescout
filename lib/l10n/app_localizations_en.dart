@@ -339,4 +339,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String notificationBody(Object title) {
     return '$title is now available on one of your platforms.';
   }
+
+  @override
+  String get notificationNewSeasonTitle => 'New season!';
+
+  @override
+  String notificationNewSeasonBody(Object title) {
+    return 'A new season of $title has been released.';
+  }
 }

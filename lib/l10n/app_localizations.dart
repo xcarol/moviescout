@@ -756,6 +756,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{title} is now available on one of your platforms.'**
   String notificationBody(Object title);
+
+  /// No description provided for @notificationNewSeasonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New season!'**
+  String get notificationNewSeasonTitle;
+
+  /// No description provided for @notificationNewSeasonBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A new season of {title} has been released.'**
+  String notificationNewSeasonBody(Object title);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

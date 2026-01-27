@@ -108,5 +108,7 @@
     "pin": "Fixar",
     "unpin": "Desfixar",
     "notificationTitle": "Ja disponible!",
-    "notificationBody": "{title} ja està disponible en una de les teves plataformes."
+    "notificationBody": "{title} ja està disponible en una de les teves plataformes.",
+    "notificationNewSeasonTitle": "Nova temporada!",
+    "notificationNewSeasonBody": "Nova temporada de {title} disponible."
 }
