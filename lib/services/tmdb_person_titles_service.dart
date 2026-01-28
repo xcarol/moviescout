@@ -103,10 +103,10 @@ class TmdbPersonTitlesService extends TmdbListService {
           cmp = a.dateRated.compareTo(b.dateRated);
           break;
         case SortOption.releaseDate:
-          cmp = a.releaseDate.compareTo(b.releaseDate);
+          cmp = a.effectiveReleaseDate.compareTo(b.effectiveReleaseDate);
           break;
         case SortOption.runtime:
-          cmp = a.runtime.compareTo(b.runtime);
+          cmp = a.effectiveRuntime.compareTo(b.effectiveRuntime);
           break;
         case SortOption.addedOrder:
           cmp = a.addedOrder.compareTo(b.addedOrder);
