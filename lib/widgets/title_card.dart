@@ -271,6 +271,8 @@ class TitleCard extends StatelessWidget {
       return const SizedBox.shrink();
     }
     return SingleChildScrollView(
+      key: ValueKey(tmdbTitle.tmdbId),
+      controller: ScrollController(keepScrollOffset: false),
       scrollDirection: Axis.horizontal,
       child: Row(
         children: tmdbTitle.providers.flatrate
