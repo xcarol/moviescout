@@ -97,6 +97,8 @@ if $run_build_assets; then
 
   echo "▶️ Custom: Deploying notification icons"
   mkdir -p android/app/src/main/res/drawable-mdpi android/app/src/main/res/drawable-hdpi android/app/src/main/res/drawable-xhdpi android/app/src/main/res/drawable-xxhdpi android/app/src/main/res/drawable-xxxhdpi
+  mkdir -p android/app/src/main/res/mipmap-mdpi android/app/src/main/res/mipmap-hdpi android/app/src/main/res/mipmap-xhdpi android/app/src/main/res/mipmap-xxhdpi android/app/src/main/res/mipmap-xxxhdpi
+  
   # Use \cp to bypass absolute aliases like 'cp -i'
   \cp assets/notification-icon.png android/app/src/main/res/drawable/ic_notification.png
   \cp assets/notification-icon.png android/app/src/main/res/drawable-mdpi/ic_notification.png
@@ -104,6 +106,14 @@ if $run_build_assets; then
   \cp assets/notification-icon.png android/app/src/main/res/drawable-xhdpi/ic_notification.png
   \cp assets/notification-icon.png android/app/src/main/res/drawable-xxhdpi/ic_notification.png
   \cp assets/notification-icon.png android/app/src/main/res/drawable-xxxhdpi/ic_notification.png
+  
+  # Also in mipmap for better compatibility on some devices
+  \cp assets/notification-icon.png android/app/src/main/res/mipmap-mdpi/ic_notification.png
+  \cp assets/notification-icon.png android/app/src/main/res/mipmap-hdpi/ic_notification.png
+  \cp assets/notification-icon.png android/app/src/main/res/mipmap-xhdpi/ic_notification.png
+  \cp assets/notification-icon.png android/app/src/main/res/mipmap-xxhdpi/ic_notification.png
+  \cp assets/notification-icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_notification.png
+  
   echo "✅ Notification icons deployed"
 fi
 
@@ -142,6 +152,7 @@ if $run_build_release; then
   echo "VERSION=$version" >> .env
 
   echo "▶️ flutter build apk --release"
+  flutter clean
   flutter build apk --release
 fi
 
