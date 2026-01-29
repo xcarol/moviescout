@@ -36,47 +36,56 @@ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (defaultTargetPlatform == TargetPlatform.android) {
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
+  try {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform);
 
-    FlutterError.onError = (errorDetails) {
-      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-    };
+      FlutterError.onError = (errorDetails) {
+        FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+      };
 
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
-    };
+      PlatformDispatcher.instance.onError = (error, stack) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        return true;
+      };
 
-    await FirebaseCrashlytics.instance
-        .setCrashlyticsCollectionEnabled(kDebugMode);
+      await FirebaseCrashlytics.instance
+          .setCrashlyticsCollectionEnabled(kDebugMode);
+    }
+  } catch (e) {
+    debugPrint('Firebase initialization failed: $e');
   }
 
-  await dotenv.load(fileName: ".env");
-  await PreferencesService().init();
-  await IsarService.init();
-  await TmdbGenreService().init();
-  await PersonTranslator.init();
-  await NotificationService().init();
+  try {
+    await dotenv.load(fileName: ".env");
+    await PreferencesService().init();
+    await IsarService.init();
+    await TmdbGenreService().init();
+    await PersonTranslator.init();
+    await NotificationService().init();
 
-  if (defaultTargetPlatform == TargetPlatform.android ||
-      defaultTargetPlatform == TargetPlatform.iOS) {
-    await Workmanager().initialize(
-      callbackDispatcher,
-      isInDebugMode: kDebugMode,
-    );
-    await Workmanager().registerPeriodicTask(
-      "watchlistUpdateTask",
-      "updateWatchlistProviders",
-      frequency: const Duration(hours: 24),
-      existingWorkPolicy: ExistingWorkPolicy.replace,
-      constraints: Constraints(
-        networkType: NetworkType.connected,
-      ),
-    );
+    if (defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS) {
+      await Workmanager().initialize(
+        callbackDispatcher,
+        isInDebugMode: kDebugMode,
+      );
+      await Workmanager().registerPeriodicTask(
+        "watchlistUpdateTask",
+        "updateWatchlistProviders",
+        frequency: const Duration(hours: 24),
+        existingWorkPolicy: ExistingWorkPolicy.replace,
+        constraints: Constraints(
+          networkType: NetworkType.connected,
+        ),
+      );
+    }
+  } catch (e) {
+    debugPrint('Service initialization failed: $e');
   }
 
+  debugPrint('Running Movie Scout...');
   final repository = TmdbTitleRepository();
   final preferencesService = PreferencesService();
 
