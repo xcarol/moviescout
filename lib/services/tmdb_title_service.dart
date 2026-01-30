@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -10,6 +11,8 @@ const String _tmdbDetails =
     '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders%2Crecommendations%2C{CREDITS_TYPE}&language={LOCALE}';
 
 const String _tmdbBrief = '/{MEDIA_TYPE}/{ID}?language={LOCALE}';
+
+const String _tmdbProviders = '/{MEDIA_TYPE}/{ID}/watch/providers';
 
 class TmdbTitleService extends TmdbBaseService {
   Future<dynamic> _retrieveTitleDetails(
@@ -40,6 +43,17 @@ class TmdbTitleService extends TmdbBaseService {
           .replaceFirst('{MEDIA_TYPE}', mediaType)
           .replaceFirst('{ID}', id.toString())
           .replaceFirst('{LOCALE}', locale),
+    );
+  }
+
+  Future<dynamic> _retrieveTitleProviders(
+    int id,
+    String mediaType,
+  ) async {
+    return get(
+      _tmdbProviders
+          .replaceFirst('{MEDIA_TYPE}', mediaType)
+          .replaceFirst('{ID}', id.toString()),
     );
   }
 
@@ -132,6 +146,28 @@ class TmdbTitleService extends TmdbBaseService {
     details[TmdbTitleFields.lastUpdated] = DateTime.now().toIso8601String();
 
     title.fillFromMap(details);
+
+    return title;
+  }
+
+  Future<TmdbTitle> updateTitleProviders(TmdbTitle title) async {
+    String mediaType = title.mediaType;
+    if (mediaType == '') {
+      mediaType = title.isMovie ? ApiConstants.movie : ApiConstants.tv;
+    }
+
+    final result = await _retrieveTitleProviders(title.tmdbId, mediaType);
+
+    if (result.statusCode != 200) {
+      return title;
+    }
+
+    final Map<String, dynamic> results = body(result);
+    final Map<String, dynamic> providers =
+        results['results']?[getCountryCode()] ?? {};
+
+    title.providersJson = jsonEncode(providers);
+    TmdbTitle.updateProviderIds(title, providers);
 
     return title;
   }
