@@ -404,7 +404,10 @@ class TmdbTitle {
   bool get isRated => rating > AppConstants.seenRating;
   bool get hasRating => rating > 0.0;
 
-  bool get isOnAir => status == statusInProduction || status == statusPlanned;
+  bool get isOnAir =>
+      status == statusReturning ||
+      status == statusInProduction ||
+      status == statusPlanned;
 
   String get posterPath =>
       posterPathSuffix != null && posterPathSuffix!.isNotEmpty

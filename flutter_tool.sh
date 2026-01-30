@@ -133,6 +133,7 @@ if $run_build_android; then
   echo "VERSION=$version" >> .env
 
   echo "▶️ flutter build appbundle --release"
+  flutter clean
   flutter build appbundle --release
 fi
 
