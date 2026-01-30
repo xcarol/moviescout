@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:moviescout/services/language_service.dart';
+import 'package:moviescout/services/region_service.dart';
 
 enum ApiVersion { v3, v4 }
 
@@ -25,7 +26,9 @@ class TmdbBaseService {
   }
 
   String getCountryCode() {
-    return LanguageService().locale.countryCode ?? "US";
+    return RegionService().currentRegion ??
+        LanguageService().locale.countryCode ??
+        "US";
   }
 
   String getLanguageCode() {
