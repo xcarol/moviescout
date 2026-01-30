@@ -167,12 +167,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     isLoading.value = true;
 
     try {
-      await _syncWithServer(
-        accountId,
-        retrieveMovies,
-        retrieveTvshows,
-        forceUpdate: forceUpdate,
-      );
+      await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
 
       await updateListGenres();
 
@@ -227,9 +222,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   Future<void> _syncWithServer(
     String accountId,
     Future<List> Function() retrieveMovies,
-    Future<List> Function() retrieveTvshows, {
-    bool forceUpdate = false,
-  }) async {
+    Future<List> Function() retrieveTvshows,
+  ) async {
     final bool isInitialLoad = listIsEmpty;
 
     if (isInitialLoad) {
@@ -267,7 +261,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       }
     }
 
-    if (forceUpdate || isInitialLoad) {
+    if (isInitialLoad) {
       final totalCount = listTitleCount;
       const batchSize = 10;
 
@@ -278,8 +272,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
           limit: batchSize,
         );
 
-        final updated = await Future.wait(batch.map((t) =>
-            TmdbTitleService().updateTitleDetails(t, force: forceUpdate)));
+        final updated = await Future.wait(
+            batch.map((t) => TmdbTitleService().updateTitleDetails(t)));
 
         await repository.saveTitles(updated.cast<TmdbTitle>());
         await Future.delayed(Duration.zero);
@@ -287,6 +281,33 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
 
     await filterTitles();
+  }
+
+  Future<void> updateProviders() async {
+    isLoading.value = true;
+    try {
+      final totalCount = listTitleCount;
+      const batchSize = 10;
+
+      for (var i = 0; i < totalCount; i += batchSize) {
+        final batch = await repository.getTitles(
+          listName: listNameVal,
+          offset: i,
+          limit: batchSize,
+        );
+
+        final updated = await Future.wait(
+            batch.map((t) => TmdbTitleService().updateTitleProviders(t)));
+
+        await repository.saveTitles(updated.cast<TmdbTitle>());
+        await Future.delayed(Duration.zero);
+      }
+
+      await filterTitles();
+    } finally {
+      isLoading.value = false;
+      notifyListeners();
+    }
   }
 
   @protected
