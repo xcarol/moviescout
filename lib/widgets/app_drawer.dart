@@ -330,27 +330,15 @@ class AppDrawer extends StatelessWidget {
           regionProvider.setManualRegion(selectedRegion);
 
           if (context.mounted) {
-            final userService =
-                Provider.of<TmdbUserService>(context, listen: false);
-            final languageService =
-                Provider.of<LanguageService>(context, listen: false);
             final watchlistService =
                 Provider.of<TmdbWatchlistService>(context, listen: false);
             final rateslistService =
                 Provider.of<TmdbRateslistService>(context, listen: false);
 
-            watchlistService.retrieveWatchlist(
-              userService.accountId,
-              userService.sessionId,
-              languageService.locale,
-              forceUpdate: true,
-            );
-            rateslistService.retrieveRateslist(
-              userService.accountId,
-              userService.sessionId,
-              languageService.locale,
-              forceUpdate: true,
-            );
+            watchlistService.updateProviders();
+            rateslistService.updateProviders();
+
+            Navigator.of(context).pop();
           }
         }
       },
