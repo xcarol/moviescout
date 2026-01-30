@@ -345,6 +345,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String notificationNewSeasonBody(Object title) {
-    return 'A new season of $title has been released.';
+    return 'New season of $title available.';
   }
+
+  @override
+  String get selectRegion => 'Select region';
+
+  @override
+  String get regionAuto => 'Automatic detection (IP)';
+
+  @override
+  String get regionSpain => 'Spain';
+
+  @override
+  String get regionUSA => 'USA';
+
+  @override
+  String get regionUK => 'UK';
+
+  @override
+  String get regionFrance => 'France';
+
+  @override
+  String get regionGermany => 'Germany';
+
+  @override
+  String get regionItaly => 'Italy';
 }

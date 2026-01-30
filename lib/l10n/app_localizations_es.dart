@@ -264,7 +264,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get providersTitle => 'Plataformas de contenido';
 
   @override
-  String get providers => 'Plataformas';
+  String get providers => 'Platforms';
 
   @override
   String get filterByProviders => 'Solo disponibles';
@@ -345,6 +345,30 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String notificationNewSeasonBody(Object title) {
-    return 'Se ha estrenado una nueva temporada de $title.';
+    return 'Nueva temporada de $title disponible.';
   }
+
+  @override
+  String get selectRegion => 'Selecciona la región';
+
+  @override
+  String get regionAuto => 'Detección automática (IP)';
+
+  @override
+  String get regionSpain => 'España';
+
+  @override
+  String get regionUSA => 'Estados Unidos';
+
+  @override
+  String get regionUK => 'Reino Unido';
+
+  @override
+  String get regionFrance => 'Francia';
+
+  @override
+  String get regionGermany => 'Alemania';
+
+  @override
+  String get regionItaly => 'Italia';
 }

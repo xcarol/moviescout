@@ -110,5 +110,13 @@
     "notificationTitle": "¡Ya disponible!",
     "notificationBody": "{title} ya está disponible en una de tus plataformas.",
     "notificationNewSeasonTitle": "¡Nueva temporada!",
-    "notificationNewSeasonBody": "Nueva temporada de {title} disponible."
+    "notificationNewSeasonBody": "Nueva temporada de {title} disponible.",
+    "selectRegion": "Selecciona la región",
+    "regionAuto": "Detección automática (IP)",
+    "regionSpain": "España",
+    "regionUSA": "Estados Unidos",
+    "regionUK": "Reino Unido",
+    "regionFrance": "Francia",
+    "regionGermany": "Alemania",
+    "regionItaly": "Italia"
 }

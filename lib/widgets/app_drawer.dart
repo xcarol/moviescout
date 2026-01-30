@@ -16,8 +16,10 @@ import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/region_service.dart';
 import 'package:moviescout/widgets/color_scheme_form.dart';
 import 'package:moviescout/widgets/language_form.dart';
+import 'package:moviescout/widgets/region_form.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:intl/intl.dart';
@@ -42,6 +44,7 @@ class AppDrawer extends StatelessWidget {
           if (isUserLoggedIn) _providersTile(context),
           _colorSchemeTile(context),
           _languageTile(context),
+          _regionTile(context),
           _aboutTile(context),
           if (kDebugMode) _lastBackgroundUpdateTile(context),
           const Divider(),
@@ -303,5 +306,42 @@ class AppDrawer extends StatelessWidget {
     if (context.mounted) {
       Navigator.of(context).popUntil((route) => route.isFirst);
     }
+  }
+
+  Widget _regionTile(BuildContext context) {
+    final regionProvider = Provider.of<RegionService>(context);
+
+    return ListTile(
+      leading: const Icon(Icons.public),
+      title: Text(
+        AppLocalizations.of(context)!.selectRegion,
+      ),
+      onTap: () async {
+        final String? selectedRegion = await showDialog<String?>(
+          context: context,
+          builder: (context) {
+            return RegionForm(
+              currentRegion: regionProvider.manualRegion,
+            );
+          },
+        );
+
+        if (selectedRegion != regionProvider.manualRegion) {
+          regionProvider.setManualRegion(selectedRegion);
+
+          if (context.mounted) {
+            final watchlistService =
+                Provider.of<TmdbWatchlistService>(context, listen: false);
+            final rateslistService =
+                Provider.of<TmdbRateslistService>(context, listen: false);
+
+            watchlistService.updateProviders();
+            rateslistService.updateProviders();
+
+            Navigator.of(context).pop();
+          }
+        }
+      },
+    );
   }
 }

@@ -18,6 +18,7 @@ import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
+import 'package:moviescout/services/region_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';
@@ -62,6 +63,7 @@ void main() async {
     await PreferencesService().init();
     await IsarService.init();
     await TmdbGenreService().init();
+    await RegionService().init();
     await PersonTranslator.init();
     await NotificationService().init();
 
@@ -95,6 +97,7 @@ void main() async {
       Provider.value(value: preferencesService),
       ChangeNotifierProvider(create: (_) => ThemeService()),
       ChangeNotifierProvider(create: (_) => LanguageService()),
+      ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
       ChangeNotifierProxyProvider<TmdbUserService, TmdbProviderService>(
         create: (_) => TmdbProviderService(),

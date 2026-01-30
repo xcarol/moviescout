@@ -18,7 +18,7 @@ class TmdbWatchlistService extends TmdbListService {
 
   Future<void> retrieveWatchlist(
       String accountId, String sessionId, Locale locale) async {
-    retrieveList(accountId, retrieveMovies: () async {
+    retrieveList(accountId, forceUpdate: false, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
             _tmdbWatchlistMovies

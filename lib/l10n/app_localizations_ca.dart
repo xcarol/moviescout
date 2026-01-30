@@ -347,4 +347,28 @@ class AppLocalizationsCa extends AppLocalizations {
   String notificationNewSeasonBody(Object title) {
     return 'Nova temporada de $title disponible.';
   }
+
+  @override
+  String get selectRegion => 'Selecciona la regió';
+
+  @override
+  String get regionAuto => 'Detecció automàtica (IP)';
+
+  @override
+  String get regionSpain => 'Espanya';
+
+  @override
+  String get regionUSA => 'Estats Units';
+
+  @override
+  String get regionUK => 'Regne Unit';
+
+  @override
+  String get regionFrance => 'França';
+
+  @override
+  String get regionGermany => 'Alemanya';
+
+  @override
+  String get regionItaly => 'Itàlia';
 }
