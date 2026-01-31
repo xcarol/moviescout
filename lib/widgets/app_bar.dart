@@ -6,9 +6,11 @@ class MainAppBar extends AppBar {
     super.key,
     required BuildContext context,
     required String title,
+    List<Widget>? actions,
   }) : super(
           title: Text(title),
           actions: [
+            ...?actions,
             if (Navigator.canPop(context))
               IconButton(
                 icon: const Icon(Icons.arrow_back),

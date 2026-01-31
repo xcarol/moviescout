@@ -26,6 +26,7 @@ import 'package:moviescout/widgets/pin_button.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 
 class TitleDetails extends StatefulWidget {
   final TmdbTitle _title;
@@ -59,6 +60,19 @@ class _TitleDetailsState extends State<TitleDetails> {
           appBar: MainAppBar(
             context: context,
             title: appTitle,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: () {
+                  final String link =
+                      '${AppConstants.deepLinkScheme}://${widget._title.mediaType}/${widget._title.tmdbId}';
+                  SharePlus.instance.share(
+                    ShareParams(text: '${widget._title.name}\n$link'),
+                  );
+                },
+                tooltip: AppLocalizations.of(context)!.shareLink,
+              ),
+            ],
           ),
           drawer: AppDrawer(),
           body: SingleChildScrollView(
@@ -74,12 +88,12 @@ class _TitleDetailsState extends State<TitleDetails> {
     final String lastUpdated = widget._title.lastUpdated;
     final TmdbTitle title =
         await TmdbTitleService().updateTitleDetails(widget._title, force: true);
-    
+
     if (lastUpdated != title.lastUpdated && title.id != Isar.autoIncrement) {
       final repository = TmdbTitleRepository();
       await repository.saveTitle(title);
     }
-    
+
     return title;
   }
 

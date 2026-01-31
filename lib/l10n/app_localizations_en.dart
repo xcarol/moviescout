@@ -371,4 +371,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get regionItaly => 'Italy';
+
+  @override
+  String get verifyDeepLinks => 'Verify Deep Links';
+
+  @override
+  String get shareLink => 'Share';
 }

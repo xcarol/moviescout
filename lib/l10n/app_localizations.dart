@@ -816,6 +816,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Italy'**
   String get regionItaly;
+
+  /// No description provided for @verifyDeepLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Deep Links'**
+  String get verifyDeepLinks;
+
+  /// No description provided for @shareLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get shareLink;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
