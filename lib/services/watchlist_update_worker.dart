@@ -125,7 +125,7 @@ void callbackDispatcher() {
           // Firebase might not be initialized if the error happened very early
           await Firebase.initializeApp();
           FirebaseCrashlytics.instance.recordError(e, stackTrace,
-              reason: 'Workmanager task error: ${task}');
+              reason: 'Workmanager task error: $task');
         } catch (_) {}
       }
       return Future.value(false);
