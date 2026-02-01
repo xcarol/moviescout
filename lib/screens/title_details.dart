@@ -24,6 +24,7 @@ import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:moviescout/widgets/pin_button.dart';
 import 'package:provider/provider.dart';
+import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
@@ -65,7 +66,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                 icon: const Icon(Icons.share),
                 onPressed: () {
                   final String link =
-                      '${AppConstants.deepLinkScheme}://${widget._title.mediaType}/${widget._title.tmdbId}';
+                      'https://${ApiConstants.tmdbHost}/${widget._title.mediaType}/${widget._title.tmdbId}';
                   SharePlus.instance.share(
                     ShareParams(text: '${widget._title.name}\n$link'),
                   );

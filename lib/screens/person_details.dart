@@ -11,6 +11,7 @@ import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_person_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
+import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/title_chip.dart';
@@ -18,7 +19,6 @@ import 'package:moviescout/screens/person_titles.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:moviescout/utils/app_constants.dart';
 
 class PersonDetails extends StatefulWidget {
   final TmdbPerson _person;
@@ -57,7 +57,7 @@ class _PersonDetailsState extends State<PersonDetails> {
                 icon: const Icon(Icons.share),
                 onPressed: () {
                   final String link =
-                      '${AppConstants.deepLinkScheme}://person/${widget._person.tmdbId}';
+                      'https://${ApiConstants.tmdbHost}/person/${widget._person.tmdbId}';
                   SharePlus.instance.share(
                     ShareParams(text: '${widget._person.name}\n$link'),
                   );
