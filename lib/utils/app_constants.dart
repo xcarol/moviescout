@@ -28,7 +28,4 @@ class AppConstants {
 
   // Other
   static const String anonymousAccountId = 'anonymous';
-
-  // Deep Links
-  static const String deepLinkScheme = 'moviescout';
 }

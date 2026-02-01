@@ -7,7 +7,6 @@ import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
-import 'package:moviescout/utils/app_constants.dart';
 
 class DeepLinkService {
   static final DeepLinkService _instance = DeepLinkService._internal();
@@ -47,18 +46,6 @@ class DeepLinkService {
       if (segments.length >= 2) {
         type = segments[0];
         id = segments[1];
-      }
-    } else if (uri.scheme == AppConstants.deepLinkScheme) {
-      final segments = uri.pathSegments;
-
-      if (uri.host == ApiConstants.movie ||
-          uri.host == ApiConstants.tv ||
-          uri.host == ApiConstants.person) {
-        type = uri.host;
-        id = segments.isNotEmpty ? segments[0] : null;
-      } else if (segments.isNotEmpty) {
-        type = segments[0];
-        id = segments.length > 1 ? segments[1] : null;
       }
     }
 
