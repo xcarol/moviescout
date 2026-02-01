@@ -118,5 +118,7 @@
     "regionUK": "UK",
     "regionFrance": "France",
     "regionGermany": "Germany",
-    "regionItaly": "Italy"
+    "regionItaly": "Italy",
+    "verifyDeepLinks": "Verify Deep Links",
+    "shareLink": "Share"
 }

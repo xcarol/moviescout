@@ -25,6 +25,7 @@ import 'package:moviescout/services/snack_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/utils/deep_link_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -45,6 +46,8 @@ class AppDrawer extends StatelessWidget {
           _colorSchemeTile(context),
           _languageTile(context),
           _regionTile(context),
+          if (defaultTargetPlatform == TargetPlatform.android)
+            _verifyDeepLinksTile(context),
           _aboutTile(context),
           if (kDebugMode) _lastBackgroundUpdateTile(context),
           const Divider(),
@@ -341,6 +344,17 @@ class AppDrawer extends StatelessWidget {
             Navigator.of(context).pop();
           }
         }
+      },
+    );
+  }
+
+  Widget _verifyDeepLinksTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.link),
+      title: Text(AppLocalizations.of(context)!.verifyDeepLinks),
+      onTap: () async {
+        Navigator.of(context).pop();
+        await DeepLinkUtils.openDeepLinkSettings(context);
       },
     );
   }

@@ -17,6 +17,8 @@ import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/screens/person_titles.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 class PersonDetails extends StatefulWidget {
   final TmdbPerson _person;
@@ -50,6 +52,19 @@ class _PersonDetailsState extends State<PersonDetails> {
           appBar: MainAppBar(
             context: context,
             title: appTitle,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: () {
+                  final String link =
+                      '${AppConstants.deepLinkScheme}://person/${widget._person.tmdbId}';
+                  SharePlus.instance.share(
+                    ShareParams(text: '${widget._person.name}\n$link'),
+                  );
+                },
+                tooltip: AppLocalizations.of(context)!.shareLink,
+              ),
+            ],
           ),
           drawer: AppDrawer(),
           body: SingleChildScrollView(
@@ -218,7 +233,7 @@ class _PersonDetailsState extends State<PersonDetails> {
           onTap: () {
             launchUrl(
               Uri.parse('https://www.imdb.com/name/${person.imdbId}'),
-              mode: LaunchMode.inAppWebView,
+              mode: LaunchMode.inAppBrowserView,
             );
           },
           child: SizedBox(
@@ -239,7 +254,7 @@ class _PersonDetailsState extends State<PersonDetails> {
           onTap: () {
             launchUrl(
               Uri.parse(person.homepage),
-              mode: LaunchMode.inAppWebView,
+              mode: LaunchMode.inAppBrowserView,
             );
           },
           child: SizedBox(
