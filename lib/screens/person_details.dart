@@ -233,7 +233,7 @@ class _PersonDetailsState extends State<PersonDetails> {
           onTap: () {
             launchUrl(
               Uri.parse('https://www.imdb.com/name/${person.imdbId}'),
-              mode: LaunchMode.inAppWebView,
+              mode: LaunchMode.inAppBrowserView,
             );
           },
           child: SizedBox(
@@ -254,7 +254,7 @@ class _PersonDetailsState extends State<PersonDetails> {
           onTap: () {
             launchUrl(
               Uri.parse(person.homepage),
-              mode: LaunchMode.inAppWebView,
+              mode: LaunchMode.inAppBrowserView,
             );
           },
           child: SizedBox(

@@ -182,7 +182,7 @@ class _TitleDetailsState extends State<TitleDetails> {
           onTap: () {
             launchUrl(
               Uri.parse('https://www.imdb.com/title/${title.imdbId}'),
-              mode: LaunchMode.inAppWebView,
+              mode: LaunchMode.inAppBrowserView,
             );
           },
           child: SizedBox(
