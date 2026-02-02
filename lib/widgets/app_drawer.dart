@@ -5,10 +5,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform, kDebugMode;
+    show TargetPlatform, defaultTargetPlatform;
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/screens/providers.dart';
+import 'package:moviescout/screens/watchlist_logs_screen.dart';
 import 'package:moviescout/services/discoverlist_service.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/theme_service.dart';
@@ -49,7 +50,7 @@ class AppDrawer extends StatelessWidget {
           if (defaultTargetPlatform == TargetPlatform.android)
             _verifyDeepLinksTile(context),
           _aboutTile(context),
-          if (kDebugMode) _lastBackgroundUpdateTile(context),
+          _lastBackgroundUpdateTile(context),
           const Divider(),
           _userSessionTile(context, isUserLoggedIn),
         ],
@@ -238,19 +239,31 @@ class AppDrawer extends StatelessWidget {
     final String? lastRunStr =
         PreferencesService().prefs.getString(AppConstants.lastBackgroundRun);
 
-    String formattedDate = 'null';
+    String formattedDate = 'none';
     if (lastRunStr != null) {
-      final DateTime lastRun = DateTime.parse(lastRunStr).toLocal();
-      formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(lastRun);
+      try {
+        final DateTime lastRun = DateTime.parse(lastRunStr).toLocal();
+        formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(lastRun);
+      } catch (_) {
+        formattedDate = 'error';
+      }
     }
 
     return ListTile(
       dense: true,
       leading: const Icon(Icons.history, size: 20),
+      trailing: const Icon(Icons.chevron_right, size: 16),
       title: Text(
-        '${AppConstants.lastBackgroundRun}: $formattedDate',
+        'Background update: $formattedDate',
         style: Theme.of(context).textTheme.bodySmall,
       ),
+      onTap: () {
+        Navigator.of(context).pop();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const WatchlistLogsScreen()),
+        );
+      },
     );
   }
 

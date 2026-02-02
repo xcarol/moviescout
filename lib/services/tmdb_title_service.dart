@@ -63,7 +63,7 @@ class TmdbTitleService extends TmdbBaseService {
               DateTime.parse(title.lastUpdated),
             )
             .inDays <
-        3;
+        1;
   }
 
   Future<TmdbTitle> updateTitleDetails(TmdbTitle title,

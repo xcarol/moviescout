@@ -19,16 +19,31 @@ import 'dart:convert';
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     WidgetsFlutterBinding.ensureInitialized();
+    final logLines = <String>[];
+    int scannedCount = 0;
+    int updatedCount = 0;
     try {
       await dotenv.load(fileName: ".env");
       await PreferencesService().init();
       await IsarService.init();
       await NotificationService().init();
 
+      logLines.add('-------------------------------------------');
+      logLines.add(
+          'Start: ${DateTime.now().toLocal().toString().split('.').first}');
+      logLines.add('-------------------------------------------');
+
       final providersStrings =
           PreferencesService().prefs.getStringList('providers') ?? [];
       final List<dynamic> providersList =
           providersStrings.map((s) => jsonDecode(s)).toList();
+
+      final enabledProviderNames = providersList
+          .where((p) => p[TmdbProvider.providerEnabled] == 'true')
+          .map((p) => p[TmdbProvider.providerName].toString())
+          .toList();
+      logLines.add('Providers: ${enabledProviderNames.join(', ')}');
+
       final enabledProviderIds = providersList
           .where((p) => p[TmdbProvider.providerEnabled] == 'true')
           .map((p) => (p[TmdbProvider.providerId] as num).toInt())
@@ -59,7 +74,9 @@ void callbackDispatcher() {
         }
 
         for (final title in watchlistTitles) {
+          scannedCount++;
           if (!TmdbTitleService.isUpToDate(title)) {
+            updatedCount++;
             final oldProviders = title.flatrateProviderIds.toSet();
             final enabledProviderSet = enabledProviderIds.toSet();
             final wasAvailable =
@@ -68,6 +85,8 @@ void callbackDispatcher() {
 
             await titleService.updateTitleDetails(title);
             await repository.saveTitle(title);
+
+            logLines.add('- Updated: ${title.name}');
 
             // Check for new availability
             if (!wasAvailable) {
@@ -115,10 +134,18 @@ void callbackDispatcher() {
             DateTime.now().toIso8601String(),
           );
 
+      logLines.add('Summary: $scannedCount scanned - $updatedCount updated');
+      await _saveLogs(logLines);
+
       return Future.value(true);
     } catch (e, stackTrace) {
       debugPrint('Error in background task: $e');
       debugPrint(stackTrace.toString());
+
+      logLines.add('ERROR: $e\n$stackTrace');
+      logLines.add(
+          'Summary: $scannedCount scanned - $updatedCount updated (Interrupted)');
+      await _saveLogs(logLines);
 
       if (defaultTargetPlatform == TargetPlatform.android) {
         try {
@@ -131,4 +158,20 @@ void callbackDispatcher() {
       return Future.value(false);
     }
   });
+}
+
+Future<void> _saveLogs(List<String> logLines) async {
+  try {
+    final prefs = PreferencesService().prefs;
+    final currentLogs =
+        prefs.getStringList(AppConstants.watchlistUpdateLogs) ?? [];
+    final newEntry = logLines.join('\n');
+    currentLogs.add(newEntry);
+    if (currentLogs.length > 50) {
+      currentLogs.removeRange(0, currentLogs.length - 50);
+    }
+    await prefs.setStringList(AppConstants.watchlistUpdateLogs, currentLogs);
+  } catch (e) {
+    debugPrint('Error saving logs: $e');
+  }
 }
