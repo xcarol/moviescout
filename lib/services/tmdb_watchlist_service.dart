@@ -4,6 +4,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_pinned_service.dart';
 
 const String _tmdbWatchlistMovies =
     'account/{ACCOUNT_ID}/movie/watchlist?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
@@ -13,12 +14,14 @@ const String _updateWatchlistTitle =
     'account/{ACCOUNT_ID}/watchlist?session_id={SESSION_ID}';
 
 class TmdbWatchlistService extends TmdbListService {
+  TmdbPinnedService? pinnedService;
+
   TmdbWatchlistService(
       super.listName, super.repository, super.preferencesService);
 
   Future<void> retrieveWatchlist(
       String accountId, String sessionId, Locale locale) async {
-    retrieveList(accountId, forceUpdate: false, retrieveMovies: () async {
+    await retrieveList(accountId, forceUpdate: false, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
             _tmdbWatchlistMovies
@@ -41,6 +44,11 @@ class TmdbWatchlistService extends TmdbListService {
             version: ApiVersion.v4);
       });
     });
+
+    if (pinnedService != null) {
+      await pinnedService!.fetchAndApplyPinnedTitles();
+      await filterTitles();
+    }
   }
 
   Future<dynamic> _updateTitleInWatchlistToTmdb(
@@ -95,6 +103,11 @@ class TmdbWatchlistService extends TmdbListService {
 
     title.isPinned = !title.isPinned;
     await repository.saveTitle(title);
+
+    if (pinnedService != null) {
+      pinnedService!.updatePinnedToServer();
+    }
+
     await filterTitles();
   }
 

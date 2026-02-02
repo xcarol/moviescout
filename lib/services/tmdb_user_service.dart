@@ -3,6 +3,7 @@ import 'dart:convert';
 // ignore: unnecessary_import
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/services/tmdb_pinned_service.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -165,6 +166,9 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     final providerService =
         Provider.of<TmdbProviderService>(context, listen: false);
     providerService.clearProvidersStatus();
+    final pinnedService =
+        Provider.of<TmdbPinnedService>(context, listen: false);
+    pinnedService.clearPinnedStatus();
     PreferencesService().prefs.clear();
     notifyListeners();
   }

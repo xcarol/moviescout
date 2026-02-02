@@ -19,6 +19,7 @@ import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/region_service.dart';
+import 'package:moviescout/services/tmdb_pinned_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';
@@ -105,15 +106,23 @@ void main() async {
           ..setup(userService.accountId, userService.sessionId,
               userService.accessToken),
       ),
+      ChangeNotifierProxyProvider<TmdbUserService, TmdbPinnedService>(
+        create: (_) => TmdbPinnedService(repository, preferencesService),
+        update: (_, userService, pinnedService) => pinnedService!
+          ..setup(userService.accountId, userService.sessionId,
+              userService.accessToken),
+      ),
       ChangeNotifierProvider(
           create: (_) => TmdbRateslistService(
               AppConstants.rateslist, repository, preferencesService)),
-      ChangeNotifierProxyProvider<TmdbRateslistService, TmdbWatchlistService>(
+      ChangeNotifierProxyProvider2<TmdbRateslistService, TmdbPinnedService,
+          TmdbWatchlistService>(
         create: (_) => TmdbWatchlistService(
             AppConstants.watchlist, repository, preferencesService),
-        update: (_, rateslistService, watchlistService) {
+        update: (_, rateslistService, pinnedService, watchlistService) {
           rateslistService.removeListener(watchlistService!.refresh);
           rateslistService.addListener(watchlistService.refresh);
+          watchlistService.pinnedService = pinnedService;
           return watchlistService;
         },
       ),
