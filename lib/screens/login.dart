@@ -37,11 +37,14 @@ class _LoginState extends State<Login> {
       try {
         if (!mounted) return;
 
-        if (uri.queryParameters['error'] != null) {
-          throw Exception(uri.queryParameters['error']);
-        }
+        // Only handle our custom scheme for login completion
+        if (uri.scheme == 'moviescout' && uri.host == 'auth') {
+          if (uri.queryParameters['error'] != null) {
+            throw Exception(uri.queryParameters['error']);
+          }
 
-        _completeLogin();
+          _completeLogin();
+        }
       } catch (error) {
         SnackMessage.showSnackBar(error.toString());
       }
@@ -136,8 +139,10 @@ class _LoginState extends State<Login> {
           _completeLoginButton(),
         const SizedBox(height: 20),
         OutlinedButton(
-          onPressed: () =>
-              launchUrlString('https://www.themoviedb.org/account/signup'),
+          onPressed: () => launchUrlString(
+            'https://www.themoviedb.org/account/signup',
+            mode: LaunchMode.externalApplication,
+          ),
           child: Text(AppLocalizations.of(context)!.signupToTmdb),
         ),
       ],

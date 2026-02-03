@@ -37,6 +37,8 @@ class DeepLinkService {
   }
 
   void _handleDeepLink(Uri uri) {
+    if (uri.scheme == 'moviescout') return;
+
     String? type;
     String? id;
 
