@@ -8,11 +8,11 @@ show_help() {
   echo "Opcions disponibles:"
   echo "  --firebase-login         Fer login a Firebase"
   echo "  --flutterfire-config     Configurar Firebase amb flutterfire"
-  echo "  -a, --install-apk        Instal·lar APK en un dispositiu connectat"
-  echo "  -b, --build-assets       Generar els asssets (icones i splash) de l'app"
-  echo "  -d, --build-android      Construir l'app Android (.aab)"
-  echo "  -g, --gen-l10n           Generar fitxers de localització"
-  echo "  -i, --build-isar         Genera els fitxers d'esquema per Isar"
+  echo "  -i, --install-apk        Instal·lar APK en un dispositiu connectat"
+  echo "  -a, --build-assets       Generar els asssets (icones i splash) de l'app"
+  echo "  -b, --build-android      Construir l'app Android (.aab)"
+  echo "  -l, --gen-l10n           Generar fitxers de localització"
+  echo "  -s, --build-isar         Genera els fitxers d'esquema per Isar"
   echo "  -r, --build-release      Construir APK release"
   echo "  -w, --wipe-cache         Netejar la caché i les dades de l'usuari"
   echo "  -h, --help               Mostrar aquesta ajuda"
@@ -41,19 +41,19 @@ for arg in "$@"; do
     --flutterfire-config)
       run_flutterfire_config=true
       ;;
-    -b|--build-assets)
+    -a|--build-assets)
       run_build_assets=true
       ;;
-    -a|--install-apk)
+    -i|--install-apk)
       run_install_apk=true
       ;;
-    -d|--build-android)
+    -b|--build-android)
       run_build_android=true
       ;;
-    -g|--gen-l10n)
+    -l|--gen-l10n)
       run_gen_l10n=true
       ;;
-    -i|--build-isar)
+    -s|--build-isar)
       run_build_isar=true
       ;;
     -r|--build-release)
