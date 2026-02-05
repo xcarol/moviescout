@@ -86,7 +86,18 @@ void callbackDispatcher() {
             await titleService.updateTitleDetails(title);
             await repository.saveTitle(title);
 
+            final oldProviderNames = providersList
+                .where((p) => oldProviders.contains(p[TmdbProvider.providerId]))
+                .map((p) => p[TmdbProvider.providerName])
+                .toList();
+            final newProviderNames = providersList
+                .where((p) => title.flatrateProviderIds.contains(p[TmdbProvider.providerId]))
+                .map((p) => p[TmdbProvider.providerName])
+                .toList();
+
             logLines.add('- Updated: ${title.name}');
+            logLines.add('- Old providers: ${oldProviderNames.join(', ')}');
+            logLines.add('- New providers: ${newProviderNames.join(', ')}');
 
             // Check for new availability
             if (!wasAvailable) {
@@ -94,7 +105,17 @@ void callbackDispatcher() {
               final isAvailable =
                   newProviders.intersection(enabledProviderSet).isNotEmpty;
 
+              final availableProviderNames = providersList
+                  .where(
+                      (p) => newProviders.contains(p[TmdbProvider.providerId]))
+                  .map((p) => p[TmdbProvider.providerName])
+                  .toList();
+
+              logLines.add(
+                  '- Available: ${title.name} at ${availableProviderNames.join(', ')}');
+
               if (isAvailable) {
+                logLines.add('- Sending notification for ${title.name}');
                 await NotificationService().showNotification(
                   id: title.tmdbId,
                   title: localizations.notificationTitle,
@@ -109,6 +130,7 @@ void callbackDispatcher() {
             if (title.isSerie &&
                 title.numberOfSeasons > oldNumberOfSeasons &&
                 oldNumberOfSeasons > 0) {
+              logLines.add('- Sending notification for new season of ${title.name} with ${title.numberOfSeasons} seasons');
               await NotificationService().showNotification(
                 id: title.tmdbId + 1000000, // Offset to avoid ID collision
                 title: localizations.notificationNewSeasonTitle,
