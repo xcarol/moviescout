@@ -79,6 +79,10 @@ class TmdbTitleFields {
   static const String providers = 'providers';
   static const String addedOrder = 'added_order';
   static const String isPinned = 'is_pinned';
+  static const String images = 'images';
+  static const String videos = 'videos';
+  static const String key = 'key';
+  static const String site = 'site';
 }
 
 const statusEnded = 'Ended';
@@ -116,6 +120,7 @@ class TmdbTitle {
   late String status;
   late String mediaType;
   late String imdbId;
+  late String homepage;
 
   late String? posterPathSuffix;
   late String? backdropPathSuffix;
@@ -155,6 +160,8 @@ class TmdbTitle {
   late String? seasonsJson;
   late String? recommendationsJson;
   late String? nextEpisodeToAirJson;
+  late String? imagesJson;
+  late String? videosJson;
 
   @ignore
   String character = '';
@@ -202,6 +209,9 @@ class TmdbTitle {
     this.seasonsJson,
     this.recommendationsJson,
     this.nextEpisodeToAirJson,
+    this.imagesJson,
+    this.videosJson,
+    this.homepage = '',
     this.isPinned = false,
   }) {
     if (effectiveReleaseDate.isEmpty) {
@@ -263,6 +273,7 @@ class TmdbTitle {
     tagline = title[TmdbTitleFields.tagline] ?? tagline;
     status = title[TmdbTitleFields.status] ?? status;
     imdbId = title[TmdbTitleFields.imdbId] ?? imdbId;
+    homepage = title[TmdbTitleFields.homepage] ?? homepage;
 
     if (title.containsKey(TmdbTitleFields.posterPath)) {
       posterPathSuffix = title[TmdbTitleFields.posterPath];
@@ -330,6 +341,12 @@ class TmdbTitle {
       nextEpisodeToAirJson =
           jsonEncode(title[TmdbTitleFields.nextEpisodeToAir]);
     }
+    if (title[TmdbTitleFields.images] != null) {
+      imagesJson = jsonEncode(title[TmdbTitleFields.images]);
+    }
+    if (title[TmdbTitleFields.videos] != null) {
+      videosJson = jsonEncode(title[TmdbTitleFields.videos]);
+    }
 
     character = title[TmdbTitleFields.character] ?? character;
     job = title[TmdbTitleFields.job] ?? job;
@@ -354,6 +371,7 @@ class TmdbTitle {
       TmdbTitleFields.status: status,
       TmdbTitleFields.mediaType: mediaType,
       TmdbTitleFields.imdbId: imdbId,
+      TmdbTitleFields.homepage: homepage,
       TmdbTitleFields.posterPath: posterPathSuffix,
       TmdbTitleFields.backdropPath: backdropPathSuffix,
       TmdbTitleFields.releaseDate: releaseDate,
@@ -387,6 +405,10 @@ class TmdbTitle {
       TmdbTitleFields.nextEpisodeToAir: nextEpisodeToAirJson != null
           ? jsonDecode(nextEpisodeToAirJson!)
           : null,
+      TmdbTitleFields.images:
+          imagesJson != null ? jsonDecode(imagesJson!) : null,
+      TmdbTitleFields.videos:
+          videosJson != null ? jsonDecode(videosJson!) : null,
       TmdbTitleFields.character: character,
       TmdbTitleFields.job: job,
       TmdbTitleFields.department: department,
@@ -556,6 +578,30 @@ class TmdbTitle {
     } else {
       return 'https://www.themoviedb.org/tv/$tmdbId';
     }
+  }
+
+  @ignore
+  List<String> get images {
+    if (imagesJson == null) return [];
+    try {
+      final decoded = jsonDecode(imagesJson!);
+      if (decoded is List) {
+        return decoded.map((e) => e.toString()).toList();
+      }
+    } catch (_) {}
+    return [];
+  }
+
+  @ignore
+  List<Map<String, dynamic>> get videos {
+    if (videosJson == null) return [];
+    try {
+      final decoded = jsonDecode(videosJson!);
+      if (decoded is List) {
+        return decoded.map((e) => e as Map<String, dynamic>).toList();
+      }
+    } catch (_) {}
+    return [];
   }
 
   static void updateGenreIds(
