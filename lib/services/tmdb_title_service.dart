@@ -8,9 +8,10 @@ import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 
 const String _tmdbDetails =
-    '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders%2Crecommendations%2C{CREDITS_TYPE}&language={LOCALE}';
+    '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders%2Crecommendations%2Cimages%2Cvideos%2C{CREDITS_TYPE}&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
 
-const String _tmdbBrief = '/{MEDIA_TYPE}/{ID}?language={LOCALE}';
+const String _tmdbBrief =
+    '/{MEDIA_TYPE}/{ID}?append_to_response=images,videos&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
 
 const String _tmdbProviders = '/{MEDIA_TYPE}/{ID}/watch/providers';
 
@@ -118,7 +119,15 @@ class TmdbTitleService extends TmdbBaseService {
       }
     }
 
-    if ((details[TmdbTitleFields.overview] ?? '').isEmpty) {
+    _mergeMediaFallback(details, details);
+
+    details[TmdbTitleFields.homepage] = details['homepage'];
+
+    final hasOverview = (details[TmdbTitleFields.overview] ?? '').isNotEmpty;
+    final hasMedia = (details[TmdbTitleFields.images] as List).isNotEmpty ||
+        (details[TmdbTitleFields.videos] as List).isNotEmpty;
+
+    if (!hasOverview || !hasMedia) {
       final fallbackResult = await _retrieveTitleBrief(
         title.tmdbId,
         mediaType,
@@ -130,7 +139,13 @@ class TmdbTitleService extends TmdbBaseService {
       }
     }
 
-    if ((details[TmdbTitleFields.overview] ?? '').isEmpty) {
+    final hasOverviewFinal =
+        (details[TmdbTitleFields.overview] ?? '').isNotEmpty;
+    final hasMediaFinal =
+        (details[TmdbTitleFields.images] as List).isNotEmpty ||
+            (details[TmdbTitleFields.videos] as List).isNotEmpty;
+
+    if (!hasOverviewFinal || !hasMediaFinal) {
       final enResult = await _retrieveTitleBrief(
         title.tmdbId,
         mediaType,
@@ -196,6 +211,58 @@ class TmdbTitleService extends TmdbBaseService {
               fallback[TmdbTitleFields.originalName];
         }
       }
+    }
+
+    _mergeMediaFallback(target, fallback, overwriteIfEmpty: true);
+  }
+
+  void _mergeMediaFallback(Map<String, dynamic> target, Map<String, dynamic> source,
+      {bool overwriteIfEmpty = false}) {
+
+    if (source['images'] != null && source['images']['backdrops'] != null) {
+      List<dynamic> backdrops = List.from(source['images']['backdrops']);
+      if (backdrops.isNotEmpty || overwriteIfEmpty) {
+        backdrops.sort((a, b) =>
+            (b['vote_average'] ?? 0).compareTo(a['vote_average'] ?? 0));
+        target[TmdbTitleFields.images] =
+            backdrops.take(10).map((b) => b['file_path']).toList();
+      }
+    }
+
+    if (target[TmdbTitleFields.images] is! List) {
+      target[TmdbTitleFields.images] = [];
+    }
+    if (source['videos'] != null && source['videos']['results'] != null) {
+      List<dynamic> videos = List.from(source['videos']['results']);
+
+      videos = videos
+          .where((v) => (v['site'] ?? '').toString().toLowerCase() == 'youtube')
+          .toList();
+
+      if (videos.isNotEmpty || overwriteIfEmpty) {
+        videos.sort((a, b) {
+          final aOfficial = a['official'] == true ? 1 : 0;
+          final bOfficial = b['official'] == true ? 1 : 0;
+          if (aOfficial != bOfficial) return bOfficial.compareTo(aOfficial);
+
+          final aTrailer = a['type'] == 'Trailer' ? 1 : 0;
+          final bTrailer = b['type'] == 'Trailer' ? 1 : 0;
+          return bTrailer.compareTo(aTrailer);
+        });
+
+        target[TmdbTitleFields.videos] = videos
+            .take(5)
+            .map((v) => {
+                  TmdbTitleFields.key: v['key'],
+                  TmdbTitleFields.site: v['site'],
+                  TmdbTitleFields.name: v['name'],
+                })
+            .toList();
+      }
+    }
+
+    if (target[TmdbTitleFields.videos] is! List) {
+      target[TmdbTitleFields.videos] = [];
     }
   }
 }

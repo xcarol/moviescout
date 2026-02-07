@@ -120,5 +120,8 @@
     "regionGermany": "Alemanya",
     "regionItaly": "Itàlia",
     "verifyDeepLinks": "Verificar enllaços",
-    "shareLink": "Compartir"
+    "shareLink": "Compartir",
+    "director": "Director",
+    "creator": "Creador",
+    "seasonsCount": "{count, plural, =1{1 temporada} other{{count} temporades}}"
 }
