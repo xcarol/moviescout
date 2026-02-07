@@ -38,10 +38,6 @@ class RegionForm extends Dialog {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 value: code,
-                groupValue: region.value,
-                onChanged: (newValue) {
-                  region.value = newValue;
-                },
                 selected: region.value == code,
               ),
             );
@@ -50,30 +46,36 @@ class RegionForm extends Dialog {
             );
           });
 
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Column(children: regionWidgets),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(AppLocalizations.of(context)!.cancel),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(region.value);
-                      },
-                      child: Text(AppLocalizations.of(context)!.select),
-                    ),
-                  ],
-                ),
-              ],
+          return RadioGroup<String?>(
+            groupValue: region.value,
+            onChanged: (newValue) {
+              region.value = newValue;
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Column(children: regionWidgets),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(AppLocalizations.of(context)!.cancel),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(region.value);
+                        },
+                        child: Text(AppLocalizations.of(context)!.select),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           );
         },

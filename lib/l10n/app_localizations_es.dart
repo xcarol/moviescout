@@ -377,4 +377,21 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get shareLink => 'Compartir';
+
+  @override
+  String get director => 'Director';
+
+  @override
+  String get creator => 'Creador';
+
+  @override
+  String seasonsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count temporadas',
+      one: '1 temporada',
+    );
+    return '$_temp0';
+  }
 }

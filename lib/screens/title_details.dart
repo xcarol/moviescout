@@ -22,6 +22,7 @@ import 'package:moviescout/widgets/person_chip.dart';
 import 'package:moviescout/widgets/rate_form.dart';
 import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
+import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/pin_button.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/utils/api_constants.dart';
@@ -102,7 +103,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _banner(title),
+        MediaCarousel(title: title),
         const SizedBox(height: 20),
         _details(title),
       ],
@@ -153,12 +154,70 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
+  Widget _creditsInfo(TmdbTitle title) {
+    if (title.creditsJson == null) return const SizedBox.shrink();
+
+    String label = '';
+    List<String> names = [];
+
+    if (title.isMovie) {
+      final directors = title.crew
+          .where((c) => c.job == 'Director')
+          .map((c) => c.name)
+          .toList();
+      if (directors.isNotEmpty) {
+        label = AppLocalizations.of(context)!.director;
+        names = directors;
+      }
+    } else {
+      final creators = title.crew
+          .where((c) => c.job == 'Executive Producer' || c.job == 'Creator')
+          .map((c) => c.name)
+          .take(3)
+          .toList();
+      if (creators.isNotEmpty) {
+        label = AppLocalizations.of(context)!.creator;
+        names = creators;
+      }
+    }
+
+    if (names.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontStyle: FontStyle.italic,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        Text(
+          names.join(', '),
+          style: const TextStyle(fontSize: 14),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    );
+  }
+
   Widget _externalLinks(TmdbTitle title) {
     List<Widget> links = [];
 
+    final buttonStyle = OutlinedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+      ),
+    );
+
     links.add(
-      GestureDetector(
-        onTap: () {
+      OutlinedButton(
+        style: buttonStyle,
+        onPressed: () {
           launchUrl(
             Uri.parse(
               'https://www.themoviedb.org/${title.mediaType}/${title.tmdbId}',
@@ -177,10 +236,11 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
 
     if (title.imdbId.isNotEmpty) {
-      links.add(const SizedBox(width: 20));
+      links.add(const SizedBox(width: 10));
       links.add(
-        GestureDetector(
-          onTap: () {
+        OutlinedButton(
+          style: buttonStyle,
+          onPressed: () {
             launchUrl(
               Uri.parse('https://www.imdb.com/title/${title.imdbId}'),
               mode: LaunchMode.inAppBrowserView,
@@ -191,6 +251,30 @@ class _TitleDetailsState extends State<TitleDetails> {
             child: Image.asset(
               'assets/imdb-logo.png',
               fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (title.homepage.isNotEmpty) {
+      links.add(const SizedBox(width: 10));
+      links.add(
+        OutlinedButton(
+          style: buttonStyle,
+          onPressed: () {
+            launchUrl(
+              Uri.parse(title.homepage),
+              mode: LaunchMode.externalApplication,
+            );
+          },
+          child: SizedBox(
+            height: 30,
+            width: 30,
+            child: Icon(
+              Icons.language,
+              size: 30,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ),
@@ -223,6 +307,7 @@ class _TitleDetailsState extends State<TitleDetails> {
           const SizedBox(height: 30),
           _infoLine(title),
           const SizedBox(height: 10),
+          _creditsInfo(title),
           const Divider(),
           _externalLinks(title),
           const Divider(),
@@ -332,88 +417,103 @@ class _TitleDetailsState extends State<TitleDetails> {
                       ),
                     ),
                   ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.primary,
-                      width: 1,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  onPressed: () => showDialog(
-                    context: context,
-                    builder: (context) {
-                      return RateForm(
-                        title: title.name,
-                        initialRate: titleRating,
-                        initialDate: titleRatingDate,
-                        onSubmit: (double rating) {
-                          Provider.of<TmdbRateslistService>(context,
-                                  listen: false)
-                              .updateTitleRate(
-                            Provider.of<TmdbUserService>(context, listen: false)
-                                .accountId,
-                            Provider.of<TmdbUserService>(context, listen: false)
-                                .sessionId,
-                            title,
-                            rating,
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  child: Text(AppLocalizations.of(context)!.rate),
-                ),
-                const SizedBox(width: 10),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    side: BorderSide(
-                      color: titleRating > AppConstants.seenRating
-                          ? Theme.of(context).disabledColor
-                          : (titleRating == AppConstants.seenRating
-                              ? Theme.of(context)
-                                  .extension<CustomColors>()!
-                                  .ratedTitle
-                              : Theme.of(context).colorScheme.primary),
-                      width: 1,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  onPressed: titleRating > AppConstants.seenRating
-                      ? null // Disabled if rated
-                      : () {
-                          final newRating =
-                              titleRating == AppConstants.seenRating
-                                  ? 0.0
-                                  : AppConstants.seenRating;
-                          Provider.of<TmdbRateslistService>(context,
-                                  listen: false)
-                              .updateTitleRate(
-                            Provider.of<TmdbUserService>(context, listen: false)
-                                .accountId,
-                            Provider.of<TmdbUserService>(context, listen: false)
-                                .sessionId,
-                            title,
-                            newRating,
-                          );
-                        },
-                  child: Tooltip(
-                    message: titleRating == AppConstants.seenRating
-                        ? AppLocalizations.of(context)!.seen
-                        : AppLocalizations.of(context)!.markAsSeen,
-                    child: Icon(
-                      titleRating > 0 ? Symbols.done_outline : Symbols.check,
-                      color: titleRating > 0
-                          ? (titleRating > AppConstants.seenRating
-                              ? Theme.of(context).disabledColor
-                              : Theme.of(context)
-                                  .extension<CustomColors>()!
-                                  .ratedTitle)
-                          : Theme.of(context).colorScheme.primary,
+                Flexible(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            side: BorderSide(
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 1,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          onPressed: () => showDialog(
+                            context: context,
+                            builder: (context) {
+                              return RateForm(
+                                title: title.name,
+                                initialRate: titleRating,
+                                initialDate: titleRatingDate,
+                                onSubmit: (double rating) {
+                                  Provider.of<TmdbRateslistService>(context,
+                                          listen: false)
+                                      .updateTitleRate(
+                                    Provider.of<TmdbUserService>(context,
+                                            listen: false)
+                                        .accountId,
+                                    Provider.of<TmdbUserService>(context,
+                                            listen: false)
+                                        .sessionId,
+                                    title,
+                                    rating,
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                          child: Text(AppLocalizations.of(context)!.rate),
+                        ),
+                        const SizedBox(width: 10),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            side: BorderSide(
+                              color: titleRating > AppConstants.seenRating
+                                  ? Theme.of(context).disabledColor
+                                  : (titleRating == AppConstants.seenRating
+                                      ? Theme.of(context)
+                                          .extension<CustomColors>()!
+                                          .ratedTitle
+                                      : Theme.of(context).colorScheme.primary),
+                              width: 1,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          onPressed: titleRating > AppConstants.seenRating
+                              ? null // Disabled if rated
+                              : () {
+                                  final newRating =
+                                      titleRating == AppConstants.seenRating
+                                          ? 0.0
+                                          : AppConstants.seenRating;
+                                  Provider.of<TmdbRateslistService>(context,
+                                          listen: false)
+                                      .updateTitleRate(
+                                    Provider.of<TmdbUserService>(context,
+                                            listen: false)
+                                        .accountId,
+                                    Provider.of<TmdbUserService>(context,
+                                            listen: false)
+                                        .sessionId,
+                                    title,
+                                    newRating,
+                                  );
+                                },
+                          child: Tooltip(
+                            message: titleRating == AppConstants.seenRating
+                                ? AppLocalizations.of(context)!.seen
+                                : AppLocalizations.of(context)!.markAsSeen,
+                            child: Icon(
+                              titleRating > 0
+                                  ? Symbols.done_outline
+                                  : Symbols.check,
+                              color: titleRating > 0
+                                  ? (titleRating > AppConstants.seenRating
+                                      ? Theme.of(context).disabledColor
+                                      : Theme.of(context)
+                                          .extension<CustomColors>()!
+                                          .ratedTitle)
+                                  : Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -458,30 +558,6 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  Widget _banner(TmdbTitle title) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final bannerHeight = screenWidth * 9 / 16;
-
-    String image =
-        title.backdropPath.isNotEmpty ? title.backdropPath : title.posterPath;
-    bool isMovie = title.isMovie;
-
-    return SizedBox(
-      height: bannerHeight,
-      width: double.infinity,
-      child: CachedNetworkImage(
-        imageUrl: image,
-        fit: BoxFit.fill,
-        errorWidget: (context, error, stackTrace) {
-          return Image.asset(
-            isMovie ? 'assets/movie_poster.png' : 'assets/tvshow_poster.png',
-            fit: BoxFit.fitWidth,
-          );
-        },
-      ),
-    );
-  }
-
   String _releaseDates(TmdbTitle title) {
     String text;
 
@@ -514,9 +590,15 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   String _duration(TmdbTitle title) {
-    return title.duration.isNotEmpty
+    String text = title.duration.isNotEmpty
         ? title.duration
         : AppLocalizations.of(context)!.unknownDuration;
+
+    if (title.isSerie && title.numberOfSeasons > 0) {
+      text +=
+          ' (${AppLocalizations.of(context)!.seasonsCount(title.numberOfSeasons)})';
+    }
+    return text;
   }
 
   Text _description(TmdbTitle title) {
@@ -657,11 +739,15 @@ class _TitleDetailsState extends State<TitleDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              type == PersonAttributes.cast
-                  ? AppLocalizations.of(context)!.cast
-                  : AppLocalizations.of(context)!.crew,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            Expanded(
+              child: Text(
+                type == PersonAttributes.cast
+                    ? AppLocalizations.of(context)!.cast
+                    : AppLocalizations.of(context)!.crew,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             TextButton(
               onPressed: () {

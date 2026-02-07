@@ -82,173 +82,188 @@ const TmdbTitleSchema = CollectionSchema(
       name: r'hashCode',
       type: IsarType.long,
     ),
-    r'imdbId': PropertySchema(
+    r'homepage': PropertySchema(
       id: 13,
+      name: r'homepage',
+      type: IsarType.string,
+    ),
+    r'imagesJson': PropertySchema(
+      id: 14,
+      name: r'imagesJson',
+      type: IsarType.string,
+    ),
+    r'imdbId': PropertySchema(
+      id: 15,
       name: r'imdbId',
       type: IsarType.string,
     ),
     r'isMovie': PropertySchema(
-      id: 14,
+      id: 16,
       name: r'isMovie',
       type: IsarType.bool,
     ),
     r'isOnAir': PropertySchema(
-      id: 15,
+      id: 17,
       name: r'isOnAir',
       type: IsarType.bool,
     ),
     r'isPinned': PropertySchema(
-      id: 16,
+      id: 18,
       name: r'isPinned',
       type: IsarType.bool,
     ),
     r'isRated': PropertySchema(
-      id: 17,
+      id: 19,
       name: r'isRated',
       type: IsarType.bool,
     ),
     r'isSeenOnly': PropertySchema(
-      id: 18,
+      id: 20,
       name: r'isSeenOnly',
       type: IsarType.bool,
     ),
     r'isSerie': PropertySchema(
-      id: 19,
+      id: 21,
       name: r'isSerie',
       type: IsarType.bool,
     ),
     r'lastAirDate': PropertySchema(
-      id: 20,
+      id: 22,
       name: r'lastAirDate',
       type: IsarType.string,
     ),
     r'lastUpdated': PropertySchema(
-      id: 21,
+      id: 23,
       name: r'lastUpdated',
       type: IsarType.string,
     ),
     r'listName': PropertySchema(
-      id: 22,
+      id: 24,
       name: r'listName',
       type: IsarType.string,
     ),
     r'mediaType': PropertySchema(
-      id: 23,
+      id: 25,
       name: r'mediaType',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 24,
+      id: 26,
       name: r'name',
       type: IsarType.string,
     ),
     r'nextEpisodeToAirJson': PropertySchema(
-      id: 25,
+      id: 27,
       name: r'nextEpisodeToAirJson',
       type: IsarType.string,
     ),
     r'numberOfEpisodes': PropertySchema(
-      id: 26,
+      id: 28,
       name: r'numberOfEpisodes',
       type: IsarType.long,
     ),
     r'numberOfSeasons': PropertySchema(
-      id: 27,
+      id: 29,
       name: r'numberOfSeasons',
       type: IsarType.long,
     ),
     r'originCountry': PropertySchema(
-      id: 28,
+      id: 30,
       name: r'originCountry',
       type: IsarType.stringList,
     ),
     r'originalLanguage': PropertySchema(
-      id: 29,
+      id: 31,
       name: r'originalLanguage',
       type: IsarType.string,
     ),
     r'originalName': PropertySchema(
-      id: 30,
+      id: 32,
       name: r'originalName',
       type: IsarType.string,
     ),
     r'overview': PropertySchema(
-      id: 31,
+      id: 33,
       name: r'overview',
       type: IsarType.string,
     ),
     r'popularity': PropertySchema(
-      id: 32,
+      id: 34,
       name: r'popularity',
       type: IsarType.double,
     ),
     r'posterPath': PropertySchema(
-      id: 33,
+      id: 35,
       name: r'posterPath',
       type: IsarType.string,
     ),
     r'posterPathSuffix': PropertySchema(
-      id: 34,
+      id: 36,
       name: r'posterPathSuffix',
       type: IsarType.string,
     ),
     r'providersJson': PropertySchema(
-      id: 35,
+      id: 37,
       name: r'providersJson',
       type: IsarType.string,
     ),
     r'rating': PropertySchema(
-      id: 36,
+      id: 38,
       name: r'rating',
       type: IsarType.double,
     ),
     r'recommendationsJson': PropertySchema(
-      id: 37,
+      id: 39,
       name: r'recommendationsJson',
       type: IsarType.string,
     ),
     r'releaseDate': PropertySchema(
-      id: 38,
+      id: 40,
       name: r'releaseDate',
       type: IsarType.string,
     ),
     r'revenue': PropertySchema(
-      id: 39,
+      id: 41,
       name: r'revenue',
       type: IsarType.long,
     ),
     r'runtime': PropertySchema(
-      id: 40,
+      id: 42,
       name: r'runtime',
       type: IsarType.long,
     ),
     r'seasonsJson': PropertySchema(
-      id: 41,
+      id: 43,
       name: r'seasonsJson',
       type: IsarType.string,
     ),
     r'status': PropertySchema(
-      id: 42,
+      id: 44,
       name: r'status',
       type: IsarType.string,
     ),
     r'tagline': PropertySchema(
-      id: 43,
+      id: 45,
       name: r'tagline',
       type: IsarType.string,
     ),
     r'tmdbId': PropertySchema(
-      id: 44,
+      id: 46,
       name: r'tmdbId',
       type: IsarType.long,
     ),
+    r'videosJson': PropertySchema(
+      id: 47,
+      name: r'videosJson',
+      type: IsarType.string,
+    ),
     r'voteAverage': PropertySchema(
-      id: 45,
+      id: 48,
       name: r'voteAverage',
       type: IsarType.double,
     ),
     r'voteCount': PropertySchema(
-      id: 46,
+      id: 49,
       name: r'voteCount',
       type: IsarType.long,
     )
@@ -317,6 +332,13 @@ int _tmdbTitleEstimateSize(
   bytesCount += 3 + object.firstAirDate.length * 3;
   bytesCount += 3 + object.flatrateProviderIds.length * 8;
   bytesCount += 3 + object.genreIds.length * 8;
+  bytesCount += 3 + object.homepage.length * 3;
+  {
+    final value = object.imagesJson;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.imdbId.length * 3;
   bytesCount += 3 + object.lastAirDate.length * 3;
   bytesCount += 3 + object.lastUpdated.length * 3;
@@ -367,6 +389,12 @@ int _tmdbTitleEstimateSize(
   }
   bytesCount += 3 + object.status.length * 3;
   bytesCount += 3 + object.tagline.length * 3;
+  {
+    final value = object.videosJson;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -389,40 +417,43 @@ void _tmdbTitleSerialize(
   writer.writeLongList(offsets[10], object.genreIds);
   writer.writeBool(offsets[11], object.hasRating);
   writer.writeLong(offsets[12], object.hashCode);
-  writer.writeString(offsets[13], object.imdbId);
-  writer.writeBool(offsets[14], object.isMovie);
-  writer.writeBool(offsets[15], object.isOnAir);
-  writer.writeBool(offsets[16], object.isPinned);
-  writer.writeBool(offsets[17], object.isRated);
-  writer.writeBool(offsets[18], object.isSeenOnly);
-  writer.writeBool(offsets[19], object.isSerie);
-  writer.writeString(offsets[20], object.lastAirDate);
-  writer.writeString(offsets[21], object.lastUpdated);
-  writer.writeString(offsets[22], object.listName);
-  writer.writeString(offsets[23], object.mediaType);
-  writer.writeString(offsets[24], object.name);
-  writer.writeString(offsets[25], object.nextEpisodeToAirJson);
-  writer.writeLong(offsets[26], object.numberOfEpisodes);
-  writer.writeLong(offsets[27], object.numberOfSeasons);
-  writer.writeStringList(offsets[28], object.originCountry);
-  writer.writeString(offsets[29], object.originalLanguage);
-  writer.writeString(offsets[30], object.originalName);
-  writer.writeString(offsets[31], object.overview);
-  writer.writeDouble(offsets[32], object.popularity);
-  writer.writeString(offsets[33], object.posterPath);
-  writer.writeString(offsets[34], object.posterPathSuffix);
-  writer.writeString(offsets[35], object.providersJson);
-  writer.writeDouble(offsets[36], object.rating);
-  writer.writeString(offsets[37], object.recommendationsJson);
-  writer.writeString(offsets[38], object.releaseDate);
-  writer.writeLong(offsets[39], object.revenue);
-  writer.writeLong(offsets[40], object.runtime);
-  writer.writeString(offsets[41], object.seasonsJson);
-  writer.writeString(offsets[42], object.status);
-  writer.writeString(offsets[43], object.tagline);
-  writer.writeLong(offsets[44], object.tmdbId);
-  writer.writeDouble(offsets[45], object.voteAverage);
-  writer.writeLong(offsets[46], object.voteCount);
+  writer.writeString(offsets[13], object.homepage);
+  writer.writeString(offsets[14], object.imagesJson);
+  writer.writeString(offsets[15], object.imdbId);
+  writer.writeBool(offsets[16], object.isMovie);
+  writer.writeBool(offsets[17], object.isOnAir);
+  writer.writeBool(offsets[18], object.isPinned);
+  writer.writeBool(offsets[19], object.isRated);
+  writer.writeBool(offsets[20], object.isSeenOnly);
+  writer.writeBool(offsets[21], object.isSerie);
+  writer.writeString(offsets[22], object.lastAirDate);
+  writer.writeString(offsets[23], object.lastUpdated);
+  writer.writeString(offsets[24], object.listName);
+  writer.writeString(offsets[25], object.mediaType);
+  writer.writeString(offsets[26], object.name);
+  writer.writeString(offsets[27], object.nextEpisodeToAirJson);
+  writer.writeLong(offsets[28], object.numberOfEpisodes);
+  writer.writeLong(offsets[29], object.numberOfSeasons);
+  writer.writeStringList(offsets[30], object.originCountry);
+  writer.writeString(offsets[31], object.originalLanguage);
+  writer.writeString(offsets[32], object.originalName);
+  writer.writeString(offsets[33], object.overview);
+  writer.writeDouble(offsets[34], object.popularity);
+  writer.writeString(offsets[35], object.posterPath);
+  writer.writeString(offsets[36], object.posterPathSuffix);
+  writer.writeString(offsets[37], object.providersJson);
+  writer.writeDouble(offsets[38], object.rating);
+  writer.writeString(offsets[39], object.recommendationsJson);
+  writer.writeString(offsets[40], object.releaseDate);
+  writer.writeLong(offsets[41], object.revenue);
+  writer.writeLong(offsets[42], object.runtime);
+  writer.writeString(offsets[43], object.seasonsJson);
+  writer.writeString(offsets[44], object.status);
+  writer.writeString(offsets[45], object.tagline);
+  writer.writeLong(offsets[46], object.tmdbId);
+  writer.writeString(offsets[47], object.videosJson);
+  writer.writeDouble(offsets[48], object.voteAverage);
+  writer.writeLong(offsets[49], object.voteCount);
 }
 
 TmdbTitle _tmdbTitleDeserialize(
@@ -442,35 +473,38 @@ TmdbTitle _tmdbTitleDeserialize(
     firstAirDate: reader.readStringOrNull(offsets[8]) ?? '',
     flatrateProviderIds: reader.readLongList(offsets[9]) ?? const [],
     genreIds: reader.readLongList(offsets[10]) ?? const [],
+    homepage: reader.readStringOrNull(offsets[13]) ?? '',
     id: id,
-    imdbId: reader.readStringOrNull(offsets[13]) ?? '',
-    isPinned: reader.readBoolOrNull(offsets[16]) ?? false,
-    lastAirDate: reader.readStringOrNull(offsets[20]) ?? '',
-    lastUpdated: reader.readString(offsets[21]),
-    listName: reader.readString(offsets[22]),
-    mediaType: reader.readStringOrNull(offsets[23]) ?? '',
-    name: reader.readString(offsets[24]),
-    nextEpisodeToAirJson: reader.readStringOrNull(offsets[25]),
-    numberOfEpisodes: reader.readLongOrNull(offsets[26]) ?? 0,
-    numberOfSeasons: reader.readLongOrNull(offsets[27]) ?? 0,
-    originCountry: reader.readStringList(offsets[28]) ?? const [],
-    originalLanguage: reader.readStringOrNull(offsets[29]) ?? '',
-    originalName: reader.readStringOrNull(offsets[30]) ?? '',
-    overview: reader.readStringOrNull(offsets[31]) ?? '',
-    popularity: reader.readDoubleOrNull(offsets[32]) ?? 0.0,
-    posterPathSuffix: reader.readStringOrNull(offsets[34]),
-    providersJson: reader.readStringOrNull(offsets[35]),
-    rating: reader.readDoubleOrNull(offsets[36]) ?? 0.0,
-    recommendationsJson: reader.readStringOrNull(offsets[37]),
-    releaseDate: reader.readStringOrNull(offsets[38]) ?? '',
-    revenue: reader.readLongOrNull(offsets[39]) ?? 0,
-    runtime: reader.readLongOrNull(offsets[40]) ?? 0,
-    seasonsJson: reader.readStringOrNull(offsets[41]),
-    status: reader.readStringOrNull(offsets[42]) ?? '',
-    tagline: reader.readStringOrNull(offsets[43]) ?? '',
-    tmdbId: reader.readLong(offsets[44]),
-    voteAverage: reader.readDoubleOrNull(offsets[45]) ?? 0.0,
-    voteCount: reader.readLongOrNull(offsets[46]) ?? 0,
+    imagesJson: reader.readStringOrNull(offsets[14]),
+    imdbId: reader.readStringOrNull(offsets[15]) ?? '',
+    isPinned: reader.readBoolOrNull(offsets[18]) ?? false,
+    lastAirDate: reader.readStringOrNull(offsets[22]) ?? '',
+    lastUpdated: reader.readString(offsets[23]),
+    listName: reader.readString(offsets[24]),
+    mediaType: reader.readStringOrNull(offsets[25]) ?? '',
+    name: reader.readString(offsets[26]),
+    nextEpisodeToAirJson: reader.readStringOrNull(offsets[27]),
+    numberOfEpisodes: reader.readLongOrNull(offsets[28]) ?? 0,
+    numberOfSeasons: reader.readLongOrNull(offsets[29]) ?? 0,
+    originCountry: reader.readStringList(offsets[30]) ?? const [],
+    originalLanguage: reader.readStringOrNull(offsets[31]) ?? '',
+    originalName: reader.readStringOrNull(offsets[32]) ?? '',
+    overview: reader.readStringOrNull(offsets[33]) ?? '',
+    popularity: reader.readDoubleOrNull(offsets[34]) ?? 0.0,
+    posterPathSuffix: reader.readStringOrNull(offsets[36]),
+    providersJson: reader.readStringOrNull(offsets[37]),
+    rating: reader.readDoubleOrNull(offsets[38]) ?? 0.0,
+    recommendationsJson: reader.readStringOrNull(offsets[39]),
+    releaseDate: reader.readStringOrNull(offsets[40]) ?? '',
+    revenue: reader.readLongOrNull(offsets[41]) ?? 0,
+    runtime: reader.readLongOrNull(offsets[42]) ?? 0,
+    seasonsJson: reader.readStringOrNull(offsets[43]),
+    status: reader.readStringOrNull(offsets[44]) ?? '',
+    tagline: reader.readStringOrNull(offsets[45]) ?? '',
+    tmdbId: reader.readLong(offsets[46]),
+    videosJson: reader.readStringOrNull(offsets[47]),
+    voteAverage: reader.readDoubleOrNull(offsets[48]) ?? 0.0,
+    voteCount: reader.readLongOrNull(offsets[49]) ?? 0,
   );
   return object;
 }
@@ -511,70 +545,76 @@ P _tmdbTitleDeserializeProp<P>(
     case 13:
       return (reader.readStringOrNull(offset) ?? '') as P;
     case 14:
-      return (reader.readBool(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 15:
-      return (reader.readBool(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 16:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
+      return (reader.readBool(offset)) as P;
     case 17:
       return (reader.readBool(offset)) as P;
     case 18:
-      return (reader.readBool(offset)) as P;
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     case 19:
       return (reader.readBool(offset)) as P;
     case 20:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (reader.readBool(offset)) as P;
     case 21:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 22:
-      return (reader.readString(offset)) as P;
-    case 23:
       return (reader.readStringOrNull(offset) ?? '') as P;
+    case 23:
+      return (reader.readString(offset)) as P;
     case 24:
       return (reader.readString(offset)) as P;
     case 25:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 26:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
+      return (reader.readString(offset)) as P;
     case 27:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 28:
-      return (reader.readStringList(offset) ?? const []) as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 29:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 30:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (reader.readStringList(offset) ?? const []) as P;
     case 31:
       return (reader.readStringOrNull(offset) ?? '') as P;
     case 32:
-      return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 33:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 34:
-      return (reader.readStringOrNull(offset)) as P;
-    case 35:
-      return (reader.readStringOrNull(offset)) as P;
-    case 36:
       return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
+    case 35:
+      return (reader.readString(offset)) as P;
+    case 36:
+      return (reader.readStringOrNull(offset)) as P;
     case 37:
       return (reader.readStringOrNull(offset)) as P;
     case 38:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 39:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 40:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 41:
-      return (reader.readStringOrNull(offset)) as P;
-    case 42:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 43:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 44:
-      return (reader.readLong(offset)) as P;
-    case 45:
       return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
+    case 39:
+      return (reader.readStringOrNull(offset)) as P;
+    case 40:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 41:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    case 42:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    case 43:
+      return (reader.readStringOrNull(offset)) as P;
+    case 44:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 45:
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 46:
+      return (reader.readLong(offset)) as P;
+    case 47:
+      return (reader.readStringOrNull(offset)) as P;
+    case 48:
+      return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
+    case 49:
       return (reader.readLongOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2096,6 +2136,137 @@ extension TmdbTitleQueryFilter
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> homepageEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'homepage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> homepageGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'homepage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> homepageLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'homepage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> homepageBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'homepage',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> homepageStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'homepage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> homepageEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'homepage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> homepageContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'homepage',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> homepageMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'homepage',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> homepageIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'homepage',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      homepageIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'homepage',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -2145,6 +2316,157 @@ extension TmdbTitleQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> imagesJsonIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'imagesJson',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      imagesJsonIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'imagesJson',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> imagesJsonEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'imagesJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      imagesJsonGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'imagesJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> imagesJsonLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'imagesJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> imagesJsonBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'imagesJson',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      imagesJsonStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'imagesJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> imagesJsonEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'imagesJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> imagesJsonContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'imagesJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> imagesJsonMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'imagesJson',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      imagesJsonIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'imagesJson',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      imagesJsonIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'imagesJson',
+        value: '',
       ));
     });
   }
@@ -5320,6 +5642,157 @@ extension TmdbTitleQueryFilter
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> videosJsonIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'videosJson',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      videosJsonIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'videosJson',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> videosJsonEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'videosJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      videosJsonGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'videosJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> videosJsonLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'videosJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> videosJsonBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'videosJson',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      videosJsonStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'videosJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> videosJsonEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'videosJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> videosJsonContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'videosJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> videosJsonMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'videosJson',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      videosJsonIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'videosJson',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      videosJsonIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'videosJson',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> voteAverageEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -5578,6 +6051,30 @@ extension TmdbTitleQuerySortBy on QueryBuilder<TmdbTitle, TmdbTitle, QSortBy> {
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByHashCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByHomepage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'homepage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByHomepageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'homepage', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByImagesJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'imagesJson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByImagesJsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'imagesJson', Sort.desc);
     });
   }
 
@@ -5959,6 +6456,18 @@ extension TmdbTitleQuerySortBy on QueryBuilder<TmdbTitle, TmdbTitle, QSortBy> {
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByVideosJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'videosJson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByVideosJsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'videosJson', Sort.desc);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByVoteAverage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'voteAverage', Sort.asc);
@@ -6122,6 +6631,18 @@ extension TmdbTitleQuerySortThenBy
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByHomepage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'homepage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByHomepageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'homepage', Sort.desc);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -6131,6 +6652,18 @@ extension TmdbTitleQuerySortThenBy
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByImagesJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'imagesJson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByImagesJsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'imagesJson', Sort.desc);
     });
   }
 
@@ -6512,6 +7045,18 @@ extension TmdbTitleQuerySortThenBy
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByVideosJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'videosJson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByVideosJsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'videosJson', Sort.desc);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByVoteAverage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'voteAverage', Sort.asc);
@@ -6622,6 +7167,20 @@ extension TmdbTitleQueryWhereDistinct
   QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'hashCode');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByHomepage(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'homepage', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByImagesJson(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'imagesJson', caseSensitive: caseSensitive);
     });
   }
 
@@ -6840,6 +7399,13 @@ extension TmdbTitleQueryWhereDistinct
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByVideosJson(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'videosJson', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByVoteAverage() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'voteAverage');
@@ -6939,6 +7505,18 @@ extension TmdbTitleQueryProperty
   QueryBuilder<TmdbTitle, int, QQueryOperations> hashCodeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'hashCode');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, String, QQueryOperations> homepageProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'homepage');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, String?, QQueryOperations> imagesJsonProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'imagesJson');
     });
   }
 
@@ -7135,6 +7713,12 @@ extension TmdbTitleQueryProperty
   QueryBuilder<TmdbTitle, int, QQueryOperations> tmdbIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'tmdbId');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, String?, QQueryOperations> videosJsonProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'videosJson');
     });
   }
 
