@@ -828,6 +828,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Share'**
   String get shareLink;
+
+  /// No description provided for @director.
+  ///
+  /// In en, this message translates to:
+  /// **'Director'**
+  String get director;
+
+  /// No description provided for @creator.
+  ///
+  /// In en, this message translates to:
+  /// **'Creator'**
+  String get creator;
+
+  /// No description provided for @seasonsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 season} other{{count} seasons}}'**
+  String seasonsCount(num count);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
