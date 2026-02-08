@@ -91,30 +91,21 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen> {
                 style: TextStyle(color: Colors.grey),
               ),
             )
-          : Column(
-              children: [
-                Row(
-                  children: [
-                    ListView.separated(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _logs.length,
-                      separatorBuilder: (context, index) =>
-                          const Divider(height: 32),
-                      itemBuilder: (context, index) {
-                        return SelectableText(
-                          _logs[index],
-                          style: const TextStyle(
-                            fontFamily: 'monospace',
-                            fontSize: 12,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32),
-              ],
+          : ListView.separated(
+              controller: _scrollController,
+              padding: const EdgeInsets.only(
+                  left: 16, right: 16, top: 16, bottom: 80),
+              itemCount: _logs.length,
+              separatorBuilder: (context, index) => const Divider(height: 32),
+              itemBuilder: (context, index) {
+                return SelectableText(
+                  _logs[index],
+                  style: const TextStyle(
+                    fontFamily: 'monospace',
+                    fontSize: 12,
+                  ),
+                );
+              },
             ),
     );
   }
