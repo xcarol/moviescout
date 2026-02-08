@@ -1,15 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-
-import 'package:flutter/foundation.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MediaCarousel extends StatefulWidget {
   final TmdbTitle title;
 
-  const MediaCarousel({required this.title, super.key});
+  const MediaCarousel({
+    required this.title,
+    super.key,
+  });
 
   @override
   State<MediaCarousel> createState() => _MediaCarouselState();
@@ -18,14 +19,11 @@ class MediaCarousel extends StatefulWidget {
 class _MediaCarouselState extends State<MediaCarousel> {
   late PageController _pageController;
   int _currentPage = 0;
-  String? _playingVideoKey;
-  YoutubePlayerController? _controller;
 
   @override
   void initState() {
     super.initState();
     final totalItems = widget.title.images.length + widget.title.videos.length;
-    // Start at a high number that is a multiple of totalItems to stay on the "first" item
     final initialPage = totalItems > 1 ? 1000 * totalItems : 0;
     _pageController = PageController(initialPage: initialPage);
     _currentPage = 0;
@@ -34,31 +32,7 @@ class _MediaCarouselState extends State<MediaCarousel> {
   @override
   void dispose() {
     _pageController.dispose();
-    _controller?.dispose();
     super.dispose();
-  }
-
-  void _playVideo(String key) {
-    if (!kIsWeb &&
-        (defaultTargetPlatform == TargetPlatform.android ||
-            defaultTargetPlatform == TargetPlatform.iOS)) {
-      _controller?.dispose();
-
-      _controller = YoutubePlayerController(
-        initialVideoId: key,
-        flags: const YoutubePlayerFlags(
-          autoPlay: true,
-          mute: false,
-        ),
-      );
-
-      setState(() {
-        _playingVideoKey = key;
-      });
-    } else {
-      final url = Uri.parse('https://www.youtube.com/watch?v=$key');
-      launchUrl(url, mode: LaunchMode.externalApplication);
-    }
   }
 
   @override
@@ -72,78 +46,76 @@ class _MediaCarouselState extends State<MediaCarousel> {
 
     final totalItems = images.length + videos.length;
 
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        _buildSizedBoxConstraints(
-          height: MediaQuery.of(context).size.width * 9 / 16,
-          child: PageView.builder(
+    return _buildCarousel(context, totalItems, images, videos);
+  }
+
+  Widget _buildCarousel(BuildContext context, int totalItems,
+      List<String> images, List<Map<String, dynamic>> videos) {
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          PageView.builder(
+            key: const PageStorageKey('media_carousel_page_view'),
             controller: _pageController,
             onPageChanged: (index) {
               final realIndex = index % totalItems;
-              setState(() {
-                _currentPage = realIndex;
-                if (_playingVideoKey != null) {
-                  _playingVideoKey = null;
-                  _controller?.dispose();
-                  _controller = null;
-                }
-              });
+              if (realIndex != _currentPage) {
+                setState(() {
+                  _currentPage = realIndex;
+                });
+              }
             },
             itemBuilder: (context, index) {
               final realIndex = index % totalItems;
               if (realIndex < images.length) {
                 return _buildImage(images[realIndex]);
               } else {
-                return _buildVideo(videos[realIndex - images.length]);
+                return VideoPlayerItem(
+                  video: videos[realIndex - images.length],
+                  isCurrentPage: realIndex == _currentPage,
+                );
               }
             },
           ),
-        ),
-        if (totalItems > 1)
-          Positioned(
-            bottom: 10,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(totalItems, (index) {
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  height: 8,
-                  width: _currentPage == index ? 16 : 8,
-                  decoration: BoxDecoration(
-                    color: _currentPage == index
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context)
-                            .colorScheme
-                            .onPrimary
-                            .withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                );
-              }),
+          if (totalItems > 1)
+            Positioned(
+              bottom: 10,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(totalItems, (index) {
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    height: 8,
+                    width: _currentPage == index ? 16 : 8,
+                    decoration: BoxDecoration(
+                      color: _currentPage == index
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context)
+                              .colorScheme
+                              .onPrimary
+                              .withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  );
+                }),
+              ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildSizedBoxConstraints(
-      {required double height, required Widget child}) {
-    return SizedBox(height: height, width: double.infinity, child: child);
-  }
-
   Widget _buildFallbackBanner() {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final bannerHeight = screenWidth * 9 / 16;
     final image = widget.title.backdropPath.isNotEmpty
         ? widget.title.backdropPath
         : widget.title.posterPath;
     final isMovie = widget.title.isMovie;
 
-    return SizedBox(
-      height: bannerHeight,
-      width: double.infinity,
+    return AspectRatio(
+      aspectRatio: 16 / 9,
       child: image.isNotEmpty
           ? CachedNetworkImage(
               imageUrl: image,
@@ -173,28 +145,162 @@ class _MediaCarouselState extends State<MediaCarousel> {
       errorWidget: (context, url, error) => const Icon(Icons.error),
     );
   }
+}
 
-  Widget _buildVideo(Map<String, dynamic> video) {
-    final key = video['key'] as String;
-    final name = video['name'] as String;
+class VideoPlayerItem extends StatefulWidget {
+  final Map<String, dynamic> video;
+  final bool isCurrentPage;
 
-    if (_playingVideoKey == key && _controller != null) {
-      return YoutubePlayerBuilder(
-        player: YoutubePlayer(
-          controller: _controller!,
-          showVideoProgressIndicator: true,
-          progressIndicatorColor: Colors.amber,
-          onEnded: (meta) {
-            setState(() {
-              _playingVideoKey = null;
-            });
-            _controller?.dispose();
-            _controller = null;
-          },
+  const VideoPlayerItem({
+    required this.video,
+    required this.isCurrentPage,
+    super.key,
+  });
+
+  @override
+  State<VideoPlayerItem> createState() => _VideoPlayerItemState();
+}
+
+class _VideoPlayerItemState extends State<VideoPlayerItem>
+    with AutomaticKeepAliveClientMixin {
+  YoutubePlayerController? _controller;
+  bool _isPlaying = false;
+  ScrollPosition? _scrollPosition;
+
+  @override
+  bool get wantKeepAlive => _isPlaying;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _scrollPosition?.removeListener(_onScroll);
+    try {
+      // Specifically look for the vertical scrollable (the screen)
+      // instead of the horizontal PageView.
+      _scrollPosition =
+          Scrollable.maybeOf(context, axis: Axis.vertical)?.position;
+      _scrollPosition?.addListener(_onScroll);
+    } catch (_) {}
+  }
+
+  @override
+  void didUpdateWidget(VideoPlayerItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Pause if we swipe away, but keep the player in the tree
+    if (!widget.isCurrentPage && _isPlaying) {
+      _controller?.pause();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollPosition?.removeListener(_onScroll);
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_isPlaying || _controller == null || !mounted) return;
+
+    final RenderObject? renderObject = context.findRenderObject();
+    if (renderObject is RenderBox) {
+      final offset = renderObject.localToGlobal(Offset.zero).dy;
+      final screenHeight = MediaQuery.of(context).size.height;
+      // Stop video if it's 80% out of view at the top OR entirely out at the bottom
+      if (offset < -renderObject.size.height * 0.8 || offset > screenHeight) {
+        _stopPlayback();
+      }
+    }
+  }
+
+  void _stopPlayback() {
+    if (mounted) {
+      setState(() {
+        _isPlaying = false;
+        _controller?.dispose();
+        _controller = null;
+      });
+      updateKeepAlive();
+    }
+  }
+
+  void _startPlayback() {
+    final key = widget.video['key'] as String;
+    setState(() {
+      _controller = YoutubePlayerController(
+        initialVideoId: key,
+        flags: const YoutubePlayerFlags(
+          autoPlay: true,
+          mute: false,
+          useHybridComposition: true,
+          disableDragSeek: true,
+          // Hide the default fullscreen button to force using our custom one
+          // which correctly handles the navigation and orientation.
         ),
-        builder: (context, player) {
-          return player;
-        },
+      );
+      _isPlaying = true;
+    });
+    updateKeepAlive();
+  }
+
+  void _enterFullScreen() {
+    if (_controller == null) return;
+
+    final currentPosition = _controller!.value.position;
+    _controller!.pause();
+
+    Navigator.of(context)
+        .push(
+      MaterialPageRoute(
+        builder: (context) => FullScreenPlayer(
+          videoId: widget.video['key'] as String,
+          startAt: currentPosition,
+        ),
+      ),
+    )
+        .then((resumePosition) {
+      if (mounted) {
+        if (resumePosition != null && resumePosition is Duration) {
+          _controller?.seekTo(resumePosition);
+        }
+        _controller?.play();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    final key = widget.video['key'] as String;
+    final name = widget.video['name'] as String;
+
+    if (_isPlaying && _controller != null) {
+      return Stack(
+        children: [
+          YoutubePlayer(
+            controller: _controller!,
+            showVideoProgressIndicator: true,
+            progressIndicatorColor: Colors.amber,
+            onEnded: (meta) => _stopPlayback(),
+            // Ensure we don't show the package's internal fullscreen button
+            bottomActions: [
+              const SizedBox(width: 14.0),
+              CurrentPosition(),
+              const SizedBox(width: 8.0),
+              ProgressBar(isExpanded: true),
+              RemainingDuration(),
+              PlaybackSpeedButton(),
+            ],
+          ),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: IconButton(
+              icon: const Icon(Icons.fullscreen, color: Colors.white, size: 32),
+              onPressed: _enterFullScreen,
+            ),
+          ),
+        ],
       );
     }
 
@@ -226,7 +332,7 @@ class _MediaCarouselState extends State<MediaCarousel> {
             child: IconButton(
               icon: Icon(Icons.play_arrow_rounded,
                   size: 56, color: Theme.of(context).colorScheme.onPrimary),
-              onPressed: () => _playVideo(key),
+              onPressed: _startPlayback,
             ),
           ),
         ),
@@ -246,6 +352,85 @@ class _MediaCarouselState extends State<MediaCarousel> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class FullScreenPlayer extends StatefulWidget {
+  final String videoId;
+  final Duration startAt;
+
+  const FullScreenPlayer({
+    required this.videoId,
+    required this.startAt,
+    super.key,
+  });
+
+  @override
+  State<FullScreenPlayer> createState() => _FullScreenPlayerState();
+}
+
+class _FullScreenPlayerState extends State<FullScreenPlayer> {
+  late YoutubePlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = YoutubePlayerController(
+      initialVideoId: widget.videoId,
+      flags: YoutubePlayerFlags(
+        autoPlay: true,
+        mute: false,
+        startAt: widget.startAt.inSeconds,
+        useHybridComposition: true,
+      ),
+    );
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          Center(
+            child: YoutubePlayer(
+              controller: _controller,
+              showVideoProgressIndicator: true,
+              progressIndicatorColor: Colors.amber,
+              onEnded: (meta) =>
+                  Navigator.of(context).pop(_controller.value.position),
+            ),
+          ),
+          Positioned(
+            top: 20,
+            left: 20,
+            child: SafeArea(
+              child: IconButton(
+                icon:
+                    const Icon(Icons.arrow_back, color: Colors.white, size: 32),
+                onPressed: () =>
+                    Navigator.of(context).pop(_controller.value.position),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
