@@ -46,17 +46,27 @@ class TitleDetails extends StatefulWidget {
 }
 
 class _TitleDetailsState extends State<TitleDetails> {
+  late Future<TmdbTitle> _titleFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleFuture = _updatedTitle();
+  }
+
   @override
   Widget build(BuildContext context) {
     String appTitle = widget._title.name;
 
     return FutureBuilder(
-      future: _updatedTitle(),
+      future: _titleFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Scaffold(
               body: Center(child: CircularProgressIndicator()));
         }
+
+        final TmdbTitle titleDetails = snapshot.data as TmdbTitle;
 
         return Scaffold(
           appBar: MainAppBar(
@@ -79,7 +89,7 @@ class _TitleDetailsState extends State<TitleDetails> {
           drawer: AppDrawer(),
           body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            child: _detailsBody(snapshot.data as TmdbTitle),
+            child: _detailsBody(titleDetails),
           ),
         );
       },
