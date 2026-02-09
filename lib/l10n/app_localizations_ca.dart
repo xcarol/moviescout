@@ -385,14 +385,11 @@ class AppLocalizationsCa extends AppLocalizations {
   String get creator => 'Creador';
 
   @override
-  String seasonsCount(num count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count temporades',
-      one: '1 temporada',
-    );
-    return '$_temp0';
+  String get writer => 'Escriptor';
+
+  @override
+  String seasonsCount(Object count) {
+    return '${count}temp';
   }
 
   @override
