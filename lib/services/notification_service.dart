@@ -156,21 +156,26 @@ class NotificationService extends ChangeNotifier {
       return;
     }
 
-    BigPictureStyleInformation? bigPictureStyleInformation;
+    StyleInformation? styleInformation;
 
     if (imageUrl != null && imageUrl.isNotEmpty) {
       try {
         final File file = await DefaultCacheManager().getSingleFile(imageUrl);
-        bigPictureStyleInformation = BigPictureStyleInformation(
+        styleInformation = BigPictureStyleInformation(
           FilePathAndroidBitmap(file.path),
           largeIcon: FilePathAndroidBitmap(file.path),
           contentTitle: title,
           summaryText: body,
         );
       } catch (e) {
-        // Fallback to normal notification if image fails
+        // Fallback to big text if image fails
       }
     }
+
+    styleInformation ??= BigTextStyleInformation(
+      body,
+      contentTitle: title,
+    );
 
     final AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
@@ -179,7 +184,7 @@ class NotificationService extends ChangeNotifier {
       channelDescription: 'Notifications for watchlist title availability',
       importance: Importance.max,
       priority: Priority.high,
-      styleInformation: bigPictureStyleInformation,
+      styleInformation: styleInformation,
       color: const Color.fromARGB(0xFF, 0x2B, 0x20, 0x16),
     );
 
