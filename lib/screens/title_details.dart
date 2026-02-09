@@ -11,6 +11,7 @@ import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart'
     show TmdbTitleRepository;
+import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
@@ -120,6 +121,19 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
+  Widget _infoColumn(String label, dynamic value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+        ),
+        if (value is Widget) value else Text(value.toString()),
+      ],
+    );
+  }
+
   Widget _infoLine(TmdbTitle title) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -130,32 +144,14 @@ class _TitleDetailsState extends State<TitleDetails> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(
-                    AppLocalizations.of(context)!.originaTitle,
-                    style: const TextStyle(
-                        fontSize: 12, fontStyle: FontStyle.italic),
-                  ),
-                  Text(title.originalName),
-                ]),
+                _infoColumn(AppLocalizations.of(context)!.originaTitle,
+                    title.originalName),
                 const SizedBox(width: 20),
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(
-                    AppLocalizations.of(context)!.originalLanguage,
-                    style: const TextStyle(
-                        fontSize: 12, fontStyle: FontStyle.italic),
-                  ),
-                  Text(title.originalLanguage),
-                ]),
+                _infoColumn(AppLocalizations.of(context)!.originalLanguage,
+                    title.originalLanguage),
                 const SizedBox(width: 20),
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(
-                    AppLocalizations.of(context)!.originCountry,
-                    style: const TextStyle(
-                        fontSize: 12, fontStyle: FontStyle.italic),
-                  ),
-                  Text(title.originCountry.join(', ')),
-                ]),
+                _infoColumn(AppLocalizations.of(context)!.originCountry,
+                    title.originCountry.join(', ')),
               ],
             ),
           ),
@@ -167,50 +163,92 @@ class _TitleDetailsState extends State<TitleDetails> {
   Widget _creditsInfo(TmdbTitle title) {
     if (title.creditsJson == null) return const SizedBox.shrink();
 
-    String label = '';
-    List<String> names = [];
-
+    Widget? creatorsWidget;
     if (title.isMovie) {
-      final directors = title.crew
-          .where((c) => c.job == 'Director')
-          .map((c) => c.name)
-          .toList();
+      final directors = title.crew.where((c) => c.job == 'Director').toList();
       if (directors.isNotEmpty) {
-        label = AppLocalizations.of(context)!.director;
-        names = directors;
+        creatorsWidget = SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: _infoColumn(AppLocalizations.of(context)!.director,
+              _clickableNames(directors)),
+        );
       }
     } else {
       final creators = title.crew
           .where((c) => c.job == 'Executive Producer' || c.job == 'Creator')
-          .map((c) => c.name)
           .take(3)
           .toList();
       if (creators.isNotEmpty) {
-        label = AppLocalizations.of(context)!.creator;
-        names = creators;
+        creatorsWidget = SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: _infoColumn(
+              AppLocalizations.of(context)!.creator, _clickableNames(creators)),
+        );
       }
     }
 
-    if (names.isEmpty) return const SizedBox.shrink();
+    Widget? writersWidget;
+    final writers = title.crew
+        .where((c) =>
+            c.job == 'Writer' || c.job == 'Screenplay' || c.job == 'Author')
+        .toList();
+
+    if (writers.isNotEmpty) {
+      writersWidget = SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: _infoColumn(
+            AppLocalizations.of(context)!.writer, _clickableNames(writers)),
+      );
+    }
+
+    if (creatorsWidget == null && writersWidget == null) {
+      return const SizedBox.shrink();
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontStyle: FontStyle.italic,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        Text(
-          names.join(', '),
-          style: const TextStyle(fontSize: 14),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
+        if (creatorsWidget != null) creatorsWidget,
+        if (creatorsWidget != null && writersWidget != null)
+          const SizedBox(height: 10),
+        if (writersWidget != null) writersWidget,
       ],
+    );
+  }
+
+  Widget _clickableNames(List<TmdbPerson> people) {
+    return Row(
+      children: people.asMap().entries.map((entry) {
+        final index = entry.key;
+        final person = entry.value;
+        final isLast = index == people.length - 1;
+
+        return Row(
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PersonDetails(
+                      person: person,
+                      tmdbListService: widget._tmdbListService,
+                    ),
+                  ),
+                );
+              },
+              child: Text(
+                person.name,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+            if (!isLast) const Text(', '),
+          ],
+        );
+      }).toList(),
     );
   }
 

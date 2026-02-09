@@ -385,6 +385,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get creator => 'Creador';
 
   @override
+  String get writer => 'Escritor';
+
+  @override
   String seasonsCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

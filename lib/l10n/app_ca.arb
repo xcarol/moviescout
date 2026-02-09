@@ -34,8 +34,8 @@
     "imdbImportWatchlist": "Importar Per Veure",
     "imdbImportRateslist": "Importar Valoracions",
     "imdbImportCount": "Títols importats correctament",
-    "imdbResetWatchlist":"ELIMINAR PER VEURE",
-    "imdbResetRateslist":"ELIMINAR VALORACIONS",
+    "imdbResetWatchlist": "ELIMINAR PER VEURE",
+    "imdbResetRateslist": "ELIMINAR VALORACIONS",
     "imdbConfirmationTitle": "ATENCIÓ",
     "imdbResetWatchlistConfirmation": "Segur que vols eliminar els títols Per Veure?",
     "imdbResetRateslistConfirmation": "Segur que vols eliminar les Valoracions?",
@@ -123,6 +123,7 @@
     "shareLink": "Compartir",
     "director": "Director",
     "creator": "Creador",
+    "writer": "Escriptor",
     "seasonsCount": "{count, plural, =1{1 temporada} other{{count} temporades}}",
     "notifications": "Notificacions",
     "notificationsPermissionRequired": "Cal que permetis les notificacions a la configuració del sistema."

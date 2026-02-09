@@ -34,8 +34,8 @@
     "imdbImportWatchlist": "Import Watchlist",
     "imdbImportRateslist": "Import Rates",
     "imdbImportCount": "Succesfully imported titles",
-    "imdbResetWatchlist":"RESET WATCHLIST",
-    "imdbResetRateslist":"RESET RATINGS",
+    "imdbResetWatchlist": "RESET WATCHLIST",
+    "imdbResetRateslist": "RESET RATINGS",
     "imdbConfirmationTitle": "WARNING",
     "imdbResetWatchlistConfirmation": "Do you really want to reset Watchlist?",
     "imdbResetRateslistConfirmation": "Do you really want to reset Ratings?",
@@ -123,6 +123,7 @@
     "shareLink": "Share",
     "director": "Director",
     "creator": "Creator",
+    "writer": "Writer",
     "seasonsCount": "{count, plural, =1{1 season} other{{count} seasons}}",
     "notifications": "Notifications",
     "notificationsPermissionRequired": "You need to allow notifications in the system settings."
