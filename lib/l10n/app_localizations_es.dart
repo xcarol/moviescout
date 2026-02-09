@@ -394,4 +394,10 @@ class AppLocalizationsEs extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get notifications => 'Notificaciones';
+
+  @override
+  String get notificationsPermissionRequired => 'Es necesario que permitas las notificaciones en la configuración del sistema.';
 }

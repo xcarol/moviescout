@@ -123,5 +123,7 @@
     "shareLink": "Share",
     "director": "Director",
     "creator": "Creator",
-    "seasonsCount": "{count, plural, =1{1 season} other{{count} seasons}}"
+    "seasonsCount": "{count, plural, =1{1 season} other{{count} seasons}}",
+    "notifications": "Notifications",
+    "notificationsPermissionRequired": "You need to allow notifications in the system settings."
 }
