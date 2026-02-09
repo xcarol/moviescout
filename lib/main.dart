@@ -138,6 +138,7 @@ void main() async {
           return discoverlistService;
         },
       ),
+      ChangeNotifierProvider(create: (_) => NotificationService()),
     ],
     child: const MyApp(),
   ));
@@ -166,6 +167,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      NotificationService().checkSystemPermission();
+    }
   }
 
   @override

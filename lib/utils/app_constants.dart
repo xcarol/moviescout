@@ -16,6 +16,7 @@ class AppConstants {
   static const String region = 'region';
   static const String lastBackgroundRun = 'last_background_run';
   static const String watchlistUpdateLogs = 'watchlist_update_logs';
+  static const String notificationsEnabled = 'notifications_enabled';
 
   static const String catalan = 'ca-ES';
   static const String spanish = 'es-ES';

@@ -841,11 +841,29 @@ abstract class AppLocalizations {
   /// **'Creator'**
   String get creator;
 
+  /// No description provided for @writer.
+  ///
+  /// In en, this message translates to:
+  /// **'Writer'**
+  String get writer;
+
   /// No description provided for @seasonsCount.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 season} other{{count} seasons}}'**
-  String seasonsCount(num count);
+  /// **'{count}seas'**
+  String seasonsCount(Object count);
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @notificationsPermissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'You need to allow notifications in the system settings.'**
+  String get notificationsPermissionRequired;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

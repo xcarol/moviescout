@@ -385,13 +385,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get creator => 'Creador';
 
   @override
-  String seasonsCount(num count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count temporadas',
-      one: '1 temporada',
-    );
-    return '$_temp0';
+  String get writer => 'Escritor';
+
+  @override
+  String seasonsCount(Object count) {
+    return '${count}temp';
   }
+
+  @override
+  String get notifications => 'Notificaciones';
+
+  @override
+  String get notificationsPermissionRequired => 'Es necesario que permitas las notificaciones en la configuración del sistema.';
 }

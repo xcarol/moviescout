@@ -4,14 +4,19 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:moviescout/services/deep_link_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
-class NotificationService {
+class NotificationService extends ChangeNotifier {
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
   NotificationService._internal();
 
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
+  bool _enabled = true;
+
+  bool get enabled => _enabled;
 
   Future<void> init() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
@@ -34,6 +39,68 @@ class NotificationService {
         }
       },
     );
+
+    _enabled =
+        PreferencesService().prefs.getBool(AppConstants.notificationsEnabled) ??
+            true;
+
+    await checkSystemPermission();
+  }
+
+  Future<void> checkSystemPermission() async {
+    bool systemGranted = false;
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+          _notificationsPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+      systemGranted =
+          await androidImplementation?.areNotificationsEnabled() ?? false;
+    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+      // For iOS, a direct check normally requires higher permissions or is assumed granted if requested.
+      // Defaulting for now as it's more complex without permission_handler.
+      systemGranted = true;
+    } else {
+      systemGranted = true;
+    }
+
+    if (!systemGranted && _enabled) {
+      _enabled = false;
+      await PreferencesService()
+          .prefs
+          .setBool(AppConstants.notificationsEnabled, false);
+      notifyListeners();
+    }
+  }
+
+  Future<bool> requestPermission() async {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+          _notificationsPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+
+      final bool? granted =
+          await androidImplementation?.requestNotificationsPermission();
+      return granted ?? false;
+    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+      final bool? granted = await _notificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+      return granted ?? false;
+    }
+    return true;
+  }
+
+  Future<void> setEnabled(bool value) async {
+    _enabled = value;
+    await PreferencesService()
+        .prefs
+        .setBool(AppConstants.notificationsEnabled, value);
+    notifyListeners();
   }
 
   void _handlePayload(String payload) {
@@ -78,6 +145,10 @@ class NotificationService {
     String? imageUrl,
     String? payload,
   }) async {
+    if (!_enabled) {
+      return;
+    }
+
     if (kIsWeb ||
         (defaultTargetPlatform != TargetPlatform.android &&
             defaultTargetPlatform != TargetPlatform.iOS &&
@@ -85,21 +156,26 @@ class NotificationService {
       return;
     }
 
-    BigPictureStyleInformation? bigPictureStyleInformation;
+    StyleInformation? styleInformation;
 
     if (imageUrl != null && imageUrl.isNotEmpty) {
       try {
         final File file = await DefaultCacheManager().getSingleFile(imageUrl);
-        bigPictureStyleInformation = BigPictureStyleInformation(
+        styleInformation = BigPictureStyleInformation(
           FilePathAndroidBitmap(file.path),
           largeIcon: FilePathAndroidBitmap(file.path),
           contentTitle: title,
           summaryText: body,
         );
       } catch (e) {
-        // Fallback to normal notification if image fails
+        // Fallback to big text if image fails
       }
     }
+
+    styleInformation ??= BigTextStyleInformation(
+      body,
+      contentTitle: title,
+    );
 
     final AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
@@ -108,7 +184,7 @@ class NotificationService {
       channelDescription: 'Notifications for watchlist title availability',
       importance: Importance.max,
       priority: Priority.high,
-      styleInformation: bigPictureStyleInformation,
+      styleInformation: styleInformation,
       color: const Color.fromARGB(0xFF, 0x2B, 0x20, 0x16),
     );
 
