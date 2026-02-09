@@ -124,7 +124,7 @@
     "director": "Director",
     "creator": "Creador",
     "writer": "Escritor",
-    "seasonsCount": "{count, plural, =1{1 temporada} other{{count} temporadas}}",
+    "seasonsCount": "{count}temp",
     "notifications": "Notificaciones",
     "notificationsPermissionRequired": "Es necesario que permitas las notificaciones en la configuración del sistema."
 }

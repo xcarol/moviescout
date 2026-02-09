@@ -850,8 +850,8 @@ abstract class AppLocalizations {
   /// No description provided for @seasonsCount.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 season} other{{count} seasons}}'**
-  String seasonsCount(num count);
+  /// **'{count}seas'**
+  String seasonsCount(Object count);
 
   /// No description provided for @notifications.
   ///

@@ -400,7 +400,16 @@ class _TitleDetailsState extends State<TitleDetails> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('${_releaseDates(title)} - ${_duration(title)}'),
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Text(
+              '${_releaseDates(title)} - ${_duration(title)}',
+              maxLines: 1,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
         Row(
           children: [
             pinButton(context, title),
@@ -644,7 +653,7 @@ class _TitleDetailsState extends State<TitleDetails> {
 
     if (title.isSerie && title.numberOfSeasons > 0) {
       text +=
-          ' (${AppLocalizations.of(context)!.seasonsCount(title.numberOfSeasons)})';
+          ' - ${AppLocalizations.of(context)!.seasonsCount(title.numberOfSeasons)}';
     }
     return text;
   }
