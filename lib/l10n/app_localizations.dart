@@ -846,6 +846,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 season} other{{count} seasons}}'**
   String seasonsCount(num count);
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @notificationsPermissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'You need to allow notifications in the system settings.'**
+  String get notificationsPermissionRequired;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

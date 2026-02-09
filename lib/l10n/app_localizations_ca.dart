@@ -394,4 +394,10 @@ class AppLocalizationsCa extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get notifications => 'Notificacions';
+
+  @override
+  String get notificationsPermissionRequired => 'Cal que permetis les notificacions a la configuració del sistema.';
 }

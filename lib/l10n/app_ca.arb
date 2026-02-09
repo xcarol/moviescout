@@ -123,5 +123,7 @@
     "shareLink": "Compartir",
     "director": "Director",
     "creator": "Creador",
-    "seasonsCount": "{count, plural, =1{1 temporada} other{{count} temporades}}"
+    "seasonsCount": "{count, plural, =1{1 temporada} other{{count} temporades}}",
+    "notifications": "Notificacions",
+    "notificationsPermissionRequired": "Cal que permetis les notificacions a la configuració del sistema."
 }

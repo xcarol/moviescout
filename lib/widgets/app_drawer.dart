@@ -11,6 +11,7 @@ import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/screens/providers.dart';
 import 'package:moviescout/services/discoverlist_service.dart';
 import 'package:moviescout/services/language_service.dart';
+import 'package:moviescout/services/notification_service.dart';
 import 'package:moviescout/services/theme_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
@@ -46,6 +47,7 @@ class AppDrawer extends StatelessWidget {
           _colorSchemeTile(context),
           _languageTile(context),
           _regionTile(context),
+          _notificationsTile(context),
           if (defaultTargetPlatform == TargetPlatform.android)
             _verifyDeepLinksTile(context),
           _aboutTile(context),
@@ -54,6 +56,28 @@ class AppDrawer extends StatelessWidget {
           _userSessionTile(context, isUserLoggedIn),
         ],
       ),
+    );
+  }
+
+  Widget _notificationsTile(BuildContext context) {
+    final notificationService = Provider.of<NotificationService>(context);
+
+    return SwitchListTile(
+      secondary: const Icon(Icons.notifications),
+      title: Text(AppLocalizations.of(context)!.notifications),
+      value: notificationService.enabled,
+      onChanged: (bool value) async {
+        if (value) {
+          final granted = await notificationService.requestPermission();
+          if (!granted && context.mounted) {
+            SnackMessage.showSnackBar(
+              AppLocalizations.of(context)!.notificationsPermissionRequired,
+            );
+            return;
+          }
+        }
+        await notificationService.setEnabled(value);
+      },
     );
   }
 
