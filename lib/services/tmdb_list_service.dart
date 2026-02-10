@@ -270,6 +270,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
           listName: listNameVal,
           offset: i,
           limit: batchSize,
+          sortOption: SortOption.addedOrder,
+          sortAscending: true,
         );
 
         final updated = await Future.wait(
