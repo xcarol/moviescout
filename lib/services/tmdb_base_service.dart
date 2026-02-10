@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/region_service.dart';
+import 'package:moviescout/services/snack_bar.dart';
 
 enum ApiVersion { v3, v4 }
 
@@ -116,6 +118,11 @@ class TmdbBaseService {
       }
     }
     _requestCount--;
+
+    SnackMessage.showSnackBar(
+      'TmdbBaseService get failed after $maxRetries retries for $uri',
+    );
+
     throw HttpException(
         'TmdbBaseService get failed after $maxRetries retries for $uri');
   }
