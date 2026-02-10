@@ -22,16 +22,17 @@ void callbackDispatcher() {
     final logLines = <String>[];
     int scannedCount = 0;
     int updatedCount = 0;
+    int notifiedCount = 0;
     try {
       await dotenv.load(fileName: ".env");
       await PreferencesService().init();
       await IsarService.init();
       await NotificationService().init();
 
-      logLines.add('-------------------------------------------');
+      logLines.add('---------------------------');
       logLines.add(
           'Start: ${DateTime.now().toLocal().toString().split('.').first}');
-      logLines.add('-------------------------------------------');
+      logLines.add('---------------------------');
 
       final providersStrings =
           PreferencesService().prefs.getStringList('providers') ?? [];
@@ -104,12 +105,11 @@ void callbackDispatcher() {
               logLines.add('- New providers: $listNewProviderNames');
             }
 
-            // Check for new availability
-            if (!wasAvailable) {
-              final newProviders = title.flatrateProviderIds.toSet();
-              final isAvailable =
-                  newProviders.intersection(enabledProviderSet).isNotEmpty;
+            final newProviders = title.flatrateProviderIds.toSet();
+            final isAvailable =
+                newProviders.intersection(enabledProviderSet).isNotEmpty;
 
+            if (isAvailable) {
               final availableProviderNames = providersList
                   .where(
                       (p) => newProviders.contains(p[TmdbProvider.providerId]))
@@ -121,8 +121,10 @@ void callbackDispatcher() {
                     '- Available: ${title.name} at ${availableProviderNames.join(', ')}');
               }
 
-              if (isAvailable) {
-                logLines.add('- Sending notification for ${title.name}');
+              if (!wasAvailable) {
+                // Title just became available
+                logLines.add(
+                    '- Sending notification for ${title.name} (Now available)');
                 await NotificationService().showNotification(
                   id: title.tmdbId,
                   title: localizations.notificationTitle,
@@ -130,22 +132,22 @@ void callbackDispatcher() {
                   imageUrl: title.posterPath,
                   payload: '${title.mediaType}|${title.tmdbId}',
                 );
+                notifiedCount++;
+              } else if (title.isSerie &&
+                  title.numberOfSeasons > oldNumberOfSeasons &&
+                  oldNumberOfSeasons > 0) {
+                // Was already available and has new seasons
+                logLines.add(
+                    '- Sending notification for new season of ${title.name} (${title.numberOfSeasons} seasons)');
+                await NotificationService().showNotification(
+                  id: title.tmdbId + 1000000, // Offset to avoid ID collision
+                  title: localizations.notificationNewSeasonTitle,
+                  body: localizations.notificationNewSeasonBody(title.name),
+                  imageUrl: title.posterPath,
+                  payload: '${title.mediaType}|${title.tmdbId}',
+                );
+                notifiedCount++;
               }
-            }
-
-            // Check for new TV season
-            if (title.isSerie &&
-                title.numberOfSeasons > oldNumberOfSeasons &&
-                oldNumberOfSeasons > 0) {
-              logLines.add(
-                  '- Sending notification for new season of ${title.name} with ${title.numberOfSeasons} seasons');
-              await NotificationService().showNotification(
-                id: title.tmdbId + 1000000, // Offset to avoid ID collision
-                title: localizations.notificationNewSeasonTitle,
-                body: localizations.notificationNewSeasonBody(title.name),
-                imageUrl: title.posterPath,
-                payload: '${title.mediaType}|${title.tmdbId}',
-              );
             }
 
             await Future.delayed(const Duration(milliseconds: 200));
@@ -164,7 +166,8 @@ void callbackDispatcher() {
             DateTime.now().toIso8601String(),
           );
 
-      logLines.add('Summary: $scannedCount scanned - $updatedCount updated');
+      logLines.add(
+          'Summary: $scannedCount scanned - $updatedCount updated - $notifiedCount notified');
       await _saveLogs(logLines);
 
       return Future.value(true);
