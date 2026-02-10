@@ -97,9 +97,11 @@ void callbackDispatcher() {
                 .toList();
 
             logLines.add('- Updated: ${title.name}');
-            if (oldProviderNames != newProviderNames) {
-              logLines.add('- Old providers: ${oldProviderNames.join(', ')}');
-              logLines.add('- New providers: ${newProviderNames.join(', ')}');
+            final listOldProviderNames = oldProviderNames.join(', ');
+            final listNewProviderNames = newProviderNames.join(', ');
+            if (listOldProviderNames != listNewProviderNames) {
+              logLines.add('- Old providers: $listOldProviderNames');
+              logLines.add('- New providers: $listNewProviderNames');
             }
 
             // Check for new availability
