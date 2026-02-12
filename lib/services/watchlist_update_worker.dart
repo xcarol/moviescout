@@ -15,6 +15,52 @@ import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'dart:convert';
 
+bool _isBrandNewSeason(Map<String, dynamic>? nextEpisode, int currentSeason) {
+  if (nextEpisode == null) return false;
+
+  try {
+    final nextSeason = nextEpisode['season_number'] as int;
+    final nextEpisodeNum = nextEpisode['episode_number'] as int;
+    final airDateStr = nextEpisode['air_date'] as String?;
+
+    if (nextSeason == currentSeason &&
+        nextEpisodeNum == 1 &&
+        airDateStr != null) {
+      final airDate = DateTime.tryParse(airDateStr);
+      if (airDate != null &&
+          airDate.isBefore(DateTime.now().add(const Duration(days: 1)))) {
+        return true;
+      }
+    }
+  } catch (_) {}
+  return false;
+}
+
+bool _hasNewSeasonStarted(Map<String, dynamic>? nextEpisode,
+    Map<String, dynamic>? lastEpisode, int currentSeason) {
+  if (lastEpisode != null &&
+      (lastEpisode['season_number'] as int) == currentSeason) {
+    return true;
+  } else if (nextEpisode != null) {
+    try {
+      final nextSeason = nextEpisode['season_number'] as int;
+      final nextEpisodeNum = nextEpisode['episode_number'] as int;
+      final airDateStr = nextEpisode['air_date'] as String?;
+
+      if (nextSeason == currentSeason &&
+          nextEpisodeNum == 1 &&
+          airDateStr != null) {
+        final airDate = DateTime.tryParse(airDateStr);
+        if (airDate != null &&
+            airDate.isBefore(DateTime.now().add(const Duration(days: 1)))) {
+          return true;
+        }
+      }
+    } catch (_) {}
+  }
+  return false;
+}
+
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
@@ -82,7 +128,6 @@ void callbackDispatcher() {
             final enabledProviderSet = enabledProviderIds.toSet();
             final wasAvailable =
                 oldProviders.intersection(enabledProviderSet).isNotEmpty;
-            final int oldNumberOfSeasons = title.numberOfSeasons;
 
             await titleService.updateTitleDetails(title);
             await repository.saveTitle(title);
@@ -133,20 +178,55 @@ void callbackDispatcher() {
                   payload: '${title.mediaType}|${title.tmdbId}',
                 );
                 notifiedCount++;
-              } else if (title.isSerie &&
-                  title.numberOfSeasons > oldNumberOfSeasons &&
-                  oldNumberOfSeasons > 0) {
-                // Was already available and has new seasons
-                logLines.add(
-                    '- Sending notification for new season of ${title.name} (${title.numberOfSeasons} seasons)');
-                await NotificationService().showNotification(
-                  id: title.tmdbId + 1000000, // Offset to avoid ID collision
-                  title: localizations.notificationNewSeasonTitle,
-                  body: localizations.notificationNewSeasonBody(title.name),
-                  imageUrl: title.posterPath,
-                  payload: '${title.mediaType}|${title.tmdbId}',
-                );
-                notifiedCount++;
+                if (title.isSerie) {
+                  title.lastNotifiedSeason = title.numberOfSeasons;
+                  await repository.saveTitle(title);
+                }
+              } else if (title.isSerie) {
+                final currentSeason = title.numberOfSeasons;
+
+                // Initialize lastNotifiedSeason if it's 0 (first run with this feature)
+                if (title.lastNotifiedSeason == 0 && currentSeason > 0) {
+                  final isBrandNew =
+                      _isBrandNewSeason(title.nextEpisodeToAir, currentSeason);
+
+                  if (isBrandNew) {
+                    title.lastNotifiedSeason = currentSeason - 1;
+                  } else {
+                    title.lastNotifiedSeason = currentSeason;
+                  }
+                  await repository.saveTitle(title);
+                }
+
+                if (currentSeason > title.lastNotifiedSeason) {
+                  final shouldNotify = _hasNewSeasonStarted(
+                      title.nextEpisodeToAir,
+                      title.lastEpisodeToAir,
+                      currentSeason);
+
+                  if (shouldNotify) {
+                    logLines.add(
+                        '- Sending notification for new season of ${title.name} (${title.numberOfSeasons} seasons)');
+                    await NotificationService().showNotification(
+                      id: title.tmdbId + 1000000,
+                      title: localizations.notificationNewSeasonTitle,
+                      body: localizations.notificationNewSeasonBody(title.name),
+                      imageUrl: title.posterPath,
+                      payload: '${title.mediaType}|${title.tmdbId}',
+                    );
+                    notifiedCount++;
+                    title.lastNotifiedSeason = currentSeason;
+                    await repository.saveTitle(title);
+                  } else {}
+                }
+              }
+            } else {
+              if (title.isSerie &&
+                  title.lastNotifiedSeason == 0 &&
+                  title.numberOfSeasons > 0) {
+                // initialize silently
+                title.lastNotifiedSeason = title.numberOfSeasons;
+                await repository.saveTitle(title);
               }
             }
 
@@ -155,7 +235,6 @@ void callbackDispatcher() {
         }
 
         page++;
-        // Safety break if needed, but pagination should handle it
         if (watchlistTitles.length < pageSize) {
           hasMore = false;
         }
