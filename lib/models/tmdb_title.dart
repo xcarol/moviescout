@@ -83,6 +83,7 @@ class TmdbTitleFields {
   static const String videos = 'videos';
   static const String key = 'key';
   static const String site = 'site';
+  static const String lastNotifiedSeason = 'last_notified_season';
 }
 
 const statusEnded = 'Ended';
@@ -160,8 +161,11 @@ class TmdbTitle {
   late String? seasonsJson;
   late String? recommendationsJson;
   late String? nextEpisodeToAirJson;
+  late String? lastEpisodeToAirJson;
   late String? imagesJson;
   late String? videosJson;
+
+  late int lastNotifiedSeason; // New field for notification tracking
 
   @ignore
   String character = '';
@@ -209,10 +213,12 @@ class TmdbTitle {
     this.seasonsJson,
     this.recommendationsJson,
     this.nextEpisodeToAirJson,
+    this.lastEpisodeToAirJson,
     this.imagesJson,
     this.videosJson,
     this.homepage = '',
     this.isPinned = false,
+    this.lastNotifiedSeason = 0,
   }) {
     if (effectiveReleaseDate.isEmpty) {
       effectiveReleaseDate =
@@ -234,6 +240,7 @@ class TmdbTitle {
       dateRated: DateTime.fromMillisecondsSinceEpoch(0),
       addedOrder: 0,
       isPinned: title[TmdbTitleFields.isPinned] ?? false,
+      lastNotifiedSeason: title[TmdbTitleFields.lastNotifiedSeason] ?? 0,
     )..fillFromMap(title);
   }
 
@@ -313,6 +320,8 @@ class TmdbTitle {
     revenue = title[TmdbTitleFields.revenue] ?? revenue;
     addedOrder = title[TmdbTitleFields.addedOrder] ?? addedOrder;
     isPinned = title[TmdbTitleFields.isPinned] ?? isPinned;
+    lastNotifiedSeason =
+        title[TmdbTitleFields.lastNotifiedSeason] ?? lastNotifiedSeason;
 
     effectiveReleaseDate =
         mediaType == ApiConstants.movie ? releaseDate : firstAirDate;
@@ -340,6 +349,10 @@ class TmdbTitle {
     if (title[TmdbTitleFields.nextEpisodeToAir] != null) {
       nextEpisodeToAirJson =
           jsonEncode(title[TmdbTitleFields.nextEpisodeToAir]);
+    }
+    if (title[TmdbTitleFields.lastEpisodeToAir] != null) {
+      lastEpisodeToAirJson =
+          jsonEncode(title[TmdbTitleFields.lastEpisodeToAir]);
     }
     if (title[TmdbTitleFields.images] != null) {
       imagesJson = jsonEncode(title[TmdbTitleFields.images]);
@@ -392,6 +405,7 @@ class TmdbTitle {
       TmdbTitleFields.revenue: revenue,
       TmdbTitleFields.addedOrder: addedOrder,
       TmdbTitleFields.isPinned: isPinned,
+      TmdbTitleFields.lastNotifiedSeason: lastNotifiedSeason,
       TmdbTitleFields.genreIds: genreIds,
       TmdbTitleFields.originCountry: originCountry,
       TmdbTitleFields.credits:
@@ -404,6 +418,9 @@ class TmdbTitle {
           recommendationsJson != null ? jsonDecode(recommendationsJson!) : null,
       TmdbTitleFields.nextEpisodeToAir: nextEpisodeToAirJson != null
           ? jsonDecode(nextEpisodeToAirJson!)
+          : null,
+      TmdbTitleFields.lastEpisodeToAir: lastEpisodeToAirJson != null
+          ? jsonDecode(lastEpisodeToAirJson!)
           : null,
       TmdbTitleFields.images:
           imagesJson != null ? jsonDecode(imagesJson!) : null,
@@ -458,10 +475,25 @@ class TmdbTitle {
   }
 
   @ignore
-  String get nextEpisodeToAir {
-    if (nextEpisodeToAirJson == null) return '';
-    final map = jsonDecode(nextEpisodeToAirJson!);
-    return map[TmdbTitleFields.airDate] ?? '';
+  Map<String, dynamic>? get nextEpisodeToAir {
+    if (nextEpisodeToAirJson == null) return null;
+    return jsonDecode(nextEpisodeToAirJson!) as Map<String, dynamic>;
+  }
+
+  @ignore
+  Map<String, dynamic>? get lastEpisodeToAir {
+    if (lastEpisodeToAirJson == null) return null;
+    return jsonDecode(lastEpisodeToAirJson!) as Map<String, dynamic>;
+  }
+
+  @ignore
+  String get nextEpisodeAirDate {
+    return nextEpisodeToAir?[TmdbTitleFields.airDate] ?? '';
+  }
+
+  @ignore
+  String get lastEpisodeAirDate {
+    return lastEpisodeToAir?[TmdbTitleFields.airDate] ?? '';
   }
 
   @ignore
