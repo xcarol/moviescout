@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -129,6 +131,18 @@ class TmdbPinnedService extends TmdbBaseService with ChangeNotifier {
     return null;
   }
 
+  Future<void> _deleteServerPinnedList() async {
+    final response = await delete(
+      'list/$_pinnedListIdKey',
+      {},
+      version: ApiVersion.v4,
+      accessToken: _accessToken,
+    );
+    if (response.statusCode == 200) {
+      preferencesService.prefs.setString(_pinnedListIdKey, '');
+    }
+  }
+
   Future<String?> _createServerPinnedList(
       {String? existingId, bool forced = false}) async {
     if (existingId != null && existingId.isNotEmpty && !forced) {
@@ -192,6 +206,23 @@ class TmdbPinnedService extends TmdbBaseService with ChangeNotifier {
         version: ApiVersion.v4,
         accessToken: _accessToken,
       );
+
+      if (response.statusCode == 500) {
+        if (defaultTargetPlatform == TargetPlatform.android) {
+          FirebaseCrashlytics.instance.recordError(
+            Exception(
+              'Failed to update pinned list for $_accountId - ${response.statusCode} - ${response.body}. Re-creating list.',
+            ),
+            null,
+            reason: 'TmdbPinnedService.updatePinnedToServer. Error 500',
+          );
+        } else {
+          SnackMessage.showSnackBar(
+            'Failed to update pinned list for $_accountId - ${response.statusCode} - ${response.body}. Re-creating list.',
+          );
+        }
+        await _deleteServerPinnedList();
+      }
 
       if (response.statusCode == 404) {
         listId = await _createServerPinnedList(forced: true);
