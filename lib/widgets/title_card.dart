@@ -117,6 +117,18 @@ class TitleCard extends StatelessWidget {
           ),
         ),
       );
+
+      if(tmdbTitle.isSerie){
+        children.add(const SizedBox(width: 5));
+        children.add(
+          Text(
+            '[${tmdbTitle.lastNotifiedSeason}]',
+            style: TextStyle(
+              fontSize: 10,
+            ),
+          ),
+        );
+      }
     }
 
     return Selector<TmdbRateslistService, TmdbTitle?>(
