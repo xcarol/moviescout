@@ -132,138 +132,148 @@ const TmdbTitleSchema = CollectionSchema(
       name: r'lastAirDate',
       type: IsarType.string,
     ),
-    r'lastUpdated': PropertySchema(
+    r'lastEpisodeToAirJson': PropertySchema(
       id: 23,
+      name: r'lastEpisodeToAirJson',
+      type: IsarType.string,
+    ),
+    r'lastNotifiedSeason': PropertySchema(
+      id: 24,
+      name: r'lastNotifiedSeason',
+      type: IsarType.long,
+    ),
+    r'lastUpdated': PropertySchema(
+      id: 25,
       name: r'lastUpdated',
       type: IsarType.string,
     ),
     r'listName': PropertySchema(
-      id: 24,
+      id: 26,
       name: r'listName',
       type: IsarType.string,
     ),
     r'mediaType': PropertySchema(
-      id: 25,
+      id: 27,
       name: r'mediaType',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 26,
+      id: 28,
       name: r'name',
       type: IsarType.string,
     ),
     r'nextEpisodeToAirJson': PropertySchema(
-      id: 27,
+      id: 29,
       name: r'nextEpisodeToAirJson',
       type: IsarType.string,
     ),
     r'numberOfEpisodes': PropertySchema(
-      id: 28,
+      id: 30,
       name: r'numberOfEpisodes',
       type: IsarType.long,
     ),
     r'numberOfSeasons': PropertySchema(
-      id: 29,
+      id: 31,
       name: r'numberOfSeasons',
       type: IsarType.long,
     ),
     r'originCountry': PropertySchema(
-      id: 30,
+      id: 32,
       name: r'originCountry',
       type: IsarType.stringList,
     ),
     r'originalLanguage': PropertySchema(
-      id: 31,
+      id: 33,
       name: r'originalLanguage',
       type: IsarType.string,
     ),
     r'originalName': PropertySchema(
-      id: 32,
+      id: 34,
       name: r'originalName',
       type: IsarType.string,
     ),
     r'overview': PropertySchema(
-      id: 33,
+      id: 35,
       name: r'overview',
       type: IsarType.string,
     ),
     r'popularity': PropertySchema(
-      id: 34,
+      id: 36,
       name: r'popularity',
       type: IsarType.double,
     ),
     r'posterPath': PropertySchema(
-      id: 35,
+      id: 37,
       name: r'posterPath',
       type: IsarType.string,
     ),
     r'posterPathSuffix': PropertySchema(
-      id: 36,
+      id: 38,
       name: r'posterPathSuffix',
       type: IsarType.string,
     ),
     r'providersJson': PropertySchema(
-      id: 37,
+      id: 39,
       name: r'providersJson',
       type: IsarType.string,
     ),
     r'rating': PropertySchema(
-      id: 38,
+      id: 40,
       name: r'rating',
       type: IsarType.double,
     ),
     r'recommendationsJson': PropertySchema(
-      id: 39,
+      id: 41,
       name: r'recommendationsJson',
       type: IsarType.string,
     ),
     r'releaseDate': PropertySchema(
-      id: 40,
+      id: 42,
       name: r'releaseDate',
       type: IsarType.string,
     ),
     r'revenue': PropertySchema(
-      id: 41,
+      id: 43,
       name: r'revenue',
       type: IsarType.long,
     ),
     r'runtime': PropertySchema(
-      id: 42,
+      id: 44,
       name: r'runtime',
       type: IsarType.long,
     ),
     r'seasonsJson': PropertySchema(
-      id: 43,
+      id: 45,
       name: r'seasonsJson',
       type: IsarType.string,
     ),
     r'status': PropertySchema(
-      id: 44,
+      id: 46,
       name: r'status',
       type: IsarType.string,
     ),
     r'tagline': PropertySchema(
-      id: 45,
+      id: 47,
       name: r'tagline',
       type: IsarType.string,
     ),
     r'tmdbId': PropertySchema(
-      id: 46,
+      id: 48,
       name: r'tmdbId',
       type: IsarType.long,
     ),
     r'videosJson': PropertySchema(
-      id: 47,
+      id: 49,
       name: r'videosJson',
       type: IsarType.string,
     ),
     r'voteAverage': PropertySchema(
-      id: 48,
+      id: 50,
       name: r'voteAverage',
       type: IsarType.double,
     ),
     r'voteCount': PropertySchema(
-      id: 49,
+      id: 51,
       name: r'voteCount',
       type: IsarType.long,
     )
@@ -341,6 +351,12 @@ int _tmdbTitleEstimateSize(
   }
   bytesCount += 3 + object.imdbId.length * 3;
   bytesCount += 3 + object.lastAirDate.length * 3;
+  {
+    final value = object.lastEpisodeToAirJson;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.lastUpdated.length * 3;
   bytesCount += 3 + object.listName.length * 3;
   bytesCount += 3 + object.mediaType.length * 3;
@@ -427,33 +443,35 @@ void _tmdbTitleSerialize(
   writer.writeBool(offsets[20], object.isSeenOnly);
   writer.writeBool(offsets[21], object.isSerie);
   writer.writeString(offsets[22], object.lastAirDate);
-  writer.writeString(offsets[23], object.lastUpdated);
-  writer.writeString(offsets[24], object.listName);
-  writer.writeString(offsets[25], object.mediaType);
-  writer.writeString(offsets[26], object.name);
-  writer.writeString(offsets[27], object.nextEpisodeToAirJson);
-  writer.writeLong(offsets[28], object.numberOfEpisodes);
-  writer.writeLong(offsets[29], object.numberOfSeasons);
-  writer.writeStringList(offsets[30], object.originCountry);
-  writer.writeString(offsets[31], object.originalLanguage);
-  writer.writeString(offsets[32], object.originalName);
-  writer.writeString(offsets[33], object.overview);
-  writer.writeDouble(offsets[34], object.popularity);
-  writer.writeString(offsets[35], object.posterPath);
-  writer.writeString(offsets[36], object.posterPathSuffix);
-  writer.writeString(offsets[37], object.providersJson);
-  writer.writeDouble(offsets[38], object.rating);
-  writer.writeString(offsets[39], object.recommendationsJson);
-  writer.writeString(offsets[40], object.releaseDate);
-  writer.writeLong(offsets[41], object.revenue);
-  writer.writeLong(offsets[42], object.runtime);
-  writer.writeString(offsets[43], object.seasonsJson);
-  writer.writeString(offsets[44], object.status);
-  writer.writeString(offsets[45], object.tagline);
-  writer.writeLong(offsets[46], object.tmdbId);
-  writer.writeString(offsets[47], object.videosJson);
-  writer.writeDouble(offsets[48], object.voteAverage);
-  writer.writeLong(offsets[49], object.voteCount);
+  writer.writeString(offsets[23], object.lastEpisodeToAirJson);
+  writer.writeLong(offsets[24], object.lastNotifiedSeason);
+  writer.writeString(offsets[25], object.lastUpdated);
+  writer.writeString(offsets[26], object.listName);
+  writer.writeString(offsets[27], object.mediaType);
+  writer.writeString(offsets[28], object.name);
+  writer.writeString(offsets[29], object.nextEpisodeToAirJson);
+  writer.writeLong(offsets[30], object.numberOfEpisodes);
+  writer.writeLong(offsets[31], object.numberOfSeasons);
+  writer.writeStringList(offsets[32], object.originCountry);
+  writer.writeString(offsets[33], object.originalLanguage);
+  writer.writeString(offsets[34], object.originalName);
+  writer.writeString(offsets[35], object.overview);
+  writer.writeDouble(offsets[36], object.popularity);
+  writer.writeString(offsets[37], object.posterPath);
+  writer.writeString(offsets[38], object.posterPathSuffix);
+  writer.writeString(offsets[39], object.providersJson);
+  writer.writeDouble(offsets[40], object.rating);
+  writer.writeString(offsets[41], object.recommendationsJson);
+  writer.writeString(offsets[42], object.releaseDate);
+  writer.writeLong(offsets[43], object.revenue);
+  writer.writeLong(offsets[44], object.runtime);
+  writer.writeString(offsets[45], object.seasonsJson);
+  writer.writeString(offsets[46], object.status);
+  writer.writeString(offsets[47], object.tagline);
+  writer.writeLong(offsets[48], object.tmdbId);
+  writer.writeString(offsets[49], object.videosJson);
+  writer.writeDouble(offsets[50], object.voteAverage);
+  writer.writeLong(offsets[51], object.voteCount);
 }
 
 TmdbTitle _tmdbTitleDeserialize(
@@ -479,32 +497,34 @@ TmdbTitle _tmdbTitleDeserialize(
     imdbId: reader.readStringOrNull(offsets[15]) ?? '',
     isPinned: reader.readBoolOrNull(offsets[18]) ?? false,
     lastAirDate: reader.readStringOrNull(offsets[22]) ?? '',
-    lastUpdated: reader.readString(offsets[23]),
-    listName: reader.readString(offsets[24]),
-    mediaType: reader.readStringOrNull(offsets[25]) ?? '',
-    name: reader.readString(offsets[26]),
-    nextEpisodeToAirJson: reader.readStringOrNull(offsets[27]),
-    numberOfEpisodes: reader.readLongOrNull(offsets[28]) ?? 0,
-    numberOfSeasons: reader.readLongOrNull(offsets[29]) ?? 0,
-    originCountry: reader.readStringList(offsets[30]) ?? const [],
-    originalLanguage: reader.readStringOrNull(offsets[31]) ?? '',
-    originalName: reader.readStringOrNull(offsets[32]) ?? '',
-    overview: reader.readStringOrNull(offsets[33]) ?? '',
-    popularity: reader.readDoubleOrNull(offsets[34]) ?? 0.0,
-    posterPathSuffix: reader.readStringOrNull(offsets[36]),
-    providersJson: reader.readStringOrNull(offsets[37]),
-    rating: reader.readDoubleOrNull(offsets[38]) ?? 0.0,
-    recommendationsJson: reader.readStringOrNull(offsets[39]),
-    releaseDate: reader.readStringOrNull(offsets[40]) ?? '',
-    revenue: reader.readLongOrNull(offsets[41]) ?? 0,
-    runtime: reader.readLongOrNull(offsets[42]) ?? 0,
-    seasonsJson: reader.readStringOrNull(offsets[43]),
-    status: reader.readStringOrNull(offsets[44]) ?? '',
-    tagline: reader.readStringOrNull(offsets[45]) ?? '',
-    tmdbId: reader.readLong(offsets[46]),
-    videosJson: reader.readStringOrNull(offsets[47]),
-    voteAverage: reader.readDoubleOrNull(offsets[48]) ?? 0.0,
-    voteCount: reader.readLongOrNull(offsets[49]) ?? 0,
+    lastEpisodeToAirJson: reader.readStringOrNull(offsets[23]),
+    lastNotifiedSeason: reader.readLongOrNull(offsets[24]) ?? 0,
+    lastUpdated: reader.readString(offsets[25]),
+    listName: reader.readString(offsets[26]),
+    mediaType: reader.readStringOrNull(offsets[27]) ?? '',
+    name: reader.readString(offsets[28]),
+    nextEpisodeToAirJson: reader.readStringOrNull(offsets[29]),
+    numberOfEpisodes: reader.readLongOrNull(offsets[30]) ?? 0,
+    numberOfSeasons: reader.readLongOrNull(offsets[31]) ?? 0,
+    originCountry: reader.readStringList(offsets[32]) ?? const [],
+    originalLanguage: reader.readStringOrNull(offsets[33]) ?? '',
+    originalName: reader.readStringOrNull(offsets[34]) ?? '',
+    overview: reader.readStringOrNull(offsets[35]) ?? '',
+    popularity: reader.readDoubleOrNull(offsets[36]) ?? 0.0,
+    posterPathSuffix: reader.readStringOrNull(offsets[38]),
+    providersJson: reader.readStringOrNull(offsets[39]),
+    rating: reader.readDoubleOrNull(offsets[40]) ?? 0.0,
+    recommendationsJson: reader.readStringOrNull(offsets[41]),
+    releaseDate: reader.readStringOrNull(offsets[42]) ?? '',
+    revenue: reader.readLongOrNull(offsets[43]) ?? 0,
+    runtime: reader.readLongOrNull(offsets[44]) ?? 0,
+    seasonsJson: reader.readStringOrNull(offsets[45]),
+    status: reader.readStringOrNull(offsets[46]) ?? '',
+    tagline: reader.readStringOrNull(offsets[47]) ?? '',
+    tmdbId: reader.readLong(offsets[48]),
+    videosJson: reader.readStringOrNull(offsets[49]),
+    voteAverage: reader.readDoubleOrNull(offsets[50]) ?? 0.0,
+    voteCount: reader.readLongOrNull(offsets[51]) ?? 0,
   );
   return object;
 }
@@ -563,58 +583,62 @@ P _tmdbTitleDeserializeProp<P>(
     case 22:
       return (reader.readStringOrNull(offset) ?? '') as P;
     case 23:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 24:
-      return (reader.readString(offset)) as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 25:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (reader.readString(offset)) as P;
     case 26:
       return (reader.readString(offset)) as P;
     case 27:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 28:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
+      return (reader.readString(offset)) as P;
     case 29:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 30:
-      return (reader.readStringList(offset) ?? const []) as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 31:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 32:
-      return (reader.readStringOrNull(offset) ?? '') as P;
+      return (reader.readStringList(offset) ?? const []) as P;
     case 33:
       return (reader.readStringOrNull(offset) ?? '') as P;
     case 34:
-      return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 35:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 36:
-      return (reader.readStringOrNull(offset)) as P;
-    case 37:
-      return (reader.readStringOrNull(offset)) as P;
-    case 38:
       return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
+    case 37:
+      return (reader.readString(offset)) as P;
+    case 38:
+      return (reader.readStringOrNull(offset)) as P;
     case 39:
       return (reader.readStringOrNull(offset)) as P;
     case 40:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 41:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 42:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 43:
-      return (reader.readStringOrNull(offset)) as P;
-    case 44:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 45:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 46:
-      return (reader.readLong(offset)) as P;
-    case 47:
-      return (reader.readStringOrNull(offset)) as P;
-    case 48:
       return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
+    case 41:
+      return (reader.readStringOrNull(offset)) as P;
+    case 42:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 43:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    case 44:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
+    case 45:
+      return (reader.readStringOrNull(offset)) as P;
+    case 46:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 47:
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 48:
+      return (reader.readLong(offset)) as P;
     case 49:
+      return (reader.readStringOrNull(offset)) as P;
+    case 50:
+      return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
+    case 51:
       return (reader.readLongOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2791,6 +2815,216 @@ extension TmdbTitleQueryFilter
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'lastAirDate',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastEpisodeToAirJsonIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'lastEpisodeToAirJson',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastEpisodeToAirJsonIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'lastEpisodeToAirJson',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastEpisodeToAirJsonEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'lastEpisodeToAirJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastEpisodeToAirJsonGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'lastEpisodeToAirJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastEpisodeToAirJsonLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'lastEpisodeToAirJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastEpisodeToAirJsonBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'lastEpisodeToAirJson',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastEpisodeToAirJsonStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'lastEpisodeToAirJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastEpisodeToAirJsonEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'lastEpisodeToAirJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastEpisodeToAirJsonContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'lastEpisodeToAirJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastEpisodeToAirJsonMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'lastEpisodeToAirJson',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastEpisodeToAirJsonIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'lastEpisodeToAirJson',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastEpisodeToAirJsonIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'lastEpisodeToAirJson',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastNotifiedSeasonEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'lastNotifiedSeason',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastNotifiedSeasonGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'lastNotifiedSeason',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastNotifiedSeasonLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'lastNotifiedSeason',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
+      lastNotifiedSeasonBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'lastNotifiedSeason',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }
@@ -6174,6 +6408,33 @@ extension TmdbTitleQuerySortBy on QueryBuilder<TmdbTitle, TmdbTitle, QSortBy> {
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy>
+      sortByLastEpisodeToAirJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastEpisodeToAirJson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy>
+      sortByLastEpisodeToAirJsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastEpisodeToAirJson', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByLastNotifiedSeason() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastNotifiedSeason', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy>
+      sortByLastNotifiedSeasonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastNotifiedSeason', Sort.desc);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByLastUpdated() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastUpdated', Sort.asc);
@@ -6763,6 +7024,33 @@ extension TmdbTitleQuerySortThenBy
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy>
+      thenByLastEpisodeToAirJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastEpisodeToAirJson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy>
+      thenByLastEpisodeToAirJsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastEpisodeToAirJson', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByLastNotifiedSeason() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastNotifiedSeason', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy>
+      thenByLastNotifiedSeasonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastNotifiedSeason', Sort.desc);
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByLastUpdated() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastUpdated', Sort.asc);
@@ -7234,6 +7522,20 @@ extension TmdbTitleQueryWhereDistinct
     });
   }
 
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByLastEpisodeToAirJson(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'lastEpisodeToAirJson',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByLastNotifiedSeason() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'lastNotifiedSeason');
+    });
+  }
+
   QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByLastUpdated(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -7565,6 +7867,19 @@ extension TmdbTitleQueryProperty
   QueryBuilder<TmdbTitle, String, QQueryOperations> lastAirDateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastAirDate');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, String?, QQueryOperations>
+      lastEpisodeToAirJsonProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'lastEpisodeToAirJson');
+    });
+  }
+
+  QueryBuilder<TmdbTitle, int, QQueryOperations> lastNotifiedSeasonProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'lastNotifiedSeason');
     });
   }
 
