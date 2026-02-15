@@ -122,6 +122,7 @@ void callbackDispatcher() {
 
         for (final title in watchlistTitles) {
           scannedCount++;
+          logLines.add('- [$scannedCount] Scanning: ${title.name}');
           if (!TmdbTitleService.isUpToDate(title)) {
             updatedCount++;
             final oldProviders = title.flatrateProviderIds.toSet();
