@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
@@ -105,6 +106,18 @@ class TitleCard extends StatelessWidget {
       const SizedBox(width: 5),
       Text(tmdbTitle.voteAverage.toStringAsFixed(2)),
     ];
+
+    if (_tmdbListService.listName == AppConstants.watchlist) {
+      children.add(const SizedBox(width: 5));
+      children.add(
+        Text(
+          '[${DateFormat('dd-MM-yyyyTHH:mm').format(DateTime.parse(tmdbTitle.lastUpdated))}]',
+          style: TextStyle(
+            fontSize: 10,
+          ),
+        ),
+      );
+    }
 
     return Selector<TmdbRateslistService, TmdbTitle?>(
       selector: (_, rateslistService) => rateslistService.getTitleByTmdbId(
