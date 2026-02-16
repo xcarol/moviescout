@@ -310,6 +310,12 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       }
 
       await filterTitles();
+    } catch (error, stackTrace) {
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        userMessage: 'Error updating platform availability',
+      );
     } finally {
       isLoading.value = false;
       notifyListeners();
@@ -575,6 +581,12 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       if (titles.length < pageSizeVal && !isLoading.value) {
         hasMoreVal = false;
       }
+    } catch (error, stackTrace) {
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        userMessage: 'Error loading page',
+      );
     } finally {
       isDbLoading = false;
       if (listGenresVal.isEmpty) {

@@ -1,10 +1,9 @@
 import 'dart:convert';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
-import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -70,8 +69,13 @@ class TmdbPinnedService extends TmdbBaseService with ChangeNotifier {
           pinnedString.split(',').where((s) => s.isNotEmpty).toList();
 
       await _applyPinnedIds(pinnedIds);
-    } catch (e) {
-      debugPrint('Error in fetchAndApplyPinnedTitles: $e');
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Error fetching pinned titles',
+        showSnackBar: false,
+      );
     } finally {
       notifyListeners();
     }
@@ -171,8 +175,13 @@ class TmdbPinnedService extends TmdbBaseService with ChangeNotifier {
         preferencesService.prefs.setString(_pinnedListIdKey, listId);
         return listId;
       }
-    } catch (e) {
-      debugPrint('Error creating pinned list: $e');
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Error creating pinned list',
+        showSnackBar: false,
+      );
     }
     return null;
   }
@@ -208,19 +217,10 @@ class TmdbPinnedService extends TmdbBaseService with ChangeNotifier {
       );
 
       if (response.statusCode == 500) {
-        if (defaultTargetPlatform == TargetPlatform.android) {
-          FirebaseCrashlytics.instance.recordError(
-            Exception(
-              'Failed to update pinned list for $_accountId - ${response.statusCode} - ${response.body}. Re-creating list.',
-            ),
-            null,
-            reason: 'TmdbPinnedService.updatePinnedToServer. Error 500',
-          );
-        } else {
-          SnackMessage.showSnackBar(
-            'Failed to update pinned list for $_accountId - ${response.statusCode} - ${response.body}. Re-creating list.',
-          );
-        }
+        ErrorService.log(
+          'Failed to update pinned list for $_accountId - ${response.statusCode} - ${response.body}. Re-creating list.',
+          userMessage: 'Error updating pinned list. Re-creating.',
+        );
         await _deleteServerPinnedList();
       }
 
@@ -238,8 +238,12 @@ class TmdbPinnedService extends TmdbBaseService with ChangeNotifier {
       }
 
       return response.statusCode == 201;
-    } catch (e) {
-      debugPrint('Error updating pinned to server: $e');
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Error updating pinned to server',
+      );
       return false;
     }
   }

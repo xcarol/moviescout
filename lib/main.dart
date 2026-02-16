@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/services/discoverlist_service.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/language_service.dart';
@@ -55,8 +56,12 @@ void main() async {
       await FirebaseCrashlytics.instance
           .setCrashlyticsCollectionEnabled(kDebugMode);
     }
-  } catch (e) {
-    debugPrint('Firebase initialization failed: $e');
+  } catch (error, stackTrace) {
+    ErrorService.log(
+      error,
+      userMessage: 'Error initializing Firebase',
+      stackTrace: stackTrace,
+    );
   }
 
   try {
@@ -84,8 +89,12 @@ void main() async {
         ),
       );
     }
-  } catch (e) {
-    debugPrint('Service initialization failed: $e');
+  } catch (error, stackTrace) {
+    ErrorService.log(
+      error,
+      userMessage: 'Error initializing services',
+      stackTrace: stackTrace,
+    );
   }
 
   debugPrint('Running Movie Scout...');

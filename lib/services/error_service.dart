@@ -61,8 +61,10 @@ class ErrorService {
       return false;
     }
 
-    // Add more types to exclude if needed
-    // For example, if we use a specific exception for "User cancelled"
+    if (error?.message ==
+        'Unable to establish connection on channel: "dev.flutter.pigeon.firebase_core_platform_interface.FirebaseCoreHostApi.initializeCore".') {
+      return false;
+    }
 
     return true;
   }
