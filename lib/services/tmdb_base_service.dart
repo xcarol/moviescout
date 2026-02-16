@@ -60,7 +60,7 @@ class TmdbBaseService {
     _requestCount++;
 
     int retryCount = 0;
-    const int maxRetries = 5;
+    const int maxRetries = 20;
 
     while (retryCount < maxRetries) {
       try {
