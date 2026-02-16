@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/error_service.dart';
-import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_pinned_service.dart';
@@ -98,7 +97,10 @@ class TmdbWatchlistService extends TmdbListService {
       );
       if (pinnedCount >= 5) {
         if (limitReachedMessage != null) {
-          SnackMessage.showSnackBar(limitReachedMessage);
+          ErrorService.log(
+            'Pin limit reached',
+            userMessage: limitReachedMessage,
+          );
         }
         return;
       }
