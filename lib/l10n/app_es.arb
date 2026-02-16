@@ -126,5 +126,6 @@
     "writer": "Escritor",
     "seasonsCount": "{count}temp",
     "notifications": "Notificaciones",
-    "notificationsPermissionRequired": "Es necesario que permitas las notificaciones en la configuración del sistema."
+    "notificationsPermissionRequired": "Debes permitir las notificaciones en los ajustes del sistema.",
+    "errorMessageGeneric": "Ha ocurrido un error. Inténtalo de nuevo más tarde."
 }

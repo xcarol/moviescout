@@ -397,4 +397,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationsPermissionRequired => 'You need to allow notifications in the system settings.';
+
+  @override
+  String get errorMessageGeneric => 'An error occurred. Please try again later.';
 }

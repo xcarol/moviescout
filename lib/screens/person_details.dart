@@ -11,6 +11,7 @@ import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_person_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
@@ -179,7 +180,12 @@ class _PersonDetailsState extends State<PersonDetails> {
       final date = DateTime.parse(dateString);
       final locale = Localizations.localeOf(context).toString();
       return DateFormat.yMMMMd(locale).format(date);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        showSnackBar: false,
+      );
       return dateString;
     }
   }
@@ -200,7 +206,12 @@ class _PersonDetailsState extends State<PersonDetails> {
         age--;
       }
       return age.toString();
-    } catch (e) {
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        showSnackBar: false,
+      );
       return '';
     }
   }

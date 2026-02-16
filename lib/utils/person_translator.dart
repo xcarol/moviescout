@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class PersonTranslator {
@@ -21,8 +22,12 @@ class PersonTranslator {
       final Map<String, dynamic> data = json.decode(jsonString);
       _deptMappings[lang] = Map<String, String>.from(data['departments']);
       _jobMappings[lang] = Map<String, String>.from(data['jobs']);
-    } catch (e) {
-      // Fallback or log error
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        'Error loading jobs/departments for $lang: $e',
+        stackTrace: stackTrace,
+        showSnackBar: false,
+      );
     }
   }
 

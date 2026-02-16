@@ -1,11 +1,8 @@
 import 'dart:convert';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/utils/api_constants.dart';
-import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
-import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 
 const String _tmdbDetails =
     '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders%2Crecommendations%2Cimages%2Cvideos%2C{CREDITS_TYPE}&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
@@ -85,19 +82,10 @@ class TmdbTitleService extends TmdbBaseService {
     );
 
     if (result.statusCode != 200) {
-      if (defaultTargetPlatform == TargetPlatform.android) {
-        FirebaseCrashlytics.instance.recordError(
-          Exception(
-            'Failed to retrieve title details for ${title.tmdbId} - ${result.statusCode} - ${result.body}',
-          ),
-          null,
-          reason: 'TmdbTitleService.updateTitleDetails',
-        );
-      } else {
-        SnackMessage.showSnackBar(
-          'Failed to retrieve title details for ${title.tmdbId} - ${result.statusCode} - ${result.body}',
-        );
-      }
+      ErrorService.log(
+        'Failed to retrieve title details for ${title.tmdbId} - ${result.statusCode} - ${result.body}',
+        userMessage: 'Failed to retrieve title details',
+      );
       return title;
     }
 
@@ -216,9 +204,9 @@ class TmdbTitleService extends TmdbBaseService {
     _mergeMediaFallback(target, fallback, overwriteIfEmpty: true);
   }
 
-  void _mergeMediaFallback(Map<String, dynamic> target, Map<String, dynamic> source,
+  void _mergeMediaFallback(
+      Map<String, dynamic> target, Map<String, dynamic> source,
       {bool overwriteIfEmpty = false}) {
-
     if (source['images'] != null && source['images']['backdrops'] != null) {
       List<dynamic> backdrops = List.from(source['images']['backdrops']);
       if (backdrops.isNotEmpty || overwriteIfEmpty) {

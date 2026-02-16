@@ -1,7 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 
@@ -88,8 +88,12 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
         await _retrieveUserProviders();
         _setLocalProviders(_providerMap);
       }
-    } catch (e) {
-      debugPrint('Error in TmdbProviderService setup: $e');
+    } catch (error, stackTrace) {
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        userMessage: 'Error initializing platforms',
+      );
     } finally {
       _isInitialized = true;
       _isInitializing = false;
@@ -166,11 +170,17 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
         _listId = listId;
         PreferencesService().prefs.setString('providerListId', _listId);
       } else {
-        debugPrint('Error creating provider list: ${response.statusCode}'
-            ' ${response.reasonPhrase}');
+        ErrorService.log(
+          'Error creating provider list: ${response.statusCode} ${response.reasonPhrase}',
+          showSnackBar: false,
+        );
       }
-    } catch (error) {
-      debugPrint('Error creating provider list: $error');
+    } catch (error, stackTrace) {
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        showSnackBar: false,
+      );
     }
   }
 
@@ -222,8 +232,12 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
       }
 
       return response.statusCode == 201;
-    } catch (error) {
-      debugPrint('Error updating providers to server: $error');
+    } catch (error, stackTrace) {
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        userMessage: 'Error updating platforms',
+      );
       return false;
     }
   }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:moviescout/models/tmdb_genre.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/update_manager.dart';
@@ -19,6 +20,7 @@ class TmdbGenreService extends TmdbBaseService {
 
   bool get isLoaded => _isLoaded;
   Future<void> init() async {
+    bool reportError = false;
     if (_isLoaded) return;
 
     List<String> genreUrls = [_tmdbMovieGenres, _tmdbTvGenres];
@@ -54,11 +56,11 @@ class TmdbGenreService extends TmdbBaseService {
                 genres = (jsonDecode((response.body))
                     as Map<String, dynamic>)['genres'];
               } else {
-                throw Exception('Failed to load genres');
+                reportError = true;
               }
             }
           } else {
-            throw Exception('Failed to load genres');
+            reportError = true;
           }
         }
 
@@ -66,7 +68,14 @@ class TmdbGenreService extends TmdbBaseService {
           _genreMap[genre['id']] = genre['name'];
         }
       } else {
-        throw Exception('Failed to load genres');
+        reportError = true;
+      }
+
+      if (reportError == true) {
+        ErrorService.log(
+          'Failed to load genres: ${response.statusCode}',
+          userMessage: 'Failed to load genres',
+        );
       }
     }
 
