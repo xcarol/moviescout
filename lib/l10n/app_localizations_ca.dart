@@ -397,4 +397,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get notificationsPermissionRequired => 'Cal que permetis les notificacions a la configuració del sistema.';
+
+  @override
+  String get errorMessageGeneric => 'S\'ha produït un error. Torna-ho a provar més tard.';
 }

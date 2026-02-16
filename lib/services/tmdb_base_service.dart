@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/region_service.dart';
 
@@ -102,16 +102,13 @@ class TmdbBaseService {
         await Future.delayed(delay);
         delay = updatedDelay();
         retryCount++;
-      } catch (error) {
+      } catch (error, stackTrace) {
         _requestCount--;
-        if (Platform.isAndroid) {
-          final message = 'TmdbBaseService get Error: ${error.toString()}';
-          FirebaseCrashlytics.instance.recordFlutterError(
-            FlutterErrorDetails(exception: message),
-          );
-        } else {
-          debugPrint('TmdbBaseService get Error: ${error.toString()}');
-        }
+        ErrorService.log(
+          error,
+          stackTrace: stackTrace,
+          showSnackBar: false,
+        );
         rethrow;
       }
     }
@@ -142,12 +139,13 @@ class TmdbBaseService {
         },
         body: jsonEncode(body),
       );
-    } catch (error) {
+    } catch (error, stackTrace) {
       final message = 'TmdbBaseService post Error: ${error.toString()}';
-      if (Platform.isAndroid) {
-        FirebaseCrashlytics.instance
-            .recordFlutterError(FlutterErrorDetails(exception: ([message])));
-      }
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        showSnackBar: false,
+      );
       throw HttpException(message);
     }
   }
@@ -174,12 +172,13 @@ class TmdbBaseService {
         },
         body: jsonEncode(body),
       );
-    } catch (error) {
+    } catch (error, stackTrace) {
       final message = 'TmdbBaseService put Error: ${error.toString()}';
-      if (Platform.isAndroid) {
-        FirebaseCrashlytics.instance
-            .recordFlutterError(FlutterErrorDetails(exception: ([message])));
-      }
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        showSnackBar: false,
+      );
       throw HttpException(message);
     }
   }
@@ -206,12 +205,13 @@ class TmdbBaseService {
         },
         body: jsonEncode(body),
       );
-    } catch (error) {
+    } catch (error, stackTrace) {
       final message = 'TmdbBaseService delete Error: ${error.toString()}';
-      if (Platform.isAndroid) {
-        FirebaseCrashlytics.instance
-            .recordFlutterError(FlutterErrorDetails(exception: ([message])));
-      }
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        showSnackBar: false,
+      );
       throw HttpException(message);
     }
   }
