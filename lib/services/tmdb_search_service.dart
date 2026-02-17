@@ -19,7 +19,7 @@ const String _tmdbFindByID =
     '/find/{ID}?language={LOCALE}&external_source=imdb_id';
 
 class TmdbSearchService extends TmdbListService {
-  TmdbSearchService(super.listName, super.repository, super.preferencesService);
+  TmdbSearchService(super.listName, super.repository);
 
   Future<dynamic> searchImdbTitle(
     String imdbId,

@@ -16,8 +16,7 @@ const String _updateWatchlistTitle =
 class TmdbWatchlistService extends TmdbListService {
   TmdbPinnedService? pinnedService;
 
-  TmdbWatchlistService(
-      super.listName, super.repository, super.preferencesService);
+  TmdbWatchlistService(super.listName, super.repository);
 
   Future<void> retrieveWatchlist(
       String accountId, String sessionId, Locale locale) async {

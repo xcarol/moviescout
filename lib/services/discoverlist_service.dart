@@ -14,8 +14,7 @@ const String _tmdbPopularlistMovies =
 const String _tmdbPopularlistTv = 'tv/popular?page={PAGE}&language={LOCALE}';
 
 class TmdbDiscoverlistService extends TmdbListService {
-  TmdbDiscoverlistService(
-      super.listName, super.repository, super.preferencesService);
+  TmdbDiscoverlistService(super.listName, super.repository);
 
   Future<void> retrieveDiscoverlist(
       String accountId, String sessionId, Locale locale,
