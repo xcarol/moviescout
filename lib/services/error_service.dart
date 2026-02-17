@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:moviescout/main.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
@@ -61,8 +62,9 @@ class ErrorService {
       return false;
     }
 
-    if (error?.message ==
-        'Unable to establish connection on channel: "dev.flutter.pigeon.firebase_core_platform_interface.FirebaseCoreHostApi.initializeCore".') {
+    if (error is PlatformException &&
+        error.message!.contains('Unable to establish connection on channel') &&
+        error.message!.contains('FirebaseCoreHostApi.initializeCore')) {
       return false;
     }
 
