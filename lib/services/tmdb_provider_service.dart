@@ -1,29 +1,27 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
-import 'package:moviescout/services/tmdb_base_service.dart';
+import 'package:moviescout/services/tmdb_config_list_service.dart';
 
 const String _tmdbMovieProviders =
     '/watch/providers/movie?language={LOCALE}&watch_region={COUNTRY}';
 const String _tmdbTvProviders =
     '/watch/providers/tv?language={LOCALE}&watch_region={COUNTRY}';
-const String _tmdbLists = '/list/{LIST_ID}';
 
-const String _providersListName = 'providers';
-
-class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
+class TmdbProviderService extends TmdbConfigListService {
   final Map<int, Map<String, String>> _providerMap = {};
   Map<int, Map<String, String>> get providers => _providerMap;
   bool _isInitialized = false;
   bool _isInitializing = false;
-  String _accessToken = '';
-  String _listId = '';
-  String _accountId = '';
-  String _sessionId = '';
 
   bool get isInitialized => _isInitialized;
+
+  TmdbProviderService()
+      : super(
+          configListName: 'providers',
+          listIdPrefKey: 'providerListId',
+        );
 
   Future<void> _retrieveProviders() async {
     List<String> providerUrls = [_tmdbMovieProviders, _tmdbTvProviders];
@@ -34,8 +32,14 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
           .replaceFirst('{COUNTRY}', getCountryCode()));
 
       if (response.statusCode != 200) {
-        throw Exception(
-            'Failed to load providers: ${response.statusCode} ${response.reasonPhrase}');
+        final message =
+            'Failed to load providers: ${response.statusCode} ${response.reasonPhrase}';
+        ErrorService.log(
+          message,
+          userMessage: 'Error loading platforms',
+          showSnackBar: false,
+        );
+        throw Exception(message);
       }
       List<dynamic> providers = (jsonDecode(response.body)
           as Map<String, dynamic>)['results'] as List<dynamic>;
@@ -43,7 +47,13 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
       if (providers.isEmpty ||
           providers[0][TmdbProvider.providerId] == null ||
           providers[0][TmdbProvider.providerId].runtimeType != int) {
-        throw Exception('Failed to load providers (invalid payload)');
+        const message = 'Failed to load providers (invalid payload)';
+        ErrorService.log(
+          message,
+          userMessage: 'Error loading platforms',
+          showSnackBar: false,
+        );
+        throw Exception(message);
       }
 
       for (var provider in providers) {
@@ -60,6 +70,7 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
   }
 
   void clearProvidersStatus() {
+    clearConfig();
     _isInitialized = false;
     for (var entry in _providerMap.entries) {
       entry.value[TmdbProvider.providerEnabled] = 'false';
@@ -76,10 +87,7 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
 
     try {
       _isInitializing = true;
-
-      _accountId = accountId;
-      _sessionId = sessionId;
-      _accessToken = accessToken;
+      setupBase(accountId, sessionId, accessToken);
 
       _providerMap.clear();
 
@@ -102,86 +110,12 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
   }
 
   Future<void> _retrieveUserProviders() async {
-    _listId = PreferencesService().prefs.getString('providerListId') ?? '';
-    if (_listId.isEmpty) {
-      await _retrieveServerProvidersListId();
-      if (_listId.isEmpty) {
-        return;
-      }
-    }
-
-    final response = await get(_tmdbLists.replaceFirst('{LIST_ID}', _listId),
-        accessToken: _accessToken);
-
-    if (response.statusCode != 200) {
-      // Reset list ID to retry on next setup.
-      PreferencesService().prefs.setString('providerListId', '');
+    final providersString = await fetchConfigFromServer();
+    if (providersString == null || providersString.isEmpty) {
       return;
     }
 
-    final data = jsonDecode(response.body);
-    if (data['description'] == null || data['description'].isEmpty) {
-      return;
-    }
-
-    _stringToProviders(data['description']);
-  }
-
-  Future<bool> _retrieveServerProvidersListId() async {
-    final response =
-        await get('/account/$_accountId/lists?session_id=$_sessionId');
-    if (response.statusCode == 200) {
-      final lists = jsonDecode(response.body)['results'] as List;
-      final providerList = lists.firstWhere(
-        (list) => list['name'] == _providersListName,
-        orElse: () => null,
-      );
-      if (providerList != null) {
-        _listId = providerList['id'].toString();
-        PreferencesService().prefs.setString('providerListId', _listId);
-        return true;
-      }
-    }
-    return false;
-  }
-
-  Future<void> _createServerProviderList({bool forced = false}) async {
-    if (_listId.isNotEmpty && !forced) return;
-
-    const String myurl = 'list';
-    const Map<String, dynamic> mybody = {
-      'name': _providersListName,
-      'iso_639_1': 'ca',
-      'description': '',
-      'public': false,
-    };
-
-    try {
-      final response = await post(
-        myurl,
-        mybody,
-        version: ApiVersion.v4,
-        accessToken: _accessToken,
-      );
-
-      if (response.statusCode == 201) {
-        final json = jsonDecode(response.body);
-        final String listId = json['id'].toString();
-        _listId = listId;
-        PreferencesService().prefs.setString('providerListId', _listId);
-      } else {
-        ErrorService.log(
-          'Error creating provider list: ${response.statusCode} ${response.reasonPhrase}',
-          showSnackBar: false,
-        );
-      }
-    } catch (error, stackTrace) {
-      ErrorService.log(
-        error,
-        stackTrace: stackTrace,
-        showSnackBar: false,
-      );
-    }
+    _stringToProviders(providersString);
   }
 
   String _providersToString() {
@@ -193,53 +127,30 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
   }
 
   void _stringToProviders(String providersString) {
-    final providerIds = providersString.split(',').map(int.parse).toList();
-    for (var entry in _providerMap.entries) {
-      if (providerIds.contains(entry.key)) {
-        entry.value[TmdbProvider.providerEnabled] = 'true';
-      } else {
-        entry.value[TmdbProvider.providerEnabled] = 'false';
-      }
-    }
-  }
-
-  Future<bool> _updateProvidersToServer() async {
-    await _createServerProviderList();
-
-    final url = 'list/$_listId';
-    final Map<String, dynamic> body = {
-      'description': _providersToString(),
-    };
-
     try {
-      final response = await put(
-        url,
-        body,
-        version: ApiVersion.v4,
-        accessToken: _accessToken,
-      );
-
-      if (response.statusCode == 404) {
-        await _createServerProviderList(forced: true);
-        final newurl = 'list/$_listId';
-        final retryResponse = await put(
-          newurl,
-          body,
-          version: ApiVersion.v4,
-          accessToken: _accessToken,
-        );
-        return retryResponse.statusCode == 201;
+      final providerIds = providersString.split(',').map(int.parse).toList();
+      for (var entry in _providerMap.entries) {
+        if (providerIds.contains(entry.key)) {
+          entry.value[TmdbProvider.providerEnabled] = 'true';
+        } else {
+          entry.value[TmdbProvider.providerEnabled] = 'false';
+        }
       }
-
-      return response.statusCode == 201;
     } catch (error, stackTrace) {
       ErrorService.log(
         error,
         stackTrace: stackTrace,
-        userMessage: 'Error updating platforms',
+        userMessage: 'Error parsing platforms',
+        showSnackBar: false,
       );
-      return false;
     }
+  }
+
+  Future<bool> _updateProvidersToServer() async {
+    return updateConfigToServer(
+      _providersToString(),
+      userErrorMessage: 'Error updating platforms',
+    );
   }
 
   bool _getLocalProviders() {
@@ -253,8 +164,6 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
             DateTime.daysPerWeek;
 
     if (providers.isEmpty || !isUpToDate) return false;
-
-    _listId = PreferencesService().prefs.getString('providerListId') ?? '';
 
     providers
         .map((provider) => jsonDecode(provider) as Map<String, dynamic>)
