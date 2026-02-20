@@ -17,8 +17,7 @@ const String _rateMovie = 'movie/{ID}/rating?session_id={SESSION_ID}';
 const String _rateTv = 'tv/{ID}/rating?session_id={SESSION_ID}';
 
 class TmdbRateslistService extends TmdbListService {
-  TmdbRateslistService(
-      super.listName, super.repository, super.preferencesService) {
+  TmdbRateslistService(super.listName, super.repository) {
     filterRating = RatingFilter.rated;
   }
 

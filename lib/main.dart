@@ -99,12 +99,10 @@ void main() async {
 
   debugPrint('Running Movie Scout...');
   final repository = TmdbTitleRepository();
-  final preferencesService = PreferencesService();
 
   runApp(MultiProvider(
     providers: [
       Provider.value(value: repository),
-      Provider.value(value: preferencesService),
       ChangeNotifierProvider(create: (_) => ThemeService()),
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
@@ -116,18 +114,17 @@ void main() async {
               userService.accessToken),
       ),
       ChangeNotifierProxyProvider<TmdbUserService, TmdbPinnedService>(
-        create: (_) => TmdbPinnedService(repository, preferencesService),
+        create: (_) => TmdbPinnedService(repository),
         update: (_, userService, pinnedService) => pinnedService!
           ..setup(userService.accountId, userService.sessionId,
               userService.accessToken),
       ),
       ChangeNotifierProvider(
-          create: (_) => TmdbRateslistService(
-              AppConstants.rateslist, repository, preferencesService)),
+          create: (_) =>
+              TmdbRateslistService(AppConstants.rateslist, repository)),
       ChangeNotifierProxyProvider2<TmdbRateslistService, TmdbPinnedService,
           TmdbWatchlistService>(
-        create: (_) => TmdbWatchlistService(
-            AppConstants.watchlist, repository, preferencesService),
+        create: (_) => TmdbWatchlistService(AppConstants.watchlist, repository),
         update: (_, rateslistService, pinnedService, watchlistService) {
           rateslistService.removeListener(watchlistService!.refresh);
           rateslistService.addListener(watchlistService.refresh);
@@ -137,8 +134,8 @@ void main() async {
       ),
       ChangeNotifierProxyProvider2<TmdbRateslistService, TmdbWatchlistService,
           TmdbDiscoverlistService>(
-        create: (_) => TmdbDiscoverlistService(
-            AppConstants.discoverlist, repository, preferencesService),
+        create: (_) =>
+            TmdbDiscoverlistService(AppConstants.discoverlist, repository),
         update: (_, rateslistService, watchlistService, discoverlistService) {
           rateslistService.removeListener(discoverlistService!.refresh);
           watchlistService.removeListener(discoverlistService.refresh);
