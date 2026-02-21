@@ -59,7 +59,7 @@ class _MainScreenState extends State<MainScreen> {
               children: [
                 WatchList(),
                 RatesList(),
-                DiscoverList(),
+                DiscoverList(isActive: _currentIndex == 2),
                 Search(),
               ],
             ),
