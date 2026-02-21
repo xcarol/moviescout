@@ -1,9 +1,6 @@
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_person.dart';
-import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
-import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 
 const String _tmdbDetails =
     '/person/{ID}?append_to_response=combined_credits&language={LOCALE}';
@@ -40,19 +37,10 @@ class TmdbPersonService extends TmdbBaseService {
     );
 
     if (result.statusCode != 200) {
-      if (defaultTargetPlatform == TargetPlatform.android) {
-        FirebaseCrashlytics.instance.recordError(
-          Exception(
-            'Failed to retrieve person details for ${person.tmdbId} - ${result.statusCode} - ${result.body}',
-          ),
-          null,
-          reason: 'TmdbPersonService.updatePersonDetails',
-        );
-      } else {
-        SnackMessage.showSnackBar(
-          'Failed to retrieve person details for ${person.tmdbId} - ${result.statusCode} - ${result.body}',
-        );
-      }
+      ErrorService.log(
+        'Failed to retrieve person details for ${person.tmdbId} - ${result.statusCode} - ${result.body}',
+        userMessage: 'Failed to retrieve person details',
+      );
       return person;
     }
 

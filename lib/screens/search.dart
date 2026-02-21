@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/search_history_service.dart';
-import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/widgets/title_list.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
-import 'package:moviescout/services/preferences_service.dart';
 import 'package:provider/provider.dart';
 
 class Search extends StatefulWidget {
@@ -38,7 +37,6 @@ class _SearchState extends State<Search> {
     _searchService = TmdbSearchService(
       'searchProvider',
       context.read<TmdbTitleRepository>(),
-      context.read<PreferencesService>(),
     );
     _searchWidget = TitleList(
       _searchService,
@@ -298,9 +296,12 @@ class _SearchState extends State<Search> {
       _resetTitle();
       await _searchService.retrieveSearchlist(
           anonymousAccountId, term, Localizations.localeOf(context));
-    } catch (error) {
+    } catch (error, stackTrace) {
       if (mounted) {
-        SnackMessage.showSnackBar(error.toString());
+        ErrorService.log(
+          error,
+          stackTrace: stackTrace,
+        );
       }
     }
   }

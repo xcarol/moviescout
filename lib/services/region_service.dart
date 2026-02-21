@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -37,8 +38,13 @@ class RegionService with ChangeNotifier {
         _detectedRegion = data['country_code'];
         notifyListeners();
       }
-    } catch (e) {
-      debugPrint('Error detecting region: $e');
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Error detecting region',
+        showSnackBar: false,
+      );
     }
   }
 

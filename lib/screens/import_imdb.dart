@@ -5,7 +5,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
@@ -13,7 +13,6 @@ import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
-import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
@@ -154,8 +153,11 @@ class _ImportIMDBState extends State<ImportIMDB> {
             title,
             false,
           );
-        } catch (error) {
-          SnackMessage.showSnackBar(error.toString());
+        } catch (error, stackTrace) {
+          ErrorService.log(
+            error,
+            stackTrace: stackTrace,
+          );
           break;
         }
       }
@@ -211,8 +213,11 @@ class _ImportIMDBState extends State<ImportIMDB> {
             title,
             0,
           );
-        } catch (error) {
-          SnackMessage.showSnackBar(error.toString());
+        } catch (error, stackTrace) {
+          ErrorService.log(
+            error,
+            stackTrace: stackTrace,
+          );
           break;
         }
       }
@@ -225,36 +230,51 @@ class _ImportIMDBState extends State<ImportIMDB> {
   }
 
   Future<void> _readCsvFromFile(String path) async {
-    final rawData = await rootBundle.loadString(path);
-    final normalizedData = rawData.replaceAll('\r\n', '\n');
-    List<List<dynamic>> csvData =
-        const CsvToListConverter(eol: '\n').convert(normalizedData);
+    try {
+      final rawData = await rootBundle.loadString(path);
+      final normalizedData = rawData.replaceAll('\r\n', '\n');
+      List<List<dynamic>> csvData =
+          const CsvToListConverter(eol: '\n').convert(normalizedData);
 
-    setState(() {
-      _csvHeaders =
-          csvData.first.map((e) => e.toString().toLowerCase()).toList();
-      _imdbIdColumn = _csvHeaders.indexOf('const');
-      _imdbTitleColumn = _csvHeaders.indexOf('title');
-      _imdbRateColumn = _csvHeaders.indexOf('your rating');
-      _csvTitles = csvData
-          .where((row) =>
-              row.length > _imdbIdColumn &&
-              row.length > _imdbTitleColumn &&
-              row.length > _imdbRateColumn)
-          .toList();
-      _csvTitles.removeAt(0);
-      _csvTitlesStatus = List.filled(_csvTitles.length, TitleStatus.pending);
-      _isRateList = _csvTitles[0][_imdbRateColumn].toString().isNotEmpty;
-    });
+      setState(() {
+        _csvHeaders =
+            csvData.first.map((e) => e.toString().toLowerCase()).toList();
+        _imdbIdColumn = _csvHeaders.indexOf('const');
+        _imdbTitleColumn = _csvHeaders.indexOf('title');
+        _imdbRateColumn = _csvHeaders.indexOf('your rating');
+        _csvTitles = csvData
+            .where((row) =>
+                row.length > _imdbIdColumn &&
+                row.length > _imdbTitleColumn &&
+                row.length > _imdbRateColumn)
+            .toList();
+        _csvTitles.removeAt(0);
+        _csvTitlesStatus = List.filled(_csvTitles.length, TitleStatus.pending);
+        _isRateList = _csvTitles[0][_imdbRateColumn].toString().isNotEmpty;
+      });
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Error reading CSV file',
+      );
+    }
   }
 
   Future<void> _pickFile(BuildContext context) async {
-    final result = await FilePicker.platform.pickFiles();
-
-    if (result != null && result.files.isNotEmpty) {
-      final file = result.files.first;
-      _filenameController.text = file.name;
-      _readCsvFromFile(file.path!);
+    try {
+      final result = await FilePicker.platform.pickFiles();
+      if (result != null && result.files.isNotEmpty) {
+        final file = result.files.first;
+        _filenameController.text = file.name;
+        _readCsvFromFile(file.path!);
+      }
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Error picking file',
+      );
     }
   }
 
@@ -311,7 +331,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
               const SizedBox(width: 10),
               OutlinedButton(
                 onPressed: _operationInProgress == true
-                    ? () => _operationInProgress = false
+                    ? () => setState(() => _operationInProgress = false)
                     : null,
                 child: Text(AppLocalizations.of(context)!.cancel),
               ),
@@ -344,7 +364,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
     );
   }
 
-  Widget _importResultsCell({double? width = 0, Widget child = const SizedBox()}) {
+  Widget _importResultsCell(
+      {double? width = 0, Widget child = const SizedBox()}) {
     return Container(
       width: width,
       margin: const EdgeInsets.only(bottom: 8.0),
@@ -392,12 +413,15 @@ class _ImportIMDBState extends State<ImportIMDB> {
             switch (_csvTitlesStatus[index]) {
               case TitleStatus.pending:
                 status = Icons.check_box_outline_blank;
+                break;
               case TitleStatus.success:
                 status = Icons.check_box;
                 statusColor = Colors.green;
+                break;
               case TitleStatus.failed:
                 status = Icons.cancel_outlined;
                 statusColor = Colors.red;
+                break;
             }
           }
 
@@ -458,7 +482,6 @@ class _ImportIMDBState extends State<ImportIMDB> {
       final tmdbSearchService = TmdbSearchService(
         searchServiceListName,
         context.read<TmdbTitleRepository>(),
-        context.read<PreferencesService>(),
       );
       final TmdbUserService tmdbUserService =
           Provider.of<TmdbUserService>(context, listen: false);
@@ -529,14 +552,19 @@ class _ImportIMDBState extends State<ImportIMDB> {
           });
         }
       }
-    } catch (error) {
+    } catch (error, stackTrace) {
       if (context.mounted) {
-        SnackMessage.showSnackBar(error.toString());
+        ErrorService.log(
+          error,
+          stackTrace: stackTrace,
+        );
       }
     } finally {
-      setState(() {
-        _operationInProgress = false;
-      });
+      if (mounted) {
+        setState(() {
+          _operationInProgress = false;
+        });
+      }
     }
   }
 
@@ -555,7 +583,6 @@ class _ImportIMDBState extends State<ImportIMDB> {
       final tmdbSearchService = TmdbSearchService(
         searchServiceListName,
         context.read<TmdbTitleRepository>(),
-        context.read<PreferencesService>(),
       );
       final tmdbUserService =
           Provider.of<TmdbUserService>(context, listen: false);
@@ -625,14 +652,19 @@ class _ImportIMDBState extends State<ImportIMDB> {
           });
         }
       }
-    } catch (error) {
+    } catch (error, stackTrace) {
       if (context.mounted) {
-        SnackMessage.showSnackBar(error.toString());
+        ErrorService.log(
+          error,
+          stackTrace: stackTrace,
+        );
       }
     } finally {
-      setState(() {
-        _operationInProgress = false;
-      });
+      if (mounted) {
+        setState(() {
+          _operationInProgress = false;
+        });
+      }
     }
   }
 }

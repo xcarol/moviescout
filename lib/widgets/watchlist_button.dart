@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:provider/provider.dart';
@@ -17,8 +17,10 @@ Widget watchlistButton(
         return IconButton(
           icon: const Icon(Icons.highlight_off),
           onPressed: () {
-            SnackMessage.showSnackBar(
-                AppLocalizations.of(context)!.signInToWatchlist);
+            ErrorService.log(
+              'User not logged in',
+              userMessage: AppLocalizations.of(context)!.signInToWatchlist,
+            );
           },
         );
       }
@@ -31,12 +33,19 @@ Widget watchlistButton(
             : Theme.of(context).extension<CustomColors>()!.notInWatchlist,
         icon: Icon(Icons.remove_red_eye),
         onPressed: () {
-          watchlistService.updateWatchlistTitle(
-            userService.accountId,
-            userService.sessionId,
-            title,
-            !isInWatchlist,
-          );
+          try {
+            watchlistService.updateWatchlistTitle(
+              userService.accountId,
+              userService.sessionId,
+              title,
+              !isInWatchlist,
+            );
+          } catch (error, stackTrace) {
+            ErrorService.log(
+              error,
+              stackTrace: stackTrace,
+            );
+          }
         },
       );
     },

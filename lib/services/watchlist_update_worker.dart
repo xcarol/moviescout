@@ -1,9 +1,7 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
@@ -251,23 +249,18 @@ void callbackDispatcher() {
       await _saveLogs(logLines);
 
       return Future.value(true);
-    } catch (e, stackTrace) {
-      debugPrint('Error in background task: $e');
-      debugPrint(stackTrace.toString());
-
-      logLines.add('ERROR: $e\n$stackTrace');
+    } catch (error, stackTrace) {
+      logLines.add('ERROR: $error\n$stackTrace');
       logLines.add(
           'Summary: $scannedCount scanned - $updatedCount updated (Interrupted)');
       await _saveLogs(logLines);
 
-      if (defaultTargetPlatform == TargetPlatform.android) {
-        try {
-          // Firebase might not be initialized if the error happened very early
-          await Firebase.initializeApp();
-          FirebaseCrashlytics.instance.recordError(e, stackTrace,
-              reason: 'Workmanager task error: $task');
-        } catch (_) {}
-      }
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        userMessage: 'Error in background task',
+        showSnackBar: false,
+      );
       return Future.value(false);
     }
   });

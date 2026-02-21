@@ -4,6 +4,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:moviescout/services/deep_link_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -167,8 +168,12 @@ class NotificationService extends ChangeNotifier {
           contentTitle: title,
           summaryText: body,
         );
-      } catch (e) {
-        // Fallback to big text if image fails
+      } catch (e, stackTrace) {
+        ErrorService.log(
+          e,
+          stackTrace: stackTrace,
+          showSnackBar: false,
+        );
       }
     }
 

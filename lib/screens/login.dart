@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
@@ -45,8 +46,11 @@ class _LoginState extends State<Login> {
 
           _completeLogin();
         }
-      } catch (error) {
-        SnackMessage.showSnackBar(error.toString());
+      } catch (error, stackTrace) {
+        ErrorService.log(
+          error,
+          stackTrace: stackTrace,
+        );
       }
     });
   }
@@ -93,8 +97,10 @@ class _LoginState extends State<Login> {
     final result = await userService.login();
 
     if (result['success'] == false) {
-      SnackMessage.showSnackBar(loginFailedMessage);
-      SnackMessage.showSnackBar(result['message']);
+      ErrorService.log(
+        result['message'],
+        userMessage: loginFailedMessage,
+      );
     }
   }
 

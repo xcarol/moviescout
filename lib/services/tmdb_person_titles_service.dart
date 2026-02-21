@@ -11,8 +11,7 @@ class TmdbPersonTitlesService extends TmdbListService {
 
   TmdbPersonTitlesService(
     super.listName,
-    super.repository,
-    super.preferencesService, {
+    super.repository, {
     required this.person,
   }) {
     _initializeTitles();

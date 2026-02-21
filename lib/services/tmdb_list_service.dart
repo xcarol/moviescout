@@ -2,8 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
-import 'package:moviescout/services/preferences_service.dart';
-import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
@@ -33,8 +32,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   final int pageSizeVal = 10;
   @protected
   final TmdbTitleRepository repository;
-  @protected
-  final PreferencesService preferencesService;
 
   @protected
   bool anyFilterApplied = false;
@@ -63,8 +60,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   List<String> listGenresVal = [];
   ValueNotifier<List<String>> listGenres = ValueNotifier([]);
 
-  TmdbListService(String listName, this.repository, this.preferencesService,
-      {List<TmdbTitle>? titles}) {
+  TmdbListService(String listName, this.repository, {List<TmdbTitle>? titles}) {
     listNameVal = listName;
   }
 
@@ -172,8 +168,12 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       await updateListGenres();
 
       setLastUpdate();
-    } catch (error) {
-      SnackMessage.showSnackBar('List $listNameVal ERROR: $error');
+    } catch (error, stackTrace) {
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        userMessage: 'Error updating list $listNameVal',
+      );
     } finally {
       isLoading.value = false;
     }
@@ -306,6 +306,12 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       }
 
       await filterTitles();
+    } catch (error, stackTrace) {
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        userMessage: 'Error updating platform availability',
+      );
     } finally {
       isLoading.value = false;
       notifyListeners();
@@ -332,8 +338,12 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
     try {
       return loadedTitlesVal[position];
-    } catch (e) {
-      debugPrint('Error getting item at position $position: $e');
+    } catch (error, stackTrace) {
+      ErrorService.log(
+        'Error getting item at position $position: $error',
+        stackTrace: stackTrace,
+        showSnackBar: false,
+      );
       return null;
     }
   }
@@ -567,6 +577,12 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       if (titles.length < pageSizeVal && !isLoading.value) {
         hasMoreVal = false;
       }
+    } catch (error, stackTrace) {
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        userMessage: 'Error loading page',
+      );
     } finally {
       isDbLoading = false;
       if (listGenresVal.isEmpty) {

@@ -1,14 +1,12 @@
 import 'dart:convert';
-
-// ignore: unnecessary_import
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/services/error_service.dart';
+import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_pinned_service.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:moviescout/services/preferences_service.dart';
-import 'package:moviescout/services/tmdb_base_service.dart';
 
 class TmdbUserService extends TmdbBaseService with ChangeNotifier {
   final String redirectTo = 'moviescout://auth/callback';
@@ -128,13 +126,22 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
           Uri.parse(authUrl),
           mode: LaunchMode.externalApplication,
         );
-      } catch (e) {
+      } catch (error, stackTrace) {
+        ErrorService.log(
+          'Error launching URL: $error',
+          stackTrace: stackTrace,
+          userMessage: 'Error launching authorization URL',
+        );
         return {
           'success': false,
-          'message': 'Error launching URL: $e',
+          'message': 'Error launching URL: $error',
         };
       }
     } else {
+      ErrorService.log(
+        'Error ${response.statusCode} in _startLogin: ${response.body}',
+        userMessage: 'Error starting login process',
+      );
       return {
         'success': false,
         'message': 'Error ${response.statusCode} in _startLogin',

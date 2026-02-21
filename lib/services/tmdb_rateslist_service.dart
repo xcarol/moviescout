@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
@@ -17,8 +17,7 @@ const String _rateMovie = 'movie/{ID}/rating?session_id={SESSION_ID}';
 const String _rateTv = 'tv/{ID}/rating?session_id={SESSION_ID}';
 
 class TmdbRateslistService extends TmdbListService {
-  TmdbRateslistService(
-      super.listName, super.repository, super.preferencesService) {
+  TmdbRateslistService(super.listName, super.repository) {
     filterRating = RatingFilter.rated;
   }
 
@@ -132,9 +131,11 @@ class TmdbRateslistService extends TmdbListService {
         return _updateTitleRateToTmdb(
             accountId, sessionId, title.tmdbId, title.mediaType, rating);
       });
-    } catch (error) {
-      SnackMessage.showSnackBar(
-        'Error updating rate for ${title.name}: $error',
+    } catch (error, stackTrace) {
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        userMessage: 'Error updating rate for ${title.name}',
       );
     }
   }

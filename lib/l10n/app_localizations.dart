@@ -864,6 +864,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You need to allow notifications in the system settings.'**
   String get notificationsPermissionRequired;
+
+  /// No description provided for @errorMessageGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred. Please try again later.'**
+  String get errorMessageGeneric;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

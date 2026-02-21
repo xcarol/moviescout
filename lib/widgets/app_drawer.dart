@@ -23,6 +23,7 @@ import 'package:moviescout/widgets/color_scheme_form.dart';
 import 'package:moviescout/widgets/language_form.dart';
 import 'package:moviescout/widgets/region_form.dart';
 import 'package:provider/provider.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:moviescout/services/preferences_service.dart';
@@ -71,8 +72,10 @@ class AppDrawer extends StatelessWidget {
         if (value) {
           final granted = await notificationService.requestPermission();
           if (!granted && context.mounted) {
-            SnackMessage.showSnackBar(
-              AppLocalizations.of(context)!.notificationsPermissionRequired,
+            ErrorService.log(
+              'Notification permission denied',
+              userMessage:
+                  AppLocalizations.of(context)!.notificationsPermissionRequired,
             );
             return;
           }
@@ -324,9 +327,10 @@ class AppDrawer extends StatelessWidget {
     final logoutSuccessText = AppLocalizations.of(context)!.logoutSuccess;
     final userLocale = Localizations.localeOf(context);
 
-    await tmdbUserService.logout(context).catchError((error) {
-      SnackMessage.showSnackBar(
-        error.toString(),
+    await tmdbUserService.logout(context).catchError((error, stackTrace) {
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
       );
     });
 

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/services/discoverlist_service.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/language_service.dart';
@@ -55,8 +56,12 @@ void main() async {
       await FirebaseCrashlytics.instance
           .setCrashlyticsCollectionEnabled(kDebugMode);
     }
-  } catch (e) {
-    debugPrint('Firebase initialization failed: $e');
+  } catch (error, stackTrace) {
+    ErrorService.log(
+      error,
+      userMessage: 'Error initializing Firebase',
+      stackTrace: stackTrace,
+    );
   }
 
   try {
@@ -84,18 +89,20 @@ void main() async {
         ),
       );
     }
-  } catch (e) {
-    debugPrint('Service initialization failed: $e');
+  } catch (error, stackTrace) {
+    ErrorService.log(
+      error,
+      userMessage: 'Error initializing services',
+      stackTrace: stackTrace,
+    );
   }
 
   debugPrint('Running Movie Scout...');
   final repository = TmdbTitleRepository();
-  final preferencesService = PreferencesService();
 
   runApp(MultiProvider(
     providers: [
       Provider.value(value: repository),
-      Provider.value(value: preferencesService),
       ChangeNotifierProvider(create: (_) => ThemeService()),
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
@@ -107,18 +114,17 @@ void main() async {
               userService.accessToken),
       ),
       ChangeNotifierProxyProvider<TmdbUserService, TmdbPinnedService>(
-        create: (_) => TmdbPinnedService(repository, preferencesService),
+        create: (_) => TmdbPinnedService(repository),
         update: (_, userService, pinnedService) => pinnedService!
           ..setup(userService.accountId, userService.sessionId,
               userService.accessToken),
       ),
       ChangeNotifierProvider(
-          create: (_) => TmdbRateslistService(
-              AppConstants.rateslist, repository, preferencesService)),
+          create: (_) =>
+              TmdbRateslistService(AppConstants.rateslist, repository)),
       ChangeNotifierProxyProvider2<TmdbRateslistService, TmdbPinnedService,
           TmdbWatchlistService>(
-        create: (_) => TmdbWatchlistService(
-            AppConstants.watchlist, repository, preferencesService),
+        create: (_) => TmdbWatchlistService(AppConstants.watchlist, repository),
         update: (_, rateslistService, pinnedService, watchlistService) {
           rateslistService.removeListener(watchlistService!.refresh);
           rateslistService.addListener(watchlistService.refresh);
@@ -128,8 +134,8 @@ void main() async {
       ),
       ChangeNotifierProxyProvider2<TmdbRateslistService, TmdbWatchlistService,
           TmdbDiscoverlistService>(
-        create: (_) => TmdbDiscoverlistService(
-            AppConstants.discoverlist, repository, preferencesService),
+        create: (_) =>
+            TmdbDiscoverlistService(AppConstants.discoverlist, repository),
         update: (_, rateslistService, watchlistService, discoverlistService) {
           rateslistService.removeListener(discoverlistService!.refresh);
           watchlistService.removeListener(discoverlistService.refresh);

@@ -126,5 +126,6 @@
     "writer": "Writer",
     "seasonsCount": "{count}seas",
     "notifications": "Notifications",
-    "notificationsPermissionRequired": "You need to allow notifications in the system settings."
+    "notificationsPermissionRequired": "You need to allow notifications in the system settings.",
+    "errorMessageGeneric": "An error occurred. Please try again later."
 }
