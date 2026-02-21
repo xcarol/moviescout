@@ -281,7 +281,7 @@ class AppDrawer extends StatelessWidget {
       leading: const Icon(Icons.history, size: 20),
       trailing: const Icon(Icons.chevron_right, size: 16),
       title: Text(
-        'Background update: $formattedDate',
+        '${AppConstants.lastBackgroundRun}: $formattedDate',
         style: Theme.of(context).textTheme.bodySmall,
       ),
       onTap: () {
