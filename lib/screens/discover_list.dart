@@ -8,7 +8,8 @@ import 'package:moviescout/widgets/title_list.dart';
 import 'package:provider/provider.dart';
 
 class DiscoverList extends StatefulWidget {
-  const DiscoverList({super.key});
+  final bool isActive;
+  const DiscoverList({super.key, required this.isActive});
 
   @override
   State<DiscoverList> createState() => _DiscoverListState();
@@ -29,9 +30,37 @@ class _DiscoverListState extends State<DiscoverList> {
 
   @override
   void dispose() {
+    _removeListeners();
+    _discoverlistService.setRefreshPaused(false);
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant DiscoverList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isActive != oldWidget.isActive) {
+      _discoverlistService.setRefreshPaused(widget.isActive);
+
+      if (!widget.isActive) {
+        if (_discoverlistService.retrievePending) {
+          _discoverlistService.clearPendingFlags();
+          _updateDiscoverList(forceUpdate: true);
+        } else if (_discoverlistService.refreshPending) {
+          _discoverlistService.clearPendingFlags();
+          _discoverlistService.refresh();
+        }
+      }
+    }
+  }
+
+  void _addListeners() {
+    _watchlistService.isLoading.addListener(_onWatchlistLoading);
+    _rateslistService.isLoading.addListener(_onRateslistLoading);
+  }
+
+  void _removeListeners() {
     _watchlistService.isLoading.removeListener(_onWatchlistLoading);
     _rateslistService.isLoading.removeListener(_onRateslistLoading);
-    super.dispose();
   }
 
   Future<void> _loadData() async {
@@ -42,8 +71,9 @@ class _DiscoverListState extends State<DiscoverList> {
     _rateslistService =
         Provider.of<TmdbRateslistService>(context, listen: false);
 
-    _watchlistService.isLoading.addListener(_onWatchlistLoading);
-    _rateslistService.isLoading.addListener(_onRateslistLoading);
+    _removeListeners();
+    _addListeners();
+    _discoverlistService.setRefreshPaused(widget.isActive);
 
     _discoverlistWidget = TitleList(
       _discoverlistService,

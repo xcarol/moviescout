@@ -5,7 +5,6 @@ import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
-import 'package:moviescout/services/update_manager.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -14,14 +13,28 @@ const String _tmdbPopularlistMovies =
 const String _tmdbPopularlistTv = 'tv/popular?page={PAGE}&language={LOCALE}';
 
 class TmdbDiscoverlistService extends TmdbListService {
+  bool _isRefreshPaused = false;
+  bool _refreshPending = false;
+  bool _retrievePending = false;
+
+  bool get retrievePending => _retrievePending;
+  bool get refreshPending => _refreshPending;
+
   TmdbDiscoverlistService(super.listName, super.repository);
 
-  Future<void> retrieveDiscoverlist(
-      String accountId, String sessionId, Locale locale,
-      {bool forceUpdate = false}) async {
-    final isUpToDate = UpdateManager().isDiscoverlistUpToDate();
+  void clearPendingFlags() {
+    _retrievePending = false;
+    _refreshPending = false;
+  }
 
-    if (listIsNotEmpty && isUpToDate && !forceUpdate) {
+  Future<void> retrieveDiscoverlist(
+    String accountId,
+    String sessionId,
+    Locale locale, {
+    bool forceUpdate = false,
+  }) async {
+    if (_isRefreshPaused && listIsNotEmpty) {
+      _retrievePending = true;
       return;
     }
 
@@ -135,7 +148,15 @@ class TmdbDiscoverlistService extends TmdbListService {
     return recommendations;
   }
 
+  void setRefreshPaused(bool paused) {
+    _isRefreshPaused = paused;
+  }
+
   void refresh() {
+    if (_isRefreshPaused && listIsNotEmpty) {
+      _refreshPending = true;
+      return;
+    }
     filterTitles();
   }
 }
