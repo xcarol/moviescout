@@ -82,7 +82,7 @@ void main() async {
       await Workmanager().registerPeriodicTask(
         "watchlistUpdateTask",
         "updateWatchlistProviders",
-        frequency: const Duration(hours: 1),
+        frequency: const Duration(hours: 24),
         existingWorkPolicy: ExistingWorkPolicy.keep,
         constraints: Constraints(
           networkType: NetworkType.connected,
