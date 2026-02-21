@@ -13,24 +13,41 @@ import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'dart:convert';
 
-bool _isBrandNewSeason(Map<String, dynamic>? nextEpisode, int currentSeason) {
-  if (nextEpisode == null) return false;
+bool _isBrandNewSeason(Map<String, dynamic>? nextEpisode,
+    Map<String, dynamic>? lastEpisode, int currentSeason) {
+  if (nextEpisode != null) {
+    try {
+      final nextSeason = nextEpisode['season_number'] as int;
+      final nextEpisodeNum = nextEpisode['episode_number'] as int;
+      final airDateStr = nextEpisode['air_date'] as String?;
 
-  try {
-    final nextSeason = nextEpisode['season_number'] as int;
-    final nextEpisodeNum = nextEpisode['episode_number'] as int;
-    final airDateStr = nextEpisode['air_date'] as String?;
-
-    if (nextSeason == currentSeason &&
-        nextEpisodeNum == 1 &&
-        airDateStr != null) {
-      final airDate = DateTime.tryParse(airDateStr);
-      if (airDate != null &&
-          airDate.isBefore(DateTime.now().add(const Duration(days: 1)))) {
-        return true;
+      if (nextSeason == currentSeason &&
+          nextEpisodeNum == 1 &&
+          airDateStr != null) {
+        final airDate = DateTime.tryParse(airDateStr);
+        if (airDate != null &&
+            airDate.isBefore(DateTime.now().add(const Duration(days: 1)))) {
+          return true;
+        }
       }
-    }
-  } catch (_) {}
+    } catch (_) {}
+  }
+
+  if (lastEpisode != null) {
+    try {
+      final lastSeason = lastEpisode['season_number'] as int;
+      final airDateStr = lastEpisode['air_date'] as String?;
+
+      if (lastSeason == currentSeason && airDateStr != null) {
+        final airDate = DateTime.tryParse(airDateStr);
+        if (airDate != null &&
+            airDate.isAfter(DateTime.now().subtract(const Duration(days: 7)))) {
+          return true;
+        }
+      }
+    } catch (_) {}
+  }
+
   return false;
 }
 
@@ -121,7 +138,8 @@ void callbackDispatcher() {
         for (final title in watchlistTitles) {
           scannedCount++;
           logLines.add('- [$scannedCount] Scanning: ${title.name}');
-          if (!TmdbTitleService.isUpToDate(title)) {
+          if (!TmdbTitleService.isUpToDate(title) ||
+              (title.isSerie && title.lastNotifiedSeason == 0)) {
             updatedCount++;
             final oldProviders = title.flatrateProviderIds.toSet();
             final enabledProviderSet = enabledProviderIds.toSet();
@@ -186,8 +204,8 @@ void callbackDispatcher() {
 
                 // Initialize lastNotifiedSeason if it's 0 (first run with this feature)
                 if (title.lastNotifiedSeason == 0 && currentSeason > 0) {
-                  final isBrandNew =
-                      _isBrandNewSeason(title.nextEpisodeToAir, currentSeason);
+                  final isBrandNew = _isBrandNewSeason(title.nextEpisodeToAir,
+                      title.lastEpisodeToAir, currentSeason);
 
                   if (isBrandNew) {
                     title.lastNotifiedSeason = currentSeason - 1;
