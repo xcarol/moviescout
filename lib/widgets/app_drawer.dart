@@ -26,9 +26,6 @@ import 'package:moviescout/widgets/notification_permission_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
-import 'package:intl/intl.dart';
-import 'package:moviescout/services/preferences_service.dart';
-import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/deep_link_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -54,7 +51,6 @@ class AppDrawer extends StatelessWidget {
           if (defaultTargetPlatform == TargetPlatform.android)
             _verifyDeepLinksTile(context),
           _aboutTile(context),
-          _lastBackgroundUpdateTile(context),
           const Divider(),
           _userSessionTile(context, isUserLoggedIn),
         ],
@@ -234,6 +230,7 @@ class AppDrawer extends StatelessWidget {
       ),
       aboutBoxChildren: [
         Text(AppLocalizations.of(context)!.aboutDescription),
+        const SizedBox(height: 16),
         SelectableText.rich(
           TextSpan(
             children: [
@@ -249,41 +246,29 @@ class AppDrawer extends StatelessWidget {
               ),
             ],
           ),
-        )
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton.icon(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close About dialog
+                Navigator.pop(context); // Close Drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const WatchlistLogsScreen(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.history),
+              label: const Text('Logs d\'actualització'),
+            ),
+          ],
+        ),
       ],
       child: Text(AppLocalizations.of(context)!.about),
-    );
-  }
-
-  Widget _lastBackgroundUpdateTile(BuildContext context) {
-    final String? lastRunStr =
-        PreferencesService().prefs.getString(AppConstants.lastBackgroundRun);
-
-    String formattedDate = 'none';
-    if (lastRunStr != null) {
-      try {
-        final DateTime lastRun = DateTime.parse(lastRunStr).toLocal();
-        formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(lastRun);
-      } catch (_) {
-        formattedDate = 'error';
-      }
-    }
-
-    return ListTile(
-      dense: true,
-      leading: const Icon(Icons.history, size: 20),
-      trailing: const Icon(Icons.chevron_right, size: 16),
-      title: Text(
-        '${AppConstants.lastBackgroundRun}: $formattedDate',
-        style: Theme.of(context).textTheme.bodySmall,
-      ),
-      onTap: () {
-        Navigator.of(context).pop();
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const WatchlistLogsScreen()),
-        );
-      },
     );
   }
 

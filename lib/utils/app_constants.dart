@@ -18,6 +18,7 @@ class AppConstants {
   static const String watchlistUpdateLogs = 'watchlist_update_logs';
   static const String notificationsEnabled = 'notifications_enabled';
   static const String notificationsAsked = 'notifications_asked';
+  static const String debugShowLastUpdate = 'debug_show_last_update';
 
   static const String catalan = 'ca-ES';
   static const String spanish = 'es-ES';
