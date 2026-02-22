@@ -127,5 +127,7 @@
     "seasonsCount": "{count}seas",
     "notifications": "Notifications",
     "notificationsPermissionRequired": "You need to allow notifications in the system settings.",
+    "notificationsPermissionDescription": "To receive updates on movie availability and new seasons, you must enable notifications in your system settings.",
+    "openSettings": "Open Settings",
     "errorMessageGeneric": "An error occurred. Please try again later."
 }

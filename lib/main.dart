@@ -167,6 +167,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         Provider.of<TmdbWatchlistService>(context, listen: false);
     DeepLinkService().init(watchlistService);
     NotificationService().handleColdStartNotification();
+
+    if (defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS) {
+      Future.delayed(const Duration(seconds: 1), () {
+        NotificationService().requestPermissionOnFirstLaunch();
+      });
+    }
   }
 
   @override

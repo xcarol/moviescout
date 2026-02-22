@@ -64,44 +64,84 @@ class NotificationService extends ChangeNotifier {
       systemGranted = true;
     }
 
-    if (!systemGranted && _enabled) {
-      _enabled = false;
+    if (systemGranted != _enabled) {
+      _enabled = systemGranted;
       await PreferencesService()
           .prefs
-          .setBool(AppConstants.notificationsEnabled, false);
+          .setBool(AppConstants.notificationsEnabled, _enabled);
       notifyListeners();
     }
   }
 
   Future<bool> requestPermission() async {
+    await PreferencesService()
+        .prefs
+        .setBool(AppConstants.notificationsAsked, true);
+
     if (defaultTargetPlatform == TargetPlatform.android) {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
           _notificationsPlugin.resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
 
-      final bool? granted =
-          await androidImplementation?.requestNotificationsPermission();
-      return granted ?? false;
+      final bool granted =
+          await androidImplementation?.requestNotificationsPermission() ??
+              false;
+
+      if (!granted && _enabled) {
+        _enabled = false;
+        await PreferencesService()
+            .prefs
+            .setBool(AppConstants.notificationsEnabled, false);
+        notifyListeners();
+      }
+
+      return granted;
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      final bool? granted = await _notificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
-      return granted ?? false;
+      final bool granted = await _notificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                  IOSFlutterLocalNotificationsPlugin>()
+              ?.requestPermissions(
+                alert: true,
+                badge: true,
+                sound: true,
+              ) ??
+          false;
+
+      if (!granted && _enabled) {
+        _enabled = false;
+        await PreferencesService()
+            .prefs
+            .setBool(AppConstants.notificationsEnabled, false);
+        notifyListeners();
+      }
+
+      return granted;
     }
     return true;
   }
 
-  Future<void> setEnabled(bool value) async {
+  Future<void> requestPermissionOnFirstLaunch() async {
+    final hasAsked =
+        PreferencesService().prefs.getBool(AppConstants.notificationsAsked) ??
+            false;
+
+    if (!hasAsked) {
+      await requestPermission();
+    }
+  }
+
+  Future<bool> setEnabled(bool value) async {
+    if (value) {
+      final granted = await requestPermission();
+      if (!granted) return false;
+    }
+
     _enabled = value;
     await PreferencesService()
         .prefs
         .setBool(AppConstants.notificationsEnabled, value);
     notifyListeners();
+    return true;
   }
 
   void _handlePayload(String payload) {

@@ -22,6 +22,7 @@ import 'package:moviescout/services/region_service.dart';
 import 'package:moviescout/widgets/color_scheme_form.dart';
 import 'package:moviescout/widgets/language_form.dart';
 import 'package:moviescout/widgets/region_form.dart';
+import 'package:moviescout/widgets/notification_permission_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
@@ -69,18 +70,10 @@ class AppDrawer extends StatelessWidget {
       title: Text(AppLocalizations.of(context)!.notifications),
       value: notificationService.enabled,
       onChanged: (bool value) async {
-        if (value) {
-          final granted = await notificationService.requestPermission();
-          if (!granted && context.mounted) {
-            ErrorService.log(
-              'Notification permission denied',
-              userMessage:
-                  AppLocalizations.of(context)!.notificationsPermissionRequired,
-            );
-            return;
-          }
+        final success = await notificationService.setEnabled(value);
+        if (!success && value && context.mounted) {
+          NotificationPermissionDialog.show(context);
         }
-        await notificationService.setEnabled(value);
       },
     );
   }

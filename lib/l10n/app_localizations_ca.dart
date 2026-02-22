@@ -399,5 +399,11 @@ class AppLocalizationsCa extends AppLocalizations {
   String get notificationsPermissionRequired => 'Cal que permetis les notificacions a la configuració del sistema.';
 
   @override
+  String get notificationsPermissionDescription => 'Per rebre avisos de disponibilitat de pel·lícules i noves temporades, cal que activis les notificacions als ajustos del sistema.';
+
+  @override
+  String get openSettings => 'Obrir ajustos';
+
+  @override
   String get errorMessageGeneric => 'S\'ha produït un error. Torna-ho a provar més tard.';
 }
