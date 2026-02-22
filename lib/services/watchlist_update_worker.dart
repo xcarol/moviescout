@@ -137,16 +137,30 @@ void callbackDispatcher() {
 
         for (final title in watchlistTitles) {
           scannedCount++;
-          logLines.add('- [$scannedCount] Scanning: ${title.name}');
-          if (!TmdbTitleService.isUpToDate(title) ||
-              (title.isSerie && title.lastNotifiedSeason == 0)) {
+          final timeSinceUpdate =
+              DateTime.now().difference(DateTime.parse(title.lastUpdated));
+          final isUninitialized =
+              title.isSerie && title.lastNotifiedSeason == 0;
+          final needsFull = timeSinceUpdate.inDays >=
+                  AppConstants.watchlistTitleUpdateFrequencyDays ||
+              isUninitialized;
+          final needsLight = timeSinceUpdate.inDays >=
+              AppConstants.watchlistProvidersUpdateFrequencyDays;
+
+          if (needsFull || needsLight) {
             updatedCount++;
             final oldProviders = title.flatrateProviderIds.toSet();
             final enabledProviderSet = enabledProviderIds.toSet();
             final wasAvailable =
                 oldProviders.intersection(enabledProviderSet).isNotEmpty;
 
-            await titleService.updateTitleDetails(title);
+            if (needsFull) {
+              logLines.add('- Full update: ${title.name}');
+              await titleService.updateTitleDetails(title);
+            } else {
+              logLines.add('- Light update: ${title.name}');
+              await titleService.updateTitleLight(title);
+            }
             await repository.saveTitle(title);
 
             final oldProviderNames = providersList
