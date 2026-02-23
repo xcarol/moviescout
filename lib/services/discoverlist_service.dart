@@ -33,7 +33,7 @@ class TmdbDiscoverlistService extends TmdbListService {
     Locale locale, {
     bool forceUpdate = false,
   }) async {
-    if (_isRefreshPaused && listIsNotEmpty) {
+    if ((_isRefreshPaused && listIsNotEmpty) || isLoading.value) {
       _retrievePending = true;
       return;
     }
