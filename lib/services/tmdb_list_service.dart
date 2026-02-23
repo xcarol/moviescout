@@ -156,7 +156,9 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }) async {
     bool isUpToDate = UpdateManager().isUpToDate(listNameVal, cacheTimeout);
 
-    if (accountId.isEmpty || (listIsNotEmpty && isUpToDate && !forceUpdate)) {
+    if (accountId.isEmpty ||
+        (listIsNotEmpty && isUpToDate && !forceUpdate) ||
+        isLoading.value) {
       return;
     }
 

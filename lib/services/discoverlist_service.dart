@@ -33,7 +33,8 @@ class TmdbDiscoverlistService extends TmdbListService {
     Locale locale, {
     bool forceUpdate = false,
   }) async {
-    if (_isRefreshPaused && listIsNotEmpty) {
+    if (((_isRefreshPaused && listIsNotEmpty) || isLoading.value) &&
+        !forceUpdate) {
       _retrievePending = true;
       return;
     }
@@ -51,6 +52,72 @@ class TmdbDiscoverlistService extends TmdbListService {
     });
   }
 
+  Future<Map<int, double>> _calculateGenrePreferences() async {
+    final isar = IsarService.instance;
+    final Map<int, double> genreWeights = {};
+    final Map<int, int> genreCounts = {};
+
+    final ratedTitles = await isar.tmdbTitles
+        .filter()
+        .listNameEqualTo(AppConstants.rateslist)
+        .findAll();
+
+    final watchlistTitles = await isar.tmdbTitles
+        .filter()
+        .listNameEqualTo(AppConstants.watchlist)
+        .findAll();
+
+    final allTitles = {...ratedTitles, ...watchlistTitles}.toList();
+    final totalTitles = allTitles.length;
+
+    if (totalTitles == 0) return {};
+
+    void addWeight(List<int> genres, double weight) {
+      for (final id in genres) {
+        genreWeights[id] = (genreWeights[id] ?? 0.0) + weight;
+        genreCounts[id] = (genreCounts[id] ?? 0) + 1;
+      }
+    }
+
+    for (final title in ratedTitles) {
+      double weight = 0.0;
+      if (title.rating >= 4.5) {
+        weight = 1.0;
+      } else if (title.rating >= 3.5) {
+        weight = 0.7;
+      } else if (title.rating >= 2.5) {
+        weight = 0.3;
+      } else if (title.rating > 0) {
+        weight = -0.5;
+      }
+      addWeight(title.genreIds, weight);
+    }
+
+    for (final title in watchlistTitles) {
+      addWeight(title.genreIds, 0.4);
+    }
+
+    final Map<int, double> normalizedWeights = {};
+    genreWeights.forEach((id, totalWeight) {
+      final count = genreCounts[id] ?? 1;
+      final avgWeight = totalWeight / count;
+
+      // Specificity Factor (IDF-like):
+      // If a genre appears in almost all titles (e.g., Drama), its "importance" is reduced.
+      // specificity = log(Total / Count)
+      // Since this is a mobile app with few titles, we use a smoothed version:
+      final genreFrequency = count / totalTitles;
+      final specificityPenalty = 1.0 /
+          (1.0 +
+              (genreFrequency *
+                  2.0)); // If frequency is 1.0, penalty is 0.33. If 0.1, penalty is 0.83.
+
+      normalizedWeights[id] = (avgWeight * specificityPenalty).clamp(-0.4, 0.6);
+    });
+
+    return normalizedWeights;
+  }
+
   Future<List> _getDiscoveryTitles(String accountId, String sessionId,
       Locale locale, String mediaType, String popularEndpoint) async {
     final List<dynamic> recommendations = [];
@@ -58,6 +125,22 @@ class TmdbDiscoverlistService extends TmdbListService {
 
     if (accountId.isNotEmpty) {
       final isar = IsarService.instance;
+
+      // 1. Get genre preferences
+      final genrePreferences = await _calculateGenrePreferences();
+
+      // 2. Get all positive signal titles
+      final positiveSignalTitles = await isar.tmdbTitles
+          .filter()
+          .group((q) => q
+              .listNameEqualTo(AppConstants.rateslist)
+              .and()
+              .ratingGreaterThan(2.5)
+              .or()
+              .listNameEqualTo(AppConstants.watchlist))
+          .and()
+          .mediaTypeEqualTo(mediaType)
+          .findAll();
 
       final ratedIds = await isar.tmdbTitles
           .filter()
@@ -78,21 +161,13 @@ class TmdbDiscoverlistService extends TmdbListService {
       addedIds.addAll(ratedIds);
       addedIds.addAll(watchlistIds);
 
-      final recommendationJsons = await isar.tmdbTitles
-          .filter()
-          .group((q) => q
-              .listNameEqualTo(AppConstants.rateslist)
-              .or()
-              .listNameEqualTo(AppConstants.watchlist))
-          .and()
-          .mediaTypeEqualTo(mediaType)
-          .sortByRatingDesc()
-          .limit(50)
-          .recommendationsJsonProperty()
-          .findAll();
+      // 3. Randomize seeds to ensure variety on refresh
+      final seedTitles = [...positiveSignalTitles]..shuffle();
+      final selectedSeeds = seedTitles.take(20).toList();
 
       final List<dynamic> allRecommendations = [];
-      for (final jsonStr in recommendationJsons) {
+      for (final title in selectedSeeds) {
+        final jsonStr = title.recommendationsJson;
         if (jsonStr != null && jsonStr.isNotEmpty) {
           try {
             allRecommendations.addAll(jsonDecode(jsonStr));
@@ -100,12 +175,34 @@ class TmdbDiscoverlistService extends TmdbListService {
         }
       }
 
+      // 4. Sort with genre weighting
       allRecommendations.sort((a, b) {
-        final double voteA =
+        double scoreA =
             (a[TmdbTitleFields.voteAverage] as num?)?.toDouble() ?? 0.0;
-        final double voteB =
+        double scoreB =
             (b[TmdbTitleFields.voteAverage] as num?)?.toDouble() ?? 0.0;
-        return voteB.compareTo(voteA);
+
+        // Apply genre weights
+        double boostA = 0.0;
+        final List<dynamic>? genresA = a[TmdbTitleFields.genreIds];
+        if (genresA != null) {
+          for (final genreId in genresA) {
+            boostA += genrePreferences[genreId] ?? 0.0;
+          }
+        }
+
+        double boostB = 0.0;
+        final List<dynamic>? genresB = b[TmdbTitleFields.genreIds];
+        if (genresB != null) {
+          for (final genreId in genresB) {
+            boostB += genrePreferences[genreId] ?? 0.0;
+          }
+        }
+
+        final finalScoreA = scoreA * (1.0 + boostA);
+        final finalScoreB = scoreB * (1.0 + boostB);
+
+        return finalScoreB.compareTo(finalScoreA);
       });
 
       for (final rec in allRecommendations) {

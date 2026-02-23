@@ -124,30 +124,36 @@ class _DiscoverListState extends State<DiscoverList> {
       selector: (_, service) => service.listIsEmpty && !service.isLoading.value,
       shouldRebuild: (prev, next) => prev != next,
       builder: (context, isEmpty, child) {
-        if (isEmpty) {
-          return emptyBody();
-        } else {
-          return discoverlistBody();
-        }
+        return RefreshIndicator(
+          onRefresh: () async {
+            _updateDiscoverList(forceUpdate: true);
+            while (_discoverlistService.isLoading.value) {
+              await Future.delayed(const Duration(milliseconds: 100));
+            }
+          },
+          child: isEmpty ? emptyBody() : discoverlistBody(),
+        );
       },
     );
   }
 
   Widget emptyBody() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(AppLocalizations.of(context)!.emptyList,
-              textAlign: TextAlign.center)
-        ],
-      ),
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.4,
+        ),
+        Center(
+          child: Text(AppLocalizations.of(context)!.emptyList,
+              textAlign: TextAlign.center),
+        ),
+      ],
     );
   }
 
   Widget discoverlistBody() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[_discoverlistWidget],
     );
   }
