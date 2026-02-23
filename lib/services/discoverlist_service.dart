@@ -67,6 +67,11 @@ class TmdbDiscoverlistService extends TmdbListService {
         .listNameEqualTo(AppConstants.watchlist)
         .findAll();
 
+    final allTitles = {...ratedTitles, ...watchlistTitles}.toList();
+    final totalTitles = allTitles.length;
+
+    if (totalTitles == 0) return {};
+
     void addWeight(List<int> genres, double weight) {
       for (final id in genres) {
         genreWeights[id] = (genreWeights[id] ?? 0.0) + weight;
@@ -94,8 +99,20 @@ class TmdbDiscoverlistService extends TmdbListService {
 
     final Map<int, double> normalizedWeights = {};
     genreWeights.forEach((id, totalWeight) {
-      final avgWeight = totalWeight / (genreCounts[id] ?? 1);
-      normalizedWeights[id] = avgWeight.clamp(-0.3, 0.5);
+      final count = genreCounts[id] ?? 1;
+      final avgWeight = totalWeight / count;
+
+      // Specificity Factor (IDF-like):
+      // If a genre appears in almost all titles (e.g., Drama), its "importance" is reduced.
+      // specificity = log(Total / Count)
+      // Since this is a mobile app with few titles, we use a smoothed version:
+      final genreFrequency = count / totalTitles;
+      final specificityPenalty = 1.0 /
+          (1.0 +
+              (genreFrequency *
+                  2.0)); // If frequency is 1.0, penalty is 0.33. If 0.1, penalty is 0.83.
+
+      normalizedWeights[id] = (avgWeight * specificityPenalty).clamp(-0.4, 0.6);
     });
 
     return normalizedWeights;
@@ -109,8 +126,10 @@ class TmdbDiscoverlistService extends TmdbListService {
     if (accountId.isNotEmpty) {
       final isar = IsarService.instance;
 
+      // 1. Get genre preferences
       final genrePreferences = await _calculateGenrePreferences();
 
+      // 2. Get all positive signal titles
       final positiveSignalTitles = await isar.tmdbTitles
           .filter()
           .group((q) => q
@@ -142,6 +161,7 @@ class TmdbDiscoverlistService extends TmdbListService {
       addedIds.addAll(ratedIds);
       addedIds.addAll(watchlistIds);
 
+      // 3. Randomize seeds to ensure variety on refresh
       final seedTitles = [...positiveSignalTitles]..shuffle();
       final selectedSeeds = seedTitles.take(20).toList();
 
@@ -155,6 +175,7 @@ class TmdbDiscoverlistService extends TmdbListService {
         }
       }
 
+      // 4. Sort with genre weighting
       allRecommendations.sort((a, b) {
         double scoreA =
             (a[TmdbTitleFields.voteAverage] as num?)?.toDouble() ?? 0.0;
