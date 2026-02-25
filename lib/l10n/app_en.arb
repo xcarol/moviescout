@@ -127,5 +127,6 @@
     "seasonsCount": "{count}seas",
     "notifications": "Notifications",
     "notificationsPermissionRequired": "You need to allow notifications in the system settings.",
-    "errorMessageGeneric": "An error occurred. Please try again later."
+    "errorMessageGeneric": "An error occurred. Please try again later.",
+    "youtubeSearch": "YouTube Search"
 }

@@ -400,4 +400,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get errorMessageGeneric => 'Ha ocurrido un error. Inténtalo de nuevo más tarde.';
+
+  @override
+  String get youtubeSearch => 'Búsqueda en YouTube';
 }

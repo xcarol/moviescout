@@ -870,6 +870,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An error occurred. Please try again later.'**
   String get errorMessageGeneric;
+
+  /// No description provided for @youtubeSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'YouTube Search'**
+  String get youtubeSearch;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

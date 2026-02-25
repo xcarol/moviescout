@@ -127,5 +127,6 @@
     "seasonsCount": "{count}temp",
     "notifications": "Notificacions",
     "notificationsPermissionRequired": "Cal que permetis les notificacions a la configuració del sistema.",
-    "errorMessageGeneric": "S'ha produït un error. Torna-ho a provar més tard."
+    "errorMessageGeneric": "S'ha produït un error. Torna-ho a provar més tard.",
+    "youtubeSearch": "Cerca a YouTube"
 }
