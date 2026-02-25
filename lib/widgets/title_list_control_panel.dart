@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/widgets/drop_down_selector.dart';
+import 'package:moviescout/screens/genres.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 
 typedef MenuEntry = DropdownMenuEntry<String>;
@@ -35,7 +35,6 @@ class TitleListControlPanel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4.0),
       child: Column(
-        spacing: 8,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -69,43 +68,48 @@ class TitleListControlPanel extends StatelessWidget {
         ? titleTheme.controlPanelActiveFilterBackground
         : titleTheme.controlPanelInactiveFilterBackground;
 
-    return DropdownSelector(
-      selectedOption: AppLocalizations.of(context)!.genres,
-      options: genresList,
-      onSelected: (_) {},
-      itemBuilder: (context, option, isSelected, closeMenu) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return SwitchListTile(
-              title: Text(option),
-              value: selectedGenres.contains(option),
-              onChanged: (bool value) {
-                setState(() {
-                  if (value) {
-                    selectedGenres.add(option);
-                  } else {
-                    selectedGenres.remove(option);
-                  }
-                });
-                genresChanged(selectedGenres);
-              },
-            );
-          },
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GenresScreen(
+              genresList: genresList,
+              selectedGenres: selectedGenres,
+              onGenresChanged: (newGenres) => genresChanged(newGenres),
+            ),
+          ),
         );
       },
-      arrowIcon: Icon(
-        Icons.arrow_drop_down,
-        color: foregroundColor,
+      child: Container(
+        height: 28,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          border: Border.all(
+            color: titleTheme.controlPanelForeground,
+          ),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.genres,
+              style: TextStyle(
+                fontSize: 16,
+                color: foregroundColor,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              Icons.arrow_forward_ios,
+              color: foregroundColor,
+              size: 14,
+            ),
+          ],
+        ),
       ),
-      textStyle: TextStyle(
-        fontSize: 16,
-        color: foregroundColor,
-      ),
-      backgroundColor: backgroundColor,
-      border: Border.all(
-        color: titleTheme.controlPanelForeground,
-      ),
-      borderRadius: BorderRadius.circular(5),
     );
   }
 
