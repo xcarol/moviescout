@@ -5,10 +5,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform, kDebugMode;
+    show TargetPlatform, defaultTargetPlatform;
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/screens/providers.dart';
+import 'package:moviescout/screens/watchlist_logs_screen.dart';
 import 'package:moviescout/services/discoverlist_service.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/notification_service.dart';
@@ -21,12 +22,10 @@ import 'package:moviescout/services/region_service.dart';
 import 'package:moviescout/widgets/color_scheme_form.dart';
 import 'package:moviescout/widgets/language_form.dart';
 import 'package:moviescout/widgets/region_form.dart';
+import 'package:moviescout/widgets/notification_permission_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
-import 'package:intl/intl.dart';
-import 'package:moviescout/services/preferences_service.dart';
-import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/deep_link_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -52,7 +51,6 @@ class AppDrawer extends StatelessWidget {
           if (defaultTargetPlatform == TargetPlatform.android)
             _verifyDeepLinksTile(context),
           _aboutTile(context),
-          if (kDebugMode) _lastBackgroundUpdateTile(context),
           const Divider(),
           _userSessionTile(context, isUserLoggedIn),
         ],
@@ -68,18 +66,10 @@ class AppDrawer extends StatelessWidget {
       title: Text(AppLocalizations.of(context)!.notifications),
       value: notificationService.enabled,
       onChanged: (bool value) async {
-        if (value) {
-          final granted = await notificationService.requestPermission();
-          if (!granted && context.mounted) {
-            ErrorService.log(
-              'Notification permission denied',
-              userMessage:
-                  AppLocalizations.of(context)!.notificationsPermissionRequired,
-            );
-            return;
-          }
+        final success = await notificationService.setEnabled(value);
+        if (!success && value && context.mounted) {
+          NotificationPermissionDialog.show(context);
         }
-        await notificationService.setEnabled(value);
       },
     );
   }
@@ -240,6 +230,7 @@ class AppDrawer extends StatelessWidget {
       ),
       aboutBoxChildren: [
         Text(AppLocalizations.of(context)!.aboutDescription),
+        const SizedBox(height: 16),
         SelectableText.rich(
           TextSpan(
             children: [
@@ -255,29 +246,29 @@ class AppDrawer extends StatelessWidget {
               ),
             ],
           ),
-        )
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton.icon(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close About dialog
+                Navigator.pop(context); // Close Drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const WatchlistLogsScreen(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.history),
+              label: const Text('Logs d\'actualització'),
+            ),
+          ],
+        ),
       ],
       child: Text(AppLocalizations.of(context)!.about),
-    );
-  }
-
-  Widget _lastBackgroundUpdateTile(BuildContext context) {
-    final String? lastRunStr =
-        PreferencesService().prefs.getString(AppConstants.lastBackgroundRun);
-
-    String formattedDate = 'null';
-    if (lastRunStr != null) {
-      final DateTime lastRun = DateTime.parse(lastRunStr).toLocal();
-      formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(lastRun);
-    }
-
-    return ListTile(
-      dense: true,
-      leading: const Icon(Icons.history, size: 20),
-      title: Text(
-        '${AppConstants.lastBackgroundRun}: $formattedDate',
-        style: Theme.of(context).textTheme.bodySmall,
-      ),
     );
   }
 

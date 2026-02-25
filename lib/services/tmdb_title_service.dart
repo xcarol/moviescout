@@ -3,6 +3,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/youtube_service.dart'; // Added import
 
 const String _tmdbDetails =
@@ -12,6 +13,8 @@ const String _tmdbBrief =
     '/{MEDIA_TYPE}/{ID}?append_to_response=images,videos&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
 
 const String _tmdbProviders = '/{MEDIA_TYPE}/{ID}/watch/providers';
+const String _tmdbLight =
+    '/{MEDIA_TYPE}/{ID}?append_to_response=watch/providers&language={LOCALE}';
 
 class TmdbTitleService extends TmdbBaseService {
   Future<dynamic> _retrieveTitleDetails(
@@ -56,13 +59,26 @@ class TmdbTitleService extends TmdbBaseService {
     );
   }
 
+  Future<dynamic> _retrieveTitleLight(
+    int id,
+    String mediaType,
+    String locale,
+  ) async {
+    return get(
+      _tmdbLight
+          .replaceFirst('{MEDIA_TYPE}', mediaType)
+          .replaceFirst('{ID}', id.toString())
+          .replaceFirst('{LOCALE}', locale),
+    );
+  }
+
   static bool isUpToDate(TmdbTitle title) {
     return DateTime.now()
             .difference(
               DateTime.parse(title.lastUpdated),
             )
             .inDays <
-        3;
+        AppConstants.titleUpToDateDays;
   }
 
   Future<TmdbTitle> updateTitleDetails(TmdbTitle title,
@@ -196,6 +212,50 @@ class TmdbTitleService extends TmdbBaseService {
     final Map<String, dynamic> providers =
         results['results']?[getCountryCode()] ?? {};
 
+    title.providersJson = jsonEncode(providers);
+    TmdbTitle.updateProviderIds(title, providers);
+
+    return title;
+  }
+
+  Future<TmdbTitle> updateTitleLight(TmdbTitle title) async {
+    String mediaType = title.mediaType;
+    if (mediaType == '') {
+      mediaType = title.isMovie ? ApiConstants.movie : ApiConstants.tv;
+    }
+
+    final result = await _retrieveTitleLight(
+      title.tmdbId,
+      mediaType,
+      '${getLanguageCode()}-${getCountryCode()}',
+    );
+
+    if (result.statusCode != 200) {
+      return title;
+    }
+
+    final Map<String, dynamic> details = body(result);
+
+    title.numberOfSeasons =
+        details[TmdbTitleFields.numberOfSeasons] ?? title.numberOfSeasons;
+    title.status = details[TmdbTitleFields.status] ?? title.status;
+    title.popularity =
+        (details[TmdbTitleFields.popularity] ?? title.popularity).toDouble();
+    title.voteAverage =
+        (details[TmdbTitleFields.voteAverage] ?? title.voteAverage).toDouble();
+    title.voteCount = details[TmdbTitleFields.voteCount] ?? title.voteCount;
+
+    if (details[TmdbTitleFields.nextEpisodeToAir] != null) {
+      title.nextEpisodeToAirJson =
+          jsonEncode(details[TmdbTitleFields.nextEpisodeToAir]);
+    }
+    if (details[TmdbTitleFields.lastEpisodeToAir] != null) {
+      title.lastEpisodeToAirJson =
+          jsonEncode(details[TmdbTitleFields.lastEpisodeToAir]);
+    }
+
+    final providers =
+        details['watch/providers']?['results']?[getCountryCode()] ?? {};
     title.providersJson = jsonEncode(providers);
     TmdbTitle.updateProviderIds(title, providers);
 

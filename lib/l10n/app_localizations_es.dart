@@ -399,6 +399,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notificationsPermissionRequired => 'Debes permitir las notificaciones en los ajustes del sistema.';
 
   @override
+  String get notificationsPermissionDescription => 'Para recibir avisos de disponibilidad de películas y nuevas temporadas, debes activar las notificaciones en los ajustes del sistema.';
+
+  @override
+  String get openSettings => 'Abrir ajustes';
+
+  @override
   String get errorMessageGeneric => 'Ha ocurrido un error. Inténtalo de nuevo más tarde.';
 
   @override

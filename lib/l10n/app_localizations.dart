@@ -865,6 +865,18 @@ abstract class AppLocalizations {
   /// **'You need to allow notifications in the system settings.'**
   String get notificationsPermissionRequired;
 
+  /// No description provided for @notificationsPermissionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'To receive updates on movie availability and new seasons, you must enable notifications in your system settings.'**
+  String get notificationsPermissionDescription;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get openSettings;
+
   /// No description provided for @errorMessageGeneric.
   ///
   /// In en, this message translates to:

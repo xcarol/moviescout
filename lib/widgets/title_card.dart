@@ -2,15 +2,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:moviescout/widgets/pin_button.dart';
 import 'package:provider/provider.dart';
@@ -105,6 +108,46 @@ class TitleCard extends StatelessWidget {
       const SizedBox(width: 5),
       Text(tmdbTitle.voteAverage.toStringAsFixed(2)),
     ];
+
+    // 302-debug-notifications
+    if (_tmdbListService.listName == AppConstants.watchlist &&
+        (PreferencesService().prefs.getBool(AppConstants.debugShowLastUpdate) ??
+            false)) {
+      children.add(const SizedBox(width: 5));
+      children.add(
+        GestureDetector(
+          onTap: () async {
+            tmdbTitle.lastUpdated = DateTime.parse(tmdbTitle.lastUpdated)
+                .subtract(const Duration(days: 1))
+                .toIso8601String();
+            await Provider.of<TmdbTitleRepository>(context, listen: false)
+                .saveTitle(tmdbTitle);
+            if (context.mounted) {
+              Provider.of<TmdbListService>(context, listen: false)
+                  .debugUpdateTitleLastUpdate(tmdbTitle);
+            }
+          },
+          child: Text(
+            '[${DateFormat('dd-MM-yyyyTHH:mm').format(DateTime.parse(tmdbTitle.lastUpdated))}]',
+            style: TextStyle(
+              fontSize: 10,
+            ),
+          ),
+        ),
+      );
+
+      if (tmdbTitle.isSerie) {
+        children.add(const SizedBox(width: 5));
+        children.add(
+          Text(
+            '[${tmdbTitle.lastNotifiedSeason}]',
+            style: TextStyle(
+              fontSize: 10,
+            ),
+          ),
+        );
+      }
+    }
 
     return Selector<TmdbRateslistService, TmdbTitle?>(
       selector: (_, rateslistService) => rateslistService.getTitleByTmdbId(
