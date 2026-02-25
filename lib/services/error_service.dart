@@ -13,7 +13,6 @@ class ErrorService {
     String? userMessage,
     bool showSnackBar = true,
   }) {
-    // 1. Console logging
     debugPrint('--- ERROR ---');
     debugPrint('Error: $error');
     if (stackTrace != null) {
@@ -21,7 +20,6 @@ class ErrorService {
     }
     debugPrint('-------------');
 
-    // 2. Decide if we should report to Crashlytics
     bool shouldReport = _shouldReportAutomatically(error);
 
     if (shouldReport && (Platform.isAndroid || Platform.isIOS)) {
@@ -35,8 +33,6 @@ class ErrorService {
         debugPrint('Failed to report to Crashlytics: $e');
       }
     }
-
-    // 3. UI Notification
     if (showSnackBar) {
       final context = scaffoldMessengerKey.currentContext;
       String message = userMessage ?? '';

@@ -127,5 +127,6 @@
     "seasonsCount": "{count}temp",
     "notifications": "Notificaciones",
     "notificationsPermissionRequired": "Debes permitir las notificaciones en los ajustes del sistema.",
-    "errorMessageGeneric": "Ha ocurrido un error. Inténtalo de nuevo más tarde."
+    "errorMessageGeneric": "Ha ocurrido un error. Inténtalo de nuevo más tarde.",
+    "youtubeSearch": "Búsqueda en YouTube"
 }

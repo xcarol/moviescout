@@ -83,6 +83,8 @@ class TmdbTitleFields {
   static const String videos = 'videos';
   static const String key = 'key';
   static const String site = 'site';
+  static const String isSearchResult = 'is_search_result';
+  static const String iso6391 = 'iso_639_1';
   static const String lastNotifiedSeason = 'last_notified_season';
 }
 

@@ -1,7 +1,11 @@
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MediaCarousel extends StatefulWidget {
@@ -38,7 +42,17 @@ class _MediaCarouselState extends State<MediaCarousel> {
   @override
   Widget build(BuildContext context) {
     final images = widget.title.images;
-    final videos = widget.title.videos;
+
+    final allVideos = widget.title.videos;
+    final tmdbVideos = allVideos
+        .where((v) => v[TmdbTitleFields.isSearchResult] != true)
+        .toList()
+        .reversed;
+    final ytVideos = allVideos
+        .where((v) => v[TmdbTitleFields.isSearchResult] == true)
+        .toList();
+
+    final videos = [...tmdbVideos, ...ytVideos];
 
     if (images.isEmpty && videos.isEmpty) {
       return _buildFallbackBanner();
@@ -166,6 +180,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
   YoutubePlayerController? _controller;
   bool _isPlaying = false;
   ScrollPosition? _scrollPosition;
+  Orientation? _lastOrientation;
 
   @override
   bool get wantKeepAlive => _isPlaying;
@@ -224,8 +239,17 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
     }
   }
 
-  void _startPlayback() {
+  void _startPlayback() async {
     final key = widget.video['key'] as String;
+
+    if (!kIsWeb && Platform.isLinux) {
+      final url = Uri.parse('https://www.youtube.com/watch?v=$key');
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url);
+      }
+      return;
+    }
+
     setState(() {
       _controller = YoutubePlayerController(
         initialVideoId: key,
@@ -243,7 +267,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
     updateKeepAlive();
   }
 
-  void _enterFullScreen() {
+  void _enterFullScreen({bool isAuto = false}) {
     if (_controller == null) return;
 
     final currentPosition = _controller!.value.position;
@@ -255,6 +279,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
         builder: (context) => FullScreenPlayer(
           videoId: widget.video['key'] as String,
           startAt: currentPosition,
+          isAuto: isAuto,
         ),
       ),
     )
@@ -273,6 +298,17 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
     super.build(context);
     final key = widget.video['key'] as String;
     final name = widget.video['name'] as String;
+    final isSearch = widget.video[TmdbTitleFields.isSearchResult] == true;
+    final currentOrientation = MediaQuery.of(context).orientation;
+
+    if (_isPlaying &&
+        _lastOrientation == Orientation.portrait &&
+        currentOrientation == Orientation.landscape) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _enterFullScreen(isAuto: true);
+      });
+    }
+    _lastOrientation = currentOrientation;
 
     if (_isPlaying && _controller != null) {
       return Stack(
@@ -297,9 +333,36 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
             right: 8,
             child: IconButton(
               icon: const Icon(Icons.fullscreen, color: Colors.white, size: 32),
-              onPressed: _enterFullScreen,
+              onPressed: () => _enterFullScreen(isAuto: false),
             ),
           ),
+          if (isSearch)
+            Positioned(
+              top: 8,
+              left: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.white24),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.search, color: Colors.white, size: 14),
+                    const SizedBox(width: 4),
+                    Text(
+                      AppLocalizations.of(context)!.youtubeSearch,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ),
         ],
       );
     }
@@ -321,6 +384,33 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
             ),
           ),
         ),
+        if (isSearch)
+          Positioned(
+            top: 8,
+            left: 8,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white24),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.search, color: Colors.white, size: 14),
+                  const SizedBox(width: 4),
+                  Text(
+                    AppLocalizations.of(context)!.youtubeSearch,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ),
         Center(
           child: Container(
             padding: const EdgeInsets.all(4),
@@ -337,13 +427,13 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
           ),
         ),
         Positioned(
-          bottom: 8,
+          bottom: 20,
           left: 8,
           right: 8,
           child: Text(
             name,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.bold,
               shadows: const [Shadow(color: Colors.black, blurRadius: 4)],
             ),
@@ -359,10 +449,12 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
 class FullScreenPlayer extends StatefulWidget {
   final String videoId;
   final Duration startAt;
+  final bool isAuto;
 
   const FullScreenPlayer({
     required this.videoId,
     required this.startAt,
+    this.isAuto = false,
     super.key,
   });
 
@@ -386,10 +478,12 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
       ),
     );
 
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    if (!widget.isAuto) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+    }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   }
 
@@ -404,6 +498,13 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.isAuto &&
+        MediaQuery.of(context).orientation == Orientation.portrait) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) Navigator.of(context).pop(_controller.value.position);
+      });
+    }
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
