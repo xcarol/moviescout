@@ -637,10 +637,12 @@ class _TitleDetailsState extends State<TitleDetails> {
     String text =
         title.firstAirDate.isNotEmpty ? title.firstAirDate.substring(0, 4) : '';
 
-    if (title.isOnAir) {
-      text += ' - ...';
-    } else if (title.lastAirDate.isNotEmpty) {
-      text += ' - ${title.lastAirDate.substring(0, 4)}';
+    if (!title.isMiniSerie) {
+      if (title.isOnAir) {
+        text += ' - ...';
+      } else if (title.lastAirDate.isNotEmpty) {
+        text += ' - ${title.lastAirDate.substring(0, 4)}';
+      }
     }
 
     return text;
