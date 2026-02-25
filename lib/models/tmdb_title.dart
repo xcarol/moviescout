@@ -450,6 +450,11 @@ class TmdbTitle {
       status == statusInProduction ||
       status == statusPlanned;
 
+  bool get isMiniSerie =>
+      firstAirDate.isNotEmpty &&
+      lastAirDate.isNotEmpty &&
+      firstAirDate.substring(0, 4) == lastAirDate.substring(0, 4);
+
   String get posterPath =>
       posterPathSuffix != null && posterPathSuffix!.isNotEmpty
           ? 'https://image.tmdb.org/t/p/original$posterPathSuffix'

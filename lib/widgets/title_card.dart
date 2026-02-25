@@ -276,10 +276,12 @@ class TitleCard extends StatelessWidget {
 
       text += firstAirDate.isNotEmpty ? firstAirDate.substring(0, 4) : '';
 
-      if (isOnAir) {
-        text += ' - ...';
-      } else if (lastAirDate.isNotEmpty) {
-        text += ' - ${lastAirDate.substring(0, 4)}';
+      if (!tmdbTitle.isMiniSerie) {
+        if (isOnAir) {
+          text += ' - ...';
+        } else if (lastAirDate.isNotEmpty) {
+          text += ' - ${lastAirDate.substring(0, 4)}';
+        }
       }
     }
 
