@@ -406,4 +406,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get errorMessageGeneric => 'S\'ha produït un error. Torna-ho a provar més tard.';
+
+  @override
+  String get youtubeSearch => 'Cerca a YouTube';
 }

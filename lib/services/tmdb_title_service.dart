@@ -4,6 +4,7 @@ import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/services/youtube_service.dart'; // Added import
 
 const String _tmdbDetails =
     '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders%2Crecommendations%2Cimages%2Cvideos%2C{CREDITS_TYPE}&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
@@ -161,12 +162,38 @@ class TmdbTitleService extends TmdbBaseService {
       }
     }
 
+    final titleName = mediaType == ApiConstants.movie
+        ? details[TmdbTitleFields.title]
+        : details[TmdbTitleFields.name];
+
+    if (titleName != null && titleName.toString().isNotEmpty) {
+      final youtubeVideos = await _searchYoutubeTrailers(
+        titleName: titleName.toString(),
+        mediaType: mediaType,
+      );
+
+      if (youtubeVideos.isNotEmpty) {
+        final List videos = details[TmdbTitleFields.videos] ?? [];
+        details[TmdbTitleFields.videos] = [...videos, ...youtubeVideos];
+      }
+    }
+
     details[TmdbTitleFields.mediaType] = mediaType;
     details[TmdbTitleFields.lastUpdated] = DateTime.now().toIso8601String();
 
     title.fillFromMap(details);
 
     return title;
+  }
+
+  Future<List<Map<String, dynamic>>> _searchYoutubeTrailers({
+    required String titleName,
+    required String mediaType,
+  }) async {
+    final lang = getLanguageCode();
+    final country = getCountryCode();
+    return await YoutubeExplodeService()
+        .searchTrailers(titleName, '$lang-$country');
   }
 
   Future<TmdbTitle> updateTitleProviders(TmdbTitle title) async {
@@ -304,6 +331,9 @@ class TmdbTitleService extends TmdbBaseService {
                   TmdbTitleFields.key: v['key'],
                   TmdbTitleFields.site: v['site'],
                   TmdbTitleFields.name: v['name'],
+                  TmdbTitleFields.iso6391: v['iso_639_1'],
+                  TmdbTitleFields.isSearchResult:
+                      v[TmdbTitleFields.isSearchResult] ?? false,
                 })
             .toList();
       }

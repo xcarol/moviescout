@@ -406,4 +406,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorMessageGeneric => 'An error occurred. Please try again later.';
+
+  @override
+  String get youtubeSearch => 'YouTube Search';
 }
