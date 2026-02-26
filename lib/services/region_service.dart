@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/tmdb_configuration_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class RegionService with ChangeNotifier {
@@ -56,5 +57,10 @@ class RegionService with ChangeNotifier {
       PreferencesService().prefs.remove(AppConstants.region);
     }
     notifyListeners();
+  }
+
+  String getRegionName(String? countryCode) {
+    if (countryCode == null) return '';
+    return TmdbConfigurationService().getCountryName(countryCode);
   }
 }

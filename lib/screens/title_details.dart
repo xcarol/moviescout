@@ -13,6 +13,8 @@ import 'package:moviescout/repositories/tmdb_title_repository.dart'
     show TmdbTitleRepository;
 import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/screens/title_people_list.dart';
+import 'package:moviescout/services/language_service.dart';
+import 'package:moviescout/services/region_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
@@ -148,10 +150,13 @@ class _TitleDetailsState extends State<TitleDetails> {
                     title.originalName),
                 const SizedBox(width: 20),
                 _infoColumn(AppLocalizations.of(context)!.originalLanguage,
-                    title.originalLanguage),
+                    LanguageService().getLanguageName(title.originalLanguage)),
                 const SizedBox(width: 20),
-                _infoColumn(AppLocalizations.of(context)!.originCountry,
-                    title.originCountry.join(', ')),
+                _infoColumn(
+                    AppLocalizations.of(context)!.originCountry,
+                    title.originCountry
+                        .map((c) => RegionService().getRegionName(c))
+                        .join(', ')),
               ],
             ),
           ),
