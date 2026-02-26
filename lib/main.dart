@@ -15,6 +15,7 @@ import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/theme_service.dart';
+import 'package:moviescout/services/tmdb_configuration_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
@@ -28,6 +29,7 @@ import 'package:moviescout/firebase_options.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/screens/main_screen.dart';
 import 'package:moviescout/services/deep_link_service.dart';
+import 'package:moviescout/utils/language_translator.dart';
 import 'package:moviescout/utils/person_translator.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/services/watchlist_update_worker.dart';
@@ -69,7 +71,9 @@ void main() async {
     await PreferencesService().init();
     await IsarService.init();
     await TmdbGenreService().init();
+    await TmdbConfigurationService().init();
     await RegionService().init();
+    await LanguageTranslator.init();
     await PersonTranslator.init();
     await NotificationService().init();
 

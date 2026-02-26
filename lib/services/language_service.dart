@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/utils/language_translator.dart';
 
 class LanguageService with ChangeNotifier {
   static final LanguageService _instance = LanguageService._internal();
@@ -31,5 +32,11 @@ class LanguageService with ChangeNotifier {
     _currentLanguage = languageCode;
     PreferencesService().prefs.setString(AppConstants.language, languageCode);
     notifyListeners();
+  }
+
+  String getLanguageName(String? languageCode) {
+    if (languageCode == null) return '';
+    return LanguageTranslator.translateLanguageCode(
+        languageCode, _currentLanguage);
   }
 }
