@@ -1,40 +1,36 @@
 import 'dart:convert';
-
 import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/services/error_service.dart';
-import 'package:moviescout/services/preferences_service.dart';
-import 'package:moviescout/services/tmdb_base_service.dart';
+import 'package:moviescout/services/tmdb_cacheable_service.dart';
 import 'package:moviescout/services/update_manager.dart';
 
 const String _tmdbMovieGenres = 'genre/movie/list?language={LOCALE}';
 const String _tmdbTvGenres = 'genre/tv/list?language={LOCALE}';
 
-class TmdbGenreService extends TmdbBaseService {
+class TmdbGenreService extends TmdbCacheableService<Map<int, String>> {
   static final TmdbGenreService _instance = TmdbGenreService._internal();
   factory TmdbGenreService() => _instance;
-  TmdbGenreService._internal();
 
-  final Map<int, String> _genreMap = {};
+  TmdbGenreService._internal()
+      : super(
+          cacheKey: 'genres',
+          timeout: UpdateManager.genresTimeout,
+        );
+
+  Map<int, String> get _genreMap => data ?? {};
+
   List<String> get defaultGenresList => _genreMap.values.toList();
-  bool _isLoaded = false;
 
-  bool get isLoaded => _isLoaded;
-  Future<void> init() async {
-    bool reportError = false;
-    if (_isLoaded) return;
-
+  @override
+  Future<void> fetchAndCache() async {
     List<String> genreUrls = [_tmdbMovieGenres, _tmdbTvGenres];
-
-    _genreMap.clear();
-
-    if (_getLocalGenres()) {
-      _isLoaded = true;
-      return;
-    }
+    final Map<int, String> newGenreMap = {};
+    bool reportError = false;
+    dynamic lastResponse;
 
     for (String url in genreUrls) {
-      dynamic response = await get(url.replaceFirst(
-          '{LOCALE}', '${getLanguageCode()}-${getCountryCode()}'));
+      String locale = '${getLanguageCode()}-${getCountryCode()}';
+      dynamic response = await get(url.replaceFirst('{LOCALE}', locale));
 
       if (response.statusCode == 200) {
         List<dynamic> genres =
@@ -49,7 +45,7 @@ class TmdbGenreService extends TmdbBaseService {
           if (response.statusCode == 200) {
             genres =
                 (jsonDecode((response.body)) as Map<String, dynamic>)['genres'];
-            if (genres[0]['name'].isEmpty) {
+            if (genres.isEmpty || genres[0]['name'].isEmpty) {
               response = await get(url.replaceFirst('{LOCALE}', 'en'));
 
               if (response.statusCode == 200) {
@@ -57,60 +53,48 @@ class TmdbGenreService extends TmdbBaseService {
                     as Map<String, dynamic>)['genres'];
               } else {
                 reportError = true;
+                lastResponse = response;
               }
             }
           } else {
             reportError = true;
+            lastResponse = response;
           }
         }
 
         for (var genre in genres) {
-          _genreMap[genre['id']] = genre['name'];
+          newGenreMap[genre['id']] = genre['name'];
         }
       } else {
         reportError = true;
-      }
-
-      if (reportError == true) {
-        ErrorService.log(
-          'Failed to load genres: ${response.statusCode}',
-          userMessage: 'Failed to load genres',
-        );
+        lastResponse = response;
       }
     }
 
-    _isLoaded = true;
-    _setLocalGenres(_genreMap);
+    if (reportError && lastResponse != null) {
+      ErrorService.log(
+        'Failed to load genres: ${lastResponse.statusCode}',
+        userMessage: 'Failed to load genres',
+      );
+    }
+
+    data = newGenreMap;
+    saveToCache(newGenreMap.entries
+        .map((e) => {'id': e.key, 'name': e.value})
+        .toList());
   }
 
-  Future<void> reload() async {
-    _isLoaded = false;
-    await PreferencesService().prefs.remove('genres');
-    await UpdateManager().removeLastUpdate('genres');
-    await init();
-  }
-
-  bool _getLocalGenres() {
-    final genres = PreferencesService().prefs.getStringList('genres') ?? [];
-    bool isUpToDate = UpdateManager().isGenresUpToDate();
-
-    if (genres.isEmpty || !isUpToDate) return false;
-
-    genres
-        .map((genre) => jsonDecode(genre) as Map<String, dynamic>)
-        .forEach((genre) {
-      _genreMap[genre['id']] = genre['name'];
-    });
-
-    return true;
-  }
-
-  void _setLocalGenres(Map<int, String> genres) {
-    final genreList = genres.entries
-        .map((entry) => jsonEncode({'id': entry.key, 'name': entry.value}))
-        .toList();
-    PreferencesService().prefs.setStringList('genres', genreList);
-    UpdateManager().updateGenresLastUpdate();
+  @override
+  Map<int, String> parseData(dynamic json) {
+    final Map<int, String> map = {};
+    if (json is List) {
+      for (var item in json) {
+        if (item is Map) {
+          map[item['id']] = item['name'];
+        }
+      }
+    }
+    return map;
   }
 
   String? getName(int id) => _genreMap[id];
