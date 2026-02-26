@@ -85,14 +85,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   bool get userRatingAvailable {
     return listNameVal == AppConstants.rateslist ||
-        (loadedTitlesVal.isNotEmpty && loadedTitlesVal.first.rating > 0.0);
-  }
-
-  bool get userRatedDateAvailable {
-    return listNameVal == AppConstants.rateslist ||
-        (loadedTitlesVal.isNotEmpty &&
-            loadedTitlesVal.first.dateRated
-                .isAfter(DateTime.fromMillisecondsSinceEpoch(0)));
+        repository.hasRatedTitles(listNameVal);
   }
 
   @protected

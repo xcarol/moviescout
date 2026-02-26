@@ -35,7 +35,6 @@ class _TitleListState extends State<TitleList> {
     _controller = TitleListController(widget.listService);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _controller.initializeControlLocalizations(context);
       await _controller.setupFilters();
     });
   }
@@ -53,14 +52,12 @@ class _TitleListState extends State<TitleList> {
     if (!isCurrent && _controller.searchFocusNode.hasFocus) {
       _controller.searchFocusNode.unfocus();
     }
-    if (mounted) {
-      _controller.initializeControlLocalizations(context);
-    }
   }
 
   Widget _titleList() {
     return Consumer<TmdbListService>(
       builder: (context, service, _) {
+        _controller.initializeControlLocalizations(context);
         return NotificationListener<ScrollNotification>(
           onNotification: (scrollInfo) {
             _controller.onScrollNotification(scrollInfo, TitleCard.cardHeight);
