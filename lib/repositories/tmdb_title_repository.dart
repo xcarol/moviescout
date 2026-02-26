@@ -59,6 +59,15 @@ class TmdbTitleRepository {
     });
   }
 
+  bool hasRatedTitles(String listName) {
+    return _isar.tmdbTitles
+        .filter()
+        .listNameEqualTo(listName)
+        .ratingGreaterThan(0)
+        .countSync() >
+        0;
+  }
+
   int countTitlesSync(String listName) {
     return _isar.tmdbTitles.filter().listNameEqualTo(listName).countSync();
   }

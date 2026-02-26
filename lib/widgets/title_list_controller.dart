@@ -85,12 +85,11 @@ class TitleListController with ChangeNotifier {
       localizations.sortAlphabetically,
       localizations.sortRating,
       if (listService.userRatingAvailable) localizations.sortUserRating,
-      if (listService.userRatedDateAvailable) localizations.sortDateRated,
+      if (listService.userRatingAvailable) localizations.sortDateRated,
       localizations.sortReleaseDate,
       localizations.sortRuntime,
       localizations.sortAddedOrder,
     ];
-    notifyListeners();
   }
 
   void onScrollNotification(ScrollNotification scrollInfo, double itemHeight) {
