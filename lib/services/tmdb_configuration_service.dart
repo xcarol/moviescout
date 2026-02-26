@@ -40,7 +40,6 @@ class TmdbConfigurationService extends TmdbCacheableService<TmdbConfigData> {
     String? errorMessage;
 
     try {
-      // Fetch languages
       final langResponse = await get('configuration/languages');
       if (langResponse.statusCode == 200) {
         final List<dynamic> languages = jsonDecode(langResponse.body);
@@ -55,7 +54,6 @@ class TmdbConfigurationService extends TmdbCacheableService<TmdbConfigData> {
         errorMessage = 'Failed to load languages: ${langResponse.statusCode}';
       }
 
-      // Fetch countries
       final countryResponse = await get(
           'configuration/countries?language=${getLanguageCode()}-${getCountryCode()}');
       if (countryResponse.statusCode == 200) {
@@ -101,7 +99,6 @@ class TmdbConfigurationService extends TmdbCacheableService<TmdbConfigData> {
     final String nativeName = details['native'] ?? '';
 
     if (appLangIso != null && nativeName.isNotEmpty) {
-      // If app language matches title language, use native name
       if (appLangIso.startsWith(iso)) {
         return nativeName;
       }

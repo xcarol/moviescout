@@ -32,16 +32,9 @@ class LanguageTranslator {
     }
   }
 
-  /// Translates a language code (e.g. 'en', 'es') to its localized name.
-  ///
-  /// Priority:
-  /// 1. Local JSON asset for the current [appLocale] (e.g. 'ca-ES', 'es-ES').
-  /// 2. TMDB Configuration service (conditional logic native vs english).
-  /// 3. Fallback to the [code] itself.
   static String translateLanguageCode(String code, String appLocale) {
     if (code.isEmpty) return code;
 
-    // 1. Try local JSON mapping
     final mapping = _languageMappings[appLocale];
     if (mapping != null && mapping.containsKey(code)) {
       final translated = mapping[code];
@@ -50,7 +43,6 @@ class LanguageTranslator {
       }
     }
 
-    // 2. Fallback to TMDB Configuration (which handles native naming if app matches title)
     return TmdbConfigurationService()
         .getLanguageName(code, appLangIso: appLocale);
   }
