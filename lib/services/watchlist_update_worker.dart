@@ -100,12 +100,6 @@ void callbackDispatcher() {
       final List<dynamic> providersList =
           providersStrings.map((s) => jsonDecode(s)).toList();
 
-      final enabledProviderNames = providersList
-          .where((p) => p[TmdbProvider.providerEnabled] == 'true')
-          .map((p) => p[TmdbProvider.providerName].toString())
-          .toList();
-      logLines.add('Providers: ${enabledProviderNames.join(', ')}');
-
       final enabledProviderIds = providersList
           .where((p) => p[TmdbProvider.providerEnabled] == 'true')
           .map((p) => (p[TmdbProvider.providerId] as num).toInt())
@@ -137,14 +131,16 @@ void callbackDispatcher() {
 
         for (final title in watchlistTitles) {
           scannedCount++;
-          final timeSinceUpdate =
-              DateTime.now().difference(DateTime.parse(title.lastUpdated));
           final isUninitialized =
               title.isSerie && title.lastNotifiedSeason == 0;
-          final needsFull = timeSinceUpdate.inDays >=
+          final needsFull = DateTime.now()
+                      .difference(DateTime.parse(title.lastUpdated))
+                      .inDays >=
                   AppConstants.watchlistTitleUpdateFrequencyDays ||
               isUninitialized;
-          final needsLight = timeSinceUpdate.inDays >=
+          final needsLight = DateTime.now()
+                  .difference(DateTime.parse(title.lastProvidersUpdate))
+                  .inDays >=
               AppConstants.watchlistProvidersUpdateFrequencyDays;
 
           if (needsFull || needsLight) {
@@ -155,10 +151,10 @@ void callbackDispatcher() {
                 oldProviders.intersection(enabledProviderSet).isNotEmpty;
 
             if (needsFull) {
-              logLines.add('- Full update: ${title.name}');
+              logLines.add('- Full update: ${title.name}. lastUpdated: ${title.lastUpdated}');
               await titleService.updateTitleDetails(title);
             } else {
-              logLines.add('- Light update: ${title.name}');
+              logLines.add('- Light update: ${title.name}. lastUpdated: ${title.lastUpdated}');
               await titleService.updateTitleLight(title);
             }
             await repository.saveTitle(title);
@@ -173,7 +169,6 @@ void callbackDispatcher() {
                 .map((p) => p[TmdbProvider.providerName])
                 .toList();
 
-            logLines.add('- Updated: ${title.name}');
             final listOldProviderNames = oldProviderNames.join(', ');
             final listNewProviderNames = newProviderNames.join(', ');
             if (listOldProviderNames != listNewProviderNames) {
@@ -250,12 +245,17 @@ void callbackDispatcher() {
                     await repository.saveTitle(title);
                   } else {}
                 }
+              } else {
+                logLines.add(
+                    '- Skipping ${title.name}. Already available at $listOldProviderNames. wasAvailable: $wasAvailable');
               }
             } else {
               if (title.isSerie &&
                   title.lastNotifiedSeason == 0 &&
                   title.numberOfSeasons > 0) {
                 // initialize silently
+                logLines.add(
+                    '- Initializing silently ${title.name} (${title.numberOfSeasons} seasons)');
                 title.lastNotifiedSeason = title.numberOfSeasons;
                 await repository.saveTitle(title);
               }

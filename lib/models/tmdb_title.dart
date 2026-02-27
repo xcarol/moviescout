@@ -86,6 +86,7 @@ class TmdbTitleFields {
   static const String isSearchResult = 'is_search_result';
   static const String iso6391 = 'iso_639_1';
   static const String lastNotifiedSeason = 'last_notified_season';
+  static const String lastProvidersUpdate = 'last_providers_update';
 }
 
 const statusEnded = 'Ended';
@@ -168,6 +169,7 @@ class TmdbTitle {
   late String? videosJson;
 
   late int lastNotifiedSeason; // New field for notification tracking
+  late String lastProvidersUpdate;
 
   @ignore
   String character = '';
@@ -221,6 +223,7 @@ class TmdbTitle {
     this.homepage = '',
     this.isPinned = false,
     this.lastNotifiedSeason = 0,
+    this.lastProvidersUpdate = '',
   }) {
     if (effectiveReleaseDate.isEmpty) {
       effectiveReleaseDate =
@@ -243,6 +246,8 @@ class TmdbTitle {
       addedOrder: 0,
       isPinned: title[TmdbTitleFields.isPinned] ?? false,
       lastNotifiedSeason: title[TmdbTitleFields.lastNotifiedSeason] ?? 0,
+      lastProvidersUpdate:
+          title[TmdbTitleFields.lastProvidersUpdate] ?? '1970-01-01',
     )..fillFromMap(title);
   }
 
@@ -324,6 +329,8 @@ class TmdbTitle {
     isPinned = title[TmdbTitleFields.isPinned] ?? isPinned;
     lastNotifiedSeason =
         title[TmdbTitleFields.lastNotifiedSeason] ?? lastNotifiedSeason;
+    lastProvidersUpdate =
+        title[TmdbTitleFields.lastProvidersUpdate] ?? lastProvidersUpdate;
 
     effectiveReleaseDate =
         mediaType == ApiConstants.movie ? releaseDate : firstAirDate;
@@ -408,6 +415,7 @@ class TmdbTitle {
       TmdbTitleFields.addedOrder: addedOrder,
       TmdbTitleFields.isPinned: isPinned,
       TmdbTitleFields.lastNotifiedSeason: lastNotifiedSeason,
+      TmdbTitleFields.lastProvidersUpdate: lastProvidersUpdate,
       TmdbTitleFields.genreIds: genreIds,
       TmdbTitleFields.originCountry: originCountry,
       TmdbTitleFields.credits:
