@@ -233,8 +233,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
     try {
       final rawData = await rootBundle.loadString(path);
       final normalizedData = rawData.replaceAll('\r\n', '\n');
-      List<List<dynamic>> csvData =
-          const CsvToListConverter(eol: '\n').convert(normalizedData);
+      List<List<dynamic>> csvData = csv.decode(normalizedData);
 
       setState(() {
         _csvHeaders =

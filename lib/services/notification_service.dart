@@ -33,7 +33,7 @@ class NotificationService extends ChangeNotifier {
     );
 
     await _notificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         if (response.payload != null) {
           _handlePayload(response.payload!);
@@ -237,7 +237,12 @@ class NotificationService extends ChangeNotifier {
       android: androidDetails,
     );
 
-    await _notificationsPlugin.show(id, title, body, notificationDetails,
-        payload: payload);
+    await _notificationsPlugin.show(
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: notificationDetails,
+      payload: payload,
+    );
   }
 }

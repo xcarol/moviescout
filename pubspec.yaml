@@ -53,7 +53,7 @@ dependencies:
   path_provider: ^2.1.5
   app_links: ^7.0.0
   file_picker: ^10.1.2
-  csv: ^6.0.0
+  csv: ^7.1.0
   isar_community: 
     version: *isar_version
   isar_community_flutter_libs:
@@ -62,13 +62,13 @@ dependencies:
   material_symbols_icons: ^4.2873.0
   flutter_native_splash: ^2.4.6
   cached_network_image: ^3.4.1
-  workmanager: ^0.6.0
-  flutter_local_notifications: ^18.0.0
+  workmanager: ^0.9.0
+  flutter_local_notifications: ^20.1.0
   share_plus: ^12.0.1
-  app_settings: ^6.1.1
+  app_settings: ^7.0.0
   youtube_player_flutter: ^9.0.1
-  youtube_explode_dart: ^2.2.2
-  android_intent_plus: ^5.0.3
+  youtube_explode_dart: ^3.0.5
+  android_intent_plus: ^6.0.0
 
 dev_dependencies:
   flutter_test:
