@@ -180,6 +180,8 @@ class TmdbTitleService extends TmdbBaseService {
 
     details[TmdbTitleFields.mediaType] = mediaType;
     details[TmdbTitleFields.lastUpdated] = DateTime.now().toIso8601String();
+    details[TmdbTitleFields.lastProvidersUpdate] =
+        DateTime.now().toIso8601String();
 
     title.fillFromMap(details);
 
@@ -258,6 +260,7 @@ class TmdbTitleService extends TmdbBaseService {
         details['watch/providers']?['results']?[getCountryCode()] ?? {};
     title.providersJson = jsonEncode(providers);
     TmdbTitle.updateProviderIds(title, providers);
+    title.lastProvidersUpdate = DateTime.now().toIso8601String();
 
     return title;
   }
