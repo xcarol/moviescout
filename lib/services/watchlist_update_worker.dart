@@ -113,161 +113,147 @@ void callbackDispatcher() {
       final repository = TmdbTitleRepository();
       final titleService = TmdbTitleService();
 
-      int page = 0;
-      const int pageSize = 50;
-      bool hasMore = true;
+      final watchlistTitles = await repository.getTitles(
+        listName: AppConstants.watchlist,
+      );
 
-      while (hasMore) {
-        final watchlistTitles = await repository.getTitles(
-          listName: AppConstants.watchlist,
-          offset: page * pageSize,
-          limit: pageSize,
-        );
+      for (final title in watchlistTitles) {
+        scannedCount++;
+        final isUninitialized = title.isSerie && title.lastNotifiedSeason == 0;
+        final needsFull = DateTime.now()
+                    .difference(DateTime.parse(title.lastUpdated))
+                    .inDays >=
+                AppConstants.watchlistTitleUpdateFrequencyDays ||
+            isUninitialized;
+        final needsLight = DateTime.now()
+                .difference(DateTime.parse(title.lastProvidersUpdate))
+                .inDays >=
+            AppConstants.watchlistProvidersUpdateFrequencyDays;
 
-        if (watchlistTitles.isEmpty) {
-          hasMore = false;
-          break;
-        }
+        if (needsFull || needsLight) {
+          if (updatedCount >= AppConstants.watchlistMaxUpdatesPerRun) {
+            logLines.add('- Max updates per run reached ($updatedCount)');
+            break;
+          }
+          updatedCount++;
+          final oldProviders = title.flatrateProviderIds.toSet();
+          final enabledProviderSet = enabledProviderIds.toSet();
+          final wasAvailable =
+              oldProviders.intersection(enabledProviderSet).isNotEmpty;
 
-        for (final title in watchlistTitles) {
-          scannedCount++;
-          final isUninitialized =
-              title.isSerie && title.lastNotifiedSeason == 0;
-          final needsFull = DateTime.now()
-                      .difference(DateTime.parse(title.lastUpdated))
-                      .inDays >=
-                  AppConstants.watchlistTitleUpdateFrequencyDays ||
-              isUninitialized;
-          final needsLight = DateTime.now()
-                  .difference(DateTime.parse(title.lastProvidersUpdate))
-                  .inDays >=
-              AppConstants.watchlistProvidersUpdateFrequencyDays;
+          if (needsFull) {
+            logLines.add(
+                '- Full update: ${title.name}. lastUpdated: ${title.lastUpdated}');
+            await titleService.updateTitleDetails(title);
+          } else {
+            logLines.add(
+                '- Light update: ${title.name}. lastUpdated: ${title.lastUpdated}');
+            await titleService.updateTitleLight(title);
+          }
+          await repository.saveTitle(title);
 
-          if (needsFull || needsLight) {
-            updatedCount++;
-            final oldProviders = title.flatrateProviderIds.toSet();
-            final enabledProviderSet = enabledProviderIds.toSet();
-            final wasAvailable =
-                oldProviders.intersection(enabledProviderSet).isNotEmpty;
+          final oldProviderNames = providersList
+              .where((p) => oldProviders.contains(p[TmdbProvider.providerId]))
+              .map((p) => p[TmdbProvider.providerName])
+              .toList();
+          final newProviderNames = providersList
+              .where((p) => title.flatrateProviderIds
+                  .contains(p[TmdbProvider.providerId]))
+              .map((p) => p[TmdbProvider.providerName])
+              .toList();
 
-            if (needsFull) {
-              logLines.add('- Full update: ${title.name}. lastUpdated: ${title.lastUpdated}');
-              await titleService.updateTitleDetails(title);
-            } else {
-              logLines.add('- Light update: ${title.name}. lastUpdated: ${title.lastUpdated}');
-              await titleService.updateTitleLight(title);
-            }
-            await repository.saveTitle(title);
+          final listOldProviderNames = oldProviderNames.join(', ');
+          final listNewProviderNames = newProviderNames.join(', ');
+          if (listOldProviderNames != listNewProviderNames) {
+            logLines.add('- Old providers: $listOldProviderNames');
+            logLines.add('- New providers: $listNewProviderNames');
+          }
 
-            final oldProviderNames = providersList
-                .where((p) => oldProviders.contains(p[TmdbProvider.providerId]))
+          final newProviders = title.flatrateProviderIds.toSet();
+          final isAvailable =
+              newProviders.intersection(enabledProviderSet).isNotEmpty;
+
+          if (isAvailable) {
+            final availableProviderNames = providersList
+                .where((p) => newProviders.contains(p[TmdbProvider.providerId]))
                 .map((p) => p[TmdbProvider.providerName])
                 .toList();
-            final newProviderNames = providersList
-                .where((p) => title.flatrateProviderIds
-                    .contains(p[TmdbProvider.providerId]))
-                .map((p) => p[TmdbProvider.providerName])
-                .toList();
 
-            final listOldProviderNames = oldProviderNames.join(', ');
-            final listNewProviderNames = newProviderNames.join(', ');
-            if (listOldProviderNames != listNewProviderNames) {
-              logLines.add('- Old providers: $listOldProviderNames');
-              logLines.add('- New providers: $listNewProviderNames');
+            if (availableProviderNames.isNotEmpty) {
+              logLines.add(
+                  '- Available: ${title.name} at ${availableProviderNames.join(', ')}');
             }
 
-            final newProviders = title.flatrateProviderIds.toSet();
-            final isAvailable =
-                newProviders.intersection(enabledProviderSet).isNotEmpty;
-
-            if (isAvailable) {
-              final availableProviderNames = providersList
-                  .where(
-                      (p) => newProviders.contains(p[TmdbProvider.providerId]))
-                  .map((p) => p[TmdbProvider.providerName])
-                  .toList();
-
-              if (availableProviderNames.isNotEmpty) {
-                logLines.add(
-                    '- Available: ${title.name} at ${availableProviderNames.join(', ')}');
-              }
-
-              if (!wasAvailable) {
-                // Title just became available
-                logLines.add(
-                    '- Sending notification for ${title.name} (Now available)');
-                await NotificationService().showNotification(
-                  id: title.tmdbId,
-                  title: localizations.notificationTitle,
-                  body: localizations.notificationBody(title.name),
-                  imageUrl: title.posterPath,
-                  payload: '${title.mediaType}|${title.tmdbId}',
-                );
-                notifiedCount++;
-                if (title.isSerie) {
-                  title.lastNotifiedSeason = title.numberOfSeasons;
-                  await repository.saveTitle(title);
-                }
-              } else if (title.isSerie) {
-                final currentSeason = title.numberOfSeasons;
-
-                // Initialize lastNotifiedSeason if it's 0 (first run with this feature)
-                if (title.lastNotifiedSeason == 0 && currentSeason > 0) {
-                  final isBrandNew = _isBrandNewSeason(title.nextEpisodeToAir,
-                      title.lastEpisodeToAir, currentSeason);
-
-                  if (isBrandNew) {
-                    title.lastNotifiedSeason = currentSeason - 1;
-                  } else {
-                    title.lastNotifiedSeason = currentSeason;
-                  }
-                  await repository.saveTitle(title);
-                }
-
-                if (currentSeason > title.lastNotifiedSeason) {
-                  final shouldNotify = _hasNewSeasonStarted(
-                      title.nextEpisodeToAir,
-                      title.lastEpisodeToAir,
-                      currentSeason);
-
-                  if (shouldNotify) {
-                    logLines.add(
-                        '- Sending notification for new season of ${title.name} (${title.numberOfSeasons} seasons)');
-                    await NotificationService().showNotification(
-                      id: title.tmdbId + 1000000,
-                      title: localizations.notificationNewSeasonTitle,
-                      body: localizations.notificationNewSeasonBody(title.name),
-                      imageUrl: title.posterPath,
-                      payload: '${title.mediaType}|${title.tmdbId}',
-                    );
-                    notifiedCount++;
-                    title.lastNotifiedSeason = currentSeason;
-                    await repository.saveTitle(title);
-                  } else {}
-                }
-              } else {
-                logLines.add(
-                    '- Skipping ${title.name}. Already available at $listOldProviderNames. wasAvailable: $wasAvailable');
-              }
-            } else {
-              if (title.isSerie &&
-                  title.lastNotifiedSeason == 0 &&
-                  title.numberOfSeasons > 0) {
-                // initialize silently
-                logLines.add(
-                    '- Initializing silently ${title.name} (${title.numberOfSeasons} seasons)');
+            if (!wasAvailable) {
+              // Title just became available
+              logLines.add(
+                  '- Sending notification for ${title.name} (Now available)');
+              await NotificationService().showNotification(
+                id: title.tmdbId,
+                title: localizations.notificationTitle,
+                body: localizations.notificationBody(title.name),
+                imageUrl: title.posterPath,
+                payload: '${title.mediaType}|${title.tmdbId}',
+              );
+              notifiedCount++;
+              if (title.isSerie) {
                 title.lastNotifiedSeason = title.numberOfSeasons;
                 await repository.saveTitle(title);
               }
+            } else if (title.isSerie) {
+              final currentSeason = title.numberOfSeasons;
+
+              // Initialize lastNotifiedSeason if it's 0 (first run with this feature)
+              if (title.lastNotifiedSeason == 0 && currentSeason > 0) {
+                final isBrandNew = _isBrandNewSeason(title.nextEpisodeToAir,
+                    title.lastEpisodeToAir, currentSeason);
+
+                if (isBrandNew) {
+                  title.lastNotifiedSeason = currentSeason - 1;
+                } else {
+                  title.lastNotifiedSeason = currentSeason;
+                }
+                await repository.saveTitle(title);
+              }
+
+              if (currentSeason > title.lastNotifiedSeason) {
+                final shouldNotify = _hasNewSeasonStarted(
+                    title.nextEpisodeToAir,
+                    title.lastEpisodeToAir,
+                    currentSeason);
+
+                if (shouldNotify) {
+                  logLines.add(
+                      '- Sending notification for new season of ${title.name} (${title.numberOfSeasons} seasons)');
+                  await NotificationService().showNotification(
+                    id: title.tmdbId + 1000000,
+                    title: localizations.notificationNewSeasonTitle,
+                    body: localizations.notificationNewSeasonBody(title.name),
+                    imageUrl: title.posterPath,
+                    payload: '${title.mediaType}|${title.tmdbId}',
+                  );
+                  notifiedCount++;
+                  title.lastNotifiedSeason = currentSeason;
+                  await repository.saveTitle(title);
+                } else {}
+              }
+            } else {
+              logLines.add(
+                  '- Skipping ${title.name}. Already available at $listOldProviderNames. wasAvailable: $wasAvailable');
             }
-
-            await Future.delayed(const Duration(milliseconds: 200));
+          } else {
+            if (title.isSerie &&
+                title.lastNotifiedSeason == 0 &&
+                title.numberOfSeasons > 0) {
+              // initialize silently
+              logLines.add(
+                  '- Initializing silently ${title.name} (${title.numberOfSeasons} seasons)');
+              title.lastNotifiedSeason = title.numberOfSeasons;
+              await repository.saveTitle(title);
+            }
           }
-        }
 
-        page++;
-        if (watchlistTitles.length < pageSize) {
-          hasMore = false;
+          await Future.delayed(const Duration(milliseconds: 200));
         }
       }
 
@@ -278,6 +264,10 @@ void callbackDispatcher() {
 
       logLines.add(
           'Summary: $scannedCount scanned - $updatedCount updated - $notifiedCount notified');
+      logLines.add('---------------------------');
+      logLines.add(
+          'End: ${DateTime.now().toLocal().toString().split('.').first}');
+      logLines.add('---------------------------');
       await _saveLogs(logLines);
 
       return Future.value(true);

@@ -35,4 +35,5 @@ class AppConstants {
   static const int titleUpToDateDays = 3;
   static const int watchlistTitleUpdateFrequencyDays = 7;
   static const int watchlistProvidersUpdateFrequencyDays = 1;
+  static const int watchlistMaxUpdatesPerRun = 50;
 }
