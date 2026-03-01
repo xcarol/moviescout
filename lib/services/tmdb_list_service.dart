@@ -130,7 +130,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   // 302-debug-notifications
   Future<void> debugUpdateTitleLastUpdate(TmdbTitle title) async {
-    await repository.saveTitle(title);
+    await repository.updateTitleMetadata(title);
     notifyListeners();
   }
 
@@ -197,21 +197,16 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
     int movieIdx = 0;
     int tvIdx = 0;
-    int globalIdx = 0;
 
     while (movieIdx < movies.length || tvIdx < tv.length) {
       if (movieIdx < movies.length) {
         var element = movies[movieIdx++];
-        element[TmdbTitleFields.listName] = listNameVal;
         element[TmdbTitleFields.mediaType] = ApiConstants.movie;
-        element[TmdbTitleFields.addedOrder] = globalIdx++;
         serverList.add(TmdbTitle.fromMap(title: element));
       }
       if (tvIdx < tv.length) {
         var element = tv[tvIdx++];
-        element[TmdbTitleFields.listName] = listNameVal;
         element[TmdbTitleFields.mediaType] = ApiConstants.tv;
-        element[TmdbTitleFields.addedOrder] = globalIdx++;
         serverList.add(TmdbTitle.fromMap(title: element));
       }
     }
@@ -235,7 +230,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
 
     if (isInitialLoad) {
-      await repository.saveTitles(serverList);
+      await repository.saveTitles(serverList, listNameVal);
     } else {
       final serverIds = serverList.map((t) => t.tmdbId).toSet();
       final localIds = await repository.getAllTmdbIds(listNameVal);
@@ -248,13 +243,10 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
       if (titlesToAdd.isNotEmpty) {
         int currentMax = repository.getMaxAddedOrderSync(listNameVal);
-        for (var title in titlesToAdd) {
-          title.addedOrder = ++currentMax;
-        }
-
         final updated = await Future.wait(
             titlesToAdd.map((t) => TmdbTitleService().updateTitleDetails(t)));
-        await repository.saveTitles(updated.cast<TmdbTitle>());
+        await repository.saveTitles(updated.cast<TmdbTitle>(), listNameVal,
+            addedOrders: titlesToAdd.map((t) => ++currentMax).toList());
       }
 
       if (idsToRemove.isNotEmpty) {
@@ -278,7 +270,9 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         final updated = await Future.wait(
             batch.map((t) => TmdbTitleService().updateTitleDetails(t)));
 
-        await repository.saveTitles(updated.cast<TmdbTitle>());
+        int startOrder = i;
+        await repository.saveTitles(updated.cast<TmdbTitle>(), listNameVal,
+            addedOrders: batch.map((t) => startOrder++).toList());
         await Future.delayed(Duration.zero);
       }
     }
@@ -302,7 +296,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         final updated = await Future.wait(
             batch.map((t) => TmdbTitleService().updateTitleProviders(t)));
 
-        await repository.saveTitles(updated.cast<TmdbTitle>());
+        await repository.updateTitlesMetadata(updated.cast<TmdbTitle>());
         await Future.delayed(Duration.zero);
       }
 
@@ -321,11 +315,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   @protected
   Future<void> updateLocalTitle(TmdbTitle title) async {
-    if (title.listName.isEmpty) {
-      return;
-    }
-
-    await repository.saveTitle(title);
+    int currentMax = repository.getMaxAddedOrderSync(listNameVal);
+    await repository.saveTitle(title, listNameVal, ++currentMax);
   }
 
   @protected

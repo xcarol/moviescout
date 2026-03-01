@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/services/error_service.dart';
@@ -86,7 +87,7 @@ class TmdbTitleService extends TmdbBaseService {
     if (!force && isUpToDate(title)) {
       return title;
     }
-
+    debugPrint('Updating title details for ${title.tmdbId}');
     String mediaType = title.mediaType;
     if (mediaType == '') {
       mediaType = title.isMovie ? ApiConstants.movie : ApiConstants.tv;
@@ -184,7 +185,7 @@ class TmdbTitleService extends TmdbBaseService {
         DateTime.now().toIso8601String();
 
     title.fillFromMap(details);
-
+    debugPrint('Updated title details for ${title.tmdbId}');
     return title;
   }
 

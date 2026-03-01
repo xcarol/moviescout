@@ -72,7 +72,7 @@ class TmdbPinnedService extends TmdbConfigListService {
     }
 
     if (toUpdate.isNotEmpty) {
-      await repository.saveTitles(toUpdate.values.toList());
+      await repository.updateTitlesMetadata(toUpdate.values.toList());
     }
   }
 

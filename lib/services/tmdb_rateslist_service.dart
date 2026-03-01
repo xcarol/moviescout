@@ -113,7 +113,6 @@ class TmdbRateslistService extends TmdbListService {
     double rating,
   ) async {
     try {
-      title.listName = listName;
       if (rating > 0) {
         title.updateRating(rating.toDouble());
         title.isPinned = false;
@@ -123,7 +122,7 @@ class TmdbRateslistService extends TmdbListService {
             AppConstants.watchlist, title.tmdbId, title.mediaType);
         if (watchlistTitle != null && watchlistTitle.isPinned) {
           watchlistTitle.isPinned = false;
-          await repository.saveTitle(watchlistTitle);
+          await repository.updateTitleMetadata(watchlistTitle);
         }
       }
       await updateTitle(accountId, sessionId, title, rating > 0,

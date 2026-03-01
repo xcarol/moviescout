@@ -68,9 +68,7 @@ class TmdbWatchlistService extends TmdbListService {
       String accountId, String sessionId, TmdbTitle title, bool add) async {
     try {
       if (add) {
-        title.listName = listName;
         title.id = Isar.autoIncrement;
-        title.addedOrder = repository.getMaxAddedOrderSync(listName) + 1;
         title.isPinned = false;
       }
 
@@ -106,7 +104,7 @@ class TmdbWatchlistService extends TmdbListService {
     }
 
     title.isPinned = !title.isPinned;
-    await repository.saveTitle(title);
+    await repository.updateTitleMetadata(title);
 
     if (pinnedService != null) {
       pinnedService!.updatePinnedToServer();
