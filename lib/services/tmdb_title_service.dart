@@ -82,7 +82,7 @@ class TmdbTitleService extends TmdbBaseService {
   }
 
   Future<TmdbTitle> updateTitleDetails(TmdbTitle title,
-      {bool force = false}) async {
+      {bool force = false, bool includeYoutubeSearch = false}) async {
     if (!force && isUpToDate(title)) {
       return title;
     }
@@ -162,20 +162,8 @@ class TmdbTitleService extends TmdbBaseService {
       }
     }
 
-    final titleName = mediaType == ApiConstants.movie
-        ? details[TmdbTitleFields.title]
-        : details[TmdbTitleFields.name];
-
-    if (titleName != null && titleName.toString().isNotEmpty) {
-      final youtubeVideos = await _searchYoutubeTrailers(
-        titleName: titleName.toString(),
-        mediaType: mediaType,
-      );
-
-      if (youtubeVideos.isNotEmpty) {
-        final List videos = details[TmdbTitleFields.videos] ?? [];
-        details[TmdbTitleFields.videos] = [...videos, ...youtubeVideos];
-      }
+    if (includeYoutubeSearch) {
+      await _addYoutubeTrailers(details);
     }
 
     details[TmdbTitleFields.mediaType] = mediaType;
@@ -188,14 +176,30 @@ class TmdbTitleService extends TmdbBaseService {
     return title;
   }
 
-  Future<List<Map<String, dynamic>>> _searchYoutubeTrailers({
-    required String titleName,
-    required String mediaType,
-  }) async {
-    final lang = getLanguageCode();
-    final country = getCountryCode();
-    return await YoutubeExplodeService()
-        .searchTrailers(titleName, '$lang-$country');
+  Future<void> _addYoutubeTrailers(Map<String, dynamic> details) async {
+    final titleName =
+        details[TmdbTitleFields.title] ?? details[TmdbTitleFields.name];
+
+    if (titleName != null && titleName.toString().isNotEmpty) {
+      final lang = getLanguageCode();
+      final country = getCountryCode();
+      final youtubeVideos = await YoutubeExplodeService()
+          .searchTrailers(titleName.toString(), '$lang-$country');
+
+      if (youtubeVideos.isNotEmpty) {
+        final List videos = details[TmdbTitleFields.videos] ?? [];
+        final Set<String> existingKeys =
+            videos.map((v) => v[TmdbTitleFields.key] as String).toSet();
+
+        final List<Map<String, dynamic>> newVideos = youtubeVideos
+            .where((v) => !existingKeys.contains(v[TmdbTitleFields.key]))
+            .toList();
+
+        if (newVideos.isNotEmpty) {
+          details[TmdbTitleFields.videos] = [...videos, ...newVideos];
+        }
+      }
+    }
   }
 
   Future<TmdbTitle> updateTitleProviders(TmdbTitle title) async {

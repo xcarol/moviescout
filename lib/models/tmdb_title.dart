@@ -638,6 +638,10 @@ class TmdbTitle {
     return [];
   }
 
+  set videos(List<Map<String, dynamic>> value) {
+    videosJson = jsonEncode(value);
+  }
+
   static void updateGenreIds(
       TmdbTitle title, dynamic genres, dynamic genreIdsList) {
     final ids = <int>[];
