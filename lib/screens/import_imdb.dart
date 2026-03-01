@@ -530,7 +530,6 @@ class _ImportIMDBState extends State<ImportIMDB> {
           final watchlistService =
               Provider.of<TmdbWatchlistService>(context, listen: false);
 
-          updatedTitle.listName = watchlistService.listName;
           await watchlistService.updateWatchlistTitle(
             tmdbUserService.accountId,
             tmdbUserService.sessionId,
@@ -630,7 +629,6 @@ class _ImportIMDBState extends State<ImportIMDB> {
           final ratelistService =
               Provider.of<TmdbRateslistService>(context, listen: false);
 
-          updatedTitle.listName = ratelistService.listName;
           await ratelistService.updateTitleRate(
             tmdbUserService.accountId,
             tmdbUserService.sessionId,

@@ -77,7 +77,6 @@ class TmdbTitleFields {
   static const String lastUpdated = 'last_updated';
   static const String mediaType = 'media_type';
   static const String providers = 'providers';
-  static const String addedOrder = 'added_order';
   static const String isPinned = 'is_pinned';
   static const String images = 'images';
   static const String videos = 'videos';
@@ -110,11 +109,8 @@ class TmdbTitle {
   @Index(unique: true)
   Id id = Isar.autoIncrement;
 
-  @Index()
+  @Index(unique: true, replace: true)
   late int tmdbId;
-
-  @Index()
-  late String listName;
 
   late String name;
   late String originalName;
@@ -150,7 +146,8 @@ class TmdbTitle {
   // Calculated/Logic fields
   late int effectiveRuntime;
   late String effectiveReleaseDate;
-  late int addedOrder;
+  @ignore
+  int addedOrder = 0;
   late bool isPinned;
 
   // Lists (Simple)
@@ -181,7 +178,6 @@ class TmdbTitle {
   TmdbTitle({
     required this.id,
     required this.tmdbId,
-    required this.listName,
     required this.name,
     this.originalName = '',
     this.originalLanguage = '',
@@ -208,7 +204,6 @@ class TmdbTitle {
     this.revenue = 0,
     this.effectiveRuntime = 0,
     this.effectiveReleaseDate = '',
-    required this.addedOrder,
     this.genreIds = const [],
     this.flatrateProviderIds = const [],
     this.originCountry = const [],
@@ -239,11 +234,9 @@ class TmdbTitle {
     return TmdbTitle(
       id: Isar.autoIncrement,
       tmdbId: title[TmdbTitleFields.id] ?? 0,
-      listName: title[TmdbTitleFields.listName] ?? '',
       name: '',
       lastUpdated: '1970-01-01',
       dateRated: DateTime.fromMillisecondsSinceEpoch(0),
-      addedOrder: 0,
       isPinned: title[TmdbTitleFields.isPinned] ?? false,
       lastNotifiedSeason: title[TmdbTitleFields.lastNotifiedSeason] ?? 0,
       lastProvidersUpdate:
@@ -261,9 +254,6 @@ class TmdbTitle {
   void fillFromMap(Map<dynamic, dynamic> title) {
     if (title[TmdbTitleFields.id] != null) {
       tmdbId = title[TmdbTitleFields.id];
-    }
-    if (title[TmdbTitleFields.listName] != null) {
-      listName = title[TmdbTitleFields.listName];
     }
 
     final mediaTypeVal = title[TmdbTitleFields.mediaType] ?? mediaType;
@@ -325,7 +315,6 @@ class TmdbTitle {
     popularity = (title[TmdbTitleFields.popularity] ?? popularity).toDouble();
     budget = title[TmdbTitleFields.budget] ?? budget;
     revenue = title[TmdbTitleFields.revenue] ?? revenue;
-    addedOrder = title[TmdbTitleFields.addedOrder] ?? addedOrder;
     isPinned = title[TmdbTitleFields.isPinned] ?? isPinned;
     lastNotifiedSeason =
         title[TmdbTitleFields.lastNotifiedSeason] ?? lastNotifiedSeason;
@@ -382,7 +371,6 @@ class TmdbTitle {
   Map<String, dynamic> toMap() {
     return {
       TmdbTitleFields.id: tmdbId,
-      TmdbTitleFields.listName: listName,
       TmdbTitleFields.name: name,
       TmdbTitleFields.title: name,
       TmdbTitleFields.originalName: originalName,
@@ -412,7 +400,6 @@ class TmdbTitle {
       TmdbTitleFields.popularity: popularity,
       TmdbTitleFields.budget: budget,
       TmdbTitleFields.revenue: revenue,
-      TmdbTitleFields.addedOrder: addedOrder,
       TmdbTitleFields.isPinned: isPinned,
       TmdbTitleFields.lastNotifiedSeason: lastNotifiedSeason,
       TmdbTitleFields.lastProvidersUpdate: lastProvidersUpdate,

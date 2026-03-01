@@ -50,11 +50,9 @@ class TitleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     TmdbTitle tmdbTitle = _title;
 
-    if (_title.listName != _tmdbListService.listName) {
-      tmdbTitle =
-          _tmdbListService.getTitleByTmdbId(_title.tmdbId, _title.mediaType) ??
-              _title;
-    }
+    tmdbTitle =
+        _tmdbListService.getTitleByTmdbId(_title.tmdbId, _title.mediaType) ??
+            _title;
 
     return RepaintBoundary(
       child: SizedBox(
@@ -121,7 +119,7 @@ class TitleCard extends StatelessWidget {
                 .subtract(const Duration(days: 1))
                 .toIso8601String();
             await Provider.of<TmdbTitleRepository>(context, listen: false)
-                .saveTitle(tmdbTitle);
+                .updateTitleMetadata(tmdbTitle);
             if (context.mounted) {
               Provider.of<TmdbListService>(context, listen: false)
                   .debugUpdateTitleLastUpdate(tmdbTitle);

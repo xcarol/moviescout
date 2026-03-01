@@ -151,13 +151,15 @@ void callbackDispatcher() {
                 oldProviders.intersection(enabledProviderSet).isNotEmpty;
 
             if (needsFull) {
-              logLines.add('- Full update: ${title.name}. lastUpdated: ${title.lastUpdated}');
+              logLines.add(
+                  '- Full update: ${title.name}. lastUpdated: ${title.lastUpdated}');
               await titleService.updateTitleDetails(title);
             } else {
-              logLines.add('- Light update: ${title.name}. lastUpdated: ${title.lastUpdated}');
+              logLines.add(
+                  '- Light update: ${title.name}. lastUpdated: ${title.lastUpdated}');
               await titleService.updateTitleLight(title);
             }
-            await repository.saveTitle(title);
+            await repository.updateTitleMetadata(title);
 
             final oldProviderNames = providersList
                 .where((p) => oldProviders.contains(p[TmdbProvider.providerId]))
@@ -206,7 +208,7 @@ void callbackDispatcher() {
                 notifiedCount++;
                 if (title.isSerie) {
                   title.lastNotifiedSeason = title.numberOfSeasons;
-                  await repository.saveTitle(title);
+                  await repository.updateTitleMetadata(title);
                 }
               } else if (title.isSerie) {
                 final currentSeason = title.numberOfSeasons;
@@ -221,7 +223,7 @@ void callbackDispatcher() {
                   } else {
                     title.lastNotifiedSeason = currentSeason;
                   }
-                  await repository.saveTitle(title);
+                  await repository.updateTitleMetadata(title);
                 }
 
                 if (currentSeason > title.lastNotifiedSeason) {
@@ -242,7 +244,7 @@ void callbackDispatcher() {
                     );
                     notifiedCount++;
                     title.lastNotifiedSeason = currentSeason;
-                    await repository.saveTitle(title);
+                    await repository.updateTitleMetadata(title);
                   } else {}
                 }
               } else {
@@ -257,7 +259,7 @@ void callbackDispatcher() {
                 logLines.add(
                     '- Initializing silently ${title.name} (${title.numberOfSeasons} seasons)');
                 title.lastNotifiedSeason = title.numberOfSeasons;
-                await repository.saveTitle(title);
+                await repository.updateTitleMetadata(title);
               }
             }
 
