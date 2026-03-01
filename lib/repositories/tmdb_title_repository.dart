@@ -1,5 +1,6 @@
 import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/models/user_list_entry.dart';
 import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -7,13 +8,43 @@ import 'package:moviescout/utils/app_constants.dart';
 class TmdbTitleRepository {
   final _isar = IsarService.instance;
 
-  Future<void> saveTitle(TmdbTitle title) async {
+  Future<void> saveTitle(
+      TmdbTitle title, String listName, int addedOrder) async {
+    await _isar.writeTxn(() async {
+      await _isar.tmdbTitles.put(title);
+      await _isar.userListEntrys.put(UserListEntry(
+        listName: listName,
+        tmdbId: title.tmdbId,
+        addedOrder: addedOrder,
+      ));
+    });
+  }
+
+  Future<void> saveTitles(List<TmdbTitle> titles, String listName,
+      {List<int>? addedOrders}) async {
+    if (titles.isEmpty) return;
+
+    await _isar.writeTxn(() async {
+      await _isar.tmdbTitles.putAll(titles);
+      final entries = <UserListEntry>[];
+      for (var i = 0; i < titles.length; i++) {
+        entries.add(UserListEntry(
+          listName: listName,
+          tmdbId: titles[i].tmdbId,
+          addedOrder: addedOrders != null ? addedOrders[i] : i,
+        ));
+      }
+      await _isar.userListEntrys.putAll(entries);
+    });
+  }
+
+  Future<void> updateTitleMetadata(TmdbTitle title) async {
     await _isar.writeTxn(() async {
       await _isar.tmdbTitles.put(title);
     });
   }
 
-  Future<void> saveTitles(List<TmdbTitle> titles) async {
+  Future<void> updateTitlesMetadata(List<TmdbTitle> titles) async {
     await _isar.writeTxn(() async {
       await _isar.tmdbTitles.putAll(titles);
     });
@@ -21,102 +52,157 @@ class TmdbTitleRepository {
 
   Future<void> deleteTitle(String listName, int tmdbId) async {
     await _isar.writeTxn(() async {
-      await _isar.tmdbTitles
+      await _isar.userListEntrys
           .filter()
           .listNameEqualTo(listName)
           .tmdbIdEqualTo(tmdbId)
           .deleteAll();
+
+      final remainsInAnyList =
+          await _isar.userListEntrys.filter().tmdbIdEqualTo(tmdbId).count() > 0;
+
+      if (!remainsInAnyList) {
+        await _isar.tmdbTitles.filter().tmdbIdEqualTo(tmdbId).deleteAll();
+      }
     });
   }
 
   Future<void> deleteTitles(String listName, List<int> tmdbIds) async {
     await _isar.writeTxn(() async {
       for (final id in tmdbIds) {
-        await _isar.tmdbTitles
+        await _isar.userListEntrys
             .filter()
             .listNameEqualTo(listName)
             .tmdbIdEqualTo(id)
             .deleteAll();
-      }
-    });
-  }
 
-  Future<void> deleteTitlesByQuery(Query<TmdbTitle> query) async {
-    await _isar.writeTxn(() async {
-      await query.deleteAll();
+        final remainsInAnyList =
+            await _isar.userListEntrys.filter().tmdbIdEqualTo(id).count() > 0;
+
+        if (!remainsInAnyList) {
+          await _isar.tmdbTitles.filter().tmdbIdEqualTo(id).deleteAll();
+        }
+      }
     });
   }
 
   Future<void> clearList(String listName) async {
     await _isar.writeTxn(() async {
-      await _isar.tmdbTitles.filter().listNameEqualTo(listName).deleteAll();
+      final idsToRemove = await _isar.userListEntrys
+          .filter()
+          .listNameEqualTo(listName)
+          .tmdbIdProperty()
+          .findAll();
+
+      await _isar.userListEntrys.filter().listNameEqualTo(listName).deleteAll();
+
+      for (final id in idsToRemove) {
+        final remainsInAnyList =
+            await _isar.userListEntrys.filter().tmdbIdEqualTo(id).count() > 0;
+        if (!remainsInAnyList) {
+          await _isar.tmdbTitles.filter().tmdbIdEqualTo(id).deleteAll();
+        }
+      }
     });
   }
 
   void clearListSync(String listName) {
     _isar.writeTxnSync(() {
-      _isar.tmdbTitles.filter().listNameEqualTo(listName).deleteAllSync();
+      final idsToRemove = _isar.userListEntrys
+          .filter()
+          .listNameEqualTo(listName)
+          .tmdbIdProperty()
+          .findAllSync();
+
+      _isar.userListEntrys.filter().listNameEqualTo(listName).deleteAllSync();
+
+      for (final id in idsToRemove) {
+        final remainsInAnyList =
+            _isar.userListEntrys.filter().tmdbIdEqualTo(id).countSync() > 0;
+        if (!remainsInAnyList) {
+          _isar.tmdbTitles.filter().tmdbIdEqualTo(id).deleteAllSync();
+        }
+      }
     });
   }
 
   bool hasRatedTitles(String listName) {
-    return _isar.tmdbTitles
+    final idsInList = _isar.userListEntrys
         .filter()
         .listNameEqualTo(listName)
-        .ratingGreaterThan(0)
-        .countSync() >
+        .tmdbIdProperty()
+        .findAllSync();
+
+    if (idsInList.isEmpty) return false;
+
+    return _isar.tmdbTitles
+            .filter()
+            .anyOf(idsInList, (q, id) => q.tmdbIdEqualTo(id))
+            .ratingGreaterThan(0)
+            .countSync() >
         0;
   }
 
   int countTitlesSync(String listName) {
-    return _isar.tmdbTitles.filter().listNameEqualTo(listName).countSync();
+    return _isar.userListEntrys.filter().listNameEqualTo(listName).countSync();
   }
 
   int getMaxAddedOrderSync(String listName) {
-    final title = _isar.tmdbTitles
+    final entry = _isar.userListEntrys
         .filter()
         .listNameEqualTo(listName)
         .sortByAddedOrderDesc()
         .findFirstSync();
-    return title?.addedOrder ?? -1;
+    return entry?.addedOrder ?? -1;
   }
 
   TmdbTitle? getTitleByTmdbId(String listName, int tmdbId, String mediaType) {
-    return _isar.tmdbTitles
+    final inList = _isar.userListEntrys
         .filter()
         .listNameEqualTo(listName)
+        .tmdbIdEqualTo(tmdbId)
+        .findFirstSync();
+
+    if (inList == null) return null;
+
+    return _isar.tmdbTitles
+        .filter()
         .tmdbIdEqualTo(tmdbId)
         .mediaTypeEqualTo(mediaType)
         .findFirstSync();
   }
 
   Future<List<int>> getAllTmdbIds(String listName) async {
-    return _isar.tmdbTitles
-        .where()
+    return _isar.userListEntrys
+        .filter()
         .listNameEqualTo(listName)
         .tmdbIdProperty()
         .findAll();
   }
 
   Future<List<List<int>>> getAllGenreIds(String listName) async {
+    final ids = await getAllTmdbIds(listName);
+    if (ids.isEmpty) return [];
     return _isar.tmdbTitles
         .filter()
-        .listNameEqualTo(listName)
+        .anyOf(ids, (q, id) => q.tmdbIdEqualTo(id))
         .genreIdsProperty()
         .findAll();
   }
 
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> buildQuery({
-    required String listName,
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> _buildQuery(
+    List<int> idsInList, {
+    bool? pinned,
     String filterText = '',
-    String filterMediaType = '',
     List<int> filterGenres = const [],
+    String filterMediaType = '',
     bool filterByProviders = false,
     List<int> filterProvidersIds = const [],
     RatingFilter filterRating = RatingFilter.all,
-    bool? pinned,
   }) {
-    var query = _isar.tmdbTitles.filter().listNameEqualTo(listName);
+    var query = _isar.tmdbTitles
+        .filter()
+        .anyOf(idsInList, (q, id) => q.tmdbIdEqualTo(id));
 
     if (pinned != null) {
       query = query.isPinnedEqualTo(pinned);
@@ -156,38 +242,90 @@ class TmdbTitleRepository {
     return query;
   }
 
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> applySort({
-    required QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> query,
-    required String sortOption,
-    required bool ascending,
-  }) {
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> _applySort(
+    QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> query,
+    String sortOption,
+    bool sortAscending,
+  ) {
     switch (sortOption) {
       case SortOption.rating:
-        return ascending
+        return sortAscending
             ? query.sortByVoteAverage()
             : query.sortByVoteAverageDesc();
       case SortOption.userRating:
-        return ascending ? query.sortByRating() : query.sortByRatingDesc();
+        return sortAscending ? query.sortByRating() : query.sortByRatingDesc();
       case SortOption.dateRated:
-        return ascending
+        return sortAscending
             ? query.sortByDateRated()
             : query.sortByDateRatedDesc();
       case SortOption.releaseDate:
-        return ascending
+        return sortAscending
             ? query.sortByEffectiveReleaseDate()
             : query.sortByEffectiveReleaseDateDesc();
       case SortOption.runtime:
-        return ascending
+        return sortAscending
             ? query.sortByIsMovieDesc().thenByEffectiveRuntime()
             : query.sortByIsMovieDesc().thenByEffectiveRuntimeDesc();
-      case SortOption.addedOrder:
-        return ascending
-            ? query.sortByAddedOrder()
-            : query.sortByAddedOrderDesc();
       case SortOption.alphabetically:
       default:
-        return ascending ? query.sortByName() : query.sortByNameDesc();
+        return sortAscending ? query.sortByName() : query.sortByNameDesc();
     }
+  }
+
+  Future<List<TmdbTitle>> _getTitlesSortedByAddedOrder({
+    required String listName,
+    required List<int> idsInList,
+    String filterText = '',
+    String filterMediaType = '',
+    List<int> filterGenres = const [],
+    bool filterByProviders = false,
+    List<int> filterProvidersIds = const [],
+    RatingFilter filterRating = RatingFilter.all,
+    bool? pinned,
+    bool sortAscending = true,
+    int offset = 0,
+    int limit = 10,
+  }) async {
+    final eligibleIds = await _buildQuery(
+      idsInList,
+      pinned: pinned,
+      filterText: filterText,
+      filterGenres: filterGenres,
+      filterMediaType: filterMediaType,
+      filterByProviders: filterByProviders,
+      filterProvidersIds: filterProvidersIds,
+      filterRating: filterRating,
+    ).tmdbIdProperty().findAll();
+
+    if (eligibleIds.isEmpty) return [];
+
+    final entryQuery = _isar.userListEntrys
+        .filter()
+        .listNameEqualTo(listName)
+        .anyOf(eligibleIds, (q, id) => q.tmdbIdEqualTo(id));
+
+    final sortedEntries = sortAscending
+        ? await entryQuery
+            .sortByAddedOrder()
+            .offset(offset)
+            .limit(limit)
+            .findAll()
+        : await entryQuery
+            .sortByAddedOrderDesc()
+            .offset(offset)
+            .limit(limit)
+            .findAll();
+
+    final pagedIds = sortedEntries.map((e) => e.tmdbId).toList();
+    if (pagedIds.isEmpty) return [];
+
+    final pagedTitles = await _isar.tmdbTitles
+        .filter()
+        .anyOf(pagedIds, (q, id) => q.tmdbIdEqualTo(id))
+        .findAll();
+
+    final titlesMap = {for (var t in pagedTitles) t.tmdbId: t};
+    return pagedIds.map((id) => titlesMap[id]!).toList();
   }
 
   Future<List<TmdbTitle>> getTitles({
@@ -203,21 +341,39 @@ class TmdbTitleRepository {
     bool? pinned,
     int offset = 0,
     int limit = 10,
-  }) {
-    final query = buildQuery(
-      listName: listName,
+  }) async {
+    final idsInList = await getAllTmdbIds(listName);
+    if (idsInList.isEmpty) return [];
+
+    if (sortOption == SortOption.addedOrder) {
+      return _getTitlesSortedByAddedOrder(
+        listName: listName,
+        idsInList: idsInList,
+        filterText: filterText,
+        filterMediaType: filterMediaType,
+        filterGenres: filterGenres,
+        filterByProviders: filterByProviders,
+        filterProvidersIds: filterProvidersIds,
+        filterRating: filterRating,
+        pinned: pinned,
+        sortAscending: sortAscending,
+        offset: offset,
+        limit: limit,
+      );
+    }
+
+    var query = _buildQuery(
+      idsInList,
+      pinned: pinned,
       filterText: filterText,
-      filterMediaType: filterMediaType,
       filterGenres: filterGenres,
+      filterMediaType: filterMediaType,
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
       filterRating: filterRating,
-      pinned: pinned,
     );
 
-    final sortedQuery = applySort(
-        query: query, sortOption: sortOption, ascending: sortAscending);
-
+    final sortedQuery = _applySort(query, sortOption, sortAscending);
     return sortedQuery.offset(offset).limit(limit).findAll();
   }
 
@@ -231,16 +387,18 @@ class TmdbTitleRepository {
     RatingFilter filterRating = RatingFilter.all,
     bool? pinned,
   }) async {
-    final query = buildQuery(
-      listName: listName,
+    final idsInList = await getAllTmdbIds(listName);
+    if (idsInList.isEmpty) return 0;
+
+    return _buildQuery(
+      idsInList,
+      pinned: pinned,
       filterText: filterText,
-      filterMediaType: filterMediaType,
       filterGenres: filterGenres,
+      filterMediaType: filterMediaType,
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
       filterRating: filterRating,
-      pinned: pinned,
-    );
-    return query.count();
+    ).count();
   }
 }

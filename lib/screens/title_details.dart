@@ -106,7 +106,7 @@ class _TitleDetailsState extends State<TitleDetails> {
 
     if (lastUpdated != title.lastUpdated && title.id != Isar.autoIncrement) {
       final repository = TmdbTitleRepository();
-      await repository.saveTitle(title);
+      await repository.updateTitleMetadata(title);
     }
 
     return title;

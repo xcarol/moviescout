@@ -3,6 +3,7 @@ import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/tmdb_title.dart';
+import '../models/user_list_entry.dart';
 
 class IsarService {
   static late final Isar _isar;
@@ -10,7 +11,7 @@ class IsarService {
   static Future<void> init() async {
     final dir = await getApplicationCacheDirectory();
     _isar = await Isar.open(
-      [TmdbTitleSchema],
+      [TmdbTitleSchema, UserListEntrySchema],
       directory: dir.path,
       inspector: kDebugMode,
     );

@@ -57,15 +57,21 @@ class TmdbDiscoverlistService extends TmdbListService {
     final Map<int, double> genreWeights = {};
     final Map<int, int> genreCounts = {};
 
-    final ratedTitles = await isar.tmdbTitles
-        .filter()
-        .listNameEqualTo(AppConstants.rateslist)
-        .findAll();
+    final ratedIds = await repository.getAllTmdbIds(AppConstants.rateslist);
+    final ratedTitles = ratedIds.isEmpty
+        ? <TmdbTitle>[]
+        : await isar.tmdbTitles
+            .filter()
+            .anyOf(ratedIds, (q, id) => q.tmdbIdEqualTo(id))
+            .findAll();
 
-    final watchlistTitles = await isar.tmdbTitles
-        .filter()
-        .listNameEqualTo(AppConstants.watchlist)
-        .findAll();
+    final watchlistIds = await repository.getAllTmdbIds(AppConstants.watchlist);
+    final watchlistTitles = watchlistIds.isEmpty
+        ? <TmdbTitle>[]
+        : await isar.tmdbTitles
+            .filter()
+            .anyOf(watchlistIds, (q, id) => q.tmdbIdEqualTo(id))
+            .findAll();
 
     final allTitles = {...ratedTitles, ...watchlistTitles}.toList();
     final totalTitles = allTitles.length;
@@ -128,33 +134,51 @@ class TmdbDiscoverlistService extends TmdbListService {
 
       final genrePreferences = await _calculateGenrePreferences();
 
+      final rIds = await repository.getAllTmdbIds(AppConstants.rateslist);
+      final wIds = await repository.getAllTmdbIds(AppConstants.watchlist);
+
       final positiveSignalTitles = await isar.tmdbTitles
           .filter()
-          .group((q) => q
-              .listNameEqualTo(AppConstants.rateslist)
+          .group((q) {
+            QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>? query;
+            if (rIds.isNotEmpty) {
+              query = q
+                  .anyOf(rIds, (q1, id) => q1.tmdbIdEqualTo(id))
+                  .ratingGreaterThan(2.5);
+            }
+            if (wIds.isNotEmpty) {
+              if (query == null) {
+                query = q.anyOf(wIds, (q1, id) => q1.tmdbIdEqualTo(id));
+              } else {
+                query =
+                    query.or().anyOf(wIds, (q1, id) => q1.tmdbIdEqualTo(id));
+              }
+            }
+            return query ?? q.tmdbIdEqualTo(-1);
+          })
+          .and()
+          .mediaTypeEqualTo(mediaType)
+          .findAll();
+
+      final ratedIds = rIds.isEmpty
+          ? <int>[]
+          : await isar.tmdbTitles
+              .filter()
+              .anyOf(rIds, (q, id) => q.tmdbIdEqualTo(id))
               .and()
-              .ratingGreaterThan(2.5)
-              .or()
-              .listNameEqualTo(AppConstants.watchlist))
-          .and()
-          .mediaTypeEqualTo(mediaType)
-          .findAll();
+              .mediaTypeEqualTo(mediaType)
+              .tmdbIdProperty()
+              .findAll();
 
-      final ratedIds = await isar.tmdbTitles
-          .filter()
-          .listNameEqualTo(AppConstants.rateslist)
-          .and()
-          .mediaTypeEqualTo(mediaType)
-          .tmdbIdProperty()
-          .findAll();
-
-      final watchlistIds = await isar.tmdbTitles
-          .filter()
-          .listNameEqualTo(AppConstants.watchlist)
-          .and()
-          .mediaTypeEqualTo(mediaType)
-          .tmdbIdProperty()
-          .findAll();
+      final watchlistIds = wIds.isEmpty
+          ? <int>[]
+          : await isar.tmdbTitles
+              .filter()
+              .anyOf(wIds, (q, id) => q.tmdbIdEqualTo(id))
+              .and()
+              .mediaTypeEqualTo(mediaType)
+              .tmdbIdProperty()
+              .findAll();
 
       addedIds.addAll(ratedIds);
       addedIds.addAll(watchlistIds);
