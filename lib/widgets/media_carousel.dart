@@ -11,8 +11,11 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 class MediaCarousel extends StatefulWidget {
   final TmdbTitle title;
 
+  final bool isLoading;
+
   const MediaCarousel({
     required this.title,
+    this.isLoading = false,
     super.key,
   });
 
@@ -23,13 +26,12 @@ class MediaCarousel extends StatefulWidget {
 class _MediaCarouselState extends State<MediaCarousel> {
   late PageController _pageController;
   int _currentPage = 0;
+  static const int _infiniteBase = 10000;
 
   @override
   void initState() {
     super.initState();
-    final totalItems = widget.title.images.length + widget.title.videos.length;
-    final initialPage = totalItems > 1 ? 1000 * totalItems : 0;
-    _pageController = PageController(initialPage: initialPage);
+    _pageController = PageController(initialPage: _infiniteBase);
     _currentPage = 0;
   }
 
@@ -63,6 +65,11 @@ class _MediaCarouselState extends State<MediaCarousel> {
     return _buildCarousel(context, totalItems, images, videos);
   }
 
+  int _getRealIndex(int index, int total) {
+    if (total <= 0) return 0;
+    return ((((index - _infiniteBase) % total) + total) % total).toInt();
+  }
+
   Widget _buildCarousel(BuildContext context, int totalItems,
       List<String> images, List<Map<String, dynamic>> videos) {
     return AspectRatio(
@@ -70,11 +77,20 @@ class _MediaCarouselState extends State<MediaCarousel> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
+          if (widget.isLoading)
+            const Positioned(
+              top: 10,
+              right: 10,
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
           PageView.builder(
-            key: const PageStorageKey('media_carousel_page_view'),
             controller: _pageController,
             onPageChanged: (index) {
-              final realIndex = index % totalItems;
+              final realIndex = _getRealIndex(index, totalItems);
               if (realIndex != _currentPage) {
                 setState(() {
                   _currentPage = realIndex;
@@ -82,7 +98,7 @@ class _MediaCarouselState extends State<MediaCarousel> {
               }
             },
             itemBuilder: (context, index) {
-              final realIndex = index % totalItems;
+              final realIndex = _getRealIndex(index, totalItems);
               if (realIndex < images.length) {
                 return _buildImage(images[realIndex]);
               } else {
