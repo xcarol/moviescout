@@ -125,6 +125,7 @@ class _DiscoverListState extends State<DiscoverList> {
       shouldRebuild: (prev, next) => prev != next,
       builder: (context, isEmpty, child) {
         return RefreshIndicator(
+          displacement: 200.0,
           onRefresh: () async {
             _updateDiscoverList(forceUpdate: true);
             while (_discoverlistService.isLoading.value) {
