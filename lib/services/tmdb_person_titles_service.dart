@@ -51,7 +51,7 @@ class TmdbPersonTitlesService extends TmdbListService {
 
   @override
   Future<void> filterTitles() async {
-    clearLoadedTitles(clearGenreCache: false);
+    clearLoadedTitles();
 
     anyFilterApplied = true;
 

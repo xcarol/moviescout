@@ -90,7 +90,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   @protected
   void resetServiceStateAfterClear() {
-    clearLoadedTitles(clearGenreCache: true);
+    clearLoadedTitles(clearGenreCache: true, resetCount: true);
     UpdateManager().removeLastUpdate(listNameVal);
     notifyListeners();
   }
@@ -101,13 +101,13 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   @protected
-  Future<void> clearLocalList() async {
+  Future<void> _clearLocalList() async {
     await repository.clearList(listNameVal);
     resetServiceStateAfterClear();
   }
 
   Future<void> clearList() async {
-    await clearLocalList();
+    await _clearLocalList();
   }
 
   bool get listIsEmpty {
@@ -135,13 +135,16 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   @protected
-  void clearLoadedTitles({bool clearGenreCache = false}) {
+  void clearLoadedTitles(
+      {bool clearGenreCache = false, bool resetCount = false}) {
     if (clearGenreCache) {
       listGenresVal.clear();
     }
     loadedTitlesVal.clear();
     pinnedTitlesVal.clear();
-    selectedTitleCount.value = 0;
+    if (resetCount) {
+      selectedTitleCount.value = 0;
+    }
     anyFilterApplied = false;
     hasMoreVal = true;
     pageVal = 0;
@@ -223,7 +226,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     final bool isInitialLoad = listIsEmpty;
 
     if (isInitialLoad) {
-      await clearLocalList();
+      await _clearLocalList();
     }
 
     List<TmdbTitle> serverList =
@@ -370,7 +373,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
     final currentRequestId = ++filterRequestId;
 
-    clearLoadedTitles(clearGenreCache: false);
+    clearLoadedTitles();
 
     anyFilterApplied = true;
 
