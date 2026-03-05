@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:isar_community/isar.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -49,74 +48,78 @@ class TitleDetails extends StatefulWidget {
 }
 
 class _TitleDetailsState extends State<TitleDetails> {
-  late Future<TmdbTitle> _titleFuture;
+  late TmdbTitle _currentTitle;
+  bool _isUpdating = false;
 
   @override
   void initState() {
     super.initState();
-    _titleFuture = _updatedTitle();
+    _currentTitle = widget._title;
+    _updateDetails();
   }
 
   @override
   Widget build(BuildContext context) {
-    String appTitle = widget._title.name;
+    String appTitle = _currentTitle.name;
 
-    return FutureBuilder(
-      future: _titleFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const Scaffold(
-              body: Center(child: CircularProgressIndicator()));
-        }
-
-        final TmdbTitle titleDetails = snapshot.data as TmdbTitle;
-
-        return Scaffold(
-          appBar: MainAppBar(
-            context: context,
-            title: appTitle,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.share),
-                onPressed: () {
-                  final String link =
-                      'https://${ApiConstants.tmdbHost}/${widget._title.mediaType}/${widget._title.tmdbId}';
-                  SharePlus.instance.share(
-                    ShareParams(text: '${widget._title.name}\n$link'),
-                  );
-                },
-                tooltip: AppLocalizations.of(context)!.shareLink,
-              ),
-            ],
+    return Scaffold(
+      appBar: MainAppBar(
+        context: context,
+        title: appTitle,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: () {
+              final String link =
+                  'https://${ApiConstants.tmdbHost}/${_currentTitle.mediaType}/${_currentTitle.tmdbId}';
+              SharePlus.instance.share(
+                ShareParams(text: '${_currentTitle.name}\n$link'),
+              );
+            },
+            tooltip: AppLocalizations.of(context)!.shareLink,
           ),
-          drawer: AppDrawer(),
-          body: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: _detailsBody(titleDetails),
-          ),
-        );
-      },
+        ],
+      ),
+      drawer: AppDrawer(),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: _detailsBody(_currentTitle),
+      ),
     );
   }
 
-  Future<TmdbTitle> _updatedTitle() async {
-    final String lastUpdated = widget._title.lastUpdated;
-    final TmdbTitle title =
-        await TmdbTitleService().updateTitleDetails(widget._title, force: true);
+  Future<void> _updateDetails() async {
+    setState(() {
+      _isUpdating = true;
+    });
 
-    if (lastUpdated != title.lastUpdated && title.id != Isar.autoIncrement) {
-      final repository = TmdbTitleRepository();
-      await repository.saveTitle(title);
+    try {
+      final updated = await TmdbTitleService().updateTitleDetails(_currentTitle,
+          force: true, includeYoutubeSearch: true);
+
+      if (mounted) {
+        setState(() {
+          _currentTitle = updated;
+          _isUpdating = false;
+        });
+
+        final repository = TmdbTitleRepository();
+        await repository.updateTitleMetadata(updated);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isUpdating = false;
+        });
+      }
     }
-
-    return title;
   }
 
   Widget _detailsBody(TmdbTitle title) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        MediaCarousel(title: title),
+        MediaCarousel(title: title, isLoading: _isUpdating),
         const SizedBox(height: 20),
         _details(title),
       ],

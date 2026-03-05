@@ -142,16 +142,16 @@ void callbackDispatcher() {
           final wasAvailable =
               oldProviders.intersection(enabledProviderSet).isNotEmpty;
 
-          if (needsFull) {
-            logLines.add(
-                '- Full update: ${title.name}. lastUpdated: ${title.lastUpdated}');
-            await titleService.updateTitleDetails(title);
-          } else {
-            logLines.add(
-                '- Light update: ${title.name}. lastUpdated: ${title.lastUpdated}');
-            await titleService.updateTitleLight(title);
-          }
-          await repository.saveTitle(title);
+            if (needsFull) {
+              logLines.add(
+                  '- Full update: ${title.name}. lastUpdated: ${title.lastUpdated}');
+              await titleService.updateTitleDetails(title);
+            } else {
+              logLines.add(
+                  '- Light update: ${title.name}. lastUpdated: ${title.lastUpdated}');
+              await titleService.updateTitleLight(title);
+            }
+            await repository.updateTitleMetadata(title);
 
           final oldProviderNames = providersList
               .where((p) => oldProviders.contains(p[TmdbProvider.providerId]))
@@ -185,37 +185,37 @@ void callbackDispatcher() {
                   '- Available: ${title.name} at ${availableProviderNames.join(', ')}');
             }
 
-            if (!wasAvailable) {
-              // Title just became available
-              logLines.add(
-                  '- Sending notification for ${title.name} (Now available)');
-              await NotificationService().showNotification(
-                id: title.tmdbId,
-                title: localizations.notificationTitle,
-                body: localizations.notificationBody(title.name),
-                imageUrl: title.posterPath,
-                payload: '${title.mediaType}|${title.tmdbId}',
-              );
-              notifiedCount++;
-              if (title.isSerie) {
-                title.lastNotifiedSeason = title.numberOfSeasons;
-                await repository.saveTitle(title);
-              }
-            } else if (title.isSerie) {
-              final currentSeason = title.numberOfSeasons;
+              if (!wasAvailable) {
+                // Title just became available
+                logLines.add(
+                    '- Sending notification for ${title.name} (Now available)');
+                await NotificationService().showNotification(
+                  id: title.tmdbId,
+                  title: localizations.notificationTitle,
+                  body: localizations.notificationBody(title.name),
+                  imageUrl: title.posterPath,
+                  payload: '${title.mediaType}|${title.tmdbId}',
+                );
+                notifiedCount++;
+                if (title.isSerie) {
+                  title.lastNotifiedSeason = title.numberOfSeasons;
+                  await repository.updateTitleMetadata(title);
+                }
+              } else if (title.isSerie) {
+                final currentSeason = title.numberOfSeasons;
 
               // Initialize lastNotifiedSeason if it's 0 (first run with this feature)
               if (title.lastNotifiedSeason == 0 && currentSeason > 0) {
                 final isBrandNew = _isBrandNewSeason(title.nextEpisodeToAir,
                     title.lastEpisodeToAir, currentSeason);
 
-                if (isBrandNew) {
-                  title.lastNotifiedSeason = currentSeason - 1;
-                } else {
-                  title.lastNotifiedSeason = currentSeason;
+                  if (isBrandNew) {
+                    title.lastNotifiedSeason = currentSeason - 1;
+                  } else {
+                    title.lastNotifiedSeason = currentSeason;
+                  }
+                  await repository.updateTitleMetadata(title);
                 }
-                await repository.saveTitle(title);
-              }
 
               if (currentSeason > title.lastNotifiedSeason) {
                 final shouldNotify = _hasNewSeasonStarted(
@@ -223,36 +223,36 @@ void callbackDispatcher() {
                     title.lastEpisodeToAir,
                     currentSeason);
 
-                if (shouldNotify) {
-                  logLines.add(
-                      '- Sending notification for new season of ${title.name} (${title.numberOfSeasons} seasons)');
-                  await NotificationService().showNotification(
-                    id: title.tmdbId + 1000000,
-                    title: localizations.notificationNewSeasonTitle,
-                    body: localizations.notificationNewSeasonBody(title.name),
-                    imageUrl: title.posterPath,
-                    payload: '${title.mediaType}|${title.tmdbId}',
-                  );
-                  notifiedCount++;
-                  title.lastNotifiedSeason = currentSeason;
-                  await repository.saveTitle(title);
-                } else {}
+                  if (shouldNotify) {
+                    logLines.add(
+                        '- Sending notification for new season of ${title.name} (${title.numberOfSeasons} seasons)');
+                    await NotificationService().showNotification(
+                      id: title.tmdbId + 1000000,
+                      title: localizations.notificationNewSeasonTitle,
+                      body: localizations.notificationNewSeasonBody(title.name),
+                      imageUrl: title.posterPath,
+                      payload: '${title.mediaType}|${title.tmdbId}',
+                    );
+                    notifiedCount++;
+                    title.lastNotifiedSeason = currentSeason;
+                    await repository.updateTitleMetadata(title);
+                  } else {}
+                }
+              } else {
+                logLines.add(
+                    '- Skipping ${title.name}. Already available at $listOldProviderNames. wasAvailable: $wasAvailable');
               }
             } else {
-              logLines.add(
-                  '- Skipping ${title.name}. Already available at $listOldProviderNames. wasAvailable: $wasAvailable');
+              if (title.isSerie &&
+                  title.lastNotifiedSeason == 0 &&
+                  title.numberOfSeasons > 0) {
+                // initialize silently
+                logLines.add(
+                    '- Initializing silently ${title.name} (${title.numberOfSeasons} seasons)');
+                title.lastNotifiedSeason = title.numberOfSeasons;
+                await repository.updateTitleMetadata(title);
+              }
             }
-          } else {
-            if (title.isSerie &&
-                title.lastNotifiedSeason == 0 &&
-                title.numberOfSeasons > 0) {
-              // initialize silently
-              logLines.add(
-                  '- Initializing silently ${title.name} (${title.numberOfSeasons} seasons)');
-              title.lastNotifiedSeason = title.numberOfSeasons;
-              await repository.saveTitle(title);
-            }
-          }
 
           await Future.delayed(const Duration(milliseconds: 200));
         }

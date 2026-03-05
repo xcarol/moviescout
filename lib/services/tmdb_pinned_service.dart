@@ -58,7 +58,7 @@ class TmdbPinnedService extends TmdbConfigListService {
     for (var item in pinnedIds) {
       final parts = item.split(':');
       if (parts.length == 2) {
-        final mediaType = parts[0];
+        final mediaType = parts[0] == '1' ? 'movie' : 'tv';
         final tmdbId = int.tryParse(parts[1]);
         if (tmdbId != null) {
           final title = repository.getTitleByTmdbId(
@@ -72,7 +72,7 @@ class TmdbPinnedService extends TmdbConfigListService {
     }
 
     if (toUpdate.isNotEmpty) {
-      await repository.saveTitles(toUpdate.values.toList());
+      await repository.updateTitlesMetadata(toUpdate.values.toList());
     }
   }
 
@@ -81,7 +81,9 @@ class TmdbPinnedService extends TmdbConfigListService {
       listName: AppConstants.watchlist,
       pinned: true,
     );
-    return pinnedTitles.map((t) => '${t.mediaType}:${t.tmdbId}').join(',');
+    return pinnedTitles
+        .map((t) => '${t.mediaType == 'movie' ? '1' : '2'}:${t.tmdbId}')
+        .join(',');
   }
 
   Future<bool> updatePinnedToServer() async {

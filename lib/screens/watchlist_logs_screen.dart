@@ -31,6 +31,12 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen> {
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(covariant WatchlistLogsScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _loadState();
+  }
+
   void _loadState() {
     final prefs = PreferencesService().prefs;
     final String? lastRunStr = prefs.getString(AppConstants.lastBackgroundRun);

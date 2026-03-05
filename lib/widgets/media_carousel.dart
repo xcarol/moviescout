@@ -11,8 +11,11 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 class MediaCarousel extends StatefulWidget {
   final TmdbTitle title;
 
+  final bool isLoading;
+
   const MediaCarousel({
     required this.title,
+    this.isLoading = false,
     super.key,
   });
 
@@ -23,13 +26,12 @@ class MediaCarousel extends StatefulWidget {
 class _MediaCarouselState extends State<MediaCarousel> {
   late PageController _pageController;
   int _currentPage = 0;
+  static const int _infiniteBase = 10000;
 
   @override
   void initState() {
     super.initState();
-    final totalItems = widget.title.images.length + widget.title.videos.length;
-    final initialPage = totalItems > 1 ? 1000 * totalItems : 0;
-    _pageController = PageController(initialPage: initialPage);
+    _pageController = PageController(initialPage: _infiniteBase);
     _currentPage = 0;
   }
 
@@ -63,6 +65,11 @@ class _MediaCarouselState extends State<MediaCarousel> {
     return _buildCarousel(context, totalItems, images, videos);
   }
 
+  int _getRealIndex(int index, int total) {
+    if (total <= 0) return 0;
+    return ((((index - _infiniteBase) % total) + total) % total).toInt();
+  }
+
   Widget _buildCarousel(BuildContext context, int totalItems,
       List<String> images, List<Map<String, dynamic>> videos) {
     return AspectRatio(
@@ -70,11 +77,20 @@ class _MediaCarouselState extends State<MediaCarousel> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
+          if (widget.isLoading)
+            const Positioned(
+              top: 10,
+              right: 10,
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
           PageView.builder(
-            key: const PageStorageKey('media_carousel_page_view'),
             controller: _pageController,
             onPageChanged: (index) {
-              final realIndex = index % totalItems;
+              final realIndex = _getRealIndex(index, totalItems);
               if (realIndex != _currentPage) {
                 setState(() {
                   _currentPage = realIndex;
@@ -82,11 +98,12 @@ class _MediaCarouselState extends State<MediaCarousel> {
               }
             },
             itemBuilder: (context, index) {
-              final realIndex = index % totalItems;
+              final realIndex = _getRealIndex(index, totalItems);
               if (realIndex < images.length) {
                 return _buildImage(images[realIndex]);
               } else {
                 return VideoPlayerItem(
+                  key: ValueKey(videos[realIndex - images.length]['key']),
                   video: videos[realIndex - images.length],
                   isCurrentPage: realIndex == _currentPage,
                 );
@@ -179,6 +196,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
     with AutomaticKeepAliveClientMixin {
   YoutubePlayerController? _controller;
   bool _isPlaying = false;
+  bool _isFullScreen = false;
   ScrollPosition? _scrollPosition;
   Orientation? _lastOrientation;
 
@@ -267,8 +285,9 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
     updateKeepAlive();
   }
 
-  void _enterFullScreen({bool isAuto = false}) {
-    if (_controller == null) return;
+  void _enterFullScreen() {
+    if (_controller == null || _isFullScreen) return;
+    _isFullScreen = true;
 
     final currentPosition = _controller!.value.position;
     _controller!.pause();
@@ -279,7 +298,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
         builder: (context) => FullScreenPlayer(
           videoId: widget.video['key'] as String,
           startAt: currentPosition,
-          isAuto: isAuto,
+          autoPlay: _controller?.value.isPlaying ?? true,
         ),
       ),
     )
@@ -288,6 +307,9 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
         if (resumePosition != null && resumePosition is Duration) {
           _controller?.seekTo(resumePosition);
         }
+        setState(() {
+          _isFullScreen = false;
+        });
         _controller?.play();
       }
     });
@@ -302,68 +324,66 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
     final currentOrientation = MediaQuery.of(context).orientation;
 
     if (_isPlaying &&
+        !_isFullScreen &&
+        (_controller?.value.isPlaying ?? false) &&
         _lastOrientation == Orientation.portrait &&
         currentOrientation == Orientation.landscape) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _enterFullScreen(isAuto: true);
+        if (mounted) _enterFullScreen();
       });
     }
     _lastOrientation = currentOrientation;
 
     if (_isPlaying && _controller != null) {
-      return Stack(
-        children: [
-          YoutubePlayer(
-            controller: _controller!,
-            showVideoProgressIndicator: true,
-            progressIndicatorColor: Colors.amber,
-            onEnded: (meta) => _stopPlayback(),
-            // Ensure we don't show the package's internal fullscreen button
-            bottomActions: [
-              const SizedBox(width: 14.0),
-              CurrentPosition(),
-              const SizedBox(width: 8.0),
-              ProgressBar(isExpanded: true),
-              RemainingDuration(),
-              PlaybackSpeedButton(),
-            ],
-          ),
-          Positioned(
-            top: 8,
-            right: 8,
-            child: IconButton(
-              icon: const Icon(Icons.fullscreen, color: Colors.white, size: 32),
-              onPressed: () => _enterFullScreen(isAuto: false),
+      return Container(
+        color: Colors.black,
+        child: Stack(
+          children: [
+            YoutubePlayer(
+              controller: _controller!,
+              showVideoProgressIndicator: true,
+              progressIndicatorColor: Colors.amber,
+              thumbnail: Container(color: Colors.black),
+              onEnded: (meta) => _stopPlayback(),
+              // Ensure we don't show the package's internal fullscreen button
+              bottomActions: [
+                const SizedBox(width: 14.0),
+                CurrentPosition(),
+                const SizedBox(width: 8.0),
+                ProgressBar(isExpanded: true),
+                RemainingDuration(),
+              ],
             ),
-          ),
-          if (isSearch)
-            Positioned(
-              top: 8,
-              left: 8,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.6),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white24),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.search, color: Colors.white, size: 14),
-                    const SizedBox(width: 4),
-                    Text(
-                      AppLocalizations.of(context)!.youtubeSearch,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
+            if (isSearch)
+              Positioned(
+                top: 8,
+                left: 8,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.6),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white24),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.search, color: Colors.white, size: 14),
+                      const SizedBox(width: 4),
+                      Text(
+                        AppLocalizations.of(context)!.youtubeSearch,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       );
     }
 
@@ -449,12 +469,12 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
 class FullScreenPlayer extends StatefulWidget {
   final String videoId;
   final Duration startAt;
-  final bool isAuto;
+  final bool autoPlay;
 
   const FullScreenPlayer({
     required this.videoId,
     required this.startAt,
-    this.isAuto = false,
+    this.autoPlay = true,
     super.key,
   });
 
@@ -464,6 +484,20 @@ class FullScreenPlayer extends StatefulWidget {
 
 class _FullScreenPlayerState extends State<FullScreenPlayer> {
   late YoutubePlayerController _controller;
+  bool _isEnded = false;
+
+  Future<void> _popWithPortrait({Duration? forcePosition}) async {
+    if (!mounted) return;
+    // Force portrait mode before exiting to ensure the details screen looks good
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    if (mounted) {
+      final position = forcePosition ??
+          (_controller.value.isReady
+              ? _controller.value.position
+              : widget.startAt);
+      Navigator.of(context).pop(position);
+    }
+  }
 
   @override
   void initState() {
@@ -471,19 +505,14 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
     _controller = YoutubePlayerController(
       initialVideoId: widget.videoId,
       flags: YoutubePlayerFlags(
-        autoPlay: true,
+        autoPlay: widget.autoPlay,
         mute: false,
         startAt: widget.startAt.inSeconds,
         useHybridComposition: true,
       ),
     );
 
-    if (!widget.isAuto) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
-    }
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   }
 
@@ -498,39 +527,79 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.isAuto &&
-        MediaQuery.of(context).orientation == Orientation.portrait) {
+    final orientation = MediaQuery.of(context).orientation;
+
+    // Handle auto-exit when rotating back to portrait
+    if (orientation == Orientation.portrait) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) Navigator.of(context).pop(_controller.value.position);
+        if (mounted) _popWithPortrait();
       });
     }
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          Center(
-            child: YoutubePlayer(
-              controller: _controller,
-              showVideoProgressIndicator: true,
-              progressIndicatorColor: Colors.amber,
-              onEnded: (meta) =>
-                  Navigator.of(context).pop(_controller.value.position),
-            ),
-          ),
-          Positioned(
-            top: 20,
-            left: 20,
-            child: SafeArea(
-              child: IconButton(
-                icon:
-                    const Icon(Icons.arrow_back, color: Colors.white, size: 32),
-                onPressed: () =>
-                    Navigator.of(context).pop(_controller.value.position),
+      body: Container(
+        color: Colors.black,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Center(
+              child: YoutubePlayer(
+                controller: _controller,
+                showVideoProgressIndicator: true,
+                progressIndicatorColor: Colors.amber,
+                thumbnail: Container(color: Colors.black),
+                onEnded: (meta) => setState(() => _isEnded = true),
+                bottomActions: [
+                  const SizedBox(width: 14.0),
+                  CurrentPosition(),
+                  const SizedBox(width: 8.0),
+                  ProgressBar(isExpanded: true),
+                  RemainingDuration(),
+                ],
               ),
             ),
-          ),
-        ],
+            if (_isEnded) ...[
+              CachedNetworkImage(
+                imageUrl:
+                    'https://img.youtube.com/vi/${widget.videoId}/maxresdefault.jpg',
+                fit: BoxFit.cover,
+                placeholder: (context, url) => CachedNetworkImage(
+                  imageUrl:
+                      'https://img.youtube.com/vi/${widget.videoId}/0.jpg',
+                  fit: BoxFit.cover,
+                ),
+                errorWidget: (context, url, error) => CachedNetworkImage(
+                  imageUrl:
+                      'https://img.youtube.com/vi/${widget.videoId}/0.jpg',
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Container(color: Colors.black.withValues(alpha: 0.4)),
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.4),
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: Icon(Icons.replay_rounded,
+                        size: 80,
+                        color: Theme.of(context).colorScheme.onPrimary),
+                    onPressed: () {
+                      _controller.play();
+                      setState(() => _isEnded = false);
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
