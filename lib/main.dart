@@ -87,7 +87,7 @@ void main() async {
         "watchlistUpdateTask",
         "updateWatchlistProviders",
         frequency: const Duration(hours: 1),
-        existingWorkPolicy: ExistingWorkPolicy.keep,
+        existingWorkPolicy: ExistingWorkPolicy.replace,
         constraints: Constraints(
           networkType: NetworkType.connected,
         ),
