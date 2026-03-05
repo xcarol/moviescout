@@ -276,6 +276,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         int startOrder = i;
         await repository.saveTitles(updated.cast<TmdbTitle>(), listNameVal,
             addedOrders: batch.map((t) => startOrder++).toList());
+
+        selectedTitleCount.value = i + batchSize;
         await Future.delayed(Duration.zero);
       }
     }
