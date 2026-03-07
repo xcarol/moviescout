@@ -58,6 +58,7 @@ dependencies:
     version: *isar_version
   isar_community_flutter_libs:
     version: *isar_version
+  custom_refresh_indicator: ^4.0.1
   diacritic: ^0.1.6
   material_symbols_icons: ^4.2873.0
   flutter_native_splash: ^2.4.6

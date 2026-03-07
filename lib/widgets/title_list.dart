@@ -7,6 +7,7 @@ import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/title_list_info_line.dart';
 import 'package:moviescout/widgets/title_list_control_panel.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/widgets/title_list_controller.dart';
@@ -29,8 +30,6 @@ class TitleList extends StatefulWidget {
 class _TitleListState extends State<TitleList> {
   late final TitleListController _controller;
   bool _isPinnedSectionExpanded = true;
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -111,8 +110,9 @@ class _TitleListState extends State<TitleList> {
         );
 
         if (service.isRefreshable) {
-          content = RefreshIndicator(
-            key: _refreshIndicatorKey,
+          content = CustomMaterialIndicator(
+            edgeOffset: 10,
+            displacement: 80,
             onRefresh: () async {
               if (widget.listService.isLoading.value) {
                 return;
@@ -125,6 +125,8 @@ class _TitleListState extends State<TitleList> {
                 locale: Localizations.localeOf(context),
               );
             },
+            color: Theme.of(context).colorScheme.primary,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             child: content,
           );
         }
