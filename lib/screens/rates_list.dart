@@ -79,9 +79,6 @@ class _RatesListState extends State<RatesList> {
   }
 
   Widget rateslistBody() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[_rateslistWidget],
-    );
+    return _rateslistWidget;
   }
 }

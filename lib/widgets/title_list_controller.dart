@@ -100,7 +100,8 @@ class TitleListController with ChangeNotifier {
     final visibleItemCount = (metrics.viewportDimension / itemHeight).ceil();
     final lastVisibleIndex = firstVisibleIndex + visibleItemCount;
 
-    if (!listService.isLoading.value &&
+    if (currentScroll > 0 &&
+        !listService.isLoading.value &&
         listService.hasMore &&
         lastVisibleIndex >= listService.loadedTitleCount - 3) {
       listService.loadNextPage();

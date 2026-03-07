@@ -17,6 +17,9 @@ class TmdbPersonTitlesService extends TmdbListService {
     _initializeTitles();
   }
 
+  @override
+  bool get isRefreshable => false;
+
   void _initializeTitles() {
     _allTitles.clear();
     final seenIds = <int>{};

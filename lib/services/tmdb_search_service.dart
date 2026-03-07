@@ -21,6 +21,9 @@ const String _tmdbFindByID =
 class TmdbSearchService extends TmdbListService {
   TmdbSearchService(super.listName, super.repository);
 
+  @override
+  bool get isRefreshable => false;
+
   Future<dynamic> searchImdbTitle(
     String imdbId,
     Locale locale,
