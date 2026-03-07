@@ -38,8 +38,9 @@ class TmdbRateslistService extends TmdbListService {
   }
 
   Future<void> retrieveRateslist(
-      String accountId, String sessionId, Locale locale) async {
-    retrieveList(accountId, forceUpdate: false, retrieveMovies: () async {
+      String accountId, String sessionId, Locale locale,
+      {bool forceUpdate = false}) async {
+    retrieveList(accountId, forceUpdate: forceUpdate, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
             _tmdbRateslistMovies
@@ -89,15 +90,13 @@ class TmdbRateslistService extends TmdbListService {
           'Invalid media type: $mediaType. Expected "${ApiConstants.movie}" or "${ApiConstants.tv}".');
     } else {
       if (mediaType == ApiConstants.movie) {
-        return delete(
-            _rateMovie
-                .replaceFirst('{ID}', id.toString())
-                .replaceFirst('{SESSION_ID}', sessionId));
+        return delete(_rateMovie
+            .replaceFirst('{ID}', id.toString())
+            .replaceFirst('{SESSION_ID}', sessionId));
       } else if (mediaType == ApiConstants.tv) {
-        return delete(
-            _rateTv
-                .replaceFirst('{ID}', id.toString())
-                .replaceFirst('{SESSION_ID}', sessionId));
+        return delete(_rateTv
+            .replaceFirst('{ID}', id.toString())
+            .replaceFirst('{SESSION_ID}', sessionId));
       }
       HttpException(
           'Invalid media type: $mediaType. Expected "${ApiConstants.movie}" or "${ApiConstants.tv}".');
@@ -135,5 +134,14 @@ class TmdbRateslistService extends TmdbListService {
         userMessage: 'Error updating rate for ${title.name}',
       );
     }
+  }
+
+  @override
+  Future<void> syncFromServer({
+    required String accountId,
+    required String sessionId,
+    required Locale locale,
+  }) async {
+    await retrieveRateslist(accountId, sessionId, locale, forceUpdate: true);
   }
 }

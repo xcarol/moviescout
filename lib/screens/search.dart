@@ -40,8 +40,9 @@ class _SearchState extends State<Search> {
     );
     _searchWidget = TitleList(
       _searchService,
-      key: ValueKey('watchlist'),
+      key: ValueKey('search'),
     );
+
     _controller = TextEditingController();
     _controller.addListener(_onSearchChanged);
     _searchFocusNode.addListener(_onFocusChanged);
@@ -183,7 +184,6 @@ class _SearchState extends State<Search> {
           _searchFocusNode.unfocus();
         },
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TapRegion(
               groupId: _searchGroupId,
@@ -278,11 +278,7 @@ class _SearchState extends State<Search> {
   }
 
   Widget searchResults() {
-    return Consumer<TmdbSearchService>(
-      builder: (context, listService, _) {
-        return _searchWidget;
-      },
-    );
+    return Expanded(child: _searchWidget);
   }
 
   void searchTitle(BuildContext context, String title) async {

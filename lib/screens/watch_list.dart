@@ -117,9 +117,6 @@ class _WatchListState extends State<WatchList> {
   }
 
   Widget watchlistBody() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[_watchlistWidget],
-    );
+    return _watchlistWidget;
   }
 }

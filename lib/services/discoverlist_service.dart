@@ -269,11 +269,21 @@ class TmdbDiscoverlistService extends TmdbListService {
     _isRefreshPaused = paused;
   }
 
+  @override
   void refresh() {
     if (_isRefreshPaused && listIsNotEmpty) {
       _refreshPending = true;
       return;
     }
     filterTitles();
+  }
+
+  @override
+  Future<void> syncFromServer({
+    required String accountId,
+    required String sessionId,
+    required Locale locale,
+  }) async {
+    await retrieveDiscoverlist(accountId, sessionId, locale, forceUpdate: true);
   }
 }

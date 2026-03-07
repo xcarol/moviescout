@@ -19,8 +19,10 @@ class TmdbWatchlistService extends TmdbListService {
   TmdbWatchlistService(super.listName, super.repository);
 
   Future<void> retrieveWatchlist(
-      String accountId, String sessionId, Locale locale) async {
-    await retrieveList(accountId, forceUpdate: false, retrieveMovies: () async {
+      String accountId, String sessionId, Locale locale,
+      {bool forceUpdate = false}) async {
+    await retrieveList(accountId, forceUpdate: forceUpdate,
+        retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
             _tmdbWatchlistMovies
@@ -113,7 +115,12 @@ class TmdbWatchlistService extends TmdbListService {
     await filterTitles();
   }
 
-  void refresh() {
-    filterTitles();
+  @override
+  Future<void> syncFromServer({
+    required String accountId,
+    required String sessionId,
+    required Locale locale,
+  }) async {
+    await retrieveWatchlist(accountId, sessionId, locale, forceUpdate: true);
   }
 }

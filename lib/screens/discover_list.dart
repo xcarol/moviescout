@@ -20,6 +20,7 @@ class _DiscoverListState extends State<DiscoverList> {
   late TmdbDiscoverlistService _discoverlistService;
   late TmdbWatchlistService _watchlistService;
   late TmdbRateslistService _rateslistService;
+
   late Widget _discoverlistWidget;
 
   @override
@@ -98,9 +99,10 @@ class _DiscoverListState extends State<DiscoverList> {
   }
 
   void _updateDiscoverList({bool forceUpdate = false}) {
-    if (!mounted) return;
+    if (!mounted || _discoverlistService.isLoading.value) return;
 
     final userService = Provider.of<TmdbUserService>(context, listen: false);
+
     _discoverlistService.retrieveDiscoverlist(
       userService.accountId,
       userService.sessionId,
@@ -124,38 +126,22 @@ class _DiscoverListState extends State<DiscoverList> {
       selector: (_, service) => service.listIsEmpty && !service.isLoading.value,
       shouldRebuild: (prev, next) => prev != next,
       builder: (context, isEmpty, child) {
-        return RefreshIndicator(
-          displacement: 200.0,
-          onRefresh: () async {
-            _updateDiscoverList(forceUpdate: true);
-            while (_discoverlistService.isLoading.value) {
-              await Future.delayed(const Duration(milliseconds: 100));
-            }
-          },
-          child: isEmpty ? emptyBody() : discoverlistBody(),
-        );
+        if (isEmpty) {
+          return emptyBody();
+        } else {
+          return discoverylistBody();
+        }
       },
     );
   }
 
   Widget emptyBody() {
-    return ListView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      children: [
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.4,
-        ),
-        Center(
-          child: Text(AppLocalizations.of(context)!.emptyList,
-              textAlign: TextAlign.center),
-        ),
-      ],
+    return Center(
+      child: Text(AppLocalizations.of(context)!.emptyList),
     );
   }
 
-  Widget discoverlistBody() {
-    return Column(
-      children: <Widget>[_discoverlistWidget],
-    );
+  Widget discoverylistBody() {
+    return _discoverlistWidget;
   }
 }

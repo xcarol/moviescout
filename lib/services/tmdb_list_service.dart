@@ -59,6 +59,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   @protected
   List<String> listGenresVal = [];
   ValueNotifier<List<String>> listGenres = ValueNotifier([]);
+  bool get isRefreshable => true;
 
   TmdbListService(String listName, this.repository, {List<TmdbTitle>? titles}) {
     listNameVal = listName;
@@ -410,6 +411,16 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
     await loadNextPage();
   }
+
+  void refresh() {
+    filterTitles();
+  }
+
+  Future<void> syncFromServer({
+    required String accountId,
+    required String sessionId,
+    required Locale locale,
+  }) async {}
 
   Future<void> setFilters(
       {String text = '',

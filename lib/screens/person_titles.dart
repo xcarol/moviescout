@@ -88,13 +88,9 @@ class _PersonTitlesState extends State<PersonTitles> {
   }
 
   Widget listBody() {
-    return Column(
-      children: [
-        TitleList(
-          _personTitlesService,
-          key: ValueKey('person_title_list_${widget._person.tmdbId}'),
-        ),
-      ],
+    return TitleList(
+      _personTitlesService,
+      key: ValueKey('person_title_list_${widget._person.tmdbId}'),
     );
   }
 }

@@ -7,6 +7,8 @@ import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/title_list_info_line.dart';
 import 'package:moviescout/widgets/title_list_control_panel.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
+import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/widgets/title_list_controller.dart';
 import 'package:moviescout/models/title_list_theme.dart';
@@ -58,56 +60,78 @@ class _TitleListState extends State<TitleList> {
     return Consumer<TmdbListService>(
       builder: (context, service, _) {
         _controller.initializeControlLocalizations(context);
-        return NotificationListener<ScrollNotification>(
+
+        Widget listView = Scrollbar(
+          controller: _controller.scrollController,
+          child: ListView.builder(
+            key: const PageStorageKey('TitleListView'),
+            controller: _controller.scrollController,
+            physics: const ClampingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics()),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            itemCount: service.loadedTitleCount,
+            itemBuilder: (context, index) {
+              final title = service.getItem(index);
+              if (title == null) {
+                return const SizedBox.shrink();
+              }
+              final clampedScale =
+                  MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.3);
+
+              final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  textScaler: TextScaler.linear(clampedScale),
+                ),
+                child: Column(
+                  children: [
+                    TitleCard(
+                      title: title,
+                      tmdbListService: widget.listService,
+                    ),
+                    Divider(
+                      height: 1,
+                      color: titleTheme.listDividerColor,
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+
+        Widget content = NotificationListener<ScrollNotification>(
           onNotification: (scrollInfo) {
             _controller.onScrollNotification(scrollInfo, TitleCard.cardHeight);
             return false;
           },
-          child: Flexible(
-            child: Scrollbar(
-              controller: _controller.scrollController,
-              child: ListView.builder(
-                key: const PageStorageKey('TitleListView'),
-                controller: _controller.scrollController,
-                shrinkWrap: true,
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                itemCount: service.loadedTitleCount,
-                itemBuilder: (context, index) {
-                  final title = service.getItem(index);
-                  if (title == null) {
-                    return SizedBox.shrink();
-                  }
-                  final clampedScale = MediaQuery.of(context)
-                      .textScaler
-                      .scale(1.0)
-                      .clamp(1.0, 1.3);
-
-                  final titleTheme =
-                      Theme.of(context).extension<TitleListTheme>()!;
-
-                  return MediaQuery(
-                    data: MediaQuery.of(context).copyWith(
-                      textScaler: TextScaler.linear(clampedScale),
-                    ),
-                    child: Column(
-                      children: [
-                        TitleCard(
-                          title: title,
-                          tmdbListService: widget.listService,
-                        ),
-                        Divider(
-                          height: 1,
-                          color: titleTheme.listDividerColor,
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
+          child: listView,
         );
+
+        if (service.isRefreshable) {
+          content = CustomMaterialIndicator(
+            edgeOffset: 10,
+            displacement: 80,
+            onRefresh: () async {
+              if (widget.listService.isLoading.value) {
+                return;
+              }
+              final userService =
+                  Provider.of<TmdbUserService>(context, listen: false);
+              await widget.listService.syncFromServer(
+                accountId: userService.accountId,
+                sessionId: userService.sessionId,
+                locale: Localizations.localeOf(context),
+              );
+            },
+            color: Theme.of(context).colorScheme.primary,
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            child: content,
+          );
+        }
+
+        return content;
       },
     );
   }
@@ -242,33 +266,31 @@ class _TitleListState extends State<TitleList> {
                 });
               }
 
-              return Expanded(
-                child: ChangeNotifierProvider<TmdbListService>.value(
-                  value: widget.listService,
-                  child: Container(
-                    color: titleTheme.listBackground,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          color: titleTheme.listBackground,
-                          child: Divider(
-                            color: titleTheme.listDividerColor,
-                          ),
-                        ),
-                        TitleListInfoLine(
-                          controller: _controller,
-                          listService: widget.listService,
-                        ),
-                        Divider(
-                          height: 1,
+              return ChangeNotifierProvider<TmdbListService>.value(
+                value: widget.listService,
+                child: Container(
+                  color: titleTheme.listBackground,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        color: titleTheme.listBackground,
+                        child: Divider(
                           color: titleTheme.listDividerColor,
                         ),
-                        if (_controller.showFilters) _controlPanel(),
-                        _pinnedTitlesRow(),
-                        _titleList(),
-                      ],
-                    ),
+                      ),
+                      TitleListInfoLine(
+                        controller: _controller,
+                        listService: widget.listService,
+                      ),
+                      Divider(
+                        height: 1,
+                        color: titleTheme.listDividerColor,
+                      ),
+                      if (_controller.showFilters) _controlPanel(),
+                      _pinnedTitlesRow(),
+                      Expanded(child: _titleList()),
+                    ],
                   ),
                 ),
               );
