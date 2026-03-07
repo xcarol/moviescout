@@ -114,12 +114,10 @@ class TmdbRateslistService extends TmdbListService {
         title.updateRating(rating.toDouble());
         title.isPinned = false;
 
-        // Unpin from watchlist if exists
         final watchlistTitle = repository.getTitleByTmdbId(
             AppConstants.watchlist, title.tmdbId, title.mediaType);
-        if (watchlistTitle != null && watchlistTitle.isPinned) {
-          watchlistTitle.isPinned = false;
-          await repository.updateTitleMetadata(watchlistTitle);
+        if (watchlistTitle != null) {
+          await repository.deleteTitle(AppConstants.watchlist, title.tmdbId);
         }
       }
       await updateTitle(accountId, sessionId, title, rating > 0,
