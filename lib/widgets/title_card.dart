@@ -118,6 +118,10 @@ class TitleCard extends StatelessWidget {
             tmdbTitle.lastUpdated = DateTime.parse(tmdbTitle.lastUpdated)
                 .subtract(const Duration(days: 1))
                 .toIso8601String();
+            tmdbTitle.lastProvidersUpdate =
+                DateTime.parse(tmdbTitle.lastProvidersUpdate)
+                    .subtract(const Duration(days: 1))
+                    .toIso8601String();
             await Provider.of<TmdbTitleRepository>(context, listen: false)
                 .updateTitleMetadata(tmdbTitle);
             if (context.mounted) {
@@ -125,11 +129,22 @@ class TitleCard extends StatelessWidget {
                   .debugUpdateTitleLastUpdate(tmdbTitle);
             }
           },
-          child: Text(
-            '[${DateFormat('dd-MM-yyyyTHH:mm').format(DateTime.parse(tmdbTitle.lastUpdated))}]',
-            style: TextStyle(
-              fontSize: 10,
-            ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(children: [
+              Text(
+                '[lastUpdated: ${DateFormat('dd-MM-yyyyTHH:mm').format(DateTime.parse(tmdbTitle.lastUpdated))}]',
+                style: TextStyle(
+                  fontSize: 10,
+                ),
+              ),
+              Text(
+                '[lastProvidersUpdate: ${DateFormat('dd-MM-yyyyTHH:mm').format(DateTime.parse(tmdbTitle.lastProvidersUpdate))}]',
+                style: TextStyle(
+                  fontSize: 10,
+                ),
+              ),
+            ]),
           ),
         ),
       );

@@ -148,7 +148,7 @@ void callbackDispatcher() {
             await titleService.updateTitleDetails(title);
           } else {
             logLines.add(
-                '- Light update: ${title.name}. lastUpdated: ${title.lastUpdated}');
+                '- Light update: ${title.name}. lastProvidersUpdate: ${title.lastProvidersUpdate}');
             await titleService.updateTitleLight(title);
           }
           await repository.updateTitleMetadata(title);
