@@ -25,7 +25,6 @@ class CustomCacheManager {
       key,
       stalePeriod: const Duration(days: 30),
       maxNrOfCacheObjects: 500,
-      repo: JsonCacheInfoRepository(databaseName: key),
       fileService: HttpFileService(),
     ),
   );
