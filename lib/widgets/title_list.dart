@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:moviescout/models/tmdb_provider.dart';
+import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
@@ -29,7 +30,7 @@ class TitleList extends StatefulWidget {
 
 class _TitleListState extends State<TitleList> {
   late final TitleListController _controller;
-  bool _isPinnedSectionExpanded = true;
+  bool _isPinnedSectionExpanded = PreferencesService().prefs.getBool('isPinnedSectionExpanded') ?? true;
 
   @override
   void initState() {
@@ -196,6 +197,7 @@ class _TitleListState extends State<TitleList> {
                 onTap: () {
                   setState(() {
                     _isPinnedSectionExpanded = !_isPinnedSectionExpanded;
+                    PreferencesService().prefs.setBool('isPinnedSectionExpanded', _isPinnedSectionExpanded);
                   });
                 },
                 child: Padding(
