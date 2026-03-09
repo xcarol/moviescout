@@ -107,61 +107,7 @@ class TitleCard extends StatelessWidget {
     ];
 
     // 302-debug-notifications
-    if (_tmdbListService.listName == AppConstants.watchlist &&
-        (PreferencesService().prefs.getBool(AppConstants.debugShowLastUpdate) ??
-            false)) {
-      children.add(const SizedBox(width: 5));
-      children.add(
-        Flexible(
-          child: GestureDetector(
-            onTap: () async {
-              tmdbTitle.lastUpdated = DateTime.parse(tmdbTitle.lastUpdated)
-                  .subtract(const Duration(days: 1))
-                  .toIso8601String();
-              tmdbTitle.lastProvidersUpdate =
-                  DateTime.parse(tmdbTitle.lastProvidersUpdate)
-                      .subtract(const Duration(days: 1))
-                      .toIso8601String();
-              await Provider.of<TmdbTitleRepository>(context, listen: false)
-                  .updateTitleMetadata(tmdbTitle);
-              if (context.mounted) {
-                Provider.of<TmdbListService>(context, listen: false)
-                    .debugUpdateTitleLastUpdate(tmdbTitle);
-              }
-            },
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(children: [
-                Text(
-                  '[lastUpdated: ${DateFormat('dd-MM-yyyyTHH:mm').format(DateTime.parse(tmdbTitle.lastUpdated))}]',
-                  style: TextStyle(
-                    fontSize: 10,
-                  ),
-                ),
-                Text(
-                  '[lastProvidersUpdate: ${DateFormat('dd-MM-yyyyTHH:mm').format(DateTime.parse(tmdbTitle.lastProvidersUpdate))}]',
-                  style: TextStyle(
-                    fontSize: 10,
-                  ),
-                ),
-              ]),
-            ),
-          ),
-        ),
-      );
-
-      if (tmdbTitle.isSerie) {
-        children.add(const SizedBox(width: 5));
-        children.add(
-          Text(
-            '[${tmdbTitle.lastNotifiedSeason}]',
-            style: TextStyle(
-              fontSize: 10,
-            ),
-          ),
-        );
-      }
-    }
+    _debugShowLastUpdates(context, children, tmdbTitle);
 
     return Selector<TmdbRateslistService, TmdbTitle?>(
       selector: (_, rateslistService) => rateslistService.getTitleByTmdbId(
@@ -368,5 +314,63 @@ class TitleCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _debugShowLastUpdates(BuildContext context, List<Widget> children, TmdbTitle tmdbTitle) {
+    if (_tmdbListService.listName == AppConstants.watchlist &&
+        (PreferencesService().prefs.getBool(AppConstants.debugShowLastUpdate) ??
+            false)) {
+      children.add(const SizedBox(width: 5));
+      children.add(
+        Flexible(
+          child: GestureDetector(
+            onTap: () async {
+              tmdbTitle.lastUpdated = DateTime.parse(tmdbTitle.lastUpdated)
+                  .subtract(const Duration(days: 1))
+                  .toIso8601String();
+              tmdbTitle.lastProvidersUpdate =
+                  DateTime.parse(tmdbTitle.lastProvidersUpdate)
+                      .subtract(const Duration(days: 1))
+                      .toIso8601String();
+              await Provider.of<TmdbTitleRepository>(context, listen: false)
+                  .updateTitleMetadata(tmdbTitle);
+              if (context.mounted) {
+                Provider.of<TmdbListService>(context, listen: false)
+                    .debugUpdateTitleLastUpdate(tmdbTitle);
+              }
+            },
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(children: [
+                Text(
+                  '[lastUpdated: ${DateFormat('dd-MM-yyyyTHH:mm').format(DateTime.parse(tmdbTitle.lastUpdated))}]',
+                  style: TextStyle(
+                    fontSize: 10,
+                  ),
+                ),
+                Text(
+                  '[lastProvidersUpdate: ${DateFormat('dd-MM-yyyyTHH:mm').format(DateTime.parse(tmdbTitle.lastProvidersUpdate))}]',
+                  style: TextStyle(
+                    fontSize: 10,
+                  ),
+                ),
+              ]),
+            ),
+          ),
+        ),
+      );
+
+      if (tmdbTitle.isSerie) {
+        children.add(const SizedBox(width: 5));
+        children.add(
+          Text(
+            '[${tmdbTitle.lastNotifiedSeason}]',
+            style: TextStyle(
+              fontSize: 10,
+            ),
+          ),
+        );
+      }
+    }
   }
 }
