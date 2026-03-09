@@ -122,5 +122,6 @@ class TmdbWatchlistService extends TmdbListService {
     required Locale locale,
   }) async {
     await retrieveWatchlist(accountId, sessionId, locale, forceUpdate: true);
+    await pinnedService!.fetchAndApplyPinnedTitles();
   }
 }
