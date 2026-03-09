@@ -84,6 +84,7 @@ void callbackDispatcher() {
     int scannedCount = 0;
     int updatedCount = 0;
     int notifiedCount = 0;
+    int skippedCount = 0;
     try {
       await dotenv.load(fileName: ".env");
       await PreferencesService().init();
@@ -148,7 +149,7 @@ void callbackDispatcher() {
             await titleService.updateTitleDetails(title);
           } else {
             logLines.add(
-                '- Light update: ${title.name}. lastUpdated: ${title.lastUpdated}');
+                '- Light update: ${title.name}. lastProvidersUpdate: ${title.lastProvidersUpdate}');
             await titleService.updateTitleLight(title);
           }
           await repository.updateTitleMetadata(title);
@@ -211,8 +212,12 @@ void callbackDispatcher() {
 
                 if (isBrandNew) {
                   title.lastNotifiedSeason = currentSeason - 1;
+                  logLines.add(
+                      '- Initializing lastNotifiedSeason = ${currentSeason - 1} for ${title.name} (brand new season)');
                 } else {
                   title.lastNotifiedSeason = currentSeason;
+                  logLines.add(
+                      '- Initializing lastNotifiedSeason = $currentSeason for ${title.name}');
                 }
                 await repository.updateTitleMetadata(title);
               }
@@ -236,13 +241,21 @@ void callbackDispatcher() {
                   notifiedCount++;
                   title.lastNotifiedSeason = currentSeason;
                   await repository.updateTitleMetadata(title);
-                } else {}
+                } else {
+                  logLines.add(
+                      '- Found new season for ${title.name} but rules forbid notification. '
+                      'Next: ${title.nextEpisodeToAir?['air_date']} | Last: ${title.lastEpisodeToAir?['air_date']}');
+                }
               }
             } else {
               logLines.add(
-                  '- Skipping ${title.name}. Already available at $listOldProviderNames. wasAvailable: $wasAvailable');
+                  '- No notification needed for ${title.name}. Already available at $listOldProviderNames.');
             }
           } else {
+            if (wasAvailable) {
+              logLines.add(
+                  '- Title ${title.name} is no longer available on enabled providers.');
+            }
             if (title.isSerie &&
                 title.lastNotifiedSeason == 0 &&
                 title.numberOfSeasons > 0) {
@@ -255,6 +268,8 @@ void callbackDispatcher() {
           }
 
           await Future.delayed(const Duration(milliseconds: 200));
+        } else {
+          skippedCount++;
         }
       }
 
@@ -264,7 +279,7 @@ void callbackDispatcher() {
           );
 
       logLines.add(
-          'Summary: $scannedCount scanned - $updatedCount updated - $notifiedCount notified');
+          'Summary: $scannedCount scanned - $updatedCount updated - $skippedCount skipped - $notifiedCount notified');
       logLines.add('---------------------------');
       logLines
           .add('End: ${DateTime.now().toLocal().toString().split('.').first}');
