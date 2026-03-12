@@ -7,7 +7,6 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
@@ -316,7 +315,8 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  void _debugShowLastUpdates(BuildContext context, List<Widget> children, TmdbTitle tmdbTitle) {
+  void _debugShowLastUpdates(
+      BuildContext context, List<Widget> children, TmdbTitle tmdbTitle) {
     if (_tmdbListService.listName == AppConstants.watchlist &&
         (PreferencesService().prefs.getBool(AppConstants.debugShowLastUpdate) ??
             false)) {
@@ -332,12 +332,8 @@ class TitleCard extends StatelessWidget {
                   DateTime.parse(tmdbTitle.lastProvidersUpdate)
                       .subtract(const Duration(days: 1))
                       .toIso8601String();
-              await Provider.of<TmdbTitleRepository>(context, listen: false)
-                  .updateTitleMetadata(tmdbTitle);
-              if (context.mounted) {
-                Provider.of<TmdbListService>(context, listen: false)
-                    .debugUpdateTitleLastUpdate(tmdbTitle);
-              }
+              await Provider.of<TmdbListService>(context, listen: false)
+                  .debugUpdateTitleLastUpdate(tmdbTitle);
             },
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -363,10 +359,17 @@ class TitleCard extends StatelessWidget {
       if (tmdbTitle.isSerie) {
         children.add(const SizedBox(width: 5));
         children.add(
-          Text(
-            '[${tmdbTitle.lastNotifiedSeason}]',
-            style: TextStyle(
-              fontSize: 10,
+          GestureDetector(
+            onTap: () async {
+              tmdbTitle.lastNotifiedSeason = tmdbTitle.lastNotifiedSeason - 1;
+              await Provider.of<TmdbListService>(context, listen: false)
+                  .debugUpdateTitleLastUpdate(tmdbTitle);
+            },
+            child: Text(
+              '[${tmdbTitle.lastNotifiedSeason}]',
+              style: TextStyle(
+                fontSize: 10,
+              ),
             ),
           ),
         );
