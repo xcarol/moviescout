@@ -13,21 +13,29 @@ import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'dart:convert';
 
-bool _isBrandNewSeason(Map<String, dynamic>? nextEpisode,
-    Map<String, dynamic>? lastEpisode, int currentSeason) {
+bool _isBrandNewSeason(List<String> logLines, Map<String, dynamic>? nextEpisode,
+    Map<String, dynamic>? lastEpisode, int currentSeason, String titleName) {
   if (nextEpisode != null) {
     try {
       final nextSeason = nextEpisode['season_number'] as int;
-      final nextEpisodeNum = nextEpisode['episode_number'] as int;
       final airDateStr = nextEpisode['air_date'] as String?;
 
-      if (nextSeason == currentSeason &&
-          nextEpisodeNum == 1 &&
-          airDateStr != null) {
+      if (nextSeason == currentSeason && airDateStr != null) {
         final airDate = DateTime.tryParse(airDateStr);
-        if (airDate != null &&
-            airDate.isBefore(DateTime.now().add(const Duration(days: 1)))) {
-          return true;
+        if (airDate != null) {
+          // If the premiere is in the future, it's "brand new"
+          // (we don't want to silently initialize lastNotifiedSeason = currentSeason yet)
+          if (airDate.isAfter(DateTime.now())) {
+            logLines.add(
+                '- init: $titleName S$nextSeason is in the future ($airDateStr). Considering brand new.');
+            return true;
+          }
+          // If it's very soon (within 3 days), also consider it brand new
+          if (airDate.isBefore(DateTime.now().add(const Duration(days: 3)))) {
+            logLines.add(
+                '- init: $titleName S$nextSeason premiered very recently ($airDateStr). Considering brand new.');
+            return true;
+          }
         }
       }
     } catch (_) {}
@@ -41,7 +49,10 @@ bool _isBrandNewSeason(Map<String, dynamic>? nextEpisode,
       if (lastSeason == currentSeason && airDateStr != null) {
         final airDate = DateTime.tryParse(airDateStr);
         if (airDate != null &&
-            airDate.isAfter(DateTime.now().subtract(const Duration(days: 7)))) {
+            airDate
+                .isAfter(DateTime.now().subtract(const Duration(days: 14)))) {
+          logLines.add(
+              '- init: $titleName S$lastSeason premiered recently ($airDateStr). Considering brand new.');
           return true;
         }
       }
@@ -51,10 +62,16 @@ bool _isBrandNewSeason(Map<String, dynamic>? nextEpisode,
   return false;
 }
 
-bool _hasNewSeasonStarted(Map<String, dynamic>? nextEpisode,
-    Map<String, dynamic>? lastEpisode, int currentSeason) {
+bool _hasNewSeasonStarted(
+    List<String> logLines,
+    Map<String, dynamic>? nextEpisode,
+    Map<String, dynamic>? lastEpisode,
+    int currentSeason,
+    String titleName) {
   if (lastEpisode != null &&
       (lastEpisode['season_number'] as int) == currentSeason) {
+    logLines
+        .add('- check: $titleName S$currentSeason has already started airing.');
     return true;
   } else if (nextEpisode != null) {
     try {
@@ -67,7 +84,9 @@ bool _hasNewSeasonStarted(Map<String, dynamic>? nextEpisode,
           airDateStr != null) {
         final airDate = DateTime.tryParse(airDateStr);
         if (airDate != null &&
-            airDate.isBefore(DateTime.now().add(const Duration(days: 1)))) {
+            airDate.isBefore(DateTime.now().add(const Duration(days: 3)))) {
+          logLines.add(
+              '- check: $titleName S$nextSeason premiere is within window ($airDateStr).');
           return true;
         }
       }
@@ -164,11 +183,9 @@ void callbackDispatcher() {
               .map((p) => p[TmdbProvider.providerName])
               .toList();
 
-          final listOldProviderNames = oldProviderNames.join(', ');
-          final listNewProviderNames = newProviderNames.join(', ');
-          if (listOldProviderNames != listNewProviderNames) {
-            logLines.add('- Old providers: $listOldProviderNames');
-            logLines.add('- New providers: $listNewProviderNames');
+          if (oldProviderNames.join(', ') != newProviderNames.join(', ')) {
+            logLines.add('- Old providers: ${oldProviderNames.join(', ')}');
+            logLines.add('- New providers: ${newProviderNames.join(', ')}');
           }
 
           final newProviders = title.flatrateProviderIds.toSet();
@@ -207,8 +224,12 @@ void callbackDispatcher() {
 
               // Initialize lastNotifiedSeason if it's 0 (first run with this feature)
               if (title.lastNotifiedSeason == 0 && currentSeason > 0) {
-                final isBrandNew = _isBrandNewSeason(title.nextEpisodeToAir,
-                    title.lastEpisodeToAir, currentSeason);
+                final isBrandNew = _isBrandNewSeason(
+                    logLines,
+                    title.nextEpisodeToAir,
+                    title.lastEpisodeToAir,
+                    currentSeason,
+                    title.name);
 
                 if (isBrandNew) {
                   title.lastNotifiedSeason = currentSeason - 1;
@@ -224,9 +245,11 @@ void callbackDispatcher() {
 
               if (currentSeason > title.lastNotifiedSeason) {
                 final shouldNotify = _hasNewSeasonStarted(
+                    logLines,
                     title.nextEpisodeToAir,
                     title.lastEpisodeToAir,
-                    currentSeason);
+                    currentSeason,
+                    title.name);
 
                 if (shouldNotify) {
                   logLines.add(
@@ -249,7 +272,7 @@ void callbackDispatcher() {
               }
             } else {
               logLines.add(
-                  '- No notification needed for ${title.name}. Already available at $listOldProviderNames.');
+                  '- No notification needed for ${title.name}. Already available at ${availableProviderNames.join(', ')}.');
             }
           } else {
             if (wasAvailable) {
