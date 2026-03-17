@@ -22,20 +22,12 @@ bool _isBrandNewSeason(List<String> logLines, Map<String, dynamic>? nextEpisode,
 
       if (nextSeason == currentSeason && airDateStr != null) {
         final airDate = DateTime.tryParse(airDateStr);
-        if (airDate != null) {
-          // If the premiere is in the future, it's "brand new"
-          // (we don't want to silently initialize lastNotifiedSeason = currentSeason yet)
-          if (airDate.isAfter(DateTime.now())) {
-            logLines.add(
-                '- init: $titleName S$nextSeason is in the future ($airDateStr). Considering brand new.');
-            return true;
-          }
-          // If it's very soon (within 3 days), also consider it brand new
-          if (airDate.isBefore(DateTime.now().add(const Duration(days: 3)))) {
-            logLines.add(
-                '- init: $titleName S$nextSeason premiered very recently ($airDateStr). Considering brand new.');
-            return true;
-          }
+        if (airDate != null &&
+            airDate
+                .isAfter(DateTime.now().subtract(const Duration(days: 14)))) {
+          logLines.add(
+              '- init: $titleName S$nextSeason is future or recent ($airDateStr). Considering brand new.');
+          return true;
         }
       }
     } catch (_) {}
@@ -83,10 +75,9 @@ bool _hasNewSeasonStarted(
           nextEpisodeNum == 1 &&
           airDateStr != null) {
         final airDate = DateTime.tryParse(airDateStr);
-        if (airDate != null &&
-            airDate.isBefore(DateTime.now().add(const Duration(days: 3)))) {
+        if (airDate != null && airDate.isBefore(DateTime.now())) {
           logLines.add(
-              '- check: $titleName S$nextSeason premiere is within window ($airDateStr).');
+              '- check: $titleName S$nextSeason premiere has arrived ($airDateStr).');
           return true;
         }
       }
