@@ -116,7 +116,7 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   Widget _detailsBody(TmdbTitle title) {
-    if (title.lastUpdated == '1970-01-01' && _isUpdating) {
+    if (title.lastUpdated == AppConstants.defaultDate && _isUpdating) {
       return const Padding(
         padding: EdgeInsets.only(top: 100.0),
         child: Center(

@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/person_translator.dart';
 
 // ignore_for_file: constant_identifier_names, unused_element
@@ -94,7 +95,8 @@ class TmdbPerson {
     return TmdbPerson(
         tmdbId: person[PersonAttributes.id] ?? 0,
         name: person[PersonAttributes.name],
-        lastUpdated: person[PersonAttributes.last_updated] ?? '1970-01-01',
+        lastUpdated:
+            person[PersonAttributes.last_updated] ?? AppConstants.defaultDate,
         knownForDepartment: person[PersonAttributes.known_for_department],
         gender: person[PersonAttributes.gender],
         originalName: person[PersonAttributes.original_name],

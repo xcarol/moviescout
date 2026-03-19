@@ -37,4 +37,6 @@ class AppConstants {
   static const int watchlistTitleUpdateFrequencyDays = 7;
   static const int watchlistProvidersUpdateFrequencyDays = 1;
   static const int watchlistMaxUpdatesPerRun = 50;
+
+  static const String defaultDate = '1970-01-01';
 }

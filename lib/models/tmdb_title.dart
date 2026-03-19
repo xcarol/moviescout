@@ -235,12 +235,12 @@ class TmdbTitle {
       id: Isar.autoIncrement,
       tmdbId: title[TmdbTitleFields.id] ?? 0,
       name: '',
-      lastUpdated: '1970-01-01',
+      lastUpdated: AppConstants.defaultDate,
       dateRated: DateTime.fromMillisecondsSinceEpoch(0),
       isPinned: title[TmdbTitleFields.isPinned] ?? false,
       lastNotifiedSeason: title[TmdbTitleFields.lastNotifiedSeason] ?? 0,
-      lastProvidersUpdate:
-          title[TmdbTitleFields.lastProvidersUpdate] ?? '1970-01-01',
+      lastProvidersUpdate: title[TmdbTitleFields.lastProvidersUpdate] ??
+          AppConstants.defaultDate,
     )..fillFromMap(title);
   }
 
@@ -526,7 +526,7 @@ class TmdbTitle {
       castPeople.add(TmdbPerson(
         tmdbId: person[PersonAttributes.id],
         name: person[PersonAttributes.name],
-        lastUpdated: '1970-01-01',
+        lastUpdated: AppConstants.defaultDate,
         knownForDepartment: person[PersonAttributes.known_for_department],
         gender: person[PersonAttributes.gender],
         originalName: person[PersonAttributes.original_name],
@@ -568,7 +568,7 @@ class TmdbTitle {
       crewPeople.add(TmdbPerson(
         tmdbId: person[PersonAttributes.id],
         name: person[PersonAttributes.name],
-        lastUpdated: '1970-01-01',
+        lastUpdated: AppConstants.defaultDate,
         knownForDepartment: person[PersonAttributes.known_for_department],
         gender: person[PersonAttributes.gender],
         originalName: person[PersonAttributes.original_name],
