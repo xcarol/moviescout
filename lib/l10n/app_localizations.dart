@@ -888,6 +888,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'YouTube Search'**
   String get youtubeSearch;
+
+  /// No description provided for @notificationsHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Last notifications'**
+  String get notificationsHistory;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

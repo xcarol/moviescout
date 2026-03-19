@@ -11,6 +11,7 @@ import 'package:moviescout/services/notification_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
+import 'package:moviescout/models/saved_notification.dart';
 import 'dart:convert';
 
 bool _isBrandNewSeason(List<String> logLines, Map<String, dynamic>? nextEpisode,
@@ -205,6 +206,14 @@ void callbackDispatcher() {
                 imageUrl: title.posterPath,
                 payload: '${title.mediaType}|${title.tmdbId}',
               );
+              await _saveNotification(SavedNotification(
+                id: title.tmdbId,
+                title: title.name,
+                body: localizations.notificationTitle,
+                imageUrl: title.posterPath,
+                payload: '${title.mediaType}|${title.tmdbId}',
+                timestamp: DateTime.now(),
+              ));
               notifiedCount++;
               if (title.isSerie) {
                 title.lastNotifiedSeason = title.numberOfSeasons;
@@ -252,6 +261,14 @@ void callbackDispatcher() {
                     imageUrl: title.posterPath,
                     payload: '${title.mediaType}|${title.tmdbId}',
                   );
+                  await _saveNotification(SavedNotification(
+                    id: title.tmdbId + 1000000,
+                    title: title.name,
+                    body: localizations.notificationNewSeasonTitle,
+                    imageUrl: title.posterPath,
+                    payload: '${title.mediaType}|${title.tmdbId}',
+                    timestamp: DateTime.now(),
+                  ));
                   notifiedCount++;
                   title.lastNotifiedSeason = currentSeason;
                   await repository.updateTitleMetadata(title);
@@ -331,5 +348,27 @@ Future<void> _saveLogs(List<String> logLines) async {
     await prefs.setStringList(AppConstants.watchlistUpdateLogs, currentLogs);
   } catch (e) {
     debugPrint('Error saving logs: $e');
+  }
+}
+
+Future<void> _saveNotification(SavedNotification notification) async {
+  try {
+    final prefs = PreferencesService().prefs;
+    final currentListStr =
+        prefs.getStringList(AppConstants.savedNotifications) ?? [];
+
+    final currentList =
+        currentListStr.map((e) => SavedNotification.fromJson(e)).toList();
+
+    currentList.insert(0, notification);
+
+    if (currentList.length > 20) {
+      currentList.removeRange(20, currentList.length);
+    }
+
+    final newListStr = currentList.map((e) => e.toJson()).toList();
+    await prefs.setStringList(AppConstants.savedNotifications, newListStr);
+  } catch (e) {
+    debugPrint('Error saving notification: $e');
   }
 }
