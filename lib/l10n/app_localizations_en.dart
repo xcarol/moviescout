@@ -409,4 +409,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get youtubeSearch => 'YouTube Search';
+
+  @override
+  String get notificationsHistory => 'Last notifications';
 }

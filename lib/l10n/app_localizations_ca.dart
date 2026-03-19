@@ -409,4 +409,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get youtubeSearch => 'Cerca a YouTube';
+
+  @override
+  String get notificationsHistory => 'Últimes notificacions';
 }

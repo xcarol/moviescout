@@ -130,5 +130,6 @@
     "notificationsPermissionDescription": "Per rebre avisos de disponibilitat de pel·lícules i noves temporades, cal que activis les notificacions als ajustos del sistema.",
     "openSettings": "Obrir ajustos",
     "errorMessageGeneric": "S'ha produït un error. Torna-ho a provar més tard.",
-    "youtubeSearch": "Cerca a YouTube"
+    "youtubeSearch": "Cerca a YouTube",
+    "notificationsHistory": "Últimes notificacions"
 }

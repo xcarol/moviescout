@@ -10,6 +10,7 @@ import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/screens/providers.dart';
 import 'package:moviescout/screens/watchlist_logs_screen.dart';
+import 'package:moviescout/screens/notifications_screen.dart';
 import 'package:moviescout/services/discoverlist_service.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/notification_service.dart';
@@ -48,6 +49,7 @@ class AppDrawer extends StatelessWidget {
           _languageTile(context),
           _regionTile(context),
           _notificationsTile(context),
+          _notificationsHistoryTile(context),
           if (defaultTargetPlatform == TargetPlatform.android)
             _verifyDeepLinksTile(context),
           _aboutTile(context),
@@ -70,6 +72,20 @@ class AppDrawer extends StatelessWidget {
         if (!success && value && context.mounted) {
           NotificationPermissionDialog.show(context);
         }
+      },
+    );
+  }
+
+  Widget _notificationsHistoryTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.history),
+      title: Text(AppLocalizations.of(context)!.notificationsHistory),
+      onTap: () {
+        Navigator.of(context).pop();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const NotificationsScreen()),
+        );
       },
     );
   }

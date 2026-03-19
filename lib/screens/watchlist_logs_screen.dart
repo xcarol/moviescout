@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/widgets/app_bar.dart';
 
 class WatchlistLogsScreen extends StatefulWidget {
   const WatchlistLogsScreen({super.key});
@@ -81,8 +82,9 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Watchlist Update Logs'),
+      appBar: MainAppBar(
+        context: context,
+        title: 'Watchlist Update Logs',
         actions: [
           if (_logs.isNotEmpty)
             IconButton(

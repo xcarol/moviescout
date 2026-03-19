@@ -18,6 +18,7 @@ class AppConstants {
   static const String watchlistUpdateLogs = 'watchlist_update_logs';
   static const String notificationsEnabled = 'notifications_enabled';
   static const String notificationsAsked = 'notifications_asked';
+  static const String savedNotifications = 'saved_notifications';
   static const String debugShowLastUpdate = 'debug_show_last_update';
 
   static const String catalan = 'ca-ES';
@@ -36,4 +37,6 @@ class AppConstants {
   static const int watchlistTitleUpdateFrequencyDays = 7;
   static const int watchlistProvidersUpdateFrequencyDays = 1;
   static const int watchlistMaxUpdatesPerRun = 50;
+
+  static const String defaultDate = '1970-01-01';
 }
