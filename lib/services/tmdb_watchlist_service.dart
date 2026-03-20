@@ -109,7 +109,11 @@ class TmdbWatchlistService extends TmdbListService {
     await repository.updateTitleMetadata(title);
 
     if (pinnedService != null) {
-      pinnedService!.updatePinnedToServer();
+      if (title.isPinned) {
+        await pinnedService!.addPinnedToServer(title);
+      } else {
+        await pinnedService!.removePinnedFromServer(title);
+      }
     }
 
     await filterTitles();

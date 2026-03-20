@@ -192,6 +192,7 @@ class TmdbBaseService {
 
   Future<dynamic> delete(
     String endpoint, {
+    Map<String, dynamic>? body,
     ApiVersion version = ApiVersion.v3,
     String accessToken = '',
   }) async {
@@ -209,6 +210,7 @@ class TmdbBaseService {
           'Accept': 'application/json',
           'Authorization': 'Bearer $token',
         },
+        body: body != null ? jsonEncode(body) : null,
       );
     } catch (error, stackTrace) {
       final message = 'TmdbBaseService delete Error: ${error.toString()}';
