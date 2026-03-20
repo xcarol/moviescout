@@ -12,7 +12,7 @@ class UpdateManager {
   factory UpdateManager() => _instance;
   UpdateManager._internal();
 
-  SharedPreferencesWithCache get _prefs => PreferencesService().prefs;
+  SharedPreferences get _prefs => PreferencesService().prefs;
 
   bool isUpToDate(String key, Duration timeout) {
     final String? lastUpdateStr =
