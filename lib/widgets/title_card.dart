@@ -241,6 +241,8 @@ class TitleCard extends StatelessWidget {
         } else if (lastAirDate.isNotEmpty) {
           text += ' - ${lastAirDate.substring(0, 4)}';
         }
+      } else if (isOnAir) {
+        text += ' - ...';
       }
     }
 
