@@ -8,6 +8,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/app_bar.dart';
+import 'package:moviescout/services/tmdb_provider_service.dart';
+import 'package:moviescout/models/tmdb_provider.dart';
+import 'package:provider/provider.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -37,6 +40,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    final providerService = Provider.of<TmdbProviderService>(context);
+    final allProviders = providerService.providers;
 
     return Scaffold(
       appBar: MainAppBar(
@@ -68,15 +73,36 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         )
                       : const Icon(Icons.notifications),
                   title: Text(notification.title),
-                  subtitle: Text(
-                    DateFormat.yMMMd(Localizations.localeOf(context).toString())
-                        .format(notification.timestamp.toLocal()),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurfaceVariant
-                              .withValues(alpha: 0.7),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        DateFormat.yMMMd(
+                                Localizations.localeOf(context).toString())
+                            .format(notification.timestamp.toLocal()),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant
+                                  .withValues(alpha: 0.7),
+                            ),
+                      ),
+                      if (notification.providerIds.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: notification.providerIds.map((id) {
+                              final providerData = allProviders[id];
+                              if (providerData == null) {
+                                return const SizedBox.shrink();
+                              }
+                              return _providerLogo(providerData);
+                            }).toList(),
+                          ),
                         ),
+                      ],
+                    ],
                   ),
                   onTap: notification.payload != null
                       ? () {
@@ -93,6 +119,32 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 );
               },
             ),
+    );
+  }
+
+  Widget _providerLogo(Map<String, String> providerData) {
+    final provider = TmdbProvider(provider: providerData);
+    final logoPath = provider.logoPath;
+    final name = provider.name;
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: Tooltip(
+        message: name,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(4.0),
+          child: CachedNetworkImage(
+            imageUrl: logoPath,
+            width: 24,
+            height: 24,
+            fit: BoxFit.cover,
+            errorWidget: (context, url, error) => const Icon(
+              Icons.broken_image,
+              size: 24,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
