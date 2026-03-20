@@ -660,6 +660,8 @@ class _TitleDetailsState extends State<TitleDetails> {
       } else if (title.lastAirDate.isNotEmpty) {
         text += ' - ${title.lastAirDate.substring(0, 4)}';
       }
+    } else if (title.isOnAir) {
+      text += ' - ...';
     }
 
     return text;
