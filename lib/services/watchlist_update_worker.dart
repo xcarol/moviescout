@@ -185,9 +185,16 @@ void callbackDispatcher() {
               newProviders.intersection(enabledProviderSet).isNotEmpty;
 
           if (isAvailable) {
-            final availableProviderNames = providersList
+            final availableProvidersData = providersList
                 .where((p) => newProviders.contains(p[TmdbProvider.providerId]))
-                .map((p) => p[TmdbProvider.providerName])
+                .toList();
+
+            final availableProviderNames = availableProvidersData
+                .map((p) => p[TmdbProvider.providerName]?.toString() ?? '')
+                .toList();
+
+            final availableProviderIds = availableProvidersData
+                .map((p) => (p[TmdbProvider.providerId] as num).toInt())
                 .toList();
 
             if (availableProviderNames.isNotEmpty) {
@@ -199,6 +206,7 @@ void callbackDispatcher() {
               // Title just became available
               logLines.add(
                   '- Sending notification for ${title.name} (Now available)');
+
               await NotificationService().showNotification(
                 id: title.tmdbId,
                 title: localizations.notificationTitle,
@@ -213,6 +221,7 @@ void callbackDispatcher() {
                 imageUrl: title.posterPath,
                 payload: '${title.mediaType}|${title.tmdbId}',
                 timestamp: DateTime.now(),
+                providerIds: availableProviderIds,
               ));
               notifiedCount++;
               if (title.isSerie) {
@@ -254,6 +263,7 @@ void callbackDispatcher() {
                 if (shouldNotify) {
                   logLines.add(
                       '- Sending notification for new season of ${title.name} (${title.numberOfSeasons} seasons)');
+
                   await NotificationService().showNotification(
                     id: title.tmdbId + 1000000,
                     title: localizations.notificationNewSeasonTitle,
@@ -268,6 +278,7 @@ void callbackDispatcher() {
                     imageUrl: title.posterPath,
                     payload: '${title.mediaType}|${title.tmdbId}',
                     timestamp: DateTime.now(),
+                    providerIds: availableProviderIds,
                   ));
                   notifiedCount++;
                   title.lastNotifiedSeason = currentSeason;

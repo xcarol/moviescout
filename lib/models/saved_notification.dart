@@ -7,6 +7,7 @@ class SavedNotification {
   final String? imageUrl;
   final String? payload;
   final DateTime timestamp;
+  final List<int> providerIds;
 
   SavedNotification({
     required this.id,
@@ -15,6 +16,7 @@ class SavedNotification {
     this.imageUrl,
     this.payload,
     required this.timestamp,
+    this.providerIds = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -25,6 +27,7 @@ class SavedNotification {
       if (imageUrl != null) 'imageUrl': imageUrl,
       if (payload != null) 'payload': payload,
       'timestamp': timestamp.toIso8601String(),
+      'providerIds': providerIds,
     };
   }
 
@@ -38,6 +41,9 @@ class SavedNotification {
       timestamp: map['timestamp'] != null
           ? DateTime.parse(map['timestamp'])
           : DateTime.now(),
+      providerIds: map['providerIds'] != null
+          ? List<int>.from(map['providerIds'])
+          : [],
     );
   }
 
