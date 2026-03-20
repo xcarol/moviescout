@@ -51,14 +51,14 @@ abstract class TmdbConfigListService extends TmdbBaseService
   }
 
   @protected
-  Future<String?> _getOrFetchListId() async {
+  Future<String?> getOrFetchListId() async {
     if (listId.isEmpty) {
-      await _retrieveServerListId();
+      await retrieveServerListId();
     }
     return listId.isNotEmpty ? listId : null;
   }
 
-  Future<void> _retrieveServerListId() async {
+  Future<void> retrieveServerListId() async {
     if (_accountId.isEmpty) return;
     try {
       final response =
@@ -84,7 +84,7 @@ abstract class TmdbConfigListService extends TmdbBaseService
   }
 
   @protected
-  Future<String?> _createServerList({bool forced = false}) async {
+  Future<String?> createServerList({bool forced = false}) async {
     if (listId.isNotEmpty && !forced) {
       return listId;
     }
@@ -126,8 +126,8 @@ abstract class TmdbConfigListService extends TmdbBaseService
       {String? userErrorMessage}) async {
     if (_accountId.isEmpty) return false;
 
-    String? currentListId = await _getOrFetchListId();
-    currentListId = await _createServerList(forced: currentListId == null);
+    String? currentListId = await getOrFetchListId();
+    currentListId = await createServerList(forced: currentListId == null);
 
     if (currentListId == null) return false;
 
@@ -146,7 +146,7 @@ abstract class TmdbConfigListService extends TmdbBaseService
 
       if (response.statusCode == 404) {
         // List missing on server, retry once with creation
-        currentListId = await _createServerList(forced: true);
+        currentListId = await createServerList(forced: true);
         if (currentListId == null) return false;
 
         final retryResponse = await put(
@@ -193,7 +193,7 @@ abstract class TmdbConfigListService extends TmdbBaseService
     if (_accountId.isEmpty || _accessToken.isEmpty) return null;
 
     try {
-      final String? currentListId = await _getOrFetchListId();
+      final String? currentListId = await getOrFetchListId();
       if (currentListId == null) return null;
 
       final response = await get('/list/$currentListId',
