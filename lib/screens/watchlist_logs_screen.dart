@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:moviescout/main.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/widgets/app_bar.dart';
+import 'package:moviescout/widgets/app_drawer.dart';
 
 class WatchlistLogsScreen extends StatefulWidget {
   const WatchlistLogsScreen({super.key});
@@ -11,7 +13,8 @@ class WatchlistLogsScreen extends StatefulWidget {
   State<WatchlistLogsScreen> createState() => _WatchlistLogsScreenState();
 }
 
-class _WatchlistLogsScreenState extends State<WatchlistLogsScreen> {
+class _WatchlistLogsScreenState extends State<WatchlistLogsScreen>
+    with WidgetsBindingObserver, RouteAware {
   List<String> _logs = [];
   bool _debugShowLastUpdate = false;
   String _lastBackgroundRunHeader = 'none';
@@ -20,6 +23,7 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToBottom();
@@ -27,9 +31,29 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
+  @override
   void dispose() {
+    routeObserver.unsubscribe(this);
+    WidgetsBinding.instance.removeObserver(this);
     _scrollController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    _loadState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _loadState();
+    }
   }
 
   @override
@@ -38,7 +62,8 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen> {
     _loadState();
   }
 
-  void _loadState() {
+  Future<void> _loadState() async {
+    await PreferencesService().refresh();
     final prefs = PreferencesService().prefs;
     final String? lastRunStr = prefs.getString(AppConstants.lastBackgroundRun);
     String formattedDate = 'none';
@@ -51,12 +76,14 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen> {
       }
     }
 
-    setState(() {
-      _logs = prefs.getStringList(AppConstants.watchlistUpdateLogs) ?? [];
-      _debugShowLastUpdate =
-          prefs.getBool(AppConstants.debugShowLastUpdate) ?? false;
-      _lastBackgroundRunHeader = formattedDate;
-    });
+    if (mounted) {
+      setState(() {
+        _logs = prefs.getStringList(AppConstants.watchlistUpdateLogs) ?? [];
+        _debugShowLastUpdate =
+            prefs.getBool(AppConstants.debugShowLastUpdate) ?? false;
+        _lastBackgroundRunHeader = formattedDate;
+      });
+    }
   }
 
   void _scrollToBottom() {
@@ -116,6 +143,7 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen> {
             ),
         ],
       ),
+      drawer: const AppDrawer(),
       body: Column(
         children: [
           Container(
@@ -147,7 +175,7 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen> {
           ),
           Expanded(
             child: _logs.isEmpty
-                ? const Center(
+                ? Center(
                     child: Text(
                       'No logs available yet.',
                       style: TextStyle(color: Colors.grey),

@@ -2,7 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesService {
   static final PreferencesService _instance = PreferencesService._internal();
-  late SharedPreferencesWithCache _preferences;
+  late SharedPreferences _preferences;
 
   factory PreferencesService() {
     return _instance;
@@ -11,10 +11,12 @@ class PreferencesService {
   PreferencesService._internal();
 
   Future<void> init() async {
-    _preferences = await SharedPreferencesWithCache.create(
-      cacheOptions: const SharedPreferencesWithCacheOptions(),
-    );
+    _preferences = await SharedPreferences.getInstance();
   }
 
-  SharedPreferencesWithCache get prefs => _preferences;
+  Future<void> refresh() async {
+    await _preferences.reload();
+  }
+
+  SharedPreferences get prefs => _preferences;
 }

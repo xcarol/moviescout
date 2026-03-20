@@ -38,6 +38,9 @@ import 'package:moviescout/services/notification_service.dart';
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
+final RouteObserver<ModalRoute<void>> routeObserver =
+    RouteObserver<ModalRoute<void>>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -243,6 +246,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       home: const MainScreen(),
       scaffoldMessengerKey: scaffoldMessengerKey,
       navigatorKey: DeepLinkService().navigatorKey,
+      navigatorObservers: [routeObserver],
       builder: (context, child) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           final theme = Theme.of(context);

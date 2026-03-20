@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/main.dart';
 import 'package:moviescout/models/saved_notification.dart';
 import 'package:moviescout/services/deep_link_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
@@ -19,22 +20,52 @@ class NotificationsScreen extends StatefulWidget {
   State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
-class _NotificationsScreenState extends State<NotificationsScreen> {
+class _NotificationsScreenState extends State<NotificationsScreen>
+    with WidgetsBindingObserver, RouteAware {
   List<SavedNotification> _notifications = [];
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadNotifications();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    _loadNotifications();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _loadNotifications();
+    }
+  }
+
   Future<void> _loadNotifications() async {
+    await PreferencesService().refresh();
     final prefs = PreferencesService().prefs;
     final listStr = prefs.getStringList(AppConstants.savedNotifications) ?? [];
-    setState(() {
-      _notifications =
-          listStr.map((e) => SavedNotification.fromJson(e)).toList();
-    });
+    if (mounted) {
+      setState(() {
+        _notifications =
+            listStr.map((e) => SavedNotification.fromJson(e)).toList();
+      });
+    }
   }
 
   @override
