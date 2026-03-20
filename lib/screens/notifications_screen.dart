@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/main.dart';
 import 'package:moviescout/models/saved_notification.dart';
+import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/services/deep_link_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -89,64 +90,82 @@ class _NotificationsScreenState extends State<NotificationsScreen>
               itemBuilder: (context, index) {
                 final notification = _notifications[index];
 
-                return ListTile(
-                  leading: notification.imageUrl != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(4.0),
-                          child: CachedNetworkImage(
-                            imageUrl: notification.imageUrl!,
-                            width: 50,
-                            height: 75,
-                            fit: BoxFit.cover,
-                            errorWidget: (context, url, error) =>
-                                const Icon(Icons.movie),
-                          ),
-                        )
-                      : const Icon(Icons.notifications),
-                  title: Text(notification.title),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        DateFormat.yMMMd(
-                                Localizations.localeOf(context).toString())
-                            .format(notification.timestamp.toLocal()),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant
-                                  .withValues(alpha: 0.7),
-                            ),
+                return Column(
+                  children: [
+                    if (index == 0)
+                      Divider(
+                        height: 1,
+                        color: Theme.of(context)
+                            .extension<TitleListTheme>()!
+                            .listDividerColor,
                       ),
-                      if (notification.providerIds.isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: notification.providerIds.map((id) {
-                              final providerData = allProviders[id];
-                              if (providerData == null) {
-                                return const SizedBox.shrink();
-                              }
-                              return _providerLogo(providerData);
-                            }).toList(),
+                    ListTile(
+                      leading: notification.imageUrl != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(4.0),
+                              child: CachedNetworkImage(
+                                imageUrl: notification.imageUrl!,
+                                width: 50,
+                                height: 75,
+                                fit: BoxFit.cover,
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.movie),
+                              ),
+                            )
+                          : const Icon(Icons.notifications),
+                      title: Text(notification.title),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            DateFormat.yMMMd(
+                                    Localizations.localeOf(context).toString())
+                                .format(notification.timestamp.toLocal()),
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant
+                                          .withValues(alpha: 0.7),
+                                    ),
                           ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  onTap: notification.payload != null
-                      ? () {
-                          final parts = notification.payload!.split('|');
-                          if (parts.length == 2) {
-                            final type = parts[0];
-                            final id = int.tryParse(parts[1]);
-                            if (id != null) {
-                              DeepLinkService().navigateTo(type, id);
+                          if (notification.providerIds.isNotEmpty) ...[
+                            const SizedBox(height: 8),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: notification.providerIds.map((id) {
+                                  final providerData = allProviders[id];
+                                  if (providerData == null) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return _providerLogo(providerData);
+                                }).toList(),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      onTap: notification.payload != null
+                          ? () {
+                              final parts = notification.payload!.split('|');
+                              if (parts.length == 2) {
+                                final type = parts[0];
+                                final id = int.tryParse(parts[1]);
+                                if (id != null) {
+                                  DeepLinkService().navigateTo(type, id);
+                                }
+                              }
                             }
-                          }
-                        }
-                      : null,
+                          : null,
+                    ),
+                    Divider(
+                      height: 1,
+                      color: Theme.of(context)
+                          .extension<TitleListTheme>()!
+                          .listDividerColor,
+                    ),
+                  ],
                 );
               },
             ),
