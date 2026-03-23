@@ -14,46 +14,7 @@ import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/saved_notification.dart';
 import 'dart:convert';
 
-bool _isBrandNewSeason(List<String> logLines, Map<String, dynamic>? nextEpisode,
-    Map<String, dynamic>? lastEpisode, int currentSeason, String titleName) {
-  if (nextEpisode != null) {
-    try {
-      final nextSeason = nextEpisode['season_number'] as int;
-      final airDateStr = nextEpisode['air_date'] as String?;
 
-      if (nextSeason == currentSeason && airDateStr != null) {
-        final airDate = DateTime.tryParse(airDateStr);
-        if (airDate != null &&
-            airDate
-                .isAfter(DateTime.now().subtract(const Duration(days: 14)))) {
-          logLines.add(
-              '- init: $titleName S$nextSeason is future or recent ($airDateStr). Considering brand new.');
-          return true;
-        }
-      }
-    } catch (_) {}
-  }
-
-  if (lastEpisode != null) {
-    try {
-      final lastSeason = lastEpisode['season_number'] as int;
-      final airDateStr = lastEpisode['air_date'] as String?;
-
-      if (lastSeason == currentSeason && airDateStr != null) {
-        final airDate = DateTime.tryParse(airDateStr);
-        if (airDate != null &&
-            airDate
-                .isAfter(DateTime.now().subtract(const Duration(days: 14)))) {
-          logLines.add(
-              '- init: $titleName S$lastSeason premiered recently ($airDateStr). Considering brand new.');
-          return true;
-        }
-      }
-    } catch (_) {}
-  }
-
-  return false;
-}
 
 bool _hasNewSeasonStarted(
     List<String> logLines,
@@ -231,24 +192,9 @@ void callbackDispatcher() {
             } else if (title.isSerie) {
               final currentSeason = title.numberOfSeasons;
 
-              // Initialize lastNotifiedSeason if it's 0 (first run with this feature)
               if (title.lastNotifiedSeason == 0 && currentSeason > 0) {
-                final isBrandNew = _isBrandNewSeason(
-                    logLines,
-                    title.nextEpisodeToAir,
-                    title.lastEpisodeToAir,
-                    currentSeason,
-                    title.name);
-
-                if (isBrandNew) {
-                  title.lastNotifiedSeason = currentSeason - 1;
-                  logLines.add(
-                      '- Initializing lastNotifiedSeason = ${currentSeason - 1} for ${title.name} (brand new season)');
-                } else {
-                  title.lastNotifiedSeason = currentSeason;
-                  logLines.add(
-                      '- Initializing lastNotifiedSeason = $currentSeason for ${title.name}');
-                }
+                logLines.add('- Initializing lastNotifiedSeason = $currentSeason for ${title.name}');
+                title.lastNotifiedSeason = currentSeason;
                 await repository.updateTitleMetadata(title);
               }
 

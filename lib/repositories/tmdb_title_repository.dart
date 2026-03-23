@@ -172,6 +172,17 @@ class TmdbTitleRepository {
         .findFirstSync();
   }
 
+  Future<TmdbTitle?> getTitleGlobal(int tmdbId) async {
+    return _isar.tmdbTitles.filter().tmdbIdEqualTo(tmdbId).findFirst();
+  }
+
+  Future<List<TmdbTitle>> getTitlesByTmdbIds(List<int> tmdbIds) async {
+    return _isar.tmdbTitles
+        .filter()
+        .anyOf(tmdbIds, (q, id) => q.tmdbIdEqualTo(id))
+        .findAll();
+  }
+
   Future<List<int>> getAllTmdbIds(String listName) async {
     return _isar.userListEntrys
         .filter()
