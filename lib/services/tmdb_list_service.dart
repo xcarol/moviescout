@@ -199,6 +199,13 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     final movies = results[0];
     final tv = results[1];
 
+    final allTmdbIds = [
+      ...movies.map((m) => m[TmdbTitleFields.id] as int),
+      ...tv.map((t) => t[TmdbTitleFields.id] as int),
+    ];
+    final existingTitles = await repository.getTitlesByTmdbIds(allTmdbIds);
+    final existingMap = {for (var t in existingTitles) t.tmdbId: t};
+
     int movieIdx = 0;
     int tvIdx = 0;
 
@@ -206,12 +213,26 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       if (movieIdx < movies.length) {
         var element = movies[movieIdx++];
         element[TmdbTitleFields.mediaType] = ApiConstants.movie;
-        serverList.add(TmdbTitle.fromMap(title: element));
+        final tmdbId = element[TmdbTitleFields.id] as int;
+        final existing = existingMap[tmdbId];
+        if (existing != null) {
+          existing.fillFromMap(element);
+          serverList.add(existing);
+        } else {
+          serverList.add(TmdbTitle.fromMap(title: element));
+        }
       }
       if (tvIdx < tv.length) {
         var element = tv[tvIdx++];
         element[TmdbTitleFields.mediaType] = ApiConstants.tv;
-        serverList.add(TmdbTitle.fromMap(title: element));
+        final tmdbId = element[TmdbTitleFields.id] as int;
+        final existing = existingMap[tmdbId];
+        if (existing != null) {
+          existing.fillFromMap(element);
+          serverList.add(existing);
+        } else {
+          serverList.add(TmdbTitle.fromMap(title: element));
+        }
       }
     }
 
