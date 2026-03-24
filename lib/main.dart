@@ -181,6 +181,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         NotificationService().requestPermissionOnFirstLaunch();
       });
     }
+
+    final themeProvider = Provider.of<ThemeService>(context, listen: false);
+    themeProvider.setupTheme();
+    final userService = Provider.of<TmdbUserService>(context, listen: false);
+    userService.setup();
   }
 
   @override
@@ -204,11 +209,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeService>(context);
     final languageProvider = Provider.of<LanguageService>(context);
-    themeProvider.setupTheme();
-    final userService = Provider.of<TmdbUserService>(context, listen: false);
-    userService.setup();
+    final themeProvider = Provider.of<ThemeService>(context);
 
     return MaterialApp(
       localizationsDelegates: const [
