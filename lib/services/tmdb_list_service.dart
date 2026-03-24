@@ -210,7 +210,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       ...tv.map((t) => t[TmdbTitleFields.id] as int),
     ];
     final existingTitles = await repository.getTitlesByTmdbIds(allTmdbIds);
-    final existingMap = {for (var t in existingTitles) t.tmdbId: t};
+    final existingMap = {for (var t in existingTitles) '${t.tmdbId}_${t.mediaType}': t};
 
     int movieIdx = 0;
     int tvIdx = 0;
@@ -220,7 +220,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         var element = movies[movieIdx++];
         element[TmdbTitleFields.mediaType] = ApiConstants.movie;
         final tmdbId = element[TmdbTitleFields.id] as int;
-        final existing = existingMap[tmdbId];
+        final existing = existingMap['${tmdbId}_${ApiConstants.movie}'];
         if (existing != null) {
           existing.fillFromMap(element);
           serverList.add(existing);
@@ -232,7 +232,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         var element = tv[tvIdx++];
         element[TmdbTitleFields.mediaType] = ApiConstants.tv;
         final tmdbId = element[TmdbTitleFields.id] as int;
-        final existing = existingMap[tmdbId];
+        final existing = existingMap['${tmdbId}_${ApiConstants.tv}'];
         if (existing != null) {
           existing.fillFromMap(element);
           serverList.add(existing);

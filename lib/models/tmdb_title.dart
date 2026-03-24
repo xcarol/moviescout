@@ -306,6 +306,8 @@ class TmdbTitle {
         dateRated = DateTime.parse(title[TmdbTitleFields.accountRating]
             [TmdbTitleFields.accountRatingDate]);
       }
+    } else if (title[TmdbTitleFields.rating] != null) {
+      rating = title[TmdbTitleFields.rating].toDouble();
     }
 
     runtime = title[TmdbTitleFields.runtime] ?? runtime;
