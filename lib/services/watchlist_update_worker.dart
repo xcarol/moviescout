@@ -14,8 +14,6 @@ import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/saved_notification.dart';
 import 'dart:convert';
 
-
-
 bool _hasNewSeasonStarted(
     List<String> logLines,
     Map<String, dynamic>? nextEpisode,
@@ -193,7 +191,8 @@ void callbackDispatcher() {
               final currentSeason = title.numberOfSeasons;
 
               if (title.lastNotifiedSeason == 0 && currentSeason > 0) {
-                logLines.add('- Initializing lastNotifiedSeason = $currentSeason for ${title.name}');
+                logLines.add(
+                    '- Initializing lastNotifiedSeason = $currentSeason for ${title.name}');
                 title.lastNotifiedSeason = currentSeason;
                 await repository.updateTitleMetadata(title);
               }
