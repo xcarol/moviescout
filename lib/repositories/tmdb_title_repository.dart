@@ -126,21 +126,18 @@ class TmdbTitleRepository {
     });
   }
 
-  bool hasRatedTitles(String listName) {
-    final idsInList = _isar.userListEntrys
-        .filter()
-        .listNameEqualTo(listName)
-        .tmdbIdProperty()
-        .findAllSync();
+  Future<bool> hasRatedTitles(String listName) async {
+    final idsInList = await getAllTmdbIds(listName);
 
     if (idsInList.isEmpty) return false;
 
-    return _isar.tmdbTitles
-            .filter()
+    final count = await _isar.tmdbTitles
+            .where()
             .anyOf(idsInList, (q, id) => q.tmdbIdEqualTo(id))
-            .ratingGreaterThan(0)
-            .countSync() >
-        0;
+            .filter()
+            .ratingGreaterThan(AppConstants.seenRating)
+            .count();
+    return count > 0;
   }
 
   int countTitlesSync(String listName) {

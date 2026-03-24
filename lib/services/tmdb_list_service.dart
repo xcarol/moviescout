@@ -60,6 +60,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   List<String> listGenresVal = [];
   ValueNotifier<List<String>> listGenres = ValueNotifier([]);
   bool get isRefreshable => true;
+  bool _userRatingAvailableVal = false;
 
   TmdbListService(String listName, this.repository, {List<TmdbTitle>? titles}) {
     listNameVal = listName;
@@ -85,8 +86,13 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   bool get userRatingAvailable {
-    return listNameVal == AppConstants.rateslist ||
-        repository.hasRatedTitles(listNameVal);
+    return listNameVal == AppConstants.rateslist || _userRatingAvailableVal;
+  }
+
+  @protected
+  Future<void> updateUserRatingAvailable() async {
+    _userRatingAvailableVal = await repository.hasRatedTitles(listNameVal);
+    notifyListeners();
   }
 
   @protected
@@ -431,6 +437,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         (listNameVal == AppConstants.watchlist ? pinnedTitlesVal.length : 0);
 
     await loadNextPage();
+    await updateUserRatingAvailable();
   }
 
   void refresh() {
