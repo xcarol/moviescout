@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/region_service.dart';
+import 'package:moviescout/services/app_lifecycle_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
 
 enum ApiVersion { v3, v4 }
@@ -89,18 +90,21 @@ class TmdbBaseService {
       } on http.ClientException {
         debugPrint(
             'ClientException: retrying in ${delay.inSeconds} seconds...');
+        await AppLifecycleService.instance.waitUntilResumed();
         await Future.delayed(delay);
         delay = updatedDelay();
         retryCount++;
       } on SocketException {
         debugPrint(
             'SocketException: retrying in ${delay.inSeconds} seconds...');
+        await AppLifecycleService.instance.waitUntilResumed();
         await Future.delayed(delay);
         delay = updatedDelay();
         retryCount++;
       } on HandshakeException {
         debugPrint(
             'HandshakeException: retrying in ${delay.inSeconds} seconds...');
+        await AppLifecycleService.instance.waitUntilResumed();
         await Future.delayed(delay);
         delay = updatedDelay();
         retryCount++;

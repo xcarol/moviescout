@@ -12,6 +12,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/services/discoverlist_service.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/isar_service.dart';
+import 'package:moviescout/services/app_lifecycle_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/theme_service.dart';
@@ -169,6 +170,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    AppLifecycleService.instance.init();
 
     final watchlistService =
         Provider.of<TmdbWatchlistService>(context, listen: false);
@@ -190,6 +192,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    AppLifecycleService.instance.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
