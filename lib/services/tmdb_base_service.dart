@@ -37,16 +37,22 @@ class TmdbBaseService {
     return LanguageService().locale.languageCode;
   }
 
+  Uri _buildUri(ApiVersion version, String endpoint) {
+    final String baseUrl = version == ApiVersion.v3 ? _baseUrlv3 : _baseUrlv4;
+    final cleanBase = baseUrl.endsWith('/') ? baseUrl.substring(0, baseUrl.length - 1) : baseUrl;
+    final cleanEndpoint = endpoint.startsWith('/') ? endpoint : '/$endpoint';
+    return Uri.parse('$cleanBase$cleanEndpoint');
+  }
+
   Future<dynamic> get(
     String query, {
     ApiVersion version = ApiVersion.v3,
     String accessToken = '',
   }) async {
-    final String baseUrl = version == ApiVersion.v3 ? _baseUrlv3 : _baseUrlv4;
     final token = accessToken.isEmpty || version == ApiVersion.v3
         ? dotenv.env['TMDB_API_RAT']
         : accessToken;
-    final uri = Uri.parse('$baseUrl$query');
+    final uri = _buildUri(version, query);
 
     const Duration initialDelay = Duration(milliseconds: _initialDelayMs);
     const Duration maxDelay = Duration(milliseconds: _maxDelayMs);
@@ -131,11 +137,10 @@ class TmdbBaseService {
     String accessToken = '',
   }) async {
     try {
-      final String baseUrl = version == ApiVersion.v3 ? _baseUrlv3 : _baseUrlv4;
       final token = accessToken.isEmpty || version == ApiVersion.v3
           ? dotenv.env['TMDB_API_RAT']
           : accessToken;
-      final uri = Uri.parse('$baseUrl/$endpoint');
+      final uri = _buildUri(version, endpoint);
 
       return http.post(
         uri,
@@ -164,11 +169,10 @@ class TmdbBaseService {
     String accessToken = '',
   }) async {
     try {
-      final String baseUrl = version == ApiVersion.v3 ? _baseUrlv3 : _baseUrlv4;
       final token = accessToken.isEmpty || version == ApiVersion.v3
           ? dotenv.env['TMDB_API_RAT']
           : accessToken;
-      final uri = Uri.parse('$baseUrl/$endpoint');
+      final uri = _buildUri(version, endpoint);
 
       return http.put(
         uri,
@@ -197,11 +201,10 @@ class TmdbBaseService {
     String accessToken = '',
   }) async {
     try {
-      final String baseUrl = version == ApiVersion.v3 ? _baseUrlv3 : _baseUrlv4;
       final token = accessToken.isEmpty || version == ApiVersion.v3
           ? dotenv.env['TMDB_API_RAT']
           : accessToken;
-      final uri = Uri.parse('$baseUrl/$endpoint');
+      final uri = _buildUri(version, endpoint);
 
       return http.delete(
         uri,
