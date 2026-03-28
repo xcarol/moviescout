@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
@@ -12,7 +13,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/saved_notification.dart';
-import 'dart:convert';
+import 'package:moviescout/utils/save_logs.dart';
 
 bool _hasNewSeasonStarted(
     List<String> logLines,
@@ -290,14 +291,14 @@ void callbackDispatcher() {
       logLines
           .add('End: ${DateTime.now().toLocal().toString().split('.').first}');
       logLines.add('---------------------------');
-      await _saveLogs(logLines);
+      await saveLogs(logLines);
 
       return Future.value(true);
     } catch (error, stackTrace) {
       logLines.add('ERROR: $error\n$stackTrace');
       logLines.add(
           'Summary: $scannedCount scanned - $updatedCount updated (Interrupted)');
-      await _saveLogs(logLines);
+      await saveLogs(logLines);
 
       ErrorService.log(
         error,
@@ -308,22 +309,6 @@ void callbackDispatcher() {
       return Future.value(false);
     }
   });
-}
-
-Future<void> _saveLogs(List<String> logLines) async {
-  try {
-    final prefs = PreferencesService().prefs;
-    final currentLogs =
-        prefs.getStringList(AppConstants.watchlistUpdateLogs) ?? [];
-    final newEntry = logLines.join('\n');
-    currentLogs.add(newEntry);
-    if (currentLogs.length > 50) {
-      currentLogs.removeRange(0, currentLogs.length - 50);
-    }
-    await prefs.setStringList(AppConstants.watchlistUpdateLogs, currentLogs);
-  } catch (e) {
-    debugPrint('Error saving logs: $e');
-  }
 }
 
 Future<void> _saveNotification(SavedNotification notification) async {

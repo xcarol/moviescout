@@ -4,13 +4,48 @@ import 'package:moviescout/models/user_list_entry.dart';
 import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/utils/save_logs.dart';
 
 class TmdbTitleRepository {
   final _isar = IsarService.instance;
 
+  Future<void> _logZeroRatingError(TmdbTitle title, {String? listName}) async {
+    if (title.rating > 0) return;
+
+    if (listName != null && listName == AppConstants.rateslist) {
+      return saveLogs([
+        '== ZERO ERROR ==',
+        'title: ${title.name} rating: ${title.rating} stackTrace: ${StackTrace.current}',
+        '== ZERO ERROR ==',
+      ]);
+    }
+
+    final inRatesList = await _isar.userListEntrys
+        .filter()
+        .listNameEqualTo(AppConstants.rateslist)
+        .tmdbIdEqualTo(title.tmdbId)
+        .findAll();
+
+    if (inRatesList.isNotEmpty) {
+      return saveLogs([
+        '== ZERO ERROR ==',
+        'title: ${title.name} rating: ${title.rating} stackTrace: ${StackTrace.current}',
+        '== ZERO ERROR ==',
+      ]);
+    }
+  }
+
+  Future<void> _logMultipleZeroRatingError(List<TmdbTitle> titles,
+      {String? listName}) async {
+    for (final title in titles) {
+      await _logZeroRatingError(title, listName: listName);
+    }
+  }
+
   Future<void> saveTitle(
       TmdbTitle title, String listName, int addedOrder) async {
     await _isar.writeTxn(() async {
+      await _logZeroRatingError(title, listName: listName);
       await _isar.tmdbTitles.put(title);
       await _isar.userListEntrys.put(UserListEntry(
         listName: listName,
@@ -25,6 +60,7 @@ class TmdbTitleRepository {
     if (titles.isEmpty) return;
 
     await _isar.writeTxn(() async {
+      await _logMultipleZeroRatingError(titles, listName: listName);
       await _isar.tmdbTitles.putAll(titles);
       final entries = <UserListEntry>[];
       for (var i = 0; i < titles.length; i++) {
@@ -40,12 +76,14 @@ class TmdbTitleRepository {
 
   Future<void> updateTitleMetadata(TmdbTitle title) async {
     await _isar.writeTxn(() async {
+      await _logZeroRatingError(title);
       await _isar.tmdbTitles.put(title);
     });
   }
 
   Future<void> updateTitlesMetadata(List<TmdbTitle> titles) async {
     await _isar.writeTxn(() async {
+      await _logMultipleZeroRatingError(titles);
       await _isar.tmdbTitles.putAll(titles);
     });
   }
@@ -132,11 +170,11 @@ class TmdbTitleRepository {
     if (idsInList.isEmpty) return false;
 
     final count = await _isar.tmdbTitles
-            .where()
-            .anyOf(idsInList, (q, id) => q.tmdbIdEqualTo(id))
-            .filter()
-            .ratingGreaterThan(AppConstants.seenRating)
-            .count();
+        .where()
+        .anyOf(idsInList, (q, id) => q.tmdbIdEqualTo(id))
+        .filter()
+        .ratingGreaterThan(AppConstants.seenRating)
+        .count();
     return count > 0;
   }
 
