@@ -4,6 +4,7 @@
 firebase.json
 .env*
 .cxx
+.kotlin
 
 # Miscellaneous
 *.class

@@ -191,10 +191,29 @@ void callbackDispatcher() {
               final currentSeason = title.numberOfSeasons;
 
               if (title.lastNotifiedSeason == 0 && currentSeason > 0) {
-                logLines.add(
-                    '- Initializing lastNotifiedSeason = $currentSeason for ${title.name}');
-                title.lastNotifiedSeason = currentSeason;
-                await repository.updateTitleMetadata(title);
+                // For brand new series (1 season, premiered recently), allow
+                // the notification path by initializing to season 0.
+                // For all other cases, initialize silently to currentSeason.
+                bool isNewSeries = false;
+                if (currentSeason == 1 && title.firstAirDate.isNotEmpty) {
+                  final firstAir = DateTime.tryParse(title.firstAirDate);
+                  if (firstAir != null &&
+                      firstAir.isAfter(
+                          DateTime.now().subtract(const Duration(days: 14)))) {
+                    isNewSeries = true;
+                  }
+                }
+
+                if (isNewSeries) {
+                  logLines.add(
+                      '- New series detected: ${title.name} (premiered ${title.firstAirDate}). Will notify.');
+                  // lastNotifiedSeason stays 0, falls through to notification check below
+                } else {
+                  logLines.add(
+                      '- Initializing lastNotifiedSeason = $currentSeason for ${title.name}');
+                  title.lastNotifiedSeason = currentSeason;
+                  await repository.updateTitleMetadata(title);
+                }
               }
 
               if (currentSeason > title.lastNotifiedSeason) {
