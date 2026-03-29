@@ -1,0 +1,106 @@
+{
+  "adult": false,
+  "backdrop_path": "/yAfNwHCnnoozTPl8Hhh024kdvSe.jpg",
+  "created_by": [],
+  "episode_run_time": [],
+  "first_air_date": "2026-04-02",
+  "genres": [
+    {
+      "id": 18,
+      "name": "Drama"
+    },
+    {
+      "id": 10759,
+      "name": "Action & Adventure"
+    }
+  ],
+  "homepage": "https://www.netflix.com/title/81477955",
+  "id": 213703,
+  "in_production": true,
+  "languages": [
+    "zh"
+  ],
+  "last_air_date": null,
+  "last_episode_to_air": null,
+  "name": "乩身",
+  "next_episode_to_air": {
+    "id": 4038035,
+    "name": "Episodi 1",
+    "overview": "",
+    "vote_average": 0,
+    "vote_count": 0,
+    "air_date": "2026-04-02",
+    "episode_number": 1,
+    "episode_type": "standard",
+    "production_code": "",
+    "runtime": null,
+    "season_number": 1,
+    "show_id": 213703,
+    "still_path": null
+  },
+  "networks": [
+    {
+      "id": 213,
+      "logo_path": "/wwemzKWzjKYJFfCeiB57q3r4Bcm.png",
+      "name": "Netflix",
+      "origin_country": ""
+    }
+  ],
+  "number_of_episodes": 6,
+  "number_of_seasons": 1,
+  "origin_country": [
+    "TW"
+  ],
+  "original_language": "zh",
+  "original_name": "乩身",
+  "overview": "",
+  "popularity": 2.7316,
+  "poster_path": "/efFwhZ9uOCYVG3VSjBoLBqRypDv.jpg",
+  "production_companies": [
+    {
+      "id": 55802,
+      "logo_path": "/l1lnXmGse9lO7Pz1Z49SrSk3Y6J.png",
+      "name": "MM2 Entertainment",
+      "origin_country": "SG"
+    },
+    {
+      "id": 18822,
+      "logo_path": null,
+      "name": "Good Films Workshop",
+      "origin_country": ""
+    }
+  ],
+  "production_countries": [
+    {
+      "iso_3166_1": "TW",
+      "name": "Taiwan"
+    }
+  ],
+  "seasons": [
+    {
+      "air_date": "2026-04-02",
+      "episode_count": 8,
+      "id": 315093,
+      "name": "Temporada 1",
+      "overview": "",
+      "poster_path": null,
+      "season_number": 1,
+      "vote_average": 0
+    }
+  ],
+  "spoken_languages": [
+    {
+      "english_name": "Mandarin",
+      "iso_639_1": "zh",
+      "name": "普通话"
+    }
+  ],
+  "status": "Returning Series",
+  "tagline": "",
+  "type": "Scripted",
+  "vote_average": 0,
+  "vote_count": 0,
+  "watch/providers": {
+    "results": {}
+  }
+}

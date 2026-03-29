@@ -1,0 +1,106 @@
+{
+  "adult": false,
+  "backdrop_path": "/m2px7CZWxArlG8Lyld1XKIkD5aA.jpg",
+  "created_by": [],
+  "episode_run_time": [],
+  "first_air_date": "2026-04-02",
+  "genres": [
+    {
+      "id": 80,
+      "name": "Crime"
+    },
+    {
+      "id": 18,
+      "name": "Drama"
+    }
+  ],
+  "homepage": "https://www.netflix.com/title/81581947",
+  "id": 303405,
+  "in_production": true,
+  "languages": [
+    "ja"
+  ],
+  "last_air_date": null,
+  "last_episode_to_air": null,
+  "name": "九条の大罪",
+  "next_episode_to_air": {
+    "id": 6613931,
+    "name": "Episodi 1",
+    "overview": "",
+    "vote_average": 0,
+    "vote_count": 0,
+    "air_date": "2026-04-02",
+    "episode_number": 1,
+    "episode_type": "standard",
+    "production_code": "",
+    "runtime": null,
+    "season_number": 1,
+    "show_id": 303405,
+    "still_path": null
+  },
+  "networks": [
+    {
+      "id": 213,
+      "logo_path": "/wwemzKWzjKYJFfCeiB57q3r4Bcm.png",
+      "name": "Netflix",
+      "origin_country": ""
+    }
+  ],
+  "number_of_episodes": 10,
+  "number_of_seasons": 1,
+  "origin_country": [
+    "JP"
+  ],
+  "original_language": "ja",
+  "original_name": "九条の大罪",
+  "overview": "",
+  "popularity": 1.9018,
+  "poster_path": "/1eHY0eqE6ricIouCyxMfAFm6D6i.jpg",
+  "production_companies": [
+    {
+      "id": 139446,
+      "logo_path": "/4uMH3FFbHgK5dKBiGMXKQCM8ln9.png",
+      "name": "TBS Sparkle",
+      "origin_country": "JP"
+    },
+    {
+      "id": 1393,
+      "logo_path": "/lUACMATs6jcscXIrzNCQzbvNVN5.png",
+      "name": "TBS",
+      "origin_country": "JP"
+    }
+  ],
+  "production_countries": [
+    {
+      "iso_3166_1": "JP",
+      "name": "Japan"
+    }
+  ],
+  "seasons": [
+    {
+      "air_date": "2026-04-02",
+      "episode_count": 10,
+      "id": 480678,
+      "name": "Temporada 1",
+      "overview": "",
+      "poster_path": "/1eHY0eqE6ricIouCyxMfAFm6D6i.jpg",
+      "season_number": 1,
+      "vote_average": 0
+    }
+  ],
+  "spoken_languages": [
+    {
+      "english_name": "Japanese",
+      "iso_639_1": "ja",
+      "name": "日本語"
+    }
+  ],
+  "status": "Returning Series",
+  "tagline": "",
+  "type": "Scripted",
+  "vote_average": 0,
+  "vote_count": 0,
+  "watch/providers": {
+    "results": {}
+  }
+}
