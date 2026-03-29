@@ -1,0 +1,137 @@
+{
+  "adult": false,
+  "backdrop_path": "/e9HhOb3o22t89lnpN511GzZE0Fp.jpg",
+  "created_by": [
+    {
+      "id": 934166,
+      "credit_id": "664ed5306615e132b334dbcd",
+      "name": "Jo Nesbø",
+      "original_name": "Jo Nesbø",
+      "gender": 2,
+      "profile_path": "/iR2Yf45AVmy3CoA3YJHne2nWJYt.jpg"
+    }
+  ],
+  "episode_run_time": [],
+  "first_air_date": "2026-03-26",
+  "genres": [
+    {
+      "id": 9648,
+      "name": "Mystery"
+    },
+    {
+      "id": 80,
+      "name": "Crime"
+    }
+  ],
+  "homepage": "https://www.netflix.com/title/81610327",
+  "id": 249597,
+  "in_production": true,
+  "languages": [
+    "no"
+  ],
+  "last_air_date": "2026-03-26",
+  "last_episode_to_air": {
+    "id": 6770190,
+    "name": "Episodi 9",
+    "overview": "",
+    "vote_average": 7,
+    "vote_count": 1,
+    "air_date": "2026-03-26",
+    "episode_number": 9,
+    "episode_type": "finale",
+    "production_code": "",
+    "runtime": 48,
+    "season_number": 1,
+    "show_id": 249597,
+    "still_path": "/cYO9IJRQkTKjhwu0g6t00TzMoAN.jpg"
+  },
+  "name": "Harry Hole",
+  "next_episode_to_air": null,
+  "networks": [
+    {
+      "id": 213,
+      "logo_path": "/wwemzKWzjKYJFfCeiB57q3r4Bcm.png",
+      "name": "Netflix",
+      "origin_country": ""
+    }
+  ],
+  "number_of_episodes": 9,
+  "number_of_seasons": 1,
+  "origin_country": [
+    "NO",
+    "GB",
+    "US"
+  ],
+  "original_language": "no",
+  "original_name": "Harry Hole",
+  "overview": "",
+  "popularity": 58.6251,
+  "poster_path": "/rbTuKjM1w9r9Q6YEQ67IeOYBF9C.jpg",
+  "production_companies": [
+    {
+      "id": 221515,
+      "logo_path": null,
+      "name": "Working Title Television",
+      "origin_country": "US"
+    },
+    {
+      "id": 87455,
+      "logo_path": "/c9sx9cexshcEIyo0u1R3yoGsjzB.png",
+      "name": "Universal International Studios",
+      "origin_country": "GB"
+    },
+    {
+      "id": 245798,
+      "logo_path": null,
+      "name": "Living Daylights Productions",
+      "origin_country": "NO"
+    },
+    {
+      "id": 193169,
+      "logo_path": "/8mlCKXC3Fg0bvVN0fAWja6tG27O.png",
+      "name": "Redpoint Productions",
+      "origin_country": "NO"
+    }
+  ],
+  "production_countries": [
+    {
+      "iso_3166_1": "GB",
+      "name": "United Kingdom"
+    },
+    {
+      "iso_3166_1": "US",
+      "name": "United States of America"
+    },
+    {
+      "iso_3166_1": "NO",
+      "name": "Norway"
+    }
+  ],
+  "seasons": [
+    {
+      "air_date": "2026-03-26",
+      "episode_count": 9,
+      "id": 384558,
+      "name": "Temporada 1",
+      "overview": "",
+      "poster_path": "/gRXFlyQq4cFK1JHoKqYVaWu4t82.jpg",
+      "season_number": 1,
+      "vote_average": 6.8
+    }
+  ],
+  "spoken_languages": [
+    {
+      "english_name": "Norwegian",
+      "iso_639_1": "no",
+      "name": "Norsk"
+    }
+  ],
+  "status": "Returning Series",
+  "tagline": "",
+  "type": "Scripted",
+  "vote_average": 8,
+  "vote_count": 14,
+  "watch/providers": {
+    "results": {}
+  }
+}

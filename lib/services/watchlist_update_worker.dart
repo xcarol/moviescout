@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/isar_service.dart';
@@ -13,37 +14,112 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/saved_notification.dart';
+import 'package:moviescout/services/watchlist_notification_evaluator.dart';
 import 'package:moviescout/utils/save_logs.dart';
 
-bool _hasNewSeasonStarted(
+Future<bool> updateTitle(
+    TmdbTitle title,
+    bool fullUpdate,
     List<String> logLines,
-    Map<String, dynamic>? nextEpisode,
-    Map<String, dynamic>? lastEpisode,
-    int currentSeason,
-    String titleName) {
-  if (lastEpisode != null &&
-      (lastEpisode['season_number'] as int) == currentSeason) {
-    logLines
-        .add('- check: $titleName S$currentSeason has already started airing.');
-    return true;
-  } else if (nextEpisode != null) {
-    try {
-      final nextSeason = nextEpisode['season_number'] as int;
-      final nextEpisodeNum = nextEpisode['episode_number'] as int;
-      final airDateStr = nextEpisode['air_date'] as String?;
+    List<dynamic> providersList,
+    List<int> enabledProviderIds,
+    TmdbTitleService titleService,
+    TmdbTitleRepository repository,
+    AppLocalizations localizations,
+    DateTime now) async {
+  final titleBeforeUpdate = TmdbTitle.fromMap(title: title.toMap());
 
-      if (nextSeason == currentSeason &&
-          nextEpisodeNum == 1 &&
-          airDateStr != null) {
-        final airDate = DateTime.tryParse(airDateStr);
-        if (airDate != null && airDate.isBefore(DateTime.now())) {
-          logLines.add(
-              '- check: $titleName S$nextSeason premiere has arrived ($airDateStr).');
-          return true;
-        }
-      }
-    } catch (_) {}
+  if (fullUpdate) {
+    logLines
+        .add('FULL UPDATE: ${title.name}. lastUpdated: ${title.lastUpdated}');
+    await titleService.updateTitleDetails(title);
+  } else {
+    logLines.add(
+        'LIGHT UPDATE: ${title.name}. lastProvidersUpdate: ${title.lastProvidersUpdate}');
+    await titleService.updateTitleLight(title);
   }
+
+  if (title.lastNotifiedSeason == 0 && title.isSerie) {
+    title.lastNotifiedSeason =
+        WatchlistNotificationEvaluator.getBaselineSeason(title, now);
+    await repository.updateTitleMetadata(title);
+  }
+
+  final trigger = WatchlistNotificationEvaluator.evaluateNotification(
+    titleBeforeUpdate: titleBeforeUpdate,
+    titleAfterUpdate: title,
+    enabledProviderIds: enabledProviderIds.toSet(),
+    now: now,
+    logLines: logLines,
+  );
+
+  if (trigger == NotificationTrigger.none) {
+    if (fullUpdate ||
+        titleBeforeUpdate.lastProvidersUpdate != title.lastProvidersUpdate) {
+      await repository.updateTitleMetadata(title);
+    }
+    return false;
+  }
+
+  // Handle Notifications
+  final availableProviderIds = title.flatrateProviderIds
+      .where((id) => enabledProviderIds.contains(id))
+      .toList();
+
+  if (trigger == NotificationTrigger.newAvailability) {
+    logLines.add('- Sending notification for ${title.name} (Now available)');
+
+    await NotificationService().showNotification(
+      id: title.tmdbId,
+      title: localizations.notificationTitle,
+      body: localizations.notificationBody(title.name),
+      imageUrl: title.posterPath,
+      payload: '${title.mediaType}|${title.tmdbId}',
+    );
+    await _saveNotification(SavedNotification(
+      id: title.tmdbId,
+      title: title.name,
+      body: localizations.notificationTitle,
+      imageUrl: title.posterPath,
+      payload: '${title.mediaType}|${title.tmdbId}',
+      timestamp: now,
+      providerIds: availableProviderIds,
+    ));
+
+    if (title.isSerie) {
+      title.lastNotifiedSeason = title.numberOfSeasons;
+    }
+    await repository.updateTitleMetadata(title);
+    return true;
+  }
+
+  if (trigger == NotificationTrigger.newSeason) {
+    logLines.add(
+        '- Sending notification for new season of ${title.name} (${title.numberOfSeasons} seasons)');
+
+    await NotificationService().showNotification(
+      id: title.tmdbId + 1000000,
+      title: localizations.notificationNewSeasonTitle,
+      body: localizations.notificationNewSeasonBody(title.name),
+      imageUrl: title.posterPath,
+      payload: '${title.mediaType}|${title.tmdbId}',
+    );
+
+    await _saveNotification(SavedNotification(
+      id: title.tmdbId + 1000000,
+      title: title.name,
+      body: localizations.notificationNewSeasonTitle,
+      imageUrl: title.posterPath,
+      payload: '${title.mediaType}|${title.tmdbId}',
+      timestamp: now,
+      providerIds: availableProviderIds,
+    ));
+
+    title.lastNotifiedSeason = title.numberOfSeasons;
+    await repository.updateTitleMetadata(title);
+    return true;
+  }
+
   return false;
 }
 
@@ -92,192 +168,36 @@ void callbackDispatcher() {
 
       for (final title in watchlistTitles) {
         scannedCount++;
-        final isUninitialized = title.isSerie && title.lastNotifiedSeason == 0;
-        final needsFull = DateTime.now()
-                    .difference(DateTime.parse(title.lastUpdated))
-                    .inDays >=
-                AppConstants.watchlistTitleUpdateFrequencyDays ||
-            isUninitialized;
-        final needsLight = DateTime.now()
-                .difference(DateTime.parse(title.lastProvidersUpdate))
-                .inDays >=
-            AppConstants.watchlistProvidersUpdateFrequencyDays;
+        final now = DateTime.now();
+        UpdateType updateType =
+            WatchlistNotificationEvaluator.checkNeedsUpdate(title, now);
 
-        if (needsFull || needsLight) {
+        if (updateType != UpdateType.none) {
           if (updatedCount >= AppConstants.watchlistMaxUpdatesPerRun) {
             logLines.add('- Max updates per run reached ($updatedCount)');
             break;
           }
+
           updatedCount++;
-          final oldProviders = title.flatrateProviderIds.toSet();
-          final enabledProviderSet = enabledProviderIds.toSet();
-          final wasAvailable =
-              oldProviders.intersection(enabledProviderSet).isNotEmpty;
+          final notified = await updateTitle(
+              title,
+              updateType == UpdateType.full,
+              logLines,
+              providersList,
+              enabledProviderIds,
+              titleService,
+              repository,
+              localizations,
+              now);
 
-          if (needsFull) {
-            logLines.add(
-                '- Full update: ${title.name}. lastUpdated: ${title.lastUpdated}');
-            await titleService.updateTitleDetails(title);
-          } else {
-            logLines.add(
-                '- Light update: ${title.name}. lastProvidersUpdate: ${title.lastProvidersUpdate}');
-            await titleService.updateTitleLight(title);
+          if (notified) {
+            notifiedCount++;
           }
-          await repository.updateTitleMetadata(title);
-
-          final oldProviderNames = providersList
-              .where((p) => oldProviders.contains(p[TmdbProvider.providerId]))
-              .map((p) => p[TmdbProvider.providerName])
-              .toList();
-          final newProviderNames = providersList
-              .where((p) => title.flatrateProviderIds
-                  .contains(p[TmdbProvider.providerId]))
-              .map((p) => p[TmdbProvider.providerName])
-              .toList();
-
-          if (oldProviderNames.join(', ') != newProviderNames.join(', ')) {
-            logLines.add('- Old providers: ${oldProviderNames.join(', ')}');
-            logLines.add('- New providers: ${newProviderNames.join(', ')}');
-          }
-
-          final newProviders = title.flatrateProviderIds.toSet();
-          final isAvailable =
-              newProviders.intersection(enabledProviderSet).isNotEmpty;
-
-          if (isAvailable) {
-            final availableProvidersData = providersList
-                .where((p) => newProviders.contains(p[TmdbProvider.providerId]))
-                .toList();
-
-            final availableProviderNames = availableProvidersData
-                .map((p) => p[TmdbProvider.providerName]?.toString() ?? '')
-                .toList();
-
-            final availableProviderIds = availableProvidersData
-                .map((p) => (p[TmdbProvider.providerId] as num).toInt())
-                .toList();
-
-            if (availableProviderNames.isNotEmpty) {
-              logLines.add(
-                  '- Available: ${title.name} at ${availableProviderNames.join(', ')}');
-            }
-
-            if (!wasAvailable) {
-              // Title just became available
-              logLines.add(
-                  '- Sending notification for ${title.name} (Now available)');
-
-              await NotificationService().showNotification(
-                id: title.tmdbId,
-                title: localizations.notificationTitle,
-                body: localizations.notificationBody(title.name),
-                imageUrl: title.posterPath,
-                payload: '${title.mediaType}|${title.tmdbId}',
-              );
-              await _saveNotification(SavedNotification(
-                id: title.tmdbId,
-                title: title.name,
-                body: localizations.notificationTitle,
-                imageUrl: title.posterPath,
-                payload: '${title.mediaType}|${title.tmdbId}',
-                timestamp: DateTime.now(),
-                providerIds: availableProviderIds,
-              ));
-              notifiedCount++;
-              if (title.isSerie) {
-                title.lastNotifiedSeason = title.numberOfSeasons;
-                await repository.updateTitleMetadata(title);
-              }
-            } else if (title.isSerie) {
-              final currentSeason = title.numberOfSeasons;
-
-              if (title.lastNotifiedSeason == 0 && currentSeason > 0) {
-                // For brand new series (1 season, premiered recently), allow
-                // the notification path by initializing to season 0.
-                // For all other cases, initialize silently to currentSeason.
-                bool isNewSeries = false;
-                if (currentSeason == 1 && title.firstAirDate.isNotEmpty) {
-                  final firstAir = DateTime.tryParse(title.firstAirDate);
-                  if (firstAir != null &&
-                      firstAir.isAfter(
-                          DateTime.now().subtract(const Duration(days: 14)))) {
-                    isNewSeries = true;
-                  }
-                }
-
-                if (isNewSeries) {
-                  logLines.add(
-                      '- New series detected: ${title.name} (premiered ${title.firstAirDate}). Will notify.');
-                  // lastNotifiedSeason stays 0, falls through to notification check below
-                } else {
-                  logLines.add(
-                      '- Initializing lastNotifiedSeason = $currentSeason for ${title.name}');
-                  title.lastNotifiedSeason = currentSeason;
-                  await repository.updateTitleMetadata(title);
-                }
-              }
-
-              if (currentSeason > title.lastNotifiedSeason) {
-                final shouldNotify = _hasNewSeasonStarted(
-                    logLines,
-                    title.nextEpisodeToAir,
-                    title.lastEpisodeToAir,
-                    currentSeason,
-                    title.name);
-
-                if (shouldNotify) {
-                  logLines.add(
-                      '- Sending notification for new season of ${title.name} (${title.numberOfSeasons} seasons)');
-
-                  await NotificationService().showNotification(
-                    id: title.tmdbId + 1000000,
-                    title: localizations.notificationNewSeasonTitle,
-                    body: localizations.notificationNewSeasonBody(title.name),
-                    imageUrl: title.posterPath,
-                    payload: '${title.mediaType}|${title.tmdbId}',
-                  );
-                  await _saveNotification(SavedNotification(
-                    id: title.tmdbId + 1000000,
-                    title: title.name,
-                    body: localizations.notificationNewSeasonTitle,
-                    imageUrl: title.posterPath,
-                    payload: '${title.mediaType}|${title.tmdbId}',
-                    timestamp: DateTime.now(),
-                    providerIds: availableProviderIds,
-                  ));
-                  notifiedCount++;
-                  title.lastNotifiedSeason = currentSeason;
-                  await repository.updateTitleMetadata(title);
-                } else {
-                  logLines.add(
-                      '- Found new season for ${title.name} but rules forbid notification. '
-                      'Next: ${title.nextEpisodeToAir?['air_date']} | Last: ${title.lastEpisodeToAir?['air_date']}');
-                }
-              }
-            } else {
-              logLines.add(
-                  '- No notification needed for ${title.name}. Already available at ${availableProviderNames.join(', ')}.');
-            }
-          } else {
-            if (wasAvailable) {
-              logLines.add(
-                  '- Title ${title.name} is no longer available on enabled providers.');
-            }
-            if (title.isSerie &&
-                title.lastNotifiedSeason == 0 &&
-                title.numberOfSeasons > 0) {
-              // initialize silently
-              logLines.add(
-                  '- Initializing silently ${title.name} (${title.numberOfSeasons} seasons)');
-              title.lastNotifiedSeason = title.numberOfSeasons;
-              await repository.updateTitleMetadata(title);
-            }
-          }
-
           await Future.delayed(const Duration(milliseconds: 200));
         } else {
           skippedCount++;
         }
+        logLines.add('');
       }
 
       await PreferencesService().prefs.setString(
