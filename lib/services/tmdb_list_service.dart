@@ -102,11 +102,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     notifyListeners();
   }
 
-  void clearListSync() {
-    repository.clearListSync(listNameVal);
-    resetServiceStateAfterClear();
-  }
-
   @protected
   Future<void> _clearLocalList() async {
     await repository.clearList(listNameVal);

@@ -179,31 +179,6 @@ class TmdbTitleRepository {
     });
   }
 
-  void clearListSync(String listName) {
-    _isar.writeTxnSync(() {
-      final entriesToRemove =
-          _isar.userListEntrys.filter().listNameEqualTo(listName).findAllSync();
-
-      _isar.userListEntrys.filter().listNameEqualTo(listName).deleteAllSync();
-
-      for (final entry in entriesToRemove) {
-        final remainsInAnyList = _isar.userListEntrys
-                .filter()
-                .tmdbIdEqualTo(entry.tmdbId)
-                .mediaTypeEqualTo(entry.mediaType)
-                .countSync() >
-            0;
-        if (!remainsInAnyList) {
-          _isar.tmdbTitles
-              .filter()
-              .tmdbIdEqualTo(entry.tmdbId)
-              .mediaTypeEqualTo(entry.mediaType)
-              .deleteAllSync();
-        }
-      }
-    });
-  }
-
   Future<bool> hasRatedTitles(String listName) async {
     final entriesInList = await getAllEntries(listName);
 
