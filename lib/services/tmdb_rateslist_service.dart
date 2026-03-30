@@ -117,7 +117,7 @@ class TmdbRateslistService extends TmdbListService {
         final watchlistTitle = repository.getTitleByTmdbId(
             AppConstants.watchlist, title.tmdbId, title.mediaType);
         if (watchlistTitle != null) {
-          await repository.deleteTitle(AppConstants.watchlist, title.tmdbId);
+          await repository.deleteTitle(AppConstants.watchlist, title.tmdbId, title.mediaType);
         }
       }
       await updateTitle(accountId, sessionId, title, rating > 0,

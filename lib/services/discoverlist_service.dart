@@ -57,20 +57,28 @@ class TmdbDiscoverlistService extends TmdbListService {
     final Map<int, double> genreWeights = {};
     final Map<int, int> genreCounts = {};
 
-    final ratedIds = await repository.getAllTmdbIds(AppConstants.rateslist);
-    final ratedTitles = ratedIds.isEmpty
+    final ratedEntries =
+        await repository.getAllEntries(AppConstants.rateslist);
+    final ratedTitles = ratedEntries.isEmpty
         ? <TmdbTitle>[]
         : await isar.tmdbTitles
             .filter()
-            .anyOf(ratedIds, (q, id) => q.tmdbIdEqualTo(id))
+            .anyOf(
+                ratedEntries,
+                (q, e) =>
+                    q.tmdbIdEqualTo(e.tmdbId).mediaTypeEqualTo(e.mediaType))
             .findAll();
 
-    final watchlistIds = await repository.getAllTmdbIds(AppConstants.watchlist);
-    final watchlistTitles = watchlistIds.isEmpty
+    final watchlistEntries =
+        await repository.getAllEntries(AppConstants.watchlist);
+    final watchlistTitles = watchlistEntries.isEmpty
         ? <TmdbTitle>[]
         : await isar.tmdbTitles
             .filter()
-            .anyOf(watchlistIds, (q, id) => q.tmdbIdEqualTo(id))
+            .anyOf(
+                watchlistEntries,
+                (q, e) =>
+                    q.tmdbIdEqualTo(e.tmdbId).mediaTypeEqualTo(e.mediaType))
             .findAll();
 
     final allTitles = {...ratedTitles, ...watchlistTitles}.toList();
@@ -134,24 +142,37 @@ class TmdbDiscoverlistService extends TmdbListService {
 
       final genrePreferences = await _calculateGenrePreferences();
 
-      final rIds = await repository.getAllTmdbIds(AppConstants.rateslist);
-      final wIds = await repository.getAllTmdbIds(AppConstants.watchlist);
+      final rEntries =
+          await repository.getAllEntries(AppConstants.rateslist);
+      final wEntries =
+          await repository.getAllEntries(AppConstants.watchlist);
 
       final positiveSignalTitles = await isar.tmdbTitles
           .filter()
           .group((q) {
             QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>? query;
-            if (rIds.isNotEmpty) {
+            if (rEntries.isNotEmpty) {
               query = q
-                  .anyOf(rIds, (q1, id) => q1.tmdbIdEqualTo(id))
+                  .anyOf(
+                      rEntries,
+                      (q1, e) => q1
+                          .tmdbIdEqualTo(e.tmdbId)
+                          .mediaTypeEqualTo(e.mediaType))
                   .ratingGreaterThan(2.5);
             }
-            if (wIds.isNotEmpty) {
+            if (wEntries.isNotEmpty) {
               if (query == null) {
-                query = q.anyOf(wIds, (q1, id) => q1.tmdbIdEqualTo(id));
+                query = q.anyOf(
+                    wEntries,
+                    (q1, e) => q1
+                        .tmdbIdEqualTo(e.tmdbId)
+                        .mediaTypeEqualTo(e.mediaType));
               } else {
-                query =
-                    query.or().anyOf(wIds, (q1, id) => q1.tmdbIdEqualTo(id));
+                query = query.or().anyOf(
+                    wEntries,
+                    (q1, e) => q1
+                        .tmdbIdEqualTo(e.tmdbId)
+                        .mediaTypeEqualTo(e.mediaType));
               }
             }
             return query ?? q.tmdbIdEqualTo(-1);
@@ -160,21 +181,27 @@ class TmdbDiscoverlistService extends TmdbListService {
           .mediaTypeEqualTo(mediaType)
           .findAll();
 
-      final ratedIds = rIds.isEmpty
+      final ratedIds = rEntries.isEmpty
           ? <int>[]
           : await isar.tmdbTitles
               .filter()
-              .anyOf(rIds, (q, id) => q.tmdbIdEqualTo(id))
+              .anyOf(
+                  rEntries,
+                  (q, e) =>
+                      q.tmdbIdEqualTo(e.tmdbId).mediaTypeEqualTo(e.mediaType))
               .and()
               .mediaTypeEqualTo(mediaType)
               .tmdbIdProperty()
               .findAll();
 
-      final watchlistIds = wIds.isEmpty
+      final watchlistIds = wEntries.isEmpty
           ? <int>[]
           : await isar.tmdbTitles
               .filter()
-              .anyOf(wIds, (q, id) => q.tmdbIdEqualTo(id))
+              .anyOf(
+                  wEntries,
+                  (q, e) =>
+                      q.tmdbIdEqualTo(e.tmdbId).mediaTypeEqualTo(e.mediaType))
               .and()
               .mediaTypeEqualTo(mediaType)
               .tmdbIdProperty()

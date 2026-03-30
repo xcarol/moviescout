@@ -284,9 +284,9 @@ const TmdbTitleSchema = CollectionSchema(
   deserializeProp: _tmdbTitleDeserializeProp,
   idName: r'id',
   indexes: {
-    r'tmdbId': IndexSchema(
-      id: 7174867214654401712,
-      name: r'tmdbId',
+    r'tmdbId_mediaType': IndexSchema(
+      id: 2073878694496381786,
+      name: r'tmdbId_mediaType',
       unique: true,
       replace: true,
       properties: [
@@ -294,6 +294,11 @@ const TmdbTitleSchema = CollectionSchema(
           name: r'tmdbId',
           type: IndexType.value,
           caseSensitive: false,
+        ),
+        IndexPropertySchema(
+          name: r'mediaType',
+          type: IndexType.hash,
+          caseSensitive: true,
         )
       ],
     )
@@ -644,57 +649,90 @@ void _tmdbTitleAttach(IsarCollection<dynamic> col, Id id, TmdbTitle object) {
 }
 
 extension TmdbTitleByIndex on IsarCollection<TmdbTitle> {
-  Future<TmdbTitle?> getByTmdbId(int tmdbId) {
-    return getByIndex(r'tmdbId', [tmdbId]);
+  Future<TmdbTitle?> getByTmdbIdMediaType(int tmdbId, String mediaType) {
+    return getByIndex(r'tmdbId_mediaType', [tmdbId, mediaType]);
   }
 
-  TmdbTitle? getByTmdbIdSync(int tmdbId) {
-    return getByIndexSync(r'tmdbId', [tmdbId]);
+  TmdbTitle? getByTmdbIdMediaTypeSync(int tmdbId, String mediaType) {
+    return getByIndexSync(r'tmdbId_mediaType', [tmdbId, mediaType]);
   }
 
-  Future<bool> deleteByTmdbId(int tmdbId) {
-    return deleteByIndex(r'tmdbId', [tmdbId]);
+  Future<bool> deleteByTmdbIdMediaType(int tmdbId, String mediaType) {
+    return deleteByIndex(r'tmdbId_mediaType', [tmdbId, mediaType]);
   }
 
-  bool deleteByTmdbIdSync(int tmdbId) {
-    return deleteByIndexSync(r'tmdbId', [tmdbId]);
+  bool deleteByTmdbIdMediaTypeSync(int tmdbId, String mediaType) {
+    return deleteByIndexSync(r'tmdbId_mediaType', [tmdbId, mediaType]);
   }
 
-  Future<List<TmdbTitle?>> getAllByTmdbId(List<int> tmdbIdValues) {
-    final values = tmdbIdValues.map((e) => [e]).toList();
-    return getAllByIndex(r'tmdbId', values);
+  Future<List<TmdbTitle?>> getAllByTmdbIdMediaType(
+      List<int> tmdbIdValues, List<String> mediaTypeValues) {
+    final len = tmdbIdValues.length;
+    assert(mediaTypeValues.length == len,
+        'All index values must have the same length');
+    final values = <List<dynamic>>[];
+    for (var i = 0; i < len; i++) {
+      values.add([tmdbIdValues[i], mediaTypeValues[i]]);
+    }
+
+    return getAllByIndex(r'tmdbId_mediaType', values);
   }
 
-  List<TmdbTitle?> getAllByTmdbIdSync(List<int> tmdbIdValues) {
-    final values = tmdbIdValues.map((e) => [e]).toList();
-    return getAllByIndexSync(r'tmdbId', values);
+  List<TmdbTitle?> getAllByTmdbIdMediaTypeSync(
+      List<int> tmdbIdValues, List<String> mediaTypeValues) {
+    final len = tmdbIdValues.length;
+    assert(mediaTypeValues.length == len,
+        'All index values must have the same length');
+    final values = <List<dynamic>>[];
+    for (var i = 0; i < len; i++) {
+      values.add([tmdbIdValues[i], mediaTypeValues[i]]);
+    }
+
+    return getAllByIndexSync(r'tmdbId_mediaType', values);
   }
 
-  Future<int> deleteAllByTmdbId(List<int> tmdbIdValues) {
-    final values = tmdbIdValues.map((e) => [e]).toList();
-    return deleteAllByIndex(r'tmdbId', values);
+  Future<int> deleteAllByTmdbIdMediaType(
+      List<int> tmdbIdValues, List<String> mediaTypeValues) {
+    final len = tmdbIdValues.length;
+    assert(mediaTypeValues.length == len,
+        'All index values must have the same length');
+    final values = <List<dynamic>>[];
+    for (var i = 0; i < len; i++) {
+      values.add([tmdbIdValues[i], mediaTypeValues[i]]);
+    }
+
+    return deleteAllByIndex(r'tmdbId_mediaType', values);
   }
 
-  int deleteAllByTmdbIdSync(List<int> tmdbIdValues) {
-    final values = tmdbIdValues.map((e) => [e]).toList();
-    return deleteAllByIndexSync(r'tmdbId', values);
+  int deleteAllByTmdbIdMediaTypeSync(
+      List<int> tmdbIdValues, List<String> mediaTypeValues) {
+    final len = tmdbIdValues.length;
+    assert(mediaTypeValues.length == len,
+        'All index values must have the same length');
+    final values = <List<dynamic>>[];
+    for (var i = 0; i < len; i++) {
+      values.add([tmdbIdValues[i], mediaTypeValues[i]]);
+    }
+
+    return deleteAllByIndexSync(r'tmdbId_mediaType', values);
   }
 
-  Future<Id> putByTmdbId(TmdbTitle object) {
-    return putByIndex(r'tmdbId', object);
+  Future<Id> putByTmdbIdMediaType(TmdbTitle object) {
+    return putByIndex(r'tmdbId_mediaType', object);
   }
 
-  Id putByTmdbIdSync(TmdbTitle object, {bool saveLinks = true}) {
-    return putByIndexSync(r'tmdbId', object, saveLinks: saveLinks);
+  Id putByTmdbIdMediaTypeSync(TmdbTitle object, {bool saveLinks = true}) {
+    return putByIndexSync(r'tmdbId_mediaType', object, saveLinks: saveLinks);
   }
 
-  Future<List<Id>> putAllByTmdbId(List<TmdbTitle> objects) {
-    return putAllByIndex(r'tmdbId', objects);
+  Future<List<Id>> putAllByTmdbIdMediaType(List<TmdbTitle> objects) {
+    return putAllByIndex(r'tmdbId_mediaType', objects);
   }
 
-  List<Id> putAllByTmdbIdSync(List<TmdbTitle> objects,
+  List<Id> putAllByTmdbIdMediaTypeSync(List<TmdbTitle> objects,
       {bool saveLinks = true}) {
-    return putAllByIndexSync(r'tmdbId', objects, saveLinks: saveLinks);
+    return putAllByIndexSync(r'tmdbId_mediaType', objects,
+        saveLinks: saveLinks);
   }
 }
 
@@ -703,14 +741,6 @@ extension TmdbTitleQueryWhereSort
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhere> anyTmdbId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        const IndexWhereClause.any(indexName: r'tmdbId'),
-      );
     });
   }
 }
@@ -782,29 +812,29 @@ extension TmdbTitleQueryWhere
     });
   }
 
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause> tmdbIdEqualTo(
-      int tmdbId) {
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause>
+      tmdbIdEqualToAnyMediaType(int tmdbId) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'tmdbId',
+        indexName: r'tmdbId_mediaType',
         value: [tmdbId],
       ));
     });
   }
 
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause> tmdbIdNotEqualTo(
-      int tmdbId) {
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause>
+      tmdbIdNotEqualToAnyMediaType(int tmdbId) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
             .addWhereClause(IndexWhereClause.between(
-              indexName: r'tmdbId',
+              indexName: r'tmdbId_mediaType',
               lower: [],
               upper: [tmdbId],
               includeUpper: false,
             ))
             .addWhereClause(IndexWhereClause.between(
-              indexName: r'tmdbId',
+              indexName: r'tmdbId_mediaType',
               lower: [tmdbId],
               includeLower: false,
               upper: [],
@@ -812,13 +842,13 @@ extension TmdbTitleQueryWhere
       } else {
         return query
             .addWhereClause(IndexWhereClause.between(
-              indexName: r'tmdbId',
+              indexName: r'tmdbId_mediaType',
               lower: [tmdbId],
               includeLower: false,
               upper: [],
             ))
             .addWhereClause(IndexWhereClause.between(
-              indexName: r'tmdbId',
+              indexName: r'tmdbId_mediaType',
               lower: [],
               upper: [tmdbId],
               includeUpper: false,
@@ -827,13 +857,14 @@ extension TmdbTitleQueryWhere
     });
   }
 
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause> tmdbIdGreaterThan(
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause>
+      tmdbIdGreaterThanAnyMediaType(
     int tmdbId, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'tmdbId',
+        indexName: r'tmdbId_mediaType',
         lower: [tmdbId],
         includeLower: include,
         upper: [],
@@ -841,13 +872,14 @@ extension TmdbTitleQueryWhere
     });
   }
 
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause> tmdbIdLessThan(
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause>
+      tmdbIdLessThanAnyMediaType(
     int tmdbId, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'tmdbId',
+        indexName: r'tmdbId_mediaType',
         lower: [],
         upper: [tmdbId],
         includeUpper: include,
@@ -855,7 +887,8 @@ extension TmdbTitleQueryWhere
     });
   }
 
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause> tmdbIdBetween(
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause>
+      tmdbIdBetweenAnyMediaType(
     int lowerTmdbId,
     int upperTmdbId, {
     bool includeLower = true,
@@ -863,12 +896,57 @@ extension TmdbTitleQueryWhere
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'tmdbId',
+        indexName: r'tmdbId_mediaType',
         lower: [lowerTmdbId],
         includeLower: includeLower,
         upper: [upperTmdbId],
         includeUpper: includeUpper,
       ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause> tmdbIdMediaTypeEqualTo(
+      int tmdbId, String mediaType) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'tmdbId_mediaType',
+        value: [tmdbId, mediaType],
+      ));
+    });
+  }
+
+  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause>
+      tmdbIdEqualToMediaTypeNotEqualTo(int tmdbId, String mediaType) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'tmdbId_mediaType',
+              lower: [tmdbId],
+              upper: [tmdbId, mediaType],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'tmdbId_mediaType',
+              lower: [tmdbId, mediaType],
+              includeLower: false,
+              upper: [tmdbId],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'tmdbId_mediaType',
+              lower: [tmdbId, mediaType],
+              includeLower: false,
+              upper: [tmdbId],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'tmdbId_mediaType',
+              lower: [tmdbId],
+              upper: [tmdbId, mediaType],
+              includeUpper: false,
+            ));
+      }
     });
   }
 }

@@ -109,7 +109,7 @@ class TmdbTitle {
   @Index(unique: true)
   Id id = Isar.autoIncrement;
 
-  @Index(unique: true, replace: true)
+  @Index(unique: true, replace: true, composite: [CompositeIndex('mediaType')])
   late int tmdbId;
 
   late String name;
@@ -306,8 +306,12 @@ class TmdbTitle {
         dateRated = DateTime.parse(title[TmdbTitleFields.accountRating]
             [TmdbTitleFields.accountRatingDate]);
       }
+    } else if (title[TmdbTitleFields.accountRating] is num) {
+      rating = title[TmdbTitleFields.accountRating].toDouble();
+      if (dateRated.year < 2000) dateRated = DateTime.now();
     } else if (title[TmdbTitleFields.rating] != null) {
       rating = title[TmdbTitleFields.rating].toDouble();
+      if (dateRated.year < 2000) dateRated = DateTime.now();
     }
 
     runtime = title[TmdbTitleFields.runtime] ?? runtime;

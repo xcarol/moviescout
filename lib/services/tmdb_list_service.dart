@@ -210,7 +210,9 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       ...tv.map((t) => t[TmdbTitleFields.id] as int),
     ];
     final existingTitles = await repository.getTitlesByTmdbIds(allTmdbIds);
-    final existingMap = {for (var t in existingTitles) '${t.tmdbId}_${t.mediaType}': t};
+    final existingMap = {
+      for (var t in existingTitles) '${t.tmdbId}_${t.mediaType}': t
+    };
 
     int movieIdx = 0;
     int tvIdx = 0;
@@ -263,14 +265,17 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     if (isInitialLoad) {
       await repository.saveTitles(serverList, listNameVal);
     } else {
-      final serverIds = serverList.map((t) => t.tmdbId).toSet();
-      final localIds = await repository.getAllTmdbIds(listNameVal);
-      final localIdSet = localIds.toSet();
+      final serverKeys =
+          serverList.map((t) => '${t.tmdbId}_${t.mediaType}').toSet();
+      final localEntries = await repository.getAllEntries(listNameVal);
+      final localKeys =
+          localEntries.map((e) => '${e.tmdbId}_${e.mediaType}').toSet();
 
-      final idsToAdd = serverIds.difference(localIdSet);
-      final titlesToAdd =
-          serverList.where((t) => idsToAdd.contains(t.tmdbId)).toList();
-      final idsToRemove = localIdSet.difference(serverIds);
+      final keysToAdd = serverKeys.difference(localKeys);
+      final titlesToAdd = serverList
+          .where((t) => keysToAdd.contains('${t.tmdbId}_${t.mediaType}'))
+          .toList();
+      final keysToRemove = localKeys.difference(serverKeys);
 
       if (titlesToAdd.isNotEmpty) {
         int currentMax = repository.getMaxAddedOrderSync(listNameVal);
@@ -280,8 +285,13 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
             addedOrders: titlesToAdd.map((t) => ++currentMax).toList());
       }
 
-      if (idsToRemove.isNotEmpty) {
-        await repository.deleteTitles(listNameVal, idsToRemove.toList());
+      if (keysToRemove.isNotEmpty) {
+        final entriesToRemove = localEntries
+            .where((e) => keysToRemove.contains('${e.tmdbId}_${e.mediaType}'))
+            .toList();
+        final idsToRemove = entriesToRemove.map((e) => e.tmdbId).toList();
+        final mediaTypes = entriesToRemove.map((e) => e.mediaType).toList();
+        await repository.deleteTitles(listNameVal, idsToRemove, mediaTypes);
       }
     }
 
@@ -354,7 +364,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   @protected
   Future<void> deleteLocalTitle(TmdbTitle title) async {
-    await repository.deleteTitle(listNameVal, title.tmdbId);
+    await repository.deleteTitle(listNameVal, title.tmdbId, title.mediaType);
   }
 
   TmdbTitle? getItem(int position) {
