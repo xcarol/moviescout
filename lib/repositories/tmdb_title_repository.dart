@@ -200,12 +200,12 @@ class TmdbTitleRepository {
         .count();
   }
 
-  int getMaxAddedOrderSync(String listName) {
-    final entry = _isar.userListEntrys
+  Future<int> getMaxAddedOrder(String listName) async {
+    final entry = await _isar.userListEntrys
         .filter()
         .listNameEqualTo(listName)
         .sortByAddedOrderDesc()
-        .findFirstSync();
+        .findFirst();
     return entry?.addedOrder ?? -1;
   }
 

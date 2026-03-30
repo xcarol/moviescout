@@ -273,7 +273,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       final keysToRemove = localKeys.difference(serverKeys);
 
       if (titlesToAdd.isNotEmpty) {
-        int currentMax = repository.getMaxAddedOrderSync(listNameVal);
+        int currentMax = await repository.getMaxAddedOrder(listNameVal);
         final updated = await Future.wait(
             titlesToAdd.map((t) => TmdbTitleService().updateTitleDetails(t)));
         await repository.saveTitles(updated.cast<TmdbTitle>(), listNameVal,
@@ -353,7 +353,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   @protected
   Future<void> updateLocalTitle(TmdbTitle title) async {
-    int currentMax = repository.getMaxAddedOrderSync(listNameVal);
+    int currentMax = await repository.getMaxAddedOrder(listNameVal);
     await repository.saveTitle(title, listNameVal, ++currentMax);
   }
 
