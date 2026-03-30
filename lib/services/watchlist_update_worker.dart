@@ -172,31 +172,33 @@ void callbackDispatcher() {
         UpdateType updateType =
             WatchlistNotificationEvaluator.checkNeedsUpdate(title, now);
 
-        if (updateType != UpdateType.none) {
-          if (updatedCount >= AppConstants.watchlistMaxUpdatesPerRun) {
-            logLines.add('- Max updates per run reached ($updatedCount)');
-            break;
-          }
-
-          updatedCount++;
-          final notified = await updateTitle(
-              title,
-              updateType == UpdateType.full,
-              logLines,
-              providersList,
-              enabledProviderIds,
-              titleService,
-              repository,
-              localizations,
-              now);
-
-          if (notified) {
-            notifiedCount++;
-          }
-          await Future.delayed(const Duration(milliseconds: 200));
-        } else {
+        if (updateType == UpdateType.none) {
           skippedCount++;
+          continue;
         }
+
+        if (updatedCount >= AppConstants.watchlistMaxUpdatesPerRun) {
+          logLines.add('- Max updates per run reached ($updatedCount)');
+          break;
+        }
+
+        updatedCount++;
+        final notified = await updateTitle(
+            title,
+            updateType == UpdateType.full,
+            logLines,
+            providersList,
+            enabledProviderIds,
+            titleService,
+            repository,
+            localizations,
+            now);
+
+        if (notified) {
+          notifiedCount++;
+        }
+
+        await Future.delayed(const Duration(milliseconds: 200));
         logLines.add('');
       }
 

@@ -27,10 +27,15 @@ Download the CSV files from [Exports](https://www.imdb.com/exports/?ref_=wl) and
 
 ### Flutter installation
 
+- Install Java 17: `sudo apt install openjdk-17-jdk`
 - Install Android Studio using snap: `sudo snap install android-studio --classic`  
 - Install flutter following this guide: [Start building Flutter Android apps on Linux](https://docs.flutter.dev/get-started/install/linux/android)  
 - Add flutter path to _.zshrc_: `export PATH=$PATH:$HOME/workspace/devtools/flutter/bin`  
 - Run `flutter doctor --android-licenses` to review and accept andriod licenses.  
+
+#### Only For Linux
+
+- Install build tools: `sudo apt install build-essential cmake ninja-build clang pkg-config libgtk-3-dev`
 
 ### Firebase & Crashlytics
 
@@ -181,7 +186,7 @@ it is worth comparing it with the same Overmaps file to imitate it as much as po
   - Click on _Draft a new release_
   - Click on _Tag_ button and copy the version number (e.g. `1.6.3+20`) from the _pubspec.yaml_ file and click on _Create new tag_
   - Click on _Generate release notes_ and then click on _Publish release_
-- Build the bundle `./flutter_tool.sh -d`.
+- Build the bundle `./flutter_tool.sh -b`.
 - Go to: [Create an internal test version](https://play.google.com/console/u/0/developers/5602401961225582177/app/4972075179053080011/app-dashboard) crate a new version and upload the bundle (`./build/app/outputs/bundle/release/app-release.aab`).
 
 ## Troubleshooting

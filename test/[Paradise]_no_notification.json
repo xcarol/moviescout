@@ -1,0 +1,151 @@
+{
+  "adult": false,
+  "backdrop_path": "/qV2REPQ7pPlmQT7Mljkca0wi4Bx.jpg",
+  "created_by": [
+    {
+      "id": 15892,
+      "credit_id": "67369ace48e9d2cf01a89135",
+      "name": "Dan Fogelman",
+      "original_name": "Dan Fogelman",
+      "gender": 2,
+      "profile_path": "/grLBoLU2blYEoT8vjGFOiM8mw1D.jpg"
+    }
+  ],
+  "episode_run_time": [],
+  "first_air_date": "2025-01-26",
+  "genres": [
+    {
+      "id": 80,
+      "name": "Crime"
+    },
+    {
+      "id": 18,
+      "name": "Drama"
+    }
+  ],
+  "homepage": "https://www.hulu.com/series/2b4b8988-50c9-4097-bf93-bc34a99a5b4f",
+  "id": 245927,
+  "in_production": true,
+  "languages": [
+    "en"
+  ],
+  "last_air_date": "2026-03-23",
+  "last_episode_to_air": {
+    "id": 6745139,
+    "name": "Episodi 7",
+    "overview": "",
+    "vote_average": 7.2,
+    "vote_count": 12,
+    "air_date": "2026-03-23",
+    "episode_number": 7,
+    "episode_type": "standard",
+    "production_code": "2PTV07",
+    "runtime": 58,
+    "season_number": 2,
+    "show_id": 245927,
+    "still_path": "/bFpe4QW3WSZ28BzJdZSIlAH1xpx.jpg"
+  },
+  "name": "Paradise",
+  "next_episode_to_air": {
+    "id": 6745140,
+    "name": "Episodi 8",
+    "overview": "",
+    "vote_average": 0,
+    "vote_count": 1,
+    "air_date": "2026-03-30",
+    "episode_number": 8,
+    "episode_type": "finale",
+    "production_code": "2PTV08",
+    "runtime": 52,
+    "season_number": 2,
+    "show_id": 245927,
+    "still_path": "/6V2EnynbNcRDqJ7X8l7ye9SJYZ6.jpg"
+  },
+  "networks": [
+    {
+      "id": 453,
+      "logo_path": "/pqUTCleNUiTLAVlelGxUgWn1ELh.png",
+      "name": "Hulu",
+      "origin_country": "US"
+    }
+  ],
+  "number_of_episodes": 16,
+  "number_of_seasons": 2,
+  "origin_country": [
+    "US"
+  ],
+  "original_language": "en",
+  "original_name": "Paradise",
+  "overview": "Paradise està ambientada en una localitat tranquil·la entre els habitants de la qual es troben algunes de les persones més prominents del món. Però la calma dóna pas a la tempesta quan es comet un impactant assassinat i comença una delicada investigació.",
+  "popularity": 74.6073,
+  "poster_path": "/l8RqfhqEk04W5sSOjQ9zeWU1DyM.jpg",
+  "production_companies": [
+    {
+      "id": 236166,
+      "logo_path": "/8rFlu5iytnjsciYXZDw90ktllCI.png",
+      "name": "20th Television",
+      "origin_country": "US"
+    },
+    {
+      "id": 41131,
+      "logo_path": null,
+      "name": "Rhode Island Ave. Productions",
+      "origin_country": "US"
+    }
+  ],
+  "production_countries": [
+    {
+      "iso_3166_1": "US",
+      "name": "United States of America"
+    }
+  ],
+  "seasons": [
+    {
+      "air_date": "2025-01-26",
+      "episode_count": 8,
+      "id": 378226,
+      "name": "Temporada 1",
+      "overview": "",
+      "poster_path": "/rkwqy7uE0ORdUxDFNeVq7vpJORN.jpg",
+      "season_number": 1,
+      "vote_average": 5.5
+    },
+    {
+      "air_date": "2026-02-23",
+      "episode_count": 8,
+      "id": 486538,
+      "name": "Temporada 2",
+      "overview": "",
+      "poster_path": "/ho9edfW4VTmxWaNKgBTG43nfymq.jpg",
+      "season_number": 2,
+      "vote_average": 5.4
+    }
+  ],
+  "spoken_languages": [
+    {
+      "english_name": "English",
+      "iso_639_1": "en",
+      "name": "English"
+    }
+  ],
+  "status": "Returning Series",
+  "tagline": "Llegeix entre mentides",
+  "type": "Scripted",
+  "vote_average": 7.427,
+  "vote_count": 388,
+  "watch/providers": {
+    "results": {
+      "ES": {
+        "link": "https://www.themoviedb.org/tv/245927-paradise/watch?locale=ES",
+        "flatrate": [
+          {
+            "logo_path": "/97yvRBw1GzX7fXprcF80er19ot.jpg",
+            "provider_id": 337,
+            "provider_name": "Disney Plus",
+            "display_priority": 3
+          }
+        ]
+      }
+    }
+  }
+}
