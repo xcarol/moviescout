@@ -54,7 +54,7 @@ void main() {
 
   group('WatchlistNotificationEvaluator - evaluateNotification', () {
     final now = DateTime(2026, 3, 29);
-    final enabledProviders = {8, 1796}; // Netflix, Netflix with Ads
+    final enabledProviders = {8, 1796, 337}; // Netflix, Netflix with Ads, Disney Plus
 
     Map<String, dynamic> loadJson(String fileName) {
       final file = File('test/$fileName');
@@ -123,6 +123,10 @@ void main() {
         'air_date': '2026-03-28'
       };
       serverJson['number_of_seasons'] = 2;
+      serverJson['seasons'] = [
+        {'season_number': 1, 'air_date': '2020-01-12'},
+        {'season_number': 2, 'air_date': '2026-03-28'}, // 1 day before 'now' (2026-03-29)
+      ];
       
       final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
@@ -143,16 +147,73 @@ void main() {
       // next_episode is S2E1 on 2026-04-01. 
       final testNow = DateTime(2026, 4, 1);
       
+      serverJson['seasons'] = [
+        {'season_number': 1, 'air_date': '2020-01-12'},
+        {'season_number': 2, 'air_date': '2026-04-01'},
+      ];
+      
       final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       localTitle.lastNotifiedSeason = 1;
-      serverTitle.numberOfSeasons = 2; // Server has a newer season
+      serverTitle.numberOfSeasons = 2; 
       
       final trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: localTitle,
         titleAfterUpdate: serverTitle,
         enabledProviderIds: enabledProviders,
         now: testNow,
+      );
+      
+      expect(trigger, NotificationTrigger.newSeason);
+    });
+
+    test('Serie: Does NOT notify if newest season is too old (14 day rule)', () {
+      final serverJson = loadJson('[Paradise]_no_notification.json');
+      // Season 2 started Feb 23, 2026. 'now' is March 30, 2026.
+      // 35 days difference.
+      final testNow = DateTime(2026, 3, 30);
+      
+      final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      localTitle.lastNotifiedSeason = 1; 
+      
+      final trigger = WatchlistNotificationEvaluator.evaluateNotification(
+        titleBeforeUpdate: localTitle,
+        titleAfterUpdate: serverTitle,
+        enabledProviderIds: enabledProviders,
+        now: testNow,
+      );
+      
+      expect(trigger, NotificationTrigger.none);
+    });
+
+    test('Serie: Notifies for binge-release if recently premiered', () {
+      final serverJson = {
+        'id': 12345,
+        'name': 'Netflix Binge Show',
+        'media_type': 'tv',
+        'number_of_seasons': 2,
+        'last_episode_to_air': {
+          'season_number': 2,
+          'episode_number': 10, // All 10 released at once!
+          'air_date': '2026-03-25'
+        },
+        'seasons': [
+          {'season_number': 1, 'air_date': '2025-01-01'},
+          {'season_number': 2, 'air_date': '2026-03-25'}, // 4 days ago
+        ],
+        'watch/providers': {'results': {'ES': {'flatrate': [{'provider_id': 8}]}}}
+      };
+      
+      final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      localTitle.lastNotifiedSeason = 1; 
+      
+      final trigger = WatchlistNotificationEvaluator.evaluateNotification(
+        titleBeforeUpdate: localTitle,
+        titleAfterUpdate: serverTitle,
+        enabledProviderIds: enabledProviders,
+        now: DateTime(2026, 3, 29),
       );
       
       expect(trigger, NotificationTrigger.newSeason);
@@ -200,6 +261,22 @@ void main() {
       
       // Mimic worker initialization flow
       localTitle.lastNotifiedSeason = WatchlistNotificationEvaluator.getBaselineSeason(serverTitle, now);
+      
+      final trigger = WatchlistNotificationEvaluator.evaluateNotification(
+        titleBeforeUpdate: localTitle,
+        titleAfterUpdate: serverTitle,
+        enabledProviderIds: enabledProviders,
+        now: now,
+      );
+      
+      expect(trigger, NotificationTrigger.none);
+    });
+
+    test('Serie: Does NOT notify if already airing', () {
+      final serverJson = loadJson('[Paradise]_no_notification.json');
+      
+      final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       
       final trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: localTitle,
