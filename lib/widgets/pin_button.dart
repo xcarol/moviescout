@@ -11,34 +11,39 @@ Widget pinButton(
 ) {
   return Consumer<TmdbWatchlistService>(
     builder: (context, watchlistService, _) {
-      final watchlistTitle =
-          watchlistService.getTitleByTmdbId(title.tmdbId, title.mediaType);
+      return FutureBuilder<TmdbTitle?>(
+        future: watchlistService.getTitleByTmdbId(title.tmdbId, title.mediaType),
+        builder: (context, snapshot) {
+          final watchlistTitle = snapshot.data;
 
-      if (watchlistTitle == null) {
-        return const SizedBox.shrink();
-      }
+          if (watchlistTitle == null) {
+            return const SizedBox.shrink();
+          }
 
-      bool isPinned = watchlistTitle.isPinned;
+          bool isPinned = watchlistTitle.isPinned;
 
-      return IconButton(
-        padding: EdgeInsets.zero,
-        constraints: const BoxConstraints(),
-        onPressed: () {
-          watchlistService.togglePin(
-            watchlistTitle,
-            limitReachedMessage: AppLocalizations.of(context)!.pinLimitReached,
+          return IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            onPressed: () {
+              watchlistService.togglePin(
+                watchlistTitle,
+                limitReachedMessage:
+                    AppLocalizations.of(context)!.pinLimitReached,
+              );
+            },
+            icon: Icon(
+              isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+              size: 20,
+              color: isPinned
+                  ? Theme.of(context).extension<CustomColors>()!.pinnedTitle
+                  : Theme.of(context).extension<CustomColors>()!.notSelected,
+            ),
+            tooltip: isPinned
+                ? AppLocalizations.of(context)!.unpin
+                : AppLocalizations.of(context)!.pin,
           );
         },
-        icon: Icon(
-          isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-          size: 20,
-          color: isPinned
-              ? Theme.of(context).extension<CustomColors>()!.pinnedTitle
-              : Theme.of(context).extension<CustomColors>()!.notSelected,
-        ),
-        tooltip: isPinned
-            ? AppLocalizations.of(context)!.unpin
-            : AppLocalizations.of(context)!.pin,
       );
     },
   );

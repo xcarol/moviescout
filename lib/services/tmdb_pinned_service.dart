@@ -74,7 +74,7 @@ class TmdbPinnedService extends TmdbConfigListService {
         final mediaType = parts[0];
         final tmdbId = int.tryParse(parts[1]);
         if (tmdbId != null) {
-          final title = repository.getTitleByTmdbId(
+          final title = await repository.getTitleByTmdbId(
               AppConstants.watchlist, tmdbId, mediaType);
           if (title != null) {
             title.isPinned = true;

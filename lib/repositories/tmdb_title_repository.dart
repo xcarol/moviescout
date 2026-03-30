@@ -209,12 +209,12 @@ class TmdbTitleRepository {
     return entry?.addedOrder ?? -1;
   }
 
-  TmdbTitle? getTitleByTmdbId(String listName, int tmdbId, String mediaType) {
-    final inList = _isar.userListEntrys
+  Future<TmdbTitle?> getTitleByTmdbId(String listName, int tmdbId, String mediaType) async {
+    final inList = await _isar.userListEntrys
         .filter()
         .listNameEqualTo(listName)
         .tmdbIdEqualTo(tmdbId)
-        .findFirstSync();
+        .findFirst();
 
     if (inList == null) return null;
 
@@ -222,7 +222,7 @@ class TmdbTitleRepository {
         .filter()
         .tmdbIdEqualTo(tmdbId)
         .mediaTypeEqualTo(mediaType)
-        .findFirstSync();
+        .findFirst();
   }
 
   Future<TmdbTitle?> getTitleGlobal(int tmdbId) async {

@@ -21,16 +21,16 @@ class TmdbRateslistService extends TmdbListService {
     filterRating = RatingFilter.rated;
   }
 
-  double getRating(int titleId, String mediaType) {
-    TmdbTitle? title = getTitleByTmdbId(titleId, mediaType);
+  Future<double> getRating(int titleId, String mediaType) async {
+    TmdbTitle? title = await getTitleByTmdbId(titleId, mediaType);
     if (title == null) {
       return 0.0;
     }
     return title.rating;
   }
 
-  DateTime getRatingDate(int titleId, String mediaType) {
-    TmdbTitle? title = getTitleByTmdbId(titleId, mediaType);
+  Future<DateTime> getRatingDate(int titleId, String mediaType) async {
+    TmdbTitle? title = await getTitleByTmdbId(titleId, mediaType);
     if (title == null) {
       return DateTime.fromMillisecondsSinceEpoch(0);
     }
@@ -114,7 +114,7 @@ class TmdbRateslistService extends TmdbListService {
         title.updateRating(rating.toDouble());
         title.isPinned = false;
 
-        final watchlistTitle = repository.getTitleByTmdbId(
+        final watchlistTitle = await repository.getTitleByTmdbId(
             AppConstants.watchlist, title.tmdbId, title.mediaType);
         if (watchlistTitle != null) {
           await repository.deleteTitle(AppConstants.watchlist, title.tmdbId, title.mediaType);

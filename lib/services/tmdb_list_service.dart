@@ -124,8 +124,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return repository.countTitles(listNameVal);
   }
 
-  bool contains(TmdbTitle title) {
-    return repository.getTitleByTmdbId(
+  Future<bool> contains(TmdbTitle title) async {
+    return await repository.getTitleByTmdbId(
             listNameVal, title.tmdbId, title.mediaType) !=
         null;
   }
@@ -585,7 +585,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     listGenres.value = [...listGenresVal];
   }
 
-  TmdbTitle? getTitleByTmdbId(int tmdbId, String mediaType) {
+  Future<TmdbTitle?> getTitleByTmdbId(int tmdbId, String mediaType) async {
     final memoryTitle = loadedTitlesVal.firstWhereOrNull(
         (t) => t.tmdbId == tmdbId && t.mediaType == mediaType);
     if (memoryTitle != null) return memoryTitle;
