@@ -27,7 +27,7 @@ class TmdbTitleRepository {
         .mediaTypeEqualTo(title.mediaType)
         .findAll();
 
-    final lists = inRatesList.map((e) => e.listName).toList();
+    final lists = inRatesList.map((e) => e.listName).toList().join(', ');
 
     if (inRatesList.isNotEmpty) {
       return saveLogs([
