@@ -125,8 +125,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return !listIsEmpty;
   }
 
-  int get listTitleCount {
-    return repository.countTitlesSync(listNameVal);
+  Future<int> get listTitleCount async {
+    return repository.countTitles(listNameVal);
   }
 
   bool contains(TmdbTitle title) {
@@ -296,7 +296,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
 
     if (isInitialLoad) {
-      final totalCount = listTitleCount;
+      final totalCount = await listTitleCount;
       const batchSize = 10;
 
       for (var i = 0; i < totalCount; i += batchSize) {
@@ -326,7 +326,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   Future<void> updateProviders() async {
     isLoading.value = true;
     try {
-      final totalCount = listTitleCount;
+      final totalCount = await listTitleCount;
       const batchSize = 10;
 
       for (var i = 0; i < totalCount; i += batchSize) {

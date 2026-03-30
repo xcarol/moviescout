@@ -218,8 +218,11 @@ class TmdbTitleRepository {
     return count > 0;
   }
 
-  int countTitlesSync(String listName) {
-    return _isar.userListEntrys.filter().listNameEqualTo(listName).countSync();
+  Future<int> countTitles(String listName) async {
+    return await _isar.userListEntrys
+        .filter()
+        .listNameEqualTo(listName)
+        .count();
   }
 
   int getMaxAddedOrderSync(String listName) {
