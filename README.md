@@ -33,7 +33,8 @@ Download the CSV files from [Exports](https://www.imdb.com/exports/?ref_=wl) and
 - Add flutter path to _.zshrc_: `export PATH=$PATH:$HOME/workspace/devtools/flutter/bin`  
 - Run `flutter doctor --android-licenses` to review and accept andriod licenses.  
 
-_(Only For Linux)_
+#### Only For Linux
+
 - Install build tools: `sudo apt install build-essential cmake ninja-build clang pkg-config libgtk-3-dev`
 
 ### Firebase & Crashlytics
