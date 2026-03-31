@@ -134,10 +134,10 @@ class _ImportIMDBState extends State<ImportIMDB> {
           break;
         }
 
-        setState(() {
+        setState(() async {
           _resetTitlesMessage =
               AppLocalizations.of(context)!.resetWatchlistCount;
-          _resetTitlesCount = watchlistService.listTitleCount;
+          _resetTitlesCount = await watchlistService.listTitleCount;
         });
 
         try {
@@ -194,10 +194,10 @@ class _ImportIMDBState extends State<ImportIMDB> {
           break;
         }
 
-        setState(() {
+        setState(() async {
           _resetTitlesMessage =
               AppLocalizations.of(context)!.resetRateslistCount;
-          _resetTitlesCount = rateslistService.listTitleCount;
+          _resetTitlesCount = await rateslistService.listTitleCount;
         });
 
         try {
@@ -512,7 +512,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
             continue;
           }
 
-          if (Provider.of<TmdbWatchlistService>(context, listen: false)
+          if (await Provider.of<TmdbWatchlistService>(context, listen: false)
               .contains(titlesFromId.first)) {
             setState(() {
               _csvTitlesStatus[index] = TitleStatus.success;
@@ -537,8 +537,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
             true,
           );
 
-          setState(() {
-            if (Provider.of<TmdbWatchlistService>(context, listen: false)
+          setState(() async {
+            if (await Provider.of<TmdbWatchlistService>(context, listen: false)
                 .contains(titlesFromId.first)) {
               _csvTitlesStatus[index] = TitleStatus.success;
             } else {
@@ -613,7 +613,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           }
 
           // We don't want to re-import a rate (it would change the rating date)... or do we?
-          if (Provider.of<TmdbRateslistService>(context, listen: false)
+          if (await Provider.of<TmdbRateslistService>(context, listen: false)
               .contains(titlesFromId.first)) {
             _csvTitlesStatus[index] = TitleStatus.success;
             continue;
@@ -636,8 +636,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
             imdbIds[index][rateIndex],
           );
 
-          setState(() {
-            if (Provider.of<TmdbRateslistService>(context, listen: false)
+          setState(() async {
+            if (await Provider.of<TmdbRateslistService>(context, listen: false)
                 .contains(titlesFromId.first)) {
               _csvTitlesStatus[index] = TitleStatus.success;
             } else {

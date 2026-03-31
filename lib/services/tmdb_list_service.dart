@@ -102,11 +102,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     notifyListeners();
   }
 
-  void clearListSync() {
-    repository.clearListSync(listNameVal);
-    resetServiceStateAfterClear();
-  }
-
   @protected
   Future<void> _clearLocalList() async {
     await repository.clearList(listNameVal);
@@ -125,12 +120,12 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return !listIsEmpty;
   }
 
-  int get listTitleCount {
-    return repository.countTitlesSync(listNameVal);
+  Future<int> get listTitleCount async {
+    return repository.countTitles(listNameVal);
   }
 
-  bool contains(TmdbTitle title) {
-    return repository.getTitleByTmdbId(
+  Future<bool> contains(TmdbTitle title) async {
+    return await repository.getTitleByTmdbId(
             listNameVal, title.tmdbId, title.mediaType) !=
         null;
   }
@@ -278,7 +273,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       final keysToRemove = localKeys.difference(serverKeys);
 
       if (titlesToAdd.isNotEmpty) {
-        int currentMax = repository.getMaxAddedOrderSync(listNameVal);
+        int currentMax = await repository.getMaxAddedOrder(listNameVal);
         final updated = await Future.wait(
             titlesToAdd.map((t) => TmdbTitleService().updateTitleDetails(t)));
         await repository.saveTitles(updated.cast<TmdbTitle>(), listNameVal,
@@ -296,7 +291,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
 
     if (isInitialLoad) {
-      final totalCount = listTitleCount;
+      final totalCount = await listTitleCount;
       const batchSize = 10;
 
       for (var i = 0; i < totalCount; i += batchSize) {
@@ -326,7 +321,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   Future<void> updateProviders() async {
     isLoading.value = true;
     try {
-      final totalCount = listTitleCount;
+      final totalCount = await listTitleCount;
       const batchSize = 10;
 
       for (var i = 0; i < totalCount; i += batchSize) {
@@ -358,7 +353,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   @protected
   Future<void> updateLocalTitle(TmdbTitle title) async {
-    int currentMax = repository.getMaxAddedOrderSync(listNameVal);
+    int currentMax = await repository.getMaxAddedOrder(listNameVal);
     await repository.saveTitle(title, listNameVal, ++currentMax);
   }
 
@@ -590,7 +585,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     listGenres.value = [...listGenresVal];
   }
 
-  TmdbTitle? getTitleByTmdbId(int tmdbId, String mediaType) {
+  Future<TmdbTitle?> getTitleByTmdbId(int tmdbId, String mediaType) async {
     final memoryTitle = loadedTitlesVal.firstWhereOrNull(
         (t) => t.tmdbId == tmdbId && t.mediaType == mediaType);
     if (memoryTitle != null) return memoryTitle;

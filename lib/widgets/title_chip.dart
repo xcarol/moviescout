@@ -21,44 +21,49 @@ class TitleChip extends TitleCard {
 
   @override
   Widget build(BuildContext context) {
-    TmdbTitle tmdbTitle =
-        tmdbListService.getTitleByTmdbId(_title.tmdbId, _title.mediaType) ??
-            _title;
+    return FutureBuilder<TmdbTitle?>(
+      future:
+          tmdbListService.getTitleByTmdbId(_title.tmdbId, _title.mediaType),
+      builder: (context, snapshot) {
+        final tmdbTitle = snapshot.data ?? _title;
 
-    return SizedBox(
-      height: CARD_HEIGHT,
-      width: CARD_WIDTH,
-      child: Card(
-        color: Theme.of(context).extension<CustomColors>()!.chipCardBackground,
-        margin: const EdgeInsets.all(0),
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => TitleDetails(
-                        title: tmdbTitle,
-                        tmdbListService: tmdbListService,
-                      )),
-            );
-          },
-          child: Column(
-            children: [
-              SizedBox(
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12),
+        return SizedBox(
+          height: CARD_HEIGHT,
+          width: CARD_WIDTH,
+          child: Card(
+            color:
+                Theme.of(context).extension<CustomColors>()!.chipCardBackground,
+            margin: const EdgeInsets.all(0),
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TitleDetails(
+                            title: tmdbTitle,
+                            tmdbListService: tmdbListService,
+                          )),
+                );
+              },
+              child: Column(
+                children: [
+                  SizedBox(
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
+                      ),
+                      child: titlePoster(tmdbTitle.posterPath),
+                    ),
                   ),
-                  child: titlePoster(tmdbTitle.posterPath),
-                ),
+                  const SizedBox(width: 10),
+                  _titleDetails(context, tmdbTitle),
+                ],
               ),
-              const SizedBox(width: 10),
-              _titleDetails(context, tmdbTitle),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

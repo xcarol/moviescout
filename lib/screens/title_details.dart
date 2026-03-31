@@ -465,133 +465,159 @@ class _TitleDetailsState extends State<TitleDetails> {
         ),
         Consumer<TmdbRateslistService>(
           builder: (context, ratingService, child) {
-            final titleRating =
-                ratingService.getRating(title.tmdbId, title.mediaType);
-            final titleRatingDate =
-                ratingService.getRatingDate(title.tmdbId, title.mediaType);
+            return FutureBuilder<List<dynamic>>(
+              future: Future.wait([
+                ratingService.getRating(title.tmdbId, title.mediaType),
+                ratingService.getRatingDate(title.tmdbId, title.mediaType),
+                ratingService.contains(title),
+              ]),
+              builder: (context, snapshot) {
+                final titleRating =
+                    snapshot.data?[0] as double? ?? 0.0;
+                final titleRatingDate =
+                    snapshot.data?[1] as DateTime? ??
+                        DateTime.fromMillisecondsSinceEpoch(0);
+                final titleIsRated =
+                    snapshot.data?[2] as bool? ?? false;
 
-            return Row(
-              children: [
-                Icon(Icons.star,
-                    color: Theme.of(context)
-                        .extension<CustomColors>()!
-                        .ratedTitle),
-                const SizedBox(width: 5),
-                if (ratingService.contains(title))
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: Text(
-                      titleRating == AppConstants.seenRating
-                          ? AppLocalizations.of(context)!.seen
-                          : '$titleRating',
-                      style: TextStyle(
+                return Row(
+                  children: [
+                    Icon(Icons.star,
                         color: Theme.of(context)
                             .extension<CustomColors>()!
-                            .ratedTitle,
-                      ),
-                    ),
-                  ),
-                Flexible(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            side: BorderSide(
-                              color: Theme.of(context).colorScheme.primary,
-                              width: 1,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
+                            .ratedTitle),
+                    const SizedBox(width: 5),
+                    if (titleIsRated)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: Text(
+                          titleRating == AppConstants.seenRating
+                              ? AppLocalizations.of(context)!.seen
+                              : '$titleRating',
+                          style: TextStyle(
+                            color: Theme.of(context)
+                                .extension<CustomColors>()!
+                                .ratedTitle,
                           ),
-                          onPressed: () => showDialog(
-                            context: context,
-                            builder: (context) {
-                              return RateForm(
-                                title: title.name,
-                                initialRate: titleRating,
-                                initialDate: titleRatingDate,
-                                onSubmit: (double rating) {
-                                  Provider.of<TmdbRateslistService>(context,
-                                          listen: false)
-                                      .updateTitleRate(
-                                    Provider.of<TmdbUserService>(context,
-                                            listen: false)
-                                        .accountId,
-                                    Provider.of<TmdbUserService>(context,
-                                            listen: false)
-                                        .sessionId,
-                                    title,
-                                    rating,
+                        ),
+                      ),
+                    Flexible(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                side: BorderSide(
+                                  color:
+                                      Theme.of(context).colorScheme.primary,
+                                  width: 1,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              onPressed: () => showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return RateForm(
+                                    title: title.name,
+                                    initialRate: titleRating,
+                                    initialDate: titleRatingDate,
+                                    onSubmit: (double rating) {
+                                      Provider.of<TmdbRateslistService>(
+                                              context,
+                                              listen: false)
+                                          .updateTitleRate(
+                                        Provider.of<TmdbUserService>(context,
+                                                listen: false)
+                                            .accountId,
+                                        Provider.of<TmdbUserService>(context,
+                                                listen: false)
+                                            .sessionId,
+                                        title,
+                                        rating,
+                                      );
+                                    },
                                   );
                                 },
-                              );
-                            },
-                          ),
-                          child: Text(AppLocalizations.of(context)!.rate),
-                        ),
-                        const SizedBox(width: 10),
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            side: BorderSide(
-                              color: titleRating > AppConstants.seenRating
-                                  ? Theme.of(context).disabledColor
-                                  : (titleRating == AppConstants.seenRating
-                                      ? Theme.of(context)
-                                          .extension<CustomColors>()!
-                                          .ratedTitle
-                                      : Theme.of(context).colorScheme.primary),
-                              width: 1,
+                              ),
+                              child:
+                                  Text(AppLocalizations.of(context)!.rate),
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                          ),
-                          onPressed: titleRating > AppConstants.seenRating
-                              ? null // Disabled if rated
-                              : () {
-                                  final newRating =
-                                      titleRating == AppConstants.seenRating
+                            const SizedBox(width: 10),
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                side: BorderSide(
+                                  color: titleRating >
+                                          AppConstants.seenRating
+                                      ? Theme.of(context).disabledColor
+                                      : (titleRating ==
+                                              AppConstants.seenRating
+                                          ? Theme.of(context)
+                                              .extension<CustomColors>()!
+                                              .ratedTitle
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .primary),
+                                  width: 1,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              onPressed: titleRating >
+                                      AppConstants.seenRating
+                                  ? null // Disabled if rated
+                                  : () {
+                                      final newRating = titleRating ==
+                                              AppConstants.seenRating
                                           ? 0.0
                                           : AppConstants.seenRating;
-                                  Provider.of<TmdbRateslistService>(context,
-                                          listen: false)
-                                      .updateTitleRate(
-                                    Provider.of<TmdbUserService>(context,
-                                            listen: false)
-                                        .accountId,
-                                    Provider.of<TmdbUserService>(context,
-                                            listen: false)
-                                        .sessionId,
-                                    title,
-                                    newRating,
-                                  );
-                                },
-                          child: Tooltip(
-                            message: titleRating == AppConstants.seenRating
-                                ? AppLocalizations.of(context)!.seen
-                                : AppLocalizations.of(context)!.markAsSeen,
-                            child: Icon(
-                              titleRating > 0
-                                  ? Symbols.done_outline
-                                  : Symbols.check,
-                              color: titleRating > 0
-                                  ? (titleRating > AppConstants.seenRating
-                                      ? Theme.of(context).disabledColor
+                                      Provider.of<TmdbRateslistService>(
+                                              context,
+                                              listen: false)
+                                          .updateTitleRate(
+                                        Provider.of<TmdbUserService>(context,
+                                                listen: false)
+                                            .accountId,
+                                        Provider.of<TmdbUserService>(context,
+                                                listen: false)
+                                            .sessionId,
+                                        title,
+                                        newRating,
+                                      );
+                                    },
+                              child: Tooltip(
+                                message:
+                                    titleRating == AppConstants.seenRating
+                                        ? AppLocalizations.of(context)!.seen
+                                        : AppLocalizations.of(context)!
+                                            .markAsSeen,
+                                child: Icon(
+                                  titleRating > 0
+                                      ? Symbols.done_outline
+                                      : Symbols.check,
+                                  color: titleRating > 0
+                                      ? (titleRating >
+                                              AppConstants.seenRating
+                                          ? Theme.of(context).disabledColor
+                                          : Theme.of(context)
+                                              .extension<CustomColors>()!
+                                              .ratedTitle)
                                       : Theme.of(context)
-                                          .extension<CustomColors>()!
-                                          .ratedTitle)
-                                  : Theme.of(context).colorScheme.primary,
+                                          .colorScheme
+                                          .primary,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              ],
+                  ],
+                );
+              },
             );
           },
         ),

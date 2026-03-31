@@ -47,7 +47,7 @@ class _SearchState extends State<Search> {
     _controller.addListener(_onSearchChanged);
     _searchFocusNode.addListener(_onFocusChanged);
     _historyService.load();
-    _searchService.clearListSync();
+    _searchService.clearList();
   }
 
   @override
@@ -202,13 +202,13 @@ class _SearchState extends State<Search> {
     );
   }
 
-  void _resetTitle({bool clearText = false}) {
+  Future<void> _resetTitle({bool clearText = false}) async {
     if (clearText) {
       _controller.clear();
       _previousText = '';
       _removeOverlay();
     }
-    _searchService.clearListSync();
+    await _searchService.clearList();
   }
 
   Widget searchBox() {
@@ -244,7 +244,7 @@ class _SearchState extends State<Search> {
                   suffixIconColor: textColor,
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.clear),
-                    onPressed: () => _resetTitle(clearText: true),
+                    onPressed: () async => await _resetTitle(clearText: true),
                     tooltip: AppLocalizations.of(context)!.search,
                   ),
                   border: OutlineInputBorder(
@@ -289,7 +289,7 @@ class _SearchState extends State<Search> {
     }
 
     try {
-      _resetTitle();
+      await _resetTitle();
       await _searchService.retrieveSearchlist(
           anonymousAccountId, term, Localizations.localeOf(context));
     } catch (error, stackTrace) {

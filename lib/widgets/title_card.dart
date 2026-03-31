@@ -46,45 +46,47 @@ class TitleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TmdbTitle tmdbTitle = _title;
+    return FutureBuilder<TmdbTitle?>(
+      future: _tmdbListService.getTitleByTmdbId(_title.tmdbId, _title.mediaType),
+      builder: (context, snapshot) {
+        final tmdbTitle = snapshot.data ?? _title;
 
-    tmdbTitle =
-        _tmdbListService.getTitleByTmdbId(_title.tmdbId, _title.mediaType) ??
-            _title;
-
-    return RepaintBoundary(
-      child: SizedBox(
-        height: cardHeight,
-        child: Card(
-          margin: const EdgeInsets.all(0),
-          shape: RoundedRectangleBorder(),
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => TitleDetails(
-                          title: tmdbTitle,
-                          tmdbListService: tmdbListService,
-                        )),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
-                    child: titlePoster(tmdbTitle.posterPath),
+        return RepaintBoundary(
+          child: SizedBox(
+            height: cardHeight,
+            child: Card(
+              margin: const EdgeInsets.all(0),
+              shape: RoundedRectangleBorder(),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TitleDetails(
+                              title: tmdbTitle,
+                              tmdbListService: tmdbListService,
+                            )),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(left: 8, top: 8, bottom: 8),
+                        child: titlePoster(tmdbTitle.posterPath),
+                      ),
+                      const SizedBox(width: 10),
+                      _titleDetails(context, tmdbTitle),
+                    ],
                   ),
-                  const SizedBox(width: 10),
-                  _titleDetails(context, tmdbTitle),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -108,37 +110,43 @@ class TitleCard extends StatelessWidget {
     // 302-debug-notifications
     _debugShowLastUpdates(context, children, tmdbTitle);
 
-    return Selector<TmdbRateslistService, TmdbTitle?>(
-      selector: (_, rateslistService) => rateslistService.getTitleByTmdbId(
-          tmdbTitle.tmdbId, tmdbTitle.mediaType),
-      shouldRebuild: (prev, next) => prev?.rating != next?.rating,
-      builder: (context, ratedTitle, _) {
-        if (ratedTitle != null && ratedTitle.tmdbId > 0) {
-          children.add(const SizedBox(width: 20));
-          if (ratedTitle.rating == AppConstants.seenRating) {
-            children.add(
-              Text(
-                AppLocalizations.of(context)!.seen,
-                style: TextStyle(color: customColors.ratedTitle),
-              ),
-            );
-          } else {
-            children.addAll([
-              Icon(Icons.star, color: customColors.ratedTitle),
-              const SizedBox(width: 5),
-              Text(
-                ratedTitle.rating.toStringAsFixed(0),
-                style: TextStyle(color: customColors.ratedTitle),
-              ),
-            ]);
-          }
-        }
+    return Consumer<TmdbRateslistService>(
+      builder: (context, rateslistService, _) {
+        return FutureBuilder<TmdbTitle?>(
+          future: rateslistService.getTitleByTmdbId(
+              tmdbTitle.tmdbId, tmdbTitle.mediaType),
+          builder: (context, snapshot) {
+            final ratedTitle = snapshot.data;
+            final ratingChildren = List<Widget>.from(children);
 
-        if (extraWidgets != null) {
-          children.addAll(extraWidgets);
-        }
+            if (ratedTitle != null && ratedTitle.tmdbId > 0) {
+              ratingChildren.add(const SizedBox(width: 20));
+              if (ratedTitle.rating == AppConstants.seenRating) {
+                ratingChildren.add(
+                  Text(
+                    AppLocalizations.of(context)!.seen,
+                    style: TextStyle(color: customColors.ratedTitle),
+                  ),
+                );
+              } else {
+                ratingChildren.addAll([
+                  Icon(Icons.star, color: customColors.ratedTitle),
+                  const SizedBox(width: 5),
+                  Text(
+                    ratedTitle.rating.toStringAsFixed(0),
+                    style: TextStyle(color: customColors.ratedTitle),
+                  ),
+                ]);
+              }
+            }
 
-        return Row(children: children);
+            if (extraWidgets != null) {
+              ratingChildren.addAll(extraWidgets);
+            }
+
+            return Row(children: ratingChildren);
+          },
+        );
       },
     );
   }

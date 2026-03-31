@@ -174,13 +174,13 @@ class TmdbPersonTitlesService extends TmdbListService {
   }
 
   @override
-  bool contains(TmdbTitle title) {
+  Future<bool> contains(TmdbTitle title) async {
     return _allTitles
         .any((t) => t.tmdbId == title.tmdbId && t.mediaType == title.mediaType);
   }
 
   @override
-  int get listTitleCount => _allTitles.length;
+  Future<int> get listTitleCount async => _allTitles.length;
 
   @override
   bool get listIsEmpty => _allTitles.isEmpty;

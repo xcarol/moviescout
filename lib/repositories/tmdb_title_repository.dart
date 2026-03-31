@@ -179,31 +179,6 @@ class TmdbTitleRepository {
     });
   }
 
-  void clearListSync(String listName) {
-    _isar.writeTxnSync(() {
-      final entriesToRemove =
-          _isar.userListEntrys.filter().listNameEqualTo(listName).findAllSync();
-
-      _isar.userListEntrys.filter().listNameEqualTo(listName).deleteAllSync();
-
-      for (final entry in entriesToRemove) {
-        final remainsInAnyList = _isar.userListEntrys
-                .filter()
-                .tmdbIdEqualTo(entry.tmdbId)
-                .mediaTypeEqualTo(entry.mediaType)
-                .countSync() >
-            0;
-        if (!remainsInAnyList) {
-          _isar.tmdbTitles
-              .filter()
-              .tmdbIdEqualTo(entry.tmdbId)
-              .mediaTypeEqualTo(entry.mediaType)
-              .deleteAllSync();
-        }
-      }
-    });
-  }
-
   Future<bool> hasRatedTitles(String listName) async {
     final entriesInList = await getAllEntries(listName);
 
@@ -218,25 +193,28 @@ class TmdbTitleRepository {
     return count > 0;
   }
 
-  int countTitlesSync(String listName) {
-    return _isar.userListEntrys.filter().listNameEqualTo(listName).countSync();
+  Future<int> countTitles(String listName) async {
+    return await _isar.userListEntrys
+        .filter()
+        .listNameEqualTo(listName)
+        .count();
   }
 
-  int getMaxAddedOrderSync(String listName) {
-    final entry = _isar.userListEntrys
+  Future<int> getMaxAddedOrder(String listName) async {
+    final entry = await _isar.userListEntrys
         .filter()
         .listNameEqualTo(listName)
         .sortByAddedOrderDesc()
-        .findFirstSync();
+        .findFirst();
     return entry?.addedOrder ?? -1;
   }
 
-  TmdbTitle? getTitleByTmdbId(String listName, int tmdbId, String mediaType) {
-    final inList = _isar.userListEntrys
+  Future<TmdbTitle?> getTitleByTmdbId(String listName, int tmdbId, String mediaType) async {
+    final inList = await _isar.userListEntrys
         .filter()
         .listNameEqualTo(listName)
         .tmdbIdEqualTo(tmdbId)
-        .findFirstSync();
+        .findFirst();
 
     if (inList == null) return null;
 
@@ -244,7 +222,7 @@ class TmdbTitleRepository {
         .filter()
         .tmdbIdEqualTo(tmdbId)
         .mediaTypeEqualTo(mediaType)
-        .findFirstSync();
+        .findFirst();
   }
 
   Future<TmdbTitle?> getTitleGlobal(int tmdbId) async {

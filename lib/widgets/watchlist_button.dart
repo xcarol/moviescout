@@ -13,39 +13,44 @@ Widget watchlistButton(
 ) {
   return Consumer2<TmdbWatchlistService, TmdbUserService>(
     builder: (_, watchlistService, userService, __) {
-      if (!userService.isUserLoggedIn) {
-        return IconButton(
-          icon: const Icon(Icons.highlight_off),
-          onPressed: () {
-            ErrorService.log(
-              'User not logged in',
-              userMessage: AppLocalizations.of(context)!.signInToWatchlist,
-            );
-          },
-        );
-      }
-
-      bool isInWatchlist = watchlistService.contains(title);
-
-      return IconButton(
-        color: isInWatchlist
-            ? Theme.of(context).extension<CustomColors>()!.inWatchlist
-            : Theme.of(context).extension<CustomColors>()!.notInWatchlist,
-        icon: Icon(Icons.remove_red_eye),
-        onPressed: () {
-          try {
-            watchlistService.updateWatchlistTitle(
-              userService.accountId,
-              userService.sessionId,
-              title,
-              !isInWatchlist,
-            );
-          } catch (error, stackTrace) {
-            ErrorService.log(
-              error,
-              stackTrace: stackTrace,
+      return FutureBuilder(
+        future: watchlistService.contains(title),
+        builder: (context, snapshot) {
+          if (!userService.isUserLoggedIn) {
+            return IconButton(
+              icon: const Icon(Icons.highlight_off),
+              onPressed: () {
+                ErrorService.log(
+                  'User not logged in',
+                  userMessage: AppLocalizations.of(context)!.signInToWatchlist,
+                );
+              },
             );
           }
+
+          bool isInWatchlist = snapshot.data ?? false;
+
+          return IconButton(
+            color: isInWatchlist
+                ? Theme.of(context).extension<CustomColors>()!.inWatchlist
+                : Theme.of(context).extension<CustomColors>()!.notInWatchlist,
+            icon: Icon(Icons.remove_red_eye),
+            onPressed: () {
+              try {
+                watchlistService.updateWatchlistTitle(
+                  userService.accountId,
+                  userService.sessionId,
+                  title,
+                  !isInWatchlist,
+                );
+              } catch (error, stackTrace) {
+                ErrorService.log(
+                  error,
+                  stackTrace: stackTrace,
+                );
+              }
+            },
+          );
         },
       );
     },
