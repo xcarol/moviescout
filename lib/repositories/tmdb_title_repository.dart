@@ -29,10 +29,10 @@ class TmdbTitleRepository {
 
     final lists = inRatesList.map((e) => e.listName).toList().join(', ');
 
-    if (inRatesList.isNotEmpty) {
+    if (inRatesList.any((e) => e.listName == AppConstants.rateslist)) {
       return saveLogs([
         '== ZERO ERROR ==',
-        'lists: $lists',
+        'lists: [$lists]',
         'title: ${title.name} rating: ${title.rating} stackTrace: ${StackTrace.current}',
         '== ZERO ERROR ==',
       ]);
