@@ -9,6 +9,7 @@ import 'package:moviescout/utils/save_logs.dart';
 class TmdbTitleRepository {
   final _isar = IsarService.instance;
 
+
   Future<void> _logZeroRatingError(TmdbTitle title, {String? listName}) async {
     if (title.rating > 0) return;
 
@@ -50,7 +51,12 @@ class TmdbTitleRepository {
       TmdbTitle title, String listName, int addedOrder) async {
     await _isar.writeTxn(() async {
       await _logZeroRatingError(title, listName: listName);
+      
+      if (!title.inLists.contains(listName)) {
+        title.inLists = [...title.inLists, listName];
+      }
       await _isar.tmdbTitles.put(title);
+      
       await _isar.userListEntrys.put(UserListEntry(
         listName: listName,
         tmdbId: title.tmdbId,
@@ -66,7 +72,14 @@ class TmdbTitleRepository {
 
     await _isar.writeTxn(() async {
       await _logMultipleZeroRatingError(titles, listName: listName);
+      
+      for (final title in titles) {
+        if (!title.inLists.contains(listName)) {
+          title.inLists = [...title.inLists, listName];
+        }
+      }
       await _isar.tmdbTitles.putAll(titles);
+      
       final entries = <UserListEntry>[];
       for (var i = 0; i < titles.length; i++) {
         entries.add(UserListEntry(
@@ -104,19 +117,19 @@ class TmdbTitleRepository {
           .mediaTypeEqualTo(mediaType)
           .deleteAll();
 
-      final remainsInAnyList = await _isar.userListEntrys
-              .filter()
-              .tmdbIdEqualTo(tmdbId)
-              .mediaTypeEqualTo(mediaType)
-              .count() >
-          0;
+      final title = await _isar.tmdbTitles
+          .filter()
+          .tmdbIdEqualTo(tmdbId)
+          .mediaTypeEqualTo(mediaType)
+          .findFirst();
 
-      if (!remainsInAnyList) {
-        await _isar.tmdbTitles
-            .filter()
-            .tmdbIdEqualTo(tmdbId)
-            .mediaTypeEqualTo(mediaType)
-            .deleteAll();
+      if (title != null) {
+        title.inLists = title.inLists.where((l) => l != listName).toList();
+        if (title.inLists.isEmpty) {
+          await _isar.tmdbTitles.delete(title.id);
+        } else {
+          await _isar.tmdbTitles.put(title);
+        }
       }
     });
   }
@@ -127,6 +140,7 @@ class TmdbTitleRepository {
       for (var i = 0; i < tmdbIds.length; i++) {
         final id = tmdbIds[i];
         final type = mediaTypes[i];
+        
         await _isar.userListEntrys
             .filter()
             .listNameEqualTo(listName)
@@ -134,19 +148,19 @@ class TmdbTitleRepository {
             .mediaTypeEqualTo(type)
             .deleteAll();
 
-        final remainsInAnyList = await _isar.userListEntrys
-                .filter()
-                .tmdbIdEqualTo(id)
-                .mediaTypeEqualTo(type)
-                .count() >
-            0;
+        final title = await _isar.tmdbTitles
+            .filter()
+            .tmdbIdEqualTo(id)
+            .mediaTypeEqualTo(type)
+            .findFirst();
 
-        if (!remainsInAnyList) {
-          await _isar.tmdbTitles
-              .filter()
-              .tmdbIdEqualTo(id)
-              .mediaTypeEqualTo(type)
-              .deleteAll();
+        if (title != null) {
+          title.inLists = title.inLists.where((l) => l != listName).toList();
+          if (title.inLists.isEmpty) {
+            await _isar.tmdbTitles.delete(title.id);
+          } else {
+            await _isar.tmdbTitles.put(title);
+          }
         }
       }
     });
@@ -162,32 +176,28 @@ class TmdbTitleRepository {
       await _isar.userListEntrys.filter().listNameEqualTo(listName).deleteAll();
 
       for (final entry in entriesToRemove) {
-        final remainsInAnyList = await _isar.userListEntrys
-                .filter()
-                .tmdbIdEqualTo(entry.tmdbId)
-                .mediaTypeEqualTo(entry.mediaType)
-                .count() >
-            0;
-        if (!remainsInAnyList) {
-          await _isar.tmdbTitles
-              .filter()
-              .tmdbIdEqualTo(entry.tmdbId)
-              .mediaTypeEqualTo(entry.mediaType)
-              .deleteAll();
+        final title = await _isar.tmdbTitles
+            .filter()
+            .tmdbIdEqualTo(entry.tmdbId)
+            .mediaTypeEqualTo(entry.mediaType)
+            .findFirst();
+
+        if (title != null) {
+          title.inLists = title.inLists.where((l) => l != listName).toList();
+          if (title.inLists.isEmpty) {
+            await _isar.tmdbTitles.delete(title.id);
+          } else {
+            await _isar.tmdbTitles.put(title);
+          }
         }
       }
     });
   }
 
   Future<bool> hasRatedTitles(String listName) async {
-    final entriesInList = await getAllEntries(listName);
-
-    if (entriesInList.isEmpty) return false;
-
     final count = await _isar.tmdbTitles
         .filter()
-        .anyOf(entriesInList,
-            (q, e) => q.tmdbIdEqualTo(e.tmdbId).mediaTypeEqualTo(e.mediaType))
+        .inListsElementEqualTo(listName)
         .ratingGreaterThan(AppConstants.seenRating)
         .count();
     return count > 0;
@@ -210,16 +220,9 @@ class TmdbTitleRepository {
   }
 
   Future<TmdbTitle?> getTitleByTmdbId(String listName, int tmdbId, String mediaType) async {
-    final inList = await _isar.userListEntrys
+    return await _isar.tmdbTitles
         .filter()
-        .listNameEqualTo(listName)
-        .tmdbIdEqualTo(tmdbId)
-        .findFirst();
-
-    if (inList == null) return null;
-
-    return _isar.tmdbTitles
-        .filter()
+        .inListsElementEqualTo(listName)
         .tmdbIdEqualTo(tmdbId)
         .mediaTypeEqualTo(mediaType)
         .findFirst();
@@ -249,17 +252,15 @@ class TmdbTitleRepository {
   }
 
   Future<List<List<int>>> getAllGenreIds(String listName) async {
-    final ids = await getAllTmdbIds(listName);
-    if (ids.isEmpty) return [];
-    return _isar.tmdbTitles
+    return await _isar.tmdbTitles
         .filter()
-        .anyOf(ids, (q, id) => q.tmdbIdEqualTo(id))
+        .inListsElementEqualTo(listName)
         .genreIdsProperty()
         .findAll();
   }
 
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition> _buildQuery(
-    List<UserListEntry> entriesInList, {
+    String listName, {
     bool? pinned,
     String filterText = '',
     List<int> filterGenres = const [],
@@ -268,8 +269,7 @@ class TmdbTitleRepository {
     List<int> filterProvidersIds = const [],
     RatingFilter filterRating = RatingFilter.all,
   }) {
-    var query = _isar.tmdbTitles.filter().anyOf(entriesInList,
-        (q, e) => q.tmdbIdEqualTo(e.tmdbId).mediaTypeEqualTo(e.mediaType));
+    var query = _isar.tmdbTitles.filter().inListsElementEqualTo(listName);
 
     if (pinned != null) {
       query = query.isPinnedEqualTo(pinned);
@@ -287,8 +287,7 @@ class TmdbTitleRepository {
     }
 
     if (filterGenres.isNotEmpty) {
-      query =
-          query.anyOf(filterGenres, (q, id) => q.genreIdsElementEqualTo(id));
+      query = query.anyOf(filterGenres, (q, id) => q.genreIdsElementEqualTo(id));
     }
 
     if (filterMediaType.isNotEmpty) {
@@ -341,7 +340,6 @@ class TmdbTitleRepository {
 
   Future<List<TmdbTitle>> _getTitlesSortedByAddedOrder({
     required String listName,
-    required List<UserListEntry> entriesInList,
     String filterText = '',
     String filterMediaType = '',
     List<int> filterGenres = const [],
@@ -353,8 +351,8 @@ class TmdbTitleRepository {
     int offset = 0,
     int limit = 10,
   }) async {
-    final eligibleEntries = await _buildQuery(
-      entriesInList,
+    final eligibleTitles = await _buildQuery(
+      listName,
       pinned: pinned,
       filterText: filterText,
       filterGenres: filterGenres,
@@ -364,32 +362,31 @@ class TmdbTitleRepository {
       filterRating: filterRating,
     ).findAll();
 
-    if (eligibleEntries.isEmpty) return [];
+    if (eligibleTitles.isEmpty) return [];
 
-    final entryQuery = _isar.userListEntrys
+    final entryMetadata = await _isar.userListEntrys
         .filter()
         .listNameEqualTo(listName)
-        .anyOf(eligibleEntries,
-            (q, t) => q.tmdbIdEqualTo(t.tmdbId).mediaTypeEqualTo(t.mediaType));
+        .findAll();
 
-    final sortedEntries = sortAscending
-        ? await entryQuery
-            .sortByAddedOrder()
-            .offset(offset)
-            .limit(limit)
-            .findAll()
-        : await entryQuery
-            .sortByAddedOrderDesc()
-            .offset(offset)
-            .limit(limit)
-            .findAll();
-
-    final titlesMap = {
-      for (var t in eligibleEntries) '${t.tmdbId}_${t.mediaType}': t
+    final orderMap = {
+      for (var e in entryMetadata) '${e.tmdbId}_${e.mediaType}': e.addedOrder
     };
-    return sortedEntries
-        .map((e) => titlesMap['${e.tmdbId}_${e.mediaType}']!)
-        .toList();
+
+    eligibleTitles.sort((a, b) {
+      final orderA = orderMap['${a.tmdbId}_${a.mediaType}'] ?? 0;
+      final orderB = orderMap['${b.tmdbId}_${b.mediaType}'] ?? 0;
+      return sortAscending ? orderA.compareTo(orderB) : orderB.compareTo(orderA);
+    });
+
+    final start = offset;
+    final end = (offset + limit) > eligibleTitles.length
+        ? eligibleTitles.length
+        : (offset + limit);
+
+    if (start >= eligibleTitles.length) return [];
+
+    return eligibleTitles.sublist(start, end);
   }
 
   Future<List<TmdbTitle>> getTitles({
@@ -406,13 +403,9 @@ class TmdbTitleRepository {
     int offset = 0,
     int limit = 10,
   }) async {
-    final entriesInList = await getAllEntries(listName);
-    if (entriesInList.isEmpty) return [];
-
     if (sortOption == SortOption.addedOrder) {
       return _getTitlesSortedByAddedOrder(
         listName: listName,
-        entriesInList: entriesInList,
         filterText: filterText,
         filterMediaType: filterMediaType,
         filterGenres: filterGenres,
@@ -427,7 +420,7 @@ class TmdbTitleRepository {
     }
 
     var query = _buildQuery(
-      entriesInList,
+      listName,
       pinned: pinned,
       filterText: filterText,
       filterGenres: filterGenres,
@@ -451,11 +444,8 @@ class TmdbTitleRepository {
     RatingFilter filterRating = RatingFilter.all,
     bool? pinned,
   }) async {
-    final entriesInList = await getAllEntries(listName);
-    if (entriesInList.isEmpty) return 0;
-
     return _buildQuery(
-      entriesInList,
+      listName,
       pinned: pinned,
       filterText: filterText,
       filterGenres: filterGenres,

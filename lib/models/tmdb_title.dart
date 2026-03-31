@@ -112,6 +112,9 @@ class TmdbTitle {
   @Index(unique: true, replace: true, composite: [CompositeIndex('mediaType')])
   late int tmdbId;
 
+  @Index()
+  List<String> inLists = [];
+
   late String name;
   late String originalName;
   late String originalLanguage;

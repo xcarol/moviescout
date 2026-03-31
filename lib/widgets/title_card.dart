@@ -56,7 +56,7 @@ class TitleCard extends StatelessWidget {
             height: cardHeight,
             child: Card(
               margin: const EdgeInsets.all(0),
-              shape: RoundedRectangleBorder(),
+              shape: const RoundedRectangleBorder(),
               child: InkWell(
                 onTap: () {
                   Navigator.push(
@@ -286,7 +286,6 @@ class TitleCard extends StatelessWidget {
     }
     return SingleChildScrollView(
       key: ValueKey(tmdbTitle.tmdbId),
-      controller: ScrollController(keepScrollOffset: false),
       scrollDirection: Axis.horizontal,
       child: Row(
         children: tmdbTitle.providers.flatrate
