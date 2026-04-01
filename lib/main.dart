@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/services/discoverlist_service.dart';
+import 'package:moviescout/utils/save_logs.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/app_lifecycle_service.dart';
@@ -70,16 +71,37 @@ void main() async {
     );
   }
 
+  final startupWatch = Stopwatch()..start();
+  final startupLogs = <String>[];
+  startupLogs.add('--- STARTUP TRACE ---');
+
   try {
     await dotenv.load(fileName: ".env");
+    startupLogs.add('Dotenv load: ${startupWatch.elapsedMilliseconds}ms');
+
     await PreferencesService().init();
+    startupLogs.add('PreferencesService init: ${startupWatch.elapsedMilliseconds}ms');
+
     await IsarService.init();
-    await TmdbGenreService().init();
-    await TmdbConfigurationService().init();
-    await RegionService().init();
-    await LanguageTranslator.init();
-    await PersonTranslator.init();
+    startupLogs.add('IsarService init: ${startupWatch.elapsedMilliseconds}ms');
+    
     await NotificationService().init();
+    startupLogs.add('NotificationService init: ${startupWatch.elapsedMilliseconds}ms');
+
+    await TmdbGenreService().init();
+    startupLogs.add('TmdbGenreService init: ${startupWatch.elapsedMilliseconds}ms');
+
+    await TmdbConfigurationService().init();
+    startupLogs.add('TmdbConfigurationService init: ${startupWatch.elapsedMilliseconds}ms');
+
+    await RegionService().init();
+    startupLogs.add('RegionService init: ${startupWatch.elapsedMilliseconds}ms');
+
+    await LanguageTranslator.init();
+    startupLogs.add('LanguageTranslator init: ${startupWatch.elapsedMilliseconds}ms');
+
+    await PersonTranslator.init();
+    startupLogs.add('PersonTranslator init: ${startupWatch.elapsedMilliseconds}ms');
 
     if (defaultTargetPlatform == TargetPlatform.android ||
         defaultTargetPlatform == TargetPlatform.iOS) {
@@ -96,14 +118,19 @@ void main() async {
           networkType: NetworkType.connected,
         ),
       );
+      startupLogs.add('Workmanager init: ${startupWatch.elapsedMilliseconds}ms');
     }
   } catch (error, stackTrace) {
+    startupLogs.add('Startup Error: $error');
     ErrorService.log(
       error,
       userMessage: 'Error initializing services',
       stackTrace: stackTrace,
     );
   }
+
+  await saveLogs(startupLogs);
+  debugPrint('Startup complete in ${startupWatch.elapsedMilliseconds}ms');
 
   debugPrint('Running Movie Scout...');
   final repository = TmdbTitleRepository();
