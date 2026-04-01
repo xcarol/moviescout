@@ -25,10 +25,21 @@ void main() {
         TmdbTitleFields.name: 'Test',
         'last_notified_season': 0,
         'media_type': 'tv',
-        'last_updated': now.subtract(const Duration(days: 1)).toIso8601String(),
-        'last_providers_update': now.subtract(const Duration(days: 1)).toIso8601String(),
+        'last_updated': AppConstants.defaultDate,
+        'last_providers_update': AppConstants.defaultDate,
       });
       expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now), UpdateType.full);
+    });
+
+    test('Serie: Does NOT full update every hour if already initialized to 0', () {
+      final title = TmdbTitle.fromMap(title: {
+        TmdbTitleFields.id: 1,
+        TmdbTitleFields.mediaType: 'tv',
+        'last_notified_season': 0,
+        'last_updated': now.toIso8601String(),
+        'last_providers_update': now.toIso8601String(),
+      });
+      expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now), UpdateType.none);
     });
 
     test('Should return none if recently updated', () {
