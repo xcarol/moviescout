@@ -18,17 +18,17 @@ class WatchlistNotificationEvaluator {
     final needsFull = now.difference(lastUpdated).inDays >=
             AppConstants.watchlistTitleUpdateFrequencyDays ||
         isUninitialized;
-    
+
     if (needsFull) {
       return UpdateType.full;
     }
 
     // Check for light update (providers only)
-    final lastProvidersUpdate = DateTime.tryParse(title.lastProvidersUpdate) ?? 
-                                DateTime.parse(AppConstants.defaultDate);
+    final lastProvidersUpdate = DateTime.tryParse(title.lastProvidersUpdate) ??
+        DateTime.parse(AppConstants.defaultDate);
     final needsLight = now.difference(lastProvidersUpdate).inDays >=
         AppConstants.watchlistProvidersUpdateFrequencyDays;
-    
+
     if (needsLight) {
       return UpdateType.light;
     }
@@ -39,11 +39,10 @@ class WatchlistNotificationEvaluator {
   static int getBaselineSeason(TmdbTitle title, DateTime now) {
     final currentSeason = title.numberOfSeasons;
     final nextEpisode = title.nextEpisodeToAir;
-    
-    if (nextEpisode != null && 
-        nextEpisode['episode_number'] == 1 && 
+
+    if (nextEpisode != null &&
+        nextEpisode['episode_number'] == 1 &&
         nextEpisode['season_number'] != null) {
-      
       final nextSeason = nextEpisode['season_number'] as int;
       final airDateStr = nextEpisode['air_date'] as String?;
       if (airDateStr != null) {
@@ -65,13 +64,16 @@ class WatchlistNotificationEvaluator {
     List<String>? logLines,
   }) {
     final oldProviders = titleBeforeUpdate.flatrateProviderIds.toSet();
-    final wasAvailable = oldProviders.intersection(enabledProviderIds).isNotEmpty;
+    final wasAvailable =
+        oldProviders.intersection(enabledProviderIds).isNotEmpty;
 
     final newProviders = titleAfterUpdate.flatrateProviderIds.toSet();
-    final isAvailable = newProviders.intersection(enabledProviderIds).isNotEmpty;
+    final isAvailable =
+        newProviders.intersection(enabledProviderIds).isNotEmpty;
 
     if (isAvailable && !wasAvailable) {
-      logLines?.add('- Notification Trigger: Title ${titleAfterUpdate.name} is now available.');
+      logLines?.add(
+          '- Notification Trigger: Title ${titleAfterUpdate.name} is now available.');
       return NotificationTrigger.newAvailability;
     }
 
@@ -86,10 +88,12 @@ class WatchlistNotificationEvaluator {
           currentSeason,
           now,
         )) {
-          logLines?.add('- Notification Trigger: New season started for ${titleAfterUpdate.name}.');
+          logLines?.add(
+              '- Notification Trigger: New season started for ${titleAfterUpdate.name}.');
           return NotificationTrigger.newSeason;
         } else {
-          logLines?.add('- Found new season for ${titleAfterUpdate.name} but premiere date not reached or too old.');
+          logLines?.add(
+              '- Found new season for ${titleAfterUpdate.name} but premiere date not reached or too old.');
         }
       }
     }
@@ -125,7 +129,8 @@ class WatchlistNotificationEvaluator {
       } else {
         // Fallback if no season air date: use the old "Episode 1" rule as a safe default
         if ((lastEpisode['episode_number'] as int) == 1) {
-          logLines.add('- check: $titleName S$currentSeason has no date but episode is 1. Notify.');
+          logLines.add(
+              '- check: $titleName S$currentSeason has no date but episode is 1. Notify.');
           return true;
         }
       }
@@ -139,7 +144,8 @@ class WatchlistNotificationEvaluator {
           final airDateStr = nextEpisode['air_date'] as String?;
           if (airDateStr != null) {
             final airDate = DateTime.tryParse(airDateStr);
-            if (airDate != null && airDate.isBefore(now.add(const Duration(seconds: 1)))) {
+            if (airDate != null &&
+                airDate.isBefore(now.add(const Duration(seconds: 1)))) {
               final daysSinceStart = now.difference(airDate).inDays;
               if (daysSinceStart >= 0 &&
                   daysSinceStart <
