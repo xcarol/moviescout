@@ -320,7 +320,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
             addedOrders: batch.map((t) => startOrder++).toList());
 
         selectedTitleCount.value = i + batchSize;
-        await Future.delayed(Duration.zero);
+        await Future.delayed(const Duration(milliseconds: 50));
       }
     }
 
