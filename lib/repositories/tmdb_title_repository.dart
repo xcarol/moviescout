@@ -403,8 +403,11 @@ class TmdbTitleRepository {
     int offset = 0,
     int limit = 10,
   }) async {
+    final watch = Stopwatch()..start();
+    List<TmdbTitle> result;
+
     if (sortOption == SortOption.addedOrder) {
-      return _getTitlesSortedByAddedOrder(
+      result = await _getTitlesSortedByAddedOrder(
         listName: listName,
         filterText: filterText,
         filterMediaType: filterMediaType,
@@ -417,21 +420,26 @@ class TmdbTitleRepository {
         offset: offset,
         limit: limit,
       );
+    } else {
+      final query = _buildQuery(
+        listName,
+        pinned: pinned,
+        filterText: filterText,
+        filterGenres: filterGenres,
+        filterMediaType: filterMediaType,
+        filterByProviders: filterByProviders,
+        filterProvidersIds: filterProvidersIds,
+        filterRating: filterRating,
+      );
+
+      final sortedQuery = _applySort(query, sortOption, sortAscending);
+      result = await sortedQuery.offset(offset).limit(limit).findAll();
     }
 
-    var query = _buildQuery(
-      listName,
-      pinned: pinned,
-      filterText: filterText,
-      filterGenres: filterGenres,
-      filterMediaType: filterMediaType,
-      filterByProviders: filterByProviders,
-      filterProvidersIds: filterProvidersIds,
-      filterRating: filterRating,
-    );
-
-    final sortedQuery = _applySort(query, sortOption, sortAscending);
-    return sortedQuery.offset(offset).limit(limit).findAll();
+    if (watch.elapsedMilliseconds > 100) {
+      await saveLogs(['getTitles($listName, $sortOption) took ${watch.elapsedMilliseconds}ms']);
+    }
+    return result;
   }
 
   Future<int> countTitlesFiltered({
