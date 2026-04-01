@@ -8,11 +8,13 @@ enum NotificationTrigger { none, newAvailability, newSeason }
 
 class WatchlistNotificationEvaluator {
   static UpdateType checkNeedsUpdate(TmdbTitle title, DateTime now) {
-    final isUninitialized = title.isSerie && title.lastNotifiedSeason == 0;
-    
+    final isUninitialized = title.isSerie &&
+        title.lastNotifiedSeason == 0 &&
+        title.lastUpdated == AppConstants.defaultDate;
+
     // Check for full update (details and providers)
-    final lastUpdated = DateTime.tryParse(title.lastUpdated) ?? 
-                        DateTime.parse(AppConstants.defaultDate);
+    final lastUpdated = DateTime.tryParse(title.lastUpdated) ??
+        DateTime.parse(AppConstants.defaultDate);
     final needsFull = now.difference(lastUpdated).inDays >=
             AppConstants.watchlistTitleUpdateFrequencyDays ||
         isUninitialized;
