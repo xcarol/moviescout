@@ -289,9 +289,10 @@ class _SearchState extends State<Search> {
     }
 
     try {
+      Locale locale = Localizations.localeOf(context);
       await _resetTitle();
       await _searchService.retrieveSearchlist(
-          anonymousAccountId, term, Localizations.localeOf(context));
+          anonymousAccountId, term, locale);
     } catch (error, stackTrace) {
       if (mounted) {
         ErrorService.log(
