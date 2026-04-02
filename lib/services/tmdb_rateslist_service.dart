@@ -21,8 +21,8 @@ class TmdbRateslistService extends TmdbListService {
     filterRating = RatingFilter.rated;
   }
 
-  Future<double> getRating(int titleId, String mediaType) async {
-    TmdbTitle? title = await getTitleByTmdbId(titleId, mediaType);
+  double getRating(int titleId, String mediaType) {
+    TmdbTitle? title = getTitleByTmdbIdSync(titleId, mediaType);
     if (title == null) {
       return 0.0;
     }
@@ -117,7 +117,8 @@ class TmdbRateslistService extends TmdbListService {
         final watchlistTitle = await repository.getTitleByTmdbId(
             AppConstants.watchlist, title.tmdbId, title.mediaType);
         if (watchlistTitle != null) {
-          await repository.deleteTitle(AppConstants.watchlist, title.tmdbId, title.mediaType);
+          await repository.deleteTitle(
+              AppConstants.watchlist, title.tmdbId, title.mediaType);
         }
       }
       await updateTitle(accountId, sessionId, title, rating > 0,

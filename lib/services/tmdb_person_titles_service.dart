@@ -180,7 +180,7 @@ class TmdbPersonTitlesService extends TmdbListService {
   }
 
   @override
-  Future<int> get listTitleCount async => _allTitles.length;
+  int get listTitleCount => _allTitles.length;
 
   @override
   bool get listIsEmpty => _allTitles.isEmpty;

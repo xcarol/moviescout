@@ -120,8 +120,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     return !listIsEmpty;
   }
 
-  Future<int> get listTitleCount async {
-    return repository.countTitles(listNameVal);
+  int get listTitleCount {
+    return repository.countTitlesSync(listNameVal);
   }
 
   Future<bool> contains(TmdbTitle title) async {
@@ -591,6 +591,14 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     if (memoryTitle != null) return memoryTitle;
 
     return repository.getTitleByTmdbId(listNameVal, tmdbId, mediaType);
+  }
+
+  TmdbTitle? getTitleByTmdbIdSync(int tmdbId, String mediaType) {
+    final memoryTitle = loadedTitlesVal.firstWhereOrNull(
+        (t) => t.tmdbId == tmdbId && t.mediaType == mediaType);
+    if (memoryTitle != null) return memoryTitle;
+
+    return repository.getTitleByTmdbIdSync(listNameVal, tmdbId, mediaType);
   }
 
   Future<void> loadNextPage() async {

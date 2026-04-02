@@ -203,11 +203,8 @@ class TmdbTitleRepository {
     return count > 0;
   }
 
-  Future<int> countTitles(String listName) async {
-    return await _isar.userListEntrys
-        .filter()
-        .listNameEqualTo(listName)
-        .count();
+  int countTitlesSync(String listName) {
+    return _isar.userListEntrys.filter().listNameEqualTo(listName).countSync();
   }
 
   Future<int> getMaxAddedOrder(String listName) async {
@@ -226,6 +223,16 @@ class TmdbTitleRepository {
         .tmdbIdEqualTo(tmdbId)
         .mediaTypeEqualTo(mediaType)
         .findFirst();
+  }
+
+  TmdbTitle? getTitleByTmdbIdSync(
+      String listName, int tmdbId, String mediaType) {
+    return _isar.tmdbTitles
+        .filter()
+        .inListsElementEqualTo(listName)
+        .tmdbIdEqualTo(tmdbId)
+        .mediaTypeEqualTo(mediaType)
+        .findFirstSync();
   }
 
   Future<TmdbTitle?> getTitleGlobal(int tmdbId) async {
