@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
-import 'package:moviescout/utils/save_logs.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
@@ -170,19 +169,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     isLoading.value = true;
 
     try {
-      final watch = Stopwatch()..start();
-      final logs = <String>[];
-      logs.add('--- SYNC LIST: $listNameVal ---');
-
       await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
-      logs.add('Sync with server: ${watch.elapsedMilliseconds}ms');
 
       await updateListGenres();
-      logs.add('Update list genres: ${watch.elapsedMilliseconds}ms');
 
       setLastUpdate();
-      logs.add('Total retrieveList: ${watch.elapsedMilliseconds}ms');
-      await saveLogs(logs);
     } catch (error, stackTrace) {
       ErrorService.log(
         error,
@@ -320,7 +311,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
             addedOrders: batch.map((t) => startOrder++).toList());
 
         selectedTitleCount.value = i + batchSize;
-        await Future.delayed(const Duration(milliseconds: 50));
+        await Future.delayed(Duration.zero);
       }
     }
 
