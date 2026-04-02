@@ -467,18 +467,15 @@ class _TitleDetailsState extends State<TitleDetails> {
           builder: (context, ratingService, child) {
             return FutureBuilder<List<dynamic>>(
               future: Future.wait([
-                ratingService.getRating(title.tmdbId, title.mediaType),
                 ratingService.getRatingDate(title.tmdbId, title.mediaType),
                 ratingService.contains(title),
               ]),
               builder: (context, snapshot) {
                 final titleRating =
-                    snapshot.data?[0] as double? ?? 0.0;
-                final titleRatingDate =
-                    snapshot.data?[1] as DateTime? ??
-                        DateTime.fromMillisecondsSinceEpoch(0);
-                final titleIsRated =
-                    snapshot.data?[2] as bool? ?? false;
+                    ratingService.getRating(title.tmdbId, title.mediaType);
+                final titleRatingDate = snapshot.data?[0] as DateTime? ??
+                    DateTime.fromMillisecondsSinceEpoch(0);
+                final titleIsRated = snapshot.data?[1] as bool? ?? false;
 
                 return Row(
                   children: [
@@ -509,8 +506,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                             TextButton(
                               style: TextButton.styleFrom(
                                 side: BorderSide(
-                                  color:
-                                      Theme.of(context).colorScheme.primary,
+                                  color: Theme.of(context).colorScheme.primary,
                                   width: 1,
                                 ),
                                 shape: RoundedRectangleBorder(
@@ -525,8 +521,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                                     initialRate: titleRating,
                                     initialDate: titleRatingDate,
                                     onSubmit: (double rating) {
-                                      Provider.of<TmdbRateslistService>(
-                                              context,
+                                      Provider.of<TmdbRateslistService>(context,
                                               listen: false)
                                           .updateTitleRate(
                                         Provider.of<TmdbUserService>(context,
@@ -542,18 +537,15 @@ class _TitleDetailsState extends State<TitleDetails> {
                                   );
                                 },
                               ),
-                              child:
-                                  Text(AppLocalizations.of(context)!.rate),
+                              child: Text(AppLocalizations.of(context)!.rate),
                             ),
                             const SizedBox(width: 10),
                             TextButton(
                               style: TextButton.styleFrom(
                                 side: BorderSide(
-                                  color: titleRating >
-                                          AppConstants.seenRating
+                                  color: titleRating > AppConstants.seenRating
                                       ? Theme.of(context).disabledColor
-                                      : (titleRating ==
-                                              AppConstants.seenRating
+                                      : (titleRating == AppConstants.seenRating
                                           ? Theme.of(context)
                                               .extension<CustomColors>()!
                                               .ratedTitle
@@ -566,16 +558,14 @@ class _TitleDetailsState extends State<TitleDetails> {
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                               ),
-                              onPressed: titleRating >
-                                      AppConstants.seenRating
+                              onPressed: titleRating > AppConstants.seenRating
                                   ? null // Disabled if rated
                                   : () {
-                                      final newRating = titleRating ==
-                                              AppConstants.seenRating
-                                          ? 0.0
-                                          : AppConstants.seenRating;
-                                      Provider.of<TmdbRateslistService>(
-                                              context,
+                                      final newRating =
+                                          titleRating == AppConstants.seenRating
+                                              ? 0.0
+                                              : AppConstants.seenRating;
+                                      Provider.of<TmdbRateslistService>(context,
                                               listen: false)
                                           .updateTitleRate(
                                         Provider.of<TmdbUserService>(context,
@@ -589,25 +579,20 @@ class _TitleDetailsState extends State<TitleDetails> {
                                       );
                                     },
                               child: Tooltip(
-                                message:
-                                    titleRating == AppConstants.seenRating
-                                        ? AppLocalizations.of(context)!.seen
-                                        : AppLocalizations.of(context)!
-                                            .markAsSeen,
+                                message: titleRating == AppConstants.seenRating
+                                    ? AppLocalizations.of(context)!.seen
+                                    : AppLocalizations.of(context)!.markAsSeen,
                                 child: Icon(
                                   titleRating > 0
                                       ? Symbols.done_outline
                                       : Symbols.check,
                                   color: titleRating > 0
-                                      ? (titleRating >
-                                              AppConstants.seenRating
+                                      ? (titleRating > AppConstants.seenRating
                                           ? Theme.of(context).disabledColor
                                           : Theme.of(context)
                                               .extension<CustomColors>()!
                                               .ratedTitle)
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .primary,
+                                      : Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                             ),

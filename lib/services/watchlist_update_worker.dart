@@ -163,7 +163,7 @@ void callbackDispatcher() {
 
       final watchlistTitles = await repository.getTitles(
         listName: AppConstants.watchlist,
-        limit: await repository.countTitles(AppConstants.watchlist),
+        limit: repository.countTitlesSync(AppConstants.watchlist),
       );
 
       for (final title in watchlistTitles) {

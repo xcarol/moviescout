@@ -113,7 +113,7 @@ class _TitleListState extends State<TitleList> {
         if (service.isRefreshable) {
           content = CustomMaterialIndicator(
             edgeOffset: 10,
-            displacement: 80,
+            displacement: 200,
             onRefresh: () async {
               if (widget.listService.isLoading.value) {
                 return;
