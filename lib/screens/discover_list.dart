@@ -99,7 +99,11 @@ class _DiscoverListState extends State<DiscoverList> {
   }
 
   void _updateDiscoverList({bool forceUpdate = false}) {
-    if (!mounted || _discoverlistService.isLoading.value) return;
+    if (!mounted ||
+        _discoverlistService.isLoading.value ||
+        (_discoverlistService.listTitleCount > 0 && !forceUpdate)) {
+      return;
+    }
 
     final userService = Provider.of<TmdbUserService>(context, listen: false);
 
