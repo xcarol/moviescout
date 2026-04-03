@@ -96,6 +96,21 @@ class TmdbTitleRepository {
   Future<void> updateTitleMetadata(TmdbTitle title) async {
     await _isar.writeTxn(() async {
       await _logZeroRatingError(title);
+
+      if (title.inLists.isEmpty) {
+        final existing = await _isar.tmdbTitles
+            .filter()
+            .tmdbIdEqualTo(title.tmdbId)
+            .mediaTypeEqualTo(title.mediaType)
+            .findFirst();
+        if (existing != null) {
+          title.inLists = existing.inLists;
+          if (!title.isPinned) {
+            title.isPinned = existing.isPinned;
+          }
+        }
+      }
+
       await _isar.tmdbTitles.put(title);
     });
   }
@@ -103,6 +118,23 @@ class TmdbTitleRepository {
   Future<void> updateTitlesMetadata(List<TmdbTitle> titles) async {
     await _isar.writeTxn(() async {
       await _logMultipleZeroRatingError(titles);
+
+      for (final title in titles) {
+        if (title.inLists.isEmpty) {
+          final existing = await _isar.tmdbTitles
+              .filter()
+              .tmdbIdEqualTo(title.tmdbId)
+              .mediaTypeEqualTo(title.mediaType)
+              .findFirst();
+          if (existing != null) {
+            title.inLists = existing.inLists;
+            if (!title.isPinned) {
+              title.isPinned = existing.isPinned;
+            }
+          }
+        }
+      }
+
       await _isar.tmdbTitles.putAll(titles);
     });
   }
@@ -235,8 +267,12 @@ class TmdbTitleRepository {
         .findFirstSync();
   }
 
-  Future<TmdbTitle?> getTitleGlobal(int tmdbId) async {
-    return _isar.tmdbTitles.filter().tmdbIdEqualTo(tmdbId).findFirst();
+  Future<TmdbTitle?> getTitleGlobal(int tmdbId, String mediaType) async {
+    return _isar.tmdbTitles
+        .filter()
+        .tmdbIdEqualTo(tmdbId)
+        .mediaTypeEqualTo(mediaType)
+        .findFirst();
   }
 
   Future<List<TmdbTitle>> getTitlesByTmdbIds(List<int> tmdbIds) async {

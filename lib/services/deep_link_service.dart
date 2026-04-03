@@ -5,6 +5,7 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/screens/title_details.dart';
+import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 
@@ -52,27 +53,33 @@ class DeepLinkService {
     }
 
     if (type != null && id != null) {
-      _navigate(type, id);
+      unawaited(_navigate(type, id));
     }
   }
 
   void navigateTo(String type, int tmdbId) {
-    _navigate(type, tmdbId.toString());
+    unawaited(_navigate(type, tmdbId.toString()));
   }
 
-  void _navigate(String type, String id) {
+  Future<void> _navigate(String type, String id) async {
     final idClean = id.split('-').first;
     final tmdbId = int.tryParse(idClean);
     if (tmdbId == null) return;
 
     if (type == ApiConstants.movie || type == ApiConstants.tv) {
+      final repository = TmdbTitleRepository();
+      final existingTitle = await repository.getTitleGlobal(tmdbId, type);
+
+      final title = existingTitle ??
+          TmdbTitle.fromMap(title: {
+            TmdbTitleFields.id: tmdbId,
+            TmdbTitleFields.mediaType: type,
+          });
+
       navigatorKey.currentState?.push(
         MaterialPageRoute(
           builder: (context) => TitleDetails(
-            title: TmdbTitle.fromMap(title: {
-              TmdbTitleFields.id: tmdbId,
-              TmdbTitleFields.mediaType: type,
-            }),
+            title: title,
             tmdbListService: _tmdbListService,
           ),
         ),
