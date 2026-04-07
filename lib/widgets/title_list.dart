@@ -30,7 +30,9 @@ class TitleList extends StatefulWidget {
 
 class _TitleListState extends State<TitleList> {
   late final TitleListController _controller;
-  bool _isPinnedSectionExpanded = PreferencesService().prefs.getBool('isPinnedSectionExpanded') ?? true;
+  final _refreshController = IndicatorController();
+  bool _isPinnedSectionExpanded =
+      PreferencesService().prefs.getBool('isPinnedSectionExpanded') ?? true;
 
   @override
   void initState() {
@@ -45,6 +47,7 @@ class _TitleListState extends State<TitleList> {
   @override
   void dispose() {
     _controller.dispose();
+    _refreshController.dispose();
     super.dispose();
   }
 
@@ -67,8 +70,9 @@ class _TitleListState extends State<TitleList> {
           child: ListView.builder(
             key: const PageStorageKey('TitleListView'),
             controller: _controller.scrollController,
-            physics: const ClampingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics()),
+            physics: AlwaysScrollableScrollPhysics(
+              parent: ClampingWithOverscrollPhysics(state: _refreshController),
+            ),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             itemCount: service.loadedTitleCount,
             itemBuilder: (context, index) {
@@ -111,9 +115,9 @@ class _TitleListState extends State<TitleList> {
         );
 
         if (service.isRefreshable) {
-          content = CustomMaterialIndicator(
-            edgeOffset: 10,
-            displacement: 200,
+          content = CustomRefreshIndicator(
+            controller: _refreshController,
+            triggerMode: IndicatorTriggerMode.anywhere,
             onRefresh: () async {
               if (widget.listService.isLoading.value) {
                 return;
@@ -126,8 +130,10 @@ class _TitleListState extends State<TitleList> {
                 locale: Localizations.localeOf(context),
               );
             },
-            color: Theme.of(context).colorScheme.primary,
-            backgroundColor: Theme.of(context).colorScheme.surface,
+            builder: (BuildContext context, Widget child,
+                IndicatorController controller) {
+              return _refreshIndicator(context, child, controller);
+            },
             child: content,
           );
         }
@@ -197,7 +203,8 @@ class _TitleListState extends State<TitleList> {
                 onTap: () {
                   setState(() {
                     _isPinnedSectionExpanded = !_isPinnedSectionExpanded;
-                    PreferencesService().prefs.setBool('isPinnedSectionExpanded', _isPinnedSectionExpanded);
+                    PreferencesService().prefs.setBool(
+                        'isPinnedSectionExpanded', _isPinnedSectionExpanded);
                   });
                 },
                 child: Padding(
@@ -248,6 +255,44 @@ class _TitleListState extends State<TitleList> {
           ),
         );
       },
+    );
+  }
+
+  Widget _refreshIndicator(BuildContext context, Widget child,
+      IndicatorController controller) {
+    return Stack(
+      children: [
+        child,
+        if (!controller.side.isNone)
+          Positioned(
+            top: (150 * controller.value),
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Opacity(
+                opacity: (controller.value / 0.5).clamp(0.0, 1.0),
+                child: Material(
+                  elevation: 4,
+                  shape: const CircleBorder(),
+                  color: Theme.of(context).colorScheme.surface,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        value: controller.isLoading
+                            ? null
+                            : controller.value,
+                        strokeWidth: 3,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 

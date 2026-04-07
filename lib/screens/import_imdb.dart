@@ -137,7 +137,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
         setState(() async {
           _resetTitlesMessage =
               AppLocalizations.of(context)!.resetWatchlistCount;
-          _resetTitlesCount = await watchlistService.listTitleCount;
+          _resetTitlesCount = watchlistService.listTitleCount;
         });
 
         try {
@@ -197,7 +197,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
         setState(() async {
           _resetTitlesMessage =
               AppLocalizations.of(context)!.resetRateslistCount;
-          _resetTitlesCount = await rateslistService.listTitleCount;
+          _resetTitlesCount = rateslistService.listTitleCount;
         });
 
         try {
