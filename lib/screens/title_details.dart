@@ -746,10 +746,9 @@ class _TitleDetailsState extends State<TitleDetails> {
       return const SizedBox.shrink();
     }
     return Row(
-      children: (providers as List?)
-              ?.map<Widget>((provider) => _providerLogo(provider))
-              .toList() ??
-          [],
+      children: providers
+              .map<Widget>((provider) => _providerLogo(provider))
+              .toList(),
     );
   }
 

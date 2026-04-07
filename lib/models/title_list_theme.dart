@@ -114,7 +114,9 @@ class TitleListTheme extends ThemeExtension<TitleListTheme> {
 
   @override
   TitleListTheme lerp(ThemeExtension<TitleListTheme>? other, double t) {
-    if (other is! TitleListTheme) return this;
+    if (other is! TitleListTheme) {
+      return this;
+    }
     return TitleListTheme(
       listBackground: Color.lerp(listBackground, other.listBackground, t)!,
       listDividerColor:

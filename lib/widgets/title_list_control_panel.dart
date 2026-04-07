@@ -3,8 +3,6 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/screens/genres.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 
-typedef MenuEntry = DropdownMenuEntry<String>;
-
 class TitleListControlPanel extends StatelessWidget {
   final Function textFilterChanged;
   final TextEditingController textFilterController;
