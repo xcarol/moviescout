@@ -119,13 +119,24 @@ class TmdbTitleRepository {
     await _isar.writeTxn(() async {
       await _logMultipleZeroRatingError(titles);
 
-      for (final title in titles) {
-        if (title.inLists.isEmpty) {
-          final existing = await _isar.tmdbTitles
-              .filter()
-              .tmdbIdEqualTo(title.tmdbId)
-              .mediaTypeEqualTo(title.mediaType)
-              .findFirst();
+      final titlesToFetch = titles.where((t) => t.inLists.isEmpty).toList();
+
+      if (titlesToFetch.isNotEmpty) {
+        final tmdbIds = titlesToFetch.map((t) => t.tmdbId).toList();
+        final mediaTypes = titlesToFetch.map((t) => t.mediaType).toList();
+
+        final existingTitles =
+            await _isar.tmdbTitles.getAllByTmdbIdMediaType(tmdbIds, mediaTypes);
+
+        final existingMap = <String, TmdbTitle>{};
+        for (final existing in existingTitles) {
+          if (existing != null) {
+            existingMap['${existing.tmdbId}_${existing.mediaType}'] = existing;
+          }
+        }
+
+        for (final title in titlesToFetch) {
+          final existing = existingMap['${title.tmdbId}_${title.mediaType}'];
           if (existing != null) {
             title.inLists = existing.inLists;
             if (!title.isPinned) {
