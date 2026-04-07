@@ -135,7 +135,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  Widget _infoColumn(String label, dynamic value) {
+  Widget _infoColumn(String label, Widget value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -143,7 +143,7 @@ class _TitleDetailsState extends State<TitleDetails> {
           label,
           style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
         ),
-        if (value is Widget) value else Text(value.toString()),
+        value,
       ],
     );
   }
@@ -159,16 +159,17 @@ class _TitleDetailsState extends State<TitleDetails> {
             child: Row(
               children: [
                 _infoColumn(AppLocalizations.of(context)!.originaTitle,
-                    title.originalName),
+                    Text(title.originalName)),
                 const SizedBox(width: 20),
                 _infoColumn(AppLocalizations.of(context)!.originalLanguage,
-                    LanguageService().getLanguageName(title.originalLanguage)),
+                    Text(LanguageService()
+                        .getLanguageName(title.originalLanguage))),
                 const SizedBox(width: 20),
                 _infoColumn(
                     AppLocalizations.of(context)!.originCountry,
-                    title.originCountry
+                    Text(title.originCountry
                         .map((c) => RegionService().getRegionName(c))
-                        .join(', ')),
+                        .join(', '))),
               ],
             ),
           ),
