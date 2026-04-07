@@ -291,7 +291,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     }
 
     if (isInitialLoad) {
-      final totalCount = await listTitleCount;
+      final totalCount = listTitleCount;
       const batchSize = 10;
 
       for (var i = 0; i < totalCount; i += batchSize) {
@@ -321,7 +321,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   Future<void> updateProviders() async {
     isLoading.value = true;
     try {
-      final totalCount = await listTitleCount;
+      final totalCount = listTitleCount;
       const batchSize = 10;
 
       for (var i = 0; i < totalCount; i += batchSize) {
