@@ -88,7 +88,9 @@ class TmdbTitleFields {
   static const String lastProvidersUpdate = 'last_providers_update';
 }
 
+const statusEnded = 'Ended';
 const statusReturning = 'Returning Series';
+const statusCanceled = 'Canceled';
 const statusInProduction = 'In Production';
 const statusPlanned = 'Planned';
 
