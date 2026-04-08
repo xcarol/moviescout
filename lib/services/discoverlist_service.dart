@@ -266,7 +266,7 @@ class TmdbDiscoverlistService extends TmdbListService {
       final popularTitles = await getTitlesFromServer((int page) async {
         if (page > 2) {
           return http.Response(
-            '{"page":%d,"total_pages":%d}'.replaceAll('%d', page.toString()),
+            '{"page":$page,"total_pages":$page}',
             200,
           );
         }

@@ -43,7 +43,9 @@ class CustomColors extends ThemeExtension<CustomColors> {
 
   @override
   CustomColors lerp(ThemeExtension<CustomColors>? other, double t) {
-    if (other is! CustomColors) return this;
+    if (other is! CustomColors) {
+      return this;
+    }
     return CustomColors(
       inWatchlist: Color.lerp(inWatchlist, other.inWatchlist, t)!,
       notInWatchlist: Color.lerp(notInWatchlist, other.notInWatchlist, t)!,

@@ -100,16 +100,16 @@ class TmdbBaseService {
         await Future.delayed(delay);
         delay = updatedDelay();
         retryCount++;
-      } on SocketException {
+      } on HandshakeException {
         debugPrint(
-            'SocketException: retrying in ${delay.inSeconds} seconds...');
+            'HandshakeException: retrying in ${delay.inSeconds} seconds...');
         await AppLifecycleService.instance.waitUntilResumed();
         await Future.delayed(delay);
         delay = updatedDelay();
         retryCount++;
-      } on HandshakeException {
+      } on SocketException {
         debugPrint(
-            'HandshakeException: retrying in ${delay.inSeconds} seconds...');
+            'SocketException: retrying in ${delay.inSeconds} seconds...');
         await AppLifecycleService.instance.waitUntilResumed();
         await Future.delayed(delay);
         delay = updatedDelay();

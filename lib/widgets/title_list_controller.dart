@@ -253,7 +253,9 @@ class TitleListController with ChangeNotifier {
   }
 
   String _titleTypeToOption(String type, [AppLocalizations? localizations]) {
-    if (localizations == null) return type;
+    if (localizations == null) {
+      return type;
+    }
 
     if (type == localizations.movies) {
       return ApiConstants.movie;
