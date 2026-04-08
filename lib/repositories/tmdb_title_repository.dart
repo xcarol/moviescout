@@ -4,59 +4,18 @@ import 'package:moviescout/models/user_list_entry.dart';
 import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/utils/save_logs.dart';
 
 class TmdbTitleRepository {
   final _isar = IsarService.instance;
 
-
-  Future<void> _logZeroRatingError(TmdbTitle title, {String? listName}) async {
-    if (title.rating > 0) return;
-
-    if (listName != null && listName == AppConstants.rateslist) {
-      return saveLogs([
-        '== ZERO ERROR ==',
-        'listName: $listName',
-        'title: ${title.name} rating: ${title.rating} stackTrace: ${StackTrace.current}',
-        '== ZERO ERROR ==',
-      ]);
-    }
-
-    final inRatesList = await _isar.userListEntrys
-        .filter()
-        .tmdbIdEqualTo(title.tmdbId)
-        .mediaTypeEqualTo(title.mediaType)
-        .findAll();
-
-    final lists = inRatesList.map((e) => e.listName).toList().join(', ');
-
-    if (inRatesList.any((e) => e.listName == AppConstants.rateslist)) {
-      return saveLogs([
-        '== ZERO ERROR ==',
-        'lists: [$lists]',
-        'title: ${title.name} rating: ${title.rating} stackTrace: ${StackTrace.current}',
-        '== ZERO ERROR ==',
-      ]);
-    }
-  }
-
-  Future<void> _logMultipleZeroRatingError(List<TmdbTitle> titles,
-      {String? listName}) async {
-    for (final title in titles) {
-      await _logZeroRatingError(title, listName: listName);
-    }
-  }
-
   Future<void> saveTitle(
       TmdbTitle title, String listName, int addedOrder) async {
     await _isar.writeTxn(() async {
-      await _logZeroRatingError(title, listName: listName);
-      
       if (!title.inLists.contains(listName)) {
         title.inLists = [...title.inLists, listName];
       }
       await _isar.tmdbTitles.put(title);
-      
+
       await _isar.userListEntrys.put(UserListEntry(
         listName: listName,
         tmdbId: title.tmdbId,
@@ -71,15 +30,13 @@ class TmdbTitleRepository {
     if (titles.isEmpty) return;
 
     await _isar.writeTxn(() async {
-      await _logMultipleZeroRatingError(titles, listName: listName);
-      
       for (final title in titles) {
         if (!title.inLists.contains(listName)) {
           title.inLists = [...title.inLists, listName];
         }
       }
       await _isar.tmdbTitles.putAll(titles);
-      
+
       final entries = <UserListEntry>[];
       for (var i = 0; i < titles.length; i++) {
         entries.add(UserListEntry(
@@ -95,8 +52,6 @@ class TmdbTitleRepository {
 
   Future<void> updateTitleMetadata(TmdbTitle title) async {
     await _isar.writeTxn(() async {
-      await _logZeroRatingError(title);
-
       if (title.inLists.isEmpty) {
         final existing = await _isar.tmdbTitles
             .filter()
@@ -117,8 +72,6 @@ class TmdbTitleRepository {
 
   Future<void> updateTitlesMetadata(List<TmdbTitle> titles) async {
     await _isar.writeTxn(() async {
-      await _logMultipleZeroRatingError(titles);
-
       final titlesToFetch = titles.where((t) => t.inLists.isEmpty).toList();
 
       if (titlesToFetch.isNotEmpty) {
@@ -183,7 +136,7 @@ class TmdbTitleRepository {
       for (var i = 0; i < tmdbIds.length; i++) {
         final id = tmdbIds[i];
         final type = mediaTypes[i];
-        
+
         await _isar.userListEntrys
             .filter()
             .listNameEqualTo(listName)
@@ -259,7 +212,8 @@ class TmdbTitleRepository {
     return entry?.addedOrder ?? -1;
   }
 
-  Future<TmdbTitle?> getTitleByTmdbId(String listName, int tmdbId, String mediaType) async {
+  Future<TmdbTitle?> getTitleByTmdbId(
+      String listName, int tmdbId, String mediaType) async {
     return await _isar.tmdbTitles
         .filter()
         .inListsElementEqualTo(listName)
@@ -341,7 +295,8 @@ class TmdbTitleRepository {
     }
 
     if (filterGenres.isNotEmpty) {
-      query = query.anyOf(filterGenres, (q, id) => q.genreIdsElementEqualTo(id));
+      query =
+          query.anyOf(filterGenres, (q, id) => q.genreIdsElementEqualTo(id));
     }
 
     if (filterMediaType.isNotEmpty) {
@@ -418,10 +373,8 @@ class TmdbTitleRepository {
 
     if (eligibleTitles.isEmpty) return [];
 
-    final entryMetadata = await _isar.userListEntrys
-        .filter()
-        .listNameEqualTo(listName)
-        .findAll();
+    final entryMetadata =
+        await _isar.userListEntrys.filter().listNameEqualTo(listName).findAll();
 
     final orderMap = {
       for (var e in entryMetadata) '${e.tmdbId}_${e.mediaType}': e.addedOrder
@@ -430,7 +383,9 @@ class TmdbTitleRepository {
     eligibleTitles.sort((a, b) {
       final orderA = orderMap['${a.tmdbId}_${a.mediaType}'] ?? 0;
       final orderB = orderMap['${b.tmdbId}_${b.mediaType}'] ?? 0;
-      return sortAscending ? orderA.compareTo(orderB) : orderB.compareTo(orderA);
+      return sortAscending
+          ? orderA.compareTo(orderB)
+          : orderB.compareTo(orderA);
     });
 
     final start = offset;
