@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform;
+    show TargetPlatform, defaultTargetPlatform, kDebugMode;
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/screens/providers.dart';
@@ -264,25 +264,26 @@ class AppDrawer extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            TextButton.icon(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close About dialog
-                Navigator.pop(context); // Close Drawer
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const WatchlistLogsScreen(),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.history),
-              label: const Text('Logs d\'actualització'),
-            ),
-          ],
-        ),
+        if (kDebugMode)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close About dialog
+                  Navigator.pop(context); // Close Drawer
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const WatchlistLogsScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.history),
+                label: const Text('Logs d\'actualització'),
+              ),
+            ],
+          ),
       ],
       child: Text(AppLocalizations.of(context)!.about),
     );

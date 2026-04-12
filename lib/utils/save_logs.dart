@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 Future<void> saveLogs(List<String> logLines) async {
+  if (kDebugMode == false) return;
+
   try {
     final prefs = PreferencesService().prefs;
     final currentLogs =
