@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -61,6 +62,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   ValueNotifier<List<String>> listGenres = ValueNotifier([]);
   bool get isRefreshable => true;
   bool _userRatingAvailableVal = false;
+
+  static Future<void> _syncQueue = Future.value();
 
   TmdbListService(String listName, this.repository, {List<TmdbTitle>? titles}) {
     listNameVal = listName;
@@ -162,7 +165,18 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
     isLoading.value = true;
 
+    final predecessor = _syncQueue;
+    final completer = Completer<void>();
+    _syncQueue = completer.future;
+
+    await predecessor.catchError((_) {});
+
     try {
+      bool isUpToDateNow = UpdateManager().isUpToDate(listNameVal, cacheTimeout);
+      if (listIsNotEmpty && isUpToDateNow && !forceUpdate) {
+        return;
+      }
+
       await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
 
       await updateListGenres();
@@ -176,6 +190,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       );
     } finally {
       isLoading.value = false;
+      completer.complete();
     }
   }
 
