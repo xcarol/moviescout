@@ -505,6 +505,8 @@ class _TitleDetailsState extends State<TitleDetails> {
                 ratingService.contains(title),
               ]),
               builder: (context, snapshot) {
+                final isUserLoggedIn =
+                    Provider.of<TmdbUserService>(context).isUserLoggedIn;
                 final titleRating =
                     ratingService.getRating(title.tmdbId, title.mediaType);
                 final titleRatingDate = snapshot.data?[0] as DateTime? ??
@@ -540,7 +542,9 @@ class _TitleDetailsState extends State<TitleDetails> {
                             TextButton(
                               style: TextButton.styleFrom(
                                 side: BorderSide(
-                                  color: Theme.of(context).colorScheme.primary,
+                                  color: isUserLoggedIn
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).disabledColor,
                                   width: 1,
                                 ),
                                 shape: RoundedRectangleBorder(
@@ -551,37 +555,43 @@ class _TitleDetailsState extends State<TitleDetails> {
                                 minimumSize: const Size(0, 0),
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
-                              onPressed: () => showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return RateForm(
-                                    title: title.name,
-                                    initialRate: titleRating,
-                                    initialDate: titleRatingDate,
-                                    onSubmit: (double rating) {
-                                      Provider.of<TmdbRateslistService>(context,
-                                              listen: false)
-                                          .updateTitleRate(
-                                        Provider.of<TmdbUserService>(context,
-                                                listen: false)
-                                            .accountId,
-                                        Provider.of<TmdbUserService>(context,
-                                                listen: false)
-                                            .sessionId,
-                                        title,
-                                        rating,
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
+                              onPressed: !isUserLoggedIn
+                                  ? null
+                                  : () => showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return RateForm(
+                                            title: title.name,
+                                            initialRate: titleRating,
+                                            initialDate: titleRatingDate,
+                                            onSubmit: (double rating) {
+                                              Provider.of<TmdbRateslistService>(
+                                                      context,
+                                                      listen: false)
+                                                  .updateTitleRate(
+                                                Provider.of<TmdbUserService>(
+                                                        context,
+                                                        listen: false)
+                                                    .accountId,
+                                                Provider.of<TmdbUserService>(
+                                                        context,
+                                                        listen: false)
+                                                    .sessionId,
+                                                title,
+                                                rating,
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
                               child: Text(AppLocalizations.of(context)!.rate),
                             ),
                             const SizedBox(width: 10),
                             TextButton(
                               style: TextButton.styleFrom(
                                 side: BorderSide(
-                                  color: titleRating > AppConstants.seenRating
+                                  color: !isUserLoggedIn ||
+                                          titleRating > AppConstants.seenRating
                                       ? Theme.of(context).disabledColor
                                       : (titleRating == AppConstants.seenRating
                                           ? Theme.of(context)
@@ -600,8 +610,9 @@ class _TitleDetailsState extends State<TitleDetails> {
                                 minimumSize: const Size(0, 0),
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
-                              onPressed: titleRating > AppConstants.seenRating
-                                  ? null // Disabled if rated
+                              onPressed: !isUserLoggedIn ||
+                                      titleRating > AppConstants.seenRating
+                                  ? null
                                   : () {
                                       final newRating =
                                           titleRating == AppConstants.seenRating
@@ -629,12 +640,18 @@ class _TitleDetailsState extends State<TitleDetails> {
                                       ? Symbols.done_outline
                                       : Symbols.check,
                                   color: titleRating > 0
-                                      ? (titleRating > AppConstants.seenRating
+                                      ? (!isUserLoggedIn ||
+                                              titleRating >
+                                                  AppConstants.seenRating
                                           ? Theme.of(context).disabledColor
                                           : Theme.of(context)
                                               .extension<CustomColors>()!
                                               .ratedTitle)
-                                      : Theme.of(context).colorScheme.primary,
+                                      : (isUserLoggedIn
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                          : Theme.of(context).disabledColor),
                                 ),
                               ),
                             ),
