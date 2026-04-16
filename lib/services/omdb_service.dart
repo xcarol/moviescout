@@ -25,14 +25,15 @@ class OmdbService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        
+
         if (data['Response'] == 'True' && data['Ratings'] is List) {
           return List<Map<String, dynamic>>.from(data['Ratings']);
         }
       } else {
         ErrorService.log(
             'OMDB API returned ${response.statusCode} for imdbId $imdbId',
-            showSnackBar: false);
+            showSnackBar: false,
+            reportToCrashlytics: response.statusCode == 401 ? true : false);
       }
     } catch (e, stackTrace) {
       ErrorService.log(
