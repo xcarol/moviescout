@@ -546,6 +546,10 @@ class _TitleDetailsState extends State<TitleDetails> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5),
                                 ),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 6, horizontal: 14),
+                                minimumSize: const Size(0, 0),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
                               onPressed: () => showDialog(
                                 context: context,
@@ -591,6 +595,10 @@ class _TitleDetailsState extends State<TitleDetails> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5),
                                 ),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 6, horizontal: 14),
+                                minimumSize: const Size(0, 0),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
                               onPressed: titleRating > AppConstants.seenRating
                                   ? null // Disabled if rated
