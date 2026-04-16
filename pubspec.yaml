@@ -103,6 +103,9 @@ flutter:
     - assets/person_web.png
     - assets/person.svg
     - assets/tmdb-logo.png
+    - assets/imdb-logo.png
+    - assets/rotten-logo.png
+    - assets/metacritic-logo.png
     - assets/tvshow_poster.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

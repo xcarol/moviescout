@@ -145,6 +145,14 @@ TMDB_API_RAT=apiReadAccessTokenGotFromTmdb
 ``` 
 NOTICE! As stated in the [TMDB API Documentation about Providers](https://developer.themoviedb.org/reference/movie-watch-providers), the data source is [**JustWatch**](https://www.justwatch.com/).  
 
+## OMDB integration
+
+Get the **API Key** from [OMDb API](https://www.omdbapi.com/apikey.aspx)     
+Add the key to your `.env` file:
+```
+OMDB_API_KEY=yourOmdbApiKey
+```
+
 ## Assets
 
 Images like tvshow_poster.png are created with [Cool Text](https://cooltext.com/) tool using [FUN](https://cooltext.com/Logo-Design-Fun) text style.  

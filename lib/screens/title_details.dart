@@ -25,6 +25,7 @@ import 'package:moviescout/widgets/rate_form.dart';
 import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
+import 'package:moviescout/widgets/omdb_rating_widget.dart';
 import 'package:moviescout/widgets/pin_button.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/utils/api_constants.dart';
@@ -161,7 +162,8 @@ class _TitleDetailsState extends State<TitleDetails> {
                 _infoColumn(AppLocalizations.of(context)!.originaTitle,
                     Text(title.originalName)),
                 const SizedBox(width: 20),
-                _infoColumn(AppLocalizations.of(context)!.originalLanguage,
+                _infoColumn(
+                    AppLocalizations.of(context)!.originalLanguage,
                     Text(LanguageService()
                         .getLanguageName(title.originalLanguage))),
                 const SizedBox(width: 20),
@@ -448,22 +450,53 @@ class _TitleDetailsState extends State<TitleDetails> {
     }
 
     if (title.voteAverage > 0) {
-      titleVoteAverage = title.voteAverage.toStringAsFixed(2);
+      titleVoteAverage = title.voteAverage.toStringAsFixed(1);
+    }
+
+    List<Widget> topChildren = [];
+    if (title.voteAverage > 0) {
+      topChildren.addAll([
+        Tooltip(
+          message: 'The Movie Database',
+          child: Row(
+            children: [
+              Image.asset('assets/tmdb-logo.png', height: 16),
+              const SizedBox(width: 5),
+              Text(titleVoteAverage),
+            ],
+          ),
+        ),
+      ]);
+    }
+
+    if (title.omdbRatings.isNotEmpty) {
+      for (var rating in title.omdbRatings) {
+        if (topChildren.isNotEmpty) topChildren.add(const SizedBox(width: 15));
+        topChildren.add(OmdbRatingWidget(rating: rating));
+      }
     }
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Icon(
-              Icons.star,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            const SizedBox(width: 5),
-            Text(titleVoteAverage),
-          ],
-        ),
+        if (topChildren.isNotEmpty)
+          Row(
+            children: [
+              Icon(
+                Icons.star,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              const SizedBox(width: 5),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(children: topChildren),
+                ),
+              ),
+            ],
+          ),
+        const SizedBox(height: 5),
         Consumer<TmdbRateslistService>(
           builder: (context, ratingService, child) {
             return FutureBuilder<List<dynamic>>(
@@ -747,9 +780,8 @@ class _TitleDetailsState extends State<TitleDetails> {
       return const SizedBox.shrink();
     }
     return Row(
-      children: providers
-              .map<Widget>((provider) => _providerLogo(provider))
-              .toList(),
+      children:
+          providers.map<Widget>((provider) => _providerLogo(provider)).toList(),
     );
   }
 
