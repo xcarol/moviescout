@@ -30,7 +30,9 @@ class OmdbService {
           return List<Map<String, dynamic>>.from(data['Ratings']);
         }
       } else {
-        ErrorService.log('OMDB API returned ${response.statusCode} for imdbId $imdbId');
+        ErrorService.log(
+            'OMDB API returned ${response.statusCode} for imdbId $imdbId',
+            showSnackBar: false);
       }
     } catch (e, stackTrace) {
       ErrorService.log(
