@@ -12,6 +12,7 @@ class ErrorService {
     StackTrace? stackTrace,
     String? userMessage,
     bool showSnackBar = true,
+    bool reportToCrashlytics = false,
   }) {
     debugPrint('--- ERROR ---');
     debugPrint('Error: $error');
@@ -22,7 +23,8 @@ class ErrorService {
 
     bool shouldReport = _shouldReportAutomatically(error);
 
-    if (shouldReport && (Platform.isAndroid || Platform.isIOS)) {
+    if ((shouldReport || reportToCrashlytics) &&
+        (Platform.isAndroid || Platform.isIOS)) {
       try {
         FirebaseCrashlytics.instance.recordError(
           error,
