@@ -25,7 +25,9 @@ import 'package:moviescout/widgets/rate_form.dart';
 import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
+import 'package:moviescout/widgets/omdb_rating_widget.dart';
 import 'package:moviescout/widgets/pin_button.dart';
+import 'package:moviescout/services/omdb_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -50,6 +52,7 @@ class TitleDetails extends StatefulWidget {
 class _TitleDetailsState extends State<TitleDetails> {
   late TmdbTitle _currentTitle;
   bool _isUpdating = false;
+  List<Map<String, dynamic>>? _omdbRatings;
 
   @override
   void initState() {
@@ -102,6 +105,15 @@ class _TitleDetailsState extends State<TitleDetails> {
           _currentTitle = updated;
           _isUpdating = false;
         });
+
+        if (updated.imdbId.isNotEmpty) {
+          final ratings = await OmdbService().getRatings(updated.imdbId);
+          if (mounted) {
+            setState(() {
+              _omdbRatings = ratings;
+            });
+          }
+        }
 
         final repository = TmdbTitleRepository();
         await repository.updateTitleMetadata(updated);
@@ -161,7 +173,8 @@ class _TitleDetailsState extends State<TitleDetails> {
                 _infoColumn(AppLocalizations.of(context)!.originaTitle,
                     Text(title.originalName)),
                 const SizedBox(width: 20),
-                _infoColumn(AppLocalizations.of(context)!.originalLanguage,
+                _infoColumn(
+                    AppLocalizations.of(context)!.originalLanguage,
                     Text(LanguageService()
                         .getLanguageName(title.originalLanguage))),
                 const SizedBox(width: 20),
@@ -448,22 +461,62 @@ class _TitleDetailsState extends State<TitleDetails> {
     }
 
     if (title.voteAverage > 0) {
-      titleVoteAverage = title.voteAverage.toStringAsFixed(2);
+      titleVoteAverage = title.voteAverage.toStringAsFixed(1);
+    }
+
+    List<Widget> topChildren = [];
+    if (title.voteAverage > 0) {
+      topChildren.addAll([
+        Tooltip(
+          message: 'The Movie Database',
+          child: Row(
+            children: [
+              Image.asset('assets/tmdb-logo.png', height: 16),
+              const SizedBox(width: 5),
+              Text(titleVoteAverage),
+            ],
+          ),
+        ),
+      ]);
+    }
+    
+    if (_isUpdating) {
+      topChildren.add(const SizedBox(width: 15));
+      topChildren.add(
+        SizedBox(
+          width: 15,
+          height: 15,
+          child: CircularProgressIndicator(strokeWidth: 1),
+        ),
+      );
+    } else if (_omdbRatings != null && _omdbRatings!.isNotEmpty) {
+      for (var rating in _omdbRatings!) {
+        if (topChildren.isNotEmpty) topChildren.add(const SizedBox(width: 15));
+        topChildren.add(OmdbRatingWidget(rating: rating));
+      }
     }
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Icon(
-              Icons.star,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            const SizedBox(width: 5),
-            Text(titleVoteAverage),
-          ],
-        ),
+        if (topChildren.isNotEmpty)
+          Row(
+            children: [
+              Icon(
+                Icons.star,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              const SizedBox(width: 5),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(children: topChildren),
+                ),
+              ),
+            ],
+          ),
+        const SizedBox(height: 5),
         Consumer<TmdbRateslistService>(
           builder: (context, ratingService, child) {
             return FutureBuilder<List<dynamic>>(
@@ -472,6 +525,8 @@ class _TitleDetailsState extends State<TitleDetails> {
                 ratingService.contains(title),
               ]),
               builder: (context, snapshot) {
+                final isUserLoggedIn =
+                    Provider.of<TmdbUserService>(context).isUserLoggedIn;
                 final titleRating =
                     ratingService.getRating(title.tmdbId, title.mediaType);
                 final titleRatingDate = snapshot.data?[0] as DateTime? ??
@@ -507,44 +562,56 @@ class _TitleDetailsState extends State<TitleDetails> {
                             TextButton(
                               style: TextButton.styleFrom(
                                 side: BorderSide(
-                                  color: Theme.of(context).colorScheme.primary,
+                                  color: isUserLoggedIn
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).disabledColor,
                                   width: 1,
                                 ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5),
                                 ),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 6, horizontal: 14),
+                                minimumSize: const Size(0, 0),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
-                              onPressed: () => showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return RateForm(
-                                    title: title.name,
-                                    initialRate: titleRating,
-                                    initialDate: titleRatingDate,
-                                    onSubmit: (double rating) {
-                                      Provider.of<TmdbRateslistService>(context,
-                                              listen: false)
-                                          .updateTitleRate(
-                                        Provider.of<TmdbUserService>(context,
-                                                listen: false)
-                                            .accountId,
-                                        Provider.of<TmdbUserService>(context,
-                                                listen: false)
-                                            .sessionId,
-                                        title,
-                                        rating,
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
+                              onPressed: !isUserLoggedIn
+                                  ? null
+                                  : () => showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return RateForm(
+                                            title: title.name,
+                                            initialRate: titleRating,
+                                            initialDate: titleRatingDate,
+                                            onSubmit: (double rating) {
+                                              Provider.of<TmdbRateslistService>(
+                                                      context,
+                                                      listen: false)
+                                                  .updateTitleRate(
+                                                Provider.of<TmdbUserService>(
+                                                        context,
+                                                        listen: false)
+                                                    .accountId,
+                                                Provider.of<TmdbUserService>(
+                                                        context,
+                                                        listen: false)
+                                                    .sessionId,
+                                                title,
+                                                rating,
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
                               child: Text(AppLocalizations.of(context)!.rate),
                             ),
                             const SizedBox(width: 10),
                             TextButton(
                               style: TextButton.styleFrom(
                                 side: BorderSide(
-                                  color: titleRating > AppConstants.seenRating
+                                  color: !isUserLoggedIn ||
+                                          titleRating > AppConstants.seenRating
                                       ? Theme.of(context).disabledColor
                                       : (titleRating == AppConstants.seenRating
                                           ? Theme.of(context)
@@ -558,9 +625,14 @@ class _TitleDetailsState extends State<TitleDetails> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5),
                                 ),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 6, horizontal: 14),
+                                minimumSize: const Size(0, 0),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
-                              onPressed: titleRating > AppConstants.seenRating
-                                  ? null // Disabled if rated
+                              onPressed: !isUserLoggedIn ||
+                                      titleRating > AppConstants.seenRating
+                                  ? null
                                   : () {
                                       final newRating =
                                           titleRating == AppConstants.seenRating
@@ -588,12 +660,18 @@ class _TitleDetailsState extends State<TitleDetails> {
                                       ? Symbols.done_outline
                                       : Symbols.check,
                                   color: titleRating > 0
-                                      ? (titleRating > AppConstants.seenRating
+                                      ? (!isUserLoggedIn ||
+                                              titleRating >
+                                                  AppConstants.seenRating
                                           ? Theme.of(context).disabledColor
                                           : Theme.of(context)
                                               .extension<CustomColors>()!
                                               .ratedTitle)
-                                      : Theme.of(context).colorScheme.primary,
+                                      : (isUserLoggedIn
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                          : Theme.of(context).disabledColor),
                                 ),
                               ),
                             ),
@@ -747,9 +825,8 @@ class _TitleDetailsState extends State<TitleDetails> {
       return const SizedBox.shrink();
     }
     return Row(
-      children: providers
-              .map<Widget>((provider) => _providerLogo(provider))
-              .toList(),
+      children:
+          providers.map<Widget>((provider) => _providerLogo(provider)).toList(),
     );
   }
 

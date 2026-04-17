@@ -97,14 +97,17 @@ class TitleCard extends StatelessWidget {
       return const SizedBox();
     }
 
-    List<Widget> children = [
-      Icon(
-        Icons.star,
-        color: Theme.of(context).colorScheme.onSurface,
-      ),
-      const SizedBox(width: 5),
-      Text(tmdbTitle.voteAverage.toStringAsFixed(2)),
-    ];
+    List<Widget> children = [];
+    if (tmdbTitle.voteAverage > 0) {
+      children.addAll([
+        Icon(
+          Icons.star,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+        const SizedBox(width: 5),
+        Text(tmdbTitle.voteAverage.toStringAsFixed(2)),
+      ]);
+    }
 
     return Consumer<TmdbRateslistService>(
       builder: (context, rateslistService, _) {
@@ -116,7 +119,9 @@ class TitleCard extends StatelessWidget {
             final ratingChildren = List<Widget>.from(children);
 
             if (ratedTitle != null && ratedTitle.tmdbId > 0) {
-              ratingChildren.add(const SizedBox(width: 20));
+              if (ratingChildren.isNotEmpty) {
+                ratingChildren.add(const SizedBox(width: 20));
+              }
               if (ratedTitle.rating == AppConstants.seenRating) {
                 ratingChildren.add(
                   Text(
@@ -140,6 +145,7 @@ class TitleCard extends StatelessWidget {
               ratingChildren.addAll(extraWidgets);
             }
 
+            if (ratingChildren.isEmpty) return const SizedBox();
             return Row(children: ratingChildren);
           },
         );
