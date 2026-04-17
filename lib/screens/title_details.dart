@@ -27,6 +27,7 @@ import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/omdb_rating_widget.dart';
 import 'package:moviescout/widgets/pin_button.dart';
+import 'package:moviescout/services/omdb_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -51,6 +52,7 @@ class TitleDetails extends StatefulWidget {
 class _TitleDetailsState extends State<TitleDetails> {
   late TmdbTitle _currentTitle;
   bool _isUpdating = false;
+  List<Map<String, dynamic>>? _omdbRatings;
 
   @override
   void initState() {
@@ -103,6 +105,15 @@ class _TitleDetailsState extends State<TitleDetails> {
           _currentTitle = updated;
           _isUpdating = false;
         });
+
+        if (updated.imdbId.isNotEmpty) {
+          final ratings = await OmdbService().getRatings(updated.imdbId);
+          if (mounted) {
+            setState(() {
+              _omdbRatings = ratings;
+            });
+          }
+        }
 
         final repository = TmdbTitleRepository();
         await repository.updateTitleMetadata(updated);
@@ -468,9 +479,18 @@ class _TitleDetailsState extends State<TitleDetails> {
         ),
       ]);
     }
-
-    if (title.omdbRatings.isNotEmpty) {
-      for (var rating in title.omdbRatings) {
+    
+    if (_isUpdating) {
+      topChildren.add(const SizedBox(width: 15));
+      topChildren.add(
+        SizedBox(
+          width: 15,
+          height: 15,
+          child: CircularProgressIndicator(strokeWidth: 1),
+        ),
+      );
+    } else if (_omdbRatings != null && _omdbRatings!.isNotEmpty) {
+      for (var rating in _omdbRatings!) {
         if (topChildren.isNotEmpty) topChildren.add(const SizedBox(width: 15));
         topChildren.add(OmdbRatingWidget(rating: rating));
       }

@@ -5,7 +5,6 @@ import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/youtube_service.dart';
-import 'package:moviescout/services/omdb_service.dart';
 
 const String _tmdbDetails =
     '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders%2Crecommendations%2Cimages%2Cvideos%2C{CREDITS_TYPE}&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
@@ -165,14 +164,6 @@ class TmdbTitleService extends TmdbBaseService {
 
     if (includeYoutubeSearch) {
       await _addYoutubeTrailers(details);
-    }
-
-    final imdbId = details[TmdbTitleFields.imdbId] ?? title.imdbId;
-    if (imdbId != null && imdbId.toString().isNotEmpty) {
-      final omdbRatings = await OmdbService().getRatings(imdbId.toString());
-      if (omdbRatings.isNotEmpty) {
-        details[TmdbTitleFields.omdbRatings] = omdbRatings;
-      }
     }
 
     details[TmdbTitleFields.mediaType] = mediaType;

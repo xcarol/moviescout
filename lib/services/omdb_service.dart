@@ -7,8 +7,11 @@ import 'package:moviescout/services/error_service.dart';
 class OmdbService {
   static const String _baseUrl = 'https://www.omdbapi.com/';
 
+  static final Map<String, List<Map<String, dynamic>>> _cache = {};
+  
   Future<List<Map<String, dynamic>>> getRatings(String imdbId) async {
     if (imdbId.isEmpty) return [];
+    if (_cache.containsKey(imdbId)) return _cache[imdbId]!;
 
     final apiKey = dotenv.env['OMDB_API_KEY'];
     if (apiKey == null || apiKey.isEmpty) {
@@ -27,7 +30,9 @@ class OmdbService {
         final data = jsonDecode(response.body);
 
         if (data['Response'] == 'True' && data['Ratings'] is List) {
-          return List<Map<String, dynamic>>.from(data['Ratings']);
+          final ratings = List<Map<String, dynamic>>.from(data['Ratings']);
+          _cache[imdbId] = ratings;
+          return ratings;
         }
       } else {
         ErrorService.log(

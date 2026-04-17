@@ -182,108 +182,103 @@ const TmdbTitleSchema = CollectionSchema(
       name: r'numberOfSeasons',
       type: IsarType.long,
     ),
-    r'omdbRatingsJson': PropertySchema(
-      id: 33,
-      name: r'omdbRatingsJson',
-      type: IsarType.string,
-    ),
     r'originCountry': PropertySchema(
-      id: 34,
+      id: 33,
       name: r'originCountry',
       type: IsarType.stringList,
     ),
     r'originalLanguage': PropertySchema(
-      id: 35,
+      id: 34,
       name: r'originalLanguage',
       type: IsarType.string,
     ),
     r'originalName': PropertySchema(
-      id: 36,
+      id: 35,
       name: r'originalName',
       type: IsarType.string,
     ),
     r'overview': PropertySchema(
-      id: 37,
+      id: 36,
       name: r'overview',
       type: IsarType.string,
     ),
     r'popularity': PropertySchema(
-      id: 38,
+      id: 37,
       name: r'popularity',
       type: IsarType.double,
     ),
     r'posterPath': PropertySchema(
-      id: 39,
+      id: 38,
       name: r'posterPath',
       type: IsarType.string,
     ),
     r'posterPathSuffix': PropertySchema(
-      id: 40,
+      id: 39,
       name: r'posterPathSuffix',
       type: IsarType.string,
     ),
     r'providersJson': PropertySchema(
-      id: 41,
+      id: 40,
       name: r'providersJson',
       type: IsarType.string,
     ),
     r'rating': PropertySchema(
-      id: 42,
+      id: 41,
       name: r'rating',
       type: IsarType.double,
     ),
     r'recommendationsJson': PropertySchema(
-      id: 43,
+      id: 42,
       name: r'recommendationsJson',
       type: IsarType.string,
     ),
     r'releaseDate': PropertySchema(
-      id: 44,
+      id: 43,
       name: r'releaseDate',
       type: IsarType.string,
     ),
     r'revenue': PropertySchema(
-      id: 45,
+      id: 44,
       name: r'revenue',
       type: IsarType.long,
     ),
     r'runtime': PropertySchema(
-      id: 46,
+      id: 45,
       name: r'runtime',
       type: IsarType.long,
     ),
     r'seasonsJson': PropertySchema(
-      id: 47,
+      id: 46,
       name: r'seasonsJson',
       type: IsarType.string,
     ),
     r'status': PropertySchema(
-      id: 48,
+      id: 47,
       name: r'status',
       type: IsarType.string,
     ),
     r'tagline': PropertySchema(
-      id: 49,
+      id: 48,
       name: r'tagline',
       type: IsarType.string,
     ),
     r'tmdbId': PropertySchema(
-      id: 50,
+      id: 49,
       name: r'tmdbId',
       type: IsarType.long,
     ),
     r'videosJson': PropertySchema(
-      id: 51,
+      id: 50,
       name: r'videosJson',
       type: IsarType.string,
     ),
     r'voteAverage': PropertySchema(
-      id: 52,
+      id: 51,
       name: r'voteAverage',
       type: IsarType.double,
     ),
     r'voteCount': PropertySchema(
-      id: 53,
+      id: 52,
       name: r'voteCount',
       type: IsarType.long,
     )
@@ -389,12 +384,6 @@ int _tmdbTitleEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
-  {
-    final value = object.omdbRatingsJson;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
   bytesCount += 3 + object.originCountry.length * 3;
   {
     for (var i = 0; i < object.originCountry.length; i++) {
@@ -481,27 +470,26 @@ void _tmdbTitleSerialize(
   writer.writeString(offsets[30], object.nextEpisodeToAirJson);
   writer.writeLong(offsets[31], object.numberOfEpisodes);
   writer.writeLong(offsets[32], object.numberOfSeasons);
-  writer.writeString(offsets[33], object.omdbRatingsJson);
-  writer.writeStringList(offsets[34], object.originCountry);
-  writer.writeString(offsets[35], object.originalLanguage);
-  writer.writeString(offsets[36], object.originalName);
-  writer.writeString(offsets[37], object.overview);
-  writer.writeDouble(offsets[38], object.popularity);
-  writer.writeString(offsets[39], object.posterPath);
-  writer.writeString(offsets[40], object.posterPathSuffix);
-  writer.writeString(offsets[41], object.providersJson);
-  writer.writeDouble(offsets[42], object.rating);
-  writer.writeString(offsets[43], object.recommendationsJson);
-  writer.writeString(offsets[44], object.releaseDate);
-  writer.writeLong(offsets[45], object.revenue);
-  writer.writeLong(offsets[46], object.runtime);
-  writer.writeString(offsets[47], object.seasonsJson);
-  writer.writeString(offsets[48], object.status);
-  writer.writeString(offsets[49], object.tagline);
-  writer.writeLong(offsets[50], object.tmdbId);
-  writer.writeString(offsets[51], object.videosJson);
-  writer.writeDouble(offsets[52], object.voteAverage);
-  writer.writeLong(offsets[53], object.voteCount);
+  writer.writeStringList(offsets[33], object.originCountry);
+  writer.writeString(offsets[34], object.originalLanguage);
+  writer.writeString(offsets[35], object.originalName);
+  writer.writeString(offsets[36], object.overview);
+  writer.writeDouble(offsets[37], object.popularity);
+  writer.writeString(offsets[38], object.posterPath);
+  writer.writeString(offsets[39], object.posterPathSuffix);
+  writer.writeString(offsets[40], object.providersJson);
+  writer.writeDouble(offsets[41], object.rating);
+  writer.writeString(offsets[42], object.recommendationsJson);
+  writer.writeString(offsets[43], object.releaseDate);
+  writer.writeLong(offsets[44], object.revenue);
+  writer.writeLong(offsets[45], object.runtime);
+  writer.writeString(offsets[46], object.seasonsJson);
+  writer.writeString(offsets[47], object.status);
+  writer.writeString(offsets[48], object.tagline);
+  writer.writeLong(offsets[49], object.tmdbId);
+  writer.writeString(offsets[50], object.videosJson);
+  writer.writeDouble(offsets[51], object.voteAverage);
+  writer.writeLong(offsets[52], object.voteCount);
 }
 
 TmdbTitle _tmdbTitleDeserialize(
@@ -535,26 +523,25 @@ TmdbTitle _tmdbTitleDeserialize(
     nextEpisodeToAirJson: reader.readStringOrNull(offsets[30]),
     numberOfEpisodes: reader.readLongOrNull(offsets[31]) ?? 0,
     numberOfSeasons: reader.readLongOrNull(offsets[32]) ?? 0,
-    omdbRatingsJson: reader.readStringOrNull(offsets[33]),
-    originCountry: reader.readStringList(offsets[34]) ?? const [],
-    originalLanguage: reader.readStringOrNull(offsets[35]) ?? '',
-    originalName: reader.readStringOrNull(offsets[36]) ?? '',
-    overview: reader.readStringOrNull(offsets[37]) ?? '',
-    popularity: reader.readDoubleOrNull(offsets[38]) ?? 0.0,
-    posterPathSuffix: reader.readStringOrNull(offsets[40]),
-    providersJson: reader.readStringOrNull(offsets[41]),
-    rating: reader.readDoubleOrNull(offsets[42]) ?? 0.0,
-    recommendationsJson: reader.readStringOrNull(offsets[43]),
-    releaseDate: reader.readStringOrNull(offsets[44]) ?? '',
-    revenue: reader.readLongOrNull(offsets[45]) ?? 0,
-    runtime: reader.readLongOrNull(offsets[46]) ?? 0,
-    seasonsJson: reader.readStringOrNull(offsets[47]),
-    status: reader.readStringOrNull(offsets[48]) ?? '',
-    tagline: reader.readStringOrNull(offsets[49]) ?? '',
-    tmdbId: reader.readLong(offsets[50]),
-    videosJson: reader.readStringOrNull(offsets[51]),
-    voteAverage: reader.readDoubleOrNull(offsets[52]) ?? 0.0,
-    voteCount: reader.readLongOrNull(offsets[53]) ?? 0,
+    originCountry: reader.readStringList(offsets[33]) ?? const [],
+    originalLanguage: reader.readStringOrNull(offsets[34]) ?? '',
+    originalName: reader.readStringOrNull(offsets[35]) ?? '',
+    overview: reader.readStringOrNull(offsets[36]) ?? '',
+    popularity: reader.readDoubleOrNull(offsets[37]) ?? 0.0,
+    posterPathSuffix: reader.readStringOrNull(offsets[39]),
+    providersJson: reader.readStringOrNull(offsets[40]),
+    rating: reader.readDoubleOrNull(offsets[41]) ?? 0.0,
+    recommendationsJson: reader.readStringOrNull(offsets[42]),
+    releaseDate: reader.readStringOrNull(offsets[43]) ?? '',
+    revenue: reader.readLongOrNull(offsets[44]) ?? 0,
+    runtime: reader.readLongOrNull(offsets[45]) ?? 0,
+    seasonsJson: reader.readStringOrNull(offsets[46]),
+    status: reader.readStringOrNull(offsets[47]) ?? '',
+    tagline: reader.readStringOrNull(offsets[48]) ?? '',
+    tmdbId: reader.readLong(offsets[49]),
+    videosJson: reader.readStringOrNull(offsets[50]),
+    voteAverage: reader.readDoubleOrNull(offsets[51]) ?? 0.0,
+    voteCount: reader.readLongOrNull(offsets[52]) ?? 0,
   );
   object.inLists = reader.readStringList(offsets[15]) ?? [];
   return object;
@@ -634,46 +621,44 @@ P _tmdbTitleDeserializeProp<P>(
     case 32:
       return (reader.readLongOrNull(offset) ?? 0) as P;
     case 33:
-      return (reader.readStringOrNull(offset)) as P;
-    case 34:
       return (reader.readStringList(offset) ?? const []) as P;
+    case 34:
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 35:
       return (reader.readStringOrNull(offset) ?? '') as P;
     case 36:
       return (reader.readStringOrNull(offset) ?? '') as P;
     case 37:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 38:
       return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
-    case 39:
+    case 38:
       return (reader.readString(offset)) as P;
+    case 39:
+      return (reader.readStringOrNull(offset)) as P;
     case 40:
       return (reader.readStringOrNull(offset)) as P;
     case 41:
-      return (reader.readStringOrNull(offset)) as P;
-    case 42:
       return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
-    case 43:
+    case 42:
       return (reader.readStringOrNull(offset)) as P;
-    case 44:
+    case 43:
       return (reader.readStringOrNull(offset) ?? '') as P;
+    case 44:
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 45:
       return (reader.readLongOrNull(offset) ?? 0) as P;
     case 46:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
-    case 47:
       return (reader.readStringOrNull(offset)) as P;
+    case 47:
+      return (reader.readStringOrNull(offset) ?? '') as P;
     case 48:
       return (reader.readStringOrNull(offset) ?? '') as P;
     case 49:
-      return (reader.readStringOrNull(offset) ?? '') as P;
-    case 50:
       return (reader.readLong(offset)) as P;
-    case 51:
+    case 50:
       return (reader.readStringOrNull(offset)) as P;
-    case 52:
+    case 51:
       return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
-    case 53:
+    case 52:
       return (reader.readLongOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -4171,160 +4156,6 @@ extension TmdbTitleQueryFilter
   }
 
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
-      omdbRatingsJsonIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'omdbRatingsJson',
-      ));
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
-      omdbRatingsJsonIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'omdbRatingsJson',
-      ));
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
-      omdbRatingsJsonEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'omdbRatingsJson',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
-      omdbRatingsJsonGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'omdbRatingsJson',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
-      omdbRatingsJsonLessThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'omdbRatingsJson',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
-      omdbRatingsJsonBetween(
-    String? lower,
-    String? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'omdbRatingsJson',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
-      omdbRatingsJsonStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'omdbRatingsJson',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
-      omdbRatingsJsonEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'omdbRatingsJson',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
-      omdbRatingsJsonContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'omdbRatingsJson',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
-      omdbRatingsJsonMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'omdbRatingsJson',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
-      omdbRatingsJsonIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'omdbRatingsJson',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
-      omdbRatingsJsonIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'omdbRatingsJson',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>
       originCountryElementEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -7025,18 +6856,6 @@ extension TmdbTitleQuerySortBy on QueryBuilder<TmdbTitle, TmdbTitle, QSortBy> {
     });
   }
 
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByOmdbRatingsJson() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'omdbRatingsJson', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByOmdbRatingsJsonDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'omdbRatingsJson', Sort.desc);
-    });
-  }
-
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> sortByOriginalLanguage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'originalLanguage', Sort.asc);
@@ -7654,18 +7473,6 @@ extension TmdbTitleQuerySortThenBy
     });
   }
 
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByOmdbRatingsJson() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'omdbRatingsJson', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByOmdbRatingsJsonDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'omdbRatingsJson', Sort.desc);
-    });
-  }
-
   QueryBuilder<TmdbTitle, TmdbTitle, QAfterSortBy> thenByOriginalLanguage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'originalLanguage', Sort.asc);
@@ -8119,14 +7926,6 @@ extension TmdbTitleQueryWhereDistinct
     });
   }
 
-  QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByOmdbRatingsJson(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'omdbRatingsJson',
-          caseSensitive: caseSensitive);
-    });
-  }
-
   QueryBuilder<TmdbTitle, TmdbTitle, QDistinct> distinctByOriginCountry() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'originCountry');
@@ -8473,12 +8272,6 @@ extension TmdbTitleQueryProperty
   QueryBuilder<TmdbTitle, int, QQueryOperations> numberOfSeasonsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'numberOfSeasons');
-    });
-  }
-
-  QueryBuilder<TmdbTitle, String?, QQueryOperations> omdbRatingsJsonProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'omdbRatingsJson');
     });
   }
 

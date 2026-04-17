@@ -86,7 +86,6 @@ class TmdbTitleFields {
   static const String iso6391 = 'iso_639_1';
   static const String lastNotifiedSeason = 'last_notified_season';
   static const String lastProvidersUpdate = 'last_providers_update';
-  static const String omdbRatings = 'omdb_ratings';
 }
 
 const statusEnded = 'Ended';
@@ -168,7 +167,6 @@ class TmdbTitle {
   late String? lastEpisodeToAirJson;
   late String? imagesJson;
   late String? videosJson;
-  late String? omdbRatingsJson;
 
   late int lastNotifiedSeason; // New field for notification tracking
   late String lastProvidersUpdate;
@@ -220,7 +218,6 @@ class TmdbTitle {
     this.lastEpisodeToAirJson,
     this.imagesJson,
     this.videosJson,
-    this.omdbRatingsJson,
     this.homepage = '',
     this.isPinned = false,
     this.lastNotifiedSeason = 0,
@@ -370,9 +367,6 @@ class TmdbTitle {
     if (title[TmdbTitleFields.videos] != null) {
       videosJson = jsonEncode(title[TmdbTitleFields.videos]);
     }
-    if (title[TmdbTitleFields.omdbRatings] != null) {
-      omdbRatingsJson = jsonEncode(title[TmdbTitleFields.omdbRatings]);
-    }
 
     character = title[TmdbTitleFields.character] ?? character;
     job = title[TmdbTitleFields.job] ?? job;
@@ -438,8 +432,6 @@ class TmdbTitle {
           imagesJson != null ? jsonDecode(imagesJson!) : null,
       TmdbTitleFields.videos:
           videosJson != null ? jsonDecode(videosJson!) : null,
-      TmdbTitleFields.omdbRatings:
-          omdbRatingsJson != null ? jsonDecode(omdbRatingsJson!) : null,
       TmdbTitleFields.character: character,
       TmdbTitleFields.job: job,
       TmdbTitleFields.department: department,
@@ -648,18 +640,6 @@ class TmdbTitle {
     if (videosJson == null) return [];
     try {
       final decoded = jsonDecode(videosJson!);
-      if (decoded is List) {
-        return decoded.map((e) => e as Map<String, dynamic>).toList();
-      }
-    } catch (_) {}
-    return [];
-  }
-
-  @ignore
-  List<Map<String, dynamic>> get omdbRatings {
-    if (omdbRatingsJson == null) return [];
-    try {
-      final decoded = jsonDecode(omdbRatingsJson!);
       if (decoded is List) {
         return decoded.map((e) => e as Map<String, dynamic>).toList();
       }
