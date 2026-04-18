@@ -412,4 +412,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationsHistory => 'Last notifications';
+
+  @override
+  String get seasons => 'Seasons';
+
+  @override
+  String get season => 'Season';
+
+  @override
+  String get selectSeason => 'Select a season...';
 }

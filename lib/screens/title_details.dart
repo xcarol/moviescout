@@ -53,6 +53,7 @@ class _TitleDetailsState extends State<TitleDetails> {
   late TmdbTitle _currentTitle;
   bool _isUpdating = false;
   List<Map<String, dynamic>>? _omdbRatings;
+  final GlobalKey<FormFieldState<int>> _seasonDropdownKey = GlobalKey<FormFieldState<int>>();
 
   @override
   void initState() {
@@ -384,6 +385,7 @@ class _TitleDetailsState extends State<TitleDetails> {
           const SizedBox(height: 10),
           _description(title),
           const SizedBox(height: 30),
+          _seasonsDropdown(title),
           _infoLine(title),
           const SizedBox(height: 10),
           _creditsInfo(title),
@@ -479,7 +481,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         ),
       ]);
     }
-    
+
     if (_isUpdating) {
       topChildren.add(const SizedBox(width: 15));
       topChildren.add(
@@ -774,6 +776,70 @@ class _TitleDetailsState extends State<TitleDetails> {
       title.overview.isEmpty
           ? AppLocalizations.of(context)!.missingDescription
           : title.overview,
+    );
+  }
+
+  Widget _seasonsDropdown(TmdbTitle title) {
+    if (!title.isSerie || title.numberOfSeasons <= 0) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 30),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppLocalizations.of(context)!.seasons,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          const SizedBox(height: 10),
+          DropdownButtonFormField<int>(
+            key: _seasonDropdownKey,
+            initialValue: 0,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+            ),
+            items: List.generate(title.numberOfSeasons + 1, (index) {
+              final seasonNumber = index;
+              if (seasonNumber == 0) {
+                return DropdownMenuItem<int>(
+                  value: seasonNumber,
+                  child: Text(AppLocalizations.of(context)!.selectSeason),
+                );
+              }
+              return DropdownMenuItem<int>(
+                value: seasonNumber,
+                child: Text(
+                    '${AppLocalizations.of(context)!.season} $seasonNumber'),
+              );
+            }),
+            onChanged: (value) {
+              if (value != null && value > 0) {
+                // Future: Navigate to Season Details
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        'Pròximament: Fitxa de la ${AppLocalizations.of(context)!.season} $value'),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+                
+                // Restablim al text de "Selecciona una temporada..."
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  if (mounted) {
+                    _seasonDropdownKey.currentState?.reset();
+                  }
+                });
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 

@@ -894,6 +894,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last notifications'**
   String get notificationsHistory;
+
+  /// No description provided for @seasons.
+  ///
+  /// In ca, this message translates to:
+  /// **'Temporades'**
+  String get seasons;
+
+  /// No description provided for @season.
+  ///
+  /// In ca, this message translates to:
+  /// **'Temporada'**
+  String get season;
+
+  /// No description provided for @selectSeason.
+  ///
+  /// In ca, this message translates to:
+  /// **'Selecciona una temporada...'**
+  String get selectSeason;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
