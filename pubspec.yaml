@@ -103,7 +103,9 @@ flutter:
     - assets/person_web.png
     - assets/person.svg
     - assets/tmdb-logo.png
+    - assets/tmdb-logo-square.png
     - assets/imdb-logo.png
+    - assets/imdb-logo-square.png
     - assets/rotten-logo.png
     - assets/metacritic-logo.png
     - assets/tvshow_poster.png

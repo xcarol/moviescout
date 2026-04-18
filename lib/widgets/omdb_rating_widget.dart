@@ -32,7 +32,7 @@ class OmdbRatingWidget extends StatelessWidget {
     String? logoPath;
 
     if (source == 'Internet Movie Database') {
-      logoPath = 'assets/imdb-logo.png';
+      logoPath = 'assets/imdb-logo-square.png';
     } else if (source == 'Rotten Tomatoes') {
       logoPath = 'assets/rotten-logo.png';
     } else if (source == 'Metacritic') {

@@ -471,7 +471,7 @@ class _TitleDetailsState extends State<TitleDetails> {
           message: 'The Movie Database',
           child: Row(
             children: [
-              Image.asset('assets/tmdb-logo.png', height: 16),
+              Image.asset('assets/tmdb-logo-square.png', height: 16),
               const SizedBox(width: 5),
               Text(titleVoteAverage),
             ],
