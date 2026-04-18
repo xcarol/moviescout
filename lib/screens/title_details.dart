@@ -11,6 +11,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart'
     show TmdbTitleRepository;
 import 'package:moviescout/screens/person_details.dart';
+import 'package:moviescout/screens/season_details.dart';
 import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/region_service.dart';
@@ -820,17 +821,15 @@ class _TitleDetailsState extends State<TitleDetails> {
             }),
             onChanged: (value) {
               if (value != null && value > 0) {
-                // Future: Navigate to Season Details
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                        'Pròximament: Fitxa de la ${AppLocalizations.of(context)!.season} $value'),
-                    duration: const Duration(seconds: 2),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SeasonDetails(
+                      tmdbId: title.tmdbId,
+                      seasonNumber: value,
+                    ),
                   ),
-                );
-                
-                // Restablim al text de "Selecciona una temporada..."
-                Future.delayed(const Duration(milliseconds: 500), () {
+                ).then((_) {
                   if (mounted) {
                     _seasonDropdownKey.currentState?.reset();
                   }
