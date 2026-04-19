@@ -626,7 +626,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 6, horizontal: 14),
+                                    vertical: 10, horizontal: 14),
                                 minimumSize: const Size(0, 0),
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
