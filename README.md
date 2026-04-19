@@ -199,6 +199,22 @@ it is worth comparing it with the same Overmaps file to imitate it as much as po
 
 ## Troubleshooting
 
+### Neverending builds or Gradle stuck (Low CPU usage)
+
+If the build takes an eternity and CPU usage is very low (e.g., < 10%), it is usually caused by a corrupted Gradle Kotlin DSL cache causing the Gradle daemon to freeze indefinitely.
+
+**Solution:**
+You can resolve this by running the provided script, which safely clears the broken cache and rebuilds the project:
+```bash
+./clean-gradle.sh
+```
+
+Alternatively, if you want to perform the fix manually:
+1. Stop the current build process (`Ctrl + C`).
+2. Kill all Gradle daemons: `pkill -f "gradle"`.
+3. Remove the corrupted Kotlin DSL cache folder: `rm -rf ~/.gradle/caches/8.14/kotlin-dsl/` (Check your current gradle version if it differs from 8.14).
+4. Run the Gradle build again; the cache will be regenerated correctly.
+
 ### adb cannot start a debug session with error: Access Denied  
 
 With the mobile connected and developer option _Enable USB install_ ON
