@@ -130,7 +130,7 @@ if $run_build_android; then
   if [ -f .env ]; then
     sed -i.bak '/^VERSION=/d' .env
   fi
-  echo "VERSION=$version" >> .env
+  echo "\nVERSION=$version" >> .env
 
   echo "▶️ flutter build appbundle --release"
   flutter clean
