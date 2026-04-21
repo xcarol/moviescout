@@ -1,16 +1,75 @@
 import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/user_list_entry.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/utils/save_logs.dart';
 
 class TmdbTitleRepository {
   final _isar = IsarService.instance;
 
+  Future<void> _logZeroRatingError(TmdbTitle title, {String? listName}) async {
+    if (title.rating > 0) return;
+
+    if (listName != null && listName == AppConstants.rateslist) {
+      ErrorService.log(
+        [
+          'listName: $listName',
+          'title: ${title.name} rating: ${title.rating} stackTrace: ${StackTrace.current}',
+        ],
+        stackTrace: StackTrace.current,
+        userMessage: 'Zero rating error',
+        showSnackBar: false,
+      );
+      return saveLogs([
+        '== ZERO ERROR ==',
+        'listName: $listName',
+        'title: ${title.name} rating: ${title.rating} stackTrace: ${StackTrace.current}',
+        '== ZERO ERROR ==',
+      ]);
+    }
+
+    final inRatesList = await _isar.userListEntrys
+        .filter()
+        .tmdbIdEqualTo(title.tmdbId)
+        .mediaTypeEqualTo(title.mediaType)
+        .findAll();
+
+    final lists = inRatesList.map((e) => e.listName).toList().join(', ');
+
+    if (inRatesList.any((e) => e.listName == AppConstants.rateslist)) {
+      ErrorService.log(
+        [
+          'lists: [$lists]',
+          'title: ${title.name} rating: ${title.rating} stackTrace: ${StackTrace.current}',
+        ],
+        stackTrace: StackTrace.current,
+        userMessage: 'Zero rating error',
+        showSnackBar: false,
+      );
+      return saveLogs([
+        '== ZERO ERROR ==',
+        'lists: [$lists]',
+        'title: ${title.name} rating: ${title.rating} stackTrace: ${StackTrace.current}',
+        '== ZERO ERROR ==',
+      ]);
+    }
+  }
+
+  Future<void> _logMultipleZeroRatingError(List<TmdbTitle> titles,
+      {String? listName}) async {
+    for (final title in titles) {
+      await _logZeroRatingError(title, listName: listName);
+    }
+  }
+
   Future<void> saveTitle(
       TmdbTitle title, String listName, int addedOrder) async {
     await _isar.writeTxn(() async {
+      await _logZeroRatingError(title, listName: listName);
+
       if (!title.inLists.contains(listName)) {
         title.inLists = [...title.inLists, listName];
       }
@@ -30,6 +89,8 @@ class TmdbTitleRepository {
     if (titles.isEmpty) return;
 
     await _isar.writeTxn(() async {
+      await _logMultipleZeroRatingError(titles, listName: listName);
+
       for (final title in titles) {
         if (!title.inLists.contains(listName)) {
           title.inLists = [...title.inLists, listName];
@@ -52,6 +113,8 @@ class TmdbTitleRepository {
 
   Future<void> updateTitleMetadata(TmdbTitle title) async {
     await _isar.writeTxn(() async {
+      await _logZeroRatingError(title);
+
       if (title.inLists.isEmpty) {
         final existing = await _isar.tmdbTitles
             .filter()
@@ -72,6 +135,8 @@ class TmdbTitleRepository {
 
   Future<void> updateTitlesMetadata(List<TmdbTitle> titles) async {
     await _isar.writeTxn(() async {
+      await _logMultipleZeroRatingError(titles);
+
       final titlesToFetch = titles.where((t) => t.inLists.isEmpty).toList();
 
       if (titlesToFetch.isNotEmpty) {
