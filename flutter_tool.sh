@@ -129,8 +129,9 @@ if $run_build_android; then
   echo "▶️ actualitzant VERSION=$version a .env"
   if [ -f .env ]; then
     sed -i.bak '/^VERSION=/d' .env
+    [ -n "$(tail -c 1 .env)" ] && echo "" >> .env
   fi
-  echo "\nVERSION=$version" >> .env
+  echo "VERSION=$version" >> .env
 
   echo "▶️ flutter build appbundle --release"
   flutter clean
@@ -149,6 +150,7 @@ if $run_build_release; then
   echo "▶️ actualitzant VERSION=$version a .env"
   if [ -f .env ]; then
     sed -i.bak '/^VERSION=/d' .env
+    [ -n "$(tail -c 1 .env)" ] && echo "" >> .env
   fi
   echo "VERSION=$version" >> .env
 
