@@ -18,9 +18,15 @@ class DeepLinkService {
   StreamSubscription<Uri>? _linkSubscription;
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   late TmdbListService _tmdbListService;
+  
+  bool _isInitialized = false;
+  String? _lastNavigatedId;
+  String? _lastNavigatedType;
+  DateTime? _lastNavigatedTime;
 
   void init(TmdbListService tmdbListService) {
     _tmdbListService = tmdbListService;
+    _isInitialized = true;
 
     _appLinks.getInitialLink().then((uri) {
       if (uri != null) {
@@ -62,9 +68,26 @@ class DeepLinkService {
   }
 
   Future<void> _navigate(String type, String id) async {
+    while (!_isInitialized || navigatorKey.currentState == null) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+
     final idClean = id.split('-').first;
     final tmdbId = int.tryParse(idClean);
     if (tmdbId == null) return;
+
+    // Prevent duplicate navigations to the same title within a short timeframe
+    // (Resolves double pushes caused by redundant cold start notification handling)
+    if (_lastNavigatedId == idClean && 
+        _lastNavigatedType == type && 
+        _lastNavigatedTime != null && 
+        DateTime.now().difference(_lastNavigatedTime!).inMilliseconds < 1500) {
+      return;
+    }
+
+    _lastNavigatedId = idClean;
+    _lastNavigatedType = type;
+    _lastNavigatedTime = DateTime.now();
 
     if (type == ApiConstants.movie || type == ApiConstants.tv) {
       final repository = TmdbTitleRepository();
