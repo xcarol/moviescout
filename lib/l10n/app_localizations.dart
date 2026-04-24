@@ -894,6 +894,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last notifications'**
   String get notificationsHistory;
+
+  /// No description provided for @notifyCompleteSeason.
+  ///
+  /// In en, this message translates to:
+  /// **'Notify complete season'**
+  String get notifyCompleteSeason;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

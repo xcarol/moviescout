@@ -3,7 +3,9 @@ import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 Future<void> saveLogs(List<String> logLines) async {
-  if (kDebugMode == false) return;
+  // if (kDebugMode == false) {
+  //   return;
+  // }
 
   try {
     final prefs = PreferencesService().prefs;

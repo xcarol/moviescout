@@ -131,5 +131,6 @@
     "openSettings": "Obrir ajustos",
     "errorMessageGeneric": "S'ha produït un error. Torna-ho a provar més tard.",
     "youtubeSearch": "Cerca a YouTube",
-    "notificationsHistory": "Últimes notificacions"
+    "notificationsHistory": "Últimes notificacions",
+    "notifyCompleteSeason": "Notificar temporada completa"
 }

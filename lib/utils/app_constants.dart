@@ -17,6 +17,7 @@ class AppConstants {
   static const String lastBackgroundRun = 'last_background_run';
   static const String watchlistUpdateLogs = 'watchlist_update_logs';
   static const String notificationsEnabled = 'notifications_enabled';
+  static const String notifyCompleteSeason = 'notify_complete_season';
   static const String notificationsAsked = 'notifications_asked';
   static const String savedNotifications = 'saved_notifications';
   static const String debugShowLastUpdate = 'debug_show_last_update';

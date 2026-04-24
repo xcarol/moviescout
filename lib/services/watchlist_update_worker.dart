@@ -26,7 +26,8 @@ Future<bool> updateTitle(
     TmdbTitleService titleService,
     TmdbTitleRepository repository,
     AppLocalizations localizations,
-    DateTime now) async {
+    DateTime now,
+    bool notifyCompleteSeason) async {
   final titleBeforeUpdate = TmdbTitle.fromMap(title: title.toMap());
 
   if (fullUpdate) {
@@ -50,6 +51,7 @@ Future<bool> updateTitle(
     titleAfterUpdate: title,
     enabledProviderIds: enabledProviderIds.toSet(),
     now: now,
+    notifyCompleteSeason: notifyCompleteSeason,
     logLines: logLines,
   );
 
@@ -158,6 +160,9 @@ void callbackDispatcher() {
       final locale = LanguageService.parseLocale(localeStr);
       final localizations = await AppLocalizations.delegate.load(locale);
 
+      final notifyCompleteSeason =
+          PreferencesService().prefs.getBool(AppConstants.notifyCompleteSeason) ?? false;
+
       final repository = TmdbTitleRepository();
       final titleService = TmdbTitleService();
 
@@ -192,7 +197,8 @@ void callbackDispatcher() {
             titleService,
             repository,
             localizations,
-            now);
+            now,
+            notifyCompleteSeason);
 
         if (notified) {
           notifiedCount++;

@@ -131,5 +131,6 @@
     "openSettings": "Open Settings",
     "errorMessageGeneric": "An error occurred. Please try again later.",
     "youtubeSearch": "YouTube Search",
-    "notificationsHistory": "Last notifications"
+    "notificationsHistory": "Last notifications",
+    "notifyCompleteSeason": "Notify complete season"
 }
