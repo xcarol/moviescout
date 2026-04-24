@@ -16,8 +16,10 @@ class NotificationService extends ChangeNotifier {
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
   bool _enabled = true;
+  bool _notifyCompleteSeason = false;
 
   bool get enabled => _enabled;
+  bool get notifyCompleteSeason => _notifyCompleteSeason;
 
   Future<void> init() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
@@ -44,6 +46,10 @@ class NotificationService extends ChangeNotifier {
     _enabled =
         PreferencesService().prefs.getBool(AppConstants.notificationsEnabled) ??
             true;
+
+    _notifyCompleteSeason =
+        PreferencesService().prefs.getBool(AppConstants.notifyCompleteSeason) ??
+            false;
 
     await checkSystemPermission();
   }
@@ -142,6 +148,14 @@ class NotificationService extends ChangeNotifier {
         .setBool(AppConstants.notificationsEnabled, value);
     notifyListeners();
     return true;
+  }
+
+  Future<void> setNotifyCompleteSeason(bool value) async {
+    _notifyCompleteSeason = value;
+    await PreferencesService()
+        .prefs
+        .setBool(AppConstants.notifyCompleteSeason, value);
+    notifyListeners();
   }
 
   void _handlePayload(String payload) {

@@ -412,4 +412,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get notificationsHistory => 'Últimas notificaciones';
+
+  @override
+  String get notifyCompleteSeason => 'Notificar temporada completa';
 }

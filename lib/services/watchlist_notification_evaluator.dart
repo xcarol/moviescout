@@ -61,6 +61,7 @@ class WatchlistNotificationEvaluator {
     required TmdbTitle titleAfterUpdate,
     required Set<int> enabledProviderIds,
     required DateTime now,
+    required bool notifyCompleteSeason,
     List<String>? logLines,
   }) {
     final oldProviders = titleBeforeUpdate.flatrateProviderIds.toSet();
@@ -87,6 +88,7 @@ class WatchlistNotificationEvaluator {
           titleAfterUpdate,
           currentSeason,
           now,
+          notifyCompleteSeason,
         )) {
           logLines?.add(
               '- Notification Trigger: New season started for ${titleAfterUpdate.name}.');
@@ -106,10 +108,43 @@ class WatchlistNotificationEvaluator {
     TmdbTitle title,
     int currentSeason,
     DateTime now,
+    bool notifyCompleteSeason,
   ) {
     final lastEpisode = title.lastEpisodeToAir;
     final nextEpisode = title.nextEpisodeToAir;
     final titleName = title.name;
+
+    if (notifyCompleteSeason) {
+      if (lastEpisode != null &&
+          (lastEpisode['season_number'] as int) == currentSeason) {
+        if (nextEpisode != null &&
+            (nextEpisode['season_number'] as int) == currentSeason) {
+          logLines.add(
+              '- check: $titleName S$currentSeason is not complete yet (next episode is in the same season).');
+          return false;
+        }
+
+        final airDateStr = lastEpisode['air_date'] as String?;
+        if (airDateStr != null) {
+          final airDate = DateTime.tryParse(airDateStr);
+          if (airDate != null &&
+              airDate.isBefore(now.add(const Duration(seconds: 1)))) {
+            final daysSinceEnded = now.difference(airDate).inDays;
+            if (daysSinceEnded >= 0 &&
+                daysSinceEnded <
+                    AppConstants.watchlistNewSeasonNotificationWindowDays) {
+              logLines.add(
+                  '- check: $titleName S$currentSeason ended $daysSinceEnded days ago. Notify.');
+              return true;
+            } else {
+              logLines.add(
+                  '- check: $titleName S$currentSeason ended $daysSinceEnded days ago. Too old.');
+            }
+          }
+        }
+      }
+      return false;
+    }
 
     if (lastEpisode != null &&
         (lastEpisode['season_number'] as int) == currentSeason) {

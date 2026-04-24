@@ -49,6 +49,7 @@ class AppDrawer extends StatelessWidget {
           _languageTile(context),
           _regionTile(context),
           _notificationsTile(context),
+          _notifyCompleteSeasonTile(context),
           _notificationsHistoryTile(context),
           if (defaultTargetPlatform == TargetPlatform.android)
             _verifyDeepLinksTile(context),
@@ -73,6 +74,21 @@ class AppDrawer extends StatelessWidget {
           NotificationPermissionDialog.show(context);
         }
       },
+    );
+  }
+
+  Widget _notifyCompleteSeasonTile(BuildContext context) {
+    final notificationService = Provider.of<NotificationService>(context);
+
+    return SwitchListTile(
+      secondary: const Icon(Icons.done_all),
+      title: Text(AppLocalizations.of(context)!.notifyCompleteSeason),
+      value: notificationService.notifyCompleteSeason,
+      onChanged: notificationService.enabled
+          ? (bool value) async {
+              await notificationService.setNotifyCompleteSeason(value);
+            }
+          : null,
     );
   }
 
