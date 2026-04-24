@@ -132,5 +132,8 @@
     "errorMessageGeneric": "Ha ocurrido un error. Inténtalo de nuevo más tarde.",
     "youtubeSearch": "Búsqueda en YouTube",
     "notificationsHistory": "Últimas notificaciones",
-    "notifyCompleteSeason": "Notificar temporada completa"
+    "notifyCompleteSeason": "Notificar temporada completa",
+    "episodes": "Episodios",
+    "selectSeason": "Selecciona la temporada",
+    "seasonLabel": "Temporada {count}"
 }

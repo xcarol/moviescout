@@ -415,4 +415,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notifyCompleteSeason => 'Notify complete season';
+
+  @override
+  String get episodes => 'Episodes';
+
+  @override
+  String get selectSeason => 'Select season';
+
+  @override
+  String seasonLabel(Object count) {
+    return 'Season $count';
+  }
 }
