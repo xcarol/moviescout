@@ -215,6 +215,13 @@ Alternatively, if you want to perform the fix manually:
 3. Remove the corrupted Kotlin DSL cache folder: `rm -rf ~/.gradle/caches/8.14/kotlin-dsl/` (Check your current gradle version if it differs from 8.14).
 4. Run the Gradle build again; the cache will be regenerated correctly.
 
+### watchlist worker logs
+
+By default logs are disabled. You can see what watchlist worker is doing by enabling the logs in _.env_ file with:
+```
+ENABLE_LOGS=true
+```
+
 ### adb cannot start a debug session with error: Access Denied  
 
 With the mobile connected and developer option _Enable USB install_ ON

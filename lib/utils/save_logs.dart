@@ -1,11 +1,12 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 Future<void> saveLogs(List<String> logLines) async {
-  // if (kDebugMode == false) {
-  //   return;
-  // }
+  if (kDebugMode == false && dotenv.env[AppConstants.enableLogs] != 'true') {
+    return;
+  }
 
   try {
     final prefs = PreferencesService().prefs;
@@ -21,4 +22,3 @@ Future<void> saveLogs(List<String> logLines) async {
     debugPrint('Error saving logs: $e');
   }
 }
-
