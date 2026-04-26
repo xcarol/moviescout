@@ -9,6 +9,7 @@ import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/region_service.dart';
 import 'package:moviescout/services/app_lifecycle_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 enum ApiVersion { v3, v4 }
 
@@ -51,7 +52,7 @@ class TmdbBaseService {
     String accessToken = '',
   }) async {
     final token = accessToken.isEmpty || version == ApiVersion.v3
-        ? dotenv.env['TMDB_API_RAT']
+        ? dotenv.env[AppConstants.tmdbApiRat]
         : accessToken;
     final uri = _buildUri(version, query);
 
@@ -142,7 +143,7 @@ class TmdbBaseService {
   }) async {
     try {
       final token = accessToken.isEmpty || version == ApiVersion.v3
-          ? dotenv.env['TMDB_API_RAT']
+          ? dotenv.env[AppConstants.tmdbApiRat]
           : accessToken;
       final uri = _buildUri(version, endpoint);
 
@@ -174,7 +175,7 @@ class TmdbBaseService {
   }) async {
     try {
       final token = accessToken.isEmpty || version == ApiVersion.v3
-          ? dotenv.env['TMDB_API_RAT']
+          ? dotenv.env[AppConstants.tmdbApiRat]
           : accessToken;
       final uri = _buildUri(version, endpoint);
 
@@ -206,7 +207,7 @@ class TmdbBaseService {
   }) async {
     try {
       final token = accessToken.isEmpty || version == ApiVersion.v3
-          ? dotenv.env['TMDB_API_RAT']
+          ? dotenv.env[AppConstants.tmdbApiRat]
           : accessToken;
       final uri = _buildUri(version, endpoint);
 
