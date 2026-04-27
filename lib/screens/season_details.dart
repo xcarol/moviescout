@@ -325,7 +325,12 @@ class _SeasonDetailsState extends State<SeasonDetails> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                child: EpisodeCard(episode: episode),
+                child: EpisodeCard(
+                  episode: episode,
+                  tvId: widget.tvId,
+                  seasonNumber: widget.seasonNumber,
+                  tmdbListService: widget.tmdbListService,
+                ),
               ),
               Divider(
                 height: 1,

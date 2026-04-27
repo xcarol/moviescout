@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_person.dart';
+import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class TmdbSeason {
@@ -185,44 +186,4 @@ class TmdbSeason {
     }
     return crewPeople;
   }
-}
-
-class TmdbEpisode {
-  late int id;
-  late String name;
-  late String overview;
-  late int episodeNumber;
-  late int runtime;
-  late String airDate;
-  late double voteAverage;
-  late String? stillPathSuffix;
-
-  TmdbEpisode({
-    required this.id,
-    required this.name,
-    required this.overview,
-    required this.episodeNumber,
-    required this.runtime,
-    required this.airDate,
-    required this.voteAverage,
-    this.stillPathSuffix,
-  });
-
-  factory TmdbEpisode.fromMap(Map<String, dynamic> data) {
-    return TmdbEpisode(
-      id: data['id'] ?? 0,
-      name: data['name'] ?? '',
-      overview: data['overview'] ?? '',
-      episodeNumber: data['episode_number'] ?? 0,
-      runtime: data['runtime'] ?? 0,
-      airDate: data['air_date'] ?? '',
-      voteAverage: (data['vote_average'] ?? 0.0).toDouble(),
-      stillPathSuffix: data['still_path'],
-    );
-  }
-
-  String get stillPath =>
-      stillPathSuffix != null && stillPathSuffix!.isNotEmpty
-          ? 'https://image.tmdb.org/t/p/original$stillPathSuffix'
-          : '';
 }

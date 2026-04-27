@@ -1,17 +1,25 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:moviescout/models/tmdb_season.dart';
+import 'package:moviescout/models/tmdb_episode.dart';
+import 'package:moviescout/screens/episode_details.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
 
 class EpisodeCard extends StatelessWidget {
   final TmdbEpisode _episode;
+  final int tvId;
+  final int seasonNumber;
+  final TmdbListService tmdbListService;
 
   static double cardHeight = 120.0;
 
   const EpisodeCard({
     super.key,
     required TmdbEpisode episode,
+    required this.tvId,
+    required this.seasonNumber,
+    required this.tmdbListService,
   }) : _episode = episode;
 
   @override
@@ -21,15 +29,32 @@ class EpisodeCard extends StatelessWidget {
         height: cardHeight,
         child: Card(
           margin: const EdgeInsets.all(0),
+          clipBehavior: Clip.hardEdge,
           shape: const RoundedRectangleBorder(),
-          child: Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: Row(
-              children: [
-                episodeThumbnail(_episode.stillPath),
-                const SizedBox(width: 10),
-                _episodeDetails(context, _episode),
-              ],
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EpisodeDetails(
+                    tvId: tvId,
+                    seasonNumber: seasonNumber,
+                    episodeNumber: _episode.episodeNumber,
+                    tmdbListService: tmdbListService,
+                    initialEpisode: _episode,
+                  ),
+                ),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Row(
+                children: [
+                  episodeThumbnail(_episode.stillPath),
+                  const SizedBox(width: 10),
+                  _episodeDetails(context, _episode),
+                ],
+              ),
             ),
           ),
         ),
