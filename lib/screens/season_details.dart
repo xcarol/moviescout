@@ -10,17 +10,18 @@ import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/episode_card.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
-import 'package:moviescout/widgets/person_chip.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 
 class SeasonDetails extends StatefulWidget {
+  final String seriesName;
   final int tvId;
   final int seasonNumber;
   final TmdbListService tmdbListService;
 
   const SeasonDetails({
     super.key,
+    required this.seriesName,
     required this.tvId,
     required this.seasonNumber,
     required this.tmdbListService,
@@ -55,7 +56,9 @@ class _SeasonDetailsState extends State<SeasonDetails> {
 
   @override
   Widget build(BuildContext context) {
-    String appTitle = _season?.name ?? 'Season ${widget.seasonNumber}';
+    String seasonName = _season?.name ?? 'Season ${widget.seasonNumber}';
+    String appTitle =
+        widget.seriesName.isEmpty ? seasonName : widget.seriesName;
 
     return Scaffold(
       appBar: MainAppBar(
@@ -121,12 +124,9 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           const Divider(),
           _externalLinks(),
           const Divider(),
-          const SizedBox(height: 10),
+          // const SizedBox(height: 10),
           _episodesList(season),
-          const SizedBox(height: 30),
-          _castAndCrew(season, PersonAttributes.cast),
-          const SizedBox(height: 30),
-          _castAndCrew(season, PersonAttributes.crew),
+          const SizedBox(height: 10),
         ],
       ),
     );
@@ -316,75 +316,25 @@ class _SeasonDetailsState extends State<SeasonDetails> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context)!.episodes,
+          '${season.episodes.length} ${AppLocalizations.of(context)!.episodes}',
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
-        const SizedBox(height: 10),
+        const Divider(),
         ...season.episodes.map((episode) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Column(
-              children: [
-                EpisodeCard(episode: episode),
-                Divider(
-                  height: 1,
-                  color: titleTheme.listDividerColor,
-                ),
-              ],
-            ),
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                child: EpisodeCard(episode: episode),
+              ),
+              Divider(
+                height: 1,
+                color: titleTheme.listDividerColor,
+              ),
+            ],
           );
         }),
       ],
-    );
-  }
-
-  Widget _castAndCrew(TmdbSeason season, String roleType) {
-    final people =
-        roleType == PersonAttributes.cast ? season.cast : season.crew;
-    if (people.isEmpty) return const SizedBox.shrink();
-
-    String title = roleType == PersonAttributes.cast
-        ? AppLocalizations.of(context)!.cast
-        : AppLocalizations.of(context)!.crew;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        const SizedBox(height: 10),
-        SizedBox(
-          height: 200,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: people.length,
-            cacheExtent: 1500,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: _personChip(context, people[index]),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _personChip(BuildContext context, TmdbPerson tmdbPerson) {
-    final clampedScale =
-        MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.3);
-
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(
-        textScaler: TextScaler.linear(clampedScale),
-      ),
-      child: PersonChip(
-        person: tmdbPerson,
-        tmdbListService: widget.tmdbListService,
-      ),
     );
   }
 }
