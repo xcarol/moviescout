@@ -26,10 +26,7 @@ class EpisodeCard extends StatelessWidget {
             padding: const EdgeInsets.only(right: 8.0),
             child: Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
-                  child: episodeThumbnail(_episode.stillPath),
-                ),
+                episodeThumbnail(_episode.stillPath),
                 const SizedBox(width: 10),
                 _episodeDetails(context, _episode),
               ],
@@ -75,27 +72,24 @@ class EpisodeCard extends StatelessWidget {
 
   Widget _episodeDetails(BuildContext context, TmdbEpisode episode) {
     return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            episodeHeader('${episode.episodeNumber}. ${episode.name}'),
-            const SizedBox(height: 5),
-            Row(
-              children: [
-                Text(episode.airDate, overflow: TextOverflow.ellipsis),
-                if (episode.runtime > 0) ...[
-                  const Text(' - '),
-                  Text('${episode.runtime} min'),
-                ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          episodeHeader('${episode.episodeNumber}. ${episode.name}'),
+          const SizedBox(height: 5),
+          Row(
+            children: [
+              Text(episode.airDate, overflow: TextOverflow.ellipsis),
+              if (episode.runtime > 0) ...[
+                const Text(' - '),
+                Text('${episode.runtime} min'),
               ],
-            ),
-            const SizedBox(height: 5),
-            episodeRating(context, episode),
-          ],
-        ),
+            ],
+          ),
+          const SizedBox(height: 5),
+          episodeRating(context, episode),
+        ],
       ),
     );
   }
