@@ -138,13 +138,13 @@ class TmdbSeasonService extends TmdbBaseService {
   void _mergeMediaFallback(
       Map<String, dynamic> target, Map<String, dynamic> source,
       {bool overwriteIfEmpty = false}) {
-    if (source['images'] != null && source['images']['backdrops'] != null) {
-      List<dynamic> backdrops = List.from(source['images']['backdrops']);
-      if (backdrops.isNotEmpty || overwriteIfEmpty) {
-        backdrops.sort((a, b) =>
+    if (source['images'] != null && source['images']['posters'] != null) {
+      List<dynamic> posters = List.from(source['images']['posters']);
+      if (posters.isNotEmpty || overwriteIfEmpty) {
+        posters.sort((a, b) =>
             (b['vote_average'] ?? 0).compareTo(a['vote_average'] ?? 0));
         target[TmdbTitleFields.images] =
-            backdrops.take(10).map((b) => b['file_path']).toList();
+            posters.take(10).map((b) => b['file_path']).toList();
       }
     }
 
