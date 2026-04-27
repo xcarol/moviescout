@@ -41,4 +41,8 @@ class AppConstants {
   static const int watchlistNewSeasonNotificationWindowDays = 14;
 
   static const String defaultDate = '1970-01-01';
+
+  static const String tmdbApiRat = 'TMDB_API_RAT';
+  static const String omdbApiKey = 'OMDB_API_KEY';
+  static const String enableLogs = 'ENABLE_LOGS';
 }

@@ -29,6 +29,7 @@ import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/utils/deep_link_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -280,7 +281,7 @@ class AppDrawer extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        if (kDebugMode)
+        if (kDebugMode || dotenv.env[AppConstants.enableLogs] == 'true')
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [

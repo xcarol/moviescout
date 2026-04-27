@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:moviescout/services/error_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 class OmdbService {
   static const String _baseUrl = 'https://www.omdbapi.com/';
@@ -13,7 +14,7 @@ class OmdbService {
     if (imdbId.isEmpty) return [];
     if (_cache.containsKey(imdbId)) return _cache[imdbId]!;
 
-    final apiKey = dotenv.env['OMDB_API_KEY'];
+    final apiKey = dotenv.env[AppConstants.omdbApiKey];
     if (apiKey == null || apiKey.isEmpty) {
       if (kDebugMode) {
         print('OMDB_API_KEY is not set in .env');
