@@ -4,6 +4,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
+import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
@@ -492,7 +493,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         ),
       ]);
     }
-    
+
     if (_isUpdating) {
       topChildren.add(const SizedBox(width: 15));
       topChildren.add(
@@ -897,31 +898,36 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   Widget _seasonsDropdown(TmdbTitle title) {
-    if (title.isMovie || title.numberOfSeasons == 0) return const SizedBox.shrink();
+    if (title.isMovie || title.numberOfSeasons == 0) {
+      return const SizedBox.shrink();
+    }
 
     final selectSeasonText = AppLocalizations.of(context)!.selectSeason;
-    
+
     final List<String> seasonOptions = [selectSeasonText];
     for (int i = 1; i <= title.numberOfSeasons; i++) {
-      seasonOptions.add(AppLocalizations.of(context)!.seasonLabel(i)); 
+      seasonOptions.add(AppLocalizations.of(context)!.seasonLabel(i));
     }
+
+    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         DropdownSelector(
-          selectedOption: _selectedSeason.isEmpty ? selectSeasonText : _selectedSeason,
+          selectedOption:
+              _selectedSeason.isEmpty ? selectSeasonText : _selectedSeason,
           options: seasonOptions,
-          border: Border.all(color: Colors.grey.withAlpha(50)),
-          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: titleTheme.listDividerColor),
+          borderRadius: BorderRadius.circular(5),
           onSelected: (option) {
             if (option == selectSeasonText) return;
-            
+
             // Reconstruct the season number by matching the option inside seasonOptions
             final seasonIndex = seasonOptions.indexOf(option);
             if (seasonIndex < 1) return;
             final seasonNumber = seasonIndex;
-            
+
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -938,7 +944,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                 });
               }
             });
-            
+
             setState(() {
               _selectedSeason = option;
             });
