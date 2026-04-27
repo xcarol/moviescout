@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/screens/person_details.dart';
@@ -40,9 +41,10 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   }
 
   Future<void> _loadSeasonDetails() async {
-    final season = await TmdbSeasonService()
-        .getSeasonDetails(widget.tvId, widget.seasonNumber, includeYoutubeSearch: false);
-    
+    final season = await TmdbSeasonService().getSeasonDetails(
+        widget.tvId, widget.seasonNumber,
+        includeYoutubeSearch: false);
+
     if (mounted) {
       setState(() {
         _season = season;
@@ -92,9 +94,9 @@ class _SeasonDetailsState extends State<SeasonDetails> {
         MediaCarousel(
           images: season.images,
           videos: season.videos,
-          backdropPath: '', 
+          backdropPath: '',
           posterPath: season.posterPath,
-          isMovie: false, 
+          isMovie: false,
           isLoading: _isLoading,
         ),
         const SizedBox(height: 20),
@@ -200,7 +202,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
         .where((c) => c.job == 'Executive Producer' || c.job == 'Creator')
         .take(3)
         .toList();
-        
+
     Widget? creatorsWidget;
     if (creators.isNotEmpty) {
       creatorsWidget = SingleChildScrollView(
@@ -211,9 +213,10 @@ class _SeasonDetailsState extends State<SeasonDetails> {
     }
 
     final writers = season.crew
-        .where((c) => c.job == 'Writer' || c.job == 'Screenplay' || c.job == 'Author')
+        .where((c) =>
+            c.job == 'Writer' || c.job == 'Screenplay' || c.job == 'Author')
         .toList();
-        
+
     Widget? writersWidget;
     if (writers.isNotEmpty) {
       writersWidget = SingleChildScrollView(
@@ -307,6 +310,8 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   Widget _episodesList(TmdbSeason season) {
     if (season.episodes.isEmpty) return const SizedBox.shrink();
 
+    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -318,7 +323,15 @@ class _SeasonDetailsState extends State<SeasonDetails> {
         ...season.episodes.map((episode) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
-            child: EpisodeCard(episode: episode),
+            child: Column(
+              children: [
+                EpisodeCard(episode: episode),
+                Divider(
+                  height: 1,
+                  color: titleTheme.listDividerColor,
+                ),
+              ],
+            ),
           );
         }),
       ],
@@ -326,7 +339,8 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   }
 
   Widget _castAndCrew(TmdbSeason season, String roleType) {
-    final people = roleType == PersonAttributes.cast ? season.cast : season.crew;
+    final people =
+        roleType == PersonAttributes.cast ? season.cast : season.crew;
     if (people.isEmpty) return const SizedBox.shrink();
 
     String title = roleType == PersonAttributes.cast
