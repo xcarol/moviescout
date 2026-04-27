@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -176,12 +177,27 @@ class _MediaCarouselState extends State<MediaCarousel> {
   Widget _buildImage(String path) {
     final url = 'https://image.tmdb.org/t/p/original$path';
 
-    return CachedNetworkImage(
-      imageUrl: url,
-      fit: BoxFit.cover,
-      placeholder: (context, url) => Container(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)),
-      errorWidget: (context, url, error) => const Icon(Icons.error),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+          child: CachedNetworkImage(
+            imageUrl: url,
+            fit: BoxFit.cover,
+            color: Colors.black.withAlpha(128),
+            colorBlendMode: BlendMode.darken,
+            errorWidget: (context, url, error) => const SizedBox.shrink(),
+          ),
+        ),
+        CachedNetworkImage(
+          imageUrl: url,
+          fit: BoxFit.contain,
+          placeholder: (context, url) => Container(
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+        ),
+      ],
     );
   }
 }
