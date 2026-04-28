@@ -910,7 +910,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectSeason.
   ///
   /// In en, this message translates to:
-  /// **'Select season'**
+  /// **'See the seasons'**
   String get selectSeason;
 
   /// No description provided for @seasonLabel.

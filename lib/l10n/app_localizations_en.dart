@@ -420,7 +420,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get episodes => 'Episodes';
 
   @override
-  String get selectSeason => 'Select season';
+  String get selectSeason => 'See the seasons';
 
   @override
   String seasonLabel(Object count) {
