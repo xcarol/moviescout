@@ -2,13 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
+import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/episode_details.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
 
 class EpisodeCard extends StatelessWidget {
   final TmdbEpisode _episode;
-  final int tvId;
+  final TmdbTitle _title;
   final int seasonNumber;
   final TmdbListService tmdbListService;
 
@@ -16,11 +17,11 @@ class EpisodeCard extends StatelessWidget {
 
   const EpisodeCard({
     super.key,
-    required TmdbEpisode episode,
-    required this.tvId,
+    required TmdbTitle title,
     required this.seasonNumber,
+    required TmdbEpisode episode,
     required this.tmdbListService,
-  }) : _episode = episode;
+  }) : _title = title, _episode = episode;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class EpisodeCard extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => EpisodeDetails(
-                    tvId: tvId,
+                    title: _title,
                     seasonNumber: seasonNumber,
                     episodeNumber: _episode.episodeNumber,
                     tmdbListService: tmdbListService,
@@ -67,7 +68,7 @@ class EpisodeCard extends StatelessWidget {
       return AspectRatio(
         aspectRatio: 16 / 9,
         child: SvgPicture.asset(
-          'assets/tvshow.svg',
+          'assets/movie.svg',
           fit: BoxFit.contain,
         ),
       );
@@ -87,7 +88,7 @@ class EpisodeCard extends StatelessWidget {
         cacheKey: stillPath,
         errorWidget: (context, error, stackTrace) {
           return SvgPicture.asset(
-            'assets/tvshow.svg',
+            'assets/movie.svg',
             fit: BoxFit.contain,
           );
         },

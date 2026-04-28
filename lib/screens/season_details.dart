@@ -3,6 +3,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_season.dart';
+import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_season_service.dart';
@@ -14,15 +15,13 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 
 class SeasonDetails extends StatefulWidget {
-  final String seriesName;
-  final int tvId;
+  final TmdbTitle title;
   final int seasonNumber;
   final TmdbListService tmdbListService;
 
   const SeasonDetails({
     super.key,
-    required this.seriesName,
-    required this.tvId,
+    required this.title,
     required this.seasonNumber,
     required this.tmdbListService,
   });
@@ -43,7 +42,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
 
   Future<void> _loadSeasonDetails() async {
     final season = await TmdbSeasonService().getSeasonDetails(
-        widget.tvId, widget.seasonNumber,
+        widget.title.tmdbId, widget.seasonNumber,
         includeYoutubeSearch: false);
 
     if (mounted) {
@@ -56,9 +55,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
 
   @override
   Widget build(BuildContext context) {
-    String seasonName = _season?.name ?? 'Season ${widget.seasonNumber}';
-    String appTitle =
-        widget.seriesName.isEmpty ? seasonName : widget.seriesName;
+    String appTitle = widget.title.name;
 
     return Scaffold(
       appBar: MainAppBar(
@@ -69,7 +66,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
             icon: const Icon(Icons.share),
             onPressed: () {
               final String link =
-                  'https://www.themoviedb.org/tv/${widget.tvId}/season/${widget.seasonNumber}';
+                  'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/${widget.seasonNumber}';
               SharePlus.instance.share(
                 ShareParams(text: '$appTitle\n$link'),
               );
@@ -291,7 +288,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           onPressed: () {
             launchUrl(
               Uri.parse(
-                  'https://www.themoviedb.org/tv/${widget.tvId}/season/${widget.seasonNumber}'),
+                  'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/${widget.seasonNumber}'),
               mode: LaunchMode.inAppWebView,
             );
           },
@@ -326,9 +323,9 @@ class _SeasonDetailsState extends State<SeasonDetails> {
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                 child: EpisodeCard(
-                  episode: episode,
-                  tvId: widget.tvId,
+                  title: widget.title,
                   seasonNumber: widget.seasonNumber,
+                  episode: episode,
                   tmdbListService: widget.tmdbListService,
                 ),
               ),

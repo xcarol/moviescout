@@ -932,8 +932,7 @@ class _TitleDetailsState extends State<TitleDetails> {
               context,
               MaterialPageRoute(
                 builder: (context) => SeasonDetails(
-                  seriesName: title.name,
-                  tvId: title.tmdbId,
+                  title: title,
                   seasonNumber: seasonNumber,
                   tmdbListService: widget._tmdbListService,
                 ),
