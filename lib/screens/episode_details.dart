@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
-import 'package:moviescout/widgets/person_list.dart';
+import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/services/tmdb_episode_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/widgets/app_bar.dart';
@@ -11,7 +12,7 @@ import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/person_chip.dart';
 
 class EpisodeDetails extends StatefulWidget {
-  final int tvId;
+  final TmdbTitle title;
   final int seasonNumber;
   final int episodeNumber;
   final TmdbListService tmdbListService;
@@ -19,7 +20,7 @@ class EpisodeDetails extends StatefulWidget {
 
   const EpisodeDetails({
     super.key,
-    required this.tvId,
+    required this.title,
     required this.seasonNumber,
     required this.episodeNumber,
     required this.tmdbListService,
@@ -48,7 +49,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
 
     try {
       final updated = await TmdbEpisodeService().getEpisodeDetails(
-          widget.tvId, widget.seasonNumber, widget.episodeNumber);
+          widget.title.tmdbId, widget.seasonNumber, widget.episodeNumber);
 
       if (mounted) {
         setState(() {
@@ -69,9 +70,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
 
   @override
   Widget build(BuildContext context) {
-    String appTitle = _currentEpisode != null
-        ? '${AppLocalizations.of(context)!.episodes} ${widget.episodeNumber}'
-        : '${AppLocalizations.of(context)!.episodes} ${widget.episodeNumber}';
+    String appTitle = widget.title.name;
 
     return Scaffold(
       appBar: MainAppBar(
@@ -210,53 +209,12 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
       return const SizedBox.shrink();
     }
 
-    String titleText = type == PersonAttributes.cast
-        ? 'Guest Stars' // Custom wording for episodes
-        : AppLocalizations.of(context)!.crew;
-
     List<TmdbPerson> people;
     if (type == PersonAttributes.cast) {
       people = episode.cast;
     } else {
       people = episode.crew;
-      final jobMap = <String, TmdbPerson>{};
-
-      for (var p in people) {
-        if (jobMap.containsKey(p.name)) {
-          final existingPerson = jobMap[p.name]!;
-          final existingJobs = existingPerson.job.split(', ');
-          final newJobs = p.job.split(', ');
-          for (var job in newJobs) {
-            if (!existingJobs.contains(job)) {
-              existingPerson.job += ', $job';
-            }
-          }
-        } else {
-          jobMap[p.name] = TmdbPerson(
-            tmdbId: p.tmdbId,
-            name: p.name,
-            lastUpdated: p.lastUpdated,
-            knownForDepartment: p.knownForDepartment,
-            gender: p.gender,
-            originalName: p.originalName,
-            profilePath: p.profilePath,
-            character: p.character,
-            job: p.job,
-            biography: p.biography,
-            birthday: p.birthday,
-            deathday: p.deathday,
-            imdbId: p.imdbId,
-            placeOfBirth: p.placeOfBirth,
-            homepage: p.homepage,
-            combinedCredits: p.combinedCredits,
-          );
-        }
-      }
-
-      people = jobMap.values.toList();
     }
-
-    final displayList = people.take(15).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,49 +222,64 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              titleText,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            Expanded(
+              child: Text(
+                type == PersonAttributes.cast
+                    ? AppLocalizations.of(context)!.cast
+                    : AppLocalizations.of(context)!.crew,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-            if (people.length > 15)
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Scaffold(
-                        appBar: MainAppBar(
-                          context: context,
-                          title: '${_currentEpisode!.name} - $titleText',
-                        ),
-                        body: PersonList(
-                          people: people,
-                          type: type,
-                          listService: widget.tmdbListService,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                child: Text(AppLocalizations.of(context)!.seeThemAll),
-              )
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TitlePeopleList(
+                            title: widget.title,
+                            type: type,
+                            tmdbListService: widget.tmdbListService,
+                          )),
+                );
+              },
+              child: Text(
+                AppLocalizations.of(context)!.seeThemAll,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 10),
-        SizedBox(
-          height: 250,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: displayList.length,
-            itemBuilder: (context, index) {
-              return PersonChip(
-                person: displayList[index],
-                tmdbListService: widget.tmdbListService,
-              );
-            },
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: people
+                .map((person) => Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: _personChip(context, person)))
+                .take(20)
+                .toList(),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _personChip(BuildContext context, TmdbPerson tmdbPerson) {
+    final clampedScale =
+        MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.3);
+
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        textScaler: TextScaler.linear(clampedScale),
+      ),
+      child: PersonChip(
+        person: tmdbPerson,
+        tmdbListService: widget.tmdbListService,
+      ),
     );
   }
 }
