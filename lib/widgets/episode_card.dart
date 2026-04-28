@@ -6,6 +6,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/episode_details.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
+import 'package:moviescout/utils/date_formatter.dart';
 
 class EpisodeCard extends StatelessWidget {
   final TmdbEpisode _episode;
@@ -106,7 +107,7 @@ class EpisodeCard extends StatelessWidget {
           const SizedBox(height: 5),
           Row(
             children: [
-              Text(episode.airDate, overflow: TextOverflow.ellipsis),
+              Text(DateFormatter.formatDate(context, episode.airDate), overflow: TextOverflow.ellipsis),
               if (episode.runtime > 0) ...[
                 const Text(' - '),
                 Text('${episode.runtime} min'),

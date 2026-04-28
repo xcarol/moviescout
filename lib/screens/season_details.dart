@@ -13,6 +13,7 @@ import 'package:moviescout/widgets/episode_card.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:moviescout/utils/date_formatter.dart';
 
 class SeasonDetails extends StatefulWidget {
   final TmdbTitle title;
@@ -147,7 +148,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Text(
-              season.airDate,
+              DateFormatter.formatDate(context, season.airDate),
               maxLines: 1,
             ),
           ),

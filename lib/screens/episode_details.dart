@@ -10,6 +10,7 @@ import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/person_chip.dart';
+import 'package:moviescout/utils/date_formatter.dart';
 
 class EpisodeDetails extends StatefulWidget {
   final TmdbTitle title;
@@ -159,7 +160,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                if (episode.airDate.isNotEmpty) Text(episode.airDate),
+                if (episode.airDate.isNotEmpty) Text(DateFormatter.formatDate(context, episode.airDate)),
                 if (episode.airDate.isNotEmpty && episode.runtime > 0)
                   const Text(' - '),
                 if (episode.runtime > 0) Text('${episode.runtime} min'),
