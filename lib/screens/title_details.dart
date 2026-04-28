@@ -4,6 +4,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
+import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
@@ -11,6 +12,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart'
     show TmdbTitleRepository;
 import 'package:moviescout/screens/person_details.dart';
+import 'package:moviescout/screens/season_details.dart';
 import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/region_service.dart';
@@ -24,6 +26,7 @@ import 'package:moviescout/widgets/person_chip.dart';
 import 'package:moviescout/widgets/rate_form.dart';
 import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
+import 'package:moviescout/widgets/drop_down_selector.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/omdb_rating_widget.dart';
 import 'package:moviescout/widgets/pin_button.dart';
@@ -53,6 +56,7 @@ class _TitleDetailsState extends State<TitleDetails> {
   late TmdbTitle _currentTitle;
   bool _isUpdating = false;
   List<Map<String, dynamic>>? _omdbRatings;
+  String _selectedSeason = '';
 
   @override
   void initState() {
@@ -140,7 +144,13 @@ class _TitleDetailsState extends State<TitleDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        MediaCarousel(title: title, isLoading: _isUpdating),
+        MediaCarousel(
+            images: title.images,
+            videos: title.videos,
+            backdropPath: title.backdropPath,
+            posterPath: title.posterPath,
+            isMovie: title.isMovie,
+            isLoading: _isUpdating),
         const SizedBox(height: 20),
         _details(title),
       ],
@@ -383,6 +393,10 @@ class _TitleDetailsState extends State<TitleDetails> {
           _genres(title),
           const SizedBox(height: 10),
           _description(title),
+          if (!title.isMovie && title.numberOfSeasons > 0) ...[
+            const SizedBox(height: 15),
+            _seasonsDropdown(title),
+          ],
           const SizedBox(height: 30),
           _infoLine(title),
           const SizedBox(height: 10),
@@ -479,7 +493,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         ),
       ]);
     }
-    
+
     if (_isUpdating) {
       topChildren.add(const SizedBox(width: 15));
       topChildren.add(
@@ -880,6 +894,63 @@ class _TitleDetailsState extends State<TitleDetails> {
         title: tmdbTitle,
         tmdbListService: widget._tmdbListService,
       ),
+    );
+  }
+
+  Widget _seasonsDropdown(TmdbTitle title) {
+    if (title.isMovie || title.numberOfSeasons == 0) {
+      return const SizedBox.shrink();
+    }
+
+    final selectSeasonText = AppLocalizations.of(context)!.selectSeason;
+
+    final List<String> seasonOptions = [selectSeasonText];
+    for (int i = 1; i <= title.numberOfSeasons; i++) {
+      seasonOptions.add(AppLocalizations.of(context)!.seasonLabel(i));
+    }
+
+    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        DropdownSelector(
+          selectedOption:
+              _selectedSeason.isEmpty ? selectSeasonText : _selectedSeason,
+          options: seasonOptions,
+          border: Border.all(color: titleTheme.listDividerColor),
+          borderRadius: BorderRadius.circular(5),
+          onSelected: (option) {
+            if (option == selectSeasonText) return;
+
+            // Reconstruct the season number by matching the option inside seasonOptions
+            final seasonIndex = seasonOptions.indexOf(option);
+            if (seasonIndex < 1) return;
+            final seasonNumber = seasonIndex;
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SeasonDetails(
+                  title: title,
+                  seasonNumber: seasonNumber,
+                  tmdbListService: widget._tmdbListService,
+                ),
+              ),
+            ).then((_) {
+              if (mounted) {
+                setState(() {
+                  _selectedSeason = '';
+                });
+              }
+            });
+
+            setState(() {
+              _selectedSeason = option;
+            });
+          },
+        ),
+      ],
     );
   }
 

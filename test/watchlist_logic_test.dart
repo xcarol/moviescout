@@ -105,6 +105,7 @@ void main() {
         titleAfterUpdate: serverTitle,
         enabledProviderIds: enabledProviders,
         now: now,
+        notifyCompleteSeason: false,
       );
       
       expect(trigger, NotificationTrigger.newAvailability);
@@ -121,6 +122,7 @@ void main() {
         titleAfterUpdate: serverTitle,
         enabledProviderIds: enabledProviders,
         now: now,
+        notifyCompleteSeason: false,
       );
       
       expect(trigger, NotificationTrigger.none);
@@ -148,6 +150,7 @@ void main() {
         titleAfterUpdate: serverTitle,
         enabledProviderIds: enabledProviders,
         now: now,
+        notifyCompleteSeason: false,
       );
       
       expect(trigger, NotificationTrigger.newSeason);
@@ -173,6 +176,7 @@ void main() {
         titleAfterUpdate: serverTitle,
         enabledProviderIds: enabledProviders,
         now: testNow,
+        notifyCompleteSeason: false,
       );
       
       expect(trigger, NotificationTrigger.newSeason);
@@ -193,6 +197,7 @@ void main() {
         titleAfterUpdate: serverTitle,
         enabledProviderIds: enabledProviders,
         now: testNow,
+        notifyCompleteSeason: false,
       );
       
       expect(trigger, NotificationTrigger.none);
@@ -225,6 +230,7 @@ void main() {
         titleAfterUpdate: serverTitle,
         enabledProviderIds: enabledProviders,
         now: DateTime(2026, 3, 29),
+        notifyCompleteSeason: false,
       );
       
       expect(trigger, NotificationTrigger.newSeason);
@@ -244,6 +250,7 @@ void main() {
         titleAfterUpdate: serverTitle,
         enabledProviderIds: enabledProviders,
         now: now,
+        notifyCompleteSeason: false,
       );
       
       expect(trigger, NotificationTrigger.none);
@@ -278,6 +285,7 @@ void main() {
         titleAfterUpdate: serverTitle,
         enabledProviderIds: enabledProviders,
         now: now,
+        notifyCompleteSeason: false,
       );
       
       expect(trigger, NotificationTrigger.none);
@@ -294,9 +302,85 @@ void main() {
         titleAfterUpdate: serverTitle,
         enabledProviderIds: enabledProviders,
         now: now,
+        notifyCompleteSeason: false,
       );
       
       expect(trigger, NotificationTrigger.none);
+    });
+
+    test('Serie [notifyCompleteSeason: true]: Does NOT notify if next episode belongs to current season', () {
+      final serverJson = {
+        'id': 12345,
+        'name': 'Weekly Show',
+        'media_type': 'tv',
+        'number_of_seasons': 2,
+        'last_episode_to_air': {
+          'season_number': 2,
+          'episode_number': 5,
+          'air_date': '2026-03-28' // aired yesterday
+        },
+        'next_episode_to_air': {
+          'season_number': 2,
+          'episode_number': 6,
+          'air_date': '2026-04-04' // next week
+        },
+        'seasons': [
+          {'season_number': 1, 'air_date': '2025-01-01'},
+          {'season_number': 2, 'air_date': '2026-03-01'}, 
+        ],
+        'watch/providers': {'results': {'ES': {'flatrate': [{'provider_id': 8}]}}}
+      };
+      
+      final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      localTitle.lastNotifiedSeason = 1; 
+      
+      final trigger = WatchlistNotificationEvaluator.evaluateNotification(
+        titleBeforeUpdate: localTitle,
+        titleAfterUpdate: serverTitle,
+        enabledProviderIds: enabledProviders,
+        now: now,
+        notifyCompleteSeason: true,
+      );
+      
+      // Should wait till it ends
+      expect(trigger, NotificationTrigger.none);
+    });
+
+    test('Serie [notifyCompleteSeason: true]: Notifies when season finishes airing completely', () {
+      final serverJson = {
+        'id': 12345,
+        'name': 'Weekly Show',
+        'media_type': 'tv',
+        'number_of_seasons': 2,
+        // Last episode of S2 finished recently
+        'last_episode_to_air': {
+          'season_number': 2,
+          'episode_number': 10,
+          'air_date': '2026-03-25' // ended 4 days ago
+        },
+        // No next episode, or next episode is S3 (null usually if not announced)
+        'next_episode_to_air': null,
+        'seasons': [
+          {'season_number': 1, 'air_date': '2025-01-01'},
+          {'season_number': 2, 'air_date': '2026-01-01'}, 
+        ],
+        'watch/providers': {'results': {'ES': {'flatrate': [{'provider_id': 8}]}}}
+      };
+      
+      final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      localTitle.lastNotifiedSeason = 1; 
+      
+      final trigger = WatchlistNotificationEvaluator.evaluateNotification(
+        titleBeforeUpdate: localTitle,
+        titleAfterUpdate: serverTitle,
+        enabledProviderIds: enabledProviders,
+        now: now,
+        notifyCompleteSeason: true,
+      );
+      
+      expect(trigger, NotificationTrigger.newSeason);
     });
   });
 

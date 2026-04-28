@@ -415,4 +415,15 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get notifyCompleteSeason => 'Notificar temporada completa';
+
+  @override
+  String get episodes => 'Episodis';
+
+  @override
+  String get selectSeason => 'Veure les temporades';
+
+  @override
+  String seasonLabel(Object count) {
+    return 'Temporada $count';
+  }
 }

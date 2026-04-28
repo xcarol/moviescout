@@ -3,12 +3,6 @@
 #
 # Useful for resolving issues related with NEVERENDING BUILDS.
 
-echo "Cleaning Kotlin DSL cache..."
-rm -rf ~/.gradle/caches/8.14/kotlin-dsl/
-
-echo "Fixing Gradle cache permissions..."
-sudo chown -R "$USER:$USER" ~/.gradle
-
 echo "Killing any leftover Gradle daemons..."
 PIDS=$(ps aux | grep '[g]radle' | grep -v 'clean-gradle.sh' | awk '{print $2}')
 if [ ! -z "$PIDS" ]; then
@@ -18,9 +12,8 @@ else
     echo "No Gradle processes found."
 fi
 
-echo "Cleaning project build..."
-cd ~/workspace/moviescout/android
-./gradlew clean
+echo "Cleaning Gradle cache..."
+sudo rm -fr ~/.gradle
 
 echo "Rebuilding with refreshed dependencies..."
 ./gradlew build --refresh-dependencies

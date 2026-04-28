@@ -900,6 +900,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Notify complete season'**
   String get notifyCompleteSeason;
+
+  /// No description provided for @episodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Episodes'**
+  String get episodes;
+
+  /// No description provided for @selectSeason.
+  ///
+  /// In en, this message translates to:
+  /// **'See the seasons'**
+  String get selectSeason;
+
+  /// No description provided for @seasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Season {count}'**
+  String seasonLabel(Object count);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -132,5 +132,8 @@
     "errorMessageGeneric": "S'ha produït un error. Torna-ho a provar més tard.",
     "youtubeSearch": "Cerca a YouTube",
     "notificationsHistory": "Últimes notificacions",
-    "notifyCompleteSeason": "Notificar temporada completa"
+    "notifyCompleteSeason": "Notificar temporada completa",
+    "episodes": "Episodis",
+    "selectSeason": "Veure les temporades",
+    "seasonLabel": "Temporada {count}"
 }

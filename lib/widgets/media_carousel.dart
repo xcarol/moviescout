@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +10,20 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MediaCarousel extends StatefulWidget {
-  final TmdbTitle title;
+  final List<String> images;
+  final List<Map<String, dynamic>> videos;
+  final String backdropPath;
+  final String posterPath;
+  final bool isMovie;
 
   final bool isLoading;
 
   const MediaCarousel({
-    required this.title,
+    required this.images,
+    required this.videos,
+    required this.backdropPath,
+    required this.posterPath,
+    required this.isMovie,
     this.isLoading = false,
     super.key,
   });
@@ -43,9 +52,9 @@ class _MediaCarouselState extends State<MediaCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    final images = widget.title.images;
+    final images = widget.images;
 
-    final allVideos = widget.title.videos;
+    final allVideos = widget.videos;
     final tmdbVideos = allVideos
         .where((v) => v[TmdbTitleFields.isSearchResult] != true)
         .toList()
@@ -140,10 +149,10 @@ class _MediaCarouselState extends State<MediaCarousel> {
   }
 
   Widget _buildFallbackBanner() {
-    final image = widget.title.backdropPath.isNotEmpty
-        ? widget.title.backdropPath
-        : widget.title.posterPath;
-    final isMovie = widget.title.isMovie;
+    final image = widget.backdropPath.isNotEmpty
+        ? widget.backdropPath
+        : widget.posterPath;
+    final isMovie = widget.isMovie;
 
     return AspectRatio(
       aspectRatio: 16 / 9,
@@ -168,12 +177,27 @@ class _MediaCarouselState extends State<MediaCarousel> {
   Widget _buildImage(String path) {
     final url = 'https://image.tmdb.org/t/p/original$path';
 
-    return CachedNetworkImage(
-      imageUrl: url,
-      fit: BoxFit.cover,
-      placeholder: (context, url) => Container(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)),
-      errorWidget: (context, url, error) => const Icon(Icons.error),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+          child: CachedNetworkImage(
+            imageUrl: url,
+            fit: BoxFit.cover,
+            color: Colors.black.withAlpha(128),
+            colorBlendMode: BlendMode.darken,
+            errorWidget: (context, url, error) => const SizedBox.shrink(),
+          ),
+        ),
+        CachedNetworkImage(
+          imageUrl: url,
+          fit: BoxFit.contain,
+          placeholder: (context, url) => Container(
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+        ),
+      ],
     );
   }
 }
