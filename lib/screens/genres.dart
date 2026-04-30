@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 
 class GenresScreen extends StatefulWidget {
@@ -35,11 +33,9 @@ class _GenresScreenState extends State<GenresScreen> {
 
     return Scaffold(
       backgroundColor: titleTheme.listBackground,
-      appBar: MainAppBar(
-        context: context,
-        title: AppLocalizations.of(context)!.genres,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.genres),
       ),
-      drawer: const AppDrawer(),
       body: ListView.builder(
         itemCount: widget.genresList.length,
         itemBuilder: (context, index) {

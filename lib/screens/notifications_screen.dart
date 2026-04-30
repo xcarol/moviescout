@@ -8,8 +8,6 @@ import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
-import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:provider/provider.dart';
@@ -76,11 +74,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     final allProviders = providerService.providers;
 
     return Scaffold(
-      appBar: MainAppBar(
-        context: context,
-        title: localizations.notificationsHistory,
+      appBar: AppBar(
+        title: Text(localizations.notificationsHistory),
       ),
-      drawer: const AppDrawer(),
       body: _notifications.isEmpty
           ? Center(
               child: Text(localizations.emptyList),

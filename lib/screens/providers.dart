@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
-import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
 
 class ProvidersScreen extends StatefulWidget {
@@ -46,11 +44,9 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
         }
       },
       child: Scaffold(
-        appBar: MainAppBar(
-          context: context,
-          title: AppLocalizations.of(context)!.providersTitle,
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context)!.providersTitle),
         ),
-        drawer: AppDrawer(),
         body: Center(child: _body(context, providerService)),
       ),
     );

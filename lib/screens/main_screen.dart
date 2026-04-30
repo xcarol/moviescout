@@ -5,7 +5,6 @@ import 'package:moviescout/screens/discover_list.dart';
 import 'package:moviescout/screens/rates_list.dart';
 import 'package:moviescout/screens/watch_list.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
-import 'package:moviescout/widgets/app_bar.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -47,9 +46,8 @@ class _MainScreenState extends State<MainScreen> {
         }
       },
       child: Scaffold(
-        appBar: MainAppBar(
-          context: context,
-          title: _getTitleForIndex(_currentIndex, context),
+        appBar: AppBar(
+          title: Text(_getTitleForIndex(_currentIndex, context)),
         ),
         drawer: AppDrawer(),
         body: Column(children: [
