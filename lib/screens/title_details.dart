@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -55,6 +57,7 @@ class TitleDetails extends StatefulWidget {
 class _TitleDetailsState extends State<TitleDetails> {
   late TmdbTitle _currentTitle;
   bool _isUpdating = false;
+  bool _isUpdatingRatings = false;
   List<Map<String, dynamic>>? _omdbRatings;
   String _selectedSeason = '';
 
@@ -62,7 +65,21 @@ class _TitleDetailsState extends State<TitleDetails> {
   void initState() {
     super.initState();
     _currentTitle = widget._title;
+    _initializeRatings();
     _updateDetails();
+  }
+
+  void _initializeRatings() {
+    if (_currentTitle.omdbRatingsJson != null && _currentTitle.omdbRatingsJson!.isNotEmpty) {
+      try {
+        _omdbRatings = List<Map<String, dynamic>>.from(jsonDecode(_currentTitle.omdbRatingsJson!));
+      } catch (_) {}
+    }
+
+    final bool wasUpToDate = TmdbTitleService.isUpToDate(_currentTitle);
+    if (_omdbRatings == null || _omdbRatings!.isEmpty || !wasUpToDate) {
+      _isUpdatingRatings = true;
+    }
   }
 
   @override
@@ -110,12 +127,28 @@ class _TitleDetailsState extends State<TitleDetails> {
           _isUpdating = false;
         });
 
-        if (updated.imdbId.isNotEmpty) {
-          final ratings = await OmdbService().getRatings(updated.imdbId);
-          if (mounted) {
+        if (_isUpdatingRatings) {
+          if (updated.imdbId.isNotEmpty) {
+            final ratings = await OmdbService().getRatings(updated.imdbId);
+            updated.omdbRatingsJson = jsonEncode(ratings);
+            if (mounted) {
+              setState(() {
+                _omdbRatings = ratings;
+                _isUpdatingRatings = false;
+              });
+            }
+          } else if (mounted) {
             setState(() {
-              _omdbRatings = ratings;
+              _isUpdatingRatings = false;
             });
+          }
+        } else {
+          if (mounted && updated.omdbRatingsJson != null && updated.omdbRatingsJson!.isNotEmpty) {
+            try {
+              setState(() {
+                _omdbRatings = List<Map<String, dynamic>>.from(jsonDecode(updated.omdbRatingsJson!));
+              });
+            } catch (_) {}
           }
         }
 
@@ -126,6 +159,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       if (mounted) {
         setState(() {
           _isUpdating = false;
+          _isUpdatingRatings = false;
         });
       }
     }
@@ -494,20 +528,22 @@ class _TitleDetailsState extends State<TitleDetails> {
       ]);
     }
 
-    if (_isUpdating) {
-      topChildren.add(const SizedBox(width: 15));
+    if (_omdbRatings != null && _omdbRatings!.isNotEmpty) {
+      for (var rating in _omdbRatings!) {
+        if (topChildren.isNotEmpty) topChildren.add(const SizedBox(width: 15));
+        topChildren.add(OmdbRatingWidget(rating: rating));
+      }
+    }
+
+    if (_isUpdatingRatings) {
+      if (topChildren.isNotEmpty) topChildren.add(const SizedBox(width: 15));
       topChildren.add(
-        SizedBox(
+        const SizedBox(
           width: 15,
           height: 15,
           child: CircularProgressIndicator(strokeWidth: 1),
         ),
       );
-    } else if (_omdbRatings != null && _omdbRatings!.isNotEmpty) {
-      for (var rating in _omdbRatings!) {
-        if (topChildren.isNotEmpty) topChildren.add(const SizedBox(width: 15));
-        topChildren.add(OmdbRatingWidget(rating: rating));
-      }
     }
 
     return Column(
