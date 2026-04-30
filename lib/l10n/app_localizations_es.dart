@@ -420,6 +420,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notifyCompleteSeason => 'Notificar temporada completa';
 
   @override
+  String get notifyCompleteSeasonSubtitle => 'Solo notifica cuando toda la temporada está disponible.';
+
+  @override
   String get episodes => 'Episodios';
 
   @override

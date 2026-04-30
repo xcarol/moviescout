@@ -68,6 +68,7 @@ class SettingsScreen extends StatelessWidget {
     return SwitchListTile(
       secondary: const Icon(Icons.done_all),
       title: Text(AppLocalizations.of(context)!.notifyCompleteSeason),
+      subtitle: Text(AppLocalizations.of(context)!.notifyCompleteSeasonSubtitle),
       value: notificationService.notifyCompleteSeason,
       onChanged: notificationService.enabled
           ? (bool value) async {

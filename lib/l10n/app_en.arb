@@ -134,6 +134,7 @@
     "youtubeSearch": "YouTube Search",
     "notificationsHistory": "Last notifications",
     "notifyCompleteSeason": "Notify complete season",
+    "notifyCompleteSeasonSubtitle": "Only notifies when the whole season is available.",
     "episodes": "Episodes",
     "selectSeason": "See the seasons",
     "seasonLabel": "Season {count}"
