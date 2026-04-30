@@ -13,6 +13,7 @@ import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/utils/deep_link_utils.dart';
 import 'package:moviescout/widgets/app_bar.dart';
+import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/color_scheme_form.dart';
 import 'package:moviescout/widgets/language_form.dart';
 import 'package:moviescout/widgets/notification_permission_dialog.dart';
@@ -31,6 +32,7 @@ class SettingsScreen extends StatelessWidget {
         context: context,
         title: AppLocalizations.of(context)!.settings,
       ),
+      drawer: const AppDrawer(),
       body: ListView(
         children: [
           if (isUserLoggedIn && defaultTargetPlatform == TargetPlatform.linux)
