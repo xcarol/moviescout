@@ -13,8 +13,6 @@ import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
-import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
 
 enum TitleStatus { pending, success, failed }
@@ -57,11 +55,9 @@ class _ImportIMDBState extends State<ImportIMDB> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar(
-        context: context,
-        title: AppLocalizations.of(context)!.imdbImport,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.imdbImport),
       ),
-      drawer: AppDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

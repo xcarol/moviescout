@@ -907,6 +907,12 @@ abstract class AppLocalizations {
   /// **'Notify complete season'**
   String get notifyCompleteSeason;
 
+  /// No description provided for @notifyCompleteSeasonSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Only notifies when the whole season is available.'**
+  String get notifyCompleteSeasonSubtitle;
+
   /// No description provided for @episodes.
   ///
   /// In en, this message translates to:

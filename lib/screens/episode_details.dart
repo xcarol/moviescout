@@ -6,8 +6,6 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/services/tmdb_episode_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
-import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/person_chip.dart';
 import 'package:moviescout/utils/date_formatter.dart';
@@ -74,11 +72,9 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
     String appTitle = widget.title.name;
 
     return Scaffold(
-      appBar: MainAppBar(
-        context: context,
-        title: appTitle,
+      appBar: AppBar(
+        title: Text(appTitle),
       ),
-      drawer: AppDrawer(),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: _detailsBody(),

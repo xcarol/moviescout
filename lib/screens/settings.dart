@@ -12,8 +12,6 @@ import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/utils/deep_link_utils.dart';
-import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/color_scheme_form.dart';
 import 'package:moviescout/widgets/language_form.dart';
 import 'package:moviescout/widgets/notification_permission_dialog.dart';
@@ -28,11 +26,9 @@ class SettingsScreen extends StatelessWidget {
     bool isUserLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
 
     return Scaffold(
-      appBar: MainAppBar(
-        context: context,
-        title: AppLocalizations.of(context)!.settings,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.settings),
       ),
-      drawer: const AppDrawer(),
       body: ListView(
         children: [
           if (isUserLoggedIn && defaultTargetPlatform == TargetPlatform.linux)
@@ -72,6 +68,7 @@ class SettingsScreen extends StatelessWidget {
     return SwitchListTile(
       secondary: const Icon(Icons.done_all),
       title: Text(AppLocalizations.of(context)!.notifyCompleteSeason),
+      subtitle: Text(AppLocalizations.of(context)!.notifyCompleteSeasonSubtitle),
       value: notificationService.notifyCompleteSeason,
       onChanged: notificationService.enabled
           ? (bool value) async {

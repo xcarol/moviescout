@@ -3,8 +3,6 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/services/tmdb_person_titles_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
-import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/title_list.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
@@ -49,11 +47,9 @@ class _PersonTitlesState extends State<PersonTitles> {
     String appTitle = widget._person.name;
 
     return Scaffold(
-      appBar: MainAppBar(
-        context: context,
-        title: appTitle,
+      appBar: AppBar(
+        title: Text(appTitle),
       ),
-      drawer: AppDrawer(),
       body: ChangeNotifierProvider<TmdbListService>.value(
         value: _personTitlesService,
         child: body(),

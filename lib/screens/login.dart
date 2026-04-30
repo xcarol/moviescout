@@ -9,8 +9,6 @@ import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:app_links/app_links.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
-import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -110,11 +108,9 @@ class _LoginState extends State<Login> {
     loginSuccessMessage = AppLocalizations.of(context)!.loginSuccess;
 
     return Scaffold(
-      appBar: MainAppBar(
-        context: context,
-        title: AppLocalizations.of(context)!.loginTitle,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.loginTitle),
       ),
-      drawer: AppDrawer(),
       body: Center(child: loginBody()),
     );
   }

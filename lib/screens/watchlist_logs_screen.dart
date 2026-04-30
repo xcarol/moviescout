@@ -3,8 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:moviescout/main.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
 
 class WatchlistLogsScreen extends StatefulWidget {
   const WatchlistLogsScreen({super.key});
@@ -109,9 +107,8 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar(
-        context: context,
-        title: 'Watchlist Update Logs',
+      appBar: AppBar(
+        title: const Text('Watchlist Update Logs'),
         actions: [
           if (_logs.isNotEmpty)
             IconButton(
@@ -143,7 +140,6 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen>
             ),
         ],
       ),
-      drawer: const AppDrawer(),
       body: Column(
         children: [
           Container(

@@ -22,8 +22,6 @@ import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
-import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/person_chip.dart';
 import 'package:moviescout/widgets/rate_form.dart';
 import 'package:moviescout/widgets/title_chip.dart';
@@ -87,9 +85,8 @@ class _TitleDetailsState extends State<TitleDetails> {
     String appTitle = _currentTitle.name;
 
     return Scaffold(
-      appBar: MainAppBar(
-        context: context,
-        title: appTitle,
+      appBar: AppBar(
+        title: Text(appTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
@@ -104,7 +101,6 @@ class _TitleDetailsState extends State<TitleDetails> {
           ),
         ],
       ),
-      drawer: AppDrawer(),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: _detailsBody(_currentTitle),

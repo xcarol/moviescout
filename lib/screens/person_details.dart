@@ -13,8 +13,6 @@ import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
-import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/screens/person_titles.dart';
 import 'package:provider/provider.dart';
@@ -50,9 +48,8 @@ class _PersonDetailsState extends State<PersonDetails> {
         }
 
         return Scaffold(
-          appBar: MainAppBar(
-            context: context,
-            title: appTitle,
+          appBar: AppBar(
+            title: Text(appTitle),
             actions: [
               IconButton(
                 icon: const Icon(Icons.share),
@@ -67,7 +64,6 @@ class _PersonDetailsState extends State<PersonDetails> {
               ),
             ],
           ),
-          drawer: AppDrawer(),
           body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: _detailsBody(snapshot.data as TmdbPerson),

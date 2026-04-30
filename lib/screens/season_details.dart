@@ -7,8 +7,6 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_season_service.dart';
-import 'package:moviescout/widgets/app_bar.dart';
-import 'package:moviescout/widgets/app_drawer.dart';
 import 'package:moviescout/widgets/episode_card.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -59,9 +57,8 @@ class _SeasonDetailsState extends State<SeasonDetails> {
     String appTitle = widget.title.name;
 
     return Scaffold(
-      appBar: MainAppBar(
-        context: context,
-        title: appTitle,
+      appBar: AppBar(
+        title: Text(appTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
@@ -76,7 +73,6 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           ),
         ],
       ),
-      drawer: AppDrawer(),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _season == null
