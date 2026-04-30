@@ -89,30 +89,37 @@ class AppDrawer extends StatelessWidget {
             : user['username']
         : AppLocalizations.of(context)!.anonymousUser;
 
-    return UserAccountsDrawerHeader(
-      currentAccountPicture: user != null
-          ? CircleAvatar(
-              backgroundImage: userImage,
-            )
-          : CircleAvatar(
-              child: SvgPicture.asset(
-                'assets/account.svg',
-                width: 80,
-                height: 80,
-              ),
-            ),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onSurface,
+    return DrawerHeader(
+      padding: const EdgeInsets.all(0),
+      margin: const EdgeInsets.all(0),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            user != null
+                ? CircleAvatar(
+                    backgroundImage: userImage,
+                  )
+                : CircleAvatar(
+                    child: SvgPicture.asset(
+                      'assets/account.svg',
+                      width: 80,
+                      height: 80,
+                    ),
+                  ),
+            const SizedBox(height: 16),
+            Text(userName,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                )),
+          ],
+        ),
       ),
-      accountName: Text(userName,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.surface,
-          )),
-      accountEmail: null,
     );
   }
-
-
 
   Widget _aboutTile(BuildContext context) {
     return AboutListTile(
@@ -226,6 +233,4 @@ class AppDrawer extends StatelessWidget {
       Navigator.of(context).popUntil((route) => route.isFirst);
     }
   }
-
-
 }
