@@ -877,6 +877,12 @@ abstract class AppLocalizations {
   /// **'Open Settings'**
   String get openSettings;
 
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
   /// No description provided for @errorMessageGeneric.
   ///
   /// In en, this message translates to:

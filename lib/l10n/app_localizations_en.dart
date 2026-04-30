@@ -405,6 +405,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get openSettings => 'Open Settings';
 
   @override
+  String get settings => 'Settings';
+
+  @override
   String get errorMessageGeneric => 'An error occurred. Please try again later.';
 
   @override

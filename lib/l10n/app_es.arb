@@ -129,6 +129,7 @@
     "notificationsPermissionRequired": "Debes permitir las notificaciones en los ajustes del sistema.",
     "notificationsPermissionDescription": "Para recibir avisos de disponibilidad de películas y nuevas temporadas, debes activar las notificaciones en los ajustes del sistema.",
     "openSettings": "Abrir ajustes",
+    "settings": "Configuración",
     "errorMessageGeneric": "Ha ocurrido un error. Inténtalo de nuevo más tarde.",
     "youtubeSearch": "Búsqueda en YouTube",
     "notificationsHistory": "Últimas notificaciones",
