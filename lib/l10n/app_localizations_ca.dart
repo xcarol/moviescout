@@ -405,6 +405,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get openSettings => 'Obrir ajustos';
 
   @override
+  String get settings => 'Configuració';
+
+  @override
   String get errorMessageGeneric => 'S\'ha produït un error. Torna-ho a provar més tard.';
 
   @override
