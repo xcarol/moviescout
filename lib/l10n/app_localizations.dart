@@ -586,7 +586,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutDescription.
   ///
   /// In en, this message translates to:
-  /// **'Movie Scout your movie and series tracker.'**
+  /// **'Movie Scout your movie and series tracker powered by TMDb, OMDb & JustWatch.'**
   String get aboutDescription;
 
   /// No description provided for @aboutGithub.
