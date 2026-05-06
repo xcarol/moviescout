@@ -252,7 +252,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get about => 'About...';
 
   @override
-  String get aboutDescription => 'Movie Scout your movie and series tracker.';
+  String get aboutDescription => 'Movie Scout your movie and series tracker powered by TMDb, OMDb & JustWatch.';
 
   @override
   String get aboutGithub => 'Visit project on ';

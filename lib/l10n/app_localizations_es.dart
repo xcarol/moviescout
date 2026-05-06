@@ -252,7 +252,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get about => 'Sobre...';
 
   @override
-  String get aboutDescription => 'Movie Scout tu rastreador de películas y series.';
+  String get aboutDescription => 'Movie Scout tu rastreador de películas y series con datos de TMDb, OMDb y JustWatch.';
 
   @override
   String get aboutGithub => 'Visita el proyecto en ';
