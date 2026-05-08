@@ -10,7 +10,7 @@ Movie Scout is a movie and TV tracker powered by TMDB. Built around your watchli
 - **Search and Organize**: Quickly search, add, or remove titles from your list.  
 - **Detailed Information**: View essential details like posters, titles, brief descriptions, and more.  
 - **User-Friendly Design**: Enjoy a clean and intuitive interface designed for movie and TV enthusiasts.  
-- **Notifications**: Get notified when new movies or series are available.  
+- **Notifications**: Get notified when movies and TV shows in your watchlist become available on your streaming platforms.  
 
 Whether you’re keeping track of what to watch next or exploring new favorites, Movie Scout ensures you’re always in the know.  
 
