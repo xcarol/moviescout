@@ -336,16 +336,16 @@ class AppLocalizationsCa extends AppLocalizations {
   String get notificationTitle => 'Ja disponible!';
 
   @override
-  String notificationBody(Object title) {
-    return '$title ja està disponible en una de les teves plataformes.';
+  String notificationBody(Object provider, Object title) {
+    return '$title ja està disponible a $provider.';
   }
 
   @override
   String get notificationNewSeasonTitle => 'Nova temporada!';
 
   @override
-  String notificationNewSeasonBody(Object title) {
-    return 'Nova temporada de $title disponible.';
+  String notificationNewSeasonBody(Object provider, Object title) {
+    return 'Nova temporada de $title disponible a $provider.';
   }
 
   @override
