@@ -98,6 +98,7 @@ class _MediaCarouselState extends State<MediaCarousel> {
             ),
           PageView.builder(
             controller: _pageController,
+            physics: totalItems == 1 ? const NeverScrollableScrollPhysics() : null,
             onPageChanged: (index) {
               final realIndex = _getRealIndex(index, totalItems);
               if (realIndex != _currentPage) {
