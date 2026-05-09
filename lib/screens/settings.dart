@@ -6,13 +6,11 @@ import 'package:moviescout/screens/providers.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/notification_service.dart';
 import 'package:moviescout/services/region_service.dart';
-import 'package:moviescout/services/theme_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/utils/deep_link_utils.dart';
-import 'package:moviescout/widgets/color_scheme_form.dart';
 import 'package:moviescout/widgets/language_form.dart';
 import 'package:moviescout/widgets/notification_permission_dialog.dart';
 import 'package:moviescout/widgets/region_form.dart';
@@ -34,7 +32,6 @@ class SettingsScreen extends StatelessWidget {
           if (isUserLoggedIn && defaultTargetPlatform == TargetPlatform.linux)
             _importImdbTile(context),
           if (isUserLoggedIn) _providersTile(context),
-          _colorSchemeTile(context),
           _languageTile(context),
           _regionTile(context),
           _notificationsTile(context),
@@ -99,30 +96,6 @@ class SettingsScreen extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const ProvidersScreen()),
-        );
-      },
-    );
-  }
-
-  Widget _colorSchemeTile(BuildContext context) {
-    final themeProvider = Provider.of<ThemeService>(context);
-
-    return ListTile(
-      leading: const Icon(Icons.color_lens),
-      title: Text(
-        AppLocalizations.of(context)!.schemeSelectTitle,
-      ),
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return ColorSchemeForm(
-              currentScheme: themeProvider.currentScheme,
-              onSubmit: (ThemeSchemes schemeName) {
-                themeProvider.setColorScheme(schemeName);
-              },
-            );
-          },
         );
       },
     );
