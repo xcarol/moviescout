@@ -68,13 +68,24 @@ Future<bool> updateTitle(
       .where((id) => enabledProviderIds.contains(id))
       .toList();
 
+  String providerName = '';
+  if (availableProviderIds.isNotEmpty) {
+    final firstId = availableProviderIds.first;
+    for (final p in providersList) {
+      if (p is Map && p[TmdbProvider.providerId] == firstId) {
+        providerName = TmdbProvider(provider: p).name;
+        break;
+      }
+    }
+  }
+
   if (trigger == NotificationTrigger.newAvailability) {
     logLines.add('- Sending notification for ${title.name} (Now available)');
 
     await NotificationService().showNotification(
       id: title.tmdbId,
       title: localizations.notificationTitle,
-      body: localizations.notificationBody(title.name),
+      body: localizations.notificationBody(providerName, title.name),
       imageUrl: title.posterPath,
       payload: '${title.mediaType}|${title.tmdbId}',
     );
@@ -102,7 +113,7 @@ Future<bool> updateTitle(
     await NotificationService().showNotification(
       id: title.tmdbId + 1000000,
       title: localizations.notificationNewSeasonTitle,
-      body: localizations.notificationNewSeasonBody(title.name),
+      body: localizations.notificationNewSeasonBody(providerName, title.name),
       imageUrl: title.posterPath,
       payload: '${title.mediaType}|${title.tmdbId}',
     );

@@ -754,8 +754,8 @@ abstract class AppLocalizations {
   /// No description provided for @notificationBody.
   ///
   /// In en, this message translates to:
-  /// **'{title} is now available on one of your platforms.'**
-  String notificationBody(Object title);
+  /// **'{title} is now available on {provider}.'**
+  String notificationBody(Object provider, Object title);
 
   /// No description provided for @notificationNewSeasonTitle.
   ///
@@ -766,8 +766,8 @@ abstract class AppLocalizations {
   /// No description provided for @notificationNewSeasonBody.
   ///
   /// In en, this message translates to:
-  /// **'New season of {title} available.'**
-  String notificationNewSeasonBody(Object title);
+  /// **'New season of {title} available on {provider}.'**
+  String notificationNewSeasonBody(Object provider, Object title);
 
   /// No description provided for @selectRegion.
   ///
