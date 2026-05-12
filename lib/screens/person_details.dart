@@ -99,6 +99,7 @@ class _PersonDetailsState extends State<PersonDetails> {
         _crewCredits(person),
         const SizedBox(height: 30),
         _ratedCredits(person, userRatedTitles),
+        const SizedBox(height: 50),
       ],
     );
   }
