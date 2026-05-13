@@ -1,4 +1,4 @@
-# Development environment
+# Development
 
 ## Flutter installation
 
@@ -103,7 +103,7 @@ Isar was adopted beacuse its easy to use and has power enough for the kind of qu
 
 **NOTE:** Each time TmdbTitle class changes its "Schema" i.e. the public attributes, the command `dart run build_runner build` has to be executed. It is also available running the script _flutter_tool.sh_  with _-i_ parameter
 
-# Icons
+## Icons
 
 The [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) tool is used to generate the icons for different platforms  
 
@@ -111,7 +111,7 @@ The file used as the app logo is _./assets/logo-icon.png_  defined in the _pubsp
 
 After updating the logo run:  $ `dart run flutter_launcher_icons`
 
-# Tmdb integration
+## Tmdb integration
 
 Get the **API Read Access Token** from [The Movie DB API Settings](https://www.themoviedb.org/settings/api)     
 Create a file called _.env_ in the root directory and add the key:
@@ -120,7 +120,7 @@ TMDB_API_RAT=apiReadAccessTokenGotFromTmdb
 ``` 
 NOTICE! As stated in the [TMDB API Documentation about Providers](https://developer.themoviedb.org/reference/movie-watch-providers), the data source is [**JustWatch**](https://www.justwatch.com/).  
 
-# OMDB integration
+## OMDB integration
 
 Get the **API Key** from [OMDb API](https://www.omdbapi.com/apikey.aspx)     
 Add the key to your `.env` file:
@@ -128,16 +128,16 @@ Add the key to your `.env` file:
 OMDB_API_KEY=yourOmdbApiKey
 ```
 
-# Assets
+## Assets
 
 Images like tvshow_poster.png are created with [Cool Text](https://cooltext.com/) tool using [FUN](https://cooltext.com/Logo-Design-Fun) text style.  
 
-# Flutter tool box
+## Flutter tool box
 
 Use the shell script `./flutter_tool.sh` to execute most used commands in the project.  
 Run `./flutter_tool.sh --help` to view the tool options.    
 
-# Application signing and publishing
+## Application signing and publishing
 
 Setup this file in the path _./android_:  
 
@@ -148,7 +148,7 @@ Setup this file in the path _./android_:
     keyAlias=upload  
     storeFile=/home/xcarol/workspace/moviescout/upload-keystore.jks (Stored in BitWarden with the name _Android signing_)  
 
-## Check app > build.gradle
+### Check app > build.gradle
 
 This attribute shuld be like this
 ```
@@ -160,7 +160,7 @@ This attribute shuld be like this
 ```
 it is worth comparing it with the same Overmaps file to imitate it as much as possible.
 
-## Publishing a new version for internal test
+### Publishing a new version for internal test
 
 - Create a new branch with the version number (e.g. `git checkout -b release/1.6.3`)
 - In the _pubspec.yaml_ file modify the last (build) number in _version: 1.6.3+**X**_ by adding 1 to it.
@@ -172,9 +172,9 @@ it is worth comparing it with the same Overmaps file to imitate it as much as po
 - Build the bundle `./flutter_tool.sh -b`.
 - Go to: [Create an internal test version](https://play.google.com/console/u/0/developers/5602401961225582177/app/4972075179053080011/app-dashboard) crate a new version and upload the bundle (`./build/app/outputs/bundle/release/app-release.aab`).
 
-# Troubleshooting
+## Troubleshooting
 
-## Neverending builds or Gradle stuck (Low CPU usage)
+### Neverending builds or Gradle stuck (Low CPU usage)
 
 If the build takes an eternity and CPU usage is very low (e.g., < 10%), it is usually caused by a corrupted Gradle Kotlin DSL cache causing the Gradle daemon to freeze indefinitely.
 
@@ -191,14 +191,14 @@ Alternatively, if you want to perform the fix manually:
 3. Remove the corrupted Kotlin DSL cache folder: `rm -rf ~/.gradle/caches/8.14/kotlin-dsl/` (Check your current gradle version if it differs from 8.14).
 4. Run the Gradle build again; the cache will be regenerated correctly.
 
-## watchlist worker logs
+### Watchlist worker logs
 
 By default logs are disabled. You can see what watchlist worker is doing by enabling the logs in _.env_ file with:
 ```
 ENABLE_LOGS=true
 ```
 
-## adb cannot start a debug session with error: Access Denied  
+### adb cannot start a debug session with error: Access Denied  
 
 With the mobile connected and developer option _Enable USB install_ ON
 - Run `lsusb` to see the Android device. 
@@ -217,9 +217,9 @@ sudo udevadm trigger
 ```
 Now the device should appear in the output of `adb devices` and debugger should be able to connect.  
 
-# Other
+## Other
 
-## IMDB Import Export
+### IMDB Import Export
 
 To import titles from IMDB go to your Imdb account > [Watchlist](https://www.imdb.com/user/ur49413795/watchlist/) > Export  
 and Imdb account > [Ratings](https://www.imdb.com/es-es/user/ur49413795/ratings) > Export.  

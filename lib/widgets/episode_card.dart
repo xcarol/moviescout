@@ -22,7 +22,8 @@ class EpisodeCard extends StatelessWidget {
     required this.seasonNumber,
     required TmdbEpisode episode,
     required this.tmdbListService,
-  }) : _title = title, _episode = episode;
+  })  : _title = title,
+        _episode = episode;
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +50,13 @@ class EpisodeCard extends StatelessWidget {
               );
             },
             child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Row(
                 children: [
-                  episodeThumbnail(_episode.stillPath),
+                  SizedBox(
+                    width: 190,
+                    child: episodeThumbnail(_episode.stillPath),
+                  ),
                   const SizedBox(width: 10),
                   _episodeDetails(context, _episode),
                 ],
@@ -105,15 +109,12 @@ class EpisodeCard extends StatelessWidget {
         children: [
           episodeHeader('${episode.episodeNumber}. ${episode.name}'),
           const SizedBox(height: 5),
-          Row(
-            children: [
-              Text(DateFormatter.formatDate(context, episode.airDate), overflow: TextOverflow.ellipsis),
-              if (episode.runtime > 0) ...[
-                const Text(' - '),
-                Text('${episode.runtime} min'),
-              ],
-            ],
-          ),
+          Text(DateFormatter.formatDate(context, episode.airDate),
+              overflow: TextOverflow.ellipsis),
+          if (episode.runtime > 0) ...[
+            const SizedBox(height: 5),
+            Text('${episode.runtime} min'),
+          ],
           const SizedBox(height: 5),
           episodeRating(context, episode),
         ],
