@@ -66,6 +66,8 @@
     "markAsSeen": "Marca com a vist",
     "ratedOnly": "Valorades",
     "seenOnly": "Vistes",
+    "snoozedOnly": "Adormides",
+    "pendingOnly": "Pendents",
     "emptyList": "No hi ha ningú per aquí.",
     "watchlistTitle": "Per veure",
     "rateslistTitle": "Valorades",

@@ -30,6 +30,7 @@ import 'package:moviescout/widgets/drop_down_selector.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/omdb_rating_widget.dart';
 import 'package:moviescout/widgets/pin_button.dart';
+import 'package:moviescout/widgets/snooze_button.dart';
 import 'package:moviescout/services/omdb_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/utils/api_constants.dart';
@@ -487,6 +488,8 @@ class _TitleDetailsState extends State<TitleDetails> {
         const SizedBox(width: 8),
         Row(
           children: [
+            snoozeButton(context, title),
+            const SizedBox(width: 8),
             pinButton(context, title),
             const SizedBox(width: 8),
             watchlistButton(context, title),

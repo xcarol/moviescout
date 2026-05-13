@@ -499,6 +499,18 @@ abstract class AppLocalizations {
   /// **'Seen'**
   String get seenOnly;
 
+  /// No description provided for @snoozedOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Snoozed'**
+  String get snoozedOnly;
+
+  /// No description provided for @pendingOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get pendingOnly;
+
   /// No description provided for @emptyList.
   ///
   /// In en, this message translates to:

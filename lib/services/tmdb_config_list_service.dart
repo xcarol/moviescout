@@ -165,6 +165,7 @@ abstract class TmdbConfigListService extends TmdbBaseService
           'TMDB API Retry Error: ${retryResponse.statusCode} - ${retryResponse.body}',
           userMessage:
               userErrorMessage ?? 'Error updating server configuration',
+          reportToCrashlytics: true,
         );
         return false;
       }
@@ -176,6 +177,7 @@ abstract class TmdbConfigListService extends TmdbBaseService
       ErrorService.log(
         'TMDB API Error: ${response.statusCode} - ${response.body}',
         userMessage: userErrorMessage ?? 'Error updating server configuration',
+        reportToCrashlytics: true,
       );
       return false;
     } catch (e, stackTrace) {
@@ -183,6 +185,7 @@ abstract class TmdbConfigListService extends TmdbBaseService
         e,
         stackTrace: stackTrace,
         userMessage: userErrorMessage ?? 'Error updating server configuration',
+        reportToCrashlytics: true,
       );
       return false;
     }
@@ -210,6 +213,7 @@ abstract class TmdbConfigListService extends TmdbBaseService
           'TMDB API Error: ${response.statusCode} - ${response.body}',
           userMessage: 'Error fetching configuration',
           showSnackBar: false,
+          reportToCrashlytics: true,
         );
       }
     } catch (e, stackTrace) {
@@ -218,6 +222,7 @@ abstract class TmdbConfigListService extends TmdbBaseService
         stackTrace: stackTrace,
         userMessage: 'Error fetching configuration',
         showSnackBar: false,
+        reportToCrashlytics: true,
       );
     }
     return null;

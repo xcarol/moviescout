@@ -4,17 +4,18 @@ import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_config_list_service.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 
-class TmdbPinnedService extends TmdbConfigListService {
+class TmdbSnoozedService extends TmdbConfigListService {
   final TmdbTitleRepository repository;
 
-  TmdbPinnedService(this.repository)
+  TmdbSnoozedService(this.repository)
       : super(
-          configListName: 'pinned',
-          listIdPrefKey: 'pinnedListId',
+          configListName: 'snoozed',
+          listIdPrefKey: 'snoozedListId',
         );
 
-  void clearPinnedStatus() {
+  void clearSnoozedStatus() {
     clearConfig();
   }
 
@@ -23,7 +24,7 @@ class TmdbPinnedService extends TmdbConfigListService {
     setupBase(accountId, sessionId, accessToken);
   }
 
-  Future<void> fetchAndApplyPinnedTitles() async {
+  Future<void> fetchAndApplySnoozedTitles() async {
     final currentListId = await getOrFetchListId();
     if (currentListId == null || currentListId.isEmpty) return;
 
@@ -35,23 +36,23 @@ class TmdbPinnedService extends TmdbConfigListService {
         final data = body(response);
         final results = data['results'] as List<dynamic>? ?? [];
 
-        final List<String> pinnedIds = [];
+        final List<String> snoozedIds = [];
         for (var item in results) {
           final mediaType = item['media_type'];
           final id = item['id'];
-          pinnedIds.add('$mediaType:$id');
+          snoozedIds.add('$mediaType:$id');
         }
 
-        await _applyPinnedIds(pinnedIds);
+        await _applySnoozedIds(snoozedIds);
         notifyListeners();
       } else if (response.statusCode == 404) {
         listId = ''; // Reset if not found
-        await _applyPinnedIds([]);
+        await _applySnoozedIds([]);
         notifyListeners();
       } else {
         ErrorService.log(
           'TMDB API Error: ${response.statusCode} - ${response.body}',
-          userMessage: 'Error fetching pinned configuration',
+          userMessage: 'Error fetching snoozed configuration',
           showSnackBar: false,
           reportToCrashlytics: true,
         );
@@ -60,29 +61,29 @@ class TmdbPinnedService extends TmdbConfigListService {
       ErrorService.log(
         e,
         stackTrace: stackTrace,
-        userMessage: 'Error fetching pinned titles',
+        userMessage: 'Error fetching snoozed titles',
         showSnackBar: false,
         reportToCrashlytics: true,
       );
     }
   }
 
-  Future<void> _applyPinnedIds(List<String> pinnedIds) async {
-    final currentPinned = await repository.getTitles(
+  Future<void> _applySnoozedIds(List<String> snoozedIds) async {
+    final currentSnoozed = await repository.getTitles(
       listName: AppConstants.watchlist,
-      pinned: true,
+      filterSnooze: SnoozeFilter.snoozed,
     );
 
     final Map<int, TmdbTitle> toUpdate = {};
 
-    // Reset current pins
-    for (var title in currentPinned) {
-      title.isPinned = false;
+    // Reset current snoozes
+    for (var title in currentSnoozed) {
+      title.isSnoozed = false;
       toUpdate[title.id] = title;
     }
 
-    // Set new pins
-    for (var item in pinnedIds) {
+    // Set new snoozes
+    for (var item in snoozedIds) {
       final parts = item.split(':');
       if (parts.length == 2) {
         final mediaType = parts[0];
@@ -91,7 +92,7 @@ class TmdbPinnedService extends TmdbConfigListService {
           final title = await repository.getTitleByTmdbId(
               AppConstants.watchlist, tmdbId, mediaType);
           if (title != null) {
-            title.isPinned = true;
+            title.isSnoozed = true;
             toUpdate[title.id] = title;
           }
         }
@@ -103,7 +104,7 @@ class TmdbPinnedService extends TmdbConfigListService {
     }
   }
 
-  Future<bool> addPinnedToServer(TmdbTitle title) async {
+  Future<bool> addSnoozedToServer(TmdbTitle title) async {
     String? currentListId = await getOrFetchListId();
     // ensure list exists
     currentListId ??= await createServerList(forced: true);
@@ -127,7 +128,7 @@ class TmdbPinnedService extends TmdbConfigListService {
       } else {
         ErrorService.log(
           'TMDB API Error: ${response.statusCode} - ${response.body}',
-          userMessage: 'Error adding pinned to server',
+          userMessage: 'Error adding snoozed to server',
           showSnackBar: false,
           reportToCrashlytics: true,
         );
@@ -137,7 +138,7 @@ class TmdbPinnedService extends TmdbConfigListService {
       ErrorService.log(
         e,
         stackTrace: stackTrace,
-        userMessage: 'Exception adding pinned to server',
+        userMessage: 'Exception adding snoozed to server',
         showSnackBar: false,
         reportToCrashlytics: true,
       );
@@ -145,7 +146,7 @@ class TmdbPinnedService extends TmdbConfigListService {
     }
   }
 
-  Future<bool> removePinnedFromServer(TmdbTitle title) async {
+  Future<bool> removeSnoozedFromServer(TmdbTitle title) async {
     final currentListId = await getOrFetchListId();
     if (currentListId == null || currentListId.isEmpty) return false;
 
@@ -166,7 +167,7 @@ class TmdbPinnedService extends TmdbConfigListService {
       } else {
         ErrorService.log(
           'TMDB API Error: ${response.statusCode} - ${response.body}',
-          userMessage: 'Error removing pinned from server',
+          userMessage: 'Error removing snoozed from server',
           showSnackBar: false,
           reportToCrashlytics: true,
         );
@@ -176,7 +177,7 @@ class TmdbPinnedService extends TmdbConfigListService {
       ErrorService.log(
         e,
         stackTrace: stackTrace,
-        userMessage: 'Exception removing pinned from server',
+        userMessage: 'Exception removing snoozed from server',
         showSnackBar: false,
         reportToCrashlytics: true,
       );
