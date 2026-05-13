@@ -4,6 +4,7 @@ import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_pinned_service.dart';
+import 'package:moviescout/services/tmdb_snoozed_service.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -176,6 +177,9 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     final pinnedService =
         Provider.of<TmdbPinnedService>(context, listen: false);
     pinnedService.clearPinnedStatus();
+    final snoozedService =
+        Provider.of<TmdbSnoozedService>(context, listen: false);
+    snoozedService.clearSnoozedStatus();
     PreferencesService().prefs.clear();
     notifyListeners();
   }
