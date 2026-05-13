@@ -2,6 +2,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_config_list_service.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class TmdbPinnedService extends TmdbConfigListService {
@@ -47,9 +48,22 @@ class TmdbPinnedService extends TmdbConfigListService {
         listId = ''; // Reset if not found
         await _applyPinnedIds([]);
         notifyListeners();
+      } else {
+        ErrorService.log(
+          'TMDB API Error: ${response.statusCode} - ${response.body}',
+          userMessage: 'Error fetching pinned configuration',
+          showSnackBar: false,
+          reportToCrashlytics: true,
+        );
       }
-    } catch (e) {
-      // ignore errors quietly for custom lists fetching
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Error fetching pinned titles',
+        showSnackBar: false,
+        reportToCrashlytics: true,
+      );
     }
   }
 
@@ -108,8 +122,25 @@ class TmdbPinnedService extends TmdbConfigListService {
     try {
       final response = await post('list/$currentListId/items', requestBody,
           version: ApiVersion.v4, accessToken: accessToken);
-      return response.statusCode == 200;
-    } catch (e) {
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        ErrorService.log(
+          'TMDB API Error: ${response.statusCode} - ${response.body}',
+          userMessage: 'Error adding pinned to server',
+          showSnackBar: false,
+          reportToCrashlytics: true,
+        );
+        return false;
+      }
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Exception adding pinned to server',
+        showSnackBar: false,
+        reportToCrashlytics: true,
+      );
       return false;
     }
   }
@@ -130,8 +161,25 @@ class TmdbPinnedService extends TmdbConfigListService {
     try {
       final response = await delete('list/$currentListId/items',
           body: requestBody, version: ApiVersion.v4, accessToken: accessToken);
-      return response.statusCode == 200;
-    } catch (e) {
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        ErrorService.log(
+          'TMDB API Error: ${response.statusCode} - ${response.body}',
+          userMessage: 'Error removing pinned from server',
+          showSnackBar: false,
+          reportToCrashlytics: true,
+        );
+        return false;
+      }
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Exception removing pinned from server',
+        showSnackBar: false,
+        reportToCrashlytics: true,
+      );
       return false;
     }
   }

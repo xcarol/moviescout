@@ -2,6 +2,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_config_list_service.dart';
+import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 
@@ -48,9 +49,22 @@ class TmdbSnoozedService extends TmdbConfigListService {
         listId = ''; // Reset if not found
         await _applySnoozedIds([]);
         notifyListeners();
+      } else {
+        ErrorService.log(
+          'TMDB API Error: ${response.statusCode} - ${response.body}',
+          userMessage: 'Error fetching snoozed configuration',
+          showSnackBar: false,
+          reportToCrashlytics: true,
+        );
       }
-    } catch (e) {
-      // ignore errors quietly for custom lists fetching
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Error fetching snoozed titles',
+        showSnackBar: false,
+        reportToCrashlytics: true,
+      );
     }
   }
 
@@ -109,8 +123,25 @@ class TmdbSnoozedService extends TmdbConfigListService {
     try {
       final response = await post('list/$currentListId/items', requestBody,
           version: ApiVersion.v4, accessToken: accessToken);
-      return response.statusCode == 200;
-    } catch (e) {
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        ErrorService.log(
+          'TMDB API Error: ${response.statusCode} - ${response.body}',
+          userMessage: 'Error adding snoozed to server',
+          showSnackBar: false,
+          reportToCrashlytics: true,
+        );
+        return false;
+      }
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Exception adding snoozed to server',
+        showSnackBar: false,
+        reportToCrashlytics: true,
+      );
       return false;
     }
   }
@@ -131,8 +162,25 @@ class TmdbSnoozedService extends TmdbConfigListService {
     try {
       final response = await delete('list/$currentListId/items',
           body: requestBody, version: ApiVersion.v4, accessToken: accessToken);
-      return response.statusCode == 200;
-    } catch (e) {
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        ErrorService.log(
+          'TMDB API Error: ${response.statusCode} - ${response.body}',
+          userMessage: 'Error removing snoozed from server',
+          showSnackBar: false,
+          reportToCrashlytics: true,
+        );
+        return false;
+      }
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Exception removing snoozed from server',
+        showSnackBar: false,
+        reportToCrashlytics: true,
+      );
       return false;
     }
   }
