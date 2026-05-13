@@ -78,6 +78,7 @@ class TmdbTitleFields {
   static const String mediaType = 'media_type';
   static const String providers = 'providers';
   static const String isPinned = 'is_pinned';
+  static const String isSnoozed = 'is_snoozed';
   static const String images = 'images';
   static const String videos = 'videos';
   static const String key = 'key';
@@ -153,6 +154,7 @@ class TmdbTitle {
   @ignore
   int addedOrder = 0;
   late bool isPinned;
+  late bool isSnoozed;
 
   // Lists (Simple)
   late List<int> genreIds;
@@ -223,6 +225,7 @@ class TmdbTitle {
     this.omdbRatingsJson,
     this.homepage = '',
     this.isPinned = false,
+    this.isSnoozed = false,
     this.lastNotifiedSeason = 0,
     this.lastProvidersUpdate = '',
   }) {
@@ -244,6 +247,7 @@ class TmdbTitle {
       lastUpdated: AppConstants.defaultDate,
       dateRated: DateTime.fromMillisecondsSinceEpoch(0),
       isPinned: title[TmdbTitleFields.isPinned] ?? false,
+      isSnoozed: title[TmdbTitleFields.isSnoozed] ?? false,
       lastNotifiedSeason: title[TmdbTitleFields.lastNotifiedSeason] ?? 0,
       lastProvidersUpdate: title[TmdbTitleFields.lastProvidersUpdate] ??
           AppConstants.defaultDate,
@@ -328,6 +332,7 @@ class TmdbTitle {
     budget = title[TmdbTitleFields.budget] ?? budget;
     revenue = title[TmdbTitleFields.revenue] ?? revenue;
     isPinned = title[TmdbTitleFields.isPinned] ?? isPinned;
+    isSnoozed = title[TmdbTitleFields.isSnoozed] ?? isSnoozed;
     lastNotifiedSeason =
         title[TmdbTitleFields.lastNotifiedSeason] ?? lastNotifiedSeason;
     lastProvidersUpdate =
@@ -416,6 +421,7 @@ class TmdbTitle {
       TmdbTitleFields.budget: budget,
       TmdbTitleFields.revenue: revenue,
       TmdbTitleFields.isPinned: isPinned,
+      TmdbTitleFields.isSnoozed: isSnoozed,
       TmdbTitleFields.lastNotifiedSeason: lastNotifiedSeason,
       TmdbTitleFields.lastProvidersUpdate: lastProvidersUpdate,
       TmdbTitleFields.genreIds: genreIds,

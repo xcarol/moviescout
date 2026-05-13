@@ -20,6 +20,7 @@ class TitleListController with ChangeNotifier {
   List<String> _selectedGenres = [];
   bool _filterByProviders = false;
   RatingFilter _ratingFilter = RatingFilter.rated;
+  SnoozeFilter _snoozeFilter = SnoozeFilter.all;
   List<int> _providerListIds = [];
   List<String> _titleTypes = [];
   List<String> _titleSorts = [];
@@ -31,6 +32,7 @@ class TitleListController with ChangeNotifier {
   late final String _selectedSortPreferencesName;
   late final String _filterByProvidersPreferencesName;
   late final String _ratingFilterPreferencesName;
+  late final String _snoozeFilterPreferencesName;
   late final String _sortPreferencesName;
 
   TitleListController(this.listService) {
@@ -47,6 +49,7 @@ class TitleListController with ChangeNotifier {
   List<String> get selectedGenres => _selectedGenres;
   bool get filterByProviders => _filterByProviders;
   RatingFilter get ratingFilter => _ratingFilter;
+  SnoozeFilter get snoozeFilter => _snoozeFilter;
   List<int> get providerListIds => _providerListIds;
   List<String> get titleTypes => _titleTypes;
   List<String> get titleSorts => _titleSorts;
@@ -56,6 +59,11 @@ class TitleListController with ChangeNotifier {
               listService is TmdbRateslistService)
           ? RatingFilter.rated
           : RatingFilter.all;
+
+  SnoozeFilter get _defaultSnoozeFilter =>
+      (listService.listName == AppConstants.watchlist)
+          ? SnoozeFilter.pending
+          : SnoozeFilter.all;
 
   String getSelectedSortLabel(AppLocalizations localizations) =>
       _optionToSortName(localizations, _selectedSort);
@@ -140,6 +148,7 @@ class TitleListController with ChangeNotifier {
         filterByProviders: _filterByProviders,
         providerListIds: _providerListIds,
         ratingFilter: _ratingFilter,
+        snoozeFilter: _snoozeFilter,
         sort: _selectedSort,
         ascending: _isSortAsc,
       );
@@ -198,6 +207,15 @@ class TitleListController with ChangeNotifier {
     notifyListeners();
   }
 
+  void setSnoozeFilter(SnoozeFilter value) {
+    _snoozeFilter = value;
+    PreferencesService()
+        .prefs
+        .setInt(_snoozeFilterPreferencesName, value.index);
+    listService.setSnoozeFilter(value);
+    notifyListeners();
+  }
+
   void _initPreferencesNames() {
     _textFilterPreferencesName = '${listService.listName}_TextFilter';
     _showFiltersPreferencesName = '${listService.listName}_ShowFilters';
@@ -208,6 +226,7 @@ class TitleListController with ChangeNotifier {
     _sortPreferencesName = '${listService.listName}_Sort';
     _selectedSortPreferencesName = '${listService.listName}_SelectedSort';
     _ratingFilterPreferencesName = '${listService.listName}_RatingFilter';
+    _snoozeFilterPreferencesName = '${listService.listName}_SnoozeFilter';
   }
 
   void _loadPreferences() {
@@ -225,6 +244,9 @@ class TitleListController with ChangeNotifier {
     _ratingFilter = RatingFilter.values[
         prefs.getInt(_ratingFilterPreferencesName) ??
             _defaultRatingFilter.index];
+    _snoozeFilter = SnoozeFilter.values[
+        prefs.getInt(_snoozeFilterPreferencesName) ??
+            _defaultSnoozeFilter.index];
   }
 
   void _onListServiceChanged() {

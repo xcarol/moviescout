@@ -119,6 +119,12 @@ class TmdbWatchlistService extends TmdbListService {
     await filterTitles();
   }
 
+  Future<void> toggleSnooze(TmdbTitle title) async {
+    title.isSnoozed = !title.isSnoozed;
+    await repository.updateTitleMetadata(title);
+    await filterTitles();
+  }
+
   @override
   Future<void> syncFromServer({
     required String accountId,

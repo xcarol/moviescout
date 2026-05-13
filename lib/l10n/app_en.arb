@@ -66,6 +66,8 @@
     "markAsSeen": "Mark as seen",
     "ratedOnly": "Rated",
     "seenOnly": "Seen",
+    "snoozedOnly": "Snoozed",
+    "pendingOnly": "Pending",
     "emptyList": "Nothing here.",
     "watchlistTitle": "Watchlist",
     "rateslistTitle": "Rated list",

@@ -66,6 +66,8 @@
     "markAsSeen": "Marcar como visto",
     "ratedOnly": "Valoradas",
     "seenOnly": "Vistas",
+    "snoozedOnly": "Dormidas",
+    "pendingOnly": "Pendientes",
     "emptyList": "Nada por aquí.",
     "watchlistTitle": "Por ver",
     "rateslistTitle": "Valoradas",

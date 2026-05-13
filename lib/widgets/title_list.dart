@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:moviescout/widgets/title_list_controller.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/widgets/rating_filter_tabs.dart';
+import 'package:moviescout/widgets/snooze_filter_tabs.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/widgets/pinned_title_chip.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
@@ -169,7 +170,9 @@ class _TitleListState extends State<TitleList> {
                 focusNode: _controller.searchFocusNode,
                 ratingFilter: widget.listService is TmdbRateslistService
                     ? RatingFilterTabs(controller: _controller)
-                    : null,
+                    : widget.listService.listName == AppConstants.watchlist
+                        ? SnoozeFilterTabs(controller: _controller)
+                        : null,
               ),
               Container(
                 color: titleTheme.controlPanelInternalBackground,

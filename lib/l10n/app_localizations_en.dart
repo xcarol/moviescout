@@ -210,6 +210,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get seenOnly => 'Seen';
 
   @override
+  String get snoozedOnly => 'Snoozed';
+
+  @override
+  String get pendingOnly => 'Pending';
+
+  @override
   String get emptyList => 'Nothing here.';
 
   @override

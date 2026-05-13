@@ -102,6 +102,7 @@ Future<bool> updateTitle(
     if (title.isSerie) {
       title.lastNotifiedSeason = title.numberOfSeasons;
     }
+    title.isSnoozed = false;
     await repository.updateTitleMetadata(title);
     return true;
   }
@@ -129,6 +130,7 @@ Future<bool> updateTitle(
     ));
 
     title.lastNotifiedSeason = title.numberOfSeasons;
+    title.isSnoozed = false;
     await repository.updateTitleMetadata(title);
     return true;
   }

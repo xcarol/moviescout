@@ -13,6 +13,7 @@ import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:moviescout/widgets/pin_button.dart';
+import 'package:moviescout/widgets/snooze_button.dart';
 import 'package:provider/provider.dart';
 
 class CustomCacheManager {
@@ -272,6 +273,8 @@ class TitleCard extends StatelessWidget {
         Flexible(child: providers(tmdbTitle)),
         Row(
           children: [
+            snoozeButton(context, tmdbTitle),
+            const SizedBox(width: 8),
             pinButton(context, tmdbTitle),
             const SizedBox(width: 8),
             watchlistButton(context, tmdbTitle),

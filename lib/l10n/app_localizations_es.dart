@@ -210,6 +210,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get seenOnly => 'Vistas';
 
   @override
+  String get snoozedOnly => 'Dormidas';
+
+  @override
+  String get pendingOnly => 'Pendientes';
+
+  @override
   String get emptyList => 'Nada por aquí.';
 
   @override
