@@ -126,6 +126,7 @@ class TitleListControlPanel extends StatelessWidget {
         const SizedBox(width: 8),
         Switch(
           activeThumbColor: titleTheme.controlPanelForeground,
+          inactiveThumbColor: titleTheme.controlPanelBackground,
           value: filterByProviders,
           onChanged: (value) {
             providersChanged(value);
