@@ -12,7 +12,7 @@ import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 enum RatingFilter { all, rated, seenOnly }
-enum SnoozeFilter { all, snoozed, pending }
+enum SnoozeFilter { all, pending, snoozed }
 
 class TmdbListService extends TmdbBaseService with ChangeNotifier {
   @protected
