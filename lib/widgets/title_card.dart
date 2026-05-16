@@ -103,7 +103,7 @@ class TitleCard extends StatelessWidget {
       children.addAll([
         Icon(
           Icons.star,
-          color: Theme.of(context).colorScheme.onSurface,
+          color: customColors.ratedTitle,
         ),
         const SizedBox(width: 5),
         Text(tmdbTitle.voteAverage.toStringAsFixed(2)),
@@ -125,19 +125,16 @@ class TitleCard extends StatelessWidget {
               }
               if (ratedTitle.rating == AppConstants.seenRating) {
                 ratingChildren.add(
-                  Text(
-                    AppLocalizations.of(context)!.seen,
-                    style: TextStyle(color: customColors.ratedTitle),
-                  ),
+                  Icon(Icons.check, color: customColors.userRatedTitle),
+                );
+                ratingChildren.add(
+                  Text(AppLocalizations.of(context)!.seen),
                 );
               } else {
                 ratingChildren.addAll([
-                  Icon(Icons.star, color: customColors.ratedTitle),
+                  Icon(Icons.star, color: customColors.userRatedTitle),
                   const SizedBox(width: 5),
-                  Text(
-                    ratedTitle.rating.toStringAsFixed(0),
-                    style: TextStyle(color: customColors.ratedTitle),
-                  ),
+                  Text(ratedTitle.rating.toStringAsFixed(0)),
                 ]);
               }
             }
@@ -198,11 +195,28 @@ class TitleCard extends StatelessWidget {
             const SizedBox(height: 5),
             Row(
               children: [
-                Text(titleDate(tmdbTitle), overflow: TextOverflow.ellipsis),
-                const Text(' - '),
+                Text(
+                  titleDate(tmdbTitle),
+                  overflow: TextOverflow.ellipsis,
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                ),
+                Text(
+                  ' - ',
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                ),
                 tmdbTitle.duration.isNotEmpty
-                    ? Text(tmdbTitle.duration)
-                    : Text(_titleType(context, tmdbTitle.mediaType)),
+                    ? Text(
+                        tmdbTitle.duration,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
+                      )
+                    : Text(
+                        _titleType(context, tmdbTitle.mediaType),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
+                      ),
               ],
             ),
             const SizedBox(height: 5),
