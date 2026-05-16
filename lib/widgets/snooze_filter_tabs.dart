@@ -47,11 +47,11 @@ class SnoozeFilterTabs extends StatelessWidget {
             ),
             Tooltip(
               message: localizations.pendingOnly,
-              child: const Tab(icon: Icon(Symbols.not_started, size: 20)),
+              child: const Tab(icon: Icon(Icons.remove_red_eye, size: 20)),
             ),
             Tooltip(
               message: localizations.snoozedOnly,
-              child: const Tab(icon: Icon(Icons.schedule, size: 20)),
+              child: const Tab(icon: Icon(Icons.pause_circle_outline, size: 20)),
             ),
           ],
         ),
