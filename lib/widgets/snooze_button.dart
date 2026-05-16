@@ -32,7 +32,7 @@ Widget snoozeButton(
               watchlistService.toggleSnooze(watchlistTitle);
             },
             icon: Icon(
-              isSnoozed ? Icons.nights_stay : Icons.nights_stay_outlined,
+              Icons.pause_circle_outline,
               size: 20,
               color: isSnoozed
                   ? Theme.of(context).extension<CustomColors>()!.ratedTitle
