@@ -112,7 +112,6 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       Provider.value(value: repository),
-      ChangeNotifierProvider(create: (_) => ThemeService()),
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
@@ -192,7 +191,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       });
     }
 
-    final themeProvider = Provider.of<ThemeService>(context, listen: false);
+    final themeProvider = ThemeService();
     themeProvider.setupTheme();
     final userService = Provider.of<TmdbUserService>(context, listen: false);
     userService.setup();
@@ -221,7 +220,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageService>(context);
-    final themeProvider = Provider.of<ThemeService>(context);
+    final themeProvider = ThemeService();
 
     return MaterialApp(
       localizationsDelegates: const [
