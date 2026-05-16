@@ -6,7 +6,6 @@ class TitleListTheme extends ThemeExtension<TitleListTheme> {
   final Color listDividerColor;
   final Color controlPanelBackground;
   final Color controlPanelInternalBackground;
-  final Color controlPanelDividerColor;
   final Color controlPanelForeground;
   final Color infoLineBackground;
 
@@ -33,7 +32,6 @@ class TitleListTheme extends ThemeExtension<TitleListTheme> {
     required this.listDividerColor,
     required this.controlPanelBackground,
     required this.controlPanelInternalBackground,
-    required this.controlPanelDividerColor,
     required this.controlPanelForeground,
     required this.infoLineBackground,
     required this.infoLineActiveFilterBackground,
@@ -57,7 +55,6 @@ class TitleListTheme extends ThemeExtension<TitleListTheme> {
     Color? listDividerColor,
     Color? controlPanelBackground,
     Color? controlPanelInternalBackground,
-    Color? controlPanelDividerColor,
     Color? controlPanelForeground,
     Color? infoLineBackground,
     Color? infoLineActiveFilterBackground,
@@ -81,8 +78,6 @@ class TitleListTheme extends ThemeExtension<TitleListTheme> {
           controlPanelBackground ?? this.controlPanelBackground,
       controlPanelInternalBackground:
           controlPanelInternalBackground ?? this.controlPanelInternalBackground,
-      controlPanelDividerColor:
-          controlPanelDividerColor ?? this.controlPanelDividerColor,
       controlPanelForeground:
           controlPanelForeground ?? this.controlPanelForeground,
       infoLineBackground: infoLineBackground ?? this.infoLineBackground,
@@ -125,8 +120,6 @@ class TitleListTheme extends ThemeExtension<TitleListTheme> {
           Color.lerp(controlPanelBackground, other.controlPanelBackground, t)!,
       controlPanelInternalBackground: Color.lerp(controlPanelInternalBackground,
           other.controlPanelInternalBackground, t)!,
-      controlPanelDividerColor: Color.lerp(
-          controlPanelDividerColor, other.controlPanelDividerColor, t)!,
       controlPanelForeground:
           Color.lerp(controlPanelForeground, other.controlPanelForeground, t)!,
       infoLineBackground:
