@@ -47,7 +47,14 @@ class _MainScreenState extends State<MainScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(_getTitleForIndex(_currentIndex, context)),
+          iconTheme: IconThemeData(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          title: Text(
+            _getTitleForIndex(_currentIndex, context),
+          ),
+          backgroundColor:
+              Theme.of(context).extension<CustomColors>()!.appBarBackground,
         ),
         drawer: AppDrawer(),
         body: Column(children: [
@@ -61,10 +68,6 @@ class _MainScreenState extends State<MainScreen> {
                 Search(),
               ],
             ),
-          ),
-          Divider(
-            height: 1,
-            color: Theme.of(context).colorScheme.primaryContainer,
           ),
         ]),
         bottomNavigationBar: BottomNavigationBar(
@@ -82,20 +85,36 @@ class _MainScreenState extends State<MainScreen> {
           },
           items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.remove_red_eye_outlined),
+              icon: Icon(Icons.remove_red_eye),
               label: '',
+              tooltip: AppLocalizations.of(context)!.watchlistTitle,
+              backgroundColor: Theme.of(context)
+                  .extension<CustomColors>()!
+                  .bottomNavigationBarBackground,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.rate_review_outlined),
+              icon: Icon(Icons.rate_review),
               label: '',
+              tooltip: AppLocalizations.of(context)!.rateslistTitle,
+              backgroundColor: Theme.of(context)
+                  .extension<CustomColors>()!
+                  .bottomNavigationBarBackground,
             ),
             BottomNavigationBarItem(
               icon: Icon(Symbols.wand_stars),
               label: '',
+              tooltip: AppLocalizations.of(context)!.discoverlistTitle,
+              backgroundColor: Theme.of(context)
+                  .extension<CustomColors>()!
+                  .bottomNavigationBarBackground,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.search),
               label: '',
+              tooltip: AppLocalizations.of(context)!.search,
+              backgroundColor: Theme.of(context)
+                  .extension<CustomColors>()!
+                  .bottomNavigationBarBackground,
             ),
           ],
         ),
