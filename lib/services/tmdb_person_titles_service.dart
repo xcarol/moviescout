@@ -53,7 +53,7 @@ class TmdbPersonTitlesService extends TmdbListService {
   }
 
   @override
-  Future<void> filterTitles() async {
+  Future<void> filterTitles({bool retainPagination = false}) async {
     clearLoadedTitles();
 
     anyFilterApplied = true;

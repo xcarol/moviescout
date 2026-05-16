@@ -123,7 +123,7 @@ class TmdbWatchlistService extends TmdbListService {
       }
     }
 
-    await filterTitles();
+    await filterTitles(retainPagination: true);
   }
 
   Future<void> toggleSnooze(TmdbTitle title) async {
@@ -138,7 +138,7 @@ class TmdbWatchlistService extends TmdbListService {
       }
     }
 
-    await filterTitles();
+    await filterTitles(retainPagination: true);
   }
 
   @override

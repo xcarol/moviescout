@@ -414,12 +414,13 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   @protected
-  Future<void> filterTitles() async {
+  Future<void> filterTitles({bool retainPagination = false}) async {
     while (isDbLoading) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
 
     final currentRequestId = ++filterRequestId;
+    final int pagesToLoad = (retainPagination && pageVal > 0) ? pageVal : 1;
 
     clearLoadedTitles();
 
@@ -455,8 +456,47 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     selectedTitleCount.value = count +
         (listNameVal == AppConstants.watchlist ? pinnedTitlesVal.length : 0);
 
-    await loadNextPage();
+    await loadNPagesFromStart(pagesToLoad, currentRequestId);
+
     await updateUserRatingAvailable();
+  }
+
+  @protected
+  Future<void> loadNPagesFromStart(
+      int pagesToLoad, int currentRequestId) async {
+    isDbLoading = true;
+    try {
+      final limit = pagesToLoad * pageSizeVal;
+      final titles = await _fetchTitles(
+        pinned: listNameVal == AppConstants.watchlist ? false : null,
+        offset: 0,
+        limit: limit,
+      );
+
+      if (currentRequestId != filterRequestId) {
+        return;
+      }
+
+      loadedTitlesVal.addAll(titles);
+      pageVal = pagesToLoad;
+      if (titles.length < limit && !isLoading.value) {
+        hasMoreVal = false;
+      } else {
+        hasMoreVal = true;
+      }
+    } catch (error, stackTrace) {
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        userMessage: 'Error loading page',
+      );
+    } finally {
+      isDbLoading = false;
+      if (listGenresVal.isEmpty) {
+        await updateListGenres();
+      }
+      notifyListeners();
+    }
   }
 
   void refresh() {
@@ -564,7 +604,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         loadedTitlesVal
             .removeWhere((element) => element.tmdbId == title.tmdbId);
       }
-      await filterTitles();
+      await filterTitles(retainPagination: true);
       setLastUpdate();
       await updateListGenres();
 
