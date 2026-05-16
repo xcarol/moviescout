@@ -174,12 +174,6 @@ class _TitleListState extends State<TitleList> {
                         ? SnoozeFilterTabs(controller: _controller)
                         : null,
               ),
-              Container(
-                color: titleTheme.controlPanelInternalBackground,
-                child: Divider(
-                  color: titleTheme.controlPanelDividerColor,
-                ),
-              ),
             ],
           ),
         );
@@ -323,19 +317,9 @@ class _TitleListState extends State<TitleList> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        color: titleTheme.listBackground,
-                        child: Divider(
-                          color: titleTheme.listDividerColor,
-                        ),
-                      ),
                       TitleListInfoLine(
                         controller: _controller,
                         listService: widget.listService,
-                      ),
-                      Divider(
-                        height: 1,
-                        color: titleTheme.listDividerColor,
                       ),
                       if (_controller.showFilters) _controlPanel(),
                       _pinnedTitlesRow(),
