@@ -15,7 +15,7 @@ class AppConstants {
   static const String language = 'language';
   static const String region = 'region';
   static const String lastBackgroundRun = 'last_background_run';
-  static const String watchlistUpdateLogs = 'watchlist_update_logs';
+  static const String updateLogs = 'update_logs';
   static const String notificationsEnabled = 'notifications_enabled';
   static const String notifyCompleteSeason = 'notify_complete_season';
   static const String notificationsAsked = 'notifications_asked';
@@ -33,6 +33,7 @@ class AppConstants {
   ];
 
   // Other
+  static const String saveLogsMessage = 'saveLogs';
   static const String anonymousAccountId = 'anonymous';
   static const int titleUpToDateDays = 3;
   static const int watchlistTitleUpdateFrequencyDays = 7;
