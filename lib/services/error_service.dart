@@ -18,10 +18,16 @@ class ErrorService {
   }) {
     debugPrint('--- ERROR ---');
     debugPrint('Error: $error');
-    if (stackTrace != null) {
-      debugPrint('StackTrace: $stackTrace');
-    }
+    debugPrint('StackTrace: $stackTrace');
     debugPrint('-------------');
+
+    if (userMessage == null || userMessage != AppConstants.saveLogsMessage) {
+      saveLogs([
+        '== ERROR ==',
+        'Error: $error',
+        '== ERROR ==',
+      ]);
+    }
 
     bool shouldReport = _shouldReportAutomatically(error);
 
@@ -38,7 +44,8 @@ class ErrorService {
         debugPrint(errorMessage);
 
         // Don't save logs for errors that are already being saved
-        if (userMessage != null && userMessage != AppConstants.saveLogsMessage) {
+        if (userMessage != null &&
+            userMessage != AppConstants.saveLogsMessage) {
           saveLogs([errorMessage]);
         }
       }
