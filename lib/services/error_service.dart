@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:moviescout/main.dart';
 import 'package:moviescout/services/snack_bar.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/utils/save_logs.dart';
 
 class ErrorService {
   static void log(
@@ -32,9 +34,16 @@ class ErrorService {
           reason: userMessage ?? 'General Error',
         );
       } catch (e) {
-        debugPrint('Failed to report to Crashlytics: $e');
+        final errorMessage = 'Failed to report to Firebase Crashlytics: $e';
+        debugPrint(errorMessage);
+
+        // Don't save logs for errors that are already being saved
+        if (userMessage != null && userMessage != AppConstants.saveLogsMessage) {
+          saveLogs([errorMessage]);
+        }
       }
     }
+
     if (showSnackBar) {
       final context = scaffoldMessengerKey.currentContext;
       String message = userMessage ?? '';
