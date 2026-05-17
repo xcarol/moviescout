@@ -33,6 +33,7 @@ class AppConstants {
   ];
 
   // Other
+  static const String saveLogsMessage = 'saveLogs';
   static const String anonymousAccountId = 'anonymous';
   static const int titleUpToDateDays = 3;
   static const int watchlistTitleUpdateFrequencyDays = 7;
