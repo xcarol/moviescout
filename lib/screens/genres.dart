@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/models/title_list_theme.dart';
+import 'package:moviescout/models/custom_colors.dart';
 
 class GenresScreen extends StatefulWidget {
   final List<String> genresList;
@@ -29,10 +29,11 @@ class _GenresScreenState extends State<GenresScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+    final colorScheme = Theme.of(context).colorScheme;
+    final customColors = Theme.of(context).extension<CustomColors>();
 
     return Scaffold(
-      backgroundColor: titleTheme.listBackground,
+      backgroundColor: colorScheme.onPrimaryContainer,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.genres),
       ),
@@ -48,15 +49,13 @@ class _GenresScreenState extends State<GenresScreen> {
                 title: Text(
                   genre,
                   style: TextStyle(
-                    color: titleTheme.controlPanelBackground,
+                    color: colorScheme.primary,
                   ),
                 ),
-                activeThumbColor: titleTheme.controlPanelActiveFilterBackground,
-                activeTrackColor: titleTheme.controlPanelActiveFilterForeground,
-                inactiveThumbColor:
-                    titleTheme.controlPanelInactiveFilterBackground,
-                inactiveTrackColor:
-                    titleTheme.controlPanelInactiveFilterForeground,
+                activeThumbColor: colorScheme.onPrimary,
+                activeTrackColor: colorScheme.primary,
+                inactiveThumbColor: colorScheme.primary,
+                inactiveTrackColor: colorScheme.onPrimary,
                 value: isSelected,
                 onChanged: (bool value) {
                   setState(() {
@@ -71,7 +70,7 @@ class _GenresScreenState extends State<GenresScreen> {
               ),
               Divider(
                 height: 1,
-                color: titleTheme.listDividerColor,
+                color: customColors!.dividerColor,
               ),
             ],
           );
