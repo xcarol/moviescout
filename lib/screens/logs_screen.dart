@@ -3,15 +3,16 @@ import 'package:intl/intl.dart';
 import 'package:moviescout/main.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:share_plus/share_plus.dart';
 
-class WatchlistLogsScreen extends StatefulWidget {
-  const WatchlistLogsScreen({super.key});
+class LogsScreen extends StatefulWidget {
+  const LogsScreen({super.key});
 
   @override
-  State<WatchlistLogsScreen> createState() => _WatchlistLogsScreenState();
+  State<LogsScreen> createState() => _LogsScreenState();
 }
 
-class _WatchlistLogsScreenState extends State<WatchlistLogsScreen>
+class _LogsScreenState extends State<LogsScreen>
     with WidgetsBindingObserver, RouteAware {
   List<String> _logs = [];
   bool _debugShowLastUpdate = false;
@@ -55,7 +56,7 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen>
   }
 
   @override
-  void didUpdateWidget(covariant WatchlistLogsScreen oldWidget) {
+  void didUpdateWidget(covariant LogsScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     _loadState();
   }
@@ -76,7 +77,7 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen>
 
     if (mounted) {
       setState(() {
-        _logs = prefs.getStringList(AppConstants.watchlistUpdateLogs) ?? [];
+        _logs = prefs.getStringList(AppConstants.updateLogs) ?? [];
         _debugShowLastUpdate =
             prefs.getBool(AppConstants.debugShowLastUpdate) ?? false;
         _lastBackgroundRunHeader = formattedDate;
@@ -91,7 +92,7 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen>
   }
 
   Future<void> _clearLogs() async {
-    await PreferencesService().prefs.remove(AppConstants.watchlistUpdateLogs);
+    await PreferencesService().prefs.remove(AppConstants.updateLogs);
     _loadState();
   }
 
@@ -108,9 +109,18 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Watchlist Update Logs'),
+        title: const Text('App Logs'),
         actions: [
-          if (_logs.isNotEmpty)
+          if (_logs.isNotEmpty) ...[
+            IconButton(
+              icon: const Icon(Icons.share),
+              tooltip: 'Share logs',
+              onPressed: () {
+                final String logText = _logs.join('\n\n---\n\n');
+                SharePlus.instance.share(ShareParams(
+                    text: logText, subject: 'App Logs'));
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.delete_outline),
               tooltip: 'Clear logs',
@@ -138,6 +148,7 @@ class _WatchlistLogsScreenState extends State<WatchlistLogsScreen>
                 );
               },
             ),
+          ],
         ],
       ),
       body: Column(

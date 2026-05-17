@@ -11,14 +11,13 @@ Future<void> saveLogs(List<String> logLines) async {
 
   try {
     final prefs = PreferencesService().prefs;
-    final currentLogs =
-        prefs.getStringList(AppConstants.watchlistUpdateLogs) ?? [];
+    final currentLogs = prefs.getStringList(AppConstants.updateLogs) ?? [];
     final newEntry = logLines.join('\n');
     currentLogs.add(newEntry);
     if (currentLogs.length > 50) {
       currentLogs.removeRange(0, currentLogs.length - 50);
     }
-    await prefs.setStringList(AppConstants.watchlistUpdateLogs, currentLogs);
+    await prefs.setStringList(AppConstants.updateLogs, currentLogs);
   } catch (e) {
     final errorMessage = 'Error saving logs: $e';
     debugPrint(errorMessage);
