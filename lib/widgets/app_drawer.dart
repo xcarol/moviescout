@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:moviescout/screens/login.dart';
-import 'package:moviescout/screens/watchlist_logs_screen.dart';
+import 'package:moviescout/screens/logs_screen.dart';
 import 'package:moviescout/screens/notifications_screen.dart';
 import 'package:moviescout/screens/settings.dart';
 import 'package:moviescout/services/discoverlist_service.dart';
@@ -162,12 +162,12 @@ class AppDrawer extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const WatchlistLogsScreen(),
+                      builder: (context) => const LogsScreen(),
                     ),
                   );
                 },
                 icon: const Icon(Icons.history),
-                label: const Text('Logs d\'actualització'),
+                label: const Text('App logs'),
               ),
             ],
           ),
