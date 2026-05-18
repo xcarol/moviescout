@@ -367,7 +367,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
       margin: const EdgeInsets.only(bottom: 8.0),
       decoration: BoxDecoration(
         border: Border.all(
-          color: Colors.grey,
+          // color: Colors.grey,
           width: 0.5,
         ),
       ),
@@ -428,7 +428,11 @@ class _ImportIMDBState extends State<ImportIMDB> {
                 children: [
                   const SizedBox(width: 10),
                   _importResultsCell(
-                      width: 40, child: Icon(status, color: statusColor)),
+                      width: 40,
+                      child: Icon(
+                        status,
+                        // color: statusColor,
+                      )),
                   _importResultsCell(
                     width: 150,
                     child: Text(_csvTitles[index][_imdbIdColumn].toString(),

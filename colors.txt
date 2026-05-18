@@ -1,0 +1,18 @@
+"Titols lletra (ex: Per veure)": #E6F4EA
+"Titols fons (ex: Per veure)": #121212
+
+
+"Titol pelicules + puntuació de tmdb": #F5F5F5
+"Titol capitols i any + psinospsis": #A0A0A0
+"Barra d'abaix": #333333
+
+"Les franges de separació (divider)": #393939
+
+"Icona no seleccionada barra d'abai": #8E8E93
+"Color de fons de boto": #10B981
+
+"Color icona seleccionada": #FEFFFF
+"Estrella valoracio tmdb": #E5BA73
+"Estrella valoració meva": #10B981
+
+

@@ -85,38 +85,38 @@ class ThemeService with ChangeNotifier {
   static TitleListTheme _createTitleListTheme(
       ColorScheme colorScheme, CustomColors customColors) {
     return TitleListTheme(
-      listBackground: colorScheme.onPrimaryContainer,
-      listDividerColor: customColors.dividerColor,
-      controlPanelBackground: customColors.controlPanelBackground,
-      controlPanelInternalBackground: colorScheme.primaryContainer,
-      controlPanelForeground: colorScheme.onPrimary,
-      infoLineBackground: colorScheme.onPrimaryContainer,
-      infoLineActiveFilterBackground: colorScheme.primary,
-      infoLineActiveFilterForeground: colorScheme.onPrimary,
-      infoLineInactiveFilterBackground: colorScheme.onPrimary,
-      infoLineInactiveFilterForeground: colorScheme.primary,
-      controlPanelActiveFilterBackground: colorScheme.onPrimary,
-      controlPanelActiveFilterForeground: customColors.controlPanelBackground,
-      controlPanelInactiveFilterBackground: customColors.controlPanelBackground,
-      controlPanelInactiveFilterForeground: colorScheme.onPrimary,
-      searchCursorColor: colorScheme.onPrimary,
-      searchHintColor: colorScheme.onPrimary,
-      searchSelectionColor: colorScheme.onPrimary.withValues(alpha: 0.5),
-      sortArrowColor: colorScheme.primary,
-      swapSortIconColor: colorScheme.primary,
+      infoLineBackground: colorScheme.primaryContainer,
+      infoLineActiveFilterBackground: colorScheme.surface,
+      infoLineActiveFilterForeground: colorScheme.primary,
+      infoLineInactiveFilterBackground: colorScheme.surface,
+      infoLineInactiveFilterForeground: colorScheme.onSurface,
+
+      controlPanelBackground: Color.fromARGB(0xFF, 0x33, 0x33, 0x33),
+      controlPanelForeground: colorScheme.onSurface,
+      controlPanelActiveFilterBackground: colorScheme.primary,
+      controlPanelActiveFilterForeground: colorScheme.onSurface,
+      controlPanelInactiveFilterBackground: Color.fromARGB(0xFF, 0x33, 0x33, 0x33),
+      controlPanelInactiveFilterForeground: colorScheme.onSurface,
+
+      searchCursorColor: colorScheme.onSurface,
+      searchHintColor: colorScheme.onSurface,
+      searchSelectionColor: colorScheme.onSurface.withValues(alpha: 0.5),
     );
   }
 
   static ColorScheme lightColorSchemeDefault = ColorScheme(
     brightness: Brightness.light,
-    primary: Color.fromARGB(0xFF, 0XE6, 0XF4, 0XEA),
-    onPrimary: Color.fromARGB(0xFF, 0x12, 0x12, 0x12),
-    secondary: Color.fromARGB(0xFF, 0xA0, 0xA0, 0xA0),
-    onSecondary: Colors.grey,
+    primary: Color.fromARGB(0xFF, 0x10, 0xB9, 0x81),
+    onPrimary: Color.fromARGB(0xFF, 0x3A, 0x1E, 0x10), //Color.fromARGB(255, 0x37, 0x2F, 0x27),
+    primaryContainer: Color.fromARGB(0xFF, 0x12, 0x12, 0x12),
+    onPrimaryContainer: Color.fromARGB(0xFF, 0XE6, 0XF4, 0XEA),
+    secondary: Color.fromARGB(255, 179, 145, 90),
+    onSecondary: Color.fromARGB(255, 255, 255, 255),
     error: Colors.red,
     onError: Colors.grey,
-    surface: Color.fromARGB(0xFF, 0x1E, 0x1E, 0x1E),
-    onSurface: Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
+    surface: Color.fromARGB(255, 0x1E, 0x1E, 0x1E),
+    onSurface: Color.fromARGB(255, 0xF5, 0xF5, 0xF5),
+    onSurfaceVariant: Color.fromARGB(255, 0xA1, 0xA1, 0xA1),
   );
 
   static CustomColors lightCustomColorsDefault = CustomColors(
@@ -124,15 +124,15 @@ class ThemeService with ChangeNotifier {
     notInWatchlist: Colors.grey,
     ratedTitle: Color.fromARGB(0xFF, 0xE5, 0xBA, 0x73),
     userRatedTitle: Color.fromARGB(0xFF, 0x10, 0xB9, 0x81),
-    pinnedTitle: Colors.amber,
-    selected: Color.fromARGB(0xFF, 0x10, 0xB9, 0x81),
-    notSelected: Color.fromARGB(0xFF, 0x8E, 0x8E, 0x93),
-    chipCardBackground: Color.fromARGB(0xFF, 0x30, 0x25, 0x1B),
+    snoozedTitle: Color.fromARGB(0xFF, 0x10, 0xB9, 0x81),
+    pinnedTitle: Color.fromARGB(0xFF, 0xE5, 0xBA, 0x73),
+    navigationBarSelected: Color.fromARGB(0xFF, 0x10, 0xB9, 0x81),
+    navigationBarNotSelected: Color.fromARGB(0xFF, 0x8E, 0x8E, 0x93),
+    chipCardBackground: Color.fromARGB(0xFF, 0x33, 0x33, 0x33),
     dividerColor: Color.fromARGB(0xFF, 0x39, 0x39, 0x39),
     bottomNavigationBarBackground: Color.fromARGB(0xFF, 0x33, 0x33, 0x33),
     appBarBackground: Color.fromARGB(0xFF, 0x12, 0x12, 0x12),
-    titleAppBar: Color.fromARGB(0xFF, 0XE6, 0XF4, 0XEA),
-    controlPanelBackground: Color.fromARGB(0xFF, 0xE5, 0xBA, 0x73),
+    appBarText: Color.fromARGB(0xFF, 0XE6, 0XF4, 0XEA),
   );
 
   static ColorScheme darkColorSchemeDefault =

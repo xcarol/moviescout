@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart' show ListEquality;
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
@@ -84,7 +85,7 @@ class _TitleListState extends State<TitleList> {
               final clampedScale =
                   MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.3);
 
-              final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+              final titleTheme = Theme.of(context).extension<CustomColors>()!;
 
               return MediaQuery(
                 data: MediaQuery.of(context).copyWith(
@@ -98,7 +99,7 @@ class _TitleListState extends State<TitleList> {
                     ),
                     Divider(
                       height: 1,
-                      color: titleTheme.listDividerColor,
+                      color: titleTheme.dividerColor,
                     ),
                   ],
                 ),
@@ -189,10 +190,9 @@ class _TitleListState extends State<TitleList> {
           return const SizedBox.shrink();
         }
 
-        final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+        final titleTheme = Theme.of(context).extension<CustomColors>()!;
 
         return Container(
-          color: titleTheme.listBackground,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -212,8 +212,7 @@ class _TitleListState extends State<TitleList> {
                       Text(
                         AppLocalizations.of(context)!.watchingNow,
                         style: TextStyle(
-                          color: titleTheme.listDividerColor
-                              .withValues(alpha: 0.7),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
@@ -223,8 +222,7 @@ class _TitleListState extends State<TitleList> {
                         _isPinnedSectionExpanded
                             ? Icons.arrow_drop_up
                             : Icons.arrow_drop_down,
-                        color:
-                            titleTheme.listDividerColor.withValues(alpha: 0.7),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 20,
                       ),
                     ],
@@ -247,7 +245,10 @@ class _TitleListState extends State<TitleList> {
                   ),
                 ),
               const SizedBox(height: 8.0),
-              Divider(height: 1, color: titleTheme.listDividerColor),
+              Divider(
+                height: 1,
+                color: titleTheme.dividerColor,
+              ),
             ],
           ),
         );
@@ -255,8 +256,8 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
-  Widget _refreshIndicator(BuildContext context, Widget child,
-      IndicatorController controller) {
+  Widget _refreshIndicator(
+      BuildContext context, Widget child, IndicatorController controller) {
     return Stack(
       children: [
         child,
@@ -271,16 +272,14 @@ class _TitleListState extends State<TitleList> {
                 child: Material(
                   elevation: 4,
                   shape: const CircleBorder(),
-                  color: Theme.of(context).colorScheme.surface,
+                  // color: Theme.of(context).colorScheme.surface,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(
                       width: 24,
                       height: 24,
                       child: CircularProgressIndicator(
-                        value: controller.isLoading
-                            ? null
-                            : controller.value,
+                        value: controller.isLoading ? null : controller.value,
                         strokeWidth: 3,
                       ),
                     ),
@@ -313,7 +312,6 @@ class _TitleListState extends State<TitleList> {
               return ChangeNotifierProvider<TmdbListService>.value(
                 value: widget.listService,
                 child: Container(
-                  color: titleTheme.listBackground,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [

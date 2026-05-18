@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/widgets/person_card.dart';
@@ -45,7 +46,7 @@ class _PersonListState extends State<PersonList> {
     return ListenableBuilder(
       listenable: _controller,
       builder: (context, _) {
-        final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+        final titleTheme = Theme.of(context).extension<CustomColors>()!;
         return Flexible(
           child: Scrollbar(
             controller: _controller.scrollController,
@@ -62,7 +63,7 @@ class _PersonListState extends State<PersonList> {
                     ),
                     Divider(
                       height: 1,
-                      color: titleTheme.listDividerColor,
+                      color: titleTheme.dividerColor,
                     ),
                   ],
                 );
@@ -79,13 +80,15 @@ class _PersonListState extends State<PersonList> {
     return ListenableBuilder(
       listenable: _controller,
       builder: (context, _) {
-        final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+        final titleTheme = Theme.of(context).extension<CustomColors>()!;
         return Container(
-          color: titleTheme.listBackground,
           child: Column(
             children: [
               PersonListInfoLine(controller: _controller),
-              Divider(height: 1, color: titleTheme.listDividerColor),
+              Divider(
+                height: 1,
+                color: titleTheme.dividerColor,
+              ),
               if (_controller.showFilters)
                 PersonListControlPanel(
                   textFilterController: _controller.textFilterController,

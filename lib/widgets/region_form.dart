@@ -33,7 +33,12 @@ class RegionForm extends Dialog {
           regions.forEach((code, name) {
             regionWidgets.add(
               RadioListTile<String?>(
-                title: Text(name),
+                title: Text(name,
+                    style: TextStyle(
+                      color: region.value == code
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.onSurface,
+                    )),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -60,13 +65,13 @@ class RegionForm extends Dialog {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextButton(
+                      FilledButton.tonal(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
                         child: Text(AppLocalizations.of(context)!.cancel),
                       ),
-                      TextButton(
+                      FilledButton(
                         onPressed: () {
                           Navigator.of(context).pop(region.value);
                         },

@@ -60,13 +60,13 @@ class RateForm extends Dialog {
               ),
               const SizedBox(height: 20),
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                TextButton(
+                FilledButton.tonal(
                     onPressed: () {
                       onSubmit(0.0);
                       Navigator.of(context).pop();
                     },
                     child: Text(AppLocalizations.of(context)!.reset_rate)),
-                TextButton(
+                FilledButton(
                     onPressed: () {
                       onSubmit(rating.value);
                       Navigator.of(context).pop();

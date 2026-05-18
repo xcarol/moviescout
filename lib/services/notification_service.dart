@@ -244,7 +244,7 @@ class NotificationService extends ChangeNotifier {
       importance: Importance.max,
       priority: Priority.high,
       styleInformation: styleInformation,
-      color: const Color.fromARGB(0xFF, 0x2B, 0x20, 0x16),
+      // color: const Color.fromARGB(0xFF, 0x2B, 0x20, 0x16),
     );
 
     final NotificationDetails notificationDetails = NotificationDetails(

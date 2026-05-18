@@ -98,7 +98,8 @@ class _MediaCarouselState extends State<MediaCarousel> {
             ),
           PageView.builder(
             controller: _pageController,
-            physics: totalItems == 1 ? const NeverScrollableScrollPhysics() : null,
+            physics:
+                totalItems == 1 ? const NeverScrollableScrollPhysics() : null,
             onPageChanged: (index) {
               final realIndex = _getRealIndex(index, totalItems);
               if (realIndex != _currentPage) {
@@ -132,12 +133,12 @@ class _MediaCarouselState extends State<MediaCarousel> {
                     height: 8,
                     width: _currentPage == index ? 16 : 8,
                     decoration: BoxDecoration(
-                      color: _currentPage == index
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context)
-                              .colorScheme
-                              .onPrimary
-                              .withValues(alpha: 0.5),
+                      // color: _currentPage == index
+                      //     ? Theme.of(context).colorScheme.primary
+                      //     : Theme.of(context)
+                      //         .colorScheme
+                      //         .onPrimary
+                      //         .withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   );
@@ -186,7 +187,7 @@ class _MediaCarouselState extends State<MediaCarousel> {
           child: CachedNetworkImage(
             imageUrl: url,
             fit: BoxFit.cover,
-            color: Colors.black.withAlpha(128),
+            // color: Colors.black.withAlpha(128),
             colorBlendMode: BlendMode.darken,
             errorWidget: (context, url, error) => const SizedBox.shrink(),
           ),
@@ -195,7 +196,8 @@ class _MediaCarouselState extends State<MediaCarousel> {
           imageUrl: url,
           fit: BoxFit.contain,
           placeholder: (context, url) => Container(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)),
+              // color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+              ),
           errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
       ],
@@ -361,14 +363,14 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
 
     if (_isPlaying && _controller != null) {
       return Container(
-        color: Colors.black,
+        // color: Colors.black,
         child: Stack(
           children: [
             YoutubePlayer(
               controller: _controller!,
               showVideoProgressIndicator: true,
-              progressIndicatorColor: Colors.amber,
-              thumbnail: Container(color: Colors.black),
+              // progressIndicatorColor: Colors.amber,
+              // thumbnail: Container(color: Colors.black),
               onEnded: (meta) => _stopPlayback(),
               // Ensure we don't show the package's internal fullscreen button
               bottomActions: [
@@ -387,19 +389,23 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.6),
+                    // color: Colors.black.withValues(alpha: 0.6),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white24),
+                    // border: Border.all(color: Colors.white24),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.search, color: Colors.white, size: 14),
+                      const Icon(
+                        Icons.search,
+                        // color: Colors.white,
+                        size: 14,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         AppLocalizations.of(context)!.youtubeSearch,
                         style: const TextStyle(
-                            color: Colors.white,
+                            // color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.bold),
                       ),
@@ -418,7 +424,9 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
         CachedNetworkImage(
           imageUrl: 'https://img.youtube.com/vi/$key/0.jpg',
           fit: BoxFit.cover,
-          errorWidget: (context, url, error) => Container(color: Colors.black),
+          errorWidget: (context, url, error) => Container(
+              // color: Colors.black,
+              ),
         ),
         Container(
           decoration: BoxDecoration(
@@ -436,19 +444,23 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.6),
+                // color: Colors.black.withValues(alpha: 0.6),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white24),
+                // border: Border.all(color: Colors.white24),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.search, color: Colors.white, size: 14),
+                  const Icon(
+                    Icons.search,
+                    // color: Colors.white,
+                    size: 14,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     AppLocalizations.of(context)!.youtubeSearch,
                     style: const TextStyle(
-                        color: Colors.white,
+                        // color: Colors.white,
                         fontSize: 10,
                         fontWeight: FontWeight.bold),
                   ),
@@ -460,13 +472,16 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
           child: Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color:
-                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
+              // color:
+              //     Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              icon: Icon(Icons.play_arrow_rounded,
-                  size: 56, color: Theme.of(context).colorScheme.onPrimary),
+              icon: Icon(
+                Icons.play_arrow_rounded,
+                size: 56,
+                // color: Theme.of(context).colorScheme.onPrimary,
+              ),
               onPressed: _startPlayback,
             ),
           ),
@@ -478,9 +493,9 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
           child: Text(
             name,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
+              // color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.bold,
-              shadows: const [Shadow(color: Colors.black, blurRadius: 4)],
+              // shadows: const [Shadow(color: Colors.black, blurRadius: 4)],
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -562,9 +577,9 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      // backgroundColor: Colors.black,
       body: Container(
-        color: Colors.black,
+        // color: Colors.black,
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -572,8 +587,8 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
               child: YoutubePlayer(
                 controller: _controller,
                 showVideoProgressIndicator: true,
-                progressIndicatorColor: Colors.amber,
-                thumbnail: Container(color: Colors.black),
+                // progressIndicatorColor: Colors.amber,
+                // thumbnail: Container(color: Colors.black),
                 onEnded: (meta) => setState(() => _isEnded = true),
                 bottomActions: [
                   const SizedBox(width: 14.0),
@@ -600,21 +615,25 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
                   fit: BoxFit.cover,
                 ),
               ),
-              Container(color: Colors.black.withValues(alpha: 0.4)),
+              Container(
+                  // color: Colors.black.withValues(alpha: 0.4),
+                  ),
               Center(
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.4),
+                    // color: Theme.of(context)
+                    //     .colorScheme
+                    //     .primary
+                    //     .withValues(alpha: 0.4),
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: Icon(Icons.replay_rounded,
-                        size: 80,
-                        color: Theme.of(context).colorScheme.onPrimary),
+                    icon: Icon(
+                      Icons.replay_rounded,
+                      size: 80,
+                      // color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                     onPressed: () {
                       _controller.play();
                       setState(() => _isEnded = false);

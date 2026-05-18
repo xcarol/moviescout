@@ -27,13 +27,13 @@ class PersonListInfoLine extends StatelessWidget {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: titleTheme.infoLineInactiveFilterBackground,
+                // color: titleTheme.infoLineInactiveFilterBackground,
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Text(
                 controller.itemCount.toString(),
                 style: TextStyle(
-                  color: titleTheme.infoLineInactiveFilterForeground,
+                  // color: titleTheme.infoLineInactiveFilterForeground,
                   fontSize: 16,
                 ),
               ),
@@ -45,20 +45,13 @@ class PersonListInfoLine extends StatelessWidget {
       sortSelector: ListenableBuilder(
         listenable: controller,
         builder: (context, _) {
-          final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
           return DropdownSelector(
             selectedOption: controller.getSelectedSortLabel(localizations),
             options: controller.personSorts,
             onSelected: (value) => controller.setSelectedSort(context, value),
             arrowIcon: controller.isSortAsc
-                ? Icon(
-                    Icons.arrow_drop_down,
-                    color: titleTheme.sortArrowColor,
-                  )
-                : Icon(
-                    Icons.arrow_drop_up,
-                    color: titleTheme.sortArrowColor,
-                  ),
+                ? Icon(Icons.arrow_drop_down)
+                : Icon(Icons.arrow_drop_up),
           );
         },
       ),

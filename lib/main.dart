@@ -253,7 +253,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           themeProvider.darkTitleListTheme,
         ],
       ),
-      themeMode: ThemeMode.system,
       title: 'Movie Scout',
       home: const MainScreen(),
       scaffoldMessengerKey: scaffoldMessengerKey,

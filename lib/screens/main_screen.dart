@@ -48,10 +48,13 @@ class _MainScreenState extends State<MainScreen> {
       child: Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(
-            color: Theme.of(context).colorScheme.secondary,
+            color: Theme.of(context).extension<CustomColors>()!.appBarText,
           ),
           title: Text(
             _getTitleForIndex(_currentIndex, context),
+            style: TextStyle(
+              color: Theme.of(context).extension<CustomColors>()!.appBarText,
+            ),
           ),
           backgroundColor:
               Theme.of(context).extension<CustomColors>()!.appBarBackground,
@@ -71,10 +74,12 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ]),
         bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor:
-              Theme.of(context).extension<CustomColors>()!.selected,
-          unselectedItemColor:
-              Theme.of(context).extension<CustomColors>()!.notSelected,
+          selectedItemColor: Theme.of(context)
+              .extension<CustomColors>()!
+              .navigationBarSelected,
+          unselectedItemColor: Theme.of(context)
+              .extension<CustomColors>()!
+              .navigationBarNotSelected,
           currentIndex: _currentIndex,
           showSelectedLabels: false,
           showUnselectedLabels: false,

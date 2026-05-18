@@ -32,13 +32,13 @@ class DropdownSelector extends StatelessWidget {
     final TextStyle effectiveTextStyle = textStyle ??
         TextStyle(
           fontSize: 16,
-          color: Theme.of(context).colorScheme.primary,
+          // color: Theme.of(context).colorScheme.primary,
         );
 
     final Icon effectiveArrowIcon = arrowIcon ??
         Icon(
           Icons.arrow_drop_down,
-          color: Theme.of(context).colorScheme.primary,
+          // color: Theme.of(context).colorScheme.primary,
         );
 
     return MenuAnchor(
@@ -51,7 +51,7 @@ class DropdownSelector extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
-              color: backgroundColor ?? Theme.of(context).colorScheme.onPrimary,
+              // color: backgroundColor ?? Theme.of(context).colorScheme.onPrimary,
               border: border,
               borderRadius: borderRadius,
             ),
@@ -87,7 +87,7 @@ class DropdownSelector extends StatelessWidget {
         return ListTile(
           title: Text(option),
           selected: isSelected,
-          selectedColor: Theme.of(context).colorScheme.secondary,
+          // selectedColor: Theme.of(context).colorScheme.secondary,
           onTap: () {
             if (!isSelected) onSelected(option);
             controller.close();

@@ -33,7 +33,7 @@ class _GenresScreenState extends State<GenresScreen> {
     final customColors = Theme.of(context).extension<CustomColors>();
 
     return Scaffold(
-      backgroundColor: colorScheme.onPrimaryContainer,
+      // backgroundColor: colorScheme.onPrimaryContainer,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.genres),
       ),
@@ -49,13 +49,13 @@ class _GenresScreenState extends State<GenresScreen> {
                 title: Text(
                   genre,
                   style: TextStyle(
-                    color: colorScheme.primary,
+                    // color: colorScheme.primary,
                   ),
                 ),
-                activeThumbColor: colorScheme.onPrimary,
-                activeTrackColor: colorScheme.primary,
-                inactiveThumbColor: colorScheme.primary,
-                inactiveTrackColor: colorScheme.onPrimary,
+                // activeThumbColor: colorScheme.onPrimary,
+                // activeTrackColor: colorScheme.primary,
+                // inactiveThumbColor: colorScheme.primary,
+                // inactiveTrackColor: colorScheme.onPrimary,
                 value: isSelected,
                 onChanged: (bool value) {
                   setState(() {

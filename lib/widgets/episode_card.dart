@@ -144,7 +144,7 @@ class EpisodeCard extends StatelessWidget {
         Icon(
           Icons.star,
           size: 16,
-          color: Theme.of(context).colorScheme.onSurface,
+          // color: Theme.of(context).colorScheme.onSurface,
         ),
         const SizedBox(width: 5),
         Text(episode.voteAverage.toStringAsFixed(2)),

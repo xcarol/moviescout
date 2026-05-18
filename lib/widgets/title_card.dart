@@ -125,14 +125,20 @@ class TitleCard extends StatelessWidget {
               }
               if (ratedTitle.rating == AppConstants.seenRating) {
                 ratingChildren.add(
-                  Icon(Icons.check, color: customColors.userRatedTitle),
+                  Icon(
+                    Icons.check,
+                    color: customColors.userRatedTitle,
+                  ),
                 );
                 ratingChildren.add(
                   Text(AppLocalizations.of(context)!.seen),
                 );
               } else {
                 ratingChildren.addAll([
-                  Icon(Icons.star, color: customColors.userRatedTitle),
+                  Icon(
+                    Icons.star,
+                    color: customColors.userRatedTitle,
+                  ),
                   const SizedBox(width: 5),
                   Text(ratedTitle.rating.toStringAsFixed(0)),
                 ]);
@@ -198,24 +204,28 @@ class TitleCard extends StatelessWidget {
                 Text(
                   titleDate(tmdbTitle),
                   overflow: TextOverflow.ellipsis,
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
                 Text(
                   ' - ',
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
                 tmdbTitle.duration.isNotEmpty
                     ? Text(
                         tmdbTitle.duration,
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       )
                     : Text(
                         _titleType(context, tmdbTitle.mediaType),
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
               ],
             ),

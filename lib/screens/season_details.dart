@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_season.dart';
@@ -154,7 +155,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
             children: [
               Icon(
                 Icons.star,
-                color: Theme.of(context).colorScheme.onSurface,
+                // color: Theme.of(context).colorScheme.onSurface,
                 size: 20,
               ),
               const SizedBox(width: 5),
@@ -259,7 +260,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
               child: Text(
                 person.name,
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
+                  // color: Theme.of(context).colorScheme.primary,
                   decoration: TextDecoration.underline,
                 ),
               ),
@@ -304,7 +305,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   Widget _episodesList(TmdbSeason season) {
     if (season.episodes.isEmpty) return const SizedBox.shrink();
 
-    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+    final titleTheme = Theme.of(context).extension<CustomColors>()!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -328,7 +329,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
               ),
               Divider(
                 height: 1,
-                color: titleTheme.listDividerColor,
+                color: titleTheme.dividerColor,
               ),
             ],
           );

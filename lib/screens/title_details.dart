@@ -69,9 +69,11 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   void _initializeRatings() {
-    if (_currentTitle.omdbRatingsJson != null && _currentTitle.omdbRatingsJson!.isNotEmpty) {
+    if (_currentTitle.omdbRatingsJson != null &&
+        _currentTitle.omdbRatingsJson!.isNotEmpty) {
       try {
-        _omdbRatings = List<Map<String, dynamic>>.from(jsonDecode(_currentTitle.omdbRatingsJson!));
+        _omdbRatings = List<Map<String, dynamic>>.from(
+            jsonDecode(_currentTitle.omdbRatingsJson!));
       } catch (_) {}
     }
 
@@ -140,10 +142,13 @@ class _TitleDetailsState extends State<TitleDetails> {
             });
           }
         } else {
-          if (mounted && updated.omdbRatingsJson != null && updated.omdbRatingsJson!.isNotEmpty) {
+          if (mounted &&
+              updated.omdbRatingsJson != null &&
+              updated.omdbRatingsJson!.isNotEmpty) {
             try {
               setState(() {
-                _omdbRatings = List<Map<String, dynamic>>.from(jsonDecode(updated.omdbRatingsJson!));
+                _omdbRatings = List<Map<String, dynamic>>.from(
+                    jsonDecode(updated.omdbRatingsJson!));
               });
             } catch (_) {}
           }
@@ -211,19 +216,31 @@ class _TitleDetailsState extends State<TitleDetails> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _infoColumn(AppLocalizations.of(context)!.originaTitle,
-                    Text(title.originalName)),
+                _infoColumn(
+                    AppLocalizations.of(context)!.originaTitle,
+                    Text(title.originalName,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ))),
                 const SizedBox(width: 20),
                 _infoColumn(
                     AppLocalizations.of(context)!.originalLanguage,
-                    Text(LanguageService()
-                        .getLanguageName(title.originalLanguage))),
+                    Text(
+                        LanguageService()
+                            .getLanguageName(title.originalLanguage),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ))),
                 const SizedBox(width: 20),
                 _infoColumn(
                     AppLocalizations.of(context)!.originCountry,
-                    Text(title.originCountry
-                        .map((c) => RegionService().getRegionName(c))
-                        .join(', '))),
+                    Text(
+                        title.originCountry
+                            .map((c) => RegionService().getRegionName(c))
+                            .join(', '),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ))),
               ],
             ),
           ),
@@ -312,7 +329,7 @@ class _TitleDetailsState extends State<TitleDetails> {
               child: Text(
                 person.name,
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   decoration: TextDecoration.underline,
                 ),
               ),
@@ -394,7 +411,7 @@ class _TitleDetailsState extends State<TitleDetails> {
             child: Icon(
               Icons.language,
               size: 30,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -432,9 +449,13 @@ class _TitleDetailsState extends State<TitleDetails> {
           _infoLine(title),
           const SizedBox(height: 10),
           _creditsInfo(title),
-          const Divider(),
+          Divider(
+            color: Theme.of(context).extension<CustomColors>()!.dividerColor,
+          ),
           _externalLinks(title),
-          const Divider(),
+          Divider(
+            color: Theme.of(context).extension<CustomColors>()!.dividerColor,
+          ),
           const SizedBox(height: 10),
           _providers(title),
           const SizedBox(height: 30),
@@ -461,13 +482,18 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   Widget _tagLine(TmdbTitle title) {
+    debugPrint("tagline: ${title.tagline}");
     if (title.tagline.isEmpty) {
       return const SizedBox.shrink();
     }
 
     return Text(
       title.tagline,
-      style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+      style: TextStyle(
+        fontStyle: FontStyle.italic,
+        fontSize: 16,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
       textAlign: TextAlign.start,
     );
   }
@@ -501,6 +527,7 @@ class _TitleDetailsState extends State<TitleDetails> {
 
   Widget _rating(TmdbTitle title) {
     String titleVoteAverage = '-.-';
+    final titleTheme = Theme.of(context).extension<CustomColors>()!;
 
     if (title.firstAirDate.isNotEmpty &&
         DateTime.parse(title.firstAirDate).isAfter(DateTime.now())) {
@@ -554,7 +581,7 @@ class _TitleDetailsState extends State<TitleDetails> {
             children: [
               Icon(
                 Icons.star,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: titleTheme.ratedTitle,
               ),
               const SizedBox(width: 5),
               Expanded(
@@ -584,10 +611,10 @@ class _TitleDetailsState extends State<TitleDetails> {
 
                 return Row(
                   children: [
-                    Icon(Icons.star,
-                        color: Theme.of(context)
-                            .extension<CustomColors>()!
-                            .ratedTitle),
+                    Icon(
+                      Icons.star,
+                      color: titleTheme.userRatedTitle,
+                    ),
                     const SizedBox(width: 5),
                     if (titleIsRated)
                       Padding(
@@ -596,11 +623,6 @@ class _TitleDetailsState extends State<TitleDetails> {
                           titleRating == AppConstants.seenRating
                               ? AppLocalizations.of(context)!.seen
                               : '$titleRating',
-                          style: TextStyle(
-                            color: Theme.of(context)
-                                .extension<CustomColors>()!
-                                .ratedTitle,
-                          ),
                         ),
                       ),
                     Flexible(
@@ -823,6 +845,9 @@ class _TitleDetailsState extends State<TitleDetails> {
       title.overview.isEmpty
           ? AppLocalizations.of(context)!.missingDescription
           : title.overview,
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
     );
   }
 
@@ -944,8 +969,6 @@ class _TitleDetailsState extends State<TitleDetails> {
       seasonOptions.add(AppLocalizations.of(context)!.seasonLabel(i));
     }
 
-    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -953,7 +976,9 @@ class _TitleDetailsState extends State<TitleDetails> {
           selectedOption:
               _selectedSeason.isEmpty ? selectSeasonText : _selectedSeason,
           options: seasonOptions,
-          border: Border.all(color: titleTheme.listDividerColor),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           borderRadius: BorderRadius.circular(5),
           onSelected: (option) {
             if (option == selectSeasonText) return;

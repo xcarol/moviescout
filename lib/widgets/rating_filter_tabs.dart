@@ -17,7 +17,7 @@ class RatingFilterTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     final ratedTitleColor =
-        Theme.of(context).extension<CustomColors>()!.ratedTitle;
+        Theme.of(context).extension<CustomColors>()!.userRatedTitle;
 
     return SizedBox(
       width: 150,

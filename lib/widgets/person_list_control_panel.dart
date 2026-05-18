@@ -29,41 +29,41 @@ class PersonListControlPanel extends StatelessWidget {
             child: Theme(
               data: Theme.of(context).copyWith(
                 textSelectionTheme: TextSelectionThemeData(
-                  selectionColor: titleTheme.searchSelectionColor,
-                  selectionHandleColor: titleTheme.searchCursorColor,
+                  // selectionColor: titleTheme.searchSelectionColor,
+                  // selectionHandleColor: titleTheme.searchCursorColor,
                 ),
               ),
               child: TextField(
                 controller: textFilterController,
                 focusNode: focusNode,
                 style: TextStyle(
-                    color: titleTheme.controlPanelForeground,
+                    // color: titleTheme.controlPanelForeground,
                     fontSize: 14,
                     fontWeight: textFilterController.text.isEmpty
                         ? FontWeight.normal
                         : FontWeight.bold),
-                cursorColor: titleTheme.searchCursorColor,
+                // cursorColor: titleTheme.searchCursorColor,
                 cursorHeight: 16,
                 decoration: InputDecoration(
                   isDense: true,
                   hintText: localizations.searchPerson,
-                  hintStyle: TextStyle(color: titleTheme.searchHintColor),
-                  suffixIconColor: titleTheme.controlPanelForeground,
+                  // hintStyle: TextStyle(color: titleTheme.searchHintColor),
+                  // suffixIconColor: titleTheme.controlPanelForeground,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 5),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5),
-                    borderSide:
-                        BorderSide(color: titleTheme.controlPanelForeground),
+                    // borderSide:
+                    //     BorderSide(color: titleTheme.controlPanelForeground),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5),
-                    borderSide:
-                        BorderSide(color: titleTheme.controlPanelForeground),
+                    // borderSide:
+                    //     BorderSide(color: titleTheme.controlPanelForeground),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5),
-                    borderSide:
-                        BorderSide(color: titleTheme.controlPanelForeground),
+                    // borderSide:
+                    //     BorderSide(color: titleTheme.controlPanelForeground),
                   ),
                   suffixIcon: GestureDetector(
                     child: Icon(Icons.clear),

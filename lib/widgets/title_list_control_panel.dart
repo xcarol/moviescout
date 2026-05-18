@@ -43,6 +43,7 @@ class TitleListControlPanel extends StatelessWidget {
             ],
           ),
           _textFilter(context, AppLocalizations.of(context)!.search),
+          const SizedBox(height: 5),
           if (ratingFilter != null)
             Container(
               color: titleTheme.controlPanelForeground.withValues(alpha: 0.2),
@@ -125,8 +126,8 @@ class TitleListControlPanel extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         Switch(
-          activeThumbColor: titleTheme.controlPanelForeground,
-          inactiveThumbColor: titleTheme.controlPanelBackground,
+          activeThumbColor: titleTheme.controlPanelActiveFilterBackground,
+          inactiveThumbColor: titleTheme.controlPanelInactiveFilterForeground,
           value: filterByProviders,
           onChanged: (value) {
             providersChanged(value);
@@ -153,11 +154,12 @@ class TitleListControlPanel extends StatelessWidget {
           focusNode: focusNode,
           style: TextStyle(
               color: titleTheme.controlPanelForeground,
-              fontSize: 14,
-              fontWeight: textFilterController.text.isEmpty
-                  ? FontWeight.normal
-                  : FontWeight.bold),
-          cursorColor: titleTheme.searchCursorColor,
+            fontSize: 14,
+            fontWeight: textFilterController.text.isEmpty
+                ? FontWeight.normal
+                : FontWeight.bold,
+          ),
+            cursorColor: titleTheme.searchCursorColor,
           cursorHeight: 16,
           decoration: InputDecoration(
             isDense: true,

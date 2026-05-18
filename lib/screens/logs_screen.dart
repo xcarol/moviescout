@@ -155,7 +155,7 @@ class _LogsScreenState extends State<LogsScreen>
         children: [
           Container(
             padding: const EdgeInsets.all(16),
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            // color: Theme.of(context).colorScheme.surfaceContainerHighest,
             child: Column(
               children: [
                 Row(
@@ -185,7 +185,7 @@ class _LogsScreenState extends State<LogsScreen>
                 ? Center(
                     child: Text(
                       'No logs available yet.',
-                      style: TextStyle(color: Colors.grey),
+                      // style: TextStyle(color: Colors.grey),
                     ),
                   )
                 : ListView.separated(
