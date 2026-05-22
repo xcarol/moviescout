@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/theme_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class NotificationService extends ChangeNotifier {
@@ -236,6 +237,12 @@ class NotificationService extends ChangeNotifier {
       contentTitle: title,
     );
 
+    final themeService = ThemeService();
+
+    final brightness =
+        WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    final isDarkMode = brightness == Brightness.dark;
+
     final AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
       'title_availability_channel',
@@ -244,7 +251,9 @@ class NotificationService extends ChangeNotifier {
       importance: Importance.max,
       priority: Priority.high,
       styleInformation: styleInformation,
-      color: const Color.fromARGB(0xFF, 0x2B, 0x20, 0x16),
+      color: isDarkMode
+          ? themeService.darkColorScheme.surface
+          : themeService.lightColorScheme.surface,
     );
 
     final NotificationDetails notificationDetails = NotificationDetails(

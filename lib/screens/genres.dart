@@ -29,11 +29,9 @@ class _GenresScreenState extends State<GenresScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final customColors = Theme.of(context).extension<CustomColors>();
 
     return Scaffold(
-      backgroundColor: colorScheme.onPrimaryContainer,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.genres),
       ),
@@ -46,16 +44,7 @@ class _GenresScreenState extends State<GenresScreen> {
           return Column(
             children: [
               SwitchListTile(
-                title: Text(
-                  genre,
-                  style: TextStyle(
-                    color: colorScheme.primary,
-                  ),
-                ),
-                activeThumbColor: colorScheme.onPrimary,
-                activeTrackColor: colorScheme.primary,
-                inactiveThumbColor: colorScheme.primary,
-                inactiveTrackColor: colorScheme.onPrimary,
+                title: Text(genre),
                 value: isSelected,
                 onChanged: (bool value) {
                   setState(() {

@@ -12,7 +12,8 @@ Widget pinButton(
   return Consumer<TmdbWatchlistService>(
     builder: (context, watchlistService, _) {
       return FutureBuilder<TmdbTitle?>(
-        future: watchlistService.getTitleByTmdbId(title.tmdbId, title.mediaType),
+        future:
+            watchlistService.getTitleByTmdbId(title.tmdbId, title.mediaType),
         builder: (context, snapshot) {
           final watchlistTitle = snapshot.data;
 
@@ -37,7 +38,7 @@ Widget pinButton(
               size: 20,
               color: isPinned
                   ? Theme.of(context).extension<CustomColors>()!.pinnedTitle
-                  : Theme.of(context).extension<CustomColors>()!.notSelected,
+                  : Theme.of(context).disabledColor,
             ),
             tooltip: isPinned
                 ? AppLocalizations.of(context)!.unpin

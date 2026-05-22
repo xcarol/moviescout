@@ -20,7 +20,6 @@ class PersonListControlPanel extends StatelessWidget {
     final localizations = AppLocalizations.of(context)!;
 
     return Container(
-      color: titleTheme.controlPanelBackground,
       padding: const EdgeInsets.all(4.0),
       child: Column(
         children: [

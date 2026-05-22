@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/episode_details.dart';
@@ -14,7 +15,7 @@ class EpisodeCard extends StatelessWidget {
   final int seasonNumber;
   final TmdbListService tmdbListService;
 
-  static double cardHeight = 120.0;
+  static double cardHeight = 122.0;
 
   const EpisodeCard({
     super.key,
@@ -49,18 +50,15 @@ class EpisodeCard extends StatelessWidget {
                 ),
               );
             },
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 190,
-                    child: episodeThumbnail(_episode.stillPath),
-                  ),
-                  const SizedBox(width: 10),
-                  _episodeDetails(context, _episode),
-                ],
-              ),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 200,
+                  child: episodeThumbnail(_episode.stillPath),
+                ),
+                const SizedBox(width: 10),
+                _episodeDetails(context, _episode),
+              ],
             ),
           ),
         ),
@@ -102,6 +100,10 @@ class EpisodeCard extends StatelessWidget {
   }
 
   Widget _episodeDetails(BuildContext context, TmdbEpisode episode) {
+    final textColor = Theme.of(
+      context,
+    ).colorScheme.onSurfaceVariant;
+
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,11 +111,17 @@ class EpisodeCard extends StatelessWidget {
         children: [
           episodeHeader('${episode.episodeNumber}. ${episode.name}'),
           const SizedBox(height: 5),
-          Text(DateFormatter.formatDate(context, episode.airDate),
-              overflow: TextOverflow.ellipsis),
+          Text(
+            DateFormatter.formatDate(context, episode.airDate),
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: textColor),
+          ),
           if (episode.runtime > 0) ...[
             const SizedBox(height: 5),
-            Text('${episode.runtime} min'),
+            Text(
+              '${episode.runtime} min',
+              style: TextStyle(color: textColor),
+            ),
           ],
           const SizedBox(height: 5),
           episodeRating(context, episode),
@@ -144,7 +152,7 @@ class EpisodeCard extends StatelessWidget {
         Icon(
           Icons.star,
           size: 16,
-          color: Theme.of(context).colorScheme.onSurface,
+          color: Theme.of(context).extension<CustomColors>()!.ratedTitle,
         ),
         const SizedBox(width: 5),
         Text(episode.voteAverage.toStringAsFixed(2)),

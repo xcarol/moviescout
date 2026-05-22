@@ -36,6 +36,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final customColors = Theme.of(context).extension<CustomColors>()!;
+
     return PopScope(
       canPop: _currentIndex == 0,
       onPopInvokedWithResult: (didPop, result) {
@@ -47,14 +49,12 @@ class _MainScreenState extends State<MainScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          iconTheme: IconThemeData(
-            color: Theme.of(context).colorScheme.secondary,
-          ),
+          iconTheme: IconThemeData(color: customColors.appBarText),
           title: Text(
             _getTitleForIndex(_currentIndex, context),
+            style: TextStyle(color: customColors.appBarText),
           ),
-          backgroundColor:
-              Theme.of(context).extension<CustomColors>()!.appBarBackground,
+          backgroundColor: customColors.appBarBackground,
         ),
         drawer: AppDrawer(),
         body: Column(children: [
@@ -71,10 +71,8 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ]),
         bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor:
-              Theme.of(context).extension<CustomColors>()!.selected,
-          unselectedItemColor:
-              Theme.of(context).extension<CustomColors>()!.notSelected,
+          selectedItemColor: customColors.navigationBarSelected,
+          unselectedItemColor: customColors.navigationBarNotSelected,
           currentIndex: _currentIndex,
           showSelectedLabels: false,
           showUnselectedLabels: false,
@@ -88,33 +86,25 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(Icons.remove_red_eye),
               label: '',
               tooltip: AppLocalizations.of(context)!.watchlistTitle,
-              backgroundColor: Theme.of(context)
-                  .extension<CustomColors>()!
-                  .bottomNavigationBarBackground,
+              backgroundColor: customColors.bottomNavigationBarBackground,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.rate_review),
               label: '',
               tooltip: AppLocalizations.of(context)!.rateslistTitle,
-              backgroundColor: Theme.of(context)
-                  .extension<CustomColors>()!
-                  .bottomNavigationBarBackground,
+              backgroundColor: customColors.bottomNavigationBarBackground,
             ),
             BottomNavigationBarItem(
               icon: Icon(Symbols.wand_stars),
               label: '',
               tooltip: AppLocalizations.of(context)!.discoverlistTitle,
-              backgroundColor: Theme.of(context)
-                  .extension<CustomColors>()!
-                  .bottomNavigationBarBackground,
+              backgroundColor: customColors.bottomNavigationBarBackground,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.search),
               label: '',
               tooltip: AppLocalizations.of(context)!.search,
-              backgroundColor: Theme.of(context)
-                  .extension<CustomColors>()!
-                  .bottomNavigationBarBackground,
+              backgroundColor: customColors.bottomNavigationBarBackground,
             ),
           ],
         ),

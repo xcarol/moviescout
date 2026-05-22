@@ -131,7 +131,6 @@ class _SearchState extends State<Search> {
               groupId: _searchGroupId,
               child: Material(
                 elevation: 4.0,
-                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(8),
                 child: ListView.builder(
                   padding: EdgeInsets.zero,
@@ -213,11 +212,11 @@ class _SearchState extends State<Search> {
 
   Widget searchBox() {
     final colorScheme = Theme.of(context).colorScheme;
-    final textColor = colorScheme.onPrimary;
-    final borderColor = colorScheme.onPrimary;
+    final textColor = colorScheme.onSecondary;
+    final borderColor = colorScheme.onSecondary;
 
     return Container(
-      color: Theme.of(context).colorScheme.primary,
+      color: colorScheme.secondary,
       width: double.infinity,
       padding: EdgeInsets.symmetric(
         horizontal: _searchHorizontalPadding,
@@ -267,7 +266,7 @@ class _SearchState extends State<Search> {
             ),
             const SizedBox(width: 8),
             IconButton(
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: colorScheme.onSecondary,
               onPressed: () => searchTitle(context, _controller.text),
               icon: const Icon(Icons.search),
             ),
@@ -291,8 +290,7 @@ class _SearchState extends State<Search> {
     try {
       Locale locale = Localizations.localeOf(context);
       await _resetTitle();
-      await _searchService.retrieveSearchlist(
-          anonymousAccountId, term, locale);
+      await _searchService.retrieveSearchlist(anonymousAccountId, term, locale);
     } catch (error, stackTrace) {
       if (mounted) {
         ErrorService.log(

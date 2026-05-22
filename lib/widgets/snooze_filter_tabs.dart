@@ -15,8 +15,8 @@ class SnoozeFilterTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    final ratedTitleColor =
-        Theme.of(context).extension<CustomColors>()!.ratedTitle;
+    final snoozedTitleColor =
+        Theme.of(context).extension<CustomColors>()!.snoozedTitle;
 
     return SizedBox(
       width: 150,
@@ -26,6 +26,7 @@ class SnoozeFilterTabs extends StatelessWidget {
         length: 3,
         initialIndex: controller.snoozeFilter.index,
         child: TabBar(
+          overlayColor: WidgetStateProperty.all(Colors.transparent),
           onTap: (index) {
             controller.setSnoozeFilter(SnoozeFilter.values[index]);
           },
@@ -34,10 +35,9 @@ class SnoozeFilterTabs extends StatelessWidget {
           indicatorSize: TabBarIndicatorSize.tab,
           indicator: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: ratedTitleColor.withValues(alpha: 0.2),
           ),
           dividerColor: Colors.transparent,
-          labelColor: ratedTitleColor,
+          labelColor: snoozedTitleColor,
           unselectedLabelColor: Theme.of(context).disabledColor,
           tabs: [
             Tooltip(
@@ -50,7 +50,8 @@ class SnoozeFilterTabs extends StatelessWidget {
             ),
             Tooltip(
               message: localizations.snoozedOnly,
-              child: const Tab(icon: Icon(Icons.pause_circle_outline, size: 20)),
+              child:
+                  const Tab(icon: Icon(Icons.pause_circle_outline, size: 20)),
             ),
           ],
         ),

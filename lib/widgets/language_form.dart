@@ -30,7 +30,12 @@ class LanguageForm extends Dialog {
           languages.forEach((code, name) {
             languageWidgets.add(
               RadioListTile<String>(
-                title: Text(name),
+                title: Text(name,
+                    style: TextStyle(
+                      color: language.value == code
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.onSurface,
+                    )),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -58,12 +63,12 @@ class LanguageForm extends Dialog {
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextButton(
+                      FilledButton.tonal(
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
                           child: Text(AppLocalizations.of(context)!.cancel)),
-                      TextButton(
+                      FilledButton(
                           onPressed: () {
                             Navigator.of(context).pop(language.value);
                           },

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/models/title_list_theme.dart';
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -115,10 +115,12 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           _description(season),
           const SizedBox(height: 30),
           _creditsInfo(season),
-          const Divider(),
+          Divider(
+              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
           _externalLinks(),
-          const Divider(),
-          // const SizedBox(height: 10),
+          Divider(
+              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
+          const SizedBox(height: 10),
           _episodesList(season),
           const SizedBox(height: 10),
         ],
@@ -137,6 +139,8 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   }
 
   Widget _dateAndRatingLine(TmdbSeason season) {
+    final customColors = Theme.of(context).extension<CustomColors>()!;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -146,6 +150,9 @@ class _SeasonDetailsState extends State<SeasonDetails> {
             child: Text(
               DateFormatter.formatDate(context, season.airDate),
               maxLines: 1,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
         ),
@@ -154,7 +161,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
             children: [
               Icon(
                 Icons.star,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: customColors.ratedTitle,
                 size: 20,
               ),
               const SizedBox(width: 5),
@@ -236,6 +243,8 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   }
 
   Widget _clickableNames(List<TmdbPerson> people) {
+    final colors = Theme.of(context).colorScheme;
+
     return Row(
       children: people.asMap().entries.map((entry) {
         final index = entry.key;
@@ -259,7 +268,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
               child: Text(
                 person.name,
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: colors.onSurfaceVariant,
                   decoration: TextDecoration.underline,
                 ),
               ),
@@ -304,7 +313,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   Widget _episodesList(TmdbSeason season) {
     if (season.episodes.isEmpty) return const SizedBox.shrink();
 
-    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+    final customColors = Theme.of(context).extension<CustomColors>()!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -328,7 +337,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
               ),
               Divider(
                 height: 1,
-                color: titleTheme.listDividerColor,
+                color: customColors.dividerColor,
               ),
             ],
           );

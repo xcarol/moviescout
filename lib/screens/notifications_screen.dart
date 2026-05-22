@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/main.dart';
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/saved_notification.dart';
-import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/services/deep_link_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -71,6 +71,8 @@ class _NotificationsScreenState extends State<NotificationsScreen>
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     final providerService = Provider.of<TmdbProviderService>(context);
+    final colors = Theme.of(context).colorScheme;
+    final customColors = Theme.of(context).extension<CustomColors>()!;
     final allProviders = providerService.providers;
 
     return Scaffold(
@@ -91,9 +93,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                     if (index == 0)
                       Divider(
                         height: 1,
-                        color: Theme.of(context)
-                            .extension<TitleListTheme>()!
-                            .listDividerColor,
+                        color: customColors.dividerColor,
                       ),
                     ListTile(
                       leading: notification.imageUrl != null
@@ -117,13 +117,10 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                             DateFormat.yMMMd(
                                     Localizations.localeOf(context).toString())
                                 .format(notification.timestamp.toLocal()),
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant
-                                          .withValues(alpha: 0.7),
-                                    ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(color: colors.onSurfaceVariant),
                           ),
                           if (notification.providerIds.isNotEmpty) ...[
                             const SizedBox(height: 8),
@@ -158,8 +155,8 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                     Divider(
                       height: 1,
                       color: Theme.of(context)
-                          .extension<TitleListTheme>()!
-                          .listDividerColor,
+                          .extension<CustomColors>()!
+                          .dividerColor,
                     ),
                   ],
                 );

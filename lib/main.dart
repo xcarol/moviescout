@@ -139,7 +139,8 @@ void main() async {
       ChangeNotifierProxyProvider3<TmdbRateslistService, TmdbPinnedService,
           TmdbSnoozedService, TmdbWatchlistService>(
         create: (_) => TmdbWatchlistService(AppConstants.watchlist, repository),
-        update: (_, rateslistService, pinnedService, snoozedService, watchlistService) {
+        update: (_, rateslistService, pinnedService, snoozedService,
+            watchlistService) {
           rateslistService.removeListener(watchlistService!.refresh);
           rateslistService.addListener(watchlistService.refresh);
           watchlistService.pinnedService = pinnedService;
@@ -253,7 +254,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           themeProvider.darkTitleListTheme,
         ],
       ),
-      themeMode: ThemeMode.system,
       title: 'Movie Scout',
       home: const MainScreen(),
       scaffoldMessengerKey: scaffoldMessengerKey,

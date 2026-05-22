@@ -120,11 +120,19 @@ class PersonChip extends StatelessWidget {
           if (tmdbPerson.character.isNotEmpty) const SizedBox(height: 5),
           if (tmdbPerson.character.isNotEmpty)
             Text(tmdbPerson.character,
-                overflow: TextOverflow.ellipsis, maxLines: 2),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                )),
           if (tmdbPerson.job.isNotEmpty) const SizedBox(height: 5),
           if (tmdbPerson.job.isNotEmpty)
             Text(tmdbPerson.localizedJob(context),
-                overflow: TextOverflow.ellipsis, maxLines: 2),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                )),
         ],
       ),
     );
