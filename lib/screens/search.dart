@@ -212,8 +212,8 @@ class _SearchState extends State<Search> {
 
   Widget searchBox() {
     final colorScheme = Theme.of(context).colorScheme;
-    final textColor = colorScheme.onSecondary;
-    final borderColor = colorScheme.onSecondary;
+    final textColor = colorScheme.onSurface;
+    final borderColor = colorScheme.onSurface;
 
     return Container(
       color: colorScheme.secondary,
@@ -263,12 +263,6 @@ class _SearchState extends State<Search> {
                   searchTitle(context, title);
                 },
               ),
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              color: colorScheme.onSecondary,
-              onPressed: () => searchTitle(context, _controller.text),
-              icon: const Icon(Icons.search),
             ),
           ],
         ),
