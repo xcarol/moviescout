@@ -82,28 +82,31 @@ class _PersonDetailsState extends State<PersonDetails> {
             tmdbRateslistService.getRating(title.tmdbId, title.mediaType) != 0)
         .toList();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _banner(person),
-        const SizedBox(height: 20),
-        _details(person),
-        const SizedBox(height: 20),
-        _description(person),
-        const SizedBox(height: 10),
-        Divider(
-            color: Theme.of(context).extension<CustomColors>()!.dividerColor),
-        _externalLinks(person),
-        Divider(
-            color: Theme.of(context).extension<CustomColors>()!.dividerColor),
-        const SizedBox(height: 10),
-        _credits(person),
-        const SizedBox(height: 10),
-        _crewCredits(person),
-        const SizedBox(height: 30),
-        _ratedCredits(person, userRatedTitles),
-        const SizedBox(height: 50),
-      ],
+    return Padding(
+      padding: EdgeInsets.only(left: 5, right: 5, bottom: 100),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _banner(person),
+          const SizedBox(height: 20),
+          _details(person),
+          const SizedBox(height: 20),
+          _description(person),
+          const SizedBox(height: 10),
+          Divider(
+              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
+          _externalLinks(person),
+          Divider(
+              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
+          const SizedBox(height: 10),
+          _credits(person),
+          const SizedBox(height: 10),
+          _crewCredits(person),
+          const SizedBox(height: 30),
+          _ratedCredits(person, userRatedTitles),
+          const SizedBox(height: 50),
+        ],
+      ),
     );
   }
 
@@ -398,7 +401,7 @@ class _PersonDetailsState extends State<PersonDetails> {
           children: [
             Text(
               AppLocalizations.of(context)!.cast,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             TextButton(
               onPressed: () {
@@ -464,7 +467,7 @@ class _PersonDetailsState extends State<PersonDetails> {
           children: [
             Text(
               AppLocalizations.of(context)!.crew,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             TextButton(
               onPressed: () {
@@ -527,7 +530,7 @@ class _PersonDetailsState extends State<PersonDetails> {
       children: [
         Text(
           AppLocalizations.of(context)!.ratedCredits,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         const SizedBox(height: 10),
         SingleChildScrollView(
