@@ -136,6 +136,11 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         null;
   }
 
+  Future<void> debugUpdateTitleLastUpdate(TmdbTitle title) async {
+    await repository.updateTitleMetadata(title);
+    notifyListeners();
+  }
+
   @protected
   void clearLoadedTitles(
       {bool clearGenreCache = false, bool resetCount = false}) {
