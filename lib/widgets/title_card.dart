@@ -2,10 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
@@ -100,6 +102,7 @@ class TitleCard extends StatelessWidget {
         Text(tmdbTitle.voteAverage.toStringAsFixed(2)),
       ]);
     }
+    _debugShowLastUpdates(context, children, tmdbTitle);
 
     return Consumer<TmdbRateslistService>(
       builder: (context, rateslistService, _) {
@@ -342,5 +345,67 @@ class TitleCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _debugShowLastUpdates(
+      BuildContext context, List<Widget> children, TmdbTitle tmdbTitle) {
+    if (_tmdbListService.listName == AppConstants.watchlist &&
+        (PreferencesService().prefs.getBool(AppConstants.debugShowLastUpdate) ??
+            false)) {
+      children.add(const SizedBox(width: 5));
+      children.add(
+        Flexible(
+          child: GestureDetector(
+            onTap: () async {
+              tmdbTitle.lastUpdated = DateTime.parse(tmdbTitle.lastUpdated)
+                  .subtract(const Duration(days: 1))
+                  .toIso8601String();
+              tmdbTitle.lastProvidersUpdate =
+                  DateTime.parse(tmdbTitle.lastProvidersUpdate)
+                      .subtract(const Duration(days: 1))
+                      .toIso8601String();
+              await Provider.of<TmdbListService>(context, listen: false)
+                  .debugUpdateTitleLastUpdate(tmdbTitle);
+            },
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(children: [
+                Text(
+                  '[lastUpdated: ${DateFormat('dd-MM-yyyyTHH:mm').format(DateTime.parse(tmdbTitle.lastUpdated))}]',
+                  style: TextStyle(
+                    fontSize: 10,
+                  ),
+                ),
+                Text(
+                  '[lastProvidersUpdate: ${DateFormat('dd-MM-yyyyTHH:mm').format(DateTime.parse(tmdbTitle.lastProvidersUpdate))}]',
+                  style: TextStyle(
+                    fontSize: 10,
+                  ),
+                ),
+              ]),
+            ),
+          ),
+        ),
+      );
+
+      if (tmdbTitle.isSerie) {
+        children.add(const SizedBox(width: 5));
+        children.add(
+          GestureDetector(
+            onTap: () async {
+              tmdbTitle.lastNotifiedSeason = tmdbTitle.lastNotifiedSeason - 1;
+              await Provider.of<TmdbListService>(context, listen: false)
+                  .debugUpdateTitleLastUpdate(tmdbTitle);
+            },
+            child: Text(
+              '[${tmdbTitle.lastNotifiedSeason}]',
+              style: TextStyle(
+                fontSize: 10,
+              ),
+            ),
+          ),
+        );
+      }
+    }
   }
 }
