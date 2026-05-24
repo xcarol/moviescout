@@ -362,6 +362,7 @@ class _PersonDetailsState extends State<PersonDetails> {
         person.biography.isEmpty
             ? AppLocalizations.of(context)!.missingDescription
             : person.biography,
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     );
   }
