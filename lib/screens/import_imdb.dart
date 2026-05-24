@@ -428,7 +428,11 @@ class _ImportIMDBState extends State<ImportIMDB> {
                 children: [
                   const SizedBox(width: 10),
                   _importResultsCell(
-                      width: 40, child: Icon(status, color: statusColor)),
+                      width: 40,
+                      child: Icon(
+                        status,
+                        color: statusColor,
+                      )),
                   _importResultsCell(
                     width: 150,
                     child: Text(_csvTitles[index][_imdbIdColumn].toString(),

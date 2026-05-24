@@ -29,7 +29,6 @@ class TitleListControlPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
     return Container(
       padding: const EdgeInsets.all(4.0),
       child: Column(
@@ -43,14 +42,12 @@ class TitleListControlPanel extends StatelessWidget {
             ],
           ),
           _textFilter(context, AppLocalizations.of(context)!.search),
+          const SizedBox(height: 5),
           if (ratingFilter != null)
-            Container(
-              color: titleTheme.controlPanelForeground.withValues(alpha: 0.2),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [ratingFilter!],
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [ratingFilter!],
             ),
         ],
       ),
@@ -125,7 +122,8 @@ class TitleListControlPanel extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         Switch(
-          activeThumbColor: titleTheme.controlPanelForeground,
+          activeThumbColor: titleTheme.controlPanelActiveFilterBackground,
+          inactiveThumbColor: titleTheme.controlPanelInactiveFilterForeground,
           value: filterByProviders,
           onChanged: (value) {
             providersChanged(value);
@@ -151,11 +149,12 @@ class TitleListControlPanel extends StatelessWidget {
           controller: textFilterController,
           focusNode: focusNode,
           style: TextStyle(
-              color: titleTheme.controlPanelForeground,
-              fontSize: 14,
-              fontWeight: textFilterController.text.isEmpty
-                  ? FontWeight.normal
-                  : FontWeight.bold),
+            color: titleTheme.controlPanelForeground,
+            fontSize: 14,
+            fontWeight: textFilterController.text.isEmpty
+                ? FontWeight.normal
+                : FontWeight.bold,
+          ),
           cursorColor: titleTheme.searchCursorColor,
           cursorHeight: 16,
           decoration: InputDecoration(

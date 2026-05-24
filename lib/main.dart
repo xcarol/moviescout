@@ -112,7 +112,6 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       Provider.value(value: repository),
-      ChangeNotifierProvider(create: (_) => ThemeService()),
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
@@ -140,7 +139,8 @@ void main() async {
       ChangeNotifierProxyProvider3<TmdbRateslistService, TmdbPinnedService,
           TmdbSnoozedService, TmdbWatchlistService>(
         create: (_) => TmdbWatchlistService(AppConstants.watchlist, repository),
-        update: (_, rateslistService, pinnedService, snoozedService, watchlistService) {
+        update: (_, rateslistService, pinnedService, snoozedService,
+            watchlistService) {
           rateslistService.removeListener(watchlistService!.refresh);
           rateslistService.addListener(watchlistService.refresh);
           watchlistService.pinnedService = pinnedService;
@@ -192,7 +192,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       });
     }
 
-    final themeProvider = Provider.of<ThemeService>(context, listen: false);
+    final themeProvider = ThemeService();
     themeProvider.setupTheme();
     final userService = Provider.of<TmdbUserService>(context, listen: false);
     userService.setup();
@@ -221,7 +221,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageService>(context);
-    final themeProvider = Provider.of<ThemeService>(context);
+    final themeProvider = ThemeService();
 
     return MaterialApp(
       localizationsDelegates: const [
@@ -254,7 +254,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           themeProvider.darkTitleListTheme,
         ],
       ),
-      themeMode: ThemeMode.system,
       title: 'Movie Scout',
       home: const MainScreen(),
       scaffoldMessengerKey: scaffoldMessengerKey,

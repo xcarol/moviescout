@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -15,7 +16,8 @@ class EpisodeDetails extends StatefulWidget {
   final int seasonNumber;
   final int episodeNumber;
   final TmdbListService tmdbListService;
-  final TmdbEpisode? initialEpisode; // allows fast-loading before API call finishes
+  final TmdbEpisode?
+      initialEpisode; // allows fast-loading before API call finishes
 
   const EpisodeDetails({
     super.key,
@@ -121,9 +123,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
         children: [
           _titleLine(episode),
           const SizedBox(height: 10),
-          _durationAndDate(episode),
-          const SizedBox(height: 10),
-          _rating(episode),
+          _durationDateAndRating(episode),
           const SizedBox(height: 10),
           _description(episode),
           const SizedBox(height: 30),
@@ -147,7 +147,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
     );
   }
 
-  Widget _durationAndDate(TmdbEpisode episode) {
+  Widget _durationDateAndRating(TmdbEpisode episode) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -156,29 +156,35 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                if (episode.airDate.isNotEmpty) Text(DateFormatter.formatDate(context, episode.airDate)),
+                if (episode.airDate.isNotEmpty)
+                  Text(
+                    DateFormatter.formatDate(context, episode.airDate),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 if (episode.airDate.isNotEmpty && episode.runtime > 0)
-                  const Text(' - '),
-                if (episode.runtime > 0) Text('${episode.runtime} min'),
+                  Text(
+                    ' - ',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                if (episode.runtime > 0)
+                  Text(
+                    '${episode.runtime} min',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
               ],
             ),
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _rating(TmdbEpisode episode) {
-    if (episode.voteAverage == 0) {
-      return const SizedBox.shrink();
-    }
-
-    return Row(
-      children: [
         Icon(
           Icons.star,
           size: 16,
-          color: Theme.of(context).colorScheme.onSurface,
+          color: Theme.of(context).extension<CustomColors>()!.ratedTitle,
         ),
         const SizedBox(width: 5),
         Text(episode.voteAverage.toStringAsFixed(1)),

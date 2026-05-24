@@ -51,7 +51,6 @@ class TitleListInfoLine extends StatelessWidget {
         textStyle: TextStyle(
           color: textColor,
           fontSize: 16,
-          backgroundColor: backgroundColor,
         ),
         borderRadius: BorderRadius.circular(5),
         leading: ValueListenableBuilder(
@@ -62,7 +61,6 @@ class TitleListInfoLine extends StatelessWidget {
               style: TextStyle(
                 color: textColor,
                 fontSize: 16,
-                backgroundColor: backgroundColor,
               ),
             );
           },
@@ -79,21 +77,14 @@ class TitleListInfoLine extends StatelessWidget {
   }
 
   Widget _sortSelector(BuildContext context) {
-    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
     final localizations = AppLocalizations.of(context)!;
     return DropdownSelector(
       selectedOption: controller.getSelectedSortLabel(localizations),
       options: controller.titleSorts,
       onSelected: (value) => controller.setSelectedSort(context, value),
       arrowIcon: controller.isSortAsc
-          ? Icon(
-              Icons.arrow_drop_down,
-              color: titleTheme.sortArrowColor,
-            )
-          : Icon(
-              Icons.arrow_drop_up,
-              color: titleTheme.sortArrowColor,
-            ),
+          ? Icon(Icons.arrow_drop_down)
+          : Icon(Icons.arrow_drop_up),
     );
   }
 }

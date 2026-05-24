@@ -141,7 +141,7 @@ flutter:
 flutter_launcher_icons:
   android: true
   image_path_android: "assets/logo-icon.png" 
-  adaptive_icon_background: "#2B2016"
+  adaptive_icon_background: "#1E1E1E"
   adaptive_icon_foreground: "assets/logo-icon.png"
 
 flutter_native_splash:
@@ -159,7 +159,7 @@ flutter_native_splash:
   # handle splash screens differently that prior versions of Android.  Android 12 and later must be
   # configured specifically in the android_12 section below.
 
-  color: "#2B2016"
+  color: "#1E1E1E"
   image: assets/logo-splash.png
 
   # Android 12 handles the splash screen differently than previous versions.  Please visit
@@ -176,10 +176,10 @@ flutter_native_splash:
     image: assets/logo-splash.png
 
   # Splash screen background color.
-    # color: "#2B2016"
+    # color: "#1E1E1E"
 
   # App icon background color.
-    # icon_background_color: "#2B2016"
+    # icon_background_color: "#1E1E1E"
 
   # The android, ios and web parameters can be used to disable generating a splash screen on a given
   # platform.

@@ -22,8 +22,7 @@ class TitleChip extends TitleCard {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<TmdbTitle?>(
-      future:
-          tmdbListService.getTitleByTmdbId(_title.tmdbId, _title.mediaType),
+      future: tmdbListService.getTitleByTmdbId(_title.tmdbId, _title.mediaType),
       builder: (context, snapshot) {
         final tmdbTitle = snapshot.data ?? _title;
 
@@ -83,6 +82,9 @@ class TitleChip extends TitleCard {
                 children: [
                   Text(
                     '${titleDate(tmdbTitle)} - ${tmdbTitle.duration}',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   const SizedBox(height: 5),
                   titleRating(

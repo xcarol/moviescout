@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
@@ -81,26 +82,31 @@ class _PersonDetailsState extends State<PersonDetails> {
             tmdbRateslistService.getRating(title.tmdbId, title.mediaType) != 0)
         .toList();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _banner(person),
-        const SizedBox(height: 20),
-        _details(person),
-        const SizedBox(height: 20),
-        _description(person),
-        const SizedBox(height: 10),
-        const Divider(),
-        _externalLinks(person),
-        const Divider(),
-        const SizedBox(height: 10),
-        _credits(person),
-        const SizedBox(height: 10),
-        _crewCredits(person),
-        const SizedBox(height: 30),
-        _ratedCredits(person, userRatedTitles),
-        const SizedBox(height: 50),
-      ],
+    return Padding(
+      padding: EdgeInsets.only(left: 5, right: 5, bottom: 100),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _banner(person),
+          const SizedBox(height: 20),
+          _details(person),
+          const SizedBox(height: 20),
+          _description(person),
+          const SizedBox(height: 10),
+          Divider(
+              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
+          _externalLinks(person),
+          Divider(
+              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
+          const SizedBox(height: 10),
+          _credits(person),
+          const SizedBox(height: 10),
+          _crewCredits(person),
+          const SizedBox(height: 30),
+          _ratedCredits(person, userRatedTitles),
+          const SizedBox(height: 50),
+        ],
+      ),
     );
   }
 
@@ -147,7 +153,10 @@ class _PersonDetailsState extends State<PersonDetails> {
         AppLocalizations.of(context)!.birthDate,
         style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
       ),
-      Text('${_formatDate(context, person.birthday)}$ageString'),
+      Text(
+        '${_formatDate(context, person.birthday)}$ageString',
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+      ),
     ]);
   }
 
@@ -165,7 +174,10 @@ class _PersonDetailsState extends State<PersonDetails> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(AppLocalizations.of(context)!.deathDate,
           style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
-      Text('${_formatDate(context, person.deathday)}$ageString')
+      Text(
+        '${_formatDate(context, person.deathday)}$ageString',
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+      ),
     ]);
   }
 
@@ -216,9 +228,17 @@ class _PersonDetailsState extends State<PersonDetails> {
   Widget _externalLinks(TmdbPerson person) {
     List<Widget> links = [];
 
+    final buttonStyle = OutlinedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+      ),
+    );
+
     links.add(
-      GestureDetector(
-        onTap: () {
+      OutlinedButton(
+        style: buttonStyle,
+        onPressed: () {
           launchUrl(
             Uri.parse('https://www.themoviedb.org/person/${person.tmdbId}'),
             mode: LaunchMode.inAppWebView,
@@ -237,8 +257,9 @@ class _PersonDetailsState extends State<PersonDetails> {
     if (person.imdbId.isNotEmpty) {
       links.add(const SizedBox(width: 20));
       links.add(
-        GestureDetector(
-          onTap: () {
+        OutlinedButton(
+          style: buttonStyle,
+          onPressed: () {
             launchUrl(
               Uri.parse('https://www.imdb.com/name/${person.imdbId}'),
               mode: LaunchMode.inAppBrowserView,
@@ -258,8 +279,9 @@ class _PersonDetailsState extends State<PersonDetails> {
     if (person.homepage.isNotEmpty) {
       links.add(const SizedBox(width: 20));
       links.add(
-        GestureDetector(
-          onTap: () {
+        OutlinedButton(
+          style: buttonStyle,
+          onPressed: () {
             launchUrl(
               Uri.parse(person.homepage),
               mode: LaunchMode.inAppBrowserView,
@@ -302,7 +324,7 @@ class _PersonDetailsState extends State<PersonDetails> {
     }
 
     return Text(
-      '${person.name} - ${person.localizedDepartment(context)}',
+      person.name,
       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
       textAlign: TextAlign.start,
     );
@@ -340,6 +362,7 @@ class _PersonDetailsState extends State<PersonDetails> {
         person.biography.isEmpty
             ? AppLocalizations.of(context)!.missingDescription
             : person.biography,
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     );
   }
@@ -354,7 +377,10 @@ class _PersonDetailsState extends State<PersonDetails> {
         AppLocalizations.of(context)!.placeOfBirth,
         style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
       ),
-      Text(person.placeOfBirth),
+      Text(
+        person.placeOfBirth,
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+      ),
     ]);
   }
 
@@ -386,7 +412,7 @@ class _PersonDetailsState extends State<PersonDetails> {
           children: [
             Text(
               AppLocalizations.of(context)!.cast,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             TextButton(
               onPressed: () {
@@ -397,7 +423,11 @@ class _PersonDetailsState extends State<PersonDetails> {
                   ),
                 );
               },
-              child: Text(AppLocalizations.of(context)!.seeThemAll),
+              child: Text(
+                AppLocalizations.of(context)!.seeThemAll,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
             ),
           ],
         ),
@@ -448,7 +478,7 @@ class _PersonDetailsState extends State<PersonDetails> {
           children: [
             Text(
               AppLocalizations.of(context)!.crew,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             TextButton(
               onPressed: () {
@@ -459,7 +489,11 @@ class _PersonDetailsState extends State<PersonDetails> {
                   ),
                 );
               },
-              child: Text(AppLocalizations.of(context)!.seeThemAll),
+              child: Text(
+                AppLocalizations.of(context)!.seeThemAll,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
             ),
           ],
         ),
@@ -507,7 +541,7 @@ class _PersonDetailsState extends State<PersonDetails> {
       children: [
         Text(
           AppLocalizations.of(context)!.ratedCredits,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         const SizedBox(height: 10),
         SingleChildScrollView(

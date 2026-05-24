@@ -117,8 +117,8 @@ class _LogsScreenState extends State<LogsScreen>
               tooltip: 'Share logs',
               onPressed: () {
                 final String logText = _logs.join('\n\n---\n\n');
-                SharePlus.instance.share(ShareParams(
-                    text: logText, subject: 'App Logs'));
+                SharePlus.instance
+                    .share(ShareParams(text: logText, subject: 'App Logs'));
               },
             ),
             IconButton(
@@ -155,7 +155,6 @@ class _LogsScreenState extends State<LogsScreen>
         children: [
           Container(
             padding: const EdgeInsets.all(16),
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
             child: Column(
               children: [
                 Row(

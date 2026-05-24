@@ -55,7 +55,6 @@ class ListInfoLine extends StatelessWidget {
             ),
           ),
           IconButton(
-            color: titleTheme.swapSortIconColor,
             icon: const Icon(Icons.swap_vert),
             onPressed: onSwapSort,
           ),

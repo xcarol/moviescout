@@ -41,8 +41,8 @@ class PersonCard extends StatelessWidget {
       child: SizedBox(
         height: cardHeight,
         child: Card(
-          margin: const EdgeInsets.all(0),
-          shape: RoundedRectangleBorder(),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: InkWell(
             onTap: () {
               Navigator.push(
@@ -54,18 +54,12 @@ class PersonCard extends StatelessWidget {
                         )),
               );
             },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
-                    child: personPoster(tmdbPerson.posterPath),
-                  ),
-                  const SizedBox(width: 10),
-                  _personDetails(context, tmdbPerson),
-                ],
-              ),
+            child: Row(
+              children: [
+                personPoster(tmdbPerson.posterPath),
+                const SizedBox(width: 10),
+                _personDetails(context, tmdbPerson),
+              ],
             ),
           ),
         ),

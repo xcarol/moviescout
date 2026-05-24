@@ -32,10 +32,6 @@ class PinnedTitleChip extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-            width: 1.5,
-          ),
         ),
         child: InkWell(
           onTap: () {
@@ -94,15 +90,12 @@ class PinnedTitleChip extends StatelessWidget {
 
   Widget _poster(String? posterPath) {
     if (posterPath == null || posterPath.isEmpty) {
-      return Container(
-        color: Colors.grey[800],
-        child: Center(
-          child: SvgPicture.asset(
-            'assets/movie.svg',
-            width: 40,
-            height: 40,
-            fit: BoxFit.contain,
-          ),
+      return Center(
+        child: SvgPicture.asset(
+          'assets/movie.svg',
+          width: 40,
+          height: 40,
+          fit: BoxFit.contain,
         ),
       );
     }
@@ -118,15 +111,12 @@ class PinnedTitleChip extends StatelessWidget {
       placeholderFadeInDuration: Duration.zero,
       cacheKey: posterPath,
       errorWidget: (context, error, stackTrace) {
-        return Container(
-          color: Colors.grey[800],
-          child: Center(
-            child: SvgPicture.asset(
-              'assets/movie.svg',
-              width: 40,
-              height: 40,
-              fit: BoxFit.contain,
-            ),
+        return Center(
+          child: SvgPicture.asset(
+            'assets/movie.svg',
+            width: 40,
+            height: 40,
+            fit: BoxFit.contain,
           ),
         );
       },

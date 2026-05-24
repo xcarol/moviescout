@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_person.dart';
-import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/widgets/person_card.dart';
 import 'package:moviescout/widgets/person_list_control_panel.dart';
 import 'package:moviescout/widgets/person_list_info_line.dart';
@@ -45,7 +45,6 @@ class _PersonListState extends State<PersonList> {
     return ListenableBuilder(
       listenable: _controller,
       builder: (context, _) {
-        final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
         return Flexible(
           child: Scrollbar(
             controller: _controller.scrollController,
@@ -59,10 +58,6 @@ class _PersonListState extends State<PersonList> {
                     PersonCard(
                       person: person,
                       tmdbListService: widget.listService,
-                    ),
-                    Divider(
-                      height: 1,
-                      color: titleTheme.listDividerColor,
                     ),
                   ],
                 );
@@ -79,22 +74,22 @@ class _PersonListState extends State<PersonList> {
     return ListenableBuilder(
       listenable: _controller,
       builder: (context, _) {
-        final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
-        return Container(
-          color: titleTheme.listBackground,
-          child: Column(
-            children: [
-              PersonListInfoLine(controller: _controller),
-              Divider(height: 1, color: titleTheme.listDividerColor),
-              if (_controller.showFilters)
-                PersonListControlPanel(
-                  textFilterController: _controller.textFilterController,
-                  focusNode: _controller.searchFocusNode,
-                  onTextChanged: (value) => _controller.setTextFilter(value),
-                ),
-              _personList(),
-            ],
-          ),
+        final titleTheme = Theme.of(context).extension<CustomColors>()!;
+        return Column(
+          children: [
+            PersonListInfoLine(controller: _controller),
+            Divider(
+              height: 1,
+              color: titleTheme.dividerColor,
+            ),
+            if (_controller.showFilters)
+              PersonListControlPanel(
+                textFilterController: _controller.textFilterController,
+                focusNode: _controller.searchFocusNode,
+                onTextChanged: (value) => _controller.setTextFilter(value),
+              ),
+            _personList(),
+          ],
         );
       },
     );

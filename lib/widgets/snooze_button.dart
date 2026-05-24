@@ -11,7 +11,8 @@ Widget snoozeButton(
   return Consumer<TmdbWatchlistService>(
     builder: (context, watchlistService, _) {
       return FutureBuilder<TmdbTitle?>(
-        future: watchlistService.getTitleByTmdbId(title.tmdbId, title.mediaType),
+        future:
+            watchlistService.getTitleByTmdbId(title.tmdbId, title.mediaType),
         builder: (context, snapshot) {
           final watchlistTitle = snapshot.data;
 
@@ -35,8 +36,8 @@ Widget snoozeButton(
               Icons.pause_circle_outline,
               size: 20,
               color: isSnoozed
-                  ? Theme.of(context).extension<CustomColors>()!.ratedTitle
-                  : Theme.of(context).extension<CustomColors>()!.notSelected,
+                  ? Theme.of(context).extension<CustomColors>()!.snoozedTitle
+                  : Theme.of(context).disabledColor,
             ),
           );
         },

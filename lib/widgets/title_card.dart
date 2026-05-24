@@ -55,8 +55,6 @@ class TitleCard extends StatelessWidget {
           child: SizedBox(
             height: cardHeight,
             child: Card(
-              margin: const EdgeInsets.all(0),
-              shape: const RoundedRectangleBorder(),
               child: InkWell(
                 onTap: () {
                   Navigator.push(
@@ -68,19 +66,12 @@ class TitleCard extends StatelessWidget {
                             )),
                   );
                 },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(left: 8, top: 8, bottom: 8),
-                        child: titlePoster(tmdbTitle.posterPath),
-                      ),
-                      const SizedBox(width: 10),
-                      _titleDetails(context, tmdbTitle),
-                    ],
-                  ),
+                child: Row(
+                  children: [
+                    titlePoster(tmdbTitle.posterPath),
+                    const SizedBox(width: 10),
+                    _titleDetails(context, tmdbTitle),
+                  ],
                 ),
               ),
             ),
@@ -103,7 +94,7 @@ class TitleCard extends StatelessWidget {
       children.addAll([
         Icon(
           Icons.star,
-          color: Theme.of(context).colorScheme.onSurface,
+          color: customColors.ratedTitle,
         ),
         const SizedBox(width: 5),
         Text(tmdbTitle.voteAverage.toStringAsFixed(2)),
@@ -125,19 +116,22 @@ class TitleCard extends StatelessWidget {
               }
               if (ratedTitle.rating == AppConstants.seenRating) {
                 ratingChildren.add(
-                  Text(
-                    AppLocalizations.of(context)!.seen,
-                    style: TextStyle(color: customColors.ratedTitle),
+                  Icon(
+                    Icons.check,
+                    color: customColors.userRatedTitle,
                   ),
+                );
+                ratingChildren.add(
+                  Text(AppLocalizations.of(context)!.seen),
                 );
               } else {
                 ratingChildren.addAll([
-                  Icon(Icons.star, color: customColors.ratedTitle),
-                  const SizedBox(width: 5),
-                  Text(
-                    ratedTitle.rating.toStringAsFixed(0),
-                    style: TextStyle(color: customColors.ratedTitle),
+                  Icon(
+                    Icons.star,
+                    color: customColors.userRatedTitle,
                   ),
+                  const SizedBox(width: 5),
+                  Text(ratedTitle.rating.toStringAsFixed(0)),
                 ]);
               }
             }
@@ -190,7 +184,7 @@ class TitleCard extends StatelessWidget {
   Widget _titleDetails(BuildContext context, TmdbTitle tmdbTitle) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -198,11 +192,32 @@ class TitleCard extends StatelessWidget {
             const SizedBox(height: 5),
             Row(
               children: [
-                Text(titleDate(tmdbTitle), overflow: TextOverflow.ellipsis),
-                const Text(' - '),
+                Text(
+                  titleDate(tmdbTitle),
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                Text(
+                  ' - ',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
                 tmdbTitle.duration.isNotEmpty
-                    ? Text(tmdbTitle.duration)
-                    : Text(_titleType(context, tmdbTitle.mediaType)),
+                    ? Text(
+                        tmdbTitle.duration,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      )
+                    : Text(
+                        _titleType(context, tmdbTitle.mediaType),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
               ],
             ),
             const SizedBox(height: 5),

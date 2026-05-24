@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/models/title_list_theme.dart';
+import 'package:moviescout/models/custom_colors.dart';
 
 class GenresScreen extends StatefulWidget {
   final List<String> genresList;
@@ -29,10 +29,9 @@ class _GenresScreenState extends State<GenresScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+    final customColors = Theme.of(context).extension<CustomColors>();
 
     return Scaffold(
-      backgroundColor: titleTheme.listBackground,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.genres),
       ),
@@ -45,18 +44,7 @@ class _GenresScreenState extends State<GenresScreen> {
           return Column(
             children: [
               SwitchListTile(
-                title: Text(
-                  genre,
-                  style: TextStyle(
-                    color: titleTheme.controlPanelBackground,
-                  ),
-                ),
-                activeThumbColor: titleTheme.controlPanelActiveFilterBackground,
-                activeTrackColor: titleTheme.controlPanelActiveFilterForeground,
-                inactiveThumbColor:
-                    titleTheme.controlPanelInactiveFilterBackground,
-                inactiveTrackColor:
-                    titleTheme.controlPanelInactiveFilterForeground,
+                title: Text(genre),
                 value: isSelected,
                 onChanged: (bool value) {
                   setState(() {
@@ -71,7 +59,7 @@ class _GenresScreenState extends State<GenresScreen> {
               ),
               Divider(
                 height: 1,
-                color: titleTheme.listDividerColor,
+                color: customColors!.dividerColor,
               ),
             ],
           );

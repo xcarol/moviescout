@@ -17,7 +17,7 @@ class RatingFilterTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     final ratedTitleColor =
-        Theme.of(context).extension<CustomColors>()!.ratedTitle;
+        Theme.of(context).extension<CustomColors>()!.userRatedTitle;
 
     return SizedBox(
       width: 150,
@@ -27,6 +27,7 @@ class RatingFilterTabs extends StatelessWidget {
         length: 3,
         initialIndex: controller.ratingFilter.index,
         child: TabBar(
+          overlayColor: WidgetStateProperty.all(Colors.transparent),
           onTap: (index) {
             controller.setRatingFilter(RatingFilter.values[index]);
           },
@@ -35,7 +36,6 @@ class RatingFilterTabs extends StatelessWidget {
           indicatorSize: TabBarIndicatorSize.tab,
           indicator: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: ratedTitleColor.withValues(alpha: 0.2),
           ),
           dividerColor: Colors.transparent,
           labelColor: ratedTitleColor,

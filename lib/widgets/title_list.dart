@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart' show ListEquality;
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
@@ -84,7 +85,7 @@ class _TitleListState extends State<TitleList> {
               final clampedScale =
                   MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.3);
 
-              final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+              final titleTheme = Theme.of(context).extension<CustomColors>()!;
 
               return MediaQuery(
                 data: MediaQuery.of(context).copyWith(
@@ -98,7 +99,7 @@ class _TitleListState extends State<TitleList> {
                     ),
                     Divider(
                       height: 1,
-                      color: titleTheme.listDividerColor,
+                      color: titleTheme.dividerColor,
                     ),
                   ],
                 ),
@@ -118,7 +119,6 @@ class _TitleListState extends State<TitleList> {
         if (service.isRefreshable) {
           content = CustomRefreshIndicator(
             controller: _refreshController,
-            triggerMode: IndicatorTriggerMode.anywhere,
             onRefresh: () async {
               if (widget.listService.isLoading.value) {
                 return;
@@ -174,12 +174,6 @@ class _TitleListState extends State<TitleList> {
                         ? SnoozeFilterTabs(controller: _controller)
                         : null,
               ),
-              Container(
-                color: titleTheme.controlPanelInternalBackground,
-                child: Divider(
-                  color: titleTheme.controlPanelDividerColor,
-                ),
-              ),
             ],
           ),
         );
@@ -195,74 +189,72 @@ class _TitleListState extends State<TitleList> {
           return const SizedBox.shrink();
         }
 
-        final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+        final titleTheme = Theme.of(context).extension<CustomColors>()!;
 
-        return Container(
-          color: titleTheme.listBackground,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    _isPinnedSectionExpanded = !_isPinnedSectionExpanded;
-                    PreferencesService().prefs.setBool(
-                        'isPinnedSectionExpanded', _isPinnedSectionExpanded);
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 12.0, top: 8.0, bottom: 4.0, right: 12.0),
-                  child: Row(
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.watchingNow,
-                        style: TextStyle(
-                          color: titleTheme.listDividerColor
-                              .withValues(alpha: 0.7),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InkWell(
+              onTap: () {
+                setState(() {
+                  _isPinnedSectionExpanded = !_isPinnedSectionExpanded;
+                  PreferencesService().prefs.setBool(
+                      'isPinnedSectionExpanded', _isPinnedSectionExpanded);
+                });
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 12.0, top: 8.0, bottom: 4.0, right: 12.0),
+                child: Row(
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.watchingNow,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
                       ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        _isPinnedSectionExpanded
-                            ? Icons.arrow_drop_up
-                            : Icons.arrow_drop_down,
-                        color:
-                            titleTheme.listDividerColor.withValues(alpha: 0.7),
-                        size: 20,
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      _isPinnedSectionExpanded
+                          ? Icons.arrow_drop_up
+                          : Icons.arrow_drop_down,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      size: 20,
+                    ),
+                  ],
                 ),
               ),
-              if (_isPinnedSectionExpanded)
-                SizedBox(
-                  height: PinnedTitleChip.cardHeight,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    itemCount: service.pinnedTitles.length,
-                    itemBuilder: (context, index) {
-                      return PinnedTitleChip(
-                        title: service.pinnedTitles[index],
-                        listService: service,
-                      );
-                    },
-                  ),
+            ),
+            if (_isPinnedSectionExpanded)
+              SizedBox(
+                height: PinnedTitleChip.cardHeight,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  itemCount: service.pinnedTitles.length,
+                  itemBuilder: (context, index) {
+                    return PinnedTitleChip(
+                      title: service.pinnedTitles[index],
+                      listService: service,
+                    );
+                  },
                 ),
-              const SizedBox(height: 8.0),
-              Divider(height: 1, color: titleTheme.listDividerColor),
-            ],
-          ),
+              ),
+            const SizedBox(height: 8.0),
+            Divider(
+              height: 1,
+              color: titleTheme.dividerColor,
+            ),
+          ],
         );
       },
     );
   }
 
-  Widget _refreshIndicator(BuildContext context, Widget child,
-      IndicatorController controller) {
+  Widget _refreshIndicator(
+      BuildContext context, Widget child, IndicatorController controller) {
     return Stack(
       children: [
         child,
@@ -272,23 +264,19 @@ class _TitleListState extends State<TitleList> {
             left: 0,
             right: 0,
             child: Center(
-              child: Opacity(
-                opacity: (controller.value / 0.5).clamp(0.0, 1.0),
-                child: Material(
-                  elevation: 4,
-                  shape: const CircleBorder(),
-                  color: Theme.of(context).colorScheme.surface,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        value: controller.isLoading
-                            ? null
-                            : controller.value,
-                        strokeWidth: 3,
-                      ),
+              child: Material(
+                elevation: 4,
+                shape: const CircleBorder(),
+                color: Theme.of(context).colorScheme.primary,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: controller.value.clamp(0.0, 1.0) * 24,
+                    height: controller.value.clamp(0.0, 1.0) * 24,
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      value: controller.isLoading ? null : controller.value,
+                      strokeWidth: 3,
                     ),
                   ),
                 ),
@@ -304,7 +292,6 @@ class _TitleListState extends State<TitleList> {
     return ListenableBuilder(
         listenable: _controller,
         builder: (context, child) {
-          final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
           return Consumer<TmdbProviderService>(
             builder: (context, providerService, _) {
               final providerList = _retrieveUserProviders(providerService);
@@ -318,30 +305,17 @@ class _TitleListState extends State<TitleList> {
 
               return ChangeNotifierProvider<TmdbListService>.value(
                 value: widget.listService,
-                child: Container(
-                  color: titleTheme.listBackground,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        color: titleTheme.listBackground,
-                        child: Divider(
-                          color: titleTheme.listDividerColor,
-                        ),
-                      ),
-                      TitleListInfoLine(
-                        controller: _controller,
-                        listService: widget.listService,
-                      ),
-                      Divider(
-                        height: 1,
-                        color: titleTheme.listDividerColor,
-                      ),
-                      if (_controller.showFilters) _controlPanel(),
-                      _pinnedTitlesRow(),
-                      Expanded(child: _titleList()),
-                    ],
-                  ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TitleListInfoLine(
+                      controller: _controller,
+                      listService: widget.listService,
+                    ),
+                    if (_controller.showFilters) _controlPanel(),
+                    _pinnedTitlesRow(),
+                    Expanded(child: _titleList()),
+                  ],
                 ),
               );
             },
