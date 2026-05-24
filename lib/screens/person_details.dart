@@ -228,9 +228,17 @@ class _PersonDetailsState extends State<PersonDetails> {
   Widget _externalLinks(TmdbPerson person) {
     List<Widget> links = [];
 
+    final buttonStyle = OutlinedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+      ),
+    );
+
     links.add(
-      GestureDetector(
-        onTap: () {
+      OutlinedButton(
+        style: buttonStyle,
+        onPressed: () {
           launchUrl(
             Uri.parse('https://www.themoviedb.org/person/${person.tmdbId}'),
             mode: LaunchMode.inAppWebView,
@@ -249,8 +257,9 @@ class _PersonDetailsState extends State<PersonDetails> {
     if (person.imdbId.isNotEmpty) {
       links.add(const SizedBox(width: 20));
       links.add(
-        GestureDetector(
-          onTap: () {
+        OutlinedButton(
+          style: buttonStyle,
+          onPressed: () {
             launchUrl(
               Uri.parse('https://www.imdb.com/name/${person.imdbId}'),
               mode: LaunchMode.inAppBrowserView,
@@ -270,8 +279,9 @@ class _PersonDetailsState extends State<PersonDetails> {
     if (person.homepage.isNotEmpty) {
       links.add(const SizedBox(width: 20));
       links.add(
-        GestureDetector(
-          onTap: () {
+        OutlinedButton(
+          style: buttonStyle,
+          onPressed: () {
             launchUrl(
               Uri.parse(person.homepage),
               mode: LaunchMode.inAppBrowserView,
