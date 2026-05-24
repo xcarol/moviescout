@@ -37,12 +37,19 @@ class RateForm extends Dialog {
                 if (value > 0)
                   Text(
                     '${AppLocalizations.of(context)!.your_rate}: ${value.toInt()}',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 if (initialDate != null &&
                     !initialDate!.isAtSameMomentAs(
                         DateTime.fromMillisecondsSinceEpoch(0)))
                   Text(
-                      '${AppLocalizations.of(context)!.rate_date}: ${DateFormat.yMMMMd(Localizations.localeOf(context).toLanguageTag()).format(initialDate!)}'),
+                    '${AppLocalizations.of(context)!.rate_date}: ${DateFormat.yMMMMd(Localizations.localeOf(context).toLanguageTag()).format(initialDate!)}',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
               ]),
               const SizedBox(height: 20),
               Wrap(
