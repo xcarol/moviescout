@@ -113,8 +113,6 @@ class TmdbTitleRepository {
 
   Future<void> updateTitleMetadata(TmdbTitle title) async {
     await _isar.writeTxn(() async {
-      await _logZeroRatingError(title);
-
       if (title.inLists.isEmpty) {
         final existing = await _isar.tmdbTitles
             .filter()
@@ -129,17 +127,19 @@ class TmdbTitleRepository {
           if (!title.isSnoozed) {
             title.isSnoozed = existing.isSnoozed;
           }
+          if (title.rating == 0.0 && existing.rating > 0.0) {
+            title.rating = existing.rating;
+            title.dateRated = existing.dateRated;
+          }
         }
       }
-
+      await _logZeroRatingError(title);
       await _isar.tmdbTitles.put(title);
     });
   }
 
   Future<void> updateTitlesMetadata(List<TmdbTitle> titles) async {
     await _isar.writeTxn(() async {
-      await _logMultipleZeroRatingError(titles);
-
       final titlesToFetch = titles.where((t) => t.inLists.isEmpty).toList();
 
       if (titlesToFetch.isNotEmpty) {
@@ -166,10 +166,15 @@ class TmdbTitleRepository {
             if (!title.isSnoozed) {
               title.isSnoozed = existing.isSnoozed;
             }
+            if (title.rating == 0.0 && existing.rating > 0.0) {
+              title.rating = existing.rating;
+              title.dateRated = existing.dateRated;
+            }
           }
         }
       }
 
+      await _logMultipleZeroRatingError(titles);
       await _isar.tmdbTitles.putAll(titles);
     });
   }
