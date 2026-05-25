@@ -8,6 +8,8 @@ import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/services/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/services/notification_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
@@ -131,6 +133,17 @@ Future<bool> updateTitle(
 
     title.lastNotifiedSeason = title.numberOfSeasons;
     title.isSnoozed = false;
+
+    if (!title.inLists.contains(AppConstants.watchlist)) {
+      title.inLists = [...title.inLists, AppConstants.watchlist];
+      final accountId = PreferencesService().prefs.getString('accountId') ?? '';
+      final sessionId = PreferencesService().prefs.getString('sessionId') ?? '';
+      if (accountId.isNotEmpty && sessionId.isNotEmpty) {
+        final watchlistService = TmdbWatchlistService(AppConstants.watchlist, repository);
+        await watchlistService.updateWatchlistTitle(accountId, sessionId, title, true);
+      }
+    }
+
     await repository.updateTitleMetadata(title);
     return true;
   }
@@ -184,7 +197,24 @@ void callbackDispatcher() {
         limit: repository.countTitlesSync(AppConstants.watchlist),
       );
 
+      final snoozedTitles = await repository.getTitles(
+        listName: AppConstants.rateslist,
+        filterRating: RatingFilter.snoozedOnly,
+        limit: await repository.countTitlesFiltered(
+            listName: AppConstants.rateslist,
+            filterRating: RatingFilter.snoozedOnly),
+      );
+
+      final allTitlesMap = <String, TmdbTitle>{};
       for (final title in watchlistTitles) {
+        allTitlesMap['${title.mediaType}_${title.tmdbId}'] = title;
+      }
+      for (final title in snoozedTitles) {
+        allTitlesMap['${title.mediaType}_${title.tmdbId}'] = title;
+      }
+      final allTitlesToScan = allTitlesMap.values.toList();
+
+      for (final title in allTitlesToScan) {
         scannedCount++;
         final now = DateTime.now();
         UpdateType updateType =

@@ -120,7 +120,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get imdbResetRateslist => 'ELIMINAR VALORACIONES';
 
   @override
-  String get imdbConfirmationTitle => 'ATENCIÓ';
+  String get imdbConfirmationTitle => 'ATENCIÓN';
 
   @override
   String get imdbResetWatchlistConfirmation => '¿Seguro que quieres eliminar los títulos Para Ver?';
@@ -342,7 +342,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notificationTitle => '¡Ya disponible!';
 
   @override
-  String notificationBody(Object provider, Object title) {
+  String notificationBody(Object title, Object provider) {
     return '$title ya está disponible en $provider.';
   }
 
@@ -350,7 +350,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notificationNewSeasonTitle => '¡Nueva temporada!';
 
   @override
-  String notificationNewSeasonBody(Object provider, Object title) {
+  String notificationNewSeasonBody(Object title, Object provider) {
     return 'Nueva temporada de $title disponible en $provider.';
   }
 
@@ -438,4 +438,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String seasonLabel(Object count) {
     return 'Temporada $count';
   }
+
+  @override
+  String get snoozeTitle => 'Pausar Serie';
+
+  @override
+  String get snoozeMessage => '¿Quieres recibir una notificación cuando se emita una nueva temporada?';
+
+  @override
+  String get no => 'No';
 }

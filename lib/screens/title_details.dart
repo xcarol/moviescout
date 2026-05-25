@@ -23,6 +23,7 @@ import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/widgets/person_chip.dart';
 import 'package:moviescout/widgets/rate_form.dart';
+import 'package:moviescout/widgets/snooze_dialog.dart';
 import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:moviescout/widgets/drop_down_selector.dart';
@@ -79,6 +80,28 @@ class _TitleDetailsState extends State<TitleDetails> {
     final bool wasUpToDate = TmdbTitleService.isUpToDate(_currentTitle);
     if (_omdbRatings == null || _omdbRatings!.isEmpty || !wasUpToDate) {
       _isUpdatingRatings = true;
+    }
+  }
+
+  Future<void> _updateTitleRate(TmdbTitle title, double rating) async {
+    final userService = Provider.of<TmdbUserService>(context, listen: false);
+    final rateslistService =
+        Provider.of<TmdbRateslistService>(context, listen: false);
+
+    await rateslistService.updateTitleRate(
+      userService.accountId,
+      userService.sessionId,
+      title,
+      rating,
+    );
+
+    if (rating > 0 && title.status == 'Returning Series' && !title.isSnoozed) {
+      if (mounted) {
+        await showDialog<void>(
+          context: context,
+          builder: (dialogContext) => SnoozeDialog(title: title),
+        );
+      }
     }
   }
 
@@ -645,22 +668,9 @@ class _TitleDetailsState extends State<TitleDetails> {
                                             title: title.name,
                                             initialRate: titleRating,
                                             initialDate: titleRatingDate,
-                                            onSubmit: (double rating) {
-                                              Provider.of<TmdbRateslistService>(
-                                                      context,
-                                                      listen: false)
-                                                  .updateTitleRate(
-                                                Provider.of<TmdbUserService>(
-                                                        context,
-                                                        listen: false)
-                                                    .accountId,
-                                                Provider.of<TmdbUserService>(
-                                                        context,
-                                                        listen: false)
-                                                    .sessionId,
-                                                title,
-                                                rating,
-                                              );
+                                            onSubmit: (double rating) async {
+                                              await _updateTitleRate(
+                                                  title, rating);
                                             },
                                           );
                                         },
@@ -707,23 +717,13 @@ class _TitleDetailsState extends State<TitleDetails> {
                               onPressed: !isUserLoggedIn ||
                                       titleRating > AppConstants.seenRating
                                   ? null
-                                  : () {
+                                  : () async {
                                       final newRating =
                                           titleRating == AppConstants.seenRating
                                               ? 0.0
                                               : AppConstants.seenRating;
-                                      Provider.of<TmdbRateslistService>(context,
-                                              listen: false)
-                                          .updateTitleRate(
-                                        Provider.of<TmdbUserService>(context,
-                                                listen: false)
-                                            .accountId,
-                                        Provider.of<TmdbUserService>(context,
-                                                listen: false)
-                                            .sessionId,
-                                        title,
-                                        newRating,
-                                      );
+
+                                      await _updateTitleRate(title, newRating);
                                     },
                               child: Tooltip(
                                 message: titleRating == AppConstants.seenRating

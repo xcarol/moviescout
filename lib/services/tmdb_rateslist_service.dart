@@ -6,6 +6,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_snoozed_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -17,6 +18,8 @@ const String _rateMovie = 'movie/{ID}/rating?session_id={SESSION_ID}';
 const String _rateTv = 'tv/{ID}/rating?session_id={SESSION_ID}';
 
 class TmdbRateslistService extends TmdbListService {
+  TmdbSnoozedService? snoozedService;
+
   TmdbRateslistService(super.listName, super.repository) {
     filterRating = RatingFilter.rated;
   }
@@ -134,6 +137,21 @@ class TmdbRateslistService extends TmdbListService {
         userMessage: 'Error updating rate for ${title.name}',
       );
     }
+  }
+
+  Future<void> toggleSnooze(TmdbTitle title) async {
+    title.isSnoozed = !title.isSnoozed;
+    await repository.updateTitleMetadata(title);
+
+    if (snoozedService != null) {
+      if (title.isSnoozed) {
+        await snoozedService!.addSnoozedToServer(title);
+      } else {
+        await snoozedService!.removeSnoozedFromServer(title);
+      }
+    }
+
+    await filterTitles(retainPagination: true);
   }
 
   @override

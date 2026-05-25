@@ -5,7 +5,6 @@ import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
 import 'package:moviescout/services/tmdb_pinned_service.dart';
-import 'package:moviescout/services/tmdb_snoozed_service.dart';
 
 const String _tmdbWatchlistMovies =
     'account/{ACCOUNT_ID}/movie/watchlist?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
@@ -16,7 +15,6 @@ const String _updateWatchlistTitle =
 
 class TmdbWatchlistService extends TmdbListService {
   TmdbPinnedService? pinnedService;
-  TmdbSnoozedService? snoozedService;
 
   TmdbWatchlistService(super.listName, super.repository);
 
@@ -50,11 +48,6 @@ class TmdbWatchlistService extends TmdbListService {
 
     if (pinnedService != null) {
       await pinnedService!.fetchAndApplyPinnedTitles();
-    }
-    if (snoozedService != null) {
-      await snoozedService!.fetchAndApplySnoozedTitles();
-    }
-    if (pinnedService != null || snoozedService != null) {
       await filterTitles();
     }
   }
@@ -126,21 +119,6 @@ class TmdbWatchlistService extends TmdbListService {
     await filterTitles(retainPagination: true);
   }
 
-  Future<void> toggleSnooze(TmdbTitle title) async {
-    title.isSnoozed = !title.isSnoozed;
-    await repository.updateTitleMetadata(title);
-
-    if (snoozedService != null) {
-      if (title.isSnoozed) {
-        await snoozedService!.addSnoozedToServer(title);
-      } else {
-        await snoozedService!.removeSnoozedFromServer(title);
-      }
-    }
-
-    await filterTitles(retainPagination: true);
-  }
-
   @override
   Future<void> syncFromServer({
     required String accountId,
@@ -150,9 +128,6 @@ class TmdbWatchlistService extends TmdbListService {
     await retrieveWatchlist(accountId, sessionId, locale, forceUpdate: true);
     if (pinnedService != null) {
       await pinnedService!.fetchAndApplyPinnedTitles();
-    }
-    if (snoozedService != null) {
-      await snoozedService!.fetchAndApplySnoozedTitles();
     }
   }
 }

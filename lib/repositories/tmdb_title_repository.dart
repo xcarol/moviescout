@@ -352,7 +352,6 @@ class TmdbTitleRepository {
     bool filterByProviders = false,
     List<int> filterProvidersIds = const [],
     RatingFilter filterRating = RatingFilter.all,
-    SnoozeFilter filterSnooze = SnoozeFilter.all,
   }) {
     var query = _isar.tmdbTitles.filter().inListsElementEqualTo(listName);
 
@@ -386,15 +385,15 @@ class TmdbTitleRepository {
     }
 
     if (filterRating == RatingFilter.rated) {
-      query = query.ratingGreaterThan(AppConstants.seenRating);
+      query = query
+          .ratingGreaterThan(AppConstants.seenRating)
+          .isSnoozedEqualTo(false);
     } else if (filterRating == RatingFilter.seenOnly) {
-      query = query.ratingEqualTo(AppConstants.seenRating);
-    }
-
-    if (filterSnooze == SnoozeFilter.snoozed) {
+      query = query
+          .ratingEqualTo(AppConstants.seenRating)
+          .isSnoozedEqualTo(false);
+    } else if (filterRating == RatingFilter.snoozedOnly) {
       query = query.isSnoozedEqualTo(true);
-    } else if (filterSnooze == SnoozeFilter.pending) {
-      query = query.not().isSnoozedEqualTo(true);
     }
 
     return query;
@@ -438,7 +437,6 @@ class TmdbTitleRepository {
     bool filterByProviders = false,
     List<int> filterProvidersIds = const [],
     RatingFilter filterRating = RatingFilter.all,
-    SnoozeFilter filterSnooze = SnoozeFilter.all,
     bool? pinned,
     bool sortAscending = true,
     int offset = 0,
@@ -453,7 +451,6 @@ class TmdbTitleRepository {
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
       filterRating: filterRating,
-      filterSnooze: filterSnooze,
     ).findAll();
 
     if (eligibleTitles.isEmpty) return [];
@@ -493,7 +490,6 @@ class TmdbTitleRepository {
     String sortOption = SortOption.alphabetically,
     bool sortAscending = true,
     RatingFilter filterRating = RatingFilter.all,
-    SnoozeFilter filterSnooze = SnoozeFilter.all,
     bool? pinned,
     int offset = 0,
     int limit = 10,
@@ -507,7 +503,6 @@ class TmdbTitleRepository {
         filterByProviders: filterByProviders,
         filterProvidersIds: filterProvidersIds,
         filterRating: filterRating,
-        filterSnooze: filterSnooze,
         pinned: pinned,
         sortAscending: sortAscending,
         offset: offset,
@@ -524,7 +519,6 @@ class TmdbTitleRepository {
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
       filterRating: filterRating,
-      filterSnooze: filterSnooze,
     );
 
     final sortedQuery = _applySort(query, sortOption, sortAscending);
@@ -539,7 +533,6 @@ class TmdbTitleRepository {
     bool filterByProviders = false,
     List<int> filterProvidersIds = const [],
     RatingFilter filterRating = RatingFilter.all,
-    SnoozeFilter filterSnooze = SnoozeFilter.all,
     bool? pinned,
   }) async {
     return _buildQuery(
@@ -551,7 +544,6 @@ class TmdbTitleRepository {
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
       filterRating: filterRating,
-      filterSnooze: filterSnooze,
     ).count();
   }
 }

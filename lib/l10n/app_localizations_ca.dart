@@ -342,7 +342,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get notificationTitle => 'Ja disponible!';
 
   @override
-  String notificationBody(Object provider, Object title) {
+  String notificationBody(Object title, Object provider) {
     return '$title ja està disponible a $provider.';
   }
 
@@ -350,7 +350,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get notificationNewSeasonTitle => 'Nova temporada!';
 
   @override
-  String notificationNewSeasonBody(Object provider, Object title) {
+  String notificationNewSeasonBody(Object title, Object provider) {
     return 'Nova temporada de $title disponible a $provider.';
   }
 
@@ -438,4 +438,13 @@ class AppLocalizationsCa extends AppLocalizations {
   String seasonLabel(Object count) {
     return 'Temporada $count';
   }
+
+  @override
+  String get snoozeTitle => 'Pausar sèrie';
+
+  @override
+  String get snoozeMessage => 'Vols que t\'avisem quan hi hagi una nova temporada?';
+
+  @override
+  String get no => 'No';
 }

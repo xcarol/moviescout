@@ -1,5 +1,5 @@
 {
-    "@@locale": "es-ES",
+    "@@locale": "es",
     "appTitle": "Movie Scout",
     "@appTitle": {},
     "catalan": "Català",
@@ -299,5 +299,11 @@
         "placeholders": {
             "count": {}
         }
-    }
+    },
+    "snoozeTitle": "Pausar Serie",
+    "@snoozeTitle": {},
+    "snoozeMessage": "¿Quieres recibir una notificación cuando se emita una nueva temporada?",
+    "@snoozeMessage": {},
+    "no": "No",
+    "@no": {}
 }
