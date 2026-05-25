@@ -24,7 +24,7 @@ class RatingFilterTabs extends StatelessWidget {
       height: 40,
       child: DefaultTabController(
         key: ValueKey(controller.ratingFilter),
-        length: 3,
+        length: 4,
         initialIndex: controller.ratingFilter.index,
         child: TabBar(
           overlayColor: WidgetStateProperty.all(Colors.transparent),
@@ -52,6 +52,10 @@ class RatingFilterTabs extends StatelessWidget {
             Tooltip(
               message: localizations.seenOnly,
               child: const Tab(icon: Icon(Symbols.done_outline, size: 20)),
+            ),
+            Tooltip(
+              message: localizations.snoozedOnly,
+              child: const Tab(icon: Icon(Icons.pause_circle_outline, size: 20)),
             ),
           ],
         ),

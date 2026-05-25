@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:provider/provider.dart';
 
 Widget snoozeButton(
   BuildContext context,
   TmdbTitle title,
 ) {
-  return Consumer<TmdbWatchlistService>(
-    builder: (context, watchlistService, _) {
+  return Consumer<TmdbRateslistService>(
+    builder: (context, rateslistService, _) {
       return FutureBuilder<TmdbTitle?>(
         future:
-            watchlistService.getTitleByTmdbId(title.tmdbId, title.mediaType),
+            rateslistService.getTitleByTmdbId(title.tmdbId, title.mediaType),
         builder: (context, snapshot) {
-          final watchlistTitle = snapshot.data;
+          final titleFromList = snapshot.data;
 
-          if (watchlistTitle == null) {
+          if (titleFromList == null) {
             return const SizedBox.shrink();
           }
 
-          if (watchlistTitle.status != 'Returning Series') {
+          if (titleFromList.status != 'Returning Series') {
             return const SizedBox.shrink();
           }
 
-          bool isSnoozed = watchlistTitle.isSnoozed;
+          bool isSnoozed = titleFromList.isSnoozed;
 
           return IconButton(
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
             onPressed: () {
-              watchlistService.toggleSnooze(watchlistTitle);
+              rateslistService.toggleSnooze(titleFromList);
             },
             icon: Icon(
               Icons.pause_circle_outline,

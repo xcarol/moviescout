@@ -767,7 +767,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{title} is now available on {provider}.'**
-  String notificationBody(Object provider, Object title);
+  String notificationBody(Object title, Object provider);
 
   /// No description provided for @notificationNewSeasonTitle.
   ///
@@ -779,7 +779,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'New season of {title} available on {provider}.'**
-  String notificationNewSeasonBody(Object provider, Object title);
+  String notificationNewSeasonBody(Object title, Object provider);
 
   /// No description provided for @selectRegion.
   ///
@@ -942,6 +942,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Season {count}'**
   String seasonLabel(Object count);
+
+  /// No description provided for @snoozeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause Series'**
+  String get snoozeTitle;
+
+  /// No description provided for @snoozeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to be notified when a new season airs?'**
+  String get snoozeMessage;
+
+  /// No description provided for @no.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

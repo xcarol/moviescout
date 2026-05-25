@@ -11,8 +11,8 @@ import 'package:moviescout/services/update_manager.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
-enum RatingFilter { all, rated, seenOnly }
-enum SnoozeFilter { all, pending, snoozed }
+enum RatingFilter { all, rated, seenOnly, snoozedOnly }
+
 
 class TmdbListService extends TmdbBaseService with ChangeNotifier {
   @protected
@@ -55,8 +55,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   bool isSortAsc = true;
   @protected
   RatingFilter filterRating = RatingFilter.all;
-  @protected
-  SnoozeFilter filterSnooze = SnoozeFilter.all;
   ValueNotifier<int> selectedTitleCount = ValueNotifier(0);
   int get loadedTitleCount => loadedTitlesVal.length;
   List<TmdbTitle> get pinnedTitles => pinnedTitlesVal;
@@ -411,7 +409,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       sortOption: selectedSort,
       sortAscending: isSortAsc,
       filterRating: filterRating,
-      filterSnooze: filterSnooze,
       pinned: pinned,
       offset: offset,
       limit: limit ?? pageSizeVal,
@@ -426,8 +423,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
     final currentRequestId = ++filterRequestId;
     final int pagesToLoad = (retainPagination && pageVal > 0) ? pageVal : 1;
-
-    clearLoadedTitles();
 
     anyFilterApplied = true;
 
@@ -450,7 +445,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
       filterRating: filterRating,
-      filterSnooze: filterSnooze,
       pinned: listNameVal == AppConstants.watchlist ? false : null,
     );
 
@@ -482,6 +476,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         return;
       }
 
+      loadedTitlesVal.clear();
       loadedTitlesVal.addAll(titles);
       pageVal = pagesToLoad;
       if (titles.length < limit && !isLoading.value) {
@@ -505,7 +500,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   void refresh() {
-    filterTitles();
+    filterTitles(retainPagination: true);
   }
 
   Future<void> syncFromServer({
@@ -521,7 +516,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       bool filterByProviders = false,
       List<int> providerListIds = const [],
       RatingFilter ratingFilter = RatingFilter.all,
-      SnoozeFilter snoozeFilter = SnoozeFilter.all,
       String sort = SortOption.alphabetically,
       bool ascending = true}) async {
     filterText = text;
@@ -530,7 +524,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     this.filterByProviders = filterByProviders;
     filterProvidersIds = providerListIds;
     filterRating = ratingFilter;
-    filterSnooze = snoozeFilter;
     selectedSort = sort;
     isSortAsc = computeSortDirection(sort, ascending);
     await filterTitles();
@@ -559,11 +552,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   void setRatingFilter(RatingFilter filter) {
     filterRating = filter;
-    filterTitles();
-  }
-
-  void setSnoozeFilter(SnoozeFilter filter) {
-    filterSnooze = filter;
     filterTitles();
   }
 

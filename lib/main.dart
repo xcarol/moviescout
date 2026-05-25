@@ -133,18 +133,20 @@ void main() async {
           ..setup(userService.accountId, userService.sessionId,
               userService.accessToken),
       ),
-      ChangeNotifierProvider(
-          create: (_) =>
-              TmdbRateslistService(AppConstants.rateslist, repository)),
-      ChangeNotifierProxyProvider3<TmdbRateslistService, TmdbPinnedService,
-          TmdbSnoozedService, TmdbWatchlistService>(
+      ChangeNotifierProxyProvider<TmdbSnoozedService, TmdbRateslistService>(
+        create: (_) => TmdbRateslistService(AppConstants.rateslist, repository),
+        update: (_, snoozedService, rateslistService) {
+          rateslistService!.snoozedService = snoozedService;
+          return rateslistService;
+        },
+      ),
+      ChangeNotifierProxyProvider2<TmdbRateslistService, TmdbPinnedService,
+          TmdbWatchlistService>(
         create: (_) => TmdbWatchlistService(AppConstants.watchlist, repository),
-        update: (_, rateslistService, pinnedService, snoozedService,
-            watchlistService) {
+        update: (_, rateslistService, pinnedService, watchlistService) {
           rateslistService.removeListener(watchlistService!.refresh);
           rateslistService.addListener(watchlistService.refresh);
           watchlistService.pinnedService = pinnedService;
-          watchlistService.snoozedService = snoozedService;
           return watchlistService;
         },
       ),

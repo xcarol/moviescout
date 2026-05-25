@@ -70,8 +70,8 @@ class TmdbSnoozedService extends TmdbConfigListService {
 
   Future<void> _applySnoozedIds(List<String> snoozedIds) async {
     final currentSnoozed = await repository.getTitles(
-      listName: AppConstants.watchlist,
-      filterSnooze: SnoozeFilter.snoozed,
+      listName: AppConstants.rateslist,
+      filterRating: RatingFilter.snoozedOnly,
     );
 
     final Map<int, TmdbTitle> toUpdate = {};
@@ -90,7 +90,7 @@ class TmdbSnoozedService extends TmdbConfigListService {
         final tmdbId = int.tryParse(parts[1]);
         if (tmdbId != null) {
           final title = await repository.getTitleByTmdbId(
-              AppConstants.watchlist, tmdbId, mediaType);
+              AppConstants.rateslist, tmdbId, mediaType);
           if (title != null) {
             title.isSnoozed = true;
             toUpdate[title.id] = title;
