@@ -251,13 +251,17 @@ class TmdbTitleService extends TmdbBaseService {
         (details[TmdbTitleFields.voteAverage] ?? title.voteAverage).toDouble();
     title.voteCount = details[TmdbTitleFields.voteCount] ?? title.voteCount;
 
-    if (details[TmdbTitleFields.nextEpisodeToAir] != null) {
+    if (details.containsKey(TmdbTitleFields.nextEpisodeToAir)) {
       title.nextEpisodeToAirJson =
-          jsonEncode(details[TmdbTitleFields.nextEpisodeToAir]);
+          details[TmdbTitleFields.nextEpisodeToAir] != null
+              ? jsonEncode(details[TmdbTitleFields.nextEpisodeToAir])
+              : null;
     }
-    if (details[TmdbTitleFields.lastEpisodeToAir] != null) {
+    if (details.containsKey(TmdbTitleFields.lastEpisodeToAir)) {
       title.lastEpisodeToAirJson =
-          jsonEncode(details[TmdbTitleFields.lastEpisodeToAir]);
+          details[TmdbTitleFields.lastEpisodeToAir] != null
+              ? jsonEncode(details[TmdbTitleFields.lastEpisodeToAir])
+              : null;
     }
 
     final providers =
