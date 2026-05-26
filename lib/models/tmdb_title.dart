@@ -361,13 +361,15 @@ class TmdbTitle {
     if (title[TmdbTitleFields.recommendations] != null) {
       recommendationsJson = jsonEncode(title[TmdbTitleFields.recommendations]);
     }
-    if (title[TmdbTitleFields.nextEpisodeToAir] != null) {
-      nextEpisodeToAirJson =
-          jsonEncode(title[TmdbTitleFields.nextEpisodeToAir]);
+    if (title.containsKey(TmdbTitleFields.nextEpisodeToAir)) {
+      nextEpisodeToAirJson = title[TmdbTitleFields.nextEpisodeToAir] != null
+          ? jsonEncode(title[TmdbTitleFields.nextEpisodeToAir])
+          : null;
     }
-    if (title[TmdbTitleFields.lastEpisodeToAir] != null) {
-      lastEpisodeToAirJson =
-          jsonEncode(title[TmdbTitleFields.lastEpisodeToAir]);
+    if (title.containsKey(TmdbTitleFields.lastEpisodeToAir)) {
+      lastEpisodeToAirJson = title[TmdbTitleFields.lastEpisodeToAir] != null
+          ? jsonEncode(title[TmdbTitleFields.lastEpisodeToAir])
+          : null;
     }
     if (title[TmdbTitleFields.images] != null) {
       imagesJson = jsonEncode(title[TmdbTitleFields.images]);
