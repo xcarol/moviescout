@@ -264,6 +264,12 @@ class _SearchState extends State<Search> {
                 },
               ),
             ),
+            const SizedBox(width: 8),
+            IconButton(
+              color: borderColor,
+              onPressed: () => searchTitle(context, _controller.text),
+              icon: const Icon(Icons.send),
+            ),
           ],
         ),
       ),
