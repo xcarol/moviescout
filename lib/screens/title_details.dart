@@ -635,8 +635,10 @@ class _TitleDetailsState extends State<TitleDetails> {
                     Flexible(
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
+                        child: IntrinsicHeight(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
                             TextButton(
                               style: TextButton.styleFrom(
                                 side: BorderSide(
@@ -753,6 +755,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                         ),
                       ),
                     ),
+                  ),
                   ],
                 );
               },
