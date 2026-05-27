@@ -62,8 +62,10 @@ class RegionForm extends Dialog {
                 children: [
                   Column(children: regionWidgets),
                   const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  OverflowBar(
+                    alignment: MainAxisAlignment.spaceBetween,
+                    spacing: 10,
+                    overflowSpacing: 10,
                     children: [
                       FilledButton.tonal(
                         onPressed: () {
