@@ -60,20 +60,23 @@ class LanguageForm extends Dialog {
               children: [
                 Column(children: languageWidgets),
                 const SizedBox(height: 20),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      FilledButton.tonal(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(AppLocalizations.of(context)!.cancel)),
-                      FilledButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(language.value);
-                          },
-                          child: Text(AppLocalizations.of(context)!.select)),
-                    ]),
+                OverflowBar(
+                  alignment: MainAxisAlignment.spaceBetween,
+                  spacing: 10,
+                  overflowSpacing: 10,
+                  children: [
+                    FilledButton.tonal(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(AppLocalizations.of(context)!.cancel)),
+                    FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(language.value);
+                        },
+                        child: Text(AppLocalizations.of(context)!.select)),
+                  ],
+                ),
               ],
             ),
           );

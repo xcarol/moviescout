@@ -67,20 +67,25 @@ class RateForm extends Dialog {
                 }),
               ),
               const SizedBox(height: 20),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                FilledButton.tonal(
-                    onPressed: () {
-                      onSubmit(0.0);
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(AppLocalizations.of(context)!.reset_rate)),
-                FilledButton(
-                    onPressed: () {
-                      onSubmit(rating.value);
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(rate)),
-              ]),
+              OverflowBar(
+                alignment: MainAxisAlignment.spaceBetween,
+                spacing: 10,
+                overflowSpacing: 10,
+                children: [
+                  FilledButton.tonal(
+                      onPressed: () {
+                        onSubmit(0.0);
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(AppLocalizations.of(context)!.reset_rate)),
+                  FilledButton(
+                      onPressed: () {
+                        onSubmit(rating.value);
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(rate)),
+                ],
+              ),
             ],
           );
         },
