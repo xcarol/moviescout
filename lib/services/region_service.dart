@@ -33,7 +33,7 @@ class RegionService with ChangeNotifier {
 
   Future<void> detectRegion() async {
     try {
-      final response = await http.get(Uri.parse('https://ipapi.co/json/'));
+      final response = await http.get(Uri.parse('https://ipapi.co/json/')).timeout(const Duration(seconds: 3));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         _detectedRegion = data['country_code'];

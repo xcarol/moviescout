@@ -72,15 +72,21 @@ void main() async {
   }
 
   try {
-    await dotenv.load(fileName: ".env");
-    await PreferencesService().init();
-    await IsarService.init();
-    await TmdbGenreService().init();
-    await TmdbConfigurationService().init();
+    await Future.wait([
+      dotenv.load(fileName: ".env"),
+      PreferencesService().init(),
+      IsarService.init(),
+    ]);
+
     await RegionService().init();
-    await LanguageTranslator.init();
-    await PersonTranslator.init();
-    await NotificationService().init();
+
+    await Future.wait([
+      TmdbGenreService().init(),
+      TmdbConfigurationService().init(),
+      LanguageTranslator.init(),
+      PersonTranslator.init(),
+      NotificationService().init(),
+    ]).timeout(const Duration(seconds: 5), onTimeout: () => []);
 
     if (defaultTargetPlatform == TargetPlatform.android ||
         defaultTargetPlatform == TargetPlatform.iOS) {
