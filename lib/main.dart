@@ -72,15 +72,20 @@ void main() async {
   }
 
   try {
-    await dotenv.load(fileName: ".env");
-    await PreferencesService().init();
-    await IsarService.init();
-    await TmdbGenreService().init();
-    await TmdbConfigurationService().init();
-    await RegionService().init();
-    await LanguageTranslator.init();
-    await PersonTranslator.init();
-    await NotificationService().init();
+    await Future.wait([
+      dotenv.load(fileName: ".env"),
+      PreferencesService().init(),
+      IsarService.init(),
+    ]);
+
+    await Future.wait([
+      RegionService().init(),
+      TmdbGenreService().init(),
+      TmdbConfigurationService().init(),
+      LanguageTranslator.init(),
+      PersonTranslator.init(),
+      NotificationService().init(),
+    ]).timeout(const Duration(seconds: 5), onTimeout: () => []);
 
     if (defaultTargetPlatform == TargetPlatform.android ||
         defaultTargetPlatform == TargetPlatform.iOS) {
@@ -198,10 +203,28 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     themeProvider.setupTheme();
     final userService = Provider.of<TmdbUserService>(context, listen: false);
     userService.setup();
+
+    final regionProvider = Provider.of<RegionService>(context, listen: false);
+    regionProvider.addListener(_onRegionChanged);
+  }
+
+  void _onRegionChanged() {
+    if (!mounted) return;
+    final watchlistService =
+        Provider.of<TmdbWatchlistService>(context, listen: false);
+    final rateslistService =
+        Provider.of<TmdbRateslistService>(context, listen: false);
+    watchlistService.updateProviders();
+    rateslistService.updateProviders();
   }
 
   @override
   void dispose() {
+    try {
+      final regionProvider = Provider.of<RegionService>(context, listen: false);
+      regionProvider.removeListener(_onRegionChanged);
+    } catch (_) {}
+    
     AppLifecycleService.instance.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();

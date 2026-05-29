@@ -27,25 +27,38 @@ class RegionService with ChangeNotifier {
 
   Future<void> init() async {
     if (_manualRegion == null) {
-      await detectRegion();
+      detectRegion(); // Don't await, run in background
     }
   }
 
   Future<void> detectRegion() async {
-    try {
-      final response = await http.get(Uri.parse('https://ipapi.co/json/'));
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        _detectedRegion = data['country_code'];
-        notifyListeners();
+    int retryCount = 0;
+    while (retryCount < 5 && _detectedRegion == null) {
+      try {
+        final response = await http
+            .get(Uri.parse('https://ipapi.co/json/'))
+            .timeout(const Duration(seconds: 2));
+        
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          _detectedRegion = data['country_code'];
+          notifyListeners();
+          return;
+        }
+      } catch (e, stackTrace) {
+        if (retryCount == 4) {
+          ErrorService.log(
+            e,
+            stackTrace: stackTrace,
+            userMessage: 'Error detecting region',
+            showSnackBar: false,
+          );
+        }
       }
-    } catch (e, stackTrace) {
-      ErrorService.log(
-        e,
-        stackTrace: stackTrace,
-        userMessage: 'Error detecting region',
-        showSnackBar: false,
-      );
+      retryCount++;
+      if (_detectedRegion == null) {
+        await Future.delayed(Duration(seconds: retryCount * 2));
+      }
     }
   }
 

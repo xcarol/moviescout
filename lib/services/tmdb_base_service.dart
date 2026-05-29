@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -46,6 +47,14 @@ class TmdbBaseService {
     return Uri.parse('$cleanBase$cleanEndpoint');
   }
 
+  Future<Duration> _handleRetry(
+      String exceptionName, Duration delay, Duration maxDelay) async {
+    debugPrint('$exceptionName: retrying in ${delay.inSeconds} seconds...');
+    await AppLifecycleService.instance.waitUntilResumed();
+    await Future.delayed(delay);
+    return (delay * 2).compareTo(maxDelay) < 0 ? delay * 2 : maxDelay;
+  }
+
   Future<dynamic> get(
     String query, {
     ApiVersion version = ApiVersion.v3,
@@ -59,9 +68,6 @@ class TmdbBaseService {
     const Duration initialDelay = Duration(milliseconds: _initialDelayMs);
     const Duration maxDelay = Duration(milliseconds: _maxDelayMs);
     Duration delay = initialDelay;
-
-    Duration updatedDelay() =>
-        (delay * 2).compareTo(maxDelay) < 0 ? delay * 2 : maxDelay;
 
     while (_requestCount >= _maxRequestsCount) {
       await Future.delayed(initialDelay);
@@ -80,14 +86,10 @@ class TmdbBaseService {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
           'Authorization': 'Bearer $token',
-        });
+        }).timeout(const Duration(seconds: 10));
 
         if (response.statusCode == 429) {
-          debugPrint(
-            'TmdbBaseService get Rate limit exceeded. Retrying in ${delay.inSeconds} seconds...',
-          );
-          await Future.delayed(delay);
-          delay = updatedDelay();
+          delay = await _handleRetry('TmdbBaseService get Rate limit exceeded', delay, maxDelay);
           retryCount++;
           continue;
         }
@@ -95,25 +97,16 @@ class TmdbBaseService {
         _requestCount--;
         return response;
       } on http.ClientException {
-        debugPrint(
-            'ClientException: retrying in ${delay.inSeconds} seconds...');
-        await AppLifecycleService.instance.waitUntilResumed();
-        await Future.delayed(delay);
-        delay = updatedDelay();
+        delay = await _handleRetry('ClientException', delay, maxDelay);
         retryCount++;
       } on HandshakeException {
-        debugPrint(
-            'HandshakeException: retrying in ${delay.inSeconds} seconds...');
-        await AppLifecycleService.instance.waitUntilResumed();
-        await Future.delayed(delay);
-        delay = updatedDelay();
+        delay = await _handleRetry('HandshakeException', delay, maxDelay);
         retryCount++;
       } on SocketException {
-        debugPrint(
-            'SocketException: retrying in ${delay.inSeconds} seconds...');
-        await AppLifecycleService.instance.waitUntilResumed();
-        await Future.delayed(delay);
-        delay = updatedDelay();
+        delay = await _handleRetry('SocketException', delay, maxDelay);
+        retryCount++;
+      } on TimeoutException {
+        delay = await _handleRetry('TimeoutException', delay, maxDelay);
         retryCount++;
       } catch (error, stackTrace) {
         _requestCount--;
@@ -147,7 +140,7 @@ class TmdbBaseService {
           : accessToken;
       final uri = _buildUri(version, endpoint);
 
-      return http.post(
+      return await http.post(
         uri,
         headers: {
           'Content-Type': 'application/json',
@@ -155,7 +148,7 @@ class TmdbBaseService {
           'Authorization': 'Bearer $token',
         },
         body: jsonEncode(body),
-      );
+      ).timeout(const Duration(seconds: 10));
     } catch (error, stackTrace) {
       final message = 'TmdbBaseService post Error: ${error.toString()}';
       ErrorService.log(
@@ -179,7 +172,7 @@ class TmdbBaseService {
           : accessToken;
       final uri = _buildUri(version, endpoint);
 
-      return http.put(
+      return await http.put(
         uri,
         headers: {
           'Content-Type': 'application/json',
@@ -187,7 +180,7 @@ class TmdbBaseService {
           'Authorization': 'Bearer $token',
         },
         body: jsonEncode(body),
-      );
+      ).timeout(const Duration(seconds: 10));
     } catch (error, stackTrace) {
       final message = 'TmdbBaseService put Error: ${error.toString()}';
       ErrorService.log(
@@ -211,7 +204,7 @@ class TmdbBaseService {
           : accessToken;
       final uri = _buildUri(version, endpoint);
 
-      return http.delete(
+      return await http.delete(
         uri,
         headers: {
           'Content-Type': 'application/json',
@@ -219,7 +212,7 @@ class TmdbBaseService {
           'Authorization': 'Bearer $token',
         },
         body: body != null ? jsonEncode(body) : null,
-      );
+      ).timeout(const Duration(seconds: 10));
     } catch (error, stackTrace) {
       final message = 'TmdbBaseService delete Error: ${error.toString()}';
       ErrorService.log(
