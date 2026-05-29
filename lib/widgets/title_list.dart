@@ -5,11 +5,12 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
+import 'package:moviescout/widgets/bottom_clamping_scroll_physics.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/title_list_info_line.dart';
 import 'package:moviescout/widgets/title_list_control_panel.dart';
-import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/widgets/title_list_controller.dart';
@@ -72,7 +73,11 @@ class _TitleListState extends State<TitleList> {
             key: const PageStorageKey('TitleListView'),
             controller: _controller.scrollController,
             physics: AlwaysScrollableScrollPhysics(
-              parent: ClampingWithOverscrollPhysics(state: _refreshController),
+              parent: BottomClampingScrollPhysics(
+                parent: ClampingWithOverscrollPhysics(
+                  state: _refreshController,
+                ),
+              ),
             ),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             itemCount: service.loadedTitleCount,
@@ -118,6 +123,7 @@ class _TitleListState extends State<TitleList> {
         if (service.isRefreshable) {
           content = CustomRefreshIndicator(
             controller: _refreshController,
+            offsetToArmed: 100,
             onRefresh: () async {
               if (widget.listService.isLoading.value) {
                 return;
@@ -257,26 +263,14 @@ class _TitleListState extends State<TitleList> {
         child,
         if (!controller.side.isNone)
           Positioned(
-            top: (150 * controller.value),
+            top: -40.0 + (80.0 * controller.value),
             left: 0,
             right: 0,
             child: Center(
-              child: Material(
-                elevation: 4,
-                shape: const CircleBorder(),
-                color: Theme.of(context).colorScheme.primary,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    width: controller.value.clamp(0.0, 1.0) * 24,
-                    height: controller.value.clamp(0.0, 1.0) * 24,
-                    child: CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      value: controller.isLoading ? null : controller.value,
-                      strokeWidth: 3,
-                    ),
-                  ),
-                ),
+              child: RefreshProgressIndicator(
+                value: controller.isLoading || controller.isFinalizing
+                    ? null
+                    : controller.value.clamp(0.0, 1.0),
               ),
             ),
           ),
