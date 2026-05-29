@@ -78,9 +78,8 @@ void main() async {
       IsarService.init(),
     ]);
 
-    await RegionService().init();
-
     await Future.wait([
+      RegionService().init(),
       TmdbGenreService().init(),
       TmdbConfigurationService().init(),
       LanguageTranslator.init(),
@@ -204,10 +203,28 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     themeProvider.setupTheme();
     final userService = Provider.of<TmdbUserService>(context, listen: false);
     userService.setup();
+
+    final regionProvider = Provider.of<RegionService>(context, listen: false);
+    regionProvider.addListener(_onRegionChanged);
+  }
+
+  void _onRegionChanged() {
+    if (!mounted) return;
+    final watchlistService =
+        Provider.of<TmdbWatchlistService>(context, listen: false);
+    final rateslistService =
+        Provider.of<TmdbRateslistService>(context, listen: false);
+    watchlistService.updateProviders();
+    rateslistService.updateProviders();
   }
 
   @override
   void dispose() {
+    try {
+      final regionProvider = Provider.of<RegionService>(context, listen: false);
+      regionProvider.removeListener(_onRegionChanged);
+    } catch (_) {}
+    
     AppLifecycleService.instance.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();

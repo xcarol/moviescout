@@ -165,16 +165,6 @@ class SettingsScreen extends StatelessWidget {
 
         if (selectedRegion != regionProvider.manualRegion) {
           regionProvider.setManualRegion(selectedRegion);
-
-          if (context.mounted) {
-            final watchlistService =
-                Provider.of<TmdbWatchlistService>(context, listen: false);
-            final rateslistService =
-                Provider.of<TmdbRateslistService>(context, listen: false);
-
-            watchlistService.updateProviders();
-            rateslistService.updateProviders();
-          }
         }
       },
     );
