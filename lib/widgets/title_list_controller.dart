@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/preferences_service.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class TitleListController with ChangeNotifier {
-  final TmdbListService listService;
+  final TmdbTitleListService listService;
   late final TextEditingController textFilterController;
   final FocusNode searchFocusNode = FocusNode();
   final ScrollController scrollController = ScrollController();

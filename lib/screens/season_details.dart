@@ -5,7 +5,7 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/person_details.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_season_service.dart';
 import 'package:moviescout/widgets/episode_card.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
@@ -16,7 +16,7 @@ import 'package:moviescout/utils/date_formatter.dart';
 class SeasonDetails extends StatefulWidget {
   final TmdbTitle title;
   final int seasonNumber;
-  final TmdbListService tmdbListService;
+  final TmdbTitleListService tmdbListService;
 
   const SeasonDetails({
     super.key,

@@ -10,7 +10,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/screens/title_details.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
@@ -32,18 +32,18 @@ class CustomCacheManager {
 
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
-  final TmdbListService _tmdbListService;
+  final TmdbTitleListService _tmdbListService;
 
   static double cardHeight = 160.0;
 
   const TitleCard({
     super.key,
     required TmdbTitle title,
-    required TmdbListService tmdbListService,
+    required TmdbTitleListService tmdbListService,
   })  : _title = title,
         _tmdbListService = tmdbListService;
 
-  TmdbListService get tmdbListService => _tmdbListService;
+  TmdbTitleListService get tmdbListService => _tmdbListService;
 
   @override
   Widget build(BuildContext context) {
@@ -364,7 +364,7 @@ class TitleCard extends StatelessWidget {
                   DateTime.parse(tmdbTitle.lastProvidersUpdate)
                       .subtract(const Duration(days: 1))
                       .toIso8601String();
-              await Provider.of<TmdbListService>(context, listen: false)
+              await Provider.of<TmdbTitleListService>(context, listen: false)
                   .debugUpdateTitleLastUpdate(tmdbTitle);
             },
             child: SingleChildScrollView(
@@ -394,7 +394,7 @@ class TitleCard extends StatelessWidget {
           GestureDetector(
             onTap: () async {
               tmdbTitle.lastNotifiedSeason = tmdbTitle.lastNotifiedSeason - 1;
-              await Provider.of<TmdbListService>(context, listen: false)
+              await Provider.of<TmdbTitleListService>(context, listen: false)
                   .debugUpdateTitleLastUpdate(tmdbTitle);
             },
             child: Text(

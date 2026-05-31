@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/isar_service.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -12,7 +12,7 @@ const String _tmdbPopularlistMovies =
     'movie/popular?page={PAGE}&language={LOCALE}';
 const String _tmdbPopularlistTv = 'tv/popular?page={PAGE}&language={LOCALE}';
 
-class TmdbDiscoverlistService extends TmdbListService {
+class TmdbDiscoverlistService extends TmdbTitleListService {
   bool _isRefreshPaused = false;
   bool _refreshPending = false;
   bool _retrievePending = false;
@@ -302,7 +302,7 @@ class TmdbDiscoverlistService extends TmdbListService {
       _refreshPending = true;
       return;
     }
-    filterTitles();
+    filterItems();
   }
 
   @override

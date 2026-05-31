@@ -3,7 +3,7 @@ import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_pinned_service.dart';
 
 const String _tmdbWatchlistMovies =
@@ -13,7 +13,7 @@ const String _tmdbWatchlistTv =
 const String _updateWatchlistTitle =
     'account/{ACCOUNT_ID}/watchlist?session_id={SESSION_ID}';
 
-class TmdbWatchlistService extends TmdbListService {
+class TmdbWatchlistService extends TmdbTitleListService {
   TmdbPinnedService? pinnedService;
 
   TmdbWatchlistService(super.listName, super.repository);
@@ -48,7 +48,7 @@ class TmdbWatchlistService extends TmdbListService {
 
     if (pinnedService != null) {
       await pinnedService!.fetchAndApplyPinnedTitles();
-      await filterTitles();
+      await filterItems();
     }
   }
 
@@ -116,7 +116,7 @@ class TmdbWatchlistService extends TmdbListService {
       }
     }
 
-    await filterTitles(retainPagination: true);
+    return filterItems(retainPagination: true);
   }
 
   @override

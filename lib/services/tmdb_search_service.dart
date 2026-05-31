@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 
 const int maxSearchMovies = 20;
@@ -18,7 +18,7 @@ const String _tmdbSearchTvShows =
 const String _tmdbFindByID =
     '/find/{ID}?language={LOCALE}&external_source=imdb_id';
 
-class TmdbSearchService extends TmdbListService {
+class TmdbSearchService extends TmdbTitleListService {
   TmdbSearchService(super.listName, super.repository);
 
   @override

@@ -4,7 +4,7 @@ import 'package:collection/collection.dart' show ListEquality;
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/preferences_service.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/widgets/bottom_clamping_scroll_physics.dart';
@@ -22,7 +22,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class TitleList extends StatefulWidget {
-  final TmdbListService listService;
+  final TmdbTitleListService listService;
 
   const TitleList(this.listService, {super.key});
 
@@ -63,7 +63,7 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _titleList() {
-    return Consumer<TmdbListService>(
+    return Consumer<TmdbTitleListService>(
       builder: (context, service, _) {
         _controller.initializeControlLocalizations(context);
 
@@ -185,7 +185,7 @@ class _TitleListState extends State<TitleList> {
   }
 
   Widget _pinnedTitlesRow() {
-    return Consumer<TmdbListService>(
+    return Consumer<TmdbTitleListService>(
       builder: (context, service, _) {
         if (service.pinnedTitles.isEmpty ||
             service.listName != AppConstants.watchlist) {
@@ -294,7 +294,7 @@ class _TitleListState extends State<TitleList> {
                 });
               }
 
-              return ChangeNotifierProvider<TmdbListService>.value(
+              return ChangeNotifierProvider<TmdbTitleListService>.value(
                 value: widget.listService,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

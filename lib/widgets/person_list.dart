@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/custom_colors.dart';
-import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/widgets/person_card.dart';
 import 'package:moviescout/widgets/person_list_control_panel.dart';
 import 'package:moviescout/widgets/person_list_info_line.dart';
 import 'package:moviescout/widgets/person_list_controller.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
+import 'package:moviescout/services/tmdb_person_list_service.dart';
 
 class PersonList extends StatefulWidget {
-  final List<TmdbPerson> people;
+  final TmdbPersonListService personListService;
   final String type;
-  final TmdbListService listService;
+  final TmdbTitleListService titleListService;
 
   const PersonList({
     super.key,
-    required this.people,
+    required this.personListService,
     required this.type,
-    required this.listService,
+    required this.titleListService,
   });
 
   @override
@@ -29,7 +29,7 @@ class _PersonListState extends State<PersonList> {
   @override
   void initState() {
     super.initState();
-    _controller = PersonListController(widget.people, widget.type);
+    _controller = PersonListController(widget.personListService, widget.type);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _controller.initializeControlLocalizations(context);
     });
@@ -46,22 +46,29 @@ class _PersonListState extends State<PersonList> {
       listenable: _controller,
       builder: (context, _) {
         return Flexible(
-          child: Scrollbar(
-            controller: _controller.scrollController,
-            child: ListView.builder(
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (scrollInfo) {
+              _controller.onScrollNotification(scrollInfo, PersonCard.cardHeight);
+              return false;
+            },
+            child: Scrollbar(
               controller: _controller.scrollController,
-              itemCount: _controller.itemCount,
-              itemBuilder: (context, index) {
-                final person = _controller.items[index];
-                return Column(
-                  children: [
-                    PersonCard(
-                      person: person,
-                      tmdbListService: widget.listService,
-                    ),
-                  ],
-                );
-              },
+              child: ListView.builder(
+                controller: _controller.scrollController,
+                itemCount: widget.personListService.loadedItemCount,
+                itemBuilder: (context, index) {
+                  final person = widget.personListService.getItem(index);
+                  if (person == null) return const SizedBox.shrink();
+                  return Column(
+                    children: [
+                      PersonCard(
+                        person: person,
+                        tmdbListService: widget.titleListService,
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         );
