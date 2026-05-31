@@ -120,7 +120,7 @@ class WatchlistNotificationEvaluator {
         if (nextEpisode != null &&
             (nextEpisode['season_number'] as int) == currentSeason) {
           logLines.add(
-              '- check: $titleName S$currentSeason is not complete yet (next episode is in the same season).');
+              '- check (NotifyCompleteSeason): $titleName S$currentSeason is not complete yet (next episode is in the same season).');
           return false;
         }
 
@@ -134,11 +134,11 @@ class WatchlistNotificationEvaluator {
                 daysSinceEnded <
                     AppConstants.watchlistNewSeasonNotificationWindowDays) {
               logLines.add(
-                  '- check: $titleName S$currentSeason ended $daysSinceEnded days ago. Notify.');
+                  '- check (NotifyCompleteSeason): $titleName S$currentSeason ended $daysSinceEnded days ago. Notify.');
               return true;
             } else {
               logLines.add(
-                  '- check: $titleName S$currentSeason ended $daysSinceEnded days ago. Too old.');
+                  '- check (NotifyCompleteSeason): $titleName S$currentSeason ended $daysSinceEnded days ago. Too old.');
             }
           }
         }
