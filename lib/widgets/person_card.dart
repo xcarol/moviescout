@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/screens/person_details.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 
 class CustomCacheManager {
   static const key = 'customCacheKey';
@@ -20,18 +20,18 @@ class CustomCacheManager {
 
 class PersonCard extends StatelessWidget {
   final TmdbPerson _person;
-  final TmdbListService _tmdbListService;
+  final TmdbTitleListService _tmdbListService;
 
   static double cardHeight = 160.0;
 
   const PersonCard({
     super.key,
     required TmdbPerson person,
-    required TmdbListService tmdbListService,
+    required TmdbTitleListService tmdbListService,
   })  : _person = person,
         _tmdbListService = tmdbListService;
 
-  TmdbListService get tmdbListService => _tmdbListService;
+  TmdbTitleListService get tmdbListService => _tmdbListService;
 
   @override
   Widget build(BuildContext context) {

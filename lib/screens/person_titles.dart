@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/services/tmdb_person_titles_service.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/title_list.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
@@ -50,7 +50,7 @@ class _PersonTitlesState extends State<PersonTitles> {
       appBar: AppBar(
         title: Text(appTitle),
       ),
-      body: ChangeNotifierProvider<TmdbListService>.value(
+      body: ChangeNotifierProvider<TmdbTitleListService>.value(
         value: _personTitlesService,
         child: body(),
       ),
@@ -58,7 +58,7 @@ class _PersonTitlesState extends State<PersonTitles> {
   }
 
   Widget body() {
-    return Selector<TmdbListService, bool>(
+    return Selector<TmdbTitleListService, bool>(
       selector: (_, service) => service.listIsEmpty && !service.isLoading.value,
       shouldRebuild: (prev, next) => prev != next,
       builder: (context, isEmpty, child) {

@@ -5,7 +5,7 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/episode_details.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/utils/date_formatter.dart';
 
@@ -13,7 +13,7 @@ class EpisodeCard extends StatelessWidget {
   final TmdbEpisode _episode;
   final TmdbTitle _title;
   final int seasonNumber;
-  final TmdbListService tmdbListService;
+  final TmdbTitleListService tmdbListService;
 
   static double cardHeight = 122.0;
 

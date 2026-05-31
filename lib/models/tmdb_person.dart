@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'package:flutter/widgets.dart';
+import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/person_translator.dart';
 
 // ignore_for_file: constant_identifier_names, unused_element
+
+part 'tmdb_person.g.dart';
 
 class PersonAttributes {
   static const id = 'id';
@@ -54,8 +58,16 @@ class CombinedCredits {
   }
 }
 
+@collection
 class TmdbPerson {
+  Id id = Isar.autoIncrement;
+
+  @Index(unique: true, replace: true, composite: [CompositeIndex('transientListId')])
   late int tmdbId;
+
+  @Index()
+  late String transientListId;
+
   late String name;
   late String lastUpdated;
   late String knownForDepartment;
@@ -70,7 +82,18 @@ class TmdbPerson {
   late String imdbId;
   late String placeOfBirth;
   late String homepage;
-  late CombinedCredits combinedCredits;
+
+  late String? combinedCreditsJson;
+
+  @ignore
+  CombinedCredits get combinedCredits {
+    if (combinedCreditsJson == null) return CombinedCredits(cast: [], crew: []);
+    return CombinedCredits.fromMap(jsonDecode(combinedCreditsJson!));
+  }
+
+  set combinedCredits(CombinedCredits value) {
+    combinedCreditsJson = jsonEncode(value.toMap());
+  }
 
   TmdbPerson({
     required this.tmdbId,
@@ -88,8 +111,14 @@ class TmdbPerson {
     required this.imdbId,
     required this.placeOfBirth,
     required this.homepage,
-    required this.combinedCredits,
-  });
+    this.combinedCreditsJson,
+    CombinedCredits? combinedCredits,
+    this.transientListId = '',
+  }) {
+    if (combinedCredits != null) {
+      combinedCreditsJson = jsonEncode(combinedCredits.toMap());
+    }
+  }
 
   factory TmdbPerson.fromMap({required Map<dynamic, dynamic> person}) {
     return TmdbPerson(
@@ -109,8 +138,9 @@ class TmdbPerson {
         imdbId: person[PersonAttributes.imdb_id] ?? '',
         placeOfBirth: person[PersonAttributes.place_of_birth] ?? '',
         homepage: person[PersonAttributes.homepage] ?? '',
-        combinedCredits: CombinedCredits.fromMap(
-            person[PersonAttributes.combined_credits] ?? {}));
+        combinedCreditsJson: person[PersonAttributes.combined_credits] != null 
+            ? jsonEncode(person[PersonAttributes.combined_credits])
+            : null);
   }
 
   String get posterPath {
@@ -136,7 +166,7 @@ class TmdbPerson {
       PersonAttributes.imdb_id: imdbId,
       PersonAttributes.place_of_birth: placeOfBirth,
       PersonAttributes.homepage: homepage,
-      PersonAttributes.combined_credits: combinedCredits.toMap(),
+      PersonAttributes.combined_credits: combinedCreditsJson != null ? jsonDecode(combinedCreditsJson!) : null,
     };
   }
 }

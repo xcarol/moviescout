@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/error_service.dart';
-import 'package:moviescout/services/tmdb_base_service.dart';
+import 'package:moviescout/services/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/update_manager.dart';
@@ -13,34 +13,12 @@ import 'package:moviescout/utils/app_constants.dart';
 
 enum RatingFilter { all, rated, seenOnly, snoozedOnly }
 
-
-class TmdbListService extends TmdbBaseService with ChangeNotifier {
-  @protected
-  String listNameVal = '';
-  @protected
-  final List<TmdbTitle> loadedTitlesVal = List.empty(growable: true);
+class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
   @protected
   final List<TmdbTitle> pinnedTitlesVal = List.empty(growable: true);
-  String get listName => listNameVal;
-  @protected
-  bool isDbLoading = false;
-  ValueNotifier<bool> isLoading = ValueNotifier(false);
-  @protected
-  bool hasMoreVal = true;
-  bool get hasMore => hasMoreVal;
-  @protected
-  int pageVal = 0;
-  @protected
-  final int pageSizeVal = 10;
   @protected
   final TmdbTitleRepository repository;
 
-  @protected
-  bool anyFilterApplied = false;
-  @protected
-  int filterRequestId = 0;
-  @protected
-  String filterText = '';
   @protected
   String filterMediaType = '';
   @protected
@@ -55,18 +33,17 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   bool isSortAsc = true;
   @protected
   RatingFilter filterRating = RatingFilter.all;
-  ValueNotifier<int> selectedTitleCount = ValueNotifier(0);
-  int get loadedTitleCount => loadedTitlesVal.length;
+  int get loadedTitleCount => loadedItemsVal.length;
   List<TmdbTitle> get pinnedTitles => pinnedTitlesVal;
   @protected
   List<String> listGenresVal = [];
   ValueNotifier<List<String>> listGenres = ValueNotifier([]);
-  bool get isRefreshable => true;
   bool _userRatingAvailableVal = false;
 
   static Future<void> _syncQueue = Future.value();
 
-  TmdbListService(String listName, this.repository, {List<TmdbTitle>? titles}) {
+  TmdbTitleListService(String listName, this.repository,
+      {List<TmdbTitle>? titles}) {
     listNameVal = listName;
   }
 
@@ -101,7 +78,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
 
   @protected
   void resetServiceStateAfterClear() {
-    clearLoadedTitles(clearGenreCache: true, resetCount: true);
+    clearLoadedItems(clearGenreCache: true, resetCount: true);
     UpdateManager().removeLastUpdate(listNameVal);
     notifyListeners();
   }
@@ -139,16 +116,17 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     notifyListeners();
   }
 
+  @override
   @protected
-  void clearLoadedTitles(
+  void clearLoadedItems(
       {bool clearGenreCache = false, bool resetCount = false}) {
     if (clearGenreCache) {
       listGenresVal.clear();
     }
-    loadedTitlesVal.clear();
+    loadedItemsVal.clear();
     pinnedTitlesVal.clear();
     if (resetCount) {
-      selectedTitleCount.value = 0;
+      selectedItemCount.value = 0;
     }
     anyFilterApplied = false;
     hasMoreVal = true;
@@ -178,7 +156,8 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     await predecessor.catchError((_) {});
 
     try {
-      bool isUpToDateNow = UpdateManager().isUpToDate(listNameVal, cacheTimeout);
+      bool isUpToDateNow =
+          UpdateManager().isUpToDate(listNameVal, cacheTimeout);
       if (listIsNotEmpty && isUpToDateNow && !forceUpdate) {
         return;
       }
@@ -325,12 +304,12 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         await repository.saveTitles(updated.cast<TmdbTitle>(), listNameVal,
             addedOrders: batch.map((t) => startOrder++).toList());
 
-        selectedTitleCount.value = i + batchSize;
+        selectedItemCount.value = i + batchSize;
         await Future.delayed(Duration.zero);
       }
     }
 
-    await filterTitles();
+    await filterItems();
   }
 
   Future<void> updateProviders() async {
@@ -353,7 +332,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         await Future.delayed(Duration.zero);
       }
 
-      await filterTitles();
+      await filterItems();
     } catch (error, stackTrace) {
       ErrorService.log(
         error,
@@ -375,22 +354,6 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   @protected
   Future<void> deleteLocalTitle(TmdbTitle title) async {
     await repository.deleteTitle(listNameVal, title.tmdbId, title.mediaType);
-  }
-
-  TmdbTitle? getItem(int position) {
-    if (position < 0 || position >= loadedTitlesVal.length) {
-      return null;
-    }
-    try {
-      return loadedTitlesVal[position];
-    } catch (error, stackTrace) {
-      ErrorService.log(
-        'Error getting item at position $position: $error',
-        stackTrace: stackTrace,
-        showSnackBar: false,
-      );
-      return null;
-    }
   }
 
   @protected
@@ -415,28 +378,33 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     );
   }
 
+  @override
   @protected
-  Future<void> filterTitles({bool retainPagination = false}) async {
-    while (isDbLoading) {
-      await Future.delayed(const Duration(milliseconds: 50));
-    }
-
-    final currentRequestId = ++filterRequestId;
-    final int pagesToLoad = (retainPagination && pageVal > 0) ? pageVal : 1;
-
-    anyFilterApplied = true;
-
+  Future<void> preFilterItems(int requestId) async {
     if (listNameVal == AppConstants.watchlist) {
       final pinnedTitles = await _fetchTitles(limit: 10, pinned: true);
 
-      if (currentRequestId != filterRequestId) {
+      if (requestId != filterRequestId) {
         return;
       }
 
       pinnedTitlesVal.clear();
       pinnedTitlesVal.addAll(pinnedTitles);
     }
+  }
 
+  @override
+  @protected
+  Future<void> postFilterItems() async {
+    await updateUserRatingAvailable();
+    if (listGenresVal.isEmpty) {
+      await updateListGenres();
+    }
+  }
+
+  @override
+  @protected
+  Future<int> countFilteredItems() async {
     final count = await repository.countTitlesFiltered(
       listName: listNameVal,
       filterText: filterText,
@@ -447,60 +415,17 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
       filterRating: filterRating,
       pinned: listNameVal == AppConstants.watchlist ? false : null,
     );
-
-    if (currentRequestId != filterRequestId) {
-      return;
-    }
-
-    selectedTitleCount.value = count +
-        (listNameVal == AppConstants.watchlist ? pinnedTitlesVal.length : 0);
-
-    await loadNPagesFromStart(pagesToLoad, currentRequestId);
-
-    await updateUserRatingAvailable();
+    return count + (listNameVal == AppConstants.watchlist ? pinnedTitlesVal.length : 0);
   }
 
+  @override
   @protected
-  Future<void> loadNPagesFromStart(
-      int pagesToLoad, int currentRequestId) async {
-    isDbLoading = true;
-    try {
-      final limit = pagesToLoad * pageSizeVal;
-      final titles = await _fetchTitles(
-        pinned: listNameVal == AppConstants.watchlist ? false : null,
-        offset: 0,
-        limit: limit,
-      );
-
-      if (currentRequestId != filterRequestId) {
-        return;
-      }
-
-      loadedTitlesVal.clear();
-      loadedTitlesVal.addAll(titles);
-      pageVal = pagesToLoad;
-      if (titles.length < limit && !isLoading.value) {
-        hasMoreVal = false;
-      } else {
-        hasMoreVal = true;
-      }
-    } catch (error, stackTrace) {
-      ErrorService.log(
-        error,
-        stackTrace: stackTrace,
-        userMessage: 'Error loading page',
-      );
-    } finally {
-      isDbLoading = false;
-      if (listGenresVal.isEmpty) {
-        await updateListGenres();
-      }
-      notifyListeners();
-    }
-  }
-
-  void refresh() {
-    filterTitles(retainPagination: true);
+  Future<List<TmdbTitle>> fetchItems({required int offset, required int limit}) async {
+    return await _fetchTitles(
+      pinned: listNameVal == AppConstants.watchlist ? false : null,
+      offset: offset,
+      limit: limit,
+    );
   }
 
   Future<void> syncFromServer({
@@ -526,33 +451,28 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
     filterRating = ratingFilter;
     selectedSort = sort;
     isSortAsc = computeSortDirection(sort, ascending);
-    await filterTitles();
-  }
-
-  void setTextFilter(String filter) {
-    filterText = filter;
-    filterTitles();
+    await filterItems();
   }
 
   void setGenresFilter(List<String> genres) {
     filterGenres = TmdbGenreService().getIdsFromNames(genres);
-    filterTitles();
+    filterItems();
   }
 
   void setProvidersFilter(bool filterByProviders, List<int> providerIds) {
     this.filterByProviders = filterByProviders;
     filterProvidersIds = providerIds;
-    filterTitles();
+    filterItems();
   }
 
   void setTypeFilter(String type) {
     filterMediaType = type;
-    filterTitles();
+    filterItems();
   }
 
   void setRatingFilter(RatingFilter filter) {
     filterRating = filter;
-    filterTitles();
+    filterItems();
   }
 
   @protected
@@ -575,7 +495,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   void setSort(String sort, bool ascending) {
     selectedSort = sort;
     isSortAsc = computeSortDirection(sort, ascending);
-    filterTitles();
+    filterItems();
   }
 
   Future<void> updateTitle(
@@ -594,10 +514,9 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
         await updateLocalTitle(title);
       } else {
         await deleteLocalTitle(title);
-        loadedTitlesVal
-            .removeWhere((element) => element.tmdbId == title.tmdbId);
+        loadedItemsVal.removeWhere((element) => element.tmdbId == title.tmdbId);
       }
-      await filterTitles(retainPagination: true);
+      await filterItems(retainPagination: true);
       setLastUpdate();
       await updateListGenres();
 
@@ -640,7 +559,7 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   Future<TmdbTitle?> getTitleByTmdbId(int tmdbId, String mediaType) async {
-    final memoryTitle = loadedTitlesVal.firstWhereOrNull(
+    final memoryTitle = loadedItemsVal.firstWhereOrNull(
         (t) => t.tmdbId == tmdbId && t.mediaType == mediaType);
     if (memoryTitle != null) return memoryTitle;
 
@@ -648,50 +567,12 @@ class TmdbListService extends TmdbBaseService with ChangeNotifier {
   }
 
   TmdbTitle? getTitleByTmdbIdSync(int tmdbId, String mediaType) {
-    final memoryTitle = loadedTitlesVal.firstWhereOrNull(
+    final memoryTitle = loadedItemsVal.firstWhereOrNull(
         (t) => t.tmdbId == tmdbId && t.mediaType == mediaType);
     if (memoryTitle != null) return memoryTitle;
 
     return repository.getTitleByTmdbIdSync(listNameVal, tmdbId, mediaType);
   }
 
-  Future<void> loadNextPage() async {
-    if ((isDbLoading) || !hasMoreVal) return;
 
-    isDbLoading = true;
-
-    try {
-      if (anyFilterApplied == false) {
-        return filterTitles();
-      }
-      final currentRequestId = ++filterRequestId;
-
-      final titles = await _fetchTitles(
-        pinned: listNameVal == AppConstants.watchlist ? false : null,
-        offset: pageVal * pageSizeVal,
-      );
-
-      if (currentRequestId != filterRequestId) {
-        return;
-      }
-
-      loadedTitlesVal.addAll(titles);
-      pageVal++;
-      if (titles.length < pageSizeVal && !isLoading.value) {
-        hasMoreVal = false;
-      }
-    } catch (error, stackTrace) {
-      ErrorService.log(
-        error,
-        stackTrace: stackTrace,
-        userMessage: 'Error loading page',
-      );
-    } finally {
-      isDbLoading = false;
-      if (listGenresVal.isEmpty) {
-        await updateListGenres();
-      }
-      notifyListeners();
-    }
-  }
 }

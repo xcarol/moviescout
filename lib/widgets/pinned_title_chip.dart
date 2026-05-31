@@ -4,13 +4,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/pin_button.dart';
 
 class PinnedTitleChip extends StatelessWidget {
   final TmdbTitle title;
-  final TmdbListService listService;
+  final TmdbTitleListService listService;
 
   static const double cardWidth = 100.0;
   static const double cardHeight = 165.0;

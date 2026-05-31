@@ -4,11 +4,11 @@ import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/widgets/list_info_line.dart';
 import 'package:moviescout/widgets/drop_down_selector.dart';
 import 'package:moviescout/widgets/title_list_controller.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 
 class TitleListInfoLine extends StatelessWidget {
   final TitleListController controller;
-  final TmdbListService listService;
+  final TmdbTitleListService listService;
 
   const TitleListInfoLine({
     super.key,
@@ -54,7 +54,7 @@ class TitleListInfoLine extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(5),
         leading: ValueListenableBuilder(
-          valueListenable: listService.selectedTitleCount,
+          valueListenable: listService.selectedItemCount,
           builder: (context, count, child) {
             return Text(
               count.toString(),

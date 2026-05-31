@@ -6,7 +6,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 
 class DeepLinkService {
@@ -17,14 +17,14 @@ class DeepLinkService {
   final _appLinks = AppLinks();
   StreamSubscription<Uri>? _linkSubscription;
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  late TmdbListService _tmdbListService;
+  late TmdbTitleListService _tmdbListService;
   
   bool _isInitialized = false;
   String? _lastNavigatedId;
   String? _lastNavigatedType;
   DateTime? _lastNavigatedTime;
 
-  void init(TmdbListService tmdbListService) {
+  void init(TmdbTitleListService tmdbListService) {
     _tmdbListService = tmdbListService;
     _isInitialized = true;
 

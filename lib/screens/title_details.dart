@@ -17,7 +17,7 @@ import 'package:moviescout/screens/season_details.dart';
 import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/region_service.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
@@ -40,12 +40,12 @@ import 'package:share_plus/share_plus.dart';
 
 class TitleDetails extends StatefulWidget {
   final TmdbTitle _title;
-  final TmdbListService _tmdbListService;
+  final TmdbTitleListService _tmdbListService;
 
   const TitleDetails({
     super.key,
     required TmdbTitle title,
-    required TmdbListService tmdbListService,
+    required TmdbTitleListService tmdbListService,
   })  : _title = title,
         _tmdbListService = tmdbListService;
 

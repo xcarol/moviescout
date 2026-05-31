@@ -4,7 +4,8 @@ import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_config_list_service.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart'
+    show RatingFilter;
 
 class TmdbSnoozedService extends TmdbConfigListService {
   final TmdbTitleRepository repository;

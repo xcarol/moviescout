@@ -6,7 +6,7 @@ import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/services/tmdb_episode_service.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/person_chip.dart';
 import 'package:moviescout/utils/date_formatter.dart';
@@ -15,7 +15,7 @@ class EpisodeDetails extends StatefulWidget {
   final TmdbTitle title;
   final int seasonNumber;
   final int episodeNumber;
-  final TmdbListService tmdbListService;
+  final TmdbTitleListService tmdbListService;
   final TmdbEpisode?
       initialEpisode; // allows fast-loading before API call finishes
 

@@ -3,7 +3,8 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/user_list_entry.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/isar_service.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart'
+    show RatingFilter;
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/save_logs.dart';
 
@@ -389,9 +390,8 @@ class TmdbTitleRepository {
           .ratingGreaterThan(AppConstants.seenRating)
           .isSnoozedEqualTo(false);
     } else if (filterRating == RatingFilter.seenOnly) {
-      query = query
-          .ratingEqualTo(AppConstants.seenRating)
-          .isSnoozedEqualTo(false);
+      query =
+          query.ratingEqualTo(AppConstants.seenRating).isSnoozedEqualTo(false);
     } else if (filterRating == RatingFilter.snoozedOnly) {
       query = query.isSnoozedEqualTo(true);
     }

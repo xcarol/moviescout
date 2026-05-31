@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
+import 'package:moviescout/services/tmdb_person_list_service.dart';
+import 'package:moviescout/repositories/tmdb_person_repository.dart';
 import 'package:moviescout/widgets/person_list.dart';
 
 class TitlePeopleList extends StatefulWidget {
   final TmdbTitle title;
   final String type;
-  final TmdbListService tmdbListService;
+  final TmdbTitleListService tmdbListService;
 
   const TitlePeopleList({
     super.key,
@@ -22,11 +24,26 @@ class TitlePeopleList extends StatefulWidget {
 }
 
 class _TitlePeopleListState extends State<TitlePeopleList> {
+  late TmdbPersonListService _personListService;
+
+  @override
+  void initState() {
+    super.initState();
+    _personListService = TmdbPersonListService(
+      repository: TmdbPersonRepository(),
+      title: widget.title,
+      roleType: widget.type,
+    );
+  }
+
+  @override
+  void dispose() {
+    _personListService.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final people = widget.type == PersonAttributes.cast
-        ? widget.title.cast
-        : widget.title.crew;
     final titleType = widget.type == PersonAttributes.cast
         ? AppLocalizations.of(context)!.cast
         : AppLocalizations.of(context)!.crew;
@@ -36,9 +53,9 @@ class _TitlePeopleListState extends State<TitlePeopleList> {
         title: Text('${widget.title.name} - $titleType'),
       ),
       body: PersonList(
-        people: people,
+        personListService: _personListService,
         type: widget.type,
-        listService: widget.tmdbListService,
+        titleListService: widget.tmdbListService,
       ),
     );
   }

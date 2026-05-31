@@ -9,7 +9,8 @@ import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart'
+    show RatingFilter;
 import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/services/notification_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
@@ -139,8 +140,10 @@ Future<bool> updateTitle(
       final accountId = PreferencesService().prefs.getString('accountId') ?? '';
       final sessionId = PreferencesService().prefs.getString('sessionId') ?? '';
       if (accountId.isNotEmpty && sessionId.isNotEmpty) {
-        final watchlistService = TmdbWatchlistService(AppConstants.watchlist, repository);
-        await watchlistService.updateWatchlistTitle(accountId, sessionId, title, true);
+        final watchlistService =
+            TmdbWatchlistService(AppConstants.watchlist, repository);
+        await watchlistService.updateWatchlistTitle(
+            accountId, sessionId, title, true);
       }
     }
 
@@ -186,8 +189,10 @@ void callbackDispatcher() {
       final locale = LanguageService.parseLocale(localeStr);
       final localizations = await AppLocalizations.delegate.load(locale);
 
-      final notifyCompleteSeason =
-          PreferencesService().prefs.getBool(AppConstants.notifyCompleteSeason) ?? false;
+      final notifyCompleteSeason = PreferencesService()
+              .prefs
+              .getBool(AppConstants.notifyCompleteSeason) ??
+          false;
 
       final repository = TmdbTitleRepository();
       final titleService = TmdbTitleService();

@@ -1,10 +1,10 @@
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 
-class TmdbPersonTitlesService extends TmdbListService {
+class TmdbPersonTitlesService extends TmdbTitleListService {
   final List<TmdbTitle> _allTitles = [];
   List<TmdbTitle> _filteredTitles = [];
   final TmdbPerson person;
@@ -46,15 +46,15 @@ class TmdbPersonTitlesService extends TmdbListService {
     try {
       await updateTitles();
       await updateListGenres();
-      await filterTitles();
+      await filterItems();
     } finally {
       isLoading.value = false;
     }
   }
 
   @override
-  Future<void> filterTitles({bool retainPagination = false}) async {
-    clearLoadedTitles();
+  Future<void> filterItems({bool retainPagination = false}) async {
+    clearLoadedItems(clearGenreCache: true, resetCount: true);
 
     anyFilterApplied = true;
 
@@ -119,7 +119,7 @@ class TmdbPersonTitlesService extends TmdbListService {
       return isSortAsc ? cmp : -cmp;
     });
 
-    selectedTitleCount.value = filtered.length;
+    selectedItemCount.value = filtered.length;
     _filteredTitles = filtered;
 
     await loadNextPageInternal();
@@ -151,7 +151,7 @@ class TmdbPersonTitlesService extends TmdbListService {
         : _filteredTitles.length;
 
     final chunk = _filteredTitles.sublist(start, end);
-    loadedTitlesVal.addAll(chunk);
+    loadedItemsVal.addAll(chunk);
     pageVal++;
 
     if (end >= _filteredTitles.length) {

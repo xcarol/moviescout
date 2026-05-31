@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/models/tmdb_person.dart';
+import 'package:moviescout/services/tmdb_person_list_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/utils/person_translator.dart';
+import 'package:moviescout/models/tmdb_person.dart';
 
 class PersonSortOption {
   static const name = 'name';
@@ -11,32 +11,28 @@ class PersonSortOption {
 }
 
 class PersonListController with ChangeNotifier {
-  final List<TmdbPerson> fullList;
-  List<TmdbPerson> _filteredList = [];
-
+  final TmdbPersonListService listService;
   late final TextEditingController textFilterController;
   final FocusNode searchFocusNode = FocusNode();
   final ScrollController scrollController = ScrollController();
 
   final String type;
-  bool _isSortAsc = true;
   bool _showFilters = false;
+  bool _isSortAsc = true;
   String _selectedSort = PersonSortOption.original;
   List<String> _personSorts = [];
-  String _languageCode = 'en';
 
-  PersonListController(this.fullList, this.type) {
+  PersonListController(this.listService, this.type) {
     textFilterController = TextEditingController();
-    _filteredList = List.from(fullList);
-    _applyFilters();
+    listService.addListener(_onListServiceChanged);
   }
 
-  List<TmdbPerson> get items => _filteredList;
-  int get itemCount => _filteredList.length;
-  bool get isSortAsc => _isSortAsc;
   bool get showFilters => _showFilters;
+  bool get isSortAsc => _isSortAsc;
   String get selectedSort => _selectedSort;
   List<String> get personSorts => _personSorts;
+  
+  int get itemCount => listService.selectedItemCount.value;
 
   void initializeControlLocalizations(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
@@ -53,8 +49,6 @@ class PersonListController with ChangeNotifier {
         localizations.department,
       ];
     }
-    _languageCode = Localizations.localeOf(context).languageCode;
-    _applyFilters();
     notifyListeners();
   }
 
@@ -84,14 +78,30 @@ class PersonListController with ChangeNotifier {
     } else if (localizedValue == localizations.cast) {
       _selectedSort = PersonSortOption.original;
     }
-    _applyFilters();
+    listService.setSort(_selectedSort, _isSortAsc);
     notifyListeners();
   }
 
   void toggleSortDirection() {
     _isSortAsc = !_isSortAsc;
-    _applyFilters();
+    listService.setSort(_selectedSort, _isSortAsc);
     notifyListeners();
+  }
+
+  void onScrollNotification(ScrollNotification scrollInfo, double itemHeight) {
+    final metrics = scrollInfo.metrics;
+    final currentScroll = metrics.pixels;
+
+    final firstVisibleIndex = (currentScroll / itemHeight).floor();
+    final visibleItemCount = (metrics.viewportDimension / itemHeight).ceil();
+    final lastVisibleIndex = firstVisibleIndex + visibleItemCount;
+
+    if (currentScroll > 0 &&
+        !listService.isLoading.value &&
+        listService.hasMore &&
+        lastVisibleIndex >= listService.loadedItemCount - 3) {
+      listService.loadNextPage();
+    }
   }
 
   void toggleFilters() {
@@ -100,48 +110,16 @@ class PersonListController with ChangeNotifier {
   }
 
   void setTextFilter(String value) {
-    _applyFilters();
-    notifyListeners();
+    listService.setTextFilter(value);
   }
 
-  void _applyFilters() {
-    final text = textFilterController.text.toLowerCase();
-    _filteredList = fullList.where((p) {
-      final localizedJob = PersonTranslator.translateJob(p.job, _languageCode);
-      final localizedDept = PersonTranslator.translateDepartment(
-          p.knownForDepartment, _languageCode);
-      return p.name.toLowerCase().contains(text) ||
-          p.originalName.toLowerCase().contains(text) ||
-          p.character.toLowerCase().contains(text) ||
-          localizedJob.toLowerCase().contains(text) ||
-          localizedDept.toLowerCase().contains(text);
-    }).toList();
-
-    _filteredList.sort((a, b) {
-      int result = 0;
-      if (_selectedSort == PersonSortOption.name) {
-        result = a.name.compareTo(b.name);
-      } else if (_selectedSort == PersonSortOption.department) {
-        result = PersonTranslator.translateDepartment(
-                a.knownForDepartment, _languageCode)
-            .compareTo(PersonTranslator.translateDepartment(
-                b.knownForDepartment, _languageCode));
-      } else if (_selectedSort == PersonSortOption.job) {
-        result = PersonTranslator.translateJob(a.job, _languageCode)
-            .compareTo(PersonTranslator.translateJob(b.job, _languageCode));
-      } else if (_selectedSort == PersonSortOption.original) {
-        result = fullList.indexOf(a).compareTo(fullList.indexOf(b));
-      }
-
-      if (result == 0 && _selectedSort != PersonSortOption.original) {
-        result = a.name.compareTo(b.name);
-      }
-      return _isSortAsc ? result : -result;
-    });
+  void _onListServiceChanged() {
+    notifyListeners();
   }
 
   @override
   void dispose() {
+    listService.removeListener(_onListServiceChanged);
     textFilterController.dispose();
     searchFocusNode.dispose();
     scrollController.dispose();

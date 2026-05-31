@@ -8,7 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_person_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
@@ -22,12 +22,12 @@ import 'package:share_plus/share_plus.dart';
 
 class PersonDetails extends StatefulWidget {
   final TmdbPerson _person;
-  final TmdbListService _tmdbListService;
+  final TmdbTitleListService _tmdbListService;
 
   const PersonDetails({
     super.key,
     required TmdbPerson person,
-    required TmdbListService tmdbListService,
+    required TmdbTitleListService tmdbListService,
   })  : _person = person,
         _tmdbListService = tmdbListService;
 

@@ -14,7 +14,6 @@ class PersonListInfoLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!;
     final anyFilterActive = controller.textFilterController.text.isNotEmpty;
 
     return ListInfoLine(
@@ -37,12 +36,13 @@ class PersonListInfoLine extends StatelessWidget {
           },
         ),
       ],
-      isLoading: ValueNotifier(false),
+      isLoading: controller.listService.isLoading,
       sortSelector: ListenableBuilder(
         listenable: controller,
         builder: (context, _) {
           return DropdownSelector(
-            selectedOption: controller.getSelectedSortLabel(localizations),
+            selectedOption:
+                controller.getSelectedSortLabel(AppLocalizations.of(context)!),
             options: controller.personSorts,
             onSelected: (value) => controller.setSelectedSort(context, value),
             arrowIcon: controller.isSortAsc

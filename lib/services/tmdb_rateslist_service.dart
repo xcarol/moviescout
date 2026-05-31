@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
-import 'package:moviescout/services/tmdb_list_service.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_snoozed_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -17,7 +17,7 @@ const String _tmdbRateslistTv =
 const String _rateMovie = 'movie/{ID}/rating?session_id={SESSION_ID}';
 const String _rateTv = 'tv/{ID}/rating?session_id={SESSION_ID}';
 
-class TmdbRateslistService extends TmdbListService {
+class TmdbRateslistService extends TmdbTitleListService {
   TmdbSnoozedService? snoozedService;
 
   TmdbRateslistService(super.listName, super.repository) {
@@ -151,7 +151,7 @@ class TmdbRateslistService extends TmdbListService {
       }
     }
 
-    await filterTitles(retainPagination: true);
+    return filterItems(retainPagination: true);
   }
 
   @override
