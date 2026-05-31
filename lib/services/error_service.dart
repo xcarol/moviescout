@@ -3,7 +3,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:moviescout/main.dart';
-import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/save_logs.dart';

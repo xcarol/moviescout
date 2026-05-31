@@ -9,7 +9,7 @@ import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/region_service.dart';
 import 'package:moviescout/services/app_lifecycle_service.dart';
-import 'package:moviescout/services/snack_bar.dart';
+import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 enum ApiVersion { v3, v4 }
