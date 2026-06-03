@@ -88,7 +88,7 @@ Future<bool> updateTitle(
     await NotificationService().showNotification(
       id: title.tmdbId,
       title: localizations.notificationTitle,
-      body: localizations.notificationBody(providerName, title.name),
+      body: localizations.notificationBody(title.name, providerName),
       imageUrl: title.posterPath,
       payload: '${title.mediaType}|${title.tmdbId}',
     );
