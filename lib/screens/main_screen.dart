@@ -20,6 +20,8 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
+  bool? _wasLoggedIn;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -27,10 +29,13 @@ class _MainScreenState extends State<MainScreen> {
     TmdbUserService userService =
         Provider.of<TmdbUserService>(context, listen: true);
 
-    if (userService.isUserLoggedIn == true) {
-      _currentIndex = 0;
-    } else {
-      _currentIndex = 2;
+    if (_wasLoggedIn != userService.isUserLoggedIn) {
+      _wasLoggedIn = userService.isUserLoggedIn;
+      if (userService.isUserLoggedIn) {
+        _currentIndex = 0;
+      } else {
+        _currentIndex = 2;
+      }
     }
   }
 
