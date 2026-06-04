@@ -59,7 +59,6 @@ class _TitleDetailsState extends State<TitleDetails> {
   bool _isUpdatingRatings = false;
   List<Map<String, dynamic>>? _omdbRatings;
   String _selectedSeason = '';
-  late MediaQueryData _mediaQuery;
 
   @override
   void initState() {
@@ -109,7 +108,6 @@ class _TitleDetailsState extends State<TitleDetails> {
   @override
   Widget build(BuildContext context) {
     String appTitle = _currentTitle.name;
-    _mediaQuery = MediaQuery.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -943,16 +941,21 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   Widget _personChip(BuildContext context, TmdbPerson tmdbPerson) {
-    final clampedScale = _mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
+    return Builder(
+      builder: (innerContext) {
+        final mediaQuery = MediaQuery.of(innerContext);
+        final clampedScale = mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
 
-    return MediaQuery(
-      data: _mediaQuery.copyWith(
-        textScaler: TextScaler.linear(clampedScale),
-      ),
-      child: PersonChip(
-        person: tmdbPerson,
-        tmdbListService: widget._tmdbListService,
-      ),
+        return MediaQuery(
+          data: mediaQuery.copyWith(
+            textScaler: TextScaler.linear(clampedScale),
+          ),
+          child: PersonChip(
+            person: tmdbPerson,
+            tmdbListService: widget._tmdbListService,
+          ),
+        );
+      },
     );
   }
 
