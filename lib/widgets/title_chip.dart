@@ -27,12 +27,12 @@ class TitleChip extends StatefulWidget {
 }
 
 class _TitleChipState extends State<TitleChip> {
-  late Future<TmdbTitle> _titleFuture;
+  Future<TmdbTitle>? _titleFuture;
 
   @override
   void initState() {
     super.initState();
-    _titleFuture = TmdbTitleService().updateTitleLight(widget.title);
+    _checkInitFuture();
   }
 
   @override
@@ -40,7 +40,17 @@ class _TitleChipState extends State<TitleChip> {
     super.didUpdateWidget(oldWidget);
     if (widget.title.tmdbId != oldWidget.title.tmdbId ||
         widget.title.mediaType != oldWidget.title.mediaType) {
+      _checkInitFuture();
+    }
+  }
+
+  void _checkInitFuture() {
+    final localTitle = widget.tmdbListService.getTitleByTmdbIdSync(
+        widget.title.tmdbId, widget.title.mediaType);
+    if (localTitle == null) {
       _titleFuture = TmdbTitleService().updateTitleLight(widget.title);
+    } else {
+      _titleFuture = null;
     }
   }
 
@@ -48,6 +58,23 @@ class _TitleChipState extends State<TitleChip> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final clampedScale = mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
+
+    // Always fetch latest from DB synchronously in case it was updated (e.g. returning from details)
+    final localTitle = widget.tmdbListService.getTitleByTmdbIdSync(
+        widget.title.tmdbId, widget.title.mediaType);
+
+    if (localTitle != null) {
+      return Padding(
+        padding: const EdgeInsets.only(right: 10),
+        child: MediaQuery(
+          data: mediaQuery.copyWith(textScaler: TextScaler.linear(clampedScale)),
+          child: _TitleChipContent(
+            title: localTitle,
+            tmdbListService: widget.tmdbListService,
+          ),
+        ),
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.only(right: 10),
@@ -65,7 +92,7 @@ class _TitleChipState extends State<TitleChip> {
           return MediaQuery(
             data: mediaQuery.copyWith(textScaler: TextScaler.linear(clampedScale)),
             child: _TitleChipContent(
-              title: snapshot.data!,
+              title: snapshot.data ?? widget.title,
               tmdbListService: widget.tmdbListService,
             ),
           );
