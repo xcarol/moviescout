@@ -117,11 +117,9 @@ class TmdbTitleService extends TmdbBaseService {
           details['recommendations']['results'];
     }
 
-    if (mediaType == ApiConstants.tv) {
-      final externalIds = details['external_ids'];
-      if (externalIds != null && externalIds['imdb_id'] != null) {
-        details[TmdbTitleFields.imdbId] = externalIds['imdb_id'];
-      }
+    final externalIds = details['external_ids'];
+    if (externalIds != null && externalIds['imdb_id'] != null) {
+      details[TmdbTitleFields.imdbId] = externalIds['imdb_id'];
     }
 
     _mergeMediaFallback(details, details);
