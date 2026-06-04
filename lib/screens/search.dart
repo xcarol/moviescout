@@ -122,7 +122,7 @@ class _SearchState extends State<Search> {
       builder: (context) {
         return Positioned(
           width:
-              MediaQuery.of(context).size.width - _searchHorizontalPadding * 2,
+              MediaQuery.sizeOf(context).width - _searchHorizontalPadding * 2,
           child: CompositedTransformFollower(
             link: _layerLink,
             showWhenUnlinked: false,

@@ -347,7 +347,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
     final key = widget.video['key'] as String;
     final name = widget.video['name'] as String;
     final isSearch = widget.video[TmdbTitleFields.isSearchResult] == true;
-    final currentOrientation = MediaQuery.of(context).orientation;
+    final currentOrientation = MediaQuery.orientationOf(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     if (_isPlaying &&
@@ -574,7 +574,7 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    final orientation = MediaQuery.of(context).orientation;
+    final orientation = MediaQuery.orientationOf(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     // Handle auto-exit when rotating back to portrait

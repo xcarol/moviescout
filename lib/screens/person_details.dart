@@ -338,7 +338,7 @@ class _PersonDetailsState extends State<PersonDetails> {
   }
 
   Widget _banner(TmdbPerson person) {
-    double posterWidth = min(MediaQuery.of(context).size.width, 200);
+    double posterWidth = min(MediaQuery.sizeOf(context).width, 200);
     String image = person.posterPath.isNotEmpty ? person.posterPath : '';
 
     return Padding(
@@ -390,8 +390,6 @@ class _PersonDetailsState extends State<PersonDetails> {
       ),
     ]);
   }
-
-
 
   Widget _credits(TmdbPerson person) {
     if (person.combinedCredits.cast.isEmpty) {
