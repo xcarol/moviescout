@@ -11,7 +11,6 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_person_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
-import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/widgets/title_chip.dart';
@@ -384,20 +383,7 @@ class _PersonDetailsState extends State<PersonDetails> {
     ]);
   }
 
-  Widget _titleChip(BuildContext context, TmdbTitle tmdbTitle) {
-    final clampedScale =
-        MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.3);
 
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(
-        textScaler: TextScaler.linear(clampedScale),
-      ),
-      child: TitleChip(
-        title: tmdbTitle,
-        tmdbListService: widget._tmdbListService,
-      ),
-    );
-  }
 
   Widget _credits(TmdbPerson person) {
     if (person.combinedCredits.cast.isEmpty) {
@@ -438,24 +424,9 @@ class _PersonDetailsState extends State<PersonDetails> {
             children: person.combinedCredits.cast
                 .take(10)
                 .map(
-                  (titleRecommended) => FutureBuilder(
-                    future: TmdbTitleService().updateTitleDetails(
-                      TmdbTitle.fromMap(title: {
-                        TmdbTitleFields.id: titleRecommended.tmdbId,
-                        TmdbTitleFields.mediaType: titleRecommended.mediaType
-                      }),
-                    ),
-                    builder: (context, snapshot) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: snapshot.connectionState != ConnectionState.done
-                            ? Center(child: CircularProgressIndicator())
-                            : _titleChip(
-                                context,
-                                snapshot.data as TmdbTitle,
-                              ),
-                      );
-                    },
+                  (titleRecommended) => TitleChip(
+                    title: titleRecommended,
+                    tmdbListService: widget._tmdbListService,
                   ),
                 )
                 .toList(),
@@ -504,24 +475,9 @@ class _PersonDetailsState extends State<PersonDetails> {
             children: person.combinedCredits.crew
                 .take(10)
                 .map(
-                  (titleRecommended) => FutureBuilder(
-                    future: TmdbTitleService().updateTitleDetails(
-                      TmdbTitle.fromMap(title: {
-                        TmdbTitleFields.id: titleRecommended.tmdbId,
-                        TmdbTitleFields.mediaType: titleRecommended.mediaType
-                      }),
-                    ),
-                    builder: (context, snapshot) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: snapshot.connectionState != ConnectionState.done
-                            ? Center(child: CircularProgressIndicator())
-                            : _titleChip(
-                                context,
-                                snapshot.data as TmdbTitle,
-                              ),
-                      );
-                    },
+                  (titleRecommended) => TitleChip(
+                    title: titleRecommended,
+                    tmdbListService: widget._tmdbListService,
                   ),
                 )
                 .toList(),
@@ -549,24 +505,9 @@ class _PersonDetailsState extends State<PersonDetails> {
           child: Row(
             children: userRatedTitles
                 .map(
-                  (titleRecommended) => FutureBuilder(
-                    future: TmdbTitleService().updateTitleDetails(
-                      TmdbTitle.fromMap(title: {
-                        TmdbTitleFields.id: titleRecommended.tmdbId,
-                        TmdbTitleFields.mediaType: titleRecommended.mediaType
-                      }),
-                    ),
-                    builder: (context, snapshot) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: snapshot.connectionState != ConnectionState.done
-                            ? Center(child: CircularProgressIndicator())
-                            : _titleChip(
-                                context,
-                                snapshot.data as TmdbTitle,
-                              ),
-                      );
-                    },
+                  (titleRecommended) => TitleChip(
+                    title: titleRecommended,
+                    tmdbListService: widget._tmdbListService,
                   ),
                 )
                 .toList(),

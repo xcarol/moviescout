@@ -59,6 +59,7 @@ class _TitleDetailsState extends State<TitleDetails> {
   bool _isUpdatingRatings = false;
   List<Map<String, dynamic>>? _omdbRatings;
   String _selectedSeason = '';
+  late MediaQueryData _mediaQuery;
 
   @override
   void initState() {
@@ -108,6 +109,7 @@ class _TitleDetailsState extends State<TitleDetails> {
   @override
   Widget build(BuildContext context) {
     String appTitle = _currentTitle.name;
+    _mediaQuery = MediaQuery.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -639,123 +641,130 @@ class _TitleDetailsState extends State<TitleDetails> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                            TextButton(
-                              style: TextButton.styleFrom(
-                                side: BorderSide(
-                                  color: !isUserLoggedIn
-                                      ? Theme.of(context).disabledColor
-                                      : titleRating > AppConstants.seenRating
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .onSurface,
-                                  width: 1,
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  side: BorderSide(
+                                    color: !isUserLoggedIn
+                                        ? Theme.of(context).disabledColor
+                                        : titleRating > AppConstants.seenRating
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                    width: 1,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 14),
+                                  minimumSize: const Size(0, 0),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
+                                onPressed: !isUserLoggedIn
+                                    ? null
+                                    : () => showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return RateForm(
+                                              title: title.name,
+                                              initialRate: titleRating,
+                                              initialDate: titleRatingDate,
+                                              onSubmit: (double rating) async {
+                                                await _updateTitleRate(
+                                                    title, rating);
+                                              },
+                                            );
+                                          },
+                                        ),
+                                child: Text(
+                                  AppLocalizations.of(context)!.rate,
+                                  style: TextStyle(
+                                    color: !isUserLoggedIn
+                                        ? Theme.of(context).disabledColor
+                                        : titleRating > AppConstants.seenRating
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                  ),
                                 ),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 14),
-                                minimumSize: const Size(0, 0),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
-                              onPressed: !isUserLoggedIn
-                                  ? null
-                                  : () => showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return RateForm(
-                                            title: title.name,
-                                            initialRate: titleRating,
-                                            initialDate: titleRatingDate,
-                                            onSubmit: (double rating) async {
-                                              await _updateTitleRate(
-                                                  title, rating);
-                                            },
-                                          );
-                                        },
-                                      ),
-                              child: Text(
-                                AppLocalizations.of(context)!.rate,
-                                style: TextStyle(
-                                  color: !isUserLoggedIn
-                                      ? Theme.of(context).disabledColor
-                                      : titleRating > AppConstants.seenRating
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .onSurface,
+                              const SizedBox(width: 10),
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  side: BorderSide(
+                                    color: !isUserLoggedIn ||
+                                            titleRating >
+                                                AppConstants.seenRating
+                                        ? Theme.of(context).disabledColor
+                                        : (titleRating ==
+                                                AppConstants.seenRating
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurface),
+                                    width: 1,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 14),
+                                  minimumSize: const Size(0, 0),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            TextButton(
-                              style: TextButton.styleFrom(
-                                side: BorderSide(
-                                  color: !isUserLoggedIn ||
-                                          titleRating > AppConstants.seenRating
-                                      ? Theme.of(context).disabledColor
-                                      : (titleRating == AppConstants.seenRating
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .onSurface),
-                                  width: 1,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 14),
-                                minimumSize: const Size(0, 0),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              onPressed: !isUserLoggedIn ||
-                                      titleRating > AppConstants.seenRating
-                                  ? null
-                                  : () async {
-                                      final newRating =
-                                          titleRating == AppConstants.seenRating
-                                              ? 0.0
-                                              : AppConstants.seenRating;
+                                onPressed: !isUserLoggedIn ||
+                                        titleRating > AppConstants.seenRating
+                                    ? null
+                                    : () async {
+                                        final newRating = titleRating ==
+                                                AppConstants.seenRating
+                                            ? 0.0
+                                            : AppConstants.seenRating;
 
-                                      await _updateTitleRate(title, newRating);
-                                    },
-                              child: Tooltip(
-                                message: titleRating == AppConstants.seenRating
-                                    ? AppLocalizations.of(context)!.seen
-                                    : AppLocalizations.of(context)!.markAsSeen,
-                                child: Icon(
-                                  titleRating > 0
-                                      ? Symbols.done_outline
-                                      : Symbols.check,
-                                  color: titleRating > 0
-                                      ? (!isUserLoggedIn ||
-                                              titleRating >
-                                                  AppConstants.seenRating
-                                          ? Theme.of(context).disabledColor
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .primary)
-                                      : (isUserLoggedIn
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .onSurface
-                                          : Theme.of(context).disabledColor),
+                                        await _updateTitleRate(
+                                            title, newRating);
+                                      },
+                                child: Tooltip(
+                                  message:
+                                      titleRating == AppConstants.seenRating
+                                          ? AppLocalizations.of(context)!.seen
+                                          : AppLocalizations.of(context)!
+                                              .markAsSeen,
+                                  child: Icon(
+                                    titleRating > 0
+                                        ? Symbols.done_outline
+                                        : Symbols.check,
+                                    color: titleRating > 0
+                                        ? (!isUserLoggedIn ||
+                                                titleRating >
+                                                    AppConstants.seenRating
+                                            ? Theme.of(context).disabledColor
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .primary)
+                                        : (isUserLoggedIn
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                            : Theme.of(context).disabledColor),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
                   ],
                 );
               },
@@ -934,11 +943,10 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   Widget _personChip(BuildContext context, TmdbPerson tmdbPerson) {
-    final clampedScale =
-        MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.3);
+    final clampedScale = _mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
 
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(
+      data: _mediaQuery.copyWith(
         textScaler: TextScaler.linear(clampedScale),
       ),
       child: PersonChip(
@@ -948,20 +956,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  Widget _titleChip(BuildContext context, TmdbTitle tmdbTitle) {
-    final clampedScale =
-        MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.3);
 
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(
-        textScaler: TextScaler.linear(clampedScale),
-      ),
-      child: TitleChip(
-        title: tmdbTitle,
-        tmdbListService: widget._tmdbListService,
-      ),
-    );
-  }
 
   Widget _seasonsDropdown(TmdbTitle title) {
     if (title.isMovie || title.numberOfSeasons == 0) {
@@ -1106,21 +1101,9 @@ class _TitleDetailsState extends State<TitleDetails> {
           child: Row(
             children: title.recommendations
                 .map(
-                  (titleRecommended) => FutureBuilder(
-                    future: TmdbTitleService().updateTitleDetails(
-                      TmdbTitle.fromMap(title: titleRecommended),
-                    ),
-                    builder: (context, snapshot) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: snapshot.connectionState != ConnectionState.done
-                            ? Center(child: CircularProgressIndicator())
-                            : _titleChip(
-                                context,
-                                snapshot.data as TmdbTitle,
-                              ),
-                      );
-                    },
+                  (titleRecommended) => TitleChip(
+                    title: TmdbTitle.fromMap(title: titleRecommended),
+                    tmdbListService: widget._tmdbListService,
                   ),
                 )
                 .toList(),
