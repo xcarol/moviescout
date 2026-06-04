@@ -35,12 +35,20 @@ class PersonDetails extends StatefulWidget {
 }
 
 class _PersonDetailsState extends State<PersonDetails> {
+  late Future<TmdbPerson> _personFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _personFuture = TmdbPersonService().updatePersonDetails(widget._person);
+  }
+
   @override
   Widget build(BuildContext context) {
     String appTitle = widget._person.name;
 
     return FutureBuilder(
-      future: TmdbPersonService().updatePersonDetails(widget._person),
+      future: _personFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Scaffold(
