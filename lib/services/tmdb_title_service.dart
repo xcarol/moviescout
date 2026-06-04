@@ -12,9 +12,9 @@ const String _tmdbDetails =
 const String _tmdbBrief =
     '/{MEDIA_TYPE}/{ID}?append_to_response=images,videos&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
 
-const String _tmdbProviders = '/{MEDIA_TYPE}/{ID}/watch/providers';
+const String _tmdbProviders = '/{MEDIA_TYPE}/{ID}/watch%2Fproviders';
 const String _tmdbLight =
-    '/{MEDIA_TYPE}/{ID}?append_to_response=watch/providers&language={LOCALE}';
+    '/{MEDIA_TYPE}/{ID}?append_to_response=watch%2Fproviders&language={LOCALE}';
 
 class TmdbTitleService extends TmdbBaseService {
   Future<dynamic> _retrieveTitleDetails(
