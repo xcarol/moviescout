@@ -12,9 +12,9 @@ const String _tmdbDetails =
 const String _tmdbBrief =
     '/{MEDIA_TYPE}/{ID}?append_to_response=images,videos&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
 
-const String _tmdbProviders = '/{MEDIA_TYPE}/{ID}/watch/providers';
+const String _tmdbProviders = '/{MEDIA_TYPE}/{ID}/watch%2Fproviders';
 const String _tmdbLight =
-    '/{MEDIA_TYPE}/{ID}?append_to_response=watch/providers&language={LOCALE}';
+    '/{MEDIA_TYPE}/{ID}?append_to_response=watch%2Fproviders&language={LOCALE}';
 
 class TmdbTitleService extends TmdbBaseService {
   Future<dynamic> _retrieveTitleDetails(
@@ -117,13 +117,13 @@ class TmdbTitleService extends TmdbBaseService {
           details['recommendations']['results'];
     }
 
-    if (mediaType == ApiConstants.tv) {
-      final externalIds = details['external_ids'];
-      if (externalIds != null && externalIds['imdb_id'] != null) {
-        details[TmdbTitleFields.imdbId] = externalIds['imdb_id'];
-      }
+    final externalIds = details['external_ids'];
+    if (externalIds != null && externalIds['imdb_id'] != null) {
+      details[TmdbTitleFields.imdbId] = externalIds['imdb_id'];
     }
 
+    // Extracts, sorts, and flattens the nested structures for images and videos
+    // from the raw API response into the expected format within the same map.
     _mergeMediaFallback(details, details);
 
     details[TmdbTitleFields.homepage] = details['homepage'];
@@ -242,6 +242,18 @@ class TmdbTitleService extends TmdbBaseService {
 
     final Map<String, dynamic> details = body(result);
 
+    if ((details[TmdbTitleFields.overview] ?? '').isEmpty) {
+      final result = await _retrieveTitleLight(
+        title.tmdbId,
+        mediaType,
+        getCountryCode().toLowerCase(),
+      );
+
+      if (result.statusCode == 200) {
+        _mergeFallback(details, body(result), mediaType);
+      }
+    }
+
     title.numberOfSeasons =
         details[TmdbTitleFields.numberOfSeasons] ?? title.numberOfSeasons;
     title.status = details[TmdbTitleFields.status] ?? title.status;
@@ -250,6 +262,13 @@ class TmdbTitleService extends TmdbBaseService {
     title.voteAverage =
         (details[TmdbTitleFields.voteAverage] ?? title.voteAverage).toDouble();
     title.voteCount = details[TmdbTitleFields.voteCount] ?? title.voteCount;
+
+    title.runtime = details[TmdbTitleFields.runtime] ?? title.runtime;
+    title.numberOfEpisodes =
+        details[TmdbTitleFields.numberOfEpisodes] ?? title.numberOfEpisodes;
+    title.effectiveRuntime = title.mediaType == ApiConstants.movie
+        ? title.runtime
+        : title.numberOfEpisodes;
 
     if (details.containsKey(TmdbTitleFields.nextEpisodeToAir)) {
       title.nextEpisodeToAirJson =

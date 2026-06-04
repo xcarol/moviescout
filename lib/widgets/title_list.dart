@@ -86,27 +86,33 @@ class _TitleListState extends State<TitleList> {
               if (title == null) {
                 return const SizedBox.shrink();
               }
-              final clampedScale =
-                  MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.3);
+              return Builder(
+                builder: (innerContext) {
+                  final mediaQuery = MediaQuery.of(innerContext);
+                  final clampedScale =
+                      mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
 
-              final titleTheme = Theme.of(context).extension<CustomColors>()!;
+                  final titleTheme =
+                      Theme.of(context).extension<CustomColors>()!;
 
-              return MediaQuery(
-                data: MediaQuery.of(context).copyWith(
-                  textScaler: TextScaler.linear(clampedScale),
-                ),
-                child: Column(
-                  children: [
-                    TitleCard(
-                      title: title,
-                      tmdbListService: widget.listService,
+                  return MediaQuery(
+                    data: mediaQuery.copyWith(
+                      textScaler: TextScaler.linear(clampedScale),
                     ),
-                    Divider(
-                      height: 1,
-                      color: titleTheme.dividerColor,
+                    child: Column(
+                      children: [
+                        TitleCard(
+                          title: title,
+                          tmdbListService: widget.listService,
+                        ),
+                        Divider(
+                          height: 1,
+                          color: titleTheme.dividerColor,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                },
               );
             },
           ),

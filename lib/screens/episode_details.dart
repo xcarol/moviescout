@@ -272,17 +272,21 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
   }
 
   Widget _personChip(BuildContext context, TmdbPerson tmdbPerson) {
-    final clampedScale =
-        MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.3);
+    return Builder(
+      builder: (innerContext) {
+        final mediaQuery = MediaQuery.of(innerContext);
+        final clampedScale = mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
 
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(
-        textScaler: TextScaler.linear(clampedScale),
-      ),
-      child: PersonChip(
-        person: tmdbPerson,
-        tmdbListService: widget.tmdbListService,
-      ),
+        return MediaQuery(
+          data: mediaQuery.copyWith(
+            textScaler: TextScaler.linear(clampedScale),
+          ),
+          child: PersonChip(
+            person: tmdbPerson,
+            tmdbListService: widget.tmdbListService,
+          ),
+        );
+      },
     );
   }
 }
