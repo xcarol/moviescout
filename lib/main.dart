@@ -224,7 +224,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       final regionProvider = Provider.of<RegionService>(context, listen: false);
       regionProvider.removeListener(_onRegionChanged);
     } catch (_) {}
-    
+
     AppLifecycleService.instance.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();

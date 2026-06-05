@@ -13,8 +13,8 @@ class ErrorService {
     dynamic error, {
     StackTrace? stackTrace,
     String? userMessage,
-    bool showSnackBar = true,
-    bool reportToCrashlytics = false,
+    bool showSnackBar = false,
+    bool reportToCrashlytics = true,
   }) {
     debugPrint('--- ERROR ---');
     debugPrint('Error: $error');

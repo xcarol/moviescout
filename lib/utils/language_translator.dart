@@ -27,7 +27,6 @@ class LanguageTranslator {
       ErrorService.log(
         'Error loading languages for $lang: $e',
         stackTrace: stackTrace,
-        showSnackBar: false,
       );
     }
   }

@@ -200,7 +200,6 @@ class _PersonDetailsState extends State<PersonDetails> {
       ErrorService.log(
         e,
         stackTrace: stackTrace,
-        showSnackBar: false,
       );
       return dateString;
     }
@@ -226,7 +225,6 @@ class _PersonDetailsState extends State<PersonDetails> {
       ErrorService.log(
         e,
         stackTrace: stackTrace,
-        showSnackBar: false,
       );
       return '';
     }

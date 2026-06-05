@@ -113,7 +113,6 @@ class TmdbBaseService {
         ErrorService.log(
           error,
           stackTrace: stackTrace,
-          showSnackBar: false,
         );
         rethrow;
       }
@@ -154,7 +153,6 @@ class TmdbBaseService {
       ErrorService.log(
         error,
         stackTrace: stackTrace,
-        showSnackBar: false,
       );
       throw HttpException(message);
     }
@@ -186,7 +184,6 @@ class TmdbBaseService {
       ErrorService.log(
         error,
         stackTrace: stackTrace,
-        showSnackBar: false,
       );
       throw HttpException(message);
     }
@@ -218,7 +215,6 @@ class TmdbBaseService {
       ErrorService.log(
         error,
         stackTrace: stackTrace,
-        showSnackBar: false,
       );
       throw HttpException(message);
     }

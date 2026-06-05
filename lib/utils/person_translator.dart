@@ -26,7 +26,6 @@ class PersonTranslator {
       ErrorService.log(
         'Error loading jobs/departments for $lang: $e',
         stackTrace: stackTrace,
-        showSnackBar: false,
       );
     }
   }

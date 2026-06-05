@@ -52,7 +52,6 @@ class RegionService with ChangeNotifier {
             e,
             stackTrace: stackTrace,
             userMessage: 'Error detecting region',
-            showSnackBar: false,
           );
         }
       }

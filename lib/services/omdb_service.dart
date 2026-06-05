@@ -9,7 +9,7 @@ class OmdbService {
   static const String _baseUrl = 'https://www.omdbapi.com/';
 
   static final Map<String, List<Map<String, dynamic>>> _cache = {};
-  
+
   Future<List<Map<String, dynamic>>> getRatings(String imdbId) async {
     if (imdbId.isEmpty) return [];
     if (_cache.containsKey(imdbId)) return _cache[imdbId]!;
@@ -38,14 +38,12 @@ class OmdbService {
       } else {
         ErrorService.log(
             'OMDB API returned ${response.statusCode} for imdbId $imdbId',
-            showSnackBar: false,
             reportToCrashlytics: response.statusCode == 401 ? true : false);
       }
     } catch (e, stackTrace) {
       ErrorService.log(
         'Error fetching OMDB ratings: $e',
         stackTrace: stackTrace,
-        showSnackBar: false,
       );
     }
 

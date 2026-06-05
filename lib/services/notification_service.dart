@@ -227,7 +227,6 @@ class NotificationService extends ChangeNotifier {
         ErrorService.log(
           e,
           stackTrace: stackTrace,
-          showSnackBar: false,
         );
       }
     }
