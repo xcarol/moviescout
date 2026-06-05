@@ -263,6 +263,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
 
     if (isInitialLoad) {
       await repository.saveTitles(serverList, listNameVal);
+      await filterItems();
     } else {
       final serverKeys =
           serverList.map((t) => '${t.tmdbId}_${t.mediaType}').toSet();
@@ -282,6 +283,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
             titlesToAdd.map((t) => TmdbTitleService().updateTitleDetails(t)));
         await repository.saveTitles(updated.cast<TmdbTitle>(), listNameVal,
             addedOrders: titlesToAdd.map((t) => ++currentMax).toList());
+        await filterItems();
       }
 
       if (keysToRemove.isNotEmpty) {
@@ -291,6 +293,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
         final idsToRemove = entriesToRemove.map((e) => e.tmdbId).toList();
         final mediaTypes = entriesToRemove.map((e) => e.mediaType).toList();
         await repository.deleteTitles(listNameVal, idsToRemove, mediaTypes);
+        await filterItems();
       }
     }
 
@@ -314,7 +317,6 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
         await repository.saveTitles(updated.cast<TmdbTitle>(), listNameVal,
             addedOrders: batch.map((t) => startOrder++).toList());
 
-        selectedItemCount.value = i + batchSize;
         await Future.delayed(Duration.zero);
       }
     }
