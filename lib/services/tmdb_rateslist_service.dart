@@ -122,7 +122,8 @@ class TmdbRateslistService extends TmdbTitleListService {
         if (watchlistTitle != null) {
           await repository.deleteTitle(
               AppConstants.watchlist, title.tmdbId, title.mediaType);
-          title.inLists = title.inLists.toList()..remove(AppConstants.watchlist);
+          title.inLists = title.inLists.toList()
+            ..remove(AppConstants.watchlist);
         }
       }
       await updateTitle(accountId, sessionId, title, rating > 0,
@@ -161,5 +162,14 @@ class TmdbRateslistService extends TmdbTitleListService {
     required Locale locale,
   }) async {
     await retrieveRateslist(accountId, sessionId, locale, forceUpdate: true);
+    await snoozedService!.fetchAndApplySnoozedTitles();
+  }
+
+  @override
+  Future<void> onBackgroundSyncComplete() async {
+    if (snoozedService != null) {
+      await snoozedService!.fetchAndApplySnoozedTitles();
+    }
+    await super.onBackgroundSyncComplete();
   }
 }

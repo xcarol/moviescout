@@ -52,8 +52,6 @@ class TmdbPinnedService extends TmdbConfigListService {
         ErrorService.log(
           'TMDB API Error: ${response.statusCode} - ${response.body}',
           userMessage: 'Error fetching pinned configuration',
-          showSnackBar: false,
-          reportToCrashlytics: true,
         );
       }
     } catch (e, stackTrace) {
@@ -61,8 +59,6 @@ class TmdbPinnedService extends TmdbConfigListService {
         e,
         stackTrace: stackTrace,
         userMessage: 'Error fetching pinned titles',
-        showSnackBar: false,
-        reportToCrashlytics: true,
       );
     }
   }
@@ -128,8 +124,6 @@ class TmdbPinnedService extends TmdbConfigListService {
         ErrorService.log(
           'TMDB API Error: ${response.statusCode} - ${response.body}',
           userMessage: 'Error adding pinned to server',
-          showSnackBar: false,
-          reportToCrashlytics: true,
         );
         return false;
       }
@@ -138,8 +132,6 @@ class TmdbPinnedService extends TmdbConfigListService {
         e,
         stackTrace: stackTrace,
         userMessage: 'Exception adding pinned to server',
-        showSnackBar: false,
-        reportToCrashlytics: true,
       );
       return false;
     }
@@ -167,8 +159,6 @@ class TmdbPinnedService extends TmdbConfigListService {
         ErrorService.log(
           'TMDB API Error: ${response.statusCode} - ${response.body}',
           userMessage: 'Error removing pinned from server',
-          showSnackBar: false,
-          reportToCrashlytics: true,
         );
         return false;
       }
@@ -177,8 +167,6 @@ class TmdbPinnedService extends TmdbConfigListService {
         e,
         stackTrace: stackTrace,
         userMessage: 'Exception removing pinned from server',
-        showSnackBar: false,
-        reportToCrashlytics: true,
       );
       return false;
     }

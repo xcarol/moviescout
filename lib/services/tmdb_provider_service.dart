@@ -37,7 +37,6 @@ class TmdbProviderService extends TmdbConfigListService {
         ErrorService.log(
           message,
           userMessage: 'Error loading platforms',
-          showSnackBar: false,
         );
         throw Exception(message);
       }
@@ -51,7 +50,6 @@ class TmdbProviderService extends TmdbConfigListService {
         ErrorService.log(
           message,
           userMessage: 'Error loading platforms',
-          showSnackBar: false,
         );
         throw Exception(message);
       }
@@ -141,7 +139,6 @@ class TmdbProviderService extends TmdbConfigListService {
         error,
         stackTrace: stackTrace,
         userMessage: 'Error parsing platforms',
-        showSnackBar: false,
       );
     }
   }

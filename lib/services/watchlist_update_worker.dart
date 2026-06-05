@@ -280,7 +280,6 @@ void callbackDispatcher() {
         error,
         stackTrace: stackTrace,
         userMessage: 'Error in background task',
-        showSnackBar: false,
       );
       return Future.value(false);
     }

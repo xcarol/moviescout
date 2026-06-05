@@ -1,7 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/search_history_service.dart';
-import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/widgets/title_list.dart';
@@ -22,6 +22,7 @@ class _SearchState extends State<Search> {
   final SearchHistoryService _historyService = SearchHistoryService();
   late Widget _searchWidget;
   String _previousText = '';
+  Timer? _debounce;
 
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
@@ -52,6 +53,7 @@ class _SearchState extends State<Search> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _removeOverlay();
     _controller.removeListener(_onSearchChanged);
     _searchFocusNode.removeListener(_onFocusChanged);
@@ -98,6 +100,18 @@ class _SearchState extends State<Search> {
       }
     }
     _previousText = _controller.text;
+
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    if (text.length >= 3) {
+      _debounce = Timer(const Duration(seconds: 1), () {
+        if (mounted) {
+          searchTitle(context, text);
+        }
+      });
+    } else if (text.isEmpty) {
+      _resetTitle();
+    }
   }
 
   void _showOverlay() {
@@ -281,17 +295,8 @@ class _SearchState extends State<Search> {
       _historyService.add(term);
     }
 
-    try {
-      Locale locale = Localizations.localeOf(context);
-      await _resetTitle();
-      await _searchService.retrieveSearchlist(anonymousAccountId, term, locale);
-    } catch (error, stackTrace) {
-      if (mounted) {
-        ErrorService.log(
-          error,
-          stackTrace: stackTrace,
-        );
-      }
-    }
+    Locale locale = Localizations.localeOf(context);
+    await _resetTitle();
+    await _searchService.retrieveSearchlist(anonymousAccountId, term, locale);
   }
 }

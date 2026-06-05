@@ -155,28 +155,38 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
 
     await predecessor.catchError((_) {});
 
-    try {
-      bool isUpToDateNow =
-          UpdateManager().isUpToDate(listNameVal, cacheTimeout);
-      if (listIsNotEmpty && isUpToDateNow && !forceUpdate) {
-        return;
+    Future<void> backgroundSync() async {
+      try {
+        bool isUpToDateNow =
+            UpdateManager().isUpToDate(listNameVal, cacheTimeout);
+        if (listIsNotEmpty && isUpToDateNow && !forceUpdate) {
+          return;
+        }
+
+        await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
+
+        await updateListGenres();
+
+        setLastUpdate();
+      } catch (error, stackTrace) {
+        ErrorService.log(
+          error,
+          stackTrace: stackTrace,
+          userMessage: 'Error updating list $listNameVal',
+        );
+      } finally {
+        await onBackgroundSyncComplete();
+        isLoading.value = false;
+        completer.complete();
       }
-
-      await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
-
-      await updateListGenres();
-
-      setLastUpdate();
-    } catch (error, stackTrace) {
-      ErrorService.log(
-        error,
-        stackTrace: stackTrace,
-        userMessage: 'Error updating list $listNameVal',
-      );
-    } finally {
-      isLoading.value = false;
-      completer.complete();
     }
+
+    unawaited(backgroundSync());
+  }
+
+  @protected
+  Future<void> onBackgroundSyncComplete() async {
+    await filterItems();
   }
 
   Future<dynamic> _retrieveServerList(
@@ -253,6 +263,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
 
     if (isInitialLoad) {
       await repository.saveTitles(serverList, listNameVal);
+      await filterItems();
     } else {
       final serverKeys =
           serverList.map((t) => '${t.tmdbId}_${t.mediaType}').toSet();
@@ -272,6 +283,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
             titlesToAdd.map((t) => TmdbTitleService().updateTitleDetails(t)));
         await repository.saveTitles(updated.cast<TmdbTitle>(), listNameVal,
             addedOrders: titlesToAdd.map((t) => ++currentMax).toList());
+        await filterItems();
       }
 
       if (keysToRemove.isNotEmpty) {
@@ -281,6 +293,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
         final idsToRemove = entriesToRemove.map((e) => e.tmdbId).toList();
         final mediaTypes = entriesToRemove.map((e) => e.mediaType).toList();
         await repository.deleteTitles(listNameVal, idsToRemove, mediaTypes);
+        await filterItems();
       }
     }
 
@@ -304,7 +317,6 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
         await repository.saveTitles(updated.cast<TmdbTitle>(), listNameVal,
             addedOrders: batch.map((t) => startOrder++).toList());
 
-        selectedItemCount.value = i + batchSize;
         await Future.delayed(Duration.zero);
       }
     }

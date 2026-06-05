@@ -54,8 +54,6 @@ class TmdbSnoozedService extends TmdbConfigListService {
         ErrorService.log(
           'TMDB API Error: ${response.statusCode} - ${response.body}',
           userMessage: 'Error fetching snoozed configuration',
-          showSnackBar: false,
-          reportToCrashlytics: true,
         );
       }
     } catch (e, stackTrace) {
@@ -63,8 +61,6 @@ class TmdbSnoozedService extends TmdbConfigListService {
         e,
         stackTrace: stackTrace,
         userMessage: 'Error fetching snoozed titles',
-        showSnackBar: false,
-        reportToCrashlytics: true,
       );
     }
   }
@@ -130,8 +126,6 @@ class TmdbSnoozedService extends TmdbConfigListService {
         ErrorService.log(
           'TMDB API Error: ${response.statusCode} - ${response.body}',
           userMessage: 'Error adding snoozed to server',
-          showSnackBar: false,
-          reportToCrashlytics: true,
         );
         return false;
       }
@@ -140,8 +134,6 @@ class TmdbSnoozedService extends TmdbConfigListService {
         e,
         stackTrace: stackTrace,
         userMessage: 'Exception adding snoozed to server',
-        showSnackBar: false,
-        reportToCrashlytics: true,
       );
       return false;
     }
@@ -169,8 +161,6 @@ class TmdbSnoozedService extends TmdbConfigListService {
         ErrorService.log(
           'TMDB API Error: ${response.statusCode} - ${response.body}',
           userMessage: 'Error removing snoozed from server',
-          showSnackBar: false,
-          reportToCrashlytics: true,
         );
         return false;
       }
@@ -179,8 +169,6 @@ class TmdbSnoozedService extends TmdbConfigListService {
         e,
         stackTrace: stackTrace,
         userMessage: 'Exception removing snoozed from server',
-        showSnackBar: false,
-        reportToCrashlytics: true,
       );
       return false;
     }

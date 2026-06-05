@@ -22,7 +22,6 @@ class TmdbTitleRepository {
         ],
         stackTrace: StackTrace.current,
         userMessage: 'Zero rating error',
-        showSnackBar: false,
       );
       return saveLogs([
         '== ZERO ERROR ==',
@@ -48,7 +47,6 @@ class TmdbTitleRepository {
         ],
         stackTrace: StackTrace.current,
         userMessage: 'Zero rating error',
-        showSnackBar: false,
       );
       return saveLogs([
         '== ZERO ERROR ==',

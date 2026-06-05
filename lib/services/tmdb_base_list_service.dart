@@ -48,7 +48,6 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService with ChangeNotifie
       ErrorService.log(
         'Error getting item at position $position: $error',
         stackTrace: stackTrace,
-        showSnackBar: false,
       );
       return null;
     }
@@ -134,7 +133,6 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService with ChangeNotifie
       ErrorService.log(
         error.toString(),
         stackTrace: stackTrace,
-        showSnackBar: false,
       );
     } finally {
       isDbLoading = false;
@@ -163,7 +161,6 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService with ChangeNotifie
       ErrorService.log(
         error.toString(),
         stackTrace: stackTrace,
-        showSnackBar: false,
       );
     } finally {
       isDbLoading = false;

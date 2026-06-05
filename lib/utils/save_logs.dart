@@ -24,7 +24,6 @@ Future<void> saveLogs(List<String> logLines) async {
     ErrorService.log(
       errorMessage,
       userMessage: AppConstants.saveLogsMessage,
-      reportToCrashlytics: true,
       stackTrace: StackTrace.current,
     );
   }
