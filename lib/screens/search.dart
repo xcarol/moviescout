@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/search_history_service.dart';
-import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/widgets/title_list.dart';
@@ -281,17 +280,8 @@ class _SearchState extends State<Search> {
       _historyService.add(term);
     }
 
-    try {
-      Locale locale = Localizations.localeOf(context);
-      await _resetTitle();
-      await _searchService.retrieveSearchlist(anonymousAccountId, term, locale);
-    } catch (error, stackTrace) {
-      if (mounted) {
-        ErrorService.log(
-          error,
-          stackTrace: stackTrace,
-        );
-      }
-    }
+    Locale locale = Localizations.localeOf(context);
+    await _resetTitle();
+    await _searchService.retrieveSearchlist(anonymousAccountId, term, locale);
   }
 }
