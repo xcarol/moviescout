@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:moviescout/services/error_service.dart';
@@ -58,6 +59,15 @@ class RegionService with ChangeNotifier {
       retryCount++;
       if (_detectedRegion == null) {
         await Future.delayed(Duration(seconds: retryCount * 2));
+      }
+    }
+    
+    // Fallback if IP detection completely fails
+    if (_detectedRegion == null) {
+      final String? fallbackCountryCode = ui.PlatformDispatcher.instance.locale.countryCode;
+      if (fallbackCountryCode != null && fallbackCountryCode.isNotEmpty) {
+        _detectedRegion = fallbackCountryCode;
+        notifyListeners();
       }
     }
   }
