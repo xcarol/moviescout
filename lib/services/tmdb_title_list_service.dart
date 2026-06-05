@@ -155,28 +155,38 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
 
     await predecessor.catchError((_) {});
 
-    try {
-      bool isUpToDateNow =
-          UpdateManager().isUpToDate(listNameVal, cacheTimeout);
-      if (listIsNotEmpty && isUpToDateNow && !forceUpdate) {
-        return;
+    Future<void> backgroundSync() async {
+      try {
+        bool isUpToDateNow =
+            UpdateManager().isUpToDate(listNameVal, cacheTimeout);
+        if (listIsNotEmpty && isUpToDateNow && !forceUpdate) {
+          return;
+        }
+
+        await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
+
+        await updateListGenres();
+
+        setLastUpdate();
+      } catch (error, stackTrace) {
+        ErrorService.log(
+          error,
+          stackTrace: stackTrace,
+          userMessage: 'Error updating list $listNameVal',
+        );
+      } finally {
+        await onBackgroundSyncComplete();
+        isLoading.value = false;
+        completer.complete();
       }
-
-      await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
-
-      await updateListGenres();
-
-      setLastUpdate();
-    } catch (error, stackTrace) {
-      ErrorService.log(
-        error,
-        stackTrace: stackTrace,
-        userMessage: 'Error updating list $listNameVal',
-      );
-    } finally {
-      isLoading.value = false;
-      completer.complete();
     }
+
+    unawaited(backgroundSync());
+  }
+
+  @protected
+  Future<void> onBackgroundSyncComplete() async {
+    await filterItems();
   }
 
   Future<dynamic> _retrieveServerList(

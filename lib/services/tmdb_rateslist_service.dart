@@ -164,4 +164,12 @@ class TmdbRateslistService extends TmdbTitleListService {
     await retrieveRateslist(accountId, sessionId, locale, forceUpdate: true);
     await snoozedService!.fetchAndApplySnoozedTitles();
   }
+
+  @override
+  Future<void> onBackgroundSyncComplete() async {
+    if (snoozedService != null) {
+      await snoozedService!.fetchAndApplySnoozedTitles();
+    }
+    await super.onBackgroundSyncComplete();
+  }
 }
