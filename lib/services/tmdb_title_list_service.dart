@@ -140,9 +140,14 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     bool forceUpdate = false,
   }) async {
     bool isUpToDate = UpdateManager().isUpToDate(listNameVal, cacheTimeout);
+    bool hasLocalData = listIsNotEmpty;
+    if (!hasLocalData) {
+      final dbCount = await repository.countTitlesFiltered(listName: listNameVal);
+      hasLocalData = dbCount > 0;
+    }
 
     if (accountId.isEmpty ||
-        (listIsNotEmpty && isUpToDate && !forceUpdate) ||
+        (hasLocalData && isUpToDate && !forceUpdate) ||
         isLoading.value) {
       return;
     }
@@ -159,7 +164,13 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       try {
         bool isUpToDateNow =
             UpdateManager().isUpToDate(listNameVal, cacheTimeout);
-        if (listIsNotEmpty && isUpToDateNow && !forceUpdate) {
+        bool hasLocalDataNow = listIsNotEmpty;
+        if (!hasLocalDataNow) {
+          final dbCount = await repository.countTitlesFiltered(listName: listNameVal);
+          hasLocalDataNow = dbCount > 0;
+        }
+
+        if (hasLocalDataNow && isUpToDateNow && !forceUpdate) {
           return;
         }
 
@@ -252,7 +263,8 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     Future<List> Function() retrieveMovies,
     Future<List> Function() retrieveTvshows,
   ) async {
-    final bool isInitialLoad = listIsEmpty;
+    final dbCount = await repository.countTitlesFiltered(listName: listNameVal);
+    final bool isInitialLoad = dbCount == 0;
 
     if (isInitialLoad) {
       await _clearLocalList();
