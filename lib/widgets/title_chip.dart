@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -8,9 +9,9 @@ import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 
 // ignore: constant_identifier_names
-const double CARD_HEIGHT = 480.0;
+const double CARD_HEIGHT = 336.0;
 // ignore: constant_identifier_names
-const double CARD_WIDTH = 200.0;
+const double CARD_WIDTH = 160.0;
 
 class TitleChip extends StatefulWidget {
   final TmdbTitle title;
@@ -129,19 +130,35 @@ class _TitleChipContent extends TitleCard {
                       )),
             );
           },
-          child: Column(
+          child: Stack(
+            fit: StackFit.expand,
             children: [
-              SizedBox(
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: titlePoster(_title.posterPath),
+              ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12),
+                    bottomLeft: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
                   ),
-                  child: titlePoster(_title.posterPath),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      color: Theme.of(context)
+                          .extension<CustomColors>()!
+                          .chipCardBackground
+                          .withValues(alpha: 0.8),
+                      padding: const EdgeInsets.all(8.0),
+                      child: _titleDetails(context, _title),
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(width: 10),
-              _titleDetails(context, _title),
             ],
           ),
         ),
@@ -150,48 +167,49 @@ class _TitleChipContent extends TitleCard {
   }
 
   Widget _titleDetails(BuildContext context, TmdbTitle tmdbTitle) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            titleHeader(tmdbTitle.name, maxLines: 2),
-            const SizedBox(height: 5),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          tmdbTitle.name,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+        const SizedBox(height: 5),
+        Text(
+          '${titleDate(tmdbTitle)} - ${tmdbTitle.duration}',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontSize: 12,
+          ),
+        ),
+        const SizedBox(height: 5),
+        titleRating(
+          context,
+          tmdbTitle,
+          extraWidgets: [
             Expanded(
-              child: Column(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '${titleDate(tmdbTitle)} - ${tmdbTitle.duration}',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  titleRating(
-                    context,
-                    tmdbTitle,
-                    extraWidgets: [
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            watchlistButton(context, tmdbTitle),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 5),
-                  Flexible(child: providers(tmdbTitle)),
+                  watchlistButton(context, tmdbTitle),
                 ],
               ),
             ),
           ],
         ),
-      ),
+        const SizedBox(height: 5),
+        SizedBox(
+          height: 30,
+          child: providers(tmdbTitle),
+        ),
+      ],
     );
   }
 }

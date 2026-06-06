@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,9 +9,9 @@ import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
 
 // ignore: constant_identifier_names
-const double CARD_HEIGHT = 420.0;
+const double CARD_HEIGHT = 336.0;
 // ignore: constant_identifier_names
-const double CARD_WIDTH = 200.0;
+const double CARD_WIDTH = 160.0;
 
 class PersonChip extends StatelessWidget {
   final TmdbPerson _person;
@@ -42,20 +43,35 @@ class PersonChip extends StatelessWidget {
                       )),
             );
           },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          child: Stack(
+            fit: StackFit.expand,
             children: [
-              SizedBox(
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: _poster(_person.posterPath),
+              ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12),
+                    bottomLeft: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
                   ),
-                  child: _poster(_person.posterPath),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      color: Theme.of(context)
+                          .extension<CustomColors>()!
+                          .chipCardBackground
+                          .withValues(alpha: 0.8),
+                      padding: const EdgeInsets.all(8.0),
+                      child: _details(context, _person),
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 10),
-              _details(context, _person),
             ],
           ),
         ),
@@ -96,45 +112,47 @@ class PersonChip extends StatelessWidget {
     );
   }
 
-  Text _personName(String name, {int maxLines = 1}) {
-    return Text(
-      name,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-      ),
-      maxLines: maxLines,
-      overflow: TextOverflow.ellipsis,
-    );
-  }
-
   Widget _details(BuildContext context, TmdbPerson tmdbPerson) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          _personName(tmdbPerson.name, maxLines: 2),
-          const SizedBox(height: 5),
-          if (tmdbPerson.character.isNotEmpty) const SizedBox(height: 5),
-          if (tmdbPerson.character.isNotEmpty)
-            Text(tmdbPerson.character,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                )),
-          if (tmdbPerson.job.isNotEmpty) const SizedBox(height: 5),
-          if (tmdbPerson.job.isNotEmpty)
-            Text(tmdbPerson.localizedJob(context),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                )),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          tmdbPerson.name,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+        const SizedBox(height: 5),
+        SizedBox(
+          height: 16,
+          child: tmdbPerson.character.isNotEmpty
+              ? Text(
+                  tmdbPerson.character,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
+                )
+              : tmdbPerson.job.isNotEmpty
+                  ? Text(
+                      tmdbPerson.localizedJob(context),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 12,
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+        ),
+      ],
     );
   }
 }
