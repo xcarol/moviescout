@@ -4,10 +4,13 @@
 ## Workmanager
 -keep class com.be2ewise.workmanager.** { *; }
 
-## Isar
+## Isar (Core, Plugin & Native Links)
 -keep class io.isar.** { *; }
+-keep class dev.isar.** { *; }
 -keep class * extends io.isar.IsarLink { *; }
 -keep class * extends io.isar.IsarLinks { *; }
+-dontwarn io.isar.**
+-dontwarn dev.isar.**
 
 ## Shared Preferences
 -keep class com.google.gson.** { *; }
