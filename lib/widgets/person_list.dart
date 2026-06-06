@@ -41,38 +41,40 @@ class _PersonListState extends State<PersonList> {
     super.dispose();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final isCurrent = ModalRoute.of(context)?.isCurrent ?? false;
+    if (!isCurrent && _controller.searchFocusNode.hasFocus) {
+      _controller.searchFocusNode.unfocus();
+    }
+  }
+
   Widget _personList() {
-    return ListenableBuilder(
-      listenable: _controller,
-      builder: (context, _) {
-        return Flexible(
-          child: NotificationListener<ScrollNotification>(
-            onNotification: (scrollInfo) {
-              _controller.onScrollNotification(scrollInfo, PersonCard.cardHeight);
-              return false;
+    return Flexible(
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (scrollInfo) {
+          _controller.onScrollNotification(scrollInfo, PersonCard.cardHeight);
+          return false;
+        },
+        child: Scrollbar(
+          controller: _controller.scrollController,
+          child: ListView.builder(
+            itemExtent: PersonCard.cardHeight,
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            controller: _controller.scrollController,
+            itemCount: widget.personListService.loadedItemCount,
+            itemBuilder: (context, index) {
+              final person = widget.personListService.getItem(index);
+              if (person == null) return const SizedBox.shrink();
+              return PersonCard(
+                person: person,
+                tmdbListService: widget.titleListService,
+              );
             },
-            child: Scrollbar(
-              controller: _controller.scrollController,
-              child: ListView.builder(
-                controller: _controller.scrollController,
-                itemCount: widget.personListService.loadedItemCount,
-                itemBuilder: (context, index) {
-                  final person = widget.personListService.getItem(index);
-                  if (person == null) return const SizedBox.shrink();
-                  return Column(
-                    children: [
-                      PersonCard(
-                        person: person,
-                        tmdbListService: widget.titleListService,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
