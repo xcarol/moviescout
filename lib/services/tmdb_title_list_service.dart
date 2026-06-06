@@ -142,7 +142,8 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     bool isUpToDate = UpdateManager().isUpToDate(listNameVal, cacheTimeout);
     bool hasLocalData = listIsNotEmpty;
     if (!hasLocalData) {
-      final dbCount = await repository.countTitlesFiltered(listName: listNameVal);
+      final dbCount =
+          await repository.countTitlesFiltered(listName: listNameVal);
       hasLocalData = dbCount > 0;
     }
 
@@ -166,7 +167,8 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
             UpdateManager().isUpToDate(listNameVal, cacheTimeout);
         bool hasLocalDataNow = listIsNotEmpty;
         if (!hasLocalDataNow) {
-          final dbCount = await repository.countTitlesFiltered(listName: listNameVal);
+          final dbCount =
+              await repository.countTitlesFiltered(listName: listNameVal);
           hasLocalDataNow = dbCount > 0;
         }
 
@@ -439,12 +441,14 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       filterRating: filterRating,
       pinned: listNameVal == AppConstants.watchlist ? false : null,
     );
-    return count + (listNameVal == AppConstants.watchlist ? pinnedTitlesVal.length : 0);
+    return count +
+        (listNameVal == AppConstants.watchlist ? pinnedTitlesVal.length : 0);
   }
 
   @override
   @protected
-  Future<List<TmdbTitle>> fetchItems({required int offset, required int limit}) async {
+  Future<List<TmdbTitle>> fetchItems(
+      {required int offset, required int limit}) async {
     return await _fetchTitles(
       pinned: listNameVal == AppConstants.watchlist ? false : null,
       offset: offset,
@@ -597,6 +601,4 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
 
     return repository.getTitleByTmdbIdSync(listNameVal, tmdbId, mediaType);
   }
-
-
 }

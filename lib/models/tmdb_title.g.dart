@@ -316,19 +316,6 @@ const TmdbTitleSchema = CollectionSchema(
           caseSensitive: true,
         )
       ],
-    ),
-    r'inLists': IndexSchema(
-      id: -7763037368219779730,
-      name: r'inLists',
-      unique: false,
-      replace: false,
-      properties: [
-        IndexPropertySchema(
-          name: r'inLists',
-          type: IndexType.hash,
-          caseSensitive: true,
-        )
-      ],
     )
   },
   links: {},
@@ -997,51 +984,6 @@ extension TmdbTitleQueryWhere
               indexName: r'tmdbId_mediaType',
               lower: [tmdbId],
               upper: [tmdbId, mediaType],
-              includeUpper: false,
-            ));
-      }
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause> inListsEqualTo(
-      List<String> inLists) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'inLists',
-        value: [inLists],
-      ));
-    });
-  }
-
-  QueryBuilder<TmdbTitle, TmdbTitle, QAfterWhereClause> inListsNotEqualTo(
-      List<String> inLists) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'inLists',
-              lower: [],
-              upper: [inLists],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'inLists',
-              lower: [inLists],
-              includeLower: false,
-              upper: [],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'inLists',
-              lower: [inLists],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'inLists',
-              lower: [],
-              upper: [inLists],
               includeUpper: false,
             ));
       }
