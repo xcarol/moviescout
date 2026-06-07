@@ -21,7 +21,7 @@ class TmdbWatchlistService extends TmdbTitleListService {
   Future<void> retrieveWatchlist(
       String accountId, String sessionId, Locale locale,
       {bool forceUpdate = false}) async {
-    retrieveList(accountId, forceUpdate: forceUpdate, retrieveMovies: () async {
+    await retrieveList(accountId, forceUpdate: forceUpdate, retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
             _tmdbWatchlistMovies
@@ -128,13 +128,5 @@ class TmdbWatchlistService extends TmdbTitleListService {
     if (pinnedService != null) {
       await pinnedService!.fetchAndApplyPinnedTitles();
     }
-  }
-
-  @override
-  Future<void> onBackgroundSyncComplete() async {
-    if (pinnedService != null) {
-      await pinnedService!.fetchAndApplyPinnedTitles();
-    }
-    await super.onBackgroundSyncComplete();
   }
 }
