@@ -544,4 +544,11 @@ class TmdbTitleRepository {
       filterRating: filterRating,
     ).count();
   }
+
+  Future<bool> hasTitlesFiltered({
+    required String listName,
+  }) async {
+    final first = await _buildQuery(listName).findFirst();
+    return first != null;
+  }
 }

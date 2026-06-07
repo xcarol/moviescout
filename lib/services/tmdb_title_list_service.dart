@@ -142,14 +142,16 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     bool isUpToDate = UpdateManager().isUpToDate(listNameVal, cacheTimeout);
     bool hasLocalData = listIsNotEmpty;
     if (!hasLocalData) {
-      final dbCount =
-          await repository.countTitlesFiltered(listName: listNameVal);
-      hasLocalData = dbCount > 0;
+      hasLocalData =
+          await repository.hasTitlesFiltered(listName: listNameVal);
     }
 
     if (accountId.isEmpty ||
         (hasLocalData && isUpToDate && !forceUpdate) ||
         isLoading.value) {
+      if (hasLocalData && loadedItemsVal.isEmpty) {
+        await filterItems();
+      }
       return;
     }
 
@@ -161,45 +163,34 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
 
     await predecessor.catchError((_) {});
 
-    Future<void> backgroundSync() async {
-      try {
-        bool isUpToDateNow =
-            UpdateManager().isUpToDate(listNameVal, cacheTimeout);
-        bool hasLocalDataNow = listIsNotEmpty;
-        if (!hasLocalDataNow) {
-          final dbCount =
-              await repository.countTitlesFiltered(listName: listNameVal);
-          hasLocalDataNow = dbCount > 0;
-        }
-
-        if (hasLocalDataNow && isUpToDateNow && !forceUpdate) {
-          return;
-        }
-
-        await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
-
-        await updateListGenres();
-
-        setLastUpdate();
-      } catch (error, stackTrace) {
-        ErrorService.log(
-          error,
-          stackTrace: stackTrace,
-          userMessage: 'Error updating list $listNameVal',
-        );
-      } finally {
-        await onBackgroundSyncComplete();
-        isLoading.value = false;
-        completer.complete();
+    try {
+      bool isUpToDateNow =
+          UpdateManager().isUpToDate(listNameVal, cacheTimeout);
+      bool hasLocalDataNow = listIsNotEmpty;
+      if (!hasLocalDataNow) {
+        hasLocalDataNow =
+            await repository.hasTitlesFiltered(listName: listNameVal);
       }
+
+      if (hasLocalDataNow && isUpToDateNow && !forceUpdate) {
+        return;
+      }
+
+      await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
+
+      await updateListGenres();
+
+      setLastUpdate();
+    } catch (error, stackTrace) {
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        userMessage: 'Error updating list $listNameVal',
+      );
+    } finally {
+      isLoading.value = false;
+      completer.complete();
     }
-
-    unawaited(backgroundSync());
-  }
-
-  @protected
-  Future<void> onBackgroundSyncComplete() async {
-    await filterItems();
   }
 
   Future<dynamic> _retrieveServerList(
