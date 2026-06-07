@@ -33,17 +33,28 @@ class RegionService with ChangeNotifier {
   }
 
   Future<void> detectRegion() async {
+    final String? fallbackCountryCode =
+        ui.PlatformDispatcher.instance.locale.countryCode;
+
+    if (fallbackCountryCode != null && fallbackCountryCode.isNotEmpty) {
+      _detectedRegion = fallbackCountryCode;
+      notifyListeners();
+    }
+
     int retryCount = 0;
-    while (retryCount < 5 && _detectedRegion == null) {
+    while (retryCount < 5) {
       try {
         final response = await http
             .get(Uri.parse('https://ipapi.co/json/'))
-            .timeout(const Duration(seconds: 2));
-        
+            .timeout(const Duration(seconds: 3));
+
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
-          _detectedRegion = data['country_code'];
-          notifyListeners();
+          final newRegion = data['country_code'];
+          if (_detectedRegion != newRegion) {
+            _detectedRegion = newRegion;
+            notifyListeners();
+          }
           return;
         }
       } catch (e, stackTrace) {
@@ -56,17 +67,8 @@ class RegionService with ChangeNotifier {
         }
       }
       retryCount++;
-      if (_detectedRegion == null) {
-        await Future.delayed(Duration(seconds: retryCount * 2));
-      }
-    }
-    
-    // Fallback if IP detection completely fails
-    if (_detectedRegion == null) {
-      final String? fallbackCountryCode = ui.PlatformDispatcher.instance.locale.countryCode;
-      if (fallbackCountryCode != null && fallbackCountryCode.isNotEmpty) {
-        _detectedRegion = fallbackCountryCode;
-        notifyListeners();
+      if (retryCount < 5) {
+        await Future.delayed(const Duration(seconds: 2));
       }
     }
   }
