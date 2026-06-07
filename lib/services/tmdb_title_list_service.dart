@@ -142,9 +142,8 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     bool isUpToDate = UpdateManager().isUpToDate(listNameVal, cacheTimeout);
     bool hasLocalData = listIsNotEmpty;
     if (!hasLocalData) {
-      final dbCount =
-          await repository.countTitlesFiltered(listName: listNameVal);
-      hasLocalData = dbCount > 0;
+      hasLocalData =
+          await repository.hasTitlesFiltered(listName: listNameVal);
     }
 
     if (accountId.isEmpty ||
@@ -167,9 +166,8 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
             UpdateManager().isUpToDate(listNameVal, cacheTimeout);
         bool hasLocalDataNow = listIsNotEmpty;
         if (!hasLocalDataNow) {
-          final dbCount =
-              await repository.countTitlesFiltered(listName: listNameVal);
-          hasLocalDataNow = dbCount > 0;
+          hasLocalDataNow =
+              await repository.hasTitlesFiltered(listName: listNameVal);
         }
 
         if (hasLocalDataNow && isUpToDateNow && !forceUpdate) {
