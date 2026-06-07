@@ -66,6 +66,10 @@ class TmdbRateslistService extends TmdbTitleListService {
             version: ApiVersion.v4);
       });
     });
+
+    if (snoozedService != null) {
+      await snoozedService!.fetchAndApplySnoozedTitles();
+    }
   }
 
   Future<dynamic> _updateTitleRateToTmdb(
@@ -162,6 +166,5 @@ class TmdbRateslistService extends TmdbTitleListService {
     required Locale locale,
   }) async {
     await retrieveRateslist(accountId, sessionId, locale, forceUpdate: true);
-    await snoozedService!.fetchAndApplySnoozedTitles();
   }
 }
