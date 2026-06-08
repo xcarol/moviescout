@@ -46,8 +46,8 @@ class _TitleChipState extends State<TitleChip> {
   }
 
   void _checkInitFuture() {
-    final localTitle = widget.tmdbListService.getTitleByTmdbIdSync(
-        widget.title.tmdbId, widget.title.mediaType);
+    final localTitle = widget.tmdbListService
+        .getTitleByTmdbIdSync(widget.title.tmdbId, widget.title.mediaType);
     if (localTitle == null) {
       _titleFuture = TmdbTitleService().updateTitleLight(widget.title);
     } else {
@@ -61,14 +61,15 @@ class _TitleChipState extends State<TitleChip> {
     final clampedScale = mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
 
     // Always fetch latest from DB synchronously in case it was updated (e.g. returning from details)
-    final localTitle = widget.tmdbListService.getTitleByTmdbIdSync(
-        widget.title.tmdbId, widget.title.mediaType);
+    final localTitle = widget.tmdbListService
+        .getTitleByTmdbIdSync(widget.title.tmdbId, widget.title.mediaType);
 
     if (localTitle != null) {
       return Padding(
         padding: const EdgeInsets.only(right: 10),
         child: MediaQuery(
-          data: mediaQuery.copyWith(textScaler: TextScaler.linear(clampedScale)),
+          data:
+              mediaQuery.copyWith(textScaler: TextScaler.linear(clampedScale)),
           child: _TitleChipContent(
             title: localTitle,
             tmdbListService: widget.tmdbListService,
@@ -91,7 +92,8 @@ class _TitleChipState extends State<TitleChip> {
           }
 
           return MediaQuery(
-            data: mediaQuery.copyWith(textScaler: TextScaler.linear(clampedScale)),
+            data: mediaQuery.copyWith(
+                textScaler: TextScaler.linear(clampedScale)),
             child: _TitleChipContent(
               title: snapshot.data ?? widget.title,
               tmdbListService: widget.tmdbListService,
@@ -118,7 +120,11 @@ class _TitleChipContent extends TitleCard {
       width: CARD_WIDTH,
       child: Card(
         color: Theme.of(context).extension<CustomColors>()!.chipCardBackground,
-        margin: const EdgeInsets.all(0),
+        margin: const EdgeInsets.symmetric(horizontal: 4.0),
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: InkWell(
           onTap: () {
             Navigator.push(
@@ -136,6 +142,20 @@ class _TitleChipContent extends TitleCard {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: titlePoster(_title.posterPath),
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(2.0),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.5),
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(8),
+                    ),
+                  ),
+                  child: watchlistButton(context, _title),
+                ),
               ),
               Positioned(
                 bottom: 0,
@@ -190,19 +210,9 @@ class _TitleChipContent extends TitleCard {
           ),
         ),
         const SizedBox(height: 5),
-        titleRating(
-          context,
-          tmdbTitle,
-          extraWidgets: [
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  watchlistButton(context, tmdbTitle),
-                ],
-              ),
-            ),
-          ],
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: titleRating(context, tmdbTitle, isCompact: true),
         ),
         const SizedBox(height: 5),
         SizedBox(
