@@ -55,9 +55,9 @@ class RatingFilterTabs extends StatelessWidget {
               child: const Tab(icon: Icon(Symbols.done_outline, size: 20)),
             ),
             Tooltip(
-              message: localizations.snoozedOnly,
+              message: localizations.followingOnly,
               child:
-                  const Tab(icon: Icon(Icons.pause_circle_outline, size: 20)),
+                  const Tab(icon: Icon(Icons.notifications_active, size: 20)),
             ),
           ],
         ),

@@ -134,8 +134,8 @@
     "@ratedOnly": {},
     "seenOnly": "Vistes",
     "@seenOnly": {},
-    "snoozedOnly": "Adormides",
-    "@snoozedOnly": {},
+    "followingOnly": "Seguint",
+    "@followingOnly": {},
     "pendingOnly": "Pendents",
     "@pendingOnly": {},
     "emptyList": "No hi ha ningú per aquí.",
@@ -300,10 +300,10 @@
             "count": {}
         }
     },
-    "snoozeTitle": "Pausar sèrie",
-    "@snoozeTitle": {},
-    "snoozeMessage": "Vols que t'avisem quan hi hagi una nova temporada?",
-    "@snoozeMessage": {},
+    "notifyTitle": "Notificar noves temporades",
+    "@notifyTitle": {},
+    "notifyMessage": "Vols que t'avisem quan hi hagi una nova temporada?",
+    "@notifyMessage": {},
     "no": "No",
     "@no": {}
 }

@@ -105,7 +105,7 @@ Future<bool> updateTitle(
     if (title.isSerie) {
       title.lastNotifiedSeason = title.numberOfSeasons;
     }
-    title.isSnoozed = false;
+    title.notifyNewSeasons = false;
     await repository.updateTitleMetadata(title);
     return true;
   }
@@ -133,7 +133,7 @@ Future<bool> updateTitle(
     ));
 
     title.lastNotifiedSeason = title.numberOfSeasons;
-    title.isSnoozed = false;
+    title.notifyNewSeasons = false;
 
     if (!title.inLists.contains(AppConstants.watchlist)) {
       title.inLists = [...title.inLists, AppConstants.watchlist];
@@ -202,19 +202,19 @@ void callbackDispatcher() {
         limit: repository.countTitlesSync(AppConstants.watchlist),
       );
 
-      final snoozedTitles = await repository.getTitles(
+      final followingTitles = await repository.getTitles(
         listName: AppConstants.rateslist,
-        filterRating: RatingFilter.snoozedOnly,
+        filterRating: RatingFilter.followingOnly,
         limit: await repository.countTitlesFiltered(
             listName: AppConstants.rateslist,
-            filterRating: RatingFilter.snoozedOnly),
+            filterRating: RatingFilter.followingOnly),
       );
 
       final allTitlesMap = <String, TmdbTitle>{};
       for (final title in watchlistTitles) {
         allTitlesMap['${title.mediaType}_${title.tmdbId}'] = title;
       }
-      for (final title in snoozedTitles) {
+      for (final title in followingTitles) {
         allTitlesMap['${title.mediaType}_${title.tmdbId}'] = title;
       }
       final allTitlesToScan = allTitlesMap.values.toList();

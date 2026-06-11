@@ -6,7 +6,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
   final Color notInWatchlist;
   final Color ratedTitle;
   final Color userRatedTitle;
-  final Color snoozedTitle;
+  final Color followingTitle;
   final Color pinnedTitle;
   final Color navigationBarSelected;
   final Color navigationBarNotSelected;
@@ -21,7 +21,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
     required this.notInWatchlist,
     required this.ratedTitle,
     required this.userRatedTitle,
-    required this.snoozedTitle,
+    required this.followingTitle,
     required this.pinnedTitle,
     required this.navigationBarSelected,
     required this.navigationBarNotSelected,
@@ -38,7 +38,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
     Color? notInWatchlist,
     Color? ratedTitle,
     Color? userRatedTitle,
-    Color? snoozedTitle,
+    Color? followingTitle,
     Color? pinnedTitle,
     Color? navigationBarSelected,
     Color? navigationBarNotSelected,
@@ -53,7 +53,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
       notInWatchlist: notInWatchlist ?? this.notInWatchlist,
       ratedTitle: ratedTitle ?? this.ratedTitle,
       userRatedTitle: userRatedTitle ?? this.userRatedTitle,
-      snoozedTitle: snoozedTitle ?? this.snoozedTitle,
+      followingTitle: followingTitle ?? this.followingTitle,
       pinnedTitle: pinnedTitle ?? this.pinnedTitle,
       navigationBarSelected:
           navigationBarSelected ?? this.navigationBarSelected,
@@ -78,7 +78,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
       notInWatchlist: Color.lerp(notInWatchlist, other.notInWatchlist, t)!,
       ratedTitle: Color.lerp(ratedTitle, other.ratedTitle, t)!,
       userRatedTitle: Color.lerp(userRatedTitle, other.userRatedTitle, t)!,
-      snoozedTitle: Color.lerp(snoozedTitle, other.snoozedTitle, t)!,
+      followingTitle: Color.lerp(followingTitle, other.followingTitle, t)!,
       pinnedTitle: Color.lerp(pinnedTitle, other.pinnedTitle, t)!,
       navigationBarSelected:
           Color.lerp(navigationBarSelected, other.navigationBarSelected, t)!,

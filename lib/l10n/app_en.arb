@@ -134,8 +134,8 @@
     "@ratedOnly": {},
     "seenOnly": "Seen",
     "@seenOnly": {},
-    "snoozedOnly": "Snoozed",
-    "@snoozedOnly": {},
+    "followingOnly": "Following",
+    "@followingOnly": {},
     "pendingOnly": "Pending",
     "@pendingOnly": {},
     "emptyList": "Nothing here.",
@@ -300,10 +300,10 @@
             "count": {}
         }
     },
-    "snoozeTitle": "Pause Series",
-    "@snoozeTitle": {},
-    "snoozeMessage": "Do you want to be notified when a new season airs?",
-    "@snoozeMessage": {},
+    "notifyTitle": "Notify new seasons",
+    "@notifyTitle": {},
+    "notifyMessage": "Do you want to be notified when a new season airs?",
+    "@notifyMessage": {},
     "no": "No",
     "@no": {}
 }

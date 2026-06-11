@@ -210,7 +210,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get seenOnly => 'Vistas';
 
   @override
-  String get snoozedOnly => 'Dormidas';
+  String get followingOnly => 'Siguiendo';
 
   @override
   String get pendingOnly => 'Pendientes';
@@ -440,10 +440,10 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get snoozeTitle => 'Pausar Serie';
+  String get notifyTitle => 'Notificar nuevas temporadas';
 
   @override
-  String get snoozeMessage => '¿Quieres recibir una notificación cuando se emita una nueva temporada?';
+  String get notifyMessage => '¿Quieres recibir una notificación cuando se emita una nueva temporada?';
 
   @override
   String get no => 'No';

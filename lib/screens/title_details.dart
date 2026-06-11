@@ -23,14 +23,14 @@ import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/widgets/person_chip.dart';
 import 'package:moviescout/widgets/rate_form.dart';
-import 'package:moviescout/widgets/snooze_dialog.dart';
+import 'package:moviescout/widgets/notify_dialog.dart';
 import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:moviescout/widgets/drop_down_selector.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/omdb_rating_widget.dart';
 import 'package:moviescout/widgets/pin_button.dart';
-import 'package:moviescout/widgets/snooze_button.dart';
+import 'package:moviescout/widgets/notify_button.dart';
 import 'package:moviescout/services/omdb_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/utils/api_constants.dart';
@@ -95,11 +95,13 @@ class _TitleDetailsState extends State<TitleDetails> {
       rating,
     );
 
-    if (rating > 0 && title.status == 'Returning Series' && !title.isSnoozed) {
+    if (rating > 0 &&
+        title.status == TvShowStatus.returning &&
+        !title.notifyNewSeasons) {
       if (mounted) {
         await showDialog<void>(
           context: context,
-          builder: (dialogContext) => SnoozeDialog(title: title),
+          builder: (dialogContext) => NotifyDialog(title: title),
         );
       }
     }
@@ -521,7 +523,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         const SizedBox(width: 8),
         Row(
           children: [
-            snoozeButton(context, title),
+            notifyButton(context, title),
             const SizedBox(width: 8),
             pinButton(context, title),
             const SizedBox(width: 8),
@@ -958,8 +960,6 @@ class _TitleDetailsState extends State<TitleDetails> {
       },
     );
   }
-
-
 
   Widget _seasonsDropdown(TmdbTitle title) {
     if (title.isMovie || title.numberOfSeasons == 0) {
