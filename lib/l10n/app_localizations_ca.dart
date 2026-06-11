@@ -447,4 +447,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get no => 'No';
+
+  @override
+  String get none => 'Cap';
 }

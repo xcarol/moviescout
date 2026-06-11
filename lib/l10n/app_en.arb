@@ -305,5 +305,7 @@
     "notifyMessage": "Do you want to be notified when a new season airs?",
     "@notifyMessage": {},
     "no": "No",
-    "@no": {}
+    "@no": {},
+    "none": "None",
+    "@none": {}
 }
