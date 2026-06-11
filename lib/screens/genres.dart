@@ -34,6 +34,18 @@ class _GenresScreenState extends State<GenresScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.genres),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_alt_off),
+            tooltip: AppLocalizations.of(context)!.none,
+            onPressed: () {
+              setState(() {
+                _tempSelectedGenres.clear();
+              });
+              widget.onGenresChanged(_tempSelectedGenres);
+            },
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: widget.genresList.length,

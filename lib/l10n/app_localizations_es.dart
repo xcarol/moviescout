@@ -447,4 +447,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get no => 'No';
+
+  @override
+  String get none => 'Ninguno';
 }

@@ -305,5 +305,7 @@
     "notifyMessage": "Vols que t'avisem quan hi hagi una nova temporada?",
     "@notifyMessage": {},
     "no": "No",
-    "@no": {}
+    "@no": {},
+    "none": "Cap",
+    "@none": {}
 }

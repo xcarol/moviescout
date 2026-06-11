@@ -305,5 +305,7 @@
     "notifyMessage": "¿Quieres recibir una notificación cuando se emita una nueva temporada?",
     "@notifyMessage": {},
     "no": "No",
-    "@no": {}
+    "@no": {},
+    "none": "Ninguno",
+    "@none": {}
 }
