@@ -84,7 +84,9 @@ class _PersonDetailsState extends State<PersonDetails> {
   Widget _detailsBody(TmdbPerson person) {
     final tmdbRateslistService =
         Provider.of<TmdbRateslistService>(context, listen: false);
+    final seen = <String>{};
     final userRatedTitles = person.combinedCredits.cast
+        .where((title) => seen.add('${title.mediaType}_${title.tmdbId}'))
         .where((title) =>
             tmdbRateslistService.getRating(title.tmdbId, title.mediaType) != 0)
         .toList();
@@ -394,6 +396,11 @@ class _PersonDetailsState extends State<PersonDetails> {
       return const SizedBox.shrink();
     }
 
+    final seen = <String>{};
+    final uniqueCast = person.combinedCredits.cast
+        .where((title) => seen.add('${title.mediaType}_${title.tmdbId}'))
+        .toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -425,7 +432,7 @@ class _PersonDetailsState extends State<PersonDetails> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: person.combinedCredits.cast
+            children: uniqueCast
                 .take(10)
                 .map(
                   (titleRecommended) => TitleChip(
@@ -444,6 +451,11 @@ class _PersonDetailsState extends State<PersonDetails> {
     if (person.combinedCredits.crew.isEmpty) {
       return const SizedBox.shrink();
     }
+
+    final seen = <String>{};
+    final uniqueCrew = person.combinedCredits.crew
+        .where((title) => seen.add('${title.mediaType}_${title.tmdbId}'))
+        .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -476,7 +488,7 @@ class _PersonDetailsState extends State<PersonDetails> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: person.combinedCredits.crew
+            children: uniqueCrew
                 .take(10)
                 .map(
                   (titleRecommended) => TitleChip(
