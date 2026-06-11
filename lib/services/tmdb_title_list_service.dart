@@ -11,7 +11,7 @@ import 'package:moviescout/services/update_manager.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
-enum RatingFilter { all, rated, seenOnly, snoozedOnly }
+enum RatingFilter { all, rated, seenOnly, followingOnly }
 
 class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
   @protected
@@ -142,8 +142,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     bool isUpToDate = UpdateManager().isUpToDate(listNameVal, cacheTimeout);
     bool hasLocalData = listIsNotEmpty;
     if (!hasLocalData) {
-      hasLocalData =
-          await repository.hasTitlesFiltered(listName: listNameVal);
+      hasLocalData = await repository.hasTitlesFiltered(listName: listNameVal);
     }
 
     if (accountId.isEmpty ||

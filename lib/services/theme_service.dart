@@ -124,7 +124,7 @@ class ThemeService with ChangeNotifier {
     notInWatchlist: lightColorSchemeDefault.onSurfaceVariant,
     ratedTitle: lightColorSchemeDefault.tertiary,
     userRatedTitle: lightColorSchemeDefault.primary,
-    snoozedTitle: lightColorSchemeDefault.primary,
+    followingTitle: lightColorSchemeDefault.primary,
     pinnedTitle: lightColorSchemeDefault.tertiary,
     navigationBarSelected: lightColorSchemeDefault.primary,
     navigationBarNotSelected: Color.fromARGB(0xFF, 0x8E, 0x8E, 0x8E),

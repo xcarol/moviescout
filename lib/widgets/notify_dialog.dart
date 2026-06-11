@@ -4,10 +4,10 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:provider/provider.dart';
 
-class SnoozeDialog extends StatelessWidget {
+class NotifyDialog extends StatelessWidget {
   final TmdbTitle title;
 
-  const SnoozeDialog({
+  const NotifyDialog({
     super.key,
     required this.title,
   });
@@ -15,8 +15,8 @@ class SnoozeDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(AppLocalizations.of(context)!.snoozeTitle),
-      content: Text(AppLocalizations.of(context)!.snoozeMessage),
+      title: Text(AppLocalizations.of(context)!.notifyTitle),
+      content: Text(AppLocalizations.of(context)!.notifyMessage),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
@@ -26,7 +26,7 @@ class SnoozeDialog extends StatelessWidget {
           onPressed: () async {
             final rateslistService =
                 Provider.of<TmdbRateslistService>(context, listen: false);
-            await rateslistService.toggleSnooze(title);
+            await rateslistService.toggleNotify(title);
             if (context.mounted) {
               Navigator.pop(context, true);
             }

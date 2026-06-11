@@ -7,10 +7,10 @@ import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart'
     show RatingFilter;
 
-class TmdbSnoozedService extends TmdbConfigListService {
+class TmdbFollowingService extends TmdbConfigListService {
   final TmdbTitleRepository repository;
 
-  TmdbSnoozedService(this.repository)
+  TmdbFollowingService(this.repository)
       : super(
           configListName: 'snoozed',
           listIdPrefKey: 'snoozedListId',
@@ -68,14 +68,14 @@ class TmdbSnoozedService extends TmdbConfigListService {
   Future<void> _applySnoozedIds(List<String> snoozedIds) async {
     final currentSnoozed = await repository.getTitles(
       listName: AppConstants.rateslist,
-      filterRating: RatingFilter.snoozedOnly,
+      filterRating: RatingFilter.followingOnly,
     );
 
     final Map<int, TmdbTitle> toUpdate = {};
 
     // Reset current snoozes
     for (var title in currentSnoozed) {
-      title.isSnoozed = false;
+      title.notifyNewSeasons = false;
       toUpdate[title.id] = title;
     }
 
@@ -89,7 +89,7 @@ class TmdbSnoozedService extends TmdbConfigListService {
           final title = await repository.getTitleByTmdbId(
               AppConstants.rateslist, tmdbId, mediaType);
           if (title != null) {
-            title.isSnoozed = true;
+            title.notifyNewSeasons = true;
             toUpdate[title.id] = title;
           }
         }
