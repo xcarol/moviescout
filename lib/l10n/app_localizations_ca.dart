@@ -450,4 +450,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get none => 'Cap';
+
+  @override
+  String get results => 'Resultats';
 }

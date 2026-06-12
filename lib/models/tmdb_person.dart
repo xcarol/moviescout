@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:moviescout/models/tmdb_item.dart';
 import 'package:flutter/widgets.dart';
 import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -59,9 +60,10 @@ class CombinedCredits {
 }
 
 @collection
-class TmdbPerson {
+class TmdbPerson implements TmdbItem {
   Id id = Isar.autoIncrement;
 
+  @override
   @Index(unique: true, replace: true, composite: [CompositeIndex('transientListId')])
   late int tmdbId;
 

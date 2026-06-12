@@ -72,6 +72,12 @@ class TitleListController with ChangeNotifier {
     super.dispose();
   }
 
+  void _scrollToTop() {
+    if (scrollController.hasClients) {
+      scrollController.jumpTo(0.0);
+    }
+  }
+
   void initializeControlLocalizations(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
@@ -114,6 +120,7 @@ class TitleListController with ChangeNotifier {
         .prefs
         .setBool(_filterByProvidersPreferencesName, value);
     listService.setProvidersFilter(_filterByProviders, _providerListIds);
+    _scrollToTop();
     notifyListeners();
   }
 
@@ -123,6 +130,7 @@ class TitleListController with ChangeNotifier {
         .prefs
         .setStringList(_selectedGenresPreferencesName, _selectedGenres);
     listService.setGenresFilter(_selectedGenres);
+    _scrollToTop();
     notifyListeners();
   }
 
@@ -153,6 +161,7 @@ class TitleListController with ChangeNotifier {
         .prefs
         .setString(_selectedSortPreferencesName, _selectedSort);
     listService.setSort(_selectedSort, _isSortAsc);
+    _scrollToTop();
     notifyListeners();
   }
 
@@ -165,12 +174,14 @@ class TitleListController with ChangeNotifier {
         .setString(_selectedTypePreferencesName, _selectedType);
 
     listService.setTypeFilter(_selectedType);
+    _scrollToTop();
     notifyListeners();
   }
 
   void setTextFilter(String value) {
     PreferencesService().prefs.setString(_textFilterPreferencesName, value);
     listService.setTextFilter(value);
+    _scrollToTop();
     notifyListeners();
   }
 
@@ -186,6 +197,7 @@ class TitleListController with ChangeNotifier {
     _isSortAsc = !_isSortAsc;
     PreferencesService().prefs.setBool(_sortPreferencesName, _isSortAsc);
     listService.setSort(_selectedSort, _isSortAsc);
+    _scrollToTop();
     notifyListeners();
   }
 
@@ -195,6 +207,7 @@ class TitleListController with ChangeNotifier {
         .prefs
         .setInt(_ratingFilterPreferencesName, value.index);
     listService.setRatingFilter(value);
+    _scrollToTop();
     notifyListeners();
   }
 

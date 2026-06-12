@@ -450,4 +450,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get none => 'Ninguno';
+
+  @override
+  String get results => 'Resultados';
 }

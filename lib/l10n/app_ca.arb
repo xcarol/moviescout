@@ -307,5 +307,7 @@
     "no": "No",
     "@no": {},
     "none": "Cap",
-    "@none": {}
+    "@none": {},
+    "results": "Resultats",
+    "@results": {}
 }
