@@ -4,8 +4,10 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/search_history_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
-import 'package:moviescout/widgets/title_list.dart';
+import 'package:moviescout/services/tmdb_title_list_service.dart';
+import 'package:moviescout/widgets/search_list.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/tmdb_person_repository.dart';
 import 'package:provider/provider.dart';
 
 class Search extends StatefulWidget {
@@ -19,6 +21,7 @@ class _SearchState extends State<Search> {
   final FocusNode _searchFocusNode = FocusNode();
   late TextEditingController _controller;
   late TmdbSearchService _searchService;
+  late TmdbTitleListService _titleListServiceSupport;
   final SearchHistoryService _historyService = SearchHistoryService();
   late Widget _searchWidget;
   String _previousText = '';
@@ -35,13 +38,19 @@ class _SearchState extends State<Search> {
   @override
   void initState() {
     super.initState();
-    _searchService = TmdbSearchService(
+    _titleListServiceSupport = TmdbTitleListService(
       'searchProvider',
       context.read<TmdbTitleRepository>(),
     );
-    _searchWidget = TitleList(
-      _searchService,
-      key: ValueKey('search'),
+    _searchService = TmdbSearchService(
+      'searchProvider',
+      context.read<TmdbTitleRepository>(),
+      context.read<TmdbPersonRepository>(),
+    );
+    _searchWidget = SearchList(
+      searchService: _searchService,
+      titleListServiceSupport: _titleListServiceSupport,
+      key: const ValueKey('search'),
     );
 
     _controller = TextEditingController();
@@ -59,6 +68,7 @@ class _SearchState extends State<Search> {
     _searchFocusNode.removeListener(_onFocusChanged);
     _controller.dispose();
     _searchFocusNode.dispose();
+    _titleListServiceSupport.dispose();
     super.dispose();
   }
 

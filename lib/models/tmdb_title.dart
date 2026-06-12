@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:moviescout/models/tmdb_item.dart';
 import 'package:isar_community/isar.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -109,10 +110,11 @@ class SortOption {
 }
 
 @collection
-class TmdbTitle {
+class TmdbTitle implements TmdbItem {
   @Index(unique: true)
   Id id = Isar.autoIncrement;
 
+  @override
   @Index(unique: true, replace: true, composite: [CompositeIndex('mediaType')])
   late int tmdbId;
 
