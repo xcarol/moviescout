@@ -87,27 +87,35 @@ class TmdbTitleRepository {
       {List<int>? addedOrders}) async {
     if (titles.isEmpty) return;
 
-    await _isar.writeTxn(() async {
-      await _logMultipleZeroRatingError(titles, listName: listName);
+    const batchSize = 250;
+    for (var i = 0; i < titles.length; i += batchSize) {
+      final end =
+          (i + batchSize < titles.length) ? i + batchSize : titles.length;
+      final batchTitles = titles.sublist(i, end);
+      final batchOrders = addedOrders?.sublist(i, end);
 
-      for (final title in titles) {
-        if (!title.inLists.contains(listName)) {
-          title.inLists = [...title.inLists, listName];
+      await _isar.writeTxn(() async {
+        await _logMultipleZeroRatingError(batchTitles, listName: listName);
+
+        for (final title in batchTitles) {
+          if (!title.inLists.contains(listName)) {
+            title.inLists = [...title.inLists, listName];
+          }
         }
-      }
-      await _isar.tmdbTitles.putAll(titles);
+        await _isar.tmdbTitles.putAll(batchTitles);
 
-      final entries = <UserListEntry>[];
-      for (var i = 0; i < titles.length; i++) {
-        entries.add(UserListEntry(
-          listName: listName,
-          tmdbId: titles[i].tmdbId,
-          mediaType: titles[i].mediaType,
-          addedOrder: addedOrders != null ? addedOrders[i] : i,
-        ));
-      }
-      await _isar.userListEntrys.putAll(entries);
-    });
+        final entries = <UserListEntry>[];
+        for (var j = 0; j < batchTitles.length; j++) {
+          entries.add(UserListEntry(
+            listName: listName,
+            tmdbId: batchTitles[j].tmdbId,
+            mediaType: batchTitles[j].mediaType,
+            addedOrder: batchOrders != null ? batchOrders[j] : (i + j),
+          ));
+        }
+        await _isar.userListEntrys.putAll(entries);
+      });
+    }
   }
 
   Future<void> updateTitleMetadata(TmdbTitle title) async {
@@ -138,44 +146,55 @@ class TmdbTitleRepository {
   }
 
   Future<void> updateTitlesMetadata(List<TmdbTitle> titles) async {
-    await _isar.writeTxn(() async {
-      final titlesToFetch = titles.where((t) => t.inLists.isEmpty).toList();
+    if (titles.isEmpty) return;
 
-      if (titlesToFetch.isNotEmpty) {
-        final tmdbIds = titlesToFetch.map((t) => t.tmdbId).toList();
-        final mediaTypes = titlesToFetch.map((t) => t.mediaType).toList();
+    const batchSize = 250;
+    for (var i = 0; i < titles.length; i += batchSize) {
+      final end =
+          (i + batchSize < titles.length) ? i + batchSize : titles.length;
+      final batchTitles = titles.sublist(i, end);
 
-        final existingTitles =
-            await _isar.tmdbTitles.getAllByTmdbIdMediaType(tmdbIds, mediaTypes);
+      await _isar.writeTxn(() async {
+        final titlesToFetch =
+            batchTitles.where((t) => t.inLists.isEmpty).toList();
 
-        final existingMap = <String, TmdbTitle>{};
-        for (final existing in existingTitles) {
-          if (existing != null) {
-            existingMap['${existing.tmdbId}_${existing.mediaType}'] = existing;
+        if (titlesToFetch.isNotEmpty) {
+          final tmdbIds = titlesToFetch.map((t) => t.tmdbId).toList();
+          final mediaTypes = titlesToFetch.map((t) => t.mediaType).toList();
+
+          final existingTitles = await _isar.tmdbTitles
+              .getAllByTmdbIdMediaType(tmdbIds, mediaTypes);
+
+          final existingMap = <String, TmdbTitle>{};
+          for (final existing in existingTitles) {
+            if (existing != null) {
+              existingMap['${existing.tmdbId}_${existing.mediaType}'] =
+                  existing;
+            }
+          }
+
+          for (final title in titlesToFetch) {
+            final existing = existingMap['${title.tmdbId}_${title.mediaType}'];
+            if (existing != null) {
+              title.inLists = existing.inLists;
+              if (!title.isPinned) {
+                title.isPinned = existing.isPinned;
+              }
+              if (!title.notifyNewSeasons) {
+                title.notifyNewSeasons = existing.notifyNewSeasons;
+              }
+              if (title.rating == 0.0 && existing.rating > 0.0) {
+                title.rating = existing.rating;
+                title.dateRated = existing.dateRated;
+              }
+            }
           }
         }
 
-        for (final title in titlesToFetch) {
-          final existing = existingMap['${title.tmdbId}_${title.mediaType}'];
-          if (existing != null) {
-            title.inLists = existing.inLists;
-            if (!title.isPinned) {
-              title.isPinned = existing.isPinned;
-            }
-            if (!title.notifyNewSeasons) {
-              title.notifyNewSeasons = existing.notifyNewSeasons;
-            }
-            if (title.rating == 0.0 && existing.rating > 0.0) {
-              title.rating = existing.rating;
-              title.dateRated = existing.dateRated;
-            }
-          }
-        }
-      }
-
-      await _logMultipleZeroRatingError(titles);
-      await _isar.tmdbTitles.putAll(titles);
-    });
+        await _logMultipleZeroRatingError(batchTitles);
+        await _isar.tmdbTitles.putAll(batchTitles);
+      });
+    }
   }
 
   Future<void> deleteTitle(
@@ -207,62 +226,95 @@ class TmdbTitleRepository {
 
   Future<void> deleteTitles(
       String listName, List<int> tmdbIds, List<String> mediaTypes) async {
-    await _isar.writeTxn(() async {
-      for (var i = 0; i < tmdbIds.length; i++) {
-        final id = tmdbIds[i];
-        final type = mediaTypes[i];
+    if (tmdbIds.isEmpty) return;
 
-        await _isar.userListEntrys
-            .filter()
-            .listNameEqualTo(listName)
-            .tmdbIdEqualTo(id)
-            .mediaTypeEqualTo(type)
-            .deleteAll();
+    const batchSize = 100;
+    for (var batchStart = 0;
+        batchStart < tmdbIds.length;
+        batchStart += batchSize) {
+      final end = (batchStart + batchSize < tmdbIds.length)
+          ? batchStart + batchSize
+          : tmdbIds.length;
+      final batchIds = tmdbIds.sublist(batchStart, end);
+      final batchTypes = mediaTypes.sublist(batchStart, end);
 
-        final title = await _isar.tmdbTitles
-            .filter()
-            .tmdbIdEqualTo(id)
-            .mediaTypeEqualTo(type)
-            .findFirst();
+      await _isar.writeTxn(() async {
+        for (var i = 0; i < batchIds.length; i++) {
+          final id = batchIds[i];
+          final type = batchTypes[i];
 
-        if (title != null) {
-          title.inLists = title.inLists.where((l) => l != listName).toList();
-          if (title.inLists.isEmpty) {
-            await _isar.tmdbTitles.delete(title.id);
-          } else {
-            await _isar.tmdbTitles.put(title);
+          await _isar.userListEntrys
+              .filter()
+              .listNameEqualTo(listName)
+              .tmdbIdEqualTo(id)
+              .mediaTypeEqualTo(type)
+              .deleteAll();
+
+          final title = await _isar.tmdbTitles
+              .filter()
+              .tmdbIdEqualTo(id)
+              .mediaTypeEqualTo(type)
+              .findFirst();
+
+          if (title != null) {
+            title.inLists = title.inLists.where((l) => l != listName).toList();
+            if (title.inLists.isEmpty) {
+              await _isar.tmdbTitles.delete(title.id);
+            } else {
+              await _isar.tmdbTitles.put(title);
+            }
           }
         }
-      }
-    });
+      });
+    }
   }
 
   Future<void> clearList(String listName) async {
-    await _isar.writeTxn(() async {
-      final entriesToRemove = await _isar.userListEntrys
-          .filter()
-          .listNameEqualTo(listName)
-          .findAll();
+    // 1. Delete UserListEntrys
+    final entriesToRemove =
+        await _isar.userListEntrys.filter().listNameEqualTo(listName).findAll();
 
-      await _isar.userListEntrys.filter().listNameEqualTo(listName).deleteAll();
+    const batchSize = 100;
+    if (entriesToRemove.isNotEmpty) {
+      for (var i = 0; i < entriesToRemove.length; i += batchSize) {
+        final end = (i + batchSize < entriesToRemove.length)
+            ? i + batchSize
+            : entriesToRemove.length;
+        final batchEntries = entriesToRemove.sublist(i, end);
 
-      for (final entry in entriesToRemove) {
-        final title = await _isar.tmdbTitles
-            .filter()
-            .tmdbIdEqualTo(entry.tmdbId)
-            .mediaTypeEqualTo(entry.mediaType)
-            .findFirst();
-
-        if (title != null) {
-          title.inLists = title.inLists.where((l) => l != listName).toList();
-          if (title.inLists.isEmpty) {
-            await _isar.tmdbTitles.delete(title.id);
-          } else {
-            await _isar.tmdbTitles.put(title);
+        await _isar.writeTxn(() async {
+          for (final entry in batchEntries) {
+            await _isar.userListEntrys.delete(entry.id);
           }
-        }
+        });
       }
-    });
+    }
+
+    // 2. Remove listName from all TmdbTitles that have it
+    final titlesToClean = await _isar.tmdbTitles
+        .filter()
+        .inListsElementEqualTo(listName)
+        .findAll();
+
+    if (titlesToClean.isNotEmpty) {
+      for (var i = 0; i < titlesToClean.length; i += batchSize) {
+        final end = (i + batchSize < titlesToClean.length)
+            ? i + batchSize
+            : titlesToClean.length;
+        final batchTitles = titlesToClean.sublist(i, end);
+
+        await _isar.writeTxn(() async {
+          for (final title in batchTitles) {
+            title.inLists = title.inLists.where((l) => l != listName).toList();
+            if (title.inLists.isEmpty) {
+              await _isar.tmdbTitles.delete(title.id);
+            } else {
+              await _isar.tmdbTitles.put(title);
+            }
+          }
+        });
+      }
+    }
   }
 
   Future<bool> hasRatedTitles(String listName) async {
@@ -316,10 +368,25 @@ class TmdbTitleRepository {
   }
 
   Future<List<TmdbTitle>> getTitlesByTmdbIds(List<int> tmdbIds) async {
-    return _isar.tmdbTitles
-        .filter()
-        .anyOf(tmdbIds, (q, id) => q.tmdbIdEqualTo(id))
-        .findAll();
+    if (tmdbIds.isEmpty) return [];
+
+    final results = <TmdbTitle>[];
+    const batchSize = 100;
+
+    for (var i = 0; i < tmdbIds.length; i += batchSize) {
+      final end =
+          (i + batchSize < tmdbIds.length) ? i + batchSize : tmdbIds.length;
+      final batch = tmdbIds.sublist(i, end);
+
+      final batchResults = await _isar.tmdbTitles
+          .filter()
+          .anyOf(batch, (q, id) => q.tmdbIdEqualTo(id))
+          .findAll();
+
+      results.addAll(batchResults);
+    }
+
+    return results;
   }
 
   Future<List<int>> getAllTmdbIds(String listName) async {

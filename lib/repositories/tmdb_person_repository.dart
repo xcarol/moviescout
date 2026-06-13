@@ -7,9 +7,16 @@ class TmdbPersonRepository {
 
   Future<void> savePeople(List<TmdbPerson> people) async {
     if (people.isEmpty) return;
-    await _isar.writeTxn(() async {
-      await _isar.tmdbPersons.putAll(people);
-    });
+
+    const batchSize = 250;
+    for (var i = 0; i < people.length; i += batchSize) {
+      final end =
+          (i + batchSize < people.length) ? i + batchSize : people.length;
+      final batch = people.sublist(i, end);
+      await _isar.writeTxn(() async {
+        await _isar.tmdbPersons.putAll(batch);
+      });
+    }
   }
 
   Future<void> clearTransientList(String transientListId) async {
@@ -30,7 +37,8 @@ class TmdbPersonRepository {
     int offset = 0,
     int limit = 10,
   }) async {
-    var query = _isar.tmdbPersons.filter().transientListIdEqualTo(transientListId);
+    var query =
+        _isar.tmdbPersons.filter().transientListIdEqualTo(transientListId);
 
     if (filterText.isNotEmpty) {
       query = query.group((q) => q
@@ -61,10 +69,10 @@ class TmdbPersonRepository {
       return await sortedQuery.offset(offset).limit(limit).findAll();
     } else {
       // Default Isar sorting (by internal ID) preserves insertion order, which is the TMDB API order.
-      // Since Isar 3 doesn't have sortByIdDesc(), we'll fetch all and reverse if needed, 
+      // Since Isar 3 doesn't have sortByIdDesc(), we'll fetch all and reverse if needed,
       // or just return the ascending paginated results. Usually TMDB order is ascending.
       if (!sortAscending) {
-        // If they specifically ask for descending original order, 
+        // If they specifically ask for descending original order,
         // we have to reverse the whole list in memory and then paginate, because Isar lacks sortByIdDesc.
         final allResults = await query.findAll();
         final reversed = allResults.reversed.toList();
@@ -79,7 +87,8 @@ class TmdbPersonRepository {
     String filterText = '',
     String filterDepartment = '',
   }) async {
-    var query = _isar.tmdbPersons.filter().transientListIdEqualTo(transientListId);
+    var query =
+        _isar.tmdbPersons.filter().transientListIdEqualTo(transientListId);
 
     if (filterText.isNotEmpty) {
       query = query.group((q) => q
