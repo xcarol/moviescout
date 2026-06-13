@@ -68,6 +68,8 @@ class TmdbTitleRepository {
       {String? listNameToAdd}) {
     newTitle.id = currentTitle.id;
 
+    bool inListsIsEmpty = newTitle.inLists.isEmpty;
+
     if (listNameToAdd != null) {
       final mergedLists = Set<String>.from(currentTitle.inLists);
       mergedLists.add(listNameToAdd);
@@ -76,8 +78,11 @@ class TmdbTitleRepository {
       newTitle.inLists = currentTitle.inLists;
     }
 
-    newTitle.isPinned = currentTitle.isPinned;
-    newTitle.notifyNewSeasons = currentTitle.notifyNewSeasons;
+    if (inListsIsEmpty) {
+      newTitle.isPinned = currentTitle.isPinned;
+      newTitle.notifyNewSeasons = currentTitle.notifyNewSeasons;
+    }
+    
     if (newTitle.rating == 0.0 && currentTitle.rating > 0.0) {
       newTitle.rating = currentTitle.rating;
       newTitle.dateRated = currentTitle.dateRated;
