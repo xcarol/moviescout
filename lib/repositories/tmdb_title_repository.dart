@@ -64,13 +64,43 @@ class TmdbTitleRepository {
     }
   }
 
+  void _mergeTitleMetadata(TmdbTitle newTitle, TmdbTitle currentTitle,
+      {String? listNameToAdd}) {
+    newTitle.id = currentTitle.id;
+
+    if (listNameToAdd != null) {
+      final mergedLists = Set<String>.from(currentTitle.inLists);
+      mergedLists.add(listNameToAdd);
+      newTitle.inLists = mergedLists.toList();
+    } else {
+      newTitle.inLists = currentTitle.inLists;
+    }
+
+    newTitle.isPinned = currentTitle.isPinned;
+    newTitle.notifyNewSeasons = currentTitle.notifyNewSeasons;
+    if (newTitle.rating == 0.0 && currentTitle.rating > 0.0) {
+      newTitle.rating = currentTitle.rating;
+      newTitle.dateRated = currentTitle.dateRated;
+    }
+  }
+
   Future<void> saveTitle(
       TmdbTitle title, String listName, int addedOrder) async {
     await _isar.writeTxn(() async {
       await _logZeroRatingError(title, listName: listName);
 
-      if (!title.inLists.contains(listName)) {
-        title.inLists = [...title.inLists, listName];
+      final current = await _isar.tmdbTitles
+          .filter()
+          .tmdbIdEqualTo(title.tmdbId)
+          .mediaTypeEqualTo(title.mediaType)
+          .findFirst();
+
+      if (current != null) {
+        _mergeTitleMetadata(title, current, listNameToAdd: listName);
+      } else {
+        if (!title.inLists.contains(listName)) {
+          title.inLists = [...title.inLists, listName];
+        }
       }
       await _isar.tmdbTitles.put(title);
 
@@ -97,9 +127,21 @@ class TmdbTitleRepository {
       await _isar.writeTxn(() async {
         await _logMultipleZeroRatingError(batchTitles, listName: listName);
 
-        for (final title in batchTitles) {
-          if (!title.inLists.contains(listName)) {
-            title.inLists = [...title.inLists, listName];
+        final tmdbIds = batchTitles.map((t) => t.tmdbId).toList();
+        final mediaTypes = batchTitles.map((t) => t.mediaType).toList();
+        final currentTitles =
+            await _isar.tmdbTitles.getAllByTmdbIdMediaType(tmdbIds, mediaTypes);
+
+        for (var j = 0; j < batchTitles.length; j++) {
+          final title = batchTitles[j];
+          final current = currentTitles[j];
+
+          if (current != null) {
+            _mergeTitleMetadata(title, current, listNameToAdd: listName);
+          } else {
+            if (!title.inLists.contains(listName)) {
+              title.inLists = [...title.inLists, listName];
+            }
           }
         }
         await _isar.tmdbTitles.putAll(batchTitles);
@@ -120,25 +162,14 @@ class TmdbTitleRepository {
 
   Future<void> updateTitleMetadata(TmdbTitle title) async {
     await _isar.writeTxn(() async {
-      if (title.inLists.isEmpty) {
-        final existing = await _isar.tmdbTitles
-            .filter()
-            .tmdbIdEqualTo(title.tmdbId)
-            .mediaTypeEqualTo(title.mediaType)
-            .findFirst();
-        if (existing != null) {
-          title.inLists = existing.inLists;
-          if (!title.isPinned) {
-            title.isPinned = existing.isPinned;
-          }
-          if (!title.notifyNewSeasons) {
-            title.notifyNewSeasons = existing.notifyNewSeasons;
-          }
-          if (title.rating == 0.0 && existing.rating > 0.0) {
-            title.rating = existing.rating;
-            title.dateRated = existing.dateRated;
-          }
-        }
+      final existing = await _isar.tmdbTitles
+          .filter()
+          .tmdbIdEqualTo(title.tmdbId)
+          .mediaTypeEqualTo(title.mediaType)
+          .findFirst();
+
+      if (existing != null) {
+        _mergeTitleMetadata(title, existing);
       }
       await _logZeroRatingError(title);
       await _isar.tmdbTitles.put(title);
@@ -155,39 +186,18 @@ class TmdbTitleRepository {
       final batchTitles = titles.sublist(i, end);
 
       await _isar.writeTxn(() async {
-        final titlesToFetch =
-            batchTitles.where((t) => t.inLists.isEmpty).toList();
+        final tmdbIds = batchTitles.map((t) => t.tmdbId).toList();
+        final mediaTypes = batchTitles.map((t) => t.mediaType).toList();
 
-        if (titlesToFetch.isNotEmpty) {
-          final tmdbIds = titlesToFetch.map((t) => t.tmdbId).toList();
-          final mediaTypes = titlesToFetch.map((t) => t.mediaType).toList();
+        final existingTitles =
+            await _isar.tmdbTitles.getAllByTmdbIdMediaType(tmdbIds, mediaTypes);
 
-          final existingTitles = await _isar.tmdbTitles
-              .getAllByTmdbIdMediaType(tmdbIds, mediaTypes);
+        for (var j = 0; j < batchTitles.length; j++) {
+          final title = batchTitles[j];
+          final existing = existingTitles[j];
 
-          final existingMap = <String, TmdbTitle>{};
-          for (final existing in existingTitles) {
-            if (existing != null) {
-              existingMap['${existing.tmdbId}_${existing.mediaType}'] =
-                  existing;
-            }
-          }
-
-          for (final title in titlesToFetch) {
-            final existing = existingMap['${title.tmdbId}_${title.mediaType}'];
-            if (existing != null) {
-              title.inLists = existing.inLists;
-              if (!title.isPinned) {
-                title.isPinned = existing.isPinned;
-              }
-              if (!title.notifyNewSeasons) {
-                title.notifyNewSeasons = existing.notifyNewSeasons;
-              }
-              if (title.rating == 0.0 && existing.rating > 0.0) {
-                title.rating = existing.rating;
-                title.dateRated = existing.dateRated;
-              }
-            }
+          if (existing != null) {
+            _mergeTitleMetadata(title, existing);
           }
         }
 
