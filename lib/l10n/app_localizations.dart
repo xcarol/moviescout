@@ -499,11 +499,11 @@ abstract class AppLocalizations {
   /// **'Seen'**
   String get seenOnly;
 
-  /// No description provided for @snoozedOnly.
+  /// No description provided for @followingOnly.
   ///
   /// In en, this message translates to:
-  /// **'Snoozed'**
-  String get snoozedOnly;
+  /// **'Following'**
+  String get followingOnly;
 
   /// No description provided for @pendingOnly.
   ///
@@ -943,23 +943,35 @@ abstract class AppLocalizations {
   /// **'Season {count}'**
   String seasonLabel(Object count);
 
-  /// No description provided for @snoozeTitle.
+  /// No description provided for @notifyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Pause Series'**
-  String get snoozeTitle;
+  /// **'Notify new seasons'**
+  String get notifyTitle;
 
-  /// No description provided for @snoozeMessage.
+  /// No description provided for @notifyMessage.
   ///
   /// In en, this message translates to:
   /// **'Do you want to be notified when a new season airs?'**
-  String get snoozeMessage;
+  String get notifyMessage;
 
   /// No description provided for @no.
   ///
   /// In en, this message translates to:
   /// **'No'**
   String get no;
+
+  /// No description provided for @none.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get none;
+
+  /// No description provided for @results.
+  ///
+  /// In en, this message translates to:
+  /// **'Results'**
+  String get results;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

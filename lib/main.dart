@@ -23,12 +23,13 @@ import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/region_service.dart';
 import 'package:moviescout/services/tmdb_pinned_service.dart';
-import 'package:moviescout/services/tmdb_snoozed_service.dart';
+import 'package:moviescout/services/tmdb_following_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/tmdb_person_repository.dart';
 import 'package:moviescout/screens/main_screen.dart';
 import 'package:moviescout/services/deep_link_service.dart';
 import 'package:moviescout/utils/language_translator.dart';
@@ -113,10 +114,12 @@ void main() async {
 
   debugPrint('Running Movie Scout...');
   final repository = TmdbTitleRepository();
+  final personRepository = TmdbPersonRepository();
 
   runApp(MultiProvider(
     providers: [
       Provider.value(value: repository),
+      Provider.value(value: personRepository),
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
@@ -132,16 +135,16 @@ void main() async {
           ..setup(userService.accountId, userService.sessionId,
               userService.accessToken),
       ),
-      ChangeNotifierProxyProvider<TmdbUserService, TmdbSnoozedService>(
-        create: (_) => TmdbSnoozedService(repository),
-        update: (_, userService, snoozedService) => snoozedService!
+      ChangeNotifierProxyProvider<TmdbUserService, TmdbFollowingService>(
+        create: (_) => TmdbFollowingService(repository),
+        update: (_, userService, followingService) => followingService!
           ..setup(userService.accountId, userService.sessionId,
               userService.accessToken),
       ),
-      ChangeNotifierProxyProvider<TmdbSnoozedService, TmdbRateslistService>(
+      ChangeNotifierProxyProvider<TmdbFollowingService, TmdbRateslistService>(
         create: (_) => TmdbRateslistService(AppConstants.rateslist, repository),
-        update: (_, snoozedService, rateslistService) {
-          rateslistService!.snoozedService = snoozedService;
+        update: (_, followingService, rateslistService) {
+          rateslistService!.followingService = followingService;
           return rateslistService;
         },
       ),

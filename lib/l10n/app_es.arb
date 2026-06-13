@@ -134,8 +134,8 @@
     "@ratedOnly": {},
     "seenOnly": "Vistas",
     "@seenOnly": {},
-    "snoozedOnly": "Dormidas",
-    "@snoozedOnly": {},
+    "followingOnly": "Siguiendo",
+    "@followingOnly": {},
     "pendingOnly": "Pendientes",
     "@pendingOnly": {},
     "emptyList": "Nada por aquí.",
@@ -300,10 +300,14 @@
             "count": {}
         }
     },
-    "snoozeTitle": "Pausar Serie",
-    "@snoozeTitle": {},
-    "snoozeMessage": "¿Quieres recibir una notificación cuando se emita una nueva temporada?",
-    "@snoozeMessage": {},
+    "notifyTitle": "Notificar nuevas temporadas",
+    "@notifyTitle": {},
+    "notifyMessage": "¿Quieres recibir una notificación cuando se emita una nueva temporada?",
+    "@notifyMessage": {},
     "no": "No",
-    "@no": {}
+    "@no": {},
+    "none": "Ninguno",
+    "@none": {},
+    "results": "Resultados",
+    "@results": {}
 }

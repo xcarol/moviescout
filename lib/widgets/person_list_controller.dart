@@ -79,12 +79,14 @@ class PersonListController with ChangeNotifier {
       _selectedSort = PersonSortOption.original;
     }
     listService.setSort(_selectedSort, _isSortAsc);
+    _scrollToTop();
     notifyListeners();
   }
 
   void toggleSortDirection() {
     _isSortAsc = !_isSortAsc;
     listService.setSort(_selectedSort, _isSortAsc);
+    _scrollToTop();
     notifyListeners();
   }
 
@@ -111,6 +113,7 @@ class PersonListController with ChangeNotifier {
 
   void setTextFilter(String value) {
     listService.setTextFilter(value);
+    _scrollToTop();
   }
 
   void _onListServiceChanged() {
@@ -124,5 +127,11 @@ class PersonListController with ChangeNotifier {
     searchFocusNode.dispose();
     scrollController.dispose();
     super.dispose();
+  }
+
+  void _scrollToTop() {
+    if (scrollController.hasClients) {
+      scrollController.jumpTo(0.0);
+    }
   }
 }

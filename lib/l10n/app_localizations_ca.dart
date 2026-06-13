@@ -210,7 +210,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get seenOnly => 'Vistes';
 
   @override
-  String get snoozedOnly => 'Adormides';
+  String get followingOnly => 'Seguint';
 
   @override
   String get pendingOnly => 'Pendents';
@@ -440,11 +440,17 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
-  String get snoozeTitle => 'Pausar sèrie';
+  String get notifyTitle => 'Notificar noves temporades';
 
   @override
-  String get snoozeMessage => 'Vols que t\'avisem quan hi hagi una nova temporada?';
+  String get notifyMessage => 'Vols que t\'avisem quan hi hagi una nova temporada?';
 
   @override
   String get no => 'No';
+
+  @override
+  String get none => 'Cap';
+
+  @override
+  String get results => 'Resultats';
 }

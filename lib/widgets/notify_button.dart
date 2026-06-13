@@ -4,7 +4,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:provider/provider.dart';
 
-Widget snoozeButton(
+Widget notifyButton(
   BuildContext context,
   TmdbTitle title,
 ) {
@@ -20,23 +20,23 @@ Widget snoozeButton(
             return const SizedBox.shrink();
           }
 
-          if (titleFromList.status != 'Returning Series') {
+          if (titleFromList.status != TvShowStatus.returning) {
             return const SizedBox.shrink();
           }
 
-          bool isSnoozed = titleFromList.isSnoozed;
+          bool notifyNewSeasons = titleFromList.notifyNewSeasons;
 
           return IconButton(
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
             onPressed: () {
-              rateslistService.toggleSnooze(titleFromList);
+              rateslistService.toggleNotify(titleFromList);
             },
             icon: Icon(
-              Icons.pause_circle_outline,
+              notifyNewSeasons ? Icons.notifications_active : Icons.notifications_off_outlined,
               size: 20,
-              color: isSnoozed
-                  ? Theme.of(context).extension<CustomColors>()!.snoozedTitle
+              color: notifyNewSeasons
+                  ? Theme.of(context).extension<CustomColors>()!.followingTitle
                   : Theme.of(context).disabledColor,
             ),
           );

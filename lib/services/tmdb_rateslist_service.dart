@@ -6,7 +6,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
-import 'package:moviescout/services/tmdb_snoozed_service.dart';
+import 'package:moviescout/services/tmdb_following_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -18,7 +18,7 @@ const String _rateMovie = 'movie/{ID}/rating?session_id={SESSION_ID}';
 const String _rateTv = 'tv/{ID}/rating?session_id={SESSION_ID}';
 
 class TmdbRateslistService extends TmdbTitleListService {
-  TmdbSnoozedService? snoozedService;
+  TmdbFollowingService? followingService;
 
   TmdbRateslistService(super.listName, super.repository) {
     filterRating = RatingFilter.rated;
@@ -43,7 +43,8 @@ class TmdbRateslistService extends TmdbTitleListService {
   Future<void> retrieveRateslist(
       String accountId, String sessionId, Locale locale,
       {bool forceUpdate = false}) async {
-    await retrieveList(accountId, forceUpdate: forceUpdate, retrieveMovies: () async {
+    await retrieveList(accountId, forceUpdate: forceUpdate,
+        retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
             _tmdbRateslistMovies
@@ -66,6 +67,10 @@ class TmdbRateslistService extends TmdbTitleListService {
             version: ApiVersion.v4);
       });
     });
+
+    if (followingService != null) {
+      await followingService!.fetchAndApplySnoozedTitles();
+    }
   }
 
   Future<dynamic> _updateTitleRateToTmdb(
@@ -140,15 +145,15 @@ class TmdbRateslistService extends TmdbTitleListService {
     }
   }
 
-  Future<void> toggleSnooze(TmdbTitle title) async {
-    title.isSnoozed = !title.isSnoozed;
+  Future<void> toggleNotify(TmdbTitle title) async {
+    title.notifyNewSeasons = !title.notifyNewSeasons;
     await repository.updateTitleMetadata(title);
 
-    if (snoozedService != null) {
-      if (title.isSnoozed) {
-        await snoozedService!.addSnoozedToServer(title);
+    if (followingService != null) {
+      if (title.notifyNewSeasons) {
+        await followingService!.addSnoozedToServer(title);
       } else {
-        await snoozedService!.removeSnoozedFromServer(title);
+        await followingService!.removeSnoozedFromServer(title);
       }
     }
 
@@ -162,14 +167,5 @@ class TmdbRateslistService extends TmdbTitleListService {
     required Locale locale,
   }) async {
     await retrieveRateslist(accountId, sessionId, locale, forceUpdate: true);
-    await snoozedService!.fetchAndApplySnoozedTitles();
-  }
-
-  @override
-  Future<void> onBackgroundSyncComplete() async {
-    if (snoozedService != null) {
-      await snoozedService!.fetchAndApplySnoozedTitles();
-    }
-    await super.onBackgroundSyncComplete();
   }
 }

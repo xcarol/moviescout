@@ -15,7 +15,7 @@ import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:moviescout/widgets/pin_button.dart';
-import 'package:moviescout/widgets/snooze_button.dart';
+import 'package:moviescout/widgets/notify_button.dart';
 import 'package:provider/provider.dart';
 
 class CustomCacheManager {
@@ -84,8 +84,10 @@ class TitleCard extends StatelessWidget {
   }
 
   Widget titleRating(BuildContext context, TmdbTitle tmdbTitle,
-      {List<Widget>? extraWidgets}) {
+      {bool isCompact = false}) {
     final customColors = Theme.of(context).extension<CustomColors>()!;
+    final double iconTextSpacing = isCompact ? 2.0 : 5.0;
+    final double betweenSpacing = isCompact ? 8.0 : 20.0;
 
     if (tmdbTitle.voteAverage == 0.0) {
       return const SizedBox();
@@ -98,7 +100,7 @@ class TitleCard extends StatelessWidget {
           Icons.star,
           color: customColors.ratedTitle,
         ),
-        const SizedBox(width: 5),
+        SizedBox(width: iconTextSpacing),
         Text(tmdbTitle.voteAverage.toStringAsFixed(2)),
       ]);
     }
@@ -115,7 +117,7 @@ class TitleCard extends StatelessWidget {
 
             if (ratedTitle != null && ratedTitle.tmdbId > 0) {
               if (ratingChildren.isNotEmpty) {
-                ratingChildren.add(const SizedBox(width: 20));
+                ratingChildren.add(SizedBox(width: betweenSpacing));
               }
               if (ratedTitle.rating == AppConstants.seenRating) {
                 ratingChildren.add(
@@ -124,26 +126,27 @@ class TitleCard extends StatelessWidget {
                     color: customColors.userRatedTitle,
                   ),
                 );
-                ratingChildren.add(
-                  Text(AppLocalizations.of(context)!.seen),
-                );
+                if (!isCompact) {
+                  ratingChildren.add(
+                    Text(AppLocalizations.of(context)!.seen),
+                  );
+                }
               } else {
                 ratingChildren.addAll([
                   Icon(
                     Icons.star,
                     color: customColors.userRatedTitle,
                   ),
-                  const SizedBox(width: 5),
+                  SizedBox(width: iconTextSpacing),
                   Text(ratedTitle.rating.toStringAsFixed(0)),
                 ]);
               }
             }
 
-            if (extraWidgets != null) {
-              ratingChildren.addAll(extraWidgets);
+            if (ratingChildren.isEmpty) {
+              return SizedBox(height: IconTheme.of(context).size ?? 24.0);
             }
 
-            if (ratingChildren.isEmpty) return const SizedBox();
             return Row(children: ratingChildren);
           },
         );
@@ -291,7 +294,7 @@ class TitleCard extends StatelessWidget {
         Flexible(child: providers(tmdbTitle)),
         Row(
           children: [
-            snoozeButton(context, tmdbTitle),
+            notifyButton(context, tmdbTitle),
             const SizedBox(width: 8),
             pinButton(context, tmdbTitle),
             const SizedBox(width: 8),

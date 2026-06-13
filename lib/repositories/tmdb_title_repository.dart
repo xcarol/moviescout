@@ -123,8 +123,8 @@ class TmdbTitleRepository {
           if (!title.isPinned) {
             title.isPinned = existing.isPinned;
           }
-          if (!title.isSnoozed) {
-            title.isSnoozed = existing.isSnoozed;
+          if (!title.notifyNewSeasons) {
+            title.notifyNewSeasons = existing.notifyNewSeasons;
           }
           if (title.rating == 0.0 && existing.rating > 0.0) {
             title.rating = existing.rating;
@@ -162,8 +162,8 @@ class TmdbTitleRepository {
             if (!title.isPinned) {
               title.isPinned = existing.isPinned;
             }
-            if (!title.isSnoozed) {
-              title.isSnoozed = existing.isSnoozed;
+            if (!title.notifyNewSeasons) {
+              title.notifyNewSeasons = existing.notifyNewSeasons;
             }
             if (title.rating == 0.0 && existing.rating > 0.0) {
               title.rating = existing.rating;
@@ -384,14 +384,11 @@ class TmdbTitleRepository {
     }
 
     if (filterRating == RatingFilter.rated) {
-      query = query
-          .ratingGreaterThan(AppConstants.seenRating)
-          .isSnoozedEqualTo(false);
+      query = query.ratingGreaterThan(AppConstants.seenRating);
     } else if (filterRating == RatingFilter.seenOnly) {
-      query =
-          query.ratingEqualTo(AppConstants.seenRating).isSnoozedEqualTo(false);
-    } else if (filterRating == RatingFilter.snoozedOnly) {
-      query = query.isSnoozedEqualTo(true);
+      query = query.ratingEqualTo(AppConstants.seenRating);
+    } else if (filterRating == RatingFilter.followingOnly) {
+      query = query.notifyNewSeasonsEqualTo(true);
     }
 
     return query;

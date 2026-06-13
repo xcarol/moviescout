@@ -125,16 +125,5 @@ class TmdbWatchlistService extends TmdbTitleListService {
     required Locale locale,
   }) async {
     await retrieveWatchlist(accountId, sessionId, locale, forceUpdate: true);
-    if (pinnedService != null) {
-      await pinnedService!.fetchAndApplyPinnedTitles();
-    }
-  }
-
-  @override
-  Future<void> onBackgroundSyncComplete() async {
-    if (pinnedService != null) {
-      await pinnedService!.fetchAndApplyPinnedTitles();
-    }
-    await super.onBackgroundSyncComplete();
   }
 }
