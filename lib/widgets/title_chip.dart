@@ -29,11 +29,12 @@ class TitleChip extends StatefulWidget {
 
 class _TitleChipState extends State<TitleChip> {
   Future<TmdbTitle>? _titleFuture;
+  TmdbTitle? _localTitle;
 
   @override
   void initState() {
     super.initState();
-    _checkInitFuture();
+    _loadLocalTitle();
   }
 
   @override
@@ -41,17 +42,23 @@ class _TitleChipState extends State<TitleChip> {
     super.didUpdateWidget(oldWidget);
     if (widget.title.tmdbId != oldWidget.title.tmdbId ||
         widget.title.mediaType != oldWidget.title.mediaType) {
-      _checkInitFuture();
+      _loadLocalTitle();
     }
   }
 
-  void _checkInitFuture() {
-    final localTitle = widget.tmdbListService
-        .getTitleByTmdbIdSync(widget.title.tmdbId, widget.title.mediaType);
-    if (localTitle == null) {
-      _titleFuture = TmdbTitleService().updateTitleLight(widget.title);
-    } else {
-      _titleFuture = null;
+  Future<void> _loadLocalTitle() async {
+    final local = await widget.tmdbListService.getTitleByTmdbId(
+        widget.title.tmdbId, widget.title.mediaType);
+
+    if (mounted) {
+      setState(() {
+        _localTitle = local;
+        if (local == null) {
+          _titleFuture = TmdbTitleService().updateTitleLight(widget.title);
+        } else {
+          _titleFuture = Future.value(local);
+        }
+      });
     }
   }
 
@@ -60,43 +67,21 @@ class _TitleChipState extends State<TitleChip> {
     final mediaQuery = MediaQuery.of(context);
     final clampedScale = mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
 
-    // Always fetch latest from DB synchronously in case it was updated (e.g. returning from details)
-    final localTitle = widget.tmdbListService
-        .getTitleByTmdbIdSync(widget.title.tmdbId, widget.title.mediaType);
-
-    if (localTitle != null) {
-      return Padding(
-        padding: const EdgeInsets.only(right: 10),
-        child: MediaQuery(
-          data:
-              mediaQuery.copyWith(textScaler: TextScaler.linear(clampedScale)),
-          child: _TitleChipContent(
-            title: localTitle,
-            tmdbListService: widget.tmdbListService,
-          ),
-        ),
-      );
-    }
-
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: FutureBuilder<TmdbTitle>(
         future: _titleFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const SizedBox(
-              height: CARD_HEIGHT,
-              width: CARD_WIDTH,
-              child: Center(child: CircularProgressIndicator()),
-            );
-          }
+          // Fallback to widget.title (API data) while waiting to prevent spinners/flickers
+          final titleToDisplay = _localTitle ?? snapshot.data ?? widget.title;
 
           return MediaQuery(
             data: mediaQuery.copyWith(
                 textScaler: TextScaler.linear(clampedScale)),
             child: _TitleChipContent(
-              title: snapshot.data ?? widget.title,
+              title: titleToDisplay,
               tmdbListService: widget.tmdbListService,
+              onReturnFromDetails: _loadLocalTitle,
             ),
           );
         },
@@ -107,10 +92,12 @@ class _TitleChipState extends State<TitleChip> {
 
 class _TitleChipContent extends TitleCard {
   final TmdbTitle _title;
+  final VoidCallback? onReturnFromDetails;
 
   const _TitleChipContent({
     required super.title,
     required super.tmdbListService,
+    this.onReturnFromDetails,
   }) : _title = title;
 
   @override
@@ -126,8 +113,8 @@ class _TitleChipContent extends TitleCard {
           borderRadius: BorderRadius.circular(12),
         ),
         child: InkWell(
-          onTap: () {
-            Navigator.push(
+          onTap: () async {
+            await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => TitleDetails(
@@ -135,6 +122,7 @@ class _TitleChipContent extends TitleCard {
                         tmdbListService: tmdbListService,
                       )),
             );
+            onReturnFromDetails?.call();
           },
           child: Stack(
             fit: StackFit.expand,

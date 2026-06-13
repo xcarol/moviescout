@@ -20,6 +20,8 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
   bool get retrievePending => _retrievePending;
   bool get refreshPending => _refreshPending;
 
+  final ValueNotifier<bool> isRefreshing = ValueNotifier(false);
+
   TmdbDiscoverlistService(super.listName, super.repository);
 
   void clearPendingFlags() {
@@ -39,6 +41,7 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
       return;
     }
 
+    isRefreshing.value = true;
     await clearList();
 
     retrieveList(
@@ -49,6 +52,8 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     }, retrieveTvshows: () async {
       return _getDiscoveryTitles(
           accountId, sessionId, locale, ApiConstants.tv, _tmdbPopularlistTv);
+    }).whenComplete(() {
+      isRefreshing.value = false;
     });
   }
 
@@ -57,29 +62,15 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     final Map<int, double> genreWeights = {};
     final Map<int, int> genreCounts = {};
 
-    final ratedEntries =
-        await repository.getAllEntries(AppConstants.rateslist);
-    final ratedTitles = ratedEntries.isEmpty
-        ? <TmdbTitle>[]
-        : await isar.tmdbTitles
-            .filter()
-            .anyOf(
-                ratedEntries,
-                (q, e) =>
-                    q.tmdbIdEqualTo(e.tmdbId).mediaTypeEqualTo(e.mediaType))
-            .findAll();
+    final ratedTitles = await isar.tmdbTitles
+        .filter()
+        .inListsElementEqualTo(AppConstants.rateslist)
+        .findAll();
 
-    final watchlistEntries =
-        await repository.getAllEntries(AppConstants.watchlist);
-    final watchlistTitles = watchlistEntries.isEmpty
-        ? <TmdbTitle>[]
-        : await isar.tmdbTitles
-            .filter()
-            .anyOf(
-                watchlistEntries,
-                (q, e) =>
-                    q.tmdbIdEqualTo(e.tmdbId).mediaTypeEqualTo(e.mediaType))
-            .findAll();
+    final watchlistTitles = await isar.tmdbTitles
+        .filter()
+        .inListsElementEqualTo(AppConstants.watchlist)
+        .findAll();
 
     final allTitles = {...ratedTitles, ...watchlistTitles}.toList();
     final totalTitles = allTitles.length;
@@ -135,80 +126,43 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
   Future<List> _getDiscoveryTitles(String accountId, String sessionId,
       Locale locale, String mediaType, String popularEndpoint) async {
     final List<dynamic> recommendations = [];
-    final Set<int> addedIds = {};
+    final Set<int> excludedTmdbIds = {};
 
     if (accountId.isNotEmpty) {
       final isar = IsarService.instance;
 
       final genrePreferences = await _calculateGenrePreferences();
 
-      final rEntries =
-          await repository.getAllEntries(AppConstants.rateslist);
-      final wEntries =
-          await repository.getAllEntries(AppConstants.watchlist);
-
       final positiveSignalTitles = await isar.tmdbTitles
           .filter()
-          .group((q) {
-            QueryBuilder<TmdbTitle, TmdbTitle, QAfterFilterCondition>? query;
-            if (rEntries.isNotEmpty) {
-              query = q
-                  .anyOf(
-                      rEntries,
-                      (q1, e) => q1
-                          .tmdbIdEqualTo(e.tmdbId)
-                          .mediaTypeEqualTo(e.mediaType))
-                  .ratingGreaterThan(2.5);
-            }
-            if (wEntries.isNotEmpty) {
-              if (query == null) {
-                query = q.anyOf(
-                    wEntries,
-                    (q1, e) => q1
-                        .tmdbIdEqualTo(e.tmdbId)
-                        .mediaTypeEqualTo(e.mediaType));
-              } else {
-                query = query.or().anyOf(
-                    wEntries,
-                    (q1, e) => q1
-                        .tmdbIdEqualTo(e.tmdbId)
-                        .mediaTypeEqualTo(e.mediaType));
-              }
-            }
-            return query ?? q.tmdbIdEqualTo(-1);
-          })
+          .group((q) => q
+              .group((q1) => q1
+                  .inListsElementEqualTo(AppConstants.rateslist)
+                  .ratingGreaterThan(2.5))
+              .or()
+              .inListsElementEqualTo(AppConstants.watchlist))
           .and()
           .mediaTypeEqualTo(mediaType)
           .findAll();
 
-      final ratedIds = rEntries.isEmpty
-          ? <int>[]
-          : await isar.tmdbTitles
-              .filter()
-              .anyOf(
-                  rEntries,
-                  (q, e) =>
-                      q.tmdbIdEqualTo(e.tmdbId).mediaTypeEqualTo(e.mediaType))
-              .and()
-              .mediaTypeEqualTo(mediaType)
-              .tmdbIdProperty()
-              .findAll();
+      final ratedIds = await isar.tmdbTitles
+          .filter()
+          .inListsElementEqualTo(AppConstants.rateslist)
+          .and()
+          .mediaTypeEqualTo(mediaType)
+          .tmdbIdProperty()
+          .findAll();
 
-      final watchlistIds = wEntries.isEmpty
-          ? <int>[]
-          : await isar.tmdbTitles
-              .filter()
-              .anyOf(
-                  wEntries,
-                  (q, e) =>
-                      q.tmdbIdEqualTo(e.tmdbId).mediaTypeEqualTo(e.mediaType))
-              .and()
-              .mediaTypeEqualTo(mediaType)
-              .tmdbIdProperty()
-              .findAll();
+      final watchlistIds = await isar.tmdbTitles
+          .filter()
+          .inListsElementEqualTo(AppConstants.watchlist)
+          .and()
+          .mediaTypeEqualTo(mediaType)
+          .tmdbIdProperty()
+          .findAll();
 
-      addedIds.addAll(ratedIds);
-      addedIds.addAll(watchlistIds);
+      excludedTmdbIds.addAll(ratedIds);
+      excludedTmdbIds.addAll(watchlistIds);
 
       final seedTitles = [...positiveSignalTitles]..shuffle();
       final selectedSeeds = seedTitles.take(20).toList();
@@ -255,9 +209,9 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
       for (final rec in allRecommendations) {
         if (recommendations.length >= 40) break;
         final recId = rec[TmdbTitleFields.id];
-        if (!addedIds.contains(recId)) {
+        if (!excludedTmdbIds.contains(recId)) {
           recommendations.add(rec);
-          addedIds.add(recId);
+          excludedTmdbIds.add(recId);
         }
       }
     }
@@ -282,9 +236,9 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
       for (final title in popularTitles) {
         if (recommendations.length >= 40) break;
         final id = title[TmdbTitleFields.id];
-        if (!addedIds.contains(id)) {
+        if (!excludedTmdbIds.contains(id)) {
           recommendations.add(title);
-          addedIds.add(id);
+          excludedTmdbIds.add(id);
         }
       }
     }

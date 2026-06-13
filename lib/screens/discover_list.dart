@@ -127,7 +127,10 @@ class _DiscoverListState extends State<DiscoverList> {
 
   Widget body() {
     return Selector<TmdbDiscoverlistService, bool>(
-      selector: (_, service) => service.listIsEmpty && !service.isLoading.value,
+      selector: (_, service) =>
+          service.listIsEmpty &&
+          !service.isLoading.value &&
+          !service.isRefreshing.value,
       shouldRebuild: (prev, next) => prev != next,
       builder: (context, isEmpty, child) {
         if (isEmpty) {

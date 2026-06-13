@@ -32,6 +32,14 @@ class TmdbRateslistService extends TmdbTitleListService {
     return title.rating;
   }
 
+  Future<double> getRatingAsync(int titleId, String mediaType) async {
+    TmdbTitle? title = await getTitleByTmdbId(titleId, mediaType);
+    if (title == null) {
+      return 0.0;
+    }
+    return title.rating;
+  }
+
   Future<DateTime> getRatingDate(int titleId, String mediaType) async {
     TmdbTitle? title = await getTitleByTmdbId(titleId, mediaType);
     if (title == null) {
