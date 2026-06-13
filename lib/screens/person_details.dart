@@ -36,11 +36,38 @@ class PersonDetails extends StatefulWidget {
 
 class _PersonDetailsState extends State<PersonDetails> {
   late Future<TmdbPerson> _personFuture;
+  List<TmdbTitle> _userRatedTitles = [];
 
   @override
   void initState() {
     super.initState();
-    _personFuture = TmdbPersonService().updatePersonDetails(widget._person);
+    _personFuture = _loadPersonAndRates();
+  }
+
+  Future<TmdbPerson> _loadPersonAndRates() async {
+    final person =
+        await TmdbPersonService().updatePersonDetails(widget._person);
+
+    if (!mounted) return person;
+    final tmdbRateslistService =
+        Provider.of<TmdbRateslistService>(context, listen: false);
+
+    final ratedTitles = <TmdbTitle>[];
+    for (var title in person.combinedCredits.cast) {
+      final rating = await tmdbRateslistService.getRatingAsync(
+          title.tmdbId, title.mediaType);
+      if (rating != 0) {
+        ratedTitles.add(title);
+      }
+    }
+
+    if (mounted) {
+      setState(() {
+        _userRatedTitles = ratedTitles;
+      });
+    }
+
+    return person;
   }
 
   @override
@@ -82,14 +109,7 @@ class _PersonDetailsState extends State<PersonDetails> {
   }
 
   Widget _detailsBody(TmdbPerson person) {
-    final tmdbRateslistService =
-        Provider.of<TmdbRateslistService>(context, listen: false);
-    final seen = <String>{};
-    final userRatedTitles = person.combinedCredits.cast
-        .where((title) => seen.add('${title.mediaType}_${title.tmdbId}'))
-        .where((title) =>
-            tmdbRateslistService.getRating(title.tmdbId, title.mediaType) != 0)
-        .toList();
+    final userRatedTitles = _userRatedTitles;
 
     return Padding(
       padding: EdgeInsets.only(left: 5, right: 5, bottom: 100),
