@@ -4,6 +4,7 @@ import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_config_list_service.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/utils/save_logs.dart';
 
 class TmdbPinnedService extends TmdbConfigListService {
   final TmdbTitleRepository repository;
@@ -30,6 +31,10 @@ class TmdbPinnedService extends TmdbConfigListService {
     try {
       final response = await get('/list/$currentListId?page=1',
           version: ApiVersion.v4, accessToken: accessToken);
+
+      saveLogs([
+        'fetchAndApplyPinnedTitles() $currentListId ${response.statusCode}'
+      ]);
 
       if (response.statusCode == 200) {
         final data = body(response);
@@ -69,6 +74,11 @@ class TmdbPinnedService extends TmdbConfigListService {
       pinned: true,
     );
 
+    saveLogs(['_applyPinnedIds(currentPinned)']);
+    for (var title in currentPinned) {
+      saveLogs(['_applyPinnedIds(currentPinned) ${title.id} ${title.name}']);
+    }
+
     final Map<int, TmdbTitle> toUpdate = {};
 
     // Reset current pins
@@ -92,6 +102,11 @@ class TmdbPinnedService extends TmdbConfigListService {
           }
         }
       }
+    }
+
+    saveLogs(['_applyPinnedIds(toUpdate)']);
+    for (var title in toUpdate.values) {
+      saveLogs(['_applyPinnedIds(toUpdate) ${title.id} ${title.name}']);
     }
 
     if (toUpdate.isNotEmpty) {
@@ -119,8 +134,14 @@ class TmdbPinnedService extends TmdbConfigListService {
       final response = await post('list/$currentListId/items', requestBody,
           version: ApiVersion.v4, accessToken: accessToken);
       if (response.statusCode == 200) {
+        saveLogs([
+          'addPinnedToServer(SUCCESS) $currentListId ${title.tmdbId} ${title.name}'
+        ]);
         return true;
       } else {
+        saveLogs([
+          'addPinnedToServer(FAILURE) $currentListId ${title.tmdbId} ${title.name}'
+        ]);
         ErrorService.log(
           'TMDB API Error: ${response.statusCode} - ${response.body}',
           userMessage: 'Error adding pinned to server',
@@ -154,8 +175,14 @@ class TmdbPinnedService extends TmdbConfigListService {
       final response = await delete('list/$currentListId/items',
           body: requestBody, version: ApiVersion.v4, accessToken: accessToken);
       if (response.statusCode == 200) {
+        saveLogs([
+          'removePinnedToServer(SUCCESS) $currentListId ${title.tmdbId} ${title.name}'
+        ]);
         return true;
       } else {
+        saveLogs([
+          'removePinnedToServer(FAILURE) $currentListId ${title.tmdbId} ${title.name}'
+        ]);
         ErrorService.log(
           'TMDB API Error: ${response.statusCode} - ${response.body}',
           userMessage: 'Error removing pinned from server',
