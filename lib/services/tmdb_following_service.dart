@@ -2,7 +2,6 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_config_list_service.dart';
-import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart'
     show RatingFilter;
@@ -14,6 +13,7 @@ class TmdbFollowingService extends TmdbConfigListService {
       : super(
           configListName: 'snoozed',
           listIdPrefKey: 'snoozedListId',
+          firestoreFieldName: 'snoozedIds',
         );
 
   void clearSnoozedStatus() {
@@ -25,9 +25,15 @@ class TmdbFollowingService extends TmdbConfigListService {
     setupBase(accountId, sessionId, accessToken);
   }
 
+  // Renamed to act as the trigger for the rateslist
   Future<void> fetchAndApplySnoozedTitles() async {
+    await fetchAndListen();
+  }
+
+  @override
+  Future<dynamic> migrateDataFromTmdb() async {
     final currentListId = await getOrFetchListId();
-    if (currentListId == null || currentListId.isEmpty) return;
+    if (currentListId == null || currentListId.isEmpty) return <String>[];
 
     try {
       final response = await get('/list/$currentListId?page=1',
@@ -43,29 +49,19 @@ class TmdbFollowingService extends TmdbConfigListService {
           final id = item['id'];
           snoozedIds.add('$mediaType:$id');
         }
-
-        await _applySnoozedIds(snoozedIds);
-        notifyListeners();
-      } else if (response.statusCode == 404) {
-        listId = ''; // Reset if not found
-        await _applySnoozedIds([]);
-        notifyListeners();
-      } else {
-        ErrorService.log(
-          'TMDB API Error: ${response.statusCode} - ${response.body}',
-          userMessage: 'Error fetching snoozed configuration',
-        );
+        return snoozedIds;
       }
-    } catch (e, stackTrace) {
-      ErrorService.log(
-        e,
-        stackTrace: stackTrace,
-        userMessage: 'Error fetching snoozed titles',
-      );
+    } catch (e) {
+      // Catch silently for migration
     }
+    return <String>[];
   }
 
-  Future<void> _applySnoozedIds(List<String> snoozedIds) async {
+  @override
+  Future<void> applyData(dynamic data) async {
+    if (data is! List) return;
+    final List<String> snoozedIds = List<String>.from(data);
+
     final currentSnoozed = await repository.getTitles(
       listName: AppConstants.rateslist,
       filterRating: RatingFilter.followingOnly,
@@ -98,79 +94,17 @@ class TmdbFollowingService extends TmdbConfigListService {
 
     if (toUpdate.isNotEmpty) {
       await repository.updateTitlesMetadata(toUpdate.values.toList());
+      notifyListeners();
     }
   }
 
   Future<bool> addSnoozedToServer(TmdbTitle title) async {
-    String? currentListId = await getOrFetchListId();
-    // ensure list exists
-    currentListId ??= await createServerList(forced: true);
-
-    if (currentListId == null) return false;
-
-    final requestBody = {
-      'items': [
-        {
-          'media_type': title.mediaType,
-          'media_id': title.tmdbId,
-        }
-      ]
-    };
-
-    try {
-      final response = await post('list/$currentListId/items', requestBody,
-          version: ApiVersion.v4, accessToken: accessToken);
-      if (response.statusCode == 200) {
-        return true;
-      } else {
-        ErrorService.log(
-          'TMDB API Error: ${response.statusCode} - ${response.body}',
-          userMessage: 'Error adding snoozed to server',
-        );
-        return false;
-      }
-    } catch (e, stackTrace) {
-      ErrorService.log(
-        e,
-        stackTrace: stackTrace,
-        userMessage: 'Exception adding snoozed to server',
-      );
-      return false;
-    }
+    return await updateArrayInFirebase(
+        '${title.mediaType}:${title.tmdbId}', true);
   }
 
   Future<bool> removeSnoozedFromServer(TmdbTitle title) async {
-    final currentListId = await getOrFetchListId();
-    if (currentListId == null || currentListId.isEmpty) return false;
-
-    final requestBody = {
-      'items': [
-        {
-          'media_type': title.mediaType,
-          'media_id': title.tmdbId,
-        }
-      ]
-    };
-
-    try {
-      final response = await delete('list/$currentListId/items',
-          body: requestBody, version: ApiVersion.v4, accessToken: accessToken);
-      if (response.statusCode == 200) {
-        return true;
-      } else {
-        ErrorService.log(
-          'TMDB API Error: ${response.statusCode} - ${response.body}',
-          userMessage: 'Error removing snoozed from server',
-        );
-        return false;
-      }
-    } catch (e, stackTrace) {
-      ErrorService.log(
-        e,
-        stackTrace: stackTrace,
-        userMessage: 'Exception removing snoozed from server',
-      );
-      return false;
-    }
+    return await updateArrayInFirebase(
+        '${title.mediaType}:${title.tmdbId}', false);
   }
 }

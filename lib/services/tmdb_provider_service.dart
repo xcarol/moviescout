@@ -21,6 +21,7 @@ class TmdbProviderService extends TmdbConfigListService {
       : super(
           configListName: 'providers',
           listIdPrefKey: 'providerListId',
+          firestoreFieldName: 'providers',
         );
 
   Future<void> _retrieveProviders() async {
@@ -91,8 +92,10 @@ class TmdbProviderService extends TmdbConfigListService {
 
       if (_getLocalProviders() == false) {
         await _retrieveProviders();
-        await _retrieveUserProviders();
+        await fetchAndListen(); // This fetches from Firebase or migrates from TMDB
         _setLocalProviders(_providerMap);
+      } else {
+        await fetchAndListen(); // Keep listening for remote changes
       }
     } catch (error, stackTrace) {
       ErrorService.log(
@@ -107,13 +110,18 @@ class TmdbProviderService extends TmdbConfigListService {
     }
   }
 
-  Future<void> _retrieveUserProviders() async {
-    final providersString = await fetchConfigFromServer();
-    if (providersString == null || providersString.isEmpty) {
-      return;
-    }
+  @override
+  Future<dynamic> migrateDataFromTmdb() async {
+    // Legacy migration logic
+    return await fetchConfigFromServer();
+  }
 
-    _stringToProviders(providersString);
+  @override
+  Future<void> applyData(dynamic data) async {
+    if (data is! String) return;
+    _stringToProviders(data);
+    _setLocalProviders(_providerMap);
+    notifyListeners();
   }
 
   String _providersToString() {
@@ -126,6 +134,7 @@ class TmdbProviderService extends TmdbConfigListService {
 
   void _stringToProviders(String providersString) {
     try {
+      if (providersString.isEmpty) return;
       final providerIds = providersString.split(',').map(int.parse).toList();
       for (var entry in _providerMap.entries) {
         if (providerIds.contains(entry.key)) {
@@ -141,13 +150,6 @@ class TmdbProviderService extends TmdbConfigListService {
         userMessage: 'Error parsing platforms',
       );
     }
-  }
-
-  Future<bool> _updateProvidersToServer() async {
-    return updateConfigToServer(
-      _providersToString(),
-      userErrorMessage: 'Error updating platforms',
-    );
   }
 
   bool _getLocalProviders() {
@@ -198,7 +200,7 @@ class TmdbProviderService extends TmdbConfigListService {
   void toggleProvider(int id, bool value) {
     if (_providerMap.containsKey(id)) {
       _providerMap[id]![TmdbProvider.providerEnabled] = value.toString();
-      _updateProvidersToServer();
+      updateToFirebase(_providersToString()); // Real-time push!
       _setLocalProviders(_providerMap);
     }
   }
