@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
@@ -8,15 +11,21 @@ abstract class TmdbConfigListService extends TmdbBaseService
     with ChangeNotifier {
   final String configListName;
   final String listIdPrefKey;
+  final String firestoreFieldName;
 
   String _accessToken = '';
   String _accountId = '';
   String _sessionId = '';
   String _listId = '';
+  DocumentReference? _docRef;
+
+  StreamSubscription<DocumentSnapshot>? _firestoreSubscription;
+  bool _isMigrating = false;
 
   TmdbConfigListService({
     required this.configListName,
     required this.listIdPrefKey,
+    required this.firestoreFieldName,
   });
 
   @protected
@@ -41,6 +50,9 @@ abstract class TmdbConfigListService extends TmdbBaseService
 
   void clearConfig() {
     listId = '';
+    _firestoreSubscription?.cancel();
+    _firestoreSubscription = null;
+    _docRef = null;
   }
 
   @protected
@@ -48,7 +60,93 @@ abstract class TmdbConfigListService extends TmdbBaseService
     _accountId = accountId;
     _sessionId = sessionId;
     _accessToken = accessToken;
+    if (accountId.isNotEmpty) {
+      _docRef = FirebaseFirestore.instance.collection('users').doc(accountId);
+    }
   }
+
+  // Abstract methods to be implemented by child classes
+  @protected
+  Future<dynamic> migrateDataFromTmdb();
+
+  @protected
+  Future<void> applyData(dynamic data);
+
+  Future<void> fetchAndListen() async {
+    if (_docRef == null || Firebase.apps.isEmpty) return;
+
+    try {
+      final snapshot =
+          await _docRef!.get(const GetOptions(source: Source.serverAndCache));
+      if (snapshot.exists &&
+          snapshot.data() != null &&
+          (snapshot.data() as Map<String, dynamic>)
+              .containsKey(firestoreFieldName)) {
+        final data =
+            (snapshot.data() as Map<String, dynamic>)[firestoreFieldName];
+        await applyData(data);
+      } else {
+        if (!_isMigrating) {
+          _isMigrating = true;
+          final legacyData = await migrateDataFromTmdb();
+          if (legacyData != null) {
+            await _docRef!
+                .set({firestoreFieldName: legacyData}, SetOptions(merge: true));
+            await applyData(legacyData);
+          }
+          _isMigrating = false;
+        }
+      }
+    } catch (e, stackTrace) {
+      ErrorService.log(e,
+          stackTrace: stackTrace,
+          userMessage: 'Error fetching config $firestoreFieldName');
+    }
+
+    _firestoreSubscription ??= _docRef!.snapshots().listen((snapshot) async {
+      if (snapshot.exists &&
+          snapshot.data() != null &&
+          (snapshot.data() as Map<String, dynamic>)
+              .containsKey(firestoreFieldName)) {
+        final data =
+            (snapshot.data() as Map<String, dynamic>)[firestoreFieldName];
+        await applyData(data);
+      }
+    });
+  }
+
+  @protected
+  Future<bool> updateToFirebase(dynamic data) async {
+    if (_docRef == null || Firebase.apps.isEmpty) return false;
+    try {
+      await _docRef!.set({firestoreFieldName: data}, SetOptions(merge: true));
+      return true;
+    } catch (e, stackTrace) {
+      ErrorService.log(e,
+          stackTrace: stackTrace,
+          userMessage: 'Error saving config $firestoreFieldName');
+      return false;
+    }
+  }
+
+  @protected
+  Future<bool> updateArrayInFirebase(String item, bool add) async {
+    if (_docRef == null || Firebase.apps.isEmpty) return false;
+    try {
+      await _docRef!.set({
+        firestoreFieldName:
+            add ? FieldValue.arrayUnion([item]) : FieldValue.arrayRemove([item])
+      }, SetOptions(merge: true));
+      return true;
+    } catch (e, stackTrace) {
+      ErrorService.log(e,
+          stackTrace: stackTrace,
+          userMessage: 'Error updating array $firestoreFieldName');
+      return false;
+    }
+  }
+
+  // --- LEGACY TMDB METHODS (used only for migration) ---
 
   @protected
   Future<String?> getOrFetchListId() async {
@@ -83,110 +181,6 @@ abstract class TmdbConfigListService extends TmdbBaseService
   }
 
   @protected
-  Future<String?> createServerList({bool forced = false}) async {
-    if (listId.isNotEmpty && !forced) {
-      return listId;
-    }
-
-    const String url = 'list';
-    final Map<String, dynamic> body = {
-      'name': configListName,
-      'iso_639_1': 'ca',
-      'description': '',
-      'public': false,
-    };
-
-    try {
-      final response = await post(
-        url,
-        body,
-        version: ApiVersion.v4,
-        accessToken: _accessToken,
-      );
-
-      if (response.statusCode == 201) {
-        final json = jsonDecode(response.body);
-        listId = json['id'].toString();
-        return listId;
-      }
-    } catch (e, stackTrace) {
-      ErrorService.log(
-        e,
-        stackTrace: stackTrace,
-        userMessage: 'Error creating configuration list: $configListName',
-      );
-    }
-    return null;
-  }
-
-  @protected
-  Future<bool> updateConfigToServer(String configuration,
-      {String? userErrorMessage}) async {
-    if (_accountId.isEmpty) return false;
-
-    String? currentListId = await getOrFetchListId();
-    currentListId = await createServerList(forced: currentListId == null);
-
-    if (currentListId == null) return false;
-
-    final url = 'list/$currentListId';
-    final Map<String, dynamic> body = {
-      'description': configuration,
-    };
-
-    try {
-      final response = await put(
-        url,
-        body,
-        version: ApiVersion.v4,
-        accessToken: _accessToken,
-      );
-
-      if (response.statusCode == 404) {
-        // List missing on server, retry once with creation
-        currentListId = await createServerList(forced: true);
-        if (currentListId == null) return false;
-
-        final retryResponse = await put(
-          'list/$currentListId',
-          body,
-          version: ApiVersion.v4,
-          accessToken: _accessToken,
-        );
-
-        if (retryResponse.statusCode == 201 ||
-            retryResponse.statusCode == 200) {
-          return true;
-        }
-
-        ErrorService.log(
-          'TMDB API Retry Error: ${retryResponse.statusCode} - ${retryResponse.body}',
-          userMessage:
-              userErrorMessage ?? 'Error updating server configuration',
-        );
-        return false;
-      }
-
-      if (response.statusCode == 201 || response.statusCode == 200) {
-        return true;
-      }
-
-      ErrorService.log(
-        'TMDB API Error: ${response.statusCode} - ${response.body}',
-        userMessage: userErrorMessage ?? 'Error updating server configuration',
-      );
-      return false;
-    } catch (e, stackTrace) {
-      ErrorService.log(
-        e,
-        stackTrace: stackTrace,
-        userMessage: userErrorMessage ?? 'Error updating server configuration',
-      );
-      return false;
-    }
-  }
-
-  @protected
   Future<String?> fetchConfigFromServer() async {
     if (_accountId.isEmpty || _accessToken.isEmpty) return null;
 
@@ -203,18 +197,9 @@ abstract class TmdbConfigListService extends TmdbBaseService
       } else if (response.statusCode == 404) {
         listId = ''; // Reset if not found
         return '';
-      } else {
-        ErrorService.log(
-          'TMDB API Error: ${response.statusCode} - ${response.body}',
-          userMessage: 'Error fetching configuration',
-        );
       }
-    } catch (e, stackTrace) {
-      ErrorService.log(
-        e,
-        stackTrace: stackTrace,
-        userMessage: 'Error fetching configuration',
-      );
+    } catch (e) {
+      // Silent catch for migration
     }
     return null;
   }

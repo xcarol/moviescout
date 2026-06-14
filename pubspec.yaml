@@ -46,6 +46,7 @@ dependencies:
   google_sign_in: ^7.2.0
   google_sign_in_web: ^1.1.0
   firebase_database: ^12.1.1
+  cloud_firestore: ^6.1.1
   flutter_svg: ^2.0.17
   provider: ^6.1.2
   url_launcher: ^6.3.1
