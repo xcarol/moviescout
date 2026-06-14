@@ -43,13 +43,19 @@ export default async function handler(req, res) {
 
   try {
     // 1. Validate the session directly with TMDB
-    const tmdbApiKey = process.env.TMDB_API_KEY;
-    if (!tmdbApiKey) {
-      return res.status(500).json({ error: 'Missing TMDB_API_KEY environment variable' });
+    const tmdbToken = process.env.TMDB_API_KEY || process.env.TMDB_API_RAT;
+    if (!tmdbToken) {
+      return res.status(500).json({ error: 'Missing TMDB API Token environment variable' });
     }
 
-    const tmdbUrl = `https://api.themoviedb.org/3/account/${account_id}?session_id=${session_id}&api_key=${tmdbApiKey}`;
-    const tmdbResponse = await fetch(tmdbUrl);
+    // Pass the token as a Bearer token, which supports TMDB v4 Read Access Tokens
+    const tmdbUrl = `https://api.themoviedb.org/3/account/${account_id}?session_id=${session_id}`;
+    const tmdbResponse = await fetch(tmdbUrl, {
+      headers: {
+        'Authorization': `Bearer ${tmdbToken}`,
+        'Accept': 'application/json'
+      }
+    });
     
     if (!tmdbResponse.ok) {
       return res.status(401).json({ error: 'Invalid TMDB session or account ID' });
