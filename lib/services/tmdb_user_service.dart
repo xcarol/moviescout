@@ -44,7 +44,8 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
       _sessionId = PreferencesService().prefs.getString('sessionId') ?? '';
       if (_accountId.isNotEmpty) {
         await _setupUserDetails();
-        if (Firebase.apps.isNotEmpty && FirebaseAuth.instance.currentUser == null) {
+        if (Firebase.apps.isNotEmpty &&
+            FirebaseAuth.instance.currentUser == null) {
           await _firebaseSignIn();
         }
       }
@@ -224,7 +225,7 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     pinnedService.clearPinnedStatus();
     final followingService =
         Provider.of<TmdbFollowingService>(context, listen: false);
-    followingService.clearSnoozedStatus();
+    followingService.clearFollowingStatus();
     PreferencesService().prefs.clear();
     if (Firebase.apps.isNotEmpty) {
       await FirebaseAuth.instance.signOut();

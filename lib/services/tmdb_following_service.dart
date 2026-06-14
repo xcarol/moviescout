@@ -11,12 +11,12 @@ class TmdbFollowingService extends TmdbConfigListService {
 
   TmdbFollowingService(this.repository)
       : super(
-          configListName: 'snoozed',
-          listIdPrefKey: 'snoozedListId',
-          firestoreFieldName: 'snoozedIds',
+          configListName: 'snoozed', // Keep legacy TMDB list name for migration
+          listIdPrefKey: 'followingListId',
+          firestoreFieldName: 'followingIds',
         );
 
-  void clearSnoozedStatus() {
+  void clearFollowingStatus() {
     clearConfig();
   }
 
@@ -25,8 +25,7 @@ class TmdbFollowingService extends TmdbConfigListService {
     setupBase(accountId, sessionId, accessToken);
   }
 
-  // Renamed to act as the trigger for the rateslist
-  Future<void> fetchAndApplySnoozedTitles() async {
+  Future<void> fetchAndApplyFollowingTitles() async {
     await fetchAndListen();
   }
 
@@ -43,13 +42,13 @@ class TmdbFollowingService extends TmdbConfigListService {
         final data = body(response);
         final results = data['results'] as List<dynamic>? ?? [];
 
-        final List<String> snoozedIds = [];
+        final List<String> followingIds = [];
         for (var item in results) {
           final mediaType = item['media_type'];
           final id = item['id'];
-          snoozedIds.add('$mediaType:$id');
+          followingIds.add('$mediaType:$id');
         }
-        return snoozedIds;
+        return followingIds;
       }
     } catch (e) {
       // Catch silently for migration
@@ -60,23 +59,23 @@ class TmdbFollowingService extends TmdbConfigListService {
   @override
   Future<void> applyData(dynamic data) async {
     if (data is! List) return;
-    final List<String> snoozedIds = List<String>.from(data);
+    final List<String> followingIds = List<String>.from(data);
 
-    final currentSnoozed = await repository.getTitles(
+    final currentFollowing = await repository.getTitles(
       listName: AppConstants.rateslist,
       filterRating: RatingFilter.followingOnly,
     );
 
     final Map<int, TmdbTitle> toUpdate = {};
 
-    // Reset current snoozes
-    for (var title in currentSnoozed) {
+    // Reset current following
+    for (var title in currentFollowing) {
       title.notifyNewSeasons = false;
       toUpdate[title.id] = title;
     }
 
-    // Set new snoozes
-    for (var item in snoozedIds) {
+    // Set new following
+    for (var item in followingIds) {
       final parts = item.split(':');
       if (parts.length == 2) {
         final mediaType = parts[0];
@@ -98,12 +97,12 @@ class TmdbFollowingService extends TmdbConfigListService {
     }
   }
 
-  Future<bool> addSnoozedToServer(TmdbTitle title) async {
+  Future<bool> addFollowingToServer(TmdbTitle title) async {
     return await updateArrayInFirebase(
         '${title.mediaType}:${title.tmdbId}', true);
   }
 
-  Future<bool> removeSnoozedFromServer(TmdbTitle title) async {
+  Future<bool> removeFollowingFromServer(TmdbTitle title) async {
     return await updateArrayInFirebase(
         '${title.mediaType}:${title.tmdbId}', false);
   }

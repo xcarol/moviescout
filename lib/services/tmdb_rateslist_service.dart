@@ -77,7 +77,7 @@ class TmdbRateslistService extends TmdbTitleListService {
     });
 
     if (followingService != null) {
-      await followingService!.fetchAndApplySnoozedTitles();
+      await followingService!.fetchAndApplyFollowingTitles();
     }
   }
 
@@ -159,9 +159,9 @@ class TmdbRateslistService extends TmdbTitleListService {
 
     if (followingService != null) {
       if (title.notifyNewSeasons) {
-        await followingService!.addSnoozedToServer(title);
+        await followingService!.addFollowingToServer(title);
       } else {
-        await followingService!.removeSnoozedFromServer(title);
+        await followingService!.removeFollowingFromServer(title);
       }
     }
 
