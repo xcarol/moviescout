@@ -1,0 +1,9 @@
+{
+  "name": "moviescout-backend",
+  "version": "1.0.0",
+  "description": "Vercel serverless functions for MovieScout Firebase Custom Auth",
+  "main": "api/auth.js",
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}
