@@ -60,7 +60,7 @@ abstract class TmdbConfigListService extends TmdbBaseService
     _accountId = accountId;
     _sessionId = sessionId;
     _accessToken = accessToken;
-    if (accountId.isNotEmpty) {
+    if (accountId.isNotEmpty && Firebase.apps.isNotEmpty) {
       _docRef = FirebaseFirestore.instance.collection('users').doc(accountId);
     }
   }
