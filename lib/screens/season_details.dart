@@ -12,6 +12,7 @@ import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:moviescout/utils/date_formatter.dart';
+import 'package:moviescout/screens/title_people_list.dart';
 
 class SeasonDetails extends StatefulWidget {
   final TmdbTitle title;
@@ -121,8 +122,12 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           Divider(
               color: Theme.of(context).extension<CustomColors>()!.dividerColor),
           const SizedBox(height: 10),
-          _episodesList(season),
+          _castAndCrew(season, PersonAttributes.cast),
+          _castAndCrew(season, PersonAttributes.crew),
+          Divider(
+              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
           const SizedBox(height: 10),
+          _episodesList(season),
         ],
       ),
     );
@@ -342,6 +347,49 @@ class _SeasonDetailsState extends State<SeasonDetails> {
             ],
           );
         }),
+      ],
+    );
+  }
+
+  Widget _castAndCrew(TmdbSeason season, String type) {
+    if (type == PersonAttributes.cast && season.cast.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    if (type == PersonAttributes.crew && season.crew.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text(
+            type == PersonAttributes.cast
+                ? AppLocalizations.of(context)!.cast
+                : AppLocalizations.of(context)!.crew,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => TitlePeopleList(
+                        title: widget.title,
+                        type: type,
+                        tmdbListService: widget.tmdbListService,
+                        season: season,
+                      )),
+            );
+          },
+          child: Text(
+            AppLocalizations.of(context)!.seeThemAll,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+        ),
       ],
     );
   }
