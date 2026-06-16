@@ -171,6 +171,79 @@ class TmdbPerson implements TmdbItem {
       PersonAttributes.combined_credits: combinedCreditsJson != null ? jsonDecode(combinedCreditsJson!) : null,
     };
   }
+
+  static List<TmdbPerson> parsePersonList(List<dynamic>? jsonList, String roleType) {
+    if (jsonList == null) return [];
+
+    List<TmdbPerson> people = [];
+    for (dynamic person in jsonList) {
+      if (person is! Map) continue;
+
+      String character = '';
+      String job = '';
+
+      if (roleType == PersonAttributes.cast) {
+        if (person[PersonAttributes.roles] is List) {
+          character = (person[PersonAttributes.roles] as List)
+              .map((r) => r[PersonAttributes.character] ?? '')
+              .where((c) => c.toString().isNotEmpty)
+              .join(', ');
+        } else {
+          character = person[PersonAttributes.character] ?? '';
+        }
+      } else if (roleType == PersonAttributes.crew) {
+        if (person[PersonAttributes.jobs] is List) {
+          job = (person[PersonAttributes.jobs] as List)
+              .map((j) => j[PersonAttributes.job] ?? '')
+              .where((j) => j.toString().isNotEmpty)
+              .join(', ');
+        } else {
+          job = person[PersonAttributes.job] ?? '';
+        }
+      }
+
+      int tmdbId = person[PersonAttributes.id] ?? 0;
+      int existingIndex = people.indexWhere((p) => p.tmdbId == tmdbId);
+
+      if (existingIndex != -1) {
+        if (roleType == PersonAttributes.cast) {
+          if (people[existingIndex].character.isNotEmpty && character.isNotEmpty && !people[existingIndex].character.contains(character)) {
+            people[existingIndex].character += ', $character';
+          } else if (people[existingIndex].character.isEmpty && character.isNotEmpty) {
+            people[existingIndex].character = character;
+          }
+        } else {
+          if (people[existingIndex].job.isNotEmpty && job.isNotEmpty && !people[existingIndex].job.contains(job)) {
+            people[existingIndex].job += ', $job';
+          } else if (people[existingIndex].job.isEmpty && job.isNotEmpty) {
+            people[existingIndex].job = job;
+          }
+        }
+        continue;
+      }
+
+      people.add(TmdbPerson(
+        tmdbId: tmdbId,
+        name: person[PersonAttributes.name] ?? '',
+        lastUpdated: AppConstants.defaultDate,
+        knownForDepartment: person[PersonAttributes.known_for_department] ?? '',
+        gender: person[PersonAttributes.gender] ?? 0,
+        originalName: person[PersonAttributes.original_name] ?? '',
+        profilePath: person[PersonAttributes.profile_path] ?? '',
+        character: character,
+        job: job,
+        biography: person[PersonAttributes.biography] ?? '',
+        birthday: person[PersonAttributes.birthday] ?? '',
+        deathday: person[PersonAttributes.deathday] ?? '',
+        imdbId: person[PersonAttributes.imdb_id] ?? '',
+        placeOfBirth: person[PersonAttributes.place_of_birth] ?? '',
+        combinedCredits: CombinedCredits.fromMap(
+            person[PersonAttributes.combined_credits] ?? {}),
+        homepage: person[PersonAttributes.homepage] ?? '',
+      ));
+    }
+    return people;
+  }
 }
 
 extension TmdbPersonTranslation on TmdbPerson {

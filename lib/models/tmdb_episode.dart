@@ -101,67 +101,13 @@ class TmdbEpisode {
 
   List<TmdbPerson> get cast {
     if (guestStarsJson == null) return [];
-
     final guestStarsList = jsonDecode(guestStarsJson!);
-    if (guestStarsList is! List) return [];
-
-    List<TmdbPerson> castPeople = [];
-    for (dynamic person in guestStarsList) {
-      String character = person['character'] ?? '';
-
-      castPeople.add(TmdbPerson(
-        tmdbId: person['id'] ?? 0,
-        name: person['name'] ?? '',
-        lastUpdated: AppConstants.defaultDate,
-        knownForDepartment: person['known_for_department'] ?? '',
-        gender: person['gender'] ?? 0,
-        originalName: person['original_name'] ?? '',
-        profilePath: person['profile_path'] ?? '',
-        character: character,
-        job: person['job'] ?? '',
-        biography: person['biography'] ?? '',
-        birthday: person['birthday'] ?? '',
-        deathday: person['deathday'] ?? '',
-        imdbId: person['imdb_id'] ?? '',
-        placeOfBirth: person['place_of_birth'] ?? '',
-        combinedCredits: CombinedCredits.fromMap(
-            person['combined_credits'] ?? {}),
-        homepage: person['homepage'] ?? '',
-      ));
-    }
-    return castPeople;
+    return TmdbPerson.parsePersonList(guestStarsList is List ? guestStarsList : null, PersonAttributes.cast);
   }
 
   List<TmdbPerson> get crew {
     if (crewJson == null) return [];
-
     final crewList = jsonDecode(crewJson!);
-    if (crewList is! List) return [];
-
-    List<TmdbPerson> crewPeople = [];
-    for (dynamic person in crewList) {
-      String job = person['job'] ?? '';
-
-      crewPeople.add(TmdbPerson(
-        tmdbId: person['id'] ?? 0,
-        name: person['name'] ?? '',
-        lastUpdated: AppConstants.defaultDate,
-        knownForDepartment: person['known_for_department'] ?? '',
-        gender: person['gender'] ?? 0,
-        originalName: person['original_name'] ?? '',
-        profilePath: person['profile_path'] ?? '',
-        character: person['character'] ?? '',
-        job: job,
-        biography: person['biography'] ?? '',
-        birthday: person['birthday'] ?? '',
-        deathday: person['deathday'] ?? '',
-        imdbId: person['imdb_id'] ?? '',
-        placeOfBirth: person['place_of_birth'] ?? '',
-        combinedCredits: CombinedCredits.fromMap(
-            person['combined_credits'] ?? {}),
-        homepage: person['homepage'] ?? '',
-      ));
-    }
-    return crewPeople;
+    return TmdbPerson.parsePersonList(crewList is List ? crewList : null, PersonAttributes.crew);
   }
 }

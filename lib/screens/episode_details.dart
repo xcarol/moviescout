@@ -244,6 +244,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
                             title: widget.title,
                             type: type,
                             tmdbListService: widget.tmdbListService,
+                            episode: episode,
                           )),
                 );
               },

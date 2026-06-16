@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/models/tmdb_season.dart';
+import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_person_list_service.dart';
 import 'package:moviescout/repositories/tmdb_person_repository.dart';
@@ -11,12 +13,16 @@ class TitlePeopleList extends StatefulWidget {
   final TmdbTitle title;
   final String type;
   final TmdbTitleListService tmdbListService;
+  final TmdbSeason? season;
+  final TmdbEpisode? episode;
 
   const TitlePeopleList({
     super.key,
     required this.title,
     required this.type,
     required this.tmdbListService,
+    this.season,
+    this.episode,
   });
 
   @override
@@ -33,6 +39,8 @@ class _TitlePeopleListState extends State<TitlePeopleList> {
       repository: TmdbPersonRepository(),
       title: widget.title,
       roleType: widget.type,
+      season: widget.season,
+      episode: widget.episode,
     );
   }
 
