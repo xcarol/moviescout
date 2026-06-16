@@ -6,17 +6,26 @@ import 'package:moviescout/widgets/person_list_info_line.dart';
 import 'package:moviescout/widgets/person_list_controller.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_person_list_service.dart';
+import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/models/tmdb_season.dart';
+import 'package:moviescout/models/tmdb_episode.dart';
 
 class PersonList extends StatefulWidget {
   final TmdbPersonListService personListService;
   final String type;
   final TmdbTitleListService titleListService;
+  final TmdbTitle? titleContext;
+  final TmdbSeason? seasonContext;
+  final TmdbEpisode? episodeContext;
 
   const PersonList({
     super.key,
     required this.personListService,
     required this.type,
     required this.titleListService,
+    this.titleContext,
+    this.seasonContext,
+    this.episodeContext,
   });
 
   @override
@@ -70,6 +79,9 @@ class _PersonListState extends State<PersonList> {
               return PersonCard(
                 person: person,
                 tmdbListService: widget.titleListService,
+                titleContext: widget.titleContext,
+                seasonContext: widget.seasonContext,
+                episodeContext: widget.episodeContext,
               );
             },
           ),

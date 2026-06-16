@@ -309,5 +309,17 @@
     "none": "Cap",
     "@none": {},
     "results": "Resultats",
-    "@results": {}
+    "@results": {},
+    "inRoleContext": " a {context}",
+    "@inRoleContext": {
+        "placeholders": {
+            "context": {}
+        }
+    },
+    "episodeLabel": "Episodi {count}",
+    "@episodeLabel": {
+        "placeholders": {
+            "count": {}
+        }
+    }
 }

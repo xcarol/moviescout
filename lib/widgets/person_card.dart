@@ -5,6 +5,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
+import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/models/tmdb_season.dart';
+import 'package:moviescout/models/tmdb_episode.dart';
 
 class CustomCacheManager {
   static const key = 'customCacheKey';
@@ -21,6 +24,9 @@ class CustomCacheManager {
 class PersonCard extends StatelessWidget {
   final TmdbPerson _person;
   final TmdbTitleListService _tmdbListService;
+  final TmdbTitle? titleContext;
+  final TmdbSeason? seasonContext;
+  final TmdbEpisode? episodeContext;
 
   static double cardHeight = 160.0;
 
@@ -28,6 +34,9 @@ class PersonCard extends StatelessWidget {
     super.key,
     required TmdbPerson person,
     required TmdbTitleListService tmdbListService,
+    this.titleContext,
+    this.seasonContext,
+    this.episodeContext,
   })  : _person = person,
         _tmdbListService = tmdbListService;
 
@@ -51,6 +60,9 @@ class PersonCard extends StatelessWidget {
                     builder: (context) => PersonDetails(
                           person: tmdbPerson,
                           tmdbListService: tmdbListService,
+                          titleContext: titleContext,
+                          seasonContext: seasonContext,
+                          episodeContext: episodeContext,
                         )),
               );
             },

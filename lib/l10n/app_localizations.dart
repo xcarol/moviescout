@@ -972,6 +972,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Results'**
   String get results;
+
+  /// No description provided for @inRoleContext.
+  ///
+  /// In en, this message translates to:
+  /// **' in {context}'**
+  String inRoleContext(Object context);
+
+  /// No description provided for @episodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Episode {count}'**
+  String episodeLabel(Object count);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

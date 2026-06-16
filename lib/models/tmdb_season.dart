@@ -1,7 +1,6 @@
 import 'dart:convert';
-import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
-import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/models/tmdb_person.dart';
 
 class TmdbSeason {
   late int tmdbId;
@@ -108,12 +107,20 @@ class TmdbSeason {
   List<TmdbPerson> get cast {
     if (creditsJson == null) return [];
     final creditsMap = jsonDecode(creditsJson!);
-    return TmdbPerson.parsePersonList(creditsMap[PersonAttributes.cast] is List ? creditsMap[PersonAttributes.cast] : null, PersonAttributes.cast);
+    return TmdbPerson.parsePersonList(
+        creditsMap[PersonAttributes.cast] is List
+            ? creditsMap[PersonAttributes.cast]
+            : null,
+        PersonAttributes.cast);
   }
 
   List<TmdbPerson> get crew {
     if (creditsJson == null) return [];
     final creditsMap = jsonDecode(creditsJson!);
-    return TmdbPerson.parsePersonList(creditsMap[PersonAttributes.crew] is List ? creditsMap[PersonAttributes.crew] : null, PersonAttributes.crew);
+    return TmdbPerson.parsePersonList(
+        creditsMap[PersonAttributes.crew] is List
+            ? creditsMap[PersonAttributes.crew]
+            : null,
+        PersonAttributes.crew);
   }
 }

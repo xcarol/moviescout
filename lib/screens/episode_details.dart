@@ -285,6 +285,8 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
           child: PersonChip(
             person: tmdbPerson,
             tmdbListService: widget.tmdbListService,
+            titleContext: widget.title,
+            episodeContext: _currentEpisode,
           ),
         );
       },

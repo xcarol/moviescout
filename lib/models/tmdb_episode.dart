@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_person.dart';
-import 'package:moviescout/utils/app_constants.dart';
 
 class TmdbEpisode {
   late int id;
@@ -72,10 +71,9 @@ class TmdbEpisode {
     }
   }
 
-  String get stillPath =>
-      stillPathSuffix != null && stillPathSuffix!.isNotEmpty
-          ? 'https://image.tmdb.org/t/p/original$stillPathSuffix'
-          : '';
+  String get stillPath => stillPathSuffix != null && stillPathSuffix!.isNotEmpty
+      ? 'https://image.tmdb.org/t/p/original$stillPathSuffix'
+      : '';
 
   List<String> get images {
     if (imagesJson == null) return [];
@@ -102,12 +100,14 @@ class TmdbEpisode {
   List<TmdbPerson> get cast {
     if (guestStarsJson == null) return [];
     final guestStarsList = jsonDecode(guestStarsJson!);
-    return TmdbPerson.parsePersonList(guestStarsList is List ? guestStarsList : null, PersonAttributes.cast);
+    return TmdbPerson.parsePersonList(
+        guestStarsList is List ? guestStarsList : null, PersonAttributes.cast);
   }
 
   List<TmdbPerson> get crew {
     if (crewJson == null) return [];
     final crewList = jsonDecode(crewJson!);
-    return TmdbPerson.parsePersonList(crewList is List ? crewList : null, PersonAttributes.crew);
+    return TmdbPerson.parsePersonList(
+        crewList is List ? crewList : null, PersonAttributes.crew);
   }
 }

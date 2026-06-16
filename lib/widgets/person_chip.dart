@@ -7,6 +7,9 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/title_card.dart';
+import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/models/tmdb_season.dart';
+import 'package:moviescout/models/tmdb_episode.dart';
 
 // ignore: constant_identifier_names
 const double CARD_HEIGHT = 336.0;
@@ -16,11 +19,17 @@ const double CARD_WIDTH = 160.0;
 class PersonChip extends StatelessWidget {
   final TmdbPerson _person;
   final TmdbTitleListService _tmdbListService;
+  final TmdbTitle? titleContext;
+  final TmdbSeason? seasonContext;
+  final TmdbEpisode? episodeContext;
 
   const PersonChip({
     super.key,
     required person,
     required tmdbListService,
+    this.titleContext,
+    this.seasonContext,
+    this.episodeContext,
   })  : _person = person,
         _tmdbListService = tmdbListService;
 
@@ -40,6 +49,9 @@ class PersonChip extends StatelessWidget {
                   builder: (context) => PersonDetails(
                         person: TmdbPerson.fromMap(person: _person.toMap()),
                         tmdbListService: _tmdbListService,
+                        titleContext: titleContext,
+                        seasonContext: seasonContext,
+                        episodeContext: episodeContext,
                       )),
             );
           },
