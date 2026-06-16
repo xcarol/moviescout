@@ -2,7 +2,6 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
-import 'package:moviescout/services/tmdb_title_service.dart';
 
 class TmdbPersonTitlesService extends TmdbTitleListService {
   final List<TmdbTitle> _allTitles = [];
@@ -203,8 +202,6 @@ class TmdbPersonTitlesService extends TmdbTitleListService {
   }
 
   Future<void> updateTitles() async {
-    await Future.wait(
-        _allTitles.map((t) => TmdbTitleService().updateTitleDetails(t)));
     await Future.delayed(Duration.zero);
     notifyListeners();
   }

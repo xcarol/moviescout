@@ -9,8 +9,10 @@ import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/widgets/bottom_clamping_scroll_physics.dart';
 import 'package:moviescout/widgets/title_card.dart';
+import 'package:moviescout/widgets/person_title_card.dart';
 import 'package:moviescout/widgets/title_list_info_line.dart';
 import 'package:moviescout/widgets/title_list_control_panel.dart';
+import 'package:moviescout/services/tmdb_person_titles_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/widgets/title_list_controller.dart';
@@ -101,10 +103,16 @@ class _TitleListState extends State<TitleList> {
                     ),
                     child: Column(
                       children: [
-                        TitleCard(
-                          title: title,
-                          tmdbListService: widget.listService,
-                        ),
+                        if (service is TmdbPersonTitlesService)
+                          PersonTitleCard(
+                            title: title,
+                            tmdbListService: widget.listService,
+                          )
+                        else
+                          TitleCard(
+                            title: title,
+                            tmdbListService: widget.listService,
+                          ),
                         Divider(
                           height: 1,
                           color: titleTheme.dividerColor,
