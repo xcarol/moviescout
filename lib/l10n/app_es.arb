@@ -309,5 +309,17 @@
     "none": "Ninguno",
     "@none": {},
     "results": "Resultados",
-    "@results": {}
+    "@results": {},
+    "inRoleContext": " en {context}",
+    "@inRoleContext": {
+        "placeholders": {
+            "context": {}
+        }
+    },
+    "episodeLabel": "Episodio {count}",
+    "@episodeLabel": {
+        "placeholders": {
+            "count": {}
+        }
+    }
 }

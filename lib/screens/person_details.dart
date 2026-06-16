@@ -15,6 +15,8 @@ import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/widgets/title_chip.dart';
 import 'package:moviescout/screens/person_titles.dart';
+import 'package:moviescout/models/tmdb_season.dart';
+import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
@@ -22,11 +24,17 @@ import 'package:share_plus/share_plus.dart';
 class PersonDetails extends StatefulWidget {
   final TmdbPerson _person;
   final TmdbTitleListService _tmdbListService;
+  final TmdbTitle? titleContext;
+  final TmdbSeason? seasonContext;
+  final TmdbEpisode? episodeContext;
 
   const PersonDetails({
     super.key,
     required TmdbPerson person,
     required TmdbTitleListService tmdbListService,
+    this.titleContext,
+    this.seasonContext,
+    this.episodeContext,
   })  : _person = person,
         _tmdbListService = tmdbListService;
 
@@ -338,10 +346,55 @@ class _PersonDetailsState extends State<PersonDetails> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _characterNameAndDepartment(person),
+          if (widget.titleContext != null) ...[
+            const SizedBox(height: 5),
+            _roleInContext(person),
+          ],
           const SizedBox(height: 10),
           _characterDetails(person),
         ],
       ),
+    );
+  }
+
+  String? _buildContextTitle(BuildContext context) {
+    if (widget.titleContext == null) return null;
+
+    String cTitle = widget.titleContext!.name;
+    if (widget.episodeContext != null) {
+      cTitle +=
+          ' - ${AppLocalizations.of(context)!.seasonLabel(widget.episodeContext!.seasonNumber)}, ${AppLocalizations.of(context)!.episodeLabel(widget.episodeContext!.episodeNumber)}';
+    } else if (widget.seasonContext != null) {
+      cTitle +=
+          ' - ${AppLocalizations.of(context)!.seasonLabel(widget.seasonContext!.seasonNumber)}';
+    }
+    return cTitle;
+  }
+
+  Widget _roleInContext(TmdbPerson person) {
+    final List<String> roles = [];
+    if (person.character.isNotEmpty) {
+      roles.add(person.character);
+    } else {
+      if (person.job.isNotEmpty) {
+        roles.add(person.localizedJob(context));
+      }
+      if (person.knownForDepartment.isNotEmpty) {
+        roles.add(person.localizedDepartment(context));
+      }
+    }
+    if (roles.isEmpty) return const SizedBox.shrink();
+
+    String rolesText = roles.join(', ');
+    String? cTitle = _buildContextTitle(context);
+    if (cTitle == null) return const SizedBox.shrink();
+
+    return Text(
+      '$rolesText${AppLocalizations.of(context)!.inRoleContext(cTitle)}',
+      style: TextStyle(
+          fontSize: 14,
+          fontStyle: FontStyle.italic,
+          color: Theme.of(context).colorScheme.onSurfaceVariant),
     );
   }
 

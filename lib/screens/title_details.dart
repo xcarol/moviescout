@@ -955,6 +955,7 @@ class _TitleDetailsState extends State<TitleDetails> {
           child: PersonChip(
             person: tmdbPerson,
             tmdbListService: widget._tmdbListService,
+            titleContext: widget._title,
           ),
         );
       },

@@ -453,4 +453,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get results => 'Results';
+
+  @override
+  String inRoleContext(Object context) {
+    return ' in $context';
+  }
+
+  @override
+  String episodeLabel(Object count) {
+    return 'Episode $count';
+  }
 }

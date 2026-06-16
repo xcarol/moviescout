@@ -309,5 +309,17 @@
     "none": "None",
     "@none": {},
     "results": "Results",
-    "@results": {}
+    "@results": {},
+    "inRoleContext": " in {context}",
+    "@inRoleContext": {
+        "placeholders": {
+            "context": {}
+        }
+    },
+    "episodeLabel": "Episode {count}",
+    "@episodeLabel": {
+        "placeholders": {
+            "count": {}
+        }
+    }
 }

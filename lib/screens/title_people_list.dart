@@ -64,6 +64,9 @@ class _TitlePeopleListState extends State<TitlePeopleList> {
         personListService: _personListService,
         type: widget.type,
         titleListService: widget.tmdbListService,
+        titleContext: widget.title,
+        seasonContext: widget.season,
+        episodeContext: widget.episode,
       ),
     );
   }
