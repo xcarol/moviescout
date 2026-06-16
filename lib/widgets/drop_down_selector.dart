@@ -11,6 +11,7 @@ class DropdownSelector extends StatelessWidget {
   final BorderRadiusGeometry? borderRadius;
   final Widget Function(BuildContext, String, bool, VoidCallback)? itemBuilder;
   final Widget? leading;
+  final double? maxMenuHeight;
 
   const DropdownSelector({
     super.key,
@@ -24,6 +25,7 @@ class DropdownSelector extends StatelessWidget {
     this.borderRadius,
     this.itemBuilder,
     this.leading,
+    this.maxMenuHeight,
   });
 
   @override
@@ -34,6 +36,13 @@ class DropdownSelector extends StatelessWidget {
 
     return MenuAnchor(
       controller: controller,
+      style: maxMenuHeight != null
+          ? MenuStyle(
+              maximumSize: WidgetStateProperty.all(
+                Size(double.infinity, maxMenuHeight!),
+              ),
+            )
+          : null,
       builder: (context, controller, _) {
         return GestureDetector(
           onTap: () {
@@ -42,6 +51,7 @@ class DropdownSelector extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
+              color: backgroundColor,
               border: border,
               borderRadius: borderRadius,
             ),
@@ -77,6 +87,7 @@ class DropdownSelector extends StatelessWidget {
         return ListTile(
           title: Text(option),
           selected: isSelected,
+          tileColor: backgroundColor,
           onTap: () {
             if (!isSelected) onSelected(option);
             controller.close();
