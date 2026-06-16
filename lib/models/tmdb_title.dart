@@ -536,85 +536,15 @@ class TmdbTitle implements TmdbItem {
   @ignore
   List<TmdbPerson> get cast {
     if (creditsJson == null) return [];
-
     final creditsMap = jsonDecode(creditsJson!);
-    if (creditsMap[TmdbTitleFields.cast] is! List) return [];
-
-    List<TmdbPerson> castPeople = [];
-    for (dynamic person in creditsMap[TmdbTitleFields.cast]) {
-      String character = '';
-      if (person[PersonAttributes.roles] is List) {
-        character = (person[PersonAttributes.roles] as List)
-            .map((r) => r[PersonAttributes.character] ?? '')
-            .where((c) => c.toString().isNotEmpty)
-            .join(', ');
-      } else {
-        character = person[PersonAttributes.character] ?? '';
-      }
-
-      castPeople.add(TmdbPerson(
-        tmdbId: person[PersonAttributes.id],
-        name: person[PersonAttributes.name],
-        lastUpdated: AppConstants.defaultDate,
-        knownForDepartment: person[PersonAttributes.known_for_department],
-        gender: person[PersonAttributes.gender],
-        originalName: person[PersonAttributes.original_name],
-        profilePath: person[PersonAttributes.profile_path] ?? '',
-        character: character,
-        job: person[PersonAttributes.job] ?? '',
-        biography: person[PersonAttributes.biography] ?? '',
-        birthday: person[PersonAttributes.birthday] ?? '',
-        deathday: person[PersonAttributes.deathday] ?? '',
-        imdbId: person[PersonAttributes.imdb_id] ?? '',
-        placeOfBirth: person[PersonAttributes.place_of_birth] ?? '',
-        combinedCredits: CombinedCredits.fromMap(
-            person[PersonAttributes.combined_credits] ?? {}),
-        homepage: person[PersonAttributes.homepage] ?? '',
-      ));
-    }
-    return castPeople;
+    return TmdbPerson.parsePersonList(creditsMap[PersonAttributes.cast] is List ? creditsMap[PersonAttributes.cast] : null, PersonAttributes.cast);
   }
 
   @ignore
   List<TmdbPerson> get crew {
     if (creditsJson == null) return [];
-
     final creditsMap = jsonDecode(creditsJson!);
-    if (creditsMap[PersonAttributes.crew] is! List) return [];
-
-    List<TmdbPerson> crewPeople = [];
-    for (dynamic person in creditsMap[PersonAttributes.crew]) {
-      String job = '';
-      if (person[PersonAttributes.jobs] is List) {
-        job = (person[PersonAttributes.jobs] as List)
-            .map((j) => j[PersonAttributes.job] ?? '')
-            .where((j) => j.toString().isNotEmpty)
-            .join(', ');
-      } else {
-        job = person[PersonAttributes.job] ?? '';
-      }
-
-      crewPeople.add(TmdbPerson(
-        tmdbId: person[PersonAttributes.id],
-        name: person[PersonAttributes.name],
-        lastUpdated: AppConstants.defaultDate,
-        knownForDepartment: person[PersonAttributes.known_for_department],
-        gender: person[PersonAttributes.gender],
-        originalName: person[PersonAttributes.original_name],
-        profilePath: person[PersonAttributes.profile_path] ?? '',
-        character: person[PersonAttributes.character] ?? '',
-        job: job,
-        biography: person[PersonAttributes.biography] ?? '',
-        birthday: person[PersonAttributes.birthday] ?? '',
-        deathday: person[PersonAttributes.deathday] ?? '',
-        imdbId: person[PersonAttributes.imdb_id] ?? '',
-        placeOfBirth: person[PersonAttributes.place_of_birth] ?? '',
-        combinedCredits: CombinedCredits.fromMap(
-            person[PersonAttributes.combined_credits] ?? {}),
-        homepage: person[PersonAttributes.homepage] ?? '',
-      ));
-    }
-    return crewPeople;
+    return TmdbPerson.parsePersonList(creditsMap[PersonAttributes.crew] is List ? creditsMap[PersonAttributes.crew] : null, PersonAttributes.crew);
   }
 
   @ignore
