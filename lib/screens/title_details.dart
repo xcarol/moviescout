@@ -978,6 +978,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         DropdownSelector(
+          maxMenuHeight: 250,
           selectedOption:
               _selectedSeason.isEmpty ? selectSeasonText : _selectedSeason,
           options: seasonOptions,
