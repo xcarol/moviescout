@@ -122,7 +122,7 @@ class TmdbTitleRepository {
       {List<int>? addedOrders}) async {
     if (titles.isEmpty) return;
 
-    const batchSize = 250;
+    const batchSize = AppConstants.defaultBatchSize;
     for (var i = 0; i < titles.length; i += batchSize) {
       final end =
           (i + batchSize < titles.length) ? i + batchSize : titles.length;
@@ -184,7 +184,7 @@ class TmdbTitleRepository {
   Future<void> updateTitlesMetadata(List<TmdbTitle> titles) async {
     if (titles.isEmpty) return;
 
-    const batchSize = 250;
+    const batchSize = AppConstants.defaultBatchSize;
     for (var i = 0; i < titles.length; i += batchSize) {
       final end =
           (i + batchSize < titles.length) ? i + batchSize : titles.length;
@@ -243,7 +243,7 @@ class TmdbTitleRepository {
       String listName, List<int> tmdbIds, List<String> mediaTypes) async {
     if (tmdbIds.isEmpty) return;
 
-    const batchSize = 100;
+    const batchSize = AppConstants.defaultBatchSize;
     for (var batchStart = 0;
         batchStart < tmdbIds.length;
         batchStart += batchSize) {
@@ -285,11 +285,10 @@ class TmdbTitleRepository {
   }
 
   Future<void> clearList(String listName) async {
-    // 1. Delete UserListEntrys
     final entriesToRemove =
         await _isar.userListEntrys.filter().listNameEqualTo(listName).findAll();
 
-    const batchSize = 100;
+    const batchSize = AppConstants.defaultBatchSize;
     if (entriesToRemove.isNotEmpty) {
       for (var i = 0; i < entriesToRemove.length; i += batchSize) {
         final end = (i + batchSize < entriesToRemove.length)
@@ -386,7 +385,7 @@ class TmdbTitleRepository {
     if (tmdbIds.isEmpty) return [];
 
     final results = <TmdbTitle>[];
-    const batchSize = 100;
+    const batchSize = AppConstants.defaultBatchSize;
 
     for (var i = 0; i < tmdbIds.length; i += batchSize) {
       final end =
