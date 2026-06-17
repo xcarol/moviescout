@@ -2,11 +2,11 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
-import 'package:moviescout/repositories/tmdb_person_repository.dart';
 import 'package:moviescout/services/tmdb_base_list_service.dart';
+import 'package:moviescout/services/tmdb_memory_list_mixin.dart';
 
-class TmdbPersonListService extends TmdbBaseListService<TmdbPerson> {
-  final TmdbPersonRepository repository;
+class TmdbPersonListService extends TmdbBaseListService<TmdbPerson>
+    with TmdbMemoryListMixin<TmdbPerson> {
   final TmdbTitle title;
   final String roleType; // 'cast' or 'crew'
   final TmdbSeason? season;
@@ -16,14 +16,14 @@ class TmdbPersonListService extends TmdbBaseListService<TmdbPerson> {
   bool _isSortAsc = true;
 
   TmdbPersonListService({
-    required this.repository,
     required this.title,
     required this.roleType,
     this.season,
     this.episode,
   }) {
     if (episode != null) {
-      listNameVal = '${title.tmdbId}_s${episode!.seasonNumber}e${episode!.episodeNumber}_$roleType';
+      listNameVal =
+          '${title.tmdbId}_s${episode!.seasonNumber}e${episode!.episodeNumber}_$roleType';
     } else if (season != null) {
       listNameVal = '${title.tmdbId}_s${season!.seasonNumber}_$roleType';
     } else {
@@ -35,34 +35,24 @@ class TmdbPersonListService extends TmdbBaseListService<TmdbPerson> {
   Future<void> _initializeList() async {
     isLoading.value = true;
     try {
-      await repository.clearTransientList(listNameVal);
-
       List<TmdbPerson> people;
       if (episode != null) {
-        people = roleType == PersonAttributes.cast ? episode!.cast : episode!.crew;
+        people =
+            roleType == PersonAttributes.cast ? episode!.cast : episode!.crew;
       } else if (season != null) {
-        people = roleType == PersonAttributes.cast ? season!.cast : season!.crew;
+        people =
+            roleType == PersonAttributes.cast ? season!.cast : season!.crew;
       } else {
         people = roleType == PersonAttributes.cast ? title.cast : title.crew;
       }
 
-      for (var person in people) {
-        person.transientListId = listNameVal;
-      }
-      
-      await repository.savePeople(people);
-      
+      allItems.clear();
+      allItems.addAll(people);
+
       await filterItems();
     } finally {
       isLoading.value = false;
     }
-  }
-
-  @override
-  void dispose() {
-    // Clear the transient list when service is disposed
-    repository.clearTransientList(listNameVal);
-    super.dispose();
   }
 
   void setSort(String sort, bool ascending) {
@@ -72,22 +62,39 @@ class TmdbPersonListService extends TmdbBaseListService<TmdbPerson> {
   }
 
   @override
-  Future<int> countFilteredItems() async {
-    return repository.countPeople(
-      transientListId: listNameVal,
-      filterText: filterText,
-    );
-  }
+  void applyFiltersAndSort() {
+    final filtered = allItems.where((person) {
+      if (filterText.isNotEmpty) {
+        final query = filterText.toLowerCase();
+        if (!person.name.toLowerCase().contains(query) &&
+            !person.character.toLowerCase().contains(query) &&
+            !person.job.toLowerCase().contains(query)) {
+          return false;
+        }
+      }
+      return true;
+    }).toList();
 
-  @override
-  Future<List<TmdbPerson>> fetchItems({required int offset, required int limit}) async {
-    return repository.getPeople(
-      transientListId: listNameVal,
-      filterText: filterText,
-      sortOption: _selectedSort,
-      sortAscending: _isSortAsc,
-      offset: offset,
-      limit: limit,
-    );
+    if (_selectedSort != 'original') {
+      filtered.sort((a, b) {
+        int cmp;
+        if (_selectedSort == 'name') {
+          cmp = a.name.compareTo(b.name);
+        } else if (_selectedSort == 'department') {
+          cmp = a.knownForDepartment.compareTo(b.knownForDepartment);
+        } else if (_selectedSort == 'job') {
+          cmp = a.job.compareTo(b.job);
+        } else {
+          cmp = 0;
+        }
+        return _isSortAsc ? cmp : -cmp;
+      });
+    }
+
+    if (_selectedSort == 'original' && !_isSortAsc) {
+      filteredItems = filtered.reversed.toList();
+    } else {
+      filteredItems = filtered;
+    }
   }
 }

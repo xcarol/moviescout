@@ -232,9 +232,10 @@ class TitleListController with ChangeNotifier {
     _selectedGenres = prefs.getStringList(_selectedGenresPreferencesName) ?? [];
     _filterByProviders =
         prefs.getBool(_filterByProvidersPreferencesName) ?? false;
-    _isSortAsc = prefs.getBool(_sortPreferencesName) ?? true;
+    _isSortAsc =
+        prefs.getBool(_sortPreferencesName) ?? listService.defaultSortAsc;
     _selectedSort = prefs.getString(_selectedSortPreferencesName) ??
-        SortOption.alphabetically;
+        listService.defaultSort;
     _ratingFilter = RatingFilter.values[
         prefs.getInt(_ratingFilterPreferencesName) ??
             _defaultRatingFilter.index];

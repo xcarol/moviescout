@@ -45,6 +45,7 @@ class PersonTitleCard extends TitleCard {
 
   Widget _personTitleDetails(BuildContext context, TmdbTitle tmdbTitle) {
     final role = tmdbTitle.getRoleString(context);
+    final dateString = titleSubtitle(context, tmdbTitle);
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
@@ -53,6 +54,18 @@ class PersonTitleCard extends TitleCard {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             titleHeader(tmdbTitle.name),
+            if (dateString.isNotEmpty) ...[
+              const SizedBox(height: 2),
+              Text(
+                dateString,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 13,
+                ),
+              ),
+            ],
             if (role.isNotEmpty) ...[
               const SizedBox(height: 5),
               Text(

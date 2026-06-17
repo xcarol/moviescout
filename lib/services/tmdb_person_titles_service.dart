@@ -3,9 +3,10 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 
-class TmdbPersonTitlesService extends TmdbTitleListService {
-  final List<TmdbTitle> _allTitles = [];
-  List<TmdbTitle> _filteredTitles = [];
+import 'package:moviescout/services/tmdb_memory_list_mixin.dart';
+
+class TmdbPersonTitlesService extends TmdbTitleListService
+    with TmdbMemoryListMixin<TmdbTitle> {
   final TmdbPerson person;
 
   TmdbPersonTitlesService(
@@ -17,18 +18,24 @@ class TmdbPersonTitlesService extends TmdbTitleListService {
   }
 
   @override
+  String get defaultSort => SortOption.releaseDate;
+
+  @override
+  bool get defaultSortAsc => true;
+
+  @override
   bool get isRefreshable => false;
 
   void _initializeTitles() {
-    _allTitles.clear();
+    allItems.clear();
     final seenIds = <int>{};
-    _allTitles.addAll(
+    allItems.addAll(
         person.combinedCredits.cast.where((t) => seenIds.add(t.tmdbId)));
-    _allTitles.addAll(
+    allItems.addAll(
         person.combinedCredits.crew.where((t) => seenIds.add(t.tmdbId)));
 
-    for (int i = 0; i < _allTitles.length; i++) {
-      _allTitles[i].addedOrder = i;
+    for (int i = 0; i < allItems.length; i++) {
+      allItems[i].addedOrder = i;
     }
   }
 
@@ -52,12 +59,8 @@ class TmdbPersonTitlesService extends TmdbTitleListService {
   }
 
   @override
-  Future<void> filterItems({bool retainPagination = false}) async {
-    clearLoadedItems(clearGenreCache: true, resetCount: true);
-
-    anyFilterApplied = true;
-
-    final filtered = _allTitles.where((title) {
+  void applyFiltersAndSort() {
+    final filtered = allItems.where((title) {
       if (filterText.isNotEmpty) {
         final query = filterText.toLowerCase();
         if (!title.name.toLowerCase().contains(query) &&
@@ -118,54 +121,16 @@ class TmdbPersonTitlesService extends TmdbTitleListService {
       return isSortAsc ? cmp : -cmp;
     });
 
-    selectedItemCount.value = filtered.length;
-    _filteredTitles = filtered;
-
-    await loadNextPageInternal();
-  }
-
-  @override
-  Future<void> loadNextPage() async {
-    if (isDbLoading || !hasMoreVal) return;
-    isDbLoading = true;
-    try {
-      await loadNextPageInternal();
-    } finally {
-      isDbLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> loadNextPageInternal() async {
-    if (!hasMoreVal) return;
-
-    final start = pageVal * pageSizeVal;
-    if (start >= _filteredTitles.length) {
-      hasMoreVal = false;
-      return;
-    }
-
-    final end = (start + pageSizeVal) < _filteredTitles.length
-        ? (start + pageSizeVal)
-        : _filteredTitles.length;
-
-    final chunk = _filteredTitles.sublist(start, end);
-    loadedItemsVal.addAll(chunk);
-    pageVal++;
-
-    if (end >= _filteredTitles.length) {
-      hasMoreVal = false;
-    }
+    filteredItems = filtered;
   }
 
   @override
   Future<void> updateListGenres() async {
     listGenresVal.clear();
-    if (_allTitles.isEmpty) {
+    if (allItems.isEmpty) {
       _initializeTitles();
     }
-    final uniqueGenreIds =
-        _allTitles.expand((t) => t.genreIds).toSet().toList();
+    final uniqueGenreIds = allItems.expand((t) => t.genreIds).toSet().toList();
     final names = TmdbGenreService().getNamesFromIds(uniqueGenreIds);
     listGenresVal = names;
     listGenresVal.sort();
@@ -174,15 +139,15 @@ class TmdbPersonTitlesService extends TmdbTitleListService {
 
   @override
   Future<bool> contains(TmdbTitle title) async {
-    return _allTitles
+    return allItems
         .any((t) => t.tmdbId == title.tmdbId && t.mediaType == title.mediaType);
   }
 
   @override
-  int get listTitleCount => _allTitles.length;
+  int get listTitleCount => allItems.length;
 
   @override
-  bool get listIsEmpty => _allTitles.isEmpty;
+  bool get listIsEmpty => allItems.isEmpty;
 
   @override
   Future<void> clearList() async {

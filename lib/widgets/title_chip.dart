@@ -191,7 +191,9 @@ class _TitleChipContent extends TitleCard {
         ),
         const SizedBox(height: 5),
         Text(
-          '${titleDate(tmdbTitle)} - ${tmdbTitle.duration}',
+          titleSubtitle(context, tmdbTitle),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontSize: 12,
