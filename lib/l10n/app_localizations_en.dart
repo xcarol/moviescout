@@ -156,6 +156,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tvshows => 'Tv Shows';
 
   @override
+  String get miniseries => 'Miniseries';
+
+  @override
   String get sortAlphabetically => 'Alphabetical';
 
   @override

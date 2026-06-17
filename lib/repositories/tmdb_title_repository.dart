@@ -5,6 +5,7 @@ import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart'
     show RatingFilter;
+import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/save_logs.dart';
 
@@ -456,7 +457,14 @@ class TmdbTitleRepository {
     }
 
     if (filterMediaType.isNotEmpty) {
-      query = query.mediaTypeEqualTo(filterMediaType);
+      if (filterMediaType == AppConstants.miniseries) {
+        query = query
+            .mediaTypeEqualTo(ApiConstants.tv)
+            .numberOfSeasonsEqualTo(1)
+            .statusEqualTo(TvShowStatus.ended);
+      } else {
+        query = query.mediaTypeEqualTo(filterMediaType);
+      }
     }
 
     if (filterByProviders && filterProvidersIds.isNotEmpty) {

@@ -2,6 +2,7 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 import 'package:moviescout/services/tmdb_memory_list_mixin.dart';
 
@@ -70,8 +71,12 @@ class TmdbPersonTitlesService extends TmdbTitleListService
         }
       }
 
-      if (filterMediaType.isNotEmpty && title.mediaType != filterMediaType) {
-        return false;
+      if (filterMediaType.isNotEmpty) {
+        if (filterMediaType == AppConstants.miniseries) {
+          if (!title.isMiniSerie) return false;
+        } else if (title.mediaType != filterMediaType) {
+          return false;
+        }
       }
       if (filterGenres.isNotEmpty) {
         if (!title.genreIds.any((id) => filterGenres.contains(id))) {
