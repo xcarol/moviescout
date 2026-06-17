@@ -18,6 +18,7 @@ class EpisodeDetails extends StatefulWidget {
   final TmdbTitleListService tmdbListService;
   final TmdbEpisode?
       initialEpisode; // allows fast-loading before API call finishes
+  final int? totalEpisodes;
 
   const EpisodeDetails({
     super.key,
@@ -26,6 +27,7 @@ class EpisodeDetails extends StatefulWidget {
     required this.episodeNumber,
     required this.tmdbListService,
     this.initialEpisode,
+    this.totalEpisodes,
   });
 
   @override
@@ -35,11 +37,13 @@ class EpisodeDetails extends StatefulWidget {
 class _EpisodeDetailsState extends State<EpisodeDetails> {
   TmdbEpisode? _currentEpisode;
   bool _isUpdating = false;
+  late int _currentEpisodeNumber;
 
   @override
   void initState() {
     super.initState();
     _currentEpisode = widget.initialEpisode;
+    _currentEpisodeNumber = widget.episodeNumber;
     _updateDetails();
   }
 
@@ -50,7 +54,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
 
     try {
       final updated = await TmdbEpisodeService().getEpisodeDetails(
-          widget.title.tmdbId, widget.seasonNumber, widget.episodeNumber);
+          widget.title.tmdbId, widget.seasonNumber, _currentEpisodeNumber);
 
       if (mounted) {
         setState(() {
@@ -77,11 +81,42 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
       appBar: AppBar(
         title: Text(appTitle),
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: _detailsBody(),
+      body: GestureDetector(
+        onHorizontalDragEnd: (details) {
+          if (details.primaryVelocity! > 0) {
+            _goToPreviousEpisode();
+          } else if (details.primaryVelocity! < 0) {
+            if (widget.totalEpisodes == null ||
+                _currentEpisodeNumber < widget.totalEpisodes!) {
+              _goToNextEpisode();
+            }
+          }
+        },
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: _detailsBody(),
+        ),
       ),
     );
+  }
+
+  void _goToPreviousEpisode() {
+    if (_currentEpisodeNumber > 1) {
+      setState(() {
+        _currentEpisodeNumber--;
+      });
+      _updateDetails();
+    }
+  }
+
+  void _goToNextEpisode() {
+    if (widget.totalEpisodes == null ||
+        _currentEpisodeNumber < widget.totalEpisodes!) {
+      setState(() {
+        _currentEpisodeNumber++;
+      });
+      _updateDetails();
+    }
   }
 
   Widget _detailsBody() {
@@ -140,10 +175,29 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
       return const SizedBox.shrink();
     }
 
-    return Text(
-      '${episode.episodeNumber}. ${episode.name}',
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-      textAlign: TextAlign.start,
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            '${episode.episodeNumber}. ${episode.name}',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            textAlign: TextAlign.start,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.chevron_left),
+          onPressed: _currentEpisodeNumber > 1 ? _goToPreviousEpisode : null,
+        ),
+        IconButton(
+          icon: const Icon(Icons.chevron_right),
+          onPressed: (widget.totalEpisodes == null ||
+                  _currentEpisodeNumber < widget.totalEpisodes!)
+              ? _goToNextEpisode
+              : null,
+        ),
+      ],
     );
   }
 

@@ -50,10 +50,12 @@ class TmdbEpisodeService extends TmdbBaseService {
     );
 
     if (result.statusCode != 200) {
-      ErrorService.log(
-        'Failed to retrieve episode details for $tvId S$seasonNumber E$episodeNumber - ${result.statusCode} - ${result.body}',
-        userMessage: 'Failed to retrieve episode details',
-      );
+      if (result.statusCode != 404) {
+        ErrorService.log(
+          'Failed to retrieve episode details for $tvId S$seasonNumber E$episodeNumber - ${result.statusCode} - ${result.body}',
+          userMessage: 'Failed to retrieve episode details',
+        );
+      }
       return null;
     }
 

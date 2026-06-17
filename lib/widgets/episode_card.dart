@@ -14,6 +14,7 @@ class EpisodeCard extends StatelessWidget {
   final TmdbTitle _title;
   final int seasonNumber;
   final TmdbTitleListService tmdbListService;
+  final int? totalEpisodes;
 
   static double cardHeight = 122.0;
 
@@ -23,6 +24,7 @@ class EpisodeCard extends StatelessWidget {
     required this.seasonNumber,
     required TmdbEpisode episode,
     required this.tmdbListService,
+    this.totalEpisodes,
   })  : _title = title,
         _episode = episode;
 
@@ -46,6 +48,7 @@ class EpisodeCard extends StatelessWidget {
                     episodeNumber: _episode.episodeNumber,
                     tmdbListService: tmdbListService,
                     initialEpisode: _episode,
+                    totalEpisodes: totalEpisodes,
                   ),
                 ),
               );

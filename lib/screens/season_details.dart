@@ -33,16 +33,21 @@ class SeasonDetails extends StatefulWidget {
 class _SeasonDetailsState extends State<SeasonDetails> {
   TmdbSeason? _season;
   bool _isLoading = true;
+  late int _currentSeasonNumber;
 
   @override
   void initState() {
     super.initState();
+    _currentSeasonNumber = widget.seasonNumber;
     _loadSeasonDetails();
   }
 
   Future<void> _loadSeasonDetails() async {
+    setState(() {
+      _isLoading = true;
+    });
     final season = await TmdbSeasonService().getSeasonDetails(
-        widget.title.tmdbId, widget.seasonNumber,
+        widget.title.tmdbId, _currentSeasonNumber,
         includeYoutubeSearch: false);
 
     if (mounted) {
@@ -65,7 +70,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
             icon: const Icon(Icons.share),
             onPressed: () {
               final String link =
-                  'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/${widget.seasonNumber}';
+                  'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/$_currentSeasonNumber';
               SharePlus.instance.share(
                 ShareParams(text: '$appTitle\n$link'),
               );
@@ -78,11 +83,38 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           ? const Center(child: CircularProgressIndicator())
           : _season == null
               ? const Center(child: Text('Failed to load season details'))
-              : SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: _detailsBody(_season!),
+              : GestureDetector(
+                  onHorizontalDragEnd: (details) {
+                    if (details.primaryVelocity! > 0) {
+                      _goToPreviousSeason();
+                    } else if (details.primaryVelocity! < 0) {
+                      _goToNextSeason();
+                    }
+                  },
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: _detailsBody(_season!),
+                  ),
                 ),
     );
+  }
+
+  void _goToPreviousSeason() {
+    if (_currentSeasonNumber > 1) {
+      setState(() {
+        _currentSeasonNumber--;
+      });
+      _loadSeasonDetails();
+    }
+  }
+
+  void _goToNextSeason() {
+    if (_currentSeasonNumber < widget.title.numberOfSeasons) {
+      setState(() {
+        _currentSeasonNumber++;
+      });
+      _loadSeasonDetails();
+    }
   }
 
   Widget _detailsBody(TmdbSeason season) {
@@ -136,10 +168,28 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   Widget _titleLine(TmdbSeason season) {
     if (season.name.isEmpty) return const SizedBox.shrink();
 
-    return Text(
-      season.name,
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-      textAlign: TextAlign.start,
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            season.name,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            textAlign: TextAlign.start,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.chevron_left),
+          onPressed: _currentSeasonNumber > 1 ? _goToPreviousSeason : null,
+        ),
+        IconButton(
+          icon: const Icon(Icons.chevron_right),
+          onPressed: _currentSeasonNumber < widget.title.numberOfSeasons
+              ? _goToNextSeason
+              : null,
+        ),
+      ],
     );
   }
 
@@ -335,9 +385,10 @@ class _SeasonDetailsState extends State<SeasonDetails> {
                 padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                 child: EpisodeCard(
                   title: widget.title,
-                  seasonNumber: widget.seasonNumber,
+                  seasonNumber: _currentSeasonNumber,
                   episode: episode,
                   tmdbListService: widget.tmdbListService,
+                  totalEpisodes: season.episodes.length,
                 ),
               ),
               Divider(
