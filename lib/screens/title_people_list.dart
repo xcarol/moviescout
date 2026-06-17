@@ -6,7 +6,6 @@ import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_person_list_service.dart';
-import 'package:moviescout/repositories/tmdb_person_repository.dart';
 import 'package:moviescout/widgets/person_list.dart';
 
 class TitlePeopleList extends StatefulWidget {
@@ -36,7 +35,6 @@ class _TitlePeopleListState extends State<TitlePeopleList> {
   void initState() {
     super.initState();
     _personListService = TmdbPersonListService(
-      repository: TmdbPersonRepository(),
       title: widget.title,
       roleType: widget.type,
       season: widget.season,
