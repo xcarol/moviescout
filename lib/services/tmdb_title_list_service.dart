@@ -35,6 +35,8 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
   RatingFilter filterRating = RatingFilter.all;
   int get loadedTitleCount => loadedItemsVal.length;
   List<TmdbTitle> get pinnedTitles => pinnedTitlesVal;
+  String get defaultSort => selectedSort;
+  bool get defaultSortAsc => isSortAsc;
   @protected
   List<String> listGenresVal = [];
   ValueNotifier<List<String>> listGenres = ValueNotifier([]);

@@ -472,7 +472,9 @@ class _PersonDetailsState extends State<PersonDetails> {
     final seen = <String>{};
     final uniqueCast = person.combinedCredits.cast
         .where((title) => seen.add('${title.mediaType}_${title.tmdbId}'))
-        .toList();
+        .toList()
+      ..sort(
+          (a, b) => b.effectiveReleaseDate.compareTo(a.effectiveReleaseDate));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -528,7 +530,9 @@ class _PersonDetailsState extends State<PersonDetails> {
     final seen = <String>{};
     final uniqueCrew = person.combinedCredits.crew
         .where((title) => seen.add('${title.mediaType}_${title.tmdbId}'))
-        .toList();
+        .toList()
+      ..sort(
+          (a, b) => b.effectiveReleaseDate.compareTo(a.effectiveReleaseDate));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

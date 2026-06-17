@@ -17,6 +17,12 @@ class TmdbPersonTitlesService extends TmdbTitleListService {
   }
 
   @override
+  String get defaultSort => SortOption.releaseDate;
+
+  @override
+  bool get defaultSortAsc => true;
+
+  @override
   bool get isRefreshable => false;
 
   void _initializeTitles() {
