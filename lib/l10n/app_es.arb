@@ -98,6 +98,8 @@
     "@movies": {},
     "tvshows": "Series",
     "@tvshows": {},
+    "miniseries": "Miniseries",
+    "@miniseries": {},
     "sortAlphabetically": "Alfabético",
     "@sortAlphabetically": {},
     "sortRating": "Valoración",

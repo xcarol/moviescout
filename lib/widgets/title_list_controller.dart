@@ -85,6 +85,7 @@ class TitleListController with ChangeNotifier {
       localizations.allTypes,
       localizations.movies,
       localizations.tvshows,
+      localizations.miniseries,
     ];
 
     _titleSorts = [
@@ -275,6 +276,8 @@ class TitleListController with ChangeNotifier {
       return ApiConstants.movie;
     } else if (type == localizations.tvshows) {
       return ApiConstants.tv;
+    } else if (type == localizations.miniseries) {
+      return AppConstants.miniseries;
     }
     return type == localizations.allTypes ? '' : type;
   }
@@ -284,6 +287,8 @@ class TitleListController with ChangeNotifier {
       return localizations.movies;
     } else if (option == ApiConstants.tv) {
       return localizations.tvshows;
+    } else if (option == AppConstants.miniseries) {
+      return localizations.miniseries;
     }
     return localizations.allTypes;
   }

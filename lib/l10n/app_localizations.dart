@@ -391,6 +391,12 @@ abstract class AppLocalizations {
   /// **'Tv Shows'**
   String get tvshows;
 
+  /// No description provided for @miniseries.
+  ///
+  /// In en, this message translates to:
+  /// **'Miniseries'**
+  String get miniseries;
+
   /// No description provided for @sortAlphabetically.
   ///
   /// In en, this message translates to:
