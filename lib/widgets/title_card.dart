@@ -198,32 +198,15 @@ class TitleCard extends StatelessWidget {
             const SizedBox(height: 5),
             Row(
               children: [
-                Text(
-                  titleDate(tmdbTitle),
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                Expanded(
+                  child: Text(
+                    titleSubtitle(context, tmdbTitle),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
-                Text(
-                  ' - ',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                tmdbTitle.duration.isNotEmpty
-                    ? Text(
-                        tmdbTitle.duration,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      )
-                    : Text(
-                        _titleType(context, tmdbTitle.mediaType),
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
               ],
             ),
             const SizedBox(height: 5),
@@ -253,39 +236,7 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  String titleDate(TmdbTitle tmdbTitle) {
-    String text = '';
 
-    if (tmdbTitle.isMovie) {
-      text = tmdbTitle.releaseDate.isNotEmpty
-          ? tmdbTitle.releaseDate.substring(0, 4)
-          : '';
-    } else if (tmdbTitle.isSerie) {
-      final firstAirDate = tmdbTitle.firstAirDate;
-      final isOnAir = tmdbTitle.isOnAir;
-      final lastAirDate = tmdbTitle.lastAirDate;
-
-      text += firstAirDate.isNotEmpty ? firstAirDate.substring(0, 4) : '';
-
-      if (!tmdbTitle.isMiniSerie) {
-        if (isOnAir) {
-          text += ' - ...';
-        } else if (lastAirDate.isNotEmpty) {
-          text += ' - ${lastAirDate.substring(0, 4)}';
-        }
-      } else if (isOnAir) {
-        text += ' - ...';
-      }
-    }
-
-    return text;
-  }
-
-  String _titleType(BuildContext context, String mediaType) {
-    return mediaType == ApiConstants.movie
-        ? AppLocalizations.of(context)!.movie
-        : AppLocalizations.of(context)!.tvShow;
-  }
 
   Row _titleBottomRow(BuildContext context, TmdbTitle tmdbTitle) {
     return Row(
@@ -412,3 +363,54 @@ class TitleCard extends StatelessWidget {
     }
   }
 }
+
+String titleDate(TmdbTitle tmdbTitle) {
+  String text = '';
+
+  if (tmdbTitle.isMovie) {
+    text = tmdbTitle.releaseDate.isNotEmpty
+        ? tmdbTitle.releaseDate.substring(0, 4)
+        : '';
+  } else if (tmdbTitle.isSerie) {
+    final firstAirDate = tmdbTitle.firstAirDate;
+    final isOnAir = tmdbTitle.isOnAir;
+    final lastAirDate = tmdbTitle.lastAirDate;
+
+    text += firstAirDate.isNotEmpty ? firstAirDate.substring(0, 4) : '';
+
+    if (!tmdbTitle.isMiniSerie) {
+      if (isOnAir) {
+        text += ' - ...';
+      } else if (lastAirDate.isNotEmpty) {
+        text += ' - ${lastAirDate.substring(0, 4)}';
+      }
+    } else if (isOnAir) {
+      text += ' - ...';
+    }
+  }
+
+  return text;
+}
+
+String titleType(BuildContext context, String mediaType) {
+  return mediaType == ApiConstants.movie
+      ? AppLocalizations.of(context)!.movie
+      : AppLocalizations.of(context)!.tvShow;
+}
+
+String titleSubtitle(BuildContext context, TmdbTitle tmdbTitle) {
+  final date = titleDate(tmdbTitle);
+  String typeOrDuration = tmdbTitle.duration;
+  if (typeOrDuration.isEmpty) {
+    typeOrDuration = titleType(context, tmdbTitle.mediaType);
+  }
+
+  if (date.isNotEmpty && typeOrDuration.isNotEmpty) {
+    return '$date - $typeOrDuration';
+  } else if (date.isNotEmpty) {
+    return date;
+  } else {
+    return typeOrDuration;
+  }
+}
+
