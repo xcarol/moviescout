@@ -1,6 +1,7 @@
 import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/services/isar_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 class TmdbPersonRepository {
   final _isar = IsarService.instance;
@@ -8,7 +9,7 @@ class TmdbPersonRepository {
   Future<void> savePeople(List<TmdbPerson> people) async {
     if (people.isEmpty) return;
 
-    const batchSize = 250;
+    const batchSize = AppConstants.defaultBatchSize;
     for (var i = 0; i < people.length; i += batchSize) {
       final end =
           (i + batchSize < people.length) ? i + batchSize : people.length;
