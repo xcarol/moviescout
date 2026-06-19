@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/models/tmdb_item.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
@@ -72,10 +73,10 @@ class TmdbTitleService extends TmdbBaseService {
     );
   }
 
-  static bool isUpToDate(TmdbTitle title) {
+  static bool isUpToDate(TmdbItem item) {
     return DateTime.now()
             .difference(
-              DateTime.parse(title.lastUpdated),
+              DateTime.parse(item.lastUpdated),
             )
             .inDays <
         AppConstants.titleUpToDateDays;

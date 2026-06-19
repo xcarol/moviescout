@@ -1,14 +1,11 @@
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_item.dart';
 import 'package:flutter/widgets.dart';
-import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/person_translator.dart';
 
 // ignore_for_file: constant_identifier_names, unused_element
-
-part 'tmdb_person.g.dart';
 
 class PersonAttributes {
   static const id = 'id';
@@ -59,18 +56,13 @@ class CombinedCredits {
   }
 }
 
-@collection
 class TmdbPerson implements TmdbItem {
-  Id id = Isar.autoIncrement;
 
   @override
-  @Index(unique: true, replace: true, composite: [CompositeIndex('transientListId')])
   late int tmdbId;
 
-  @Index()
-  late String transientListId;
-
   late String name;
+  @override
   late String lastUpdated;
   late String knownForDepartment;
   late int gender;
@@ -87,7 +79,6 @@ class TmdbPerson implements TmdbItem {
 
   late String? combinedCreditsJson;
 
-  @ignore
   CombinedCredits get combinedCredits {
     if (combinedCreditsJson == null) return CombinedCredits(cast: [], crew: []);
     return CombinedCredits.fromMap(jsonDecode(combinedCreditsJson!));
@@ -115,7 +106,6 @@ class TmdbPerson implements TmdbItem {
     required this.homepage,
     this.combinedCreditsJson,
     CombinedCredits? combinedCredits,
-    this.transientListId = '',
   }) {
     if (combinedCredits != null) {
       combinedCreditsJson = jsonEncode(combinedCredits.toMap());

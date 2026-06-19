@@ -1,5 +1,7 @@
 import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/models/tmdb_season.dart';
+import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/user_list_entry.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/isar_service.dart';
@@ -233,6 +235,10 @@ class TmdbTitleRepository {
         title.inLists = title.inLists.where((l) => l != listName).toList();
         if (title.inLists.isEmpty) {
           await _isar.tmdbTitles.delete(title.id);
+          if (title.mediaType == ApiConstants.tv || title.mediaType == AppConstants.miniseries) {
+            await _isar.tmdbSeasons.filter().tvIdEqualTo(title.tmdbId).deleteAll();
+            await _isar.tmdbEpisodes.filter().tvIdEqualTo(title.tmdbId).deleteAll();
+          }
         } else {
           await _isar.tmdbTitles.put(title);
         }
@@ -276,6 +282,10 @@ class TmdbTitleRepository {
             title.inLists = title.inLists.where((l) => l != listName).toList();
             if (title.inLists.isEmpty) {
               await _isar.tmdbTitles.delete(title.id);
+              if (title.mediaType == ApiConstants.tv || title.mediaType == AppConstants.miniseries) {
+                await _isar.tmdbSeasons.filter().tvIdEqualTo(title.tmdbId).deleteAll();
+                await _isar.tmdbEpisodes.filter().tvIdEqualTo(title.tmdbId).deleteAll();
+              }
             } else {
               await _isar.tmdbTitles.put(title);
             }
@@ -323,6 +333,10 @@ class TmdbTitleRepository {
             title.inLists = title.inLists.where((l) => l != listName).toList();
             if (title.inLists.isEmpty) {
               await _isar.tmdbTitles.delete(title.id);
+              if (title.mediaType == ApiConstants.tv || title.mediaType == AppConstants.miniseries) {
+                await _isar.tmdbSeasons.filter().tvIdEqualTo(title.tmdbId).deleteAll();
+                await _isar.tmdbEpisodes.filter().tvIdEqualTo(title.tmdbId).deleteAll();
+              }
             } else {
               await _isar.tmdbTitles.put(title);
             }
@@ -372,6 +386,43 @@ class TmdbTitleRepository {
         .tmdbIdEqualTo(tmdbId)
         .mediaTypeEqualTo(mediaType)
         .findFirstSync();
+  }
+
+  Future<TmdbSeason?> getSeason(int tvId, int seasonNumber) async {
+    return _isar.tmdbSeasons
+        .filter()
+        .tvIdEqualTo(tvId)
+        .seasonNumberEqualTo(seasonNumber)
+        .findFirst();
+  }
+
+  Future<void> putSeason(TmdbSeason season) async {
+    final cached = await getSeason(season.tvId, season.seasonNumber);
+    if (cached != null) {
+      season.isarId = cached.isarId;
+    }
+    await _isar.writeTxn(() async {
+      await _isar.tmdbSeasons.put(season);
+    });
+  }
+
+  Future<TmdbEpisode?> getEpisode(int tvId, int seasonNumber, int episodeNumber) async {
+    return _isar.tmdbEpisodes
+        .filter()
+        .tvIdEqualTo(tvId)
+        .seasonNumberEqualTo(seasonNumber)
+        .episodeNumberEqualTo(episodeNumber)
+        .findFirst();
+  }
+
+  Future<void> putEpisode(TmdbEpisode episode) async {
+    final cached = await getEpisode(episode.tvId, episode.seasonNumber, episode.episodeNumber);
+    if (cached != null) {
+      episode.isarId = cached.isarId;
+    }
+    await _isar.writeTxn(() async {
+      await _isar.tmdbEpisodes.put(episode);
+    });
   }
 
   Future<TmdbTitle?> getTitleGlobal(int tmdbId, String mediaType) async {

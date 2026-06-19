@@ -137,6 +137,7 @@ class TmdbTitle implements TmdbItem {
   late String releaseDate;
   late String firstAirDate;
   late String lastAirDate;
+  @override
   late String lastUpdated;
 
   // Numbers

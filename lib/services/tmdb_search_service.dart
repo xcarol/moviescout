@@ -5,7 +5,6 @@ import 'package:moviescout/models/tmdb_item.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
-import 'package:moviescout/repositories/tmdb_person_repository.dart';
 import 'package:moviescout/services/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
@@ -28,9 +27,9 @@ const String _tmdbFindByID =
 
 class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
   final TmdbTitleRepository titleRepository;
-  final TmdbPersonRepository personRepository;
+  final List<TmdbPerson> _memoryPersons = [];
 
-  TmdbSearchService(String listName, this.titleRepository, this.personRepository) {
+  TmdbSearchService(String listName, this.titleRepository) {
     listNameVal = listName;
   }
 
@@ -100,12 +99,16 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
     }
     
     if (_selectedType == '' || _selectedType == ApiConstants.person) {
-      final persons = await personRepository.getPeople(
-        transientListId: listNameVal,
-        filterText: '',
-        limit: 1000,
-      );
-      allItems.addAll(persons);
+      if (filterText.isEmpty) {
+        allItems.addAll(_memoryPersons);
+      } else {
+        final query = filterText.toLowerCase().trim();
+        allItems.addAll(_memoryPersons.where((p) {
+          return p.name.toLowerCase().contains(query) ||
+                 p.character.toLowerCase().contains(query) ||
+                 p.job.toLowerCase().contains(query);
+        }));
+      }
     }
 
     final String query = filterText.toLowerCase().trim();
@@ -150,7 +153,7 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
 
   Future<void> clearList() async {
     await titleRepository.clearList(listNameVal);
-    await personRepository.clearTransientList(listNameVal);
+    _memoryPersons.clear();
     clearLoadedItems(resetCount: true);
     notifyListeners();
   }
@@ -164,7 +167,7 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
     
     try {
       await titleRepository.clearList(listNameVal);
-      await personRepository.clearTransientList(listNameVal);
+      _memoryPersons.clear();
 
       await Future.wait([
         _fetchAndSaveMovies(searchTerm, locale),
@@ -275,7 +278,6 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
           if (responseBody['results'] != null) {
             for (var item in responseBody['results']) {
                final person = TmdbPerson.fromMap(person: item);
-               person.transientListId = listNameVal;
                persons.add(person);
             }
           }
@@ -283,7 +285,7 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
       } while (page++ < totalPages);
       
       if (persons.isNotEmpty) {
-          await personRepository.savePeople(persons);
+          _memoryPersons.addAll(persons);
       }
   }
 

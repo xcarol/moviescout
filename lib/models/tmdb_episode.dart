@@ -1,9 +1,18 @@
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_person.dart';
+import 'package:isar_community/isar.dart';
+import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/models/tmdb_item.dart';
 
-class TmdbEpisode {
-  late int id;
-  late int showId;
+part 'tmdb_episode.g.dart';
+
+@collection
+class TmdbEpisode implements TmdbItem {
+  Id isarId = Isar.autoIncrement;
+  @override
+  late int tmdbId;
+  @Index(composite: [CompositeIndex('seasonNumber'), CompositeIndex('episodeNumber')])
+  late int tvId;
   late int seasonNumber;
   late String name;
   late String overview;
@@ -17,10 +26,12 @@ class TmdbEpisode {
   late String? crewJson;
   late String? imagesJson;
   late String? videosJson;
+  @override
+  late String lastUpdated;
 
   TmdbEpisode({
-    required this.id,
-    required this.showId,
+    required this.tmdbId,
+    required this.tvId,
     required this.seasonNumber,
     required this.name,
     required this.overview,
@@ -33,12 +44,13 @@ class TmdbEpisode {
     this.crewJson,
     this.imagesJson,
     this.videosJson,
+    required this.lastUpdated,
   });
 
-  factory TmdbEpisode.fromMap(Map<String, dynamic> data) {
+  factory TmdbEpisode.fromMap(Map<String, dynamic> data, {int tvId = 0}) {
     return TmdbEpisode(
-      id: data['id'] ?? 0,
-      showId: data['show_id'] ?? 0,
+      tmdbId: data['id'] ?? 0,
+      tvId: tvId,
       seasonNumber: data['season_number'] ?? 0,
       name: data['name'] ?? '',
       overview: data['overview'] ?? '',
@@ -47,6 +59,7 @@ class TmdbEpisode {
       airDate: data['air_date'] ?? '',
       voteAverage: (data['vote_average'] ?? 0.0).toDouble(),
       stillPathSuffix: data['still_path'],
+      lastUpdated: AppConstants.defaultDate,
     )..fillFromMap(data);
   }
 
@@ -71,10 +84,12 @@ class TmdbEpisode {
     }
   }
 
+  @ignore
   String get stillPath => stillPathSuffix != null && stillPathSuffix!.isNotEmpty
       ? 'https://image.tmdb.org/t/p/original$stillPathSuffix'
       : '';
 
+  @ignore
   List<String> get images {
     if (imagesJson == null) return [];
     try {
@@ -86,6 +101,7 @@ class TmdbEpisode {
     return [];
   }
 
+  @ignore
   List<Map<String, dynamic>> get videos {
     if (videosJson == null) return [];
     try {
@@ -97,6 +113,7 @@ class TmdbEpisode {
     return [];
   }
 
+  @ignore
   List<TmdbPerson> get cast {
     if (guestStarsJson == null) return [];
     final guestStarsList = jsonDecode(guestStarsJson!);
@@ -104,6 +121,7 @@ class TmdbEpisode {
         guestStarsList is List ? guestStarsList : null, PersonAttributes.cast);
   }
 
+  @ignore
   List<TmdbPerson> get crew {
     if (crewJson == null) return [];
     final crewList = jsonDecode(crewJson!);
