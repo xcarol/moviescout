@@ -29,7 +29,6 @@ import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
-import 'package:moviescout/repositories/tmdb_person_repository.dart';
 import 'package:moviescout/screens/main_screen.dart';
 import 'package:moviescout/services/deep_link_service.dart';
 import 'package:moviescout/utils/language_translator.dart';
@@ -114,12 +113,10 @@ void main() async {
 
   debugPrint('Running Movie Scout...');
   final repository = TmdbTitleRepository();
-  final personRepository = TmdbPersonRepository();
 
   runApp(MultiProvider(
     providers: [
       Provider.value(value: repository),
-      Provider.value(value: personRepository),
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),

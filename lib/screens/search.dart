@@ -7,7 +7,6 @@ import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/search_list.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
-import 'package:moviescout/repositories/tmdb_person_repository.dart';
 import 'package:provider/provider.dart';
 
 class Search extends StatefulWidget {
@@ -45,7 +44,6 @@ class _SearchState extends State<Search> {
     _searchService = TmdbSearchService(
       'searchProvider',
       context.read<TmdbTitleRepository>(),
-      context.read<TmdbPersonRepository>(),
     );
     _searchWidget = SearchList(
       searchService: _searchService,
