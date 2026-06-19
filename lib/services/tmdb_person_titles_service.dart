@@ -9,11 +9,13 @@ import 'package:moviescout/services/tmdb_memory_list_mixin.dart';
 class TmdbPersonTitlesService extends TmdbTitleListService
     with TmdbMemoryListMixin<TmdbTitle> {
   final TmdbPerson person;
+  final PersonTitleRole role;
 
   TmdbPersonTitlesService(
     super.listName,
     super.repository, {
     required this.person,
+    this.role = PersonTitleRole.character,
   }) {
     _initializeTitles();
   }
@@ -30,10 +32,14 @@ class TmdbPersonTitlesService extends TmdbTitleListService
   void _initializeTitles() {
     allItems.clear();
     final seenIds = <int>{};
-    allItems.addAll(
-        person.combinedCredits.cast.where((t) => seenIds.add(t.tmdbId)));
-    allItems.addAll(
-        person.combinedCredits.crew.where((t) => seenIds.add(t.tmdbId)));
+
+    if (role == PersonTitleRole.crew) {
+      allItems.addAll(
+          person.combinedCredits.crew.where((t) => seenIds.add(t.tmdbId)));
+    } else {
+      allItems.addAll(
+          person.combinedCredits.cast.where((t) => seenIds.add(t.tmdbId)));
+    }
 
     for (int i = 0; i < allItems.length; i++) {
       allItems[i].addedOrder = i;

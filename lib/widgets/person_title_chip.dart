@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/title_chip.dart';
@@ -18,7 +19,15 @@ extension TmdbTitleRoleTranslation on TmdbTitle {
     return PersonTranslator.translateDepartment(department, locale);
   }
 
-  String getRoleString(BuildContext context) {
+  String getRoleString(BuildContext context,
+      {PersonTitleRole role = PersonTitleRole.character}) {
+    if (role == PersonTitleRole.crew) {
+      if (job.isNotEmpty) return localizedJob(context);
+      if (department.isNotEmpty) return localizedDepartment(context);
+      if (character.isNotEmpty) return character;
+      return '';
+    }
+
     if (character.isNotEmpty) return character;
     if (job.isNotEmpty) return localizedJob(context);
     if (department.isNotEmpty) return localizedDepartment(context);
@@ -28,11 +37,13 @@ extension TmdbTitleRoleTranslation on TmdbTitle {
 
 class PersonTitleChip extends TitleCard {
   final TmdbTitle _title;
+  final PersonTitleRole role;
 
   const PersonTitleChip({
     super.key,
     required super.title,
     required super.tmdbListService,
+    this.role = PersonTitleRole.character,
   }) : _title = title;
 
   @override
@@ -105,7 +116,7 @@ class PersonTitleChip extends TitleCard {
   }
 
   Widget _personTitleDetails(BuildContext context, TmdbTitle tmdbTitle) {
-    final role = tmdbTitle.getRoleString(context);
+    final roleText = tmdbTitle.getRoleString(context, role: role);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -120,10 +131,10 @@ class PersonTitleChip extends TitleCard {
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        if (role.isNotEmpty) ...[
+        if (roleText.isNotEmpty) ...[
           const SizedBox(height: 5),
           Text(
-            role,
+            roleText,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(

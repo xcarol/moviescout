@@ -10,10 +10,12 @@ import 'package:moviescout/repositories/tmdb_title_repository.dart';
 
 class PersonTitles extends StatefulWidget {
   final TmdbPerson _person;
+  final PersonTitleRole role;
 
   const PersonTitles({
     super.key,
     required TmdbPerson person,
+    this.role = PersonTitleRole.character,
   }) : _person = person;
 
   @override
@@ -30,6 +32,7 @@ class _PersonTitlesState extends State<PersonTitles> {
       'person_titles_${widget._person.tmdbId}',
       Provider.of<TmdbTitleRepository>(context, listen: false),
       person: widget._person,
+      role: widget.role,
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -7,6 +7,8 @@ import 'package:moviescout/utils/person_translator.dart';
 
 // ignore_for_file: constant_identifier_names, unused_element
 
+enum PersonTitleRole { character, crew }
+
 class PersonAttributes {
   static const id = 'id';
   static const last_updated = 'last_updated';
@@ -57,7 +59,6 @@ class CombinedCredits {
 }
 
 class TmdbPerson implements TmdbItem {
-
   @override
   late int tmdbId;
 
@@ -130,7 +131,7 @@ class TmdbPerson implements TmdbItem {
         imdbId: person[PersonAttributes.imdb_id] ?? '',
         placeOfBirth: person[PersonAttributes.place_of_birth] ?? '',
         homepage: person[PersonAttributes.homepage] ?? '',
-        combinedCreditsJson: person[PersonAttributes.combined_credits] != null 
+        combinedCreditsJson: person[PersonAttributes.combined_credits] != null
             ? jsonEncode(person[PersonAttributes.combined_credits])
             : null);
   }
@@ -158,11 +159,13 @@ class TmdbPerson implements TmdbItem {
       PersonAttributes.imdb_id: imdbId,
       PersonAttributes.place_of_birth: placeOfBirth,
       PersonAttributes.homepage: homepage,
-      PersonAttributes.combined_credits: combinedCreditsJson != null ? jsonDecode(combinedCreditsJson!) : null,
+      PersonAttributes.combined_credits:
+          combinedCreditsJson != null ? jsonDecode(combinedCreditsJson!) : null,
     };
   }
 
-  static List<TmdbPerson> parsePersonList(List<dynamic>? jsonList, String roleType) {
+  static List<TmdbPerson> parsePersonList(
+      List<dynamic>? jsonList, String roleType) {
     if (jsonList == null) return [];
 
     List<TmdbPerson> people = [];
@@ -197,13 +200,18 @@ class TmdbPerson implements TmdbItem {
 
       if (existingIndex != -1) {
         if (roleType == PersonAttributes.cast) {
-          if (people[existingIndex].character.isNotEmpty && character.isNotEmpty && !people[existingIndex].character.contains(character)) {
+          if (people[existingIndex].character.isNotEmpty &&
+              character.isNotEmpty &&
+              !people[existingIndex].character.contains(character)) {
             people[existingIndex].character += ', $character';
-          } else if (people[existingIndex].character.isEmpty && character.isNotEmpty) {
+          } else if (people[existingIndex].character.isEmpty &&
+              character.isNotEmpty) {
             people[existingIndex].character = character;
           }
         } else {
-          if (people[existingIndex].job.isNotEmpty && job.isNotEmpty && !people[existingIndex].job.contains(job)) {
+          if (people[existingIndex].job.isNotEmpty &&
+              job.isNotEmpty &&
+              !people[existingIndex].job.contains(job)) {
             people[existingIndex].job += ', $job';
           } else if (people[existingIndex].job.isEmpty && job.isNotEmpty) {
             people[existingIndex].job = job;

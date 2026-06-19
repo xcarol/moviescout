@@ -107,6 +107,7 @@ class _TitleListState extends State<TitleList> {
                           PersonTitleCard(
                             title: title,
                             tmdbListService: widget.listService,
+                            role: service.role,
                           )
                         else
                           TitleCard(

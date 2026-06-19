@@ -549,7 +549,8 @@ class _PersonDetailsState extends State<PersonDetails> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PersonTitles(person: person),
+                    builder: (context) => PersonTitles(
+                        person: person, role: PersonTitleRole.crew),
                   ),
                 );
               },
@@ -571,6 +572,7 @@ class _PersonDetailsState extends State<PersonDetails> {
                   (titleRecommended) => PersonTitleChip(
                     title: titleRecommended,
                     tmdbListService: widget._tmdbListService,
+                    role: PersonTitleRole.crew,
                   ),
                 )
                 .toList(),
