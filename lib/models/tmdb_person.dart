@@ -62,6 +62,7 @@ class TmdbPerson implements TmdbItem {
   late int tmdbId;
 
   late String name;
+  @override
   late String lastUpdated;
   late String knownForDepartment;
   late int gender;

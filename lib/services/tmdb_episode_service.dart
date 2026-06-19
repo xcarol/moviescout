@@ -1,6 +1,8 @@
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/error_service.dart';
+import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 
 const String _tmdbEpisodeDetails =
@@ -10,6 +12,8 @@ const String _tmdbEpisodeBrief =
     '/tv/{ID}/season/{SEASON_NUMBER}/episode/{EPISODE_NUMBER}?append_to_response=images,videos&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
 
 class TmdbEpisodeService extends TmdbBaseService {
+  final _repository = TmdbTitleRepository();
+
   Future<dynamic> _retrieveEpisodeDetails(
     int id,
     int seasonNumber,
@@ -41,7 +45,18 @@ class TmdbEpisodeService extends TmdbBaseService {
   }
 
   Future<TmdbEpisode?> getEpisodeDetails(
-      int tvId, int seasonNumber, int episodeNumber) async {
+      int tvId, int seasonNumber, int episodeNumber,
+      {bool isPrefetch = false}) async {
+    final dbEpisode =
+        await _repository.getEpisode(tvId, seasonNumber, episodeNumber);
+
+    if (dbEpisode != null && TmdbTitleService.isUpToDate(dbEpisode)) {
+      if (!isPrefetch) {
+        _prefetchAdjacents(tvId, seasonNumber, episodeNumber);
+      }
+      return dbEpisode;
+    }
+
     final result = await _retrieveEpisodeDetails(
       tvId,
       seasonNumber,
@@ -52,7 +67,7 @@ class TmdbEpisodeService extends TmdbBaseService {
     if (result.statusCode != 200) {
       if (result.statusCode != 404) {
         ErrorService.log(
-          'Failed to retrieve episode details for $tvId S$seasonNumber E$episodeNumber - ${result.statusCode} - ${result.body}',
+          'Failed to retrieve episode details for $tvId season $seasonNumber episode $episodeNumber - ${result.statusCode} - ${result.body}',
           userMessage: 'Failed to retrieve episode details',
         );
       }
@@ -102,11 +117,30 @@ class TmdbEpisodeService extends TmdbBaseService {
       }
     }
 
-    // Force inject showId and seasonNumber since endpoint root might not provide or we need it mapped exactly
-    details['show_id'] = tvId;
-    details['season_number'] = seasonNumber;
+    final episode = TmdbEpisode.fromMap(details, tvId: tvId);
+    episode.lastUpdated = DateTime.now().toIso8601String();
 
-    return TmdbEpisode.fromMap(details);
+    await _repository.putEpisode(episode);
+
+    if (!isPrefetch) {
+      _prefetchAdjacents(tvId, seasonNumber, episodeNumber);
+    }
+
+    return episode;
+  }
+
+  Future<void> _prefetchAdjacents(
+      int tvId, int seasonNumber, int episodeNumber) async {
+    if (episodeNumber > 1) {
+      getEpisodeDetails(tvId, seasonNumber, episodeNumber - 1,
+          isPrefetch: true);
+    }
+
+    final season = await _repository.getSeason(tvId, seasonNumber);
+    if (season != null && episodeNumber + 1 <= season.episodes.length) {
+      getEpisodeDetails(tvId, seasonNumber, episodeNumber + 1,
+          isPrefetch: true);
+    }
   }
 
   void _mergeFallback(

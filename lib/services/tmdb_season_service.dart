@@ -1,6 +1,8 @@
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/utils/api_constants.dart';
+import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/youtube_service.dart';
@@ -12,6 +14,8 @@ const String _tmdbSeasonBrief =
     '/tv/{ID}/season/{SEASON_NUMBER}?append_to_response=images,videos&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
 
 class TmdbSeasonService extends TmdbBaseService {
+  final _repository = TmdbTitleRepository();
+
   Future<dynamic> _retrieveSeasonDetails(
     int id,
     int seasonNumber,
@@ -39,7 +43,18 @@ class TmdbSeasonService extends TmdbBaseService {
   }
 
   Future<TmdbSeason?> getSeasonDetails(int tvId, int seasonNumber,
-      {bool includeYoutubeSearch = false, String? seriesName}) async {
+      {bool includeYoutubeSearch = false,
+      String? seriesName,
+      bool isPrefetch = false}) async {
+    final dbSeason = await _repository.getSeason(tvId, seasonNumber);
+
+    if (dbSeason != null && TmdbTitleService.isUpToDate(dbSeason)) {
+      if (!isPrefetch) {
+        _prefetchAdjacents(tvId, seasonNumber, seriesName);
+      }
+      return dbSeason;
+    }
+
     final result = await _retrieveSeasonDetails(
       tvId,
       seasonNumber,
@@ -47,10 +62,12 @@ class TmdbSeasonService extends TmdbBaseService {
     );
 
     if (result.statusCode != 200) {
-      ErrorService.log(
-        'Failed to retrieve season details for $tvId season $seasonNumber - ${result.statusCode} - ${result.body}',
-        userMessage: 'Failed to retrieve season details',
-      );
+      if (result.statusCode != 404) {
+        ErrorService.log(
+          'Failed to retrieve season details for $tvId season $seasonNumber - ${result.statusCode} - ${result.body}',
+          userMessage: 'Failed to retrieve season details',
+        );
+      }
       return null;
     }
 
@@ -99,8 +116,8 @@ class TmdbSeasonService extends TmdbBaseService {
       final lang = getLanguageCode();
       final country = getCountryCode();
       final query = '$seriesName season $seasonNumber';
-      final youtubeVideos = await YoutubeExplodeService()
-          .searchTrailers(query, '$lang-$country');
+      final youtubeVideos =
+          await YoutubeExplodeService().searchTrailers(query, '$lang-$country');
 
       if (youtubeVideos.isNotEmpty) {
         final List videos = details[TmdbTitleFields.videos] ?? [];
@@ -117,7 +134,30 @@ class TmdbSeasonService extends TmdbBaseService {
       }
     }
 
-    return TmdbSeason.fromMap(details);
+    final season = TmdbSeason.fromMap(details, tvId: tvId);
+    season.lastUpdated = DateTime.now().toIso8601String();
+
+    await _repository.putSeason(season);
+
+    if (!isPrefetch) {
+      _prefetchAdjacents(tvId, seasonNumber, seriesName);
+    }
+
+    return season;
+  }
+
+  Future<void> _prefetchAdjacents(
+      int tvId, int seasonNumber, String? seriesName) async {
+    if (seasonNumber > 1) {
+      getSeasonDetails(tvId, seasonNumber - 1,
+          seriesName: seriesName, isPrefetch: true);
+    }
+
+    final title = await _repository.getTitleGlobal(tvId, ApiConstants.tv);
+    if (title != null && seasonNumber + 1 <= title.numberOfSeasons) {
+      getSeasonDetails(tvId, seasonNumber + 1,
+          seriesName: seriesName, isPrefetch: true);
+    }
   }
 
   void _mergeFallback(Map<String, dynamic> target,
