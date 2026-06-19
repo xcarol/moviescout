@@ -4,13 +4,17 @@ import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/person_title_chip.dart'; // To reuse TmdbTitleRoleTranslation
 
+import 'package:moviescout/models/tmdb_person.dart';
+
 class PersonTitleCard extends TitleCard {
   final TmdbTitle _title;
+  final PersonTitleRole role;
 
   const PersonTitleCard({
     super.key,
     required super.title,
     required super.tmdbListService,
+    this.role = PersonTitleRole.character,
   }) : _title = title;
 
   @override
@@ -44,7 +48,7 @@ class PersonTitleCard extends TitleCard {
   }
 
   Widget _personTitleDetails(BuildContext context, TmdbTitle tmdbTitle) {
-    final role = tmdbTitle.getRoleString(context);
+    final roleText = tmdbTitle.getRoleString(context, role: role);
     final dateString = titleSubtitle(context, tmdbTitle);
     return Expanded(
       child: Padding(
@@ -66,10 +70,10 @@ class PersonTitleCard extends TitleCard {
                 ),
               ),
             ],
-            if (role.isNotEmpty) ...[
+            if (roleText.isNotEmpty) ...[
               const SizedBox(height: 5),
               Text(
-                role,
+                roleText,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
