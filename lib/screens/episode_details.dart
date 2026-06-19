@@ -38,25 +38,34 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
   TmdbEpisode? _currentEpisode;
   bool _isUpdating = false;
   late int _currentEpisodeNumber;
+  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
     _currentEpisode = widget.initialEpisode;
     _currentEpisodeNumber = widget.episodeNumber;
+    _pageController = PageController(initialPage: _currentEpisodeNumber - 1);
     _updateDetails();
   }
 
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   Future<void> _updateDetails() async {
+    final requestedEpNumber = _currentEpisodeNumber;
     setState(() {
       _isUpdating = true;
     });
 
     try {
       final updated = await TmdbEpisodeService().getEpisodeDetails(
-          widget.title.tmdbId, widget.seasonNumber, _currentEpisodeNumber);
+          widget.title.tmdbId, widget.seasonNumber, requestedEpNumber);
 
-      if (mounted) {
+      if (mounted && _currentEpisodeNumber == requestedEpNumber) {
         setState(() {
           if (updated != null) {
             _currentEpisode = updated;
@@ -65,7 +74,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
         });
       }
     } catch (e) {
-      if (mounted) {
+      if (mounted && _currentEpisodeNumber == requestedEpNumber) {
         setState(() {
           _isUpdating = false;
         });
@@ -81,58 +90,58 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
       appBar: AppBar(
         title: Text(appTitle),
       ),
-      body: GestureDetector(
-        onHorizontalDragEnd: (details) {
-          if (details.primaryVelocity! > 0) {
-            _goToPreviousEpisode();
-          } else if (details.primaryVelocity! < 0) {
-            if (widget.totalEpisodes == null ||
-                _currentEpisodeNumber < widget.totalEpisodes!) {
-              _goToNextEpisode();
-            }
+      body: PageView.builder(
+        controller: _pageController,
+        itemCount: widget.totalEpisodes,
+        onPageChanged: (index) {
+          final newEpNumber = index + 1;
+          if (newEpNumber != _currentEpisodeNumber) {
+            setState(() {
+              _currentEpisodeNumber = newEpNumber;
+            });
+            _updateDetails();
           }
         },
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: _detailsBody(),
-        ),
+        itemBuilder: (context, index) {
+          if (index + 1 == _currentEpisodeNumber) {
+            if (_isUpdating) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (_currentEpisode == null) {
+              return const Center(child: Text('Failed to load episode details'));
+            } else {
+              return SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: _detailsBody(_currentEpisode!),
+              );
+            }
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }
 
   void _goToPreviousEpisode() {
     if (_currentEpisodeNumber > 1) {
-      setState(() {
-        _currentEpisodeNumber--;
-      });
-      _updateDetails();
+      _pageController.previousPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
   }
 
   void _goToNextEpisode() {
     if (widget.totalEpisodes == null ||
         _currentEpisodeNumber < widget.totalEpisodes!) {
-      setState(() {
-        _currentEpisodeNumber++;
-      });
-      _updateDetails();
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
   }
 
-  Widget _detailsBody() {
-    if (_currentEpisode == null && _isUpdating) {
-      return const Padding(
-        padding: EdgeInsets.only(top: 100.0),
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
-    final episode = _currentEpisode;
-    if (episode == null) {
-      return const Center(child: Text('Failed to load episode details'));
-    }
+  Widget _detailsBody(TmdbEpisode episode) {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,

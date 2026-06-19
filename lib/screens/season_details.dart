@@ -34,23 +34,32 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   TmdbSeason? _season;
   bool _isLoading = true;
   late int _currentSeasonNumber;
+  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
     _currentSeasonNumber = widget.seasonNumber;
+    _pageController = PageController(initialPage: _currentSeasonNumber - 1);
     _loadSeasonDetails();
   }
 
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadSeasonDetails() async {
+    final requestedSeasonNumber = _currentSeasonNumber;
     setState(() {
       _isLoading = true;
     });
     final season = await TmdbSeasonService().getSeasonDetails(
-        widget.title.tmdbId, _currentSeasonNumber,
+        widget.title.tmdbId, requestedSeasonNumber,
         includeYoutubeSearch: false);
 
-    if (mounted) {
+    if (mounted && _currentSeasonNumber == requestedSeasonNumber) {
       setState(() {
         _season = season;
         _isLoading = false;
@@ -79,41 +88,53 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _season == null
-              ? const Center(child: Text('Failed to load season details'))
-              : GestureDetector(
-                  onHorizontalDragEnd: (details) {
-                    if (details.primaryVelocity! > 0) {
-                      _goToPreviousSeason();
-                    } else if (details.primaryVelocity! < 0) {
-                      _goToNextSeason();
-                    }
-                  },
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: _detailsBody(_season!),
-                  ),
-                ),
+      body: PageView.builder(
+        controller: _pageController,
+        itemCount: widget.title.numberOfSeasons,
+        onPageChanged: (index) {
+          final newSeasonNumber = index + 1;
+          if (newSeasonNumber != _currentSeasonNumber) {
+            setState(() {
+              _currentSeasonNumber = newSeasonNumber;
+            });
+            _loadSeasonDetails();
+          }
+        },
+        itemBuilder: (context, index) {
+          if (index + 1 == _currentSeasonNumber) {
+            if (_isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (_season == null) {
+              return const Center(child: Text('Failed to load season details'));
+            } else {
+              return SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: _detailsBody(_season!),
+              );
+            }
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 
   void _goToPreviousSeason() {
     if (_currentSeasonNumber > 1) {
-      setState(() {
-        _currentSeasonNumber--;
-      });
-      _loadSeasonDetails();
+      _pageController.previousPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
   }
 
   void _goToNextSeason() {
     if (_currentSeasonNumber < widget.title.numberOfSeasons) {
-      setState(() {
-        _currentSeasonNumber++;
-      });
-      _loadSeasonDetails();
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
   }
 
