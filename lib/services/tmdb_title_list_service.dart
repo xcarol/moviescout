@@ -24,6 +24,8 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
   @protected
   List<int> filterGenres = [];
   @protected
+  bool filterExcludeGenres = false;
+  @protected
   List<int> filterProvidersIds = [];
   @protected
   bool filterByProviders = false;
@@ -385,6 +387,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       filterText: filterText,
       filterMediaType: filterMediaType,
       filterGenres: filterGenres,
+      filterExcludeGenres: filterExcludeGenres,
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
       sortOption: selectedSort,
@@ -428,6 +431,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       filterText: filterText,
       filterMediaType: filterMediaType,
       filterGenres: filterGenres,
+      filterExcludeGenres: filterExcludeGenres,
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
       filterRating: filterRating,
@@ -458,6 +462,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       {String text = '',
       String type = '',
       List<String> genres = const [],
+      bool excludeGenres = false,
       bool filterByProviders = false,
       List<int> providerListIds = const [],
       RatingFilter ratingFilter = RatingFilter.all,
@@ -466,6 +471,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     filterText = text;
     filterMediaType = type;
     filterGenres = TmdbGenreService().getIdsFromNames(genres);
+    filterExcludeGenres = excludeGenres;
     this.filterByProviders = filterByProviders;
     filterProvidersIds = providerListIds;
     filterRating = ratingFilter;
@@ -474,8 +480,9 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     await filterItems();
   }
 
-  void setGenresFilter(List<String> genres) {
+  void setGenresFilter(List<String> genres, bool excludeGenres) {
     filterGenres = TmdbGenreService().getIdsFromNames(genres);
+    filterExcludeGenres = excludeGenres;
     filterItems();
   }
 

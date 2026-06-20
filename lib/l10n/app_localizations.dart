@@ -175,6 +175,18 @@ abstract class AppLocalizations {
   /// **'Search for a provider'**
   String get searchProvider;
 
+  /// No description provided for @includeGenres.
+  ///
+  /// In en, this message translates to:
+  /// **'Include'**
+  String get includeGenres;
+
+  /// No description provided for @excludeGenres.
+  ///
+  /// In en, this message translates to:
+  /// **'Exclude'**
+  String get excludeGenres;
+
   /// No description provided for @back.
   ///
   /// In en, this message translates to:

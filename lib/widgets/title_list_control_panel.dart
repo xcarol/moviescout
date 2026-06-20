@@ -7,8 +7,9 @@ import 'package:moviescout/widgets/text_filter_widget.dart';
 class TitleListControlPanel extends StatelessWidget {
   final Function textFilterChanged;
   final TextEditingController textFilterController;
-  final List<String> selectedGenres;
   final List<String> genresList;
+  final List<String> selectedGenres;
+  final bool excludeGenres;
   final Function genresChanged;
   final bool filterByProviders;
   final Function providersChanged;
@@ -19,8 +20,9 @@ class TitleListControlPanel extends StatelessWidget {
     super.key,
     required this.textFilterChanged,
     required this.textFilterController,
-    required this.selectedGenres,
     required this.genresList,
+    required this.selectedGenres,
+    required this.excludeGenres,
     required this.genresChanged,
     required this.filterByProviders,
     required this.providersChanged,
@@ -79,7 +81,10 @@ class TitleListControlPanel extends StatelessWidget {
             builder: (context) => GenresScreen(
               genresList: genresList,
               selectedGenres: selectedGenres,
-              onGenresChanged: (newGenres) => genresChanged(newGenres),
+              excludeGenres: excludeGenres,
+              onGenresChanged: (genres, exclude) {
+                genresChanged(genres, exclude);
+              },
             ),
           ),
         );

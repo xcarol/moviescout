@@ -179,9 +179,11 @@ class _TitleListState extends State<TitleList> {
                 },
                 textFilterController: _controller.textFilterController,
                 selectedGenres: _controller.selectedGenres.toList(),
+                excludeGenres: _controller.excludeGenres,
                 genresList: genres,
-                genresChanged: (List<String> genresChanged) {
-                  _controller.setGenres(genresChanged);
+                genresChanged:
+                    (List<String> genresChanged, bool excludeGenres) {
+                  _controller.setGenres(genresChanged, excludeGenres);
                 },
                 filterByProviders: _controller.filterByProviders,
                 providersChanged: (bool providersChanged) {
