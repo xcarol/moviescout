@@ -85,7 +85,7 @@ class TmdbTitleRepository {
       newTitle.isPinned = currentTitle.isPinned;
       newTitle.notifyNewSeasons = currentTitle.notifyNewSeasons;
     }
-    
+
     if (newTitle.rating == 0.0 && currentTitle.rating > 0.0) {
       newTitle.rating = currentTitle.rating;
       newTitle.dateRated = currentTitle.dateRated;
@@ -235,9 +235,16 @@ class TmdbTitleRepository {
         title.inLists = title.inLists.where((l) => l != listName).toList();
         if (title.inLists.isEmpty) {
           await _isar.tmdbTitles.delete(title.id);
-          if (title.mediaType == ApiConstants.tv || title.mediaType == AppConstants.miniseries) {
-            await _isar.tmdbSeasons.filter().tvIdEqualTo(title.tmdbId).deleteAll();
-            await _isar.tmdbEpisodes.filter().tvIdEqualTo(title.tmdbId).deleteAll();
+          if (title.mediaType == ApiConstants.tv ||
+              title.mediaType == AppConstants.miniseries) {
+            await _isar.tmdbSeasons
+                .filter()
+                .tvIdEqualTo(title.tmdbId)
+                .deleteAll();
+            await _isar.tmdbEpisodes
+                .filter()
+                .tvIdEqualTo(title.tmdbId)
+                .deleteAll();
           }
         } else {
           await _isar.tmdbTitles.put(title);
@@ -282,9 +289,16 @@ class TmdbTitleRepository {
             title.inLists = title.inLists.where((l) => l != listName).toList();
             if (title.inLists.isEmpty) {
               await _isar.tmdbTitles.delete(title.id);
-              if (title.mediaType == ApiConstants.tv || title.mediaType == AppConstants.miniseries) {
-                await _isar.tmdbSeasons.filter().tvIdEqualTo(title.tmdbId).deleteAll();
-                await _isar.tmdbEpisodes.filter().tvIdEqualTo(title.tmdbId).deleteAll();
+              if (title.mediaType == ApiConstants.tv ||
+                  title.mediaType == AppConstants.miniseries) {
+                await _isar.tmdbSeasons
+                    .filter()
+                    .tvIdEqualTo(title.tmdbId)
+                    .deleteAll();
+                await _isar.tmdbEpisodes
+                    .filter()
+                    .tvIdEqualTo(title.tmdbId)
+                    .deleteAll();
               }
             } else {
               await _isar.tmdbTitles.put(title);
@@ -333,9 +347,16 @@ class TmdbTitleRepository {
             title.inLists = title.inLists.where((l) => l != listName).toList();
             if (title.inLists.isEmpty) {
               await _isar.tmdbTitles.delete(title.id);
-              if (title.mediaType == ApiConstants.tv || title.mediaType == AppConstants.miniseries) {
-                await _isar.tmdbSeasons.filter().tvIdEqualTo(title.tmdbId).deleteAll();
-                await _isar.tmdbEpisodes.filter().tvIdEqualTo(title.tmdbId).deleteAll();
+              if (title.mediaType == ApiConstants.tv ||
+                  title.mediaType == AppConstants.miniseries) {
+                await _isar.tmdbSeasons
+                    .filter()
+                    .tvIdEqualTo(title.tmdbId)
+                    .deleteAll();
+                await _isar.tmdbEpisodes
+                    .filter()
+                    .tvIdEqualTo(title.tmdbId)
+                    .deleteAll();
               }
             } else {
               await _isar.tmdbTitles.put(title);
@@ -406,7 +427,8 @@ class TmdbTitleRepository {
     });
   }
 
-  Future<TmdbEpisode?> getEpisode(int tvId, int seasonNumber, int episodeNumber) async {
+  Future<TmdbEpisode?> getEpisode(
+      int tvId, int seasonNumber, int episodeNumber) async {
     return _isar.tmdbEpisodes
         .filter()
         .tvIdEqualTo(tvId)
@@ -416,7 +438,8 @@ class TmdbTitleRepository {
   }
 
   Future<void> putEpisode(TmdbEpisode episode) async {
-    final cached = await getEpisode(episode.tvId, episode.seasonNumber, episode.episodeNumber);
+    final cached = await getEpisode(
+        episode.tvId, episode.seasonNumber, episode.episodeNumber);
     if (cached != null) {
       episode.isarId = cached.isarId;
     }
@@ -480,6 +503,7 @@ class TmdbTitleRepository {
     bool? pinned,
     String filterText = '',
     List<int> filterGenres = const [],
+    bool filterExcludeGenres = false,
     String filterMediaType = '',
     bool filterByProviders = false,
     List<int> filterProvidersIds = const [],
@@ -503,8 +527,14 @@ class TmdbTitleRepository {
     }
 
     if (filterGenres.isNotEmpty) {
-      query =
-          query.anyOf(filterGenres, (q, id) => q.genreIdsElementEqualTo(id));
+      if (filterExcludeGenres) {
+        for (final id in filterGenres) {
+          query = query.not().genreIdsElementEqualTo(id);
+        }
+      } else {
+        query =
+            query.anyOf(filterGenres, (q, id) => q.genreIdsElementEqualTo(id));
+      }
     }
 
     if (filterMediaType.isNotEmpty) {
@@ -569,6 +599,7 @@ class TmdbTitleRepository {
     String filterText = '',
     String filterMediaType = '',
     List<int> filterGenres = const [],
+    bool filterExcludeGenres = false,
     bool filterByProviders = false,
     List<int> filterProvidersIds = const [],
     RatingFilter filterRating = RatingFilter.all,
@@ -582,6 +613,7 @@ class TmdbTitleRepository {
       pinned: pinned,
       filterText: filterText,
       filterGenres: filterGenres,
+      filterExcludeGenres: filterExcludeGenres,
       filterMediaType: filterMediaType,
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
@@ -620,6 +652,7 @@ class TmdbTitleRepository {
     String filterText = '',
     String filterMediaType = '',
     List<int> filterGenres = const [],
+    bool filterExcludeGenres = false,
     bool filterByProviders = false,
     List<int> filterProvidersIds = const [],
     String sortOption = SortOption.alphabetically,
@@ -635,6 +668,7 @@ class TmdbTitleRepository {
         filterText: filterText,
         filterMediaType: filterMediaType,
         filterGenres: filterGenres,
+        filterExcludeGenres: filterExcludeGenres,
         filterByProviders: filterByProviders,
         filterProvidersIds: filterProvidersIds,
         filterRating: filterRating,
@@ -650,6 +684,7 @@ class TmdbTitleRepository {
       pinned: pinned,
       filterText: filterText,
       filterGenres: filterGenres,
+      filterExcludeGenres: filterExcludeGenres,
       filterMediaType: filterMediaType,
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,
@@ -665,6 +700,7 @@ class TmdbTitleRepository {
     String filterText = '',
     String filterMediaType = '',
     List<int> filterGenres = const [],
+    bool filterExcludeGenres = false,
     bool filterByProviders = false,
     List<int> filterProvidersIds = const [],
     RatingFilter filterRating = RatingFilter.all,
@@ -675,6 +711,7 @@ class TmdbTitleRepository {
       pinned: pinned,
       filterText: filterText,
       filterGenres: filterGenres,
+      filterExcludeGenres: filterExcludeGenres,
       filterMediaType: filterMediaType,
       filterByProviders: filterByProviders,
       filterProvidersIds: filterProvidersIds,

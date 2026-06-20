@@ -48,6 +48,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get searchProvider => 'Busca un proveedor';
 
   @override
+  String get includeGenres => 'Incluir';
+
+  @override
+  String get excludeGenres => 'Excluir';
+
+  @override
   String get back => 'Atrás';
 
   @override

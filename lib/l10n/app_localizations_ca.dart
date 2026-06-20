@@ -48,6 +48,12 @@ class AppLocalizationsCa extends AppLocalizations {
   String get searchProvider => 'Cerca un proveïdor';
 
   @override
+  String get includeGenres => 'Incloure';
+
+  @override
+  String get excludeGenres => 'Excloure';
+
+  @override
   String get back => 'Enrere';
 
   @override

@@ -18,6 +18,7 @@ class TitleListController with ChangeNotifier {
   String _selectedType = '';
   String _selectedSort = '';
   List<String> _selectedGenres = [];
+  bool _excludeGenres = false;
   bool _filterByProviders = false;
   RatingFilter _ratingFilter = RatingFilter.rated;
   List<int> _providerListIds = [];
@@ -27,6 +28,7 @@ class TitleListController with ChangeNotifier {
   late final String _showFiltersPreferencesName;
   late final String _textFilterPreferencesName;
   late final String _selectedGenresPreferencesName;
+  late final String _excludeGenresPreferencesName;
   late final String _selectedTypePreferencesName;
   late final String _selectedSortPreferencesName;
   late final String _filterByProvidersPreferencesName;
@@ -45,6 +47,7 @@ class TitleListController with ChangeNotifier {
   String get selectedType => _selectedType;
   String get selectedSort => _selectedSort;
   List<String> get selectedGenres => _selectedGenres;
+  bool get excludeGenres => _excludeGenres;
   bool get filterByProviders => _filterByProviders;
   RatingFilter get ratingFilter => _ratingFilter;
   List<int> get providerListIds => _providerListIds;
@@ -125,12 +128,16 @@ class TitleListController with ChangeNotifier {
     notifyListeners();
   }
 
-  void setGenres(List<String> genres) {
+  void setGenres(List<String> genres, bool excludeGenres) {
     _selectedGenres = genres;
+    _excludeGenres = excludeGenres;
     PreferencesService()
         .prefs
         .setStringList(_selectedGenresPreferencesName, _selectedGenres);
-    listService.setGenresFilter(_selectedGenres);
+    PreferencesService()
+        .prefs
+        .setBool(_excludeGenresPreferencesName, _excludeGenres);
+    listService.setGenresFilter(_selectedGenres, _excludeGenres);
     _scrollToTop();
     notifyListeners();
   }
@@ -146,6 +153,7 @@ class TitleListController with ChangeNotifier {
         text: textFilterController.text,
         type: _selectedType,
         genres: _selectedGenres,
+        excludeGenres: _excludeGenres,
         filterByProviders: _filterByProviders,
         providerListIds: _providerListIds,
         ratingFilter: _ratingFilter,
@@ -217,6 +225,7 @@ class TitleListController with ChangeNotifier {
     _showFiltersPreferencesName = '${listService.listName}_ShowFilters';
     _selectedTypePreferencesName = '${listService.listName}_SelectedType';
     _selectedGenresPreferencesName = '${listService.listName}_SelectedGenres';
+    _excludeGenresPreferencesName = '${listService.listName}_ExcludeGenres';
     _filterByProvidersPreferencesName =
         '${listService.listName}_FilterByProviders';
     _sortPreferencesName = '${listService.listName}_Sort';
@@ -231,6 +240,7 @@ class TitleListController with ChangeNotifier {
     _showFilters = prefs.getBool(_showFiltersPreferencesName) ?? false;
     _selectedType = prefs.getString(_selectedTypePreferencesName) ?? '';
     _selectedGenres = prefs.getStringList(_selectedGenresPreferencesName) ?? [];
+    _excludeGenres = prefs.getBool(_excludeGenresPreferencesName) ?? false;
     _filterByProviders =
         prefs.getBool(_filterByProvidersPreferencesName) ?? false;
     _isSortAsc =
