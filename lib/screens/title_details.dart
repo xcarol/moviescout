@@ -608,15 +608,15 @@ class _TitleDetailsState extends State<TitleDetails> {
               future: Future.wait([
                 ratingService.getRatingDate(title.tmdbId, title.mediaType),
                 ratingService.contains(title),
+                ratingService.getRatingAsync(title.tmdbId, title.mediaType),
               ]),
               builder: (context, snapshot) {
                 final isUserLoggedIn =
                     Provider.of<TmdbUserService>(context).isUserLoggedIn;
-                final titleRating =
-                    ratingService.getRating(title.tmdbId, title.mediaType);
                 final titleRatingDate = snapshot.data?[0] as DateTime? ??
                     DateTime.fromMillisecondsSinceEpoch(0);
                 final titleIsRated = snapshot.data?[1] as bool? ?? false;
+                final titleRating = snapshot.data?[2] as double? ?? 0.0;
 
                 return Row(
                   children: [

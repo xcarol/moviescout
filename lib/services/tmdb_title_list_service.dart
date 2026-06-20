@@ -305,7 +305,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
 
     if (isInitialLoad) {
       final totalCount = listTitleCount;
-      const batchSize = AppConstants.tinyBatchSize;
+      const batchSize = AppConstants.defaultBatchSize;
 
       for (var i = 0; i < totalCount; i += batchSize) {
         final batch = await repository.getTitles(
@@ -334,7 +334,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     isLoading.value = true;
     try {
       final totalCount = listTitleCount;
-      const batchSize = AppConstants.tinyBatchSize;
+      const batchSize = AppConstants.defaultBatchSize;
 
       for (var i = 0; i < totalCount; i += batchSize) {
         final batch = await repository.getTitles(

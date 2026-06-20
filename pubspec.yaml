@@ -21,7 +21,7 @@ version: 1.18.1+91
 environment:
   sdk: ^3.6.0
 
-isar_version: &isar_version 3.3.0
+isar_version: &isar_version 3.3.2
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
