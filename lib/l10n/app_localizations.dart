@@ -169,6 +169,12 @@ abstract class AppLocalizations {
   /// **'Search for somebody'**
   String get searchPerson;
 
+  /// No description provided for @searchProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for a provider'**
+  String get searchProvider;
+
   /// No description provided for @back.
   ///
   /// In en, this message translates to:

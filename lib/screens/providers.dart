@@ -4,6 +4,8 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:provider/provider.dart';
+import 'package:moviescout/models/title_list_theme.dart';
+import 'package:moviescout/widgets/text_filter_widget.dart';
 
 class ProvidersScreen extends StatefulWidget {
   const ProvidersScreen({super.key});
@@ -15,8 +17,33 @@ class ProvidersScreen extends StatefulWidget {
 class _ProvidersScreenState extends State<ProvidersScreen> {
   bool _providersChanged = false;
   List<MapEntry<int, Map<String, String>>> _sortedProviders = [];
+  List<MapEntry<int, Map<String, String>>> _filteredProviders = [];
+
+  final TextEditingController _textFilterController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   String _normalize(String s) => removeDiacritics(s.toLowerCase());
+
+  @override
+  void dispose() {
+    _textFilterController.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _applyLocalFilter([String? filterText]) {
+    final text = filterText ?? _textFilterController.text;
+    final query = _normalize(text);
+
+    if (query.isEmpty) {
+      _filteredProviders = _sortedProviders;
+    } else {
+      _filteredProviders = _sortedProviders.where((entry) {
+        final providerName = entry.value[TmdbProvider.providerName] ?? '';
+        return _normalize(providerName).contains(query);
+      }).toList();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +51,7 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
         Provider.of<TmdbProviderService>(context, listen: false);
     final map = providerService.providers;
 
-    if (_sortedProviders.isEmpty) {
+    if (_sortedProviders.isEmpty && map.isNotEmpty) {
       _sortedProviders = map.entries.where((entry) {
         String providerName = entry.value[TmdbProvider.providerName] ?? '';
         String logoPath = entry.value[TmdbProvider.logoPathName] ?? '';
@@ -35,6 +62,7 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
           final bName = b.value[TmdbProvider.providerName] ?? '';
           return _normalize(aName).compareTo(_normalize(bName));
         });
+      _applyLocalFilter();
     }
 
     return PopScope(
@@ -47,7 +75,31 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.providersTitle),
         ),
-        body: Center(child: _body(context, providerService)),
+        body: Column(
+          children: [
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              color: Theme.of(context)
+                  .extension<TitleListTheme>()
+                  ?.controlPanelBackground,
+              child: TextFilterWidget(
+                controller: _textFilterController,
+                focusNode: _focusNode,
+                hintText: AppLocalizations.of(context)!.searchProvider,
+                height: 36,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                onChanged: (String value) {
+                  setState(() {
+                    _applyLocalFilter(value);
+                  });
+                },
+              ),
+            ),
+            Expanded(child: _body(context, providerService)),
+          ],
+        ),
       ),
     );
   }
@@ -59,23 +111,25 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
       );
     }
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: _sortedProviders
-            .map(
-              (provider) => SwitchListTile(
-                title: Text(provider.value[TmdbProvider.providerName] ?? ''),
-                value: provider.value[TmdbProvider.providerEnabled] == 'true',
-                onChanged: (value) => setState(() {
-                  providerService.toggleProvider(provider.key, value);
-                  _providersChanged = true;
-                }),
-              ),
-            )
-            .toList(),
-      ),
+    if (_filteredProviders.isEmpty) {
+      return Center(
+        child: Text(AppLocalizations.of(context)!.noProvidersAvailable),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: _filteredProviders.length,
+      itemBuilder: (context, index) {
+        final provider = _filteredProviders[index];
+        return SwitchListTile(
+          title: Text(provider.value[TmdbProvider.providerName] ?? ''),
+          value: provider.value[TmdbProvider.providerEnabled] == 'true',
+          onChanged: (value) => setState(() {
+            providerService.toggleProvider(provider.key, value);
+            _providersChanged = true;
+          }),
+        );
+      },
     );
   }
 }

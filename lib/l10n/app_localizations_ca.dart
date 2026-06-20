@@ -45,6 +45,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get searchPerson => 'Cerca algú';
 
   @override
+  String get searchProvider => 'Cerca un proveïdor';
+
+  @override
   String get back => 'Enrere';
 
   @override

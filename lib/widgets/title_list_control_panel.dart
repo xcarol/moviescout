@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/screens/genres.dart';
 import 'package:moviescout/models/title_list_theme.dart';
+import 'package:moviescout/widgets/text_filter_widget.dart';
 
 class TitleListControlPanel extends StatelessWidget {
   final Function textFilterChanged;
@@ -41,7 +42,14 @@ class TitleListControlPanel extends StatelessWidget {
               _providersSelector(context, filterByProviders),
             ],
           ),
-          _textFilter(context, AppLocalizations.of(context)!.search),
+          TextFilterWidget(
+            controller: textFilterController,
+            focusNode: focusNode,
+            hintText: AppLocalizations.of(context)!.search,
+            onChanged: (String value) {
+              textFilterChanged(value);
+            },
+          ),
           const SizedBox(height: 5),
           if (ratingFilter != null)
             Row(
@@ -130,64 +138,6 @@ class TitleListControlPanel extends StatelessWidget {
           },
         ),
       ],
-    );
-  }
-
-  Widget _textFilter(BuildContext context, String hintText) {
-    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
-
-    return SizedBox(
-      height: 26,
-      child: Theme(
-        data: Theme.of(context).copyWith(
-          textSelectionTheme: TextSelectionThemeData(
-            selectionColor: titleTheme.searchSelectionColor,
-            selectionHandleColor: titleTheme.searchCursorColor,
-          ),
-        ),
-        child: TextField(
-          controller: textFilterController,
-          focusNode: focusNode,
-          style: TextStyle(
-            color: titleTheme.controlPanelForeground,
-            fontSize: 14,
-            fontWeight: textFilterController.text.isEmpty
-                ? FontWeight.normal
-                : FontWeight.bold,
-          ),
-          cursorColor: titleTheme.searchCursorColor,
-          cursorHeight: 16,
-          decoration: InputDecoration(
-            isDense: true,
-            hintText: hintText,
-            hintStyle: TextStyle(color: titleTheme.searchHintColor),
-            suffixIconColor: titleTheme.controlPanelForeground,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 5),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5),
-              borderSide: BorderSide(color: titleTheme.controlPanelForeground),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5),
-              borderSide: BorderSide(color: titleTheme.controlPanelForeground),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5),
-              borderSide: BorderSide(color: titleTheme.controlPanelForeground),
-            ),
-            suffixIcon: GestureDetector(
-              child: Icon(Icons.clear),
-              onTap: () {
-                textFilterChanged('');
-                textFilterController.clear();
-              },
-            ),
-          ),
-          onChanged: (String value) {
-            textFilterChanged(value);
-          },
-        ),
-      ),
     );
   }
 }

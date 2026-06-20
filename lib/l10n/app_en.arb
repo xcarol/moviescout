@@ -24,6 +24,8 @@
     "@searchTitle": {},
     "searchPerson": "Search for somebody",
     "@searchPerson": {},
+    "searchProvider": "Search for a provider",
+    "@searchProvider": {},
     "back": "Back",
     "@back": {},
     "username": "User name",
