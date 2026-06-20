@@ -22,6 +22,8 @@
     "@search": {},
     "searchPerson": "Busca alguien",
     "@searchPerson": {},
+    "searchProvider": "Busca un proveedor",
+    "@searchProvider": {},
     "searchTitle": "Búsqueda",
     "@searchTitle": {},
     "back": "Atrás",

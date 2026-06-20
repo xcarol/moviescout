@@ -45,6 +45,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchPerson => 'Search for somebody';
 
   @override
+  String get searchProvider => 'Search for a provider';
+
+  @override
   String get back => 'Back';
 
   @override

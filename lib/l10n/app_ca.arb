@@ -22,6 +22,8 @@
     "@search": {},
     "searchPerson": "Cerca algú",
     "@searchPerson": {},
+    "searchProvider": "Cerca un proveïdor",
+    "@searchProvider": {},
     "searchTitle": "Cerca",
     "@searchTitle": {},
     "back": "Enrere",
