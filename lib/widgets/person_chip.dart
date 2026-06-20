@@ -125,6 +125,12 @@ class PersonChip extends StatelessWidget {
   }
 
   Widget _details(BuildContext context, TmdbPerson tmdbPerson) {
+    final roleText = tmdbPerson.character.isNotEmpty
+        ? tmdbPerson.character
+        : tmdbPerson.job.isNotEmpty
+            ? tmdbPerson.localizedJob(context)
+            : ' '; // Space maintains fixed overlay height without text clipping
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -140,29 +146,14 @@ class PersonChip extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 5),
-        SizedBox(
-          height: 16,
-          child: tmdbPerson.character.isNotEmpty
-              ? Text(
-                  tmdbPerson.character,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontSize: 12,
-                  ),
-                )
-              : tmdbPerson.job.isNotEmpty
-                  ? Text(
-                      tmdbPerson.localizedJob(context),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 12,
-                      ),
-                    )
-                  : const SizedBox.shrink(),
+        Text(
+          roleText,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontSize: 12,
+          ),
         ),
       ],
     );
