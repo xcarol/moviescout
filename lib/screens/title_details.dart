@@ -22,6 +22,7 @@ import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/widgets/person_chip.dart';
+import 'package:moviescout/widgets/edit_button.dart';
 import 'package:moviescout/widgets/rate_form.dart';
 import 'package:moviescout/widgets/notify_dialog.dart';
 import 'package:moviescout/widgets/title_chip.dart';
@@ -497,10 +498,18 @@ class _TitleDetailsState extends State<TitleDetails> {
       return const SizedBox.shrink();
     }
 
-    return Text(
-      title.name,
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-      textAlign: TextAlign.start,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Text(
+            title.name,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            textAlign: TextAlign.start,
+          ),
+        ),
+        EditButton(url: 'https://www.themoviedb.org/${title.mediaType}/${title.tmdbId}/edit'),
+      ],
     );
   }
 

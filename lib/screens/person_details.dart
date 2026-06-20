@@ -20,6 +20,7 @@ import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:moviescout/widgets/edit_button.dart';
 
 class PersonDetails extends StatefulWidget {
   final TmdbPerson _person;
@@ -403,10 +404,18 @@ class _PersonDetailsState extends State<PersonDetails> {
       return const SizedBox.shrink();
     }
 
-    return Text(
-      person.name,
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-      textAlign: TextAlign.start,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Text(
+            person.name,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            textAlign: TextAlign.start,
+          ),
+        ),
+        EditButton(url: 'https://www.themoviedb.org/person/${person.tmdbId}/edit'),
+      ],
     );
   }
 

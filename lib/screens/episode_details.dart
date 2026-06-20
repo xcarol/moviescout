@@ -10,6 +10,7 @@ import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/person_chip.dart';
 import 'package:moviescout/utils/date_formatter.dart';
+import 'package:moviescout/widgets/edit_button.dart';
 
 class EpisodeDetails extends StatefulWidget {
   final TmdbTitle title;
@@ -195,6 +196,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
             overflow: TextOverflow.ellipsis,
           ),
         ),
+        EditButton(url: 'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/${widget.seasonNumber}/episode/$_currentEpisodeNumber/edit'),
         IconButton(
           icon: const Icon(Icons.chevron_left),
           onPressed: _currentEpisodeNumber > 1 ? _goToPreviousEpisode : null,

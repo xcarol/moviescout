@@ -22,6 +22,7 @@ class AppConstants {
   static const String notificationsAsked = 'notifications_asked';
   static const String savedNotifications = 'saved_notifications';
   static const String debugShowLastUpdate = 'debug_show_last_update';
+  static const String showEditContent = 'show_edit_content';
 
   static const String catalan = 'ca-ES';
   static const String spanish = 'es-ES';

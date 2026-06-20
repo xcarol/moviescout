@@ -329,5 +329,7 @@
         "placeholders": {
             "count": {}
         }
-    }
+    },
+    "showEditContent": "Show edit button",
+    "@showEditContent": {}
 }

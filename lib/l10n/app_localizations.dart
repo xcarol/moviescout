@@ -1008,6 +1008,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Episode {count}'**
   String episodeLabel(Object count);
+
+  /// No description provided for @showEditContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Show edit button'**
+  String get showEditContent;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

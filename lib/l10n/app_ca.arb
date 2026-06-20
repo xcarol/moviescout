@@ -329,5 +329,7 @@
         "placeholders": {
             "count": {}
         }
-    }
+    },
+    "showEditContent": "Mostrar botó d'edició",
+    "@showEditContent": {}
 }

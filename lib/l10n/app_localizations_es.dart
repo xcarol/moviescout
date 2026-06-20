@@ -475,4 +475,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String episodeLabel(Object count) {
     return 'Episodio $count';
   }
+
+  @override
+  String get showEditContent => 'Mostrar botón de edición';
 }
