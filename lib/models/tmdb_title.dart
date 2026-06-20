@@ -499,23 +499,38 @@ class TmdbTitle implements TmdbItem {
   }
 
   @ignore
+  List? _recommendationsCache;
+
+  @ignore
   List get recommendations {
-    if (recommendationsJson != null) {
-      return jsonDecode(recommendationsJson!) as List;
-    }
-    return [];
+    if (_recommendationsCache != null) return _recommendationsCache!;
+    if (_recommendationsCache == null) return [];
+    _recommendationsCache = jsonDecode(recommendationsJson!) as List;
+    return _recommendationsCache!;
   }
+
+  @ignore
+  Map<String, dynamic>? _nextEpisodeToAirCache;
 
   @ignore
   Map<String, dynamic>? get nextEpisodeToAir {
+    if (_nextEpisodeToAirCache != null) return _nextEpisodeToAirCache;
     if (nextEpisodeToAirJson == null) return null;
-    return jsonDecode(nextEpisodeToAirJson!) as Map<String, dynamic>;
+    _nextEpisodeToAirCache =
+        jsonDecode(nextEpisodeToAirJson!) as Map<String, dynamic>;
+    return _nextEpisodeToAirCache;
   }
 
   @ignore
+  Map<String, dynamic>? _lastEpisodeToAirCache;
+
+  @ignore
   Map<String, dynamic>? get lastEpisodeToAir {
+    if (_lastEpisodeToAirCache != null) return _lastEpisodeToAirCache;
     if (lastEpisodeToAirJson == null) return null;
-    return jsonDecode(lastEpisodeToAirJson!) as Map<String, dynamic>;
+    _lastEpisodeToAirCache =
+        jsonDecode(lastEpisodeToAirJson!) as Map<String, dynamic>;
+    return _lastEpisodeToAirCache;
   }
 
   @ignore
@@ -529,23 +544,49 @@ class TmdbTitle implements TmdbItem {
   }
 
   @ignore
+  TmdbProviders? _providersCache;
+
+  @ignore
   TmdbProviders get providers {
+    if (_providersCache != null) return _providersCache!;
     if (providersJson == null) return TmdbProviders(providers: {});
-    return TmdbProviders(providers: jsonDecode(providersJson!));
+    _providersCache = TmdbProviders(providers: jsonDecode(providersJson!));
+    return _providersCache!;
   }
+
+  @ignore
+  Map<String, dynamic>? _creditsMapCache;
+
+  @ignore
+  List<TmdbPerson>? _castCache;
 
   @ignore
   List<TmdbPerson> get cast {
+    if (_castCache != null) return _castCache!;
     if (creditsJson == null) return [];
-    final creditsMap = jsonDecode(creditsJson!);
-    return TmdbPerson.parsePersonList(creditsMap[PersonAttributes.cast] is List ? creditsMap[PersonAttributes.cast] : null, PersonAttributes.cast);
+    _creditsMapCache ??= jsonDecode(creditsJson!);
+    _castCache = TmdbPerson.parsePersonList(
+        _creditsMapCache![PersonAttributes.cast] is List
+            ? _creditsMapCache![PersonAttributes.cast]
+            : null,
+        PersonAttributes.cast);
+    return _castCache!;
   }
 
   @ignore
+  List<TmdbPerson>? _crewCache;
+
+  @ignore
   List<TmdbPerson> get crew {
+    if (_crewCache != null) return _crewCache!;
     if (creditsJson == null) return [];
-    final creditsMap = jsonDecode(creditsJson!);
-    return TmdbPerson.parsePersonList(creditsMap[PersonAttributes.crew] is List ? creditsMap[PersonAttributes.crew] : null, PersonAttributes.crew);
+    _creditsMapCache ??= jsonDecode(creditsJson!);
+    _crewCache = TmdbPerson.parsePersonList(
+        _creditsMapCache![PersonAttributes.crew] is List
+            ? _creditsMapCache![PersonAttributes.crew]
+            : null,
+        PersonAttributes.crew);
+    return _crewCache!;
   }
 
   @ignore
@@ -575,24 +616,34 @@ class TmdbTitle implements TmdbItem {
   }
 
   @ignore
+  List<String>? _imagesCache;
+
+  @ignore
   List<String> get images {
+    if (_imagesCache != null) return _imagesCache!;
     if (imagesJson == null) return [];
     try {
       final decoded = jsonDecode(imagesJson!);
       if (decoded is List) {
-        return decoded.map((e) => e.toString()).toList();
+        _imagesCache = decoded.map((e) => e.toString()).toList();
+        return _imagesCache!;
       }
     } catch (_) {}
     return [];
   }
 
   @ignore
+  List<Map<String, dynamic>>? _videosCache;
+
+  @ignore
   List<Map<String, dynamic>> get videos {
+    if (_videosCache != null) return _videosCache!;
     if (videosJson == null) return [];
     try {
       final decoded = jsonDecode(videosJson!);
       if (decoded is List) {
-        return decoded.map((e) => e as Map<String, dynamic>).toList();
+        _videosCache = decoded.map((e) => e as Map<String, dynamic>).toList();
+        return _videosCache!;
       }
     } catch (_) {}
     return [];

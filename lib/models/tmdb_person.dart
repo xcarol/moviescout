@@ -80,9 +80,14 @@ class TmdbPerson implements TmdbItem {
 
   late String? combinedCreditsJson;
 
+  CombinedCredits? _combinedCreditsCache;
+
   CombinedCredits get combinedCredits {
+    if (_combinedCreditsCache != null) return _combinedCreditsCache!;
     if (combinedCreditsJson == null) return CombinedCredits(cast: [], crew: []);
-    return CombinedCredits.fromMap(jsonDecode(combinedCreditsJson!));
+    _combinedCreditsCache =
+        CombinedCredits.fromMap(jsonDecode(combinedCreditsJson!));
+    return _combinedCreditsCache!;
   }
 
   set combinedCredits(CombinedCredits value) {
