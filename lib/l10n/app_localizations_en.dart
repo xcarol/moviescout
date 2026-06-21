@@ -475,4 +475,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String episodeLabel(Object count) {
     return 'Episode $count';
   }
+
+  @override
+  String get showEditContent => 'Show edit button';
+
+  @override
+  String get translations => 'Translations';
+
+  @override
+  String get copiedToClipboard => 'Copied to clipboard';
+
+  @override
+  String get close => 'Close';
 }

@@ -10,6 +10,9 @@ import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/person_chip.dart';
 import 'package:moviescout/utils/date_formatter.dart';
+import 'package:moviescout/widgets/edit_button.dart';
+import 'package:moviescout/widgets/translations_button.dart';
+import 'package:moviescout/services/tmdb_translation_service.dart';
 
 class EpisodeDetails extends StatefulWidget {
   final TmdbTitle title;
@@ -107,7 +110,8 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
             if (_isUpdating) {
               return const Center(child: CircularProgressIndicator());
             } else if (_currentEpisode == null) {
-              return const Center(child: Text('Failed to load episode details'));
+              return const Center(
+                  child: Text('Failed to load episode details'));
             } else {
               return SingleChildScrollView(
                 scrollDirection: Axis.vertical,
@@ -142,7 +146,6 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
   }
 
   Widget _detailsBody(TmdbEpisode episode) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -195,6 +198,13 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
             overflow: TextOverflow.ellipsis,
           ),
         ),
+        EditButton(
+            url:
+                'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/${widget.seasonNumber}/episode/$_currentEpisodeNumber/edit'),
+        TranslationsButton(
+            fetchTranslations: () => TmdbTranslationService()
+                .getEpisodeTranslations(widget.title.tmdbId,
+                    widget.seasonNumber, _currentEpisodeNumber)),
         IconButton(
           icon: const Icon(Icons.chevron_left),
           onPressed: _currentEpisodeNumber > 1 ? _goToPreviousEpisode : null,

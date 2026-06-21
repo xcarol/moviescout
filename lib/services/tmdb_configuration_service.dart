@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_cacheable_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 class TmdbConfigData {
   final Map<String, Map<String, String>> languages;
@@ -44,9 +45,9 @@ class TmdbConfigurationService extends TmdbCacheableService<TmdbConfigData> {
       if (langResponse.statusCode == 200) {
         final List<dynamic> languages = jsonDecode(langResponse.body);
         for (var lang in languages) {
-          languagesMap[lang['iso_639_1']] = {
-            'en': lang['english_name'] ?? '',
-            'native': lang['name'] ?? '',
+          languagesMap[lang[AppConstants.iso639_1]] = {
+            'en': lang[AppConstants.englishName] ?? '',
+            'native': lang[AppConstants.name] ?? '',
           };
         }
       } else {
@@ -59,8 +60,9 @@ class TmdbConfigurationService extends TmdbCacheableService<TmdbConfigData> {
       if (countryResponse.statusCode == 200) {
         final List<dynamic> countries = jsonDecode(countryResponse.body);
         for (var country in countries) {
-          countriesMap[country['iso_3166_1']] =
-              country['native_name'] ?? country['english_name'];
+          countriesMap[country[AppConstants.iso3166_1]] =
+              country[AppConstants.nativeName] ??
+                  country[AppConstants.englishName];
         }
       } else {
         reportError = true;

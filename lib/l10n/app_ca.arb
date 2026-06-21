@@ -329,5 +329,13 @@
         "placeholders": {
             "count": {}
         }
-    }
+    },
+    "showEditContent": "Mostrar botó d'edició",
+    "@showEditContent": {},
+    "translations": "Traduccions",
+    "@translations": {},
+    "copiedToClipboard": "Text copiat al portapapers",
+    "@copiedToClipboard": {},
+    "close": "Tancar",
+    "@close": {}
 }
