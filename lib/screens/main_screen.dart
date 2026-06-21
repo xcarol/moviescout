@@ -6,6 +6,7 @@ import 'package:moviescout/screens/rates_list.dart';
 import 'package:moviescout/screens/watch_list.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/widgets/app_drawer.dart';
+import 'package:moviescout/widgets/double_back_exit_wrapper.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'search.dart';
@@ -43,14 +44,15 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     final customColors = Theme.of(context).extension<CustomColors>()!;
 
-    return PopScope(
-      canPop: _currentIndex == 0,
-      onPopInvokedWithResult: (didPop, result) {
-        if (!didPop && _currentIndex != 0) {
+    return DoubleBackExitWrapper(
+      onPopHandled: () {
+        if (_currentIndex != 0) {
           setState(() {
             _currentIndex = 0;
           });
+          return true;
         }
+        return false;
       },
       child: Scaffold(
         appBar: AppBar(

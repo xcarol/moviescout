@@ -323,7 +323,7 @@ const TmdbTitleSchema = CollectionSchema(
   getId: _tmdbTitleGetId,
   getLinks: _tmdbTitleGetLinks,
   attach: _tmdbTitleAttach,
-  version: '3.3.2',
+  version: '3.3.0',
 );
 
 int _tmdbTitleEstimateSize(

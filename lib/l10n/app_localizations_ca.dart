@@ -54,6 +54,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get excludeGenres => 'Excloure';
 
   @override
+  String get pressBackAgainToExit => 'Prem de nou per sortir';
+
+  @override
   String get back => 'Enrere';
 
   @override

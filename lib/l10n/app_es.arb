@@ -28,6 +28,8 @@
     "@includeGenres": {},
     "excludeGenres": "Excluir",
     "@excludeGenres": {},
+    "pressBackAgainToExit": "Presiona de nuevo para salir",
+    "@pressBackAgainToExit": {},
     "searchTitle": "Búsqueda",
     "@searchTitle": {},
     "back": "Atrás",

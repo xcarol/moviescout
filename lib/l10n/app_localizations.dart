@@ -187,6 +187,12 @@ abstract class AppLocalizations {
   /// **'Exclude'**
   String get excludeGenres;
 
+  /// No description provided for @pressBackAgainToExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Press back again to exit'**
+  String get pressBackAgainToExit;
+
   /// No description provided for @back.
   ///
   /// In en, this message translates to:
