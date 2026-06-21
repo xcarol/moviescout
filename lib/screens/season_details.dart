@@ -14,6 +14,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:moviescout/utils/date_formatter.dart';
 import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/widgets/edit_button.dart';
+import 'package:moviescout/widgets/translations_button.dart';
+import 'package:moviescout/services/tmdb_translation_service.dart';
 
 class SeasonDetails extends StatefulWidget {
   final TmdbTitle title;
@@ -201,7 +203,13 @@ class _SeasonDetailsState extends State<SeasonDetails> {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        EditButton(url: 'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/$_currentSeasonNumber/edit'),
+        EditButton(
+            url:
+                'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/$_currentSeasonNumber/edit'),
+        TranslationsButton(
+            fetchTranslations: () => TmdbTranslationService()
+                .getSeasonTranslations(
+                    widget.title.tmdbId, _currentSeasonNumber)),
         IconButton(
           icon: const Icon(Icons.chevron_left),
           onPressed: _currentSeasonNumber > 1 ? _goToPreviousSeason : null,

@@ -478,4 +478,13 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get showEditContent => 'Mostrar botó d\'edició';
+
+  @override
+  String get translations => 'Traduccions';
+
+  @override
+  String get copiedToClipboard => 'Text copiat al portapapers';
+
+  @override
+  String get close => 'Tancar';
 }

@@ -21,6 +21,8 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:moviescout/widgets/edit_button.dart';
+import 'package:moviescout/widgets/translations_button.dart';
+import 'package:moviescout/services/tmdb_translation_service.dart';
 
 class PersonDetails extends StatefulWidget {
   final TmdbPerson _person;
@@ -414,7 +416,11 @@ class _PersonDetailsState extends State<PersonDetails> {
             textAlign: TextAlign.start,
           ),
         ),
-        EditButton(url: 'https://www.themoviedb.org/person/${person.tmdbId}/edit'),
+        EditButton(
+            url: 'https://www.themoviedb.org/person/${person.tmdbId}/edit'),
+        TranslationsButton(
+            fetchTranslations: () => TmdbTranslationService()
+                .getTranslations('person', person.tmdbId)),
       ],
     );
   }

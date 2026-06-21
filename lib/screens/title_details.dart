@@ -23,6 +23,8 @@ import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/widgets/person_chip.dart';
 import 'package:moviescout/widgets/edit_button.dart';
+import 'package:moviescout/widgets/translations_button.dart';
+import 'package:moviescout/services/tmdb_translation_service.dart';
 import 'package:moviescout/widgets/rate_form.dart';
 import 'package:moviescout/widgets/notify_dialog.dart';
 import 'package:moviescout/widgets/title_chip.dart';
@@ -508,7 +510,12 @@ class _TitleDetailsState extends State<TitleDetails> {
             textAlign: TextAlign.start,
           ),
         ),
-        EditButton(url: 'https://www.themoviedb.org/${title.mediaType}/${title.tmdbId}/edit'),
+        EditButton(
+            url:
+                'https://www.themoviedb.org/${title.mediaType}/${title.tmdbId}/edit'),
+        TranslationsButton(
+            fetchTranslations: () => TmdbTranslationService()
+                .getTranslations(title.mediaType, title.tmdbId)),
       ],
     );
   }

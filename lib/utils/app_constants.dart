@@ -50,4 +50,22 @@ class AppConstants {
   static const String omdbApiKey = 'OMDB_API_KEY';
   static const String enableLogs = 'ENABLE_LOGS';
   static const String firebaseAuthUrl = 'FIREBASE_AUTH_URL';
+
+  static const String iso3166_1 = 'iso_3166_1';
+  static const String iso639_1 = 'iso_639_1';
+  static const String name = 'name';
+  static const String englishName = 'english_name';
+  static const String data = 'data';
+  static const String title = 'title';
+  static const String biography = 'biography';
+  static const String overview = 'overview';
+  static const String nativeName = 'native_name';
+  
+  static const String sessionId = 'session_id';
+  static const String accessToken = 'access_token';
+  static const String accountId = 'account_id';
+  static const String requestToken = 'request_token';
+  static const String success = 'success';
+  static const String message = 'message';
+  static const String token = 'token';
 }

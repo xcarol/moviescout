@@ -331,5 +331,11 @@
         }
     },
     "showEditContent": "Mostrar botón de edición",
-    "@showEditContent": {}
+    "@showEditContent": {},
+    "translations": "Traducciones",
+    "@translations": {},
+    "copiedToClipboard": "Texto copiado al portapapeles",
+    "@copiedToClipboard": {},
+    "close": "Cerrar",
+    "@close": {}
 }

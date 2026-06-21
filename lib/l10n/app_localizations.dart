@@ -1014,6 +1014,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show edit button'**
   String get showEditContent;
+
+  /// No description provided for @translations.
+  ///
+  /// In en, this message translates to:
+  /// **'Translations'**
+  String get translations;
+
+  /// No description provided for @copiedToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get copiedToClipboard;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
