@@ -86,7 +86,7 @@ const UserListEntrySchema = CollectionSchema(
   getId: _userListEntryGetId,
   getLinks: _userListEntryGetLinks,
   attach: _userListEntryAttach,
-  version: '3.3.0',
+  version: '3.3.2',
 );
 
 int _userListEntryEstimateSize(
