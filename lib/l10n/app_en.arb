@@ -30,6 +30,8 @@
     "@includeGenres": {},
     "excludeGenres": "Exclude",
     "@excludeGenres": {},
+    "pressBackAgainToExit": "Press back again to exit",
+    "@pressBackAgainToExit": {},
     "back": "Back",
     "@back": {},
     "username": "User name",

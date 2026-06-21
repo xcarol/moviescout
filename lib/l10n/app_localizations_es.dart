@@ -54,6 +54,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get excludeGenres => 'Excluir';
 
   @override
+  String get pressBackAgainToExit => 'Presiona de nuevo para salir';
+
+  @override
   String get back => 'Atrás';
 
   @override
