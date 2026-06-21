@@ -36,6 +36,7 @@ import 'package:moviescout/utils/person_translator.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/services/watchlist_update_worker.dart';
 import 'package:moviescout/services/notification_service.dart';
+import 'package:moviescout/services/edit_settings_service.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -85,6 +86,7 @@ void main() async {
       LanguageTranslator.init(),
       PersonTranslator.init(),
       NotificationService().init(),
+      EditSettingsService().init(),
     ]).timeout(const Duration(seconds: 5), onTimeout: () => []);
 
     if (defaultTargetPlatform == TargetPlatform.android ||
@@ -168,6 +170,7 @@ void main() async {
         },
       ),
       ChangeNotifierProvider(create: (_) => NotificationService()),
+      ChangeNotifierProvider(create: (_) => EditSettingsService()),
     ],
     child: const MyApp(),
   ));

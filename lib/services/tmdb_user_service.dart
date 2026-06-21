@@ -54,29 +54,33 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
 
   Future<Map> completeLogin() async {
     if (_requestToken == null) {
-      return {'success': false, 'message': 'Error: _requestToken is null'};
+      return {
+        AppConstants.success: false,
+        AppConstants.message: 'Error: _requestToken is null'
+      };
     }
 
     int status = await _exchangeToken(_requestToken!);
     if (status != 200) {
       return {
-        'success': false,
-        'message': 'Error $status in _exchangeToken with token $_requestToken',
+        AppConstants.success: false,
+        AppConstants.message:
+            'Error $status in _exchangeToken with token $_requestToken',
       };
     }
 
     status = await _getSession();
     if (status != 200) {
       return {
-        'success': false,
-        'message': 'Error $status in _getSession (convert/4)',
+        AppConstants.success: false,
+        AppConstants.message: 'Error $status in _getSession (convert/4)',
       };
     }
 
     await _setupUserDetails();
     await _firebaseSignIn();
 
-    return {'success': true};
+    return {AppConstants.success: true};
   }
 
   Future<int> _getSession() async {
@@ -85,12 +89,12 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
 
     final response = await post(
       '/authentication/session/convert/4',
-      {'access_token': accessToken},
+      {AppConstants.accessToken: accessToken},
     );
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
-      _sessionId = json['session_id'];
+      _sessionId = json[AppConstants.sessionId];
       PreferencesService().prefs.setString('sessionId', _sessionId);
     }
 
@@ -100,14 +104,14 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
   Future<int> _exchangeToken(String requestToken) async {
     final response = await post(
       '/auth/access_token',
-      {'request_token': requestToken},
+      {AppConstants.requestToken: requestToken},
       version: ApiVersion.v4,
     );
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
-      final accessToken = json['access_token'];
-      final accountId = json['account_id'];
+      final accessToken = json[AppConstants.accessToken];
+      final accountId = json[AppConstants.accountId];
 
       _accessToken = accessToken;
       _accountId = accountId;
@@ -127,7 +131,7 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
-      _requestToken = json['request_token'];
+      _requestToken = json[AppConstants.requestToken];
 
       final authUrl =
           'https://www.themoviedb.org/auth/access?request_token=$_requestToken';
@@ -144,8 +148,8 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
           userMessage: 'Error launching authorization URL',
         );
         return {
-          'success': false,
-          'message': 'Error launching URL: $error',
+          AppConstants.success: false,
+          AppConstants.message: 'Error launching URL: $error',
         };
       }
     } else {
@@ -154,13 +158,13 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
         userMessage: 'Error starting login process',
       );
       return {
-        'success': false,
-        'message': 'Error ${response.statusCode} in _startLogin',
+        AppConstants.success: false,
+        AppConstants.message: 'Error ${response.statusCode} in _startLogin',
       };
     }
 
     return {
-      'success': true,
+      AppConstants.success: true,
     };
   }
 
@@ -181,14 +185,14 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
         Uri.parse(authUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'account_id': _accountId,
-          'session_id': _sessionId,
+          AppConstants.accountId: _accountId,
+          AppConstants.sessionId: _sessionId,
         }),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final customToken = data['token'];
+        final customToken = data[AppConstants.token];
         if (customToken != null) {
           await FirebaseAuth.instance.signInWithCustomToken(customToken);
         }

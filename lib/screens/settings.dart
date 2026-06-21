@@ -12,6 +12,7 @@ import 'package:moviescout/utils/deep_link_utils.dart';
 import 'package:moviescout/widgets/language_form.dart';
 import 'package:moviescout/widgets/notification_permission_dialog.dart';
 import 'package:moviescout/widgets/region_form.dart';
+import 'package:moviescout/services/edit_settings_service.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -32,12 +33,26 @@ class SettingsScreen extends StatelessWidget {
           if (isUserLoggedIn) _providersTile(context),
           _languageTile(context),
           _regionTile(context),
+          _showEditContentTile(context),
           _notificationsTile(context),
           _notifyCompleteSeasonTile(context),
           if (defaultTargetPlatform == TargetPlatform.android)
             _verifyDeepLinksTile(context),
         ],
       ),
+    );
+  }
+
+  Widget _showEditContentTile(BuildContext context) {
+    final editService = Provider.of<EditSettingsService>(context);
+
+    return SwitchListTile(
+      secondary: const Icon(Icons.edit),
+      title: Text(AppLocalizations.of(context)!.showEditContent),
+      value: editService.showEditContent,
+      onChanged: (bool value) async {
+        await editService.setShowEditContent(value);
+      },
     );
   }
 

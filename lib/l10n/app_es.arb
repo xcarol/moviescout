@@ -329,5 +329,13 @@
         "placeholders": {
             "count": {}
         }
-    }
+    },
+    "showEditContent": "Mostrar botón de edición",
+    "@showEditContent": {},
+    "translations": "Traducciones",
+    "@translations": {},
+    "copiedToClipboard": "Texto copiado al portapapeles",
+    "@copiedToClipboard": {},
+    "close": "Cerrar",
+    "@close": {}
 }
