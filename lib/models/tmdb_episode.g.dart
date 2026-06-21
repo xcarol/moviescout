@@ -128,7 +128,7 @@ const TmdbEpisodeSchema = CollectionSchema(
   getId: _tmdbEpisodeGetId,
   getLinks: _tmdbEpisodeGetLinks,
   attach: _tmdbEpisodeAttach,
-  version: '3.3.2',
+  version: '3.3.0',
 );
 
 int _tmdbEpisodeEstimateSize(
