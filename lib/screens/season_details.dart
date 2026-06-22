@@ -34,7 +34,7 @@ class SeasonDetails extends StatefulWidget {
 }
 
 class _SeasonDetailsState extends State<SeasonDetails> {
-  TmdbSeason? _season;
+  final Map<int, TmdbSeason> _loadedSeasons = {};
   bool _isLoading = true;
   late int _currentSeasonNumber;
   late PageController _pageController;
@@ -44,7 +44,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
     super.initState();
     _currentSeasonNumber = widget.seasonNumber;
     _pageController = PageController(initialPage: _currentSeasonNumber - 1);
-    _loadSeasonDetails();
+    _loadSeasonDetails(_currentSeasonNumber);
   }
 
   @override
@@ -53,19 +53,27 @@ class _SeasonDetailsState extends State<SeasonDetails> {
     super.dispose();
   }
 
-  Future<void> _loadSeasonDetails() async {
-    final requestedSeasonNumber = _currentSeasonNumber;
-    setState(() {
-      _isLoading = true;
-    });
+  Future<void> _loadSeasonDetails(int seasonNumber) async {
+    if (!_loadedSeasons.containsKey(seasonNumber)) {
+      if (mounted && _currentSeasonNumber == seasonNumber) {
+        setState(() {
+          _isLoading = true;
+        });
+      }
+    }
+
     final season = await TmdbSeasonService().getSeasonDetails(
-        widget.title.tmdbId, requestedSeasonNumber,
+        widget.title.tmdbId, seasonNumber,
         includeYoutubeSearch: false);
 
-    if (mounted && _currentSeasonNumber == requestedSeasonNumber) {
+    if (mounted) {
       setState(() {
-        _season = season;
-        _isLoading = false;
+        if (season != null) {
+          _loadedSeasons[seasonNumber] = season;
+        }
+        if (_currentSeasonNumber == seasonNumber) {
+          _isLoading = false;
+        }
       });
     }
   }
@@ -100,22 +108,24 @@ class _SeasonDetailsState extends State<SeasonDetails> {
             setState(() {
               _currentSeasonNumber = newSeasonNumber;
             });
-            _loadSeasonDetails();
+            _loadSeasonDetails(newSeasonNumber);
           }
         },
         itemBuilder: (context, index) {
-          if (index + 1 == _currentSeasonNumber) {
-            if (_isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (_season == null) {
-              return const Center(child: Text('Failed to load season details'));
-            } else {
-              return SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: _detailsBody(_season!),
-              );
-            }
+          final seasonNumber = index + 1;
+          final cachedSeason = _loadedSeasons[seasonNumber];
+
+          if (cachedSeason != null) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: _detailsBody(cachedSeason),
+            );
           } else {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted && !_loadedSeasons.containsKey(seasonNumber)) {
+                _loadSeasonDetails(seasonNumber);
+              }
+            });
             return const Center(child: CircularProgressIndicator());
           }
         },
