@@ -113,7 +113,7 @@ const TmdbSeasonSchema = CollectionSchema(
   getId: _tmdbSeasonGetId,
   getLinks: _tmdbSeasonGetLinks,
   attach: _tmdbSeasonAttach,
-  version: '3.3.0',
+  version: '3.3.2',
 );
 
 int _tmdbSeasonEstimateSize(
