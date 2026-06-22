@@ -278,8 +278,10 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
       return const SizedBox.shrink();
     }
 
-    return SelectableText(
-      episode.overview,
+    return Text(
+      episode.overview.isEmpty
+          ? AppLocalizations.of(context)!.missingDescription
+          : episode.overview,
       textAlign: TextAlign.justify,
     );
   }
@@ -338,15 +340,17 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
           ],
         ),
         const SizedBox(height: 10),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: people
-                .map((person) => Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: _personChip(context, person)))
-                .take(20)
-                .toList(),
+        SizedBox(
+          height: 336.0,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: people.length > 20 ? 20 : people.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: _personChip(context, people[index]),
+              );
+            },
           ),
         ),
       ],

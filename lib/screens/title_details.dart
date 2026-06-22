@@ -1089,15 +1089,17 @@ class _TitleDetailsState extends State<TitleDetails> {
           ],
         ),
         const SizedBox(height: 10),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: people
-                .map((person) => Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: _personChip(context, person)))
-                .take(20)
-                .toList(),
+        SizedBox(
+          height: 336.0,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: people.length > 20 ? 20 : people.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: _personChip(context, people[index]),
+              );
+            },
           ),
         ),
       ],
@@ -1117,17 +1119,17 @@ class _TitleDetailsState extends State<TitleDetails> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         const SizedBox(height: 10),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: title.recommendations
-                .map(
-                  (titleRecommended) => TitleChip(
-                    title: TmdbTitle.fromMap(title: titleRecommended),
-                    tmdbListService: widget._tmdbListService,
-                  ),
-                )
-                .toList(),
+        SizedBox(
+          height: 336.0,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: title.recommendations.length,
+            itemBuilder: (context, index) {
+              return TitleChip(
+                title: TmdbTitle.fromMap(title: title.recommendations[index]),
+                tmdbListService: widget._tmdbListService,
+              );
+            },
           ),
         ),
       ],

@@ -47,8 +47,8 @@ class _TitleChipState extends State<TitleChip> {
   }
 
   Future<void> _loadLocalTitle() async {
-    final local = await widget.tmdbListService.getTitleByTmdbId(
-        widget.title.tmdbId, widget.title.mediaType);
+    final local = await widget.tmdbListService
+        .getTitleByTmdbId(widget.title.tmdbId, widget.title.mediaType);
 
     if (mounted) {
       setState(() {
@@ -102,72 +102,75 @@ class _TitleChipContent extends TitleCard {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: CARD_HEIGHT,
-      width: CARD_WIDTH,
-      child: Card(
-        color: Theme.of(context).extension<CustomColors>()!.chipCardBackground,
-        margin: const EdgeInsets.symmetric(horizontal: 4.0),
-        clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: InkWell(
-          onTap: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => TitleDetails(
-                        title: _title,
-                        tmdbListService: tmdbListService,
-                      )),
-            );
-            onReturnFromDetails?.call();
-          },
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: titlePoster(_title.posterPath),
-              ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(2.0),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.5),
+    return RepaintBoundary(
+      child: SizedBox(
+        height: CARD_HEIGHT,
+        width: CARD_WIDTH,
+        child: Card(
+          color:
+              Theme.of(context).extension<CustomColors>()!.chipCardBackground,
+          margin: const EdgeInsets.symmetric(horizontal: 4.0),
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: InkWell(
+            onTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TitleDetails(
+                          title: _title,
+                          tmdbListService: tmdbListService,
+                        )),
+              );
+              onReturnFromDetails?.call();
+            },
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: titlePoster(_title.posterPath),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(2.0),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(8),
+                      ),
+                    ),
+                    child: watchlistButton(context, _title),
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: ClipRRect(
                     borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(8),
+                      bottomLeft: Radius.circular(12),
+                      bottomRight: Radius.circular(12),
                     ),
-                  ),
-                  child: watchlistButton(context, _title),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(12),
-                    bottomRight: Radius.circular(12),
-                  ),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      color: Theme.of(context)
-                          .extension<CustomColors>()!
-                          .chipCardBackground
-                          .withValues(alpha: 0.8),
-                      padding: const EdgeInsets.all(8.0),
-                      child: _titleDetails(context, _title),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        color: Theme.of(context)
+                            .extension<CustomColors>()!
+                            .chipCardBackground
+                            .withValues(alpha: 0.8),
+                        padding: const EdgeInsets.all(8.0),
+                        child: _titleDetails(context, _title),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
