@@ -90,42 +90,58 @@ class TmdbEpisode implements TmdbItem {
       : '';
 
   @ignore
+  List<String>? _imagesCache;
+  @ignore
   List<String> get images {
+    if (_imagesCache != null) return _imagesCache!;
     if (imagesJson == null) return [];
     try {
       final decoded = jsonDecode(imagesJson!);
       if (decoded is List) {
-        return decoded.map((e) => e.toString()).toList();
+        _imagesCache = decoded.map((e) => e.toString()).toList();
+        return _imagesCache!;
       }
     } catch (_) {}
     return [];
   }
 
   @ignore
+  List<Map<String, dynamic>>? _videosCache;
+  @ignore
   List<Map<String, dynamic>> get videos {
+    if (_videosCache != null) return _videosCache!;
     if (videosJson == null) return [];
     try {
       final decoded = jsonDecode(videosJson!);
       if (decoded is List) {
-        return decoded.map((e) => e as Map<String, dynamic>).toList();
+        _videosCache = decoded.map((e) => e as Map<String, dynamic>).toList();
+        return _videosCache!;
       }
     } catch (_) {}
     return [];
   }
 
   @ignore
+  List<TmdbPerson>? _castCache;
+  @ignore
   List<TmdbPerson> get cast {
+    if (_castCache != null) return _castCache!;
     if (guestStarsJson == null) return [];
     final guestStarsList = jsonDecode(guestStarsJson!);
-    return TmdbPerson.parsePersonList(
+    _castCache = TmdbPerson.parsePersonList(
         guestStarsList is List ? guestStarsList : null, PersonAttributes.cast);
+    return _castCache!;
   }
 
   @ignore
+  List<TmdbPerson>? _crewCache;
+  @ignore
   List<TmdbPerson> get crew {
+    if (_crewCache != null) return _crewCache!;
     if (crewJson == null) return [];
     final crewList = jsonDecode(crewJson!);
-    return TmdbPerson.parsePersonList(
+    _crewCache = TmdbPerson.parsePersonList(
         crewList is List ? crewList : null, PersonAttributes.crew);
+    return _crewCache!;
   }
 }

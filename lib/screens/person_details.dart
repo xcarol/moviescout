@@ -519,18 +519,17 @@ class _PersonDetailsState extends State<PersonDetails> {
           ],
         ),
         const SizedBox(height: 10),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: uniqueCast
-                .take(10)
-                .map(
-                  (titleRecommended) => PersonTitleChip(
-                    title: titleRecommended,
-                    tmdbListService: widget._tmdbListService,
-                  ),
-                )
-                .toList(),
+        SizedBox(
+          height: 336.0,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: uniqueCast.length > 10 ? 10 : uniqueCast.length,
+            itemBuilder: (context, index) {
+              return PersonTitleChip(
+                title: uniqueCast[index],
+                tmdbListService: widget._tmdbListService,
+              );
+            },
           ),
         ),
       ],
@@ -578,19 +577,18 @@ class _PersonDetailsState extends State<PersonDetails> {
           ],
         ),
         const SizedBox(height: 10),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: uniqueCrew
-                .take(10)
-                .map(
-                  (titleRecommended) => PersonTitleChip(
-                    title: titleRecommended,
-                    tmdbListService: widget._tmdbListService,
-                    role: PersonTitleRole.crew,
-                  ),
-                )
-                .toList(),
+        SizedBox(
+          height: 336.0,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: uniqueCrew.length > 10 ? 10 : uniqueCrew.length,
+            itemBuilder: (context, index) {
+              return PersonTitleChip(
+                title: uniqueCrew[index],
+                tmdbListService: widget._tmdbListService,
+                role: PersonTitleRole.crew,
+              );
+            },
           ),
         ),
       ],
@@ -610,17 +608,17 @@ class _PersonDetailsState extends State<PersonDetails> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         const SizedBox(height: 10),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: userRatedTitles
-                .map(
-                  (titleRecommended) => PersonTitleChip(
-                    title: titleRecommended,
-                    tmdbListService: widget._tmdbListService,
-                  ),
-                )
-                .toList(),
+        SizedBox(
+          height: 336.0,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: userRatedTitles.length,
+            itemBuilder: (context, index) {
+              return PersonTitleChip(
+                title: userRatedTitles[index],
+                tmdbListService: widget._tmdbListService,
+              );
+            },
           ),
         ),
       ],

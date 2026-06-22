@@ -81,7 +81,8 @@ class _MediaCarouselState extends State<MediaCarousel> {
 
   Widget _buildCarousel(BuildContext context, int totalItems,
       List<String> images, List<Map<String, dynamic>> videos) {
-    return AspectRatio(
+    return RepaintBoundary(
+        child: AspectRatio(
       aspectRatio: 16 / 9,
       child: Stack(
         alignment: Alignment.bottomCenter,
@@ -145,7 +146,7 @@ class _MediaCarouselState extends State<MediaCarousel> {
             ),
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildFallbackBanner() {

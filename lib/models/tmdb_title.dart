@@ -504,9 +504,13 @@ class TmdbTitle implements TmdbItem {
   @ignore
   List get recommendations {
     if (_recommendationsCache != null) return _recommendationsCache!;
-    if (_recommendationsCache == null) return [];
-    _recommendationsCache = jsonDecode(recommendationsJson!) as List;
-    return _recommendationsCache!;
+    if (recommendationsJson == null) return [];
+    try {
+      _recommendationsCache = jsonDecode(recommendationsJson!) as List;
+      return _recommendationsCache!;
+    } catch (_) {
+      return [];
+    }
   }
 
   @ignore

@@ -38,7 +38,7 @@ class EpisodeDetails extends StatefulWidget {
 }
 
 class _EpisodeDetailsState extends State<EpisodeDetails> {
-  TmdbEpisode? _currentEpisode;
+  final Map<int, TmdbEpisode> _loadedEpisodes = {};
   bool _isUpdating = false;
   late int _currentEpisodeNumber;
   late PageController _pageController;
@@ -46,10 +46,12 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
   @override
   void initState() {
     super.initState();
-    _currentEpisode = widget.initialEpisode;
     _currentEpisodeNumber = widget.episodeNumber;
     _pageController = PageController(initialPage: _currentEpisodeNumber - 1);
-    _updateDetails();
+    if (widget.initialEpisode != null) {
+      _loadedEpisodes[_currentEpisodeNumber] = widget.initialEpisode!;
+    }
+    _updateDetails(_currentEpisodeNumber);
   }
 
   @override
@@ -58,26 +60,31 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
     super.dispose();
   }
 
-  Future<void> _updateDetails() async {
-    final requestedEpNumber = _currentEpisodeNumber;
-    setState(() {
-      _isUpdating = true;
-    });
+  Future<void> _updateDetails(int episodeNumber) async {
+    if (!_loadedEpisodes.containsKey(episodeNumber)) {
+      if (mounted && _currentEpisodeNumber == episodeNumber) {
+        setState(() {
+          _isUpdating = true;
+        });
+      }
+    }
 
     try {
       final updated = await TmdbEpisodeService().getEpisodeDetails(
-          widget.title.tmdbId, widget.seasonNumber, requestedEpNumber);
+          widget.title.tmdbId, widget.seasonNumber, episodeNumber);
 
-      if (mounted && _currentEpisodeNumber == requestedEpNumber) {
+      if (mounted) {
         setState(() {
           if (updated != null) {
-            _currentEpisode = updated;
+            _loadedEpisodes[episodeNumber] = updated;
           }
-          _isUpdating = false;
+          if (_currentEpisodeNumber == episodeNumber) {
+            _isUpdating = false;
+          }
         });
       }
     } catch (e) {
-      if (mounted && _currentEpisodeNumber == requestedEpNumber) {
+      if (mounted && _currentEpisodeNumber == episodeNumber) {
         setState(() {
           _isUpdating = false;
         });
@@ -102,23 +109,24 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
             setState(() {
               _currentEpisodeNumber = newEpNumber;
             });
-            _updateDetails();
+            _updateDetails(newEpNumber);
           }
         },
         itemBuilder: (context, index) {
-          if (index + 1 == _currentEpisodeNumber) {
-            if (_isUpdating) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (_currentEpisode == null) {
-              return const Center(
-                  child: Text('Failed to load episode details'));
-            } else {
-              return SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: _detailsBody(_currentEpisode!),
-              );
-            }
+          final epNumber = index + 1;
+          final cachedEpisode = _loadedEpisodes[epNumber];
+
+          if (cachedEpisode != null) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: _detailsBody(cachedEpisode),
+            );
           } else {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted && !_loadedEpisodes.containsKey(epNumber)) {
+                _updateDetails(epNumber);
+              }
+            });
             return const Center(child: CircularProgressIndicator());
           }
         },
@@ -270,8 +278,10 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
       return const SizedBox.shrink();
     }
 
-    return SelectableText(
-      episode.overview,
+    return Text(
+      episode.overview.isEmpty
+          ? AppLocalizations.of(context)!.missingDescription
+          : episode.overview,
       textAlign: TextAlign.justify,
     );
   }
@@ -330,15 +340,17 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
           ],
         ),
         const SizedBox(height: 10),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: people
-                .map((person) => Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: _personChip(context, person)))
-                .take(20)
-                .toList(),
+        SizedBox(
+          height: 336.0,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: people.length > 20 ? 20 : people.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: _personChip(context, people[index]),
+              );
+            },
           ),
         ),
       ],
@@ -359,7 +371,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
             person: tmdbPerson,
             tmdbListService: widget.tmdbListService,
             titleContext: widget.title,
-            episodeContext: _currentEpisode,
+            episodeContext: _loadedEpisodes[_currentEpisodeNumber],
           ),
         );
       },

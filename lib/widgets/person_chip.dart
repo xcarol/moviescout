@@ -35,56 +35,59 @@ class PersonChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: CARD_HEIGHT,
-      width: CARD_WIDTH,
-      child: Card(
-        color: Theme.of(context).extension<CustomColors>()!.chipCardBackground,
-        margin: const EdgeInsets.all(0),
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => PersonDetails(
-                        person: TmdbPerson.fromMap(person: _person.toMap()),
-                        tmdbListService: _tmdbListService,
-                        titleContext: titleContext,
-                        seasonContext: seasonContext,
-                        episodeContext: episodeContext,
-                      )),
-            );
-          },
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: _poster(_person.posterPath),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(12),
-                    bottomRight: Radius.circular(12),
-                  ),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      color: Theme.of(context)
-                          .extension<CustomColors>()!
-                          .chipCardBackground
-                          .withValues(alpha: 0.8),
-                      padding: const EdgeInsets.all(8.0),
-                      child: _details(context, _person),
+    return RepaintBoundary(
+      child: SizedBox(
+        height: CARD_HEIGHT,
+        width: CARD_WIDTH,
+        child: Card(
+          color:
+              Theme.of(context).extension<CustomColors>()!.chipCardBackground,
+          margin: const EdgeInsets.all(0),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PersonDetails(
+                          person: TmdbPerson.fromMap(person: _person.toMap()),
+                          tmdbListService: _tmdbListService,
+                          titleContext: titleContext,
+                          seasonContext: seasonContext,
+                          episodeContext: episodeContext,
+                        )),
+              );
+            },
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: _poster(_person.posterPath),
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(12),
+                      bottomRight: Radius.circular(12),
+                    ),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        color: Theme.of(context)
+                            .extension<CustomColors>()!
+                            .chipCardBackground
+                            .withValues(alpha: 0.8),
+                        padding: const EdgeInsets.all(8.0),
+                        child: _details(context, _person),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

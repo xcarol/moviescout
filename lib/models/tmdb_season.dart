@@ -87,7 +87,10 @@ class TmdbSeason implements TmdbItem {
           : '';
 
   @ignore
+  List<TmdbEpisode>? _episodesCache;
+  @ignore
   List<TmdbEpisode> get episodes {
+    if (_episodesCache != null) return _episodesCache!;
     List<TmdbEpisode> epList = [];
     try {
       final decoded = jsonDecode(episodesJson);
@@ -97,52 +100,72 @@ class TmdbSeason implements TmdbItem {
         }
       }
     } catch (_) {}
+    _episodesCache = epList;
     return epList;
   }
 
   @ignore
+  List<String>? _imagesCache;
+  @ignore
   List<String> get images {
+    if (_imagesCache != null) return _imagesCache!;
     if (imagesJson == null) return [];
     try {
       final decoded = jsonDecode(imagesJson!);
       if (decoded is List) {
-        return decoded.map((e) => e.toString()).toList();
+        _imagesCache = decoded.map((e) => e.toString()).toList();
+        return _imagesCache!;
       }
     } catch (_) {}
     return [];
   }
 
   @ignore
+  List<Map<String, dynamic>>? _videosCache;
+  @ignore
   List<Map<String, dynamic>> get videos {
+    if (_videosCache != null) return _videosCache!;
     if (videosJson == null) return [];
     try {
       final decoded = jsonDecode(videosJson!);
       if (decoded is List) {
-        return decoded.map((e) => e as Map<String, dynamic>).toList();
+        _videosCache = decoded.map((e) => e as Map<String, dynamic>).toList();
+        return _videosCache!;
       }
     } catch (_) {}
     return [];
   }
 
   @ignore
+  Map<String, dynamic>? _creditsMapCache;
+  
+  @ignore
+  List<TmdbPerson>? _castCache;
+  @ignore
   List<TmdbPerson> get cast {
+    if (_castCache != null) return _castCache!;
     if (creditsJson == null) return [];
-    final creditsMap = jsonDecode(creditsJson!);
-    return TmdbPerson.parsePersonList(
-        creditsMap[PersonAttributes.cast] is List
-            ? creditsMap[PersonAttributes.cast]
+    _creditsMapCache ??= jsonDecode(creditsJson!);
+    _castCache = TmdbPerson.parsePersonList(
+        _creditsMapCache![PersonAttributes.cast] is List
+            ? _creditsMapCache![PersonAttributes.cast]
             : null,
         PersonAttributes.cast);
+    return _castCache!;
   }
 
   @ignore
+  List<TmdbPerson>? _crewCache;
+  @ignore
   List<TmdbPerson> get crew {
+    if (_crewCache != null) return _crewCache!;
     if (creditsJson == null) return [];
-    final creditsMap = jsonDecode(creditsJson!);
-    return TmdbPerson.parsePersonList(
-        creditsMap[PersonAttributes.crew] is List
-            ? creditsMap[PersonAttributes.crew]
+    _creditsMapCache ??= jsonDecode(creditsJson!);
+    _crewCache = TmdbPerson.parsePersonList(
+        _creditsMapCache![PersonAttributes.crew] is List
+            ? _creditsMapCache![PersonAttributes.crew]
             : null,
         PersonAttributes.crew);
+    return _crewCache!;
   }
 }
