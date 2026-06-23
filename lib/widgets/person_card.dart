@@ -50,8 +50,6 @@ class PersonCard extends StatelessWidget {
       child: SizedBox(
         height: cardHeight,
         child: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: InkWell(
             onTap: () {
               Navigator.push(
