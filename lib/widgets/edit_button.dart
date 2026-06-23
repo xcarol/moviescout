@@ -32,7 +32,7 @@ class EditButton extends StatelessWidget {
 
         launchUrl(
           Uri.parse(finalUrl),
-          mode: LaunchMode.externalApplication,
+          mode: LaunchMode.inAppWebView,
         );
       },
     );
