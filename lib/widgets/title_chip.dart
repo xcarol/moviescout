@@ -156,16 +156,13 @@ class _TitleChipContent extends TitleCard {
                       bottomLeft: Radius.circular(12),
                       bottomRight: Radius.circular(12),
                     ),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                      child: Container(
-                        color: Theme.of(context)
-                            .extension<CustomColors>()!
-                            .chipCardBackground
-                            .withValues(alpha: 0.8),
-                        padding: const EdgeInsets.all(8.0),
-                        child: _titleDetails(context, _title),
-                      ),
+                    child: Container(
+                      color: Theme.of(context)
+                          .extension<CustomColors>()!
+                          .chipCardBackground
+                          .withValues(alpha: 0.95),
+                      padding: const EdgeInsets.all(8.0),
+                      child: _titleDetails(context, _title),
                     ),
                   ),
                 ),
