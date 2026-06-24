@@ -18,6 +18,7 @@ import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/theme_service.dart';
 import 'package:moviescout/services/tmdb_configuration_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
+import 'package:moviescout/services/web_translation_service.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
@@ -171,6 +172,7 @@ void main() async {
       ),
       ChangeNotifierProvider(create: (_) => NotificationService()),
       ChangeNotifierProvider(create: (_) => EditSettingsService()),
+      ChangeNotifierProvider(create: (_) => WebTranslationService()),
     ],
     child: const MyApp(),
   ));

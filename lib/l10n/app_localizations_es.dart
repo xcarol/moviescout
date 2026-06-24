@@ -490,4 +490,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get close => 'Cerrar';
+
+  @override
+  String get autoTranslation => 'Traducción Automática';
+
+  @override
+  String get selectLanguages => 'Selecciona los idiomas:';
+
+  @override
+  String get sourceLanguage => 'Origen';
+
+  @override
+  String get targetLanguage => 'Destino';
+
+  @override
+  String get originalText => 'Texto Original';
 }

@@ -490,4 +490,19 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get close => 'Tancar';
+
+  @override
+  String get autoTranslation => 'Traducció Automàtica';
+
+  @override
+  String get selectLanguages => 'Selecciona els idiomes:';
+
+  @override
+  String get sourceLanguage => 'Origen';
+
+  @override
+  String get targetLanguage => 'Destí';
+
+  @override
+  String get originalText => 'Text Original';
 }
