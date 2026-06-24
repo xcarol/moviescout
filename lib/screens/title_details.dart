@@ -500,6 +500,9 @@ class _TitleDetailsState extends State<TitleDetails> {
       return const SizedBox.shrink();
     }
 
+    final String editUrl =
+        'https://www.themoviedb.org/${title.mediaType}/${title.tmdbId}/edit';
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -510,12 +513,14 @@ class _TitleDetailsState extends State<TitleDetails> {
             textAlign: TextAlign.start,
           ),
         ),
-        EditButton(
-            url:
-                'https://www.themoviedb.org/${title.mediaType}/${title.tmdbId}/edit'),
+        EditButton(url: editUrl),
         TranslationsButton(
+            editUrl: editUrl,
             fetchTranslations: () => TmdbTranslationService()
-                .getTranslations(title.mediaType, title.tmdbId)),
+                .getTranslations(title.mediaType, title.tmdbId),
+            originalTitle:
+                title.originalName.isNotEmpty ? title.originalName : title.name,
+            originalDescription: title.overview),
       ],
     );
   }

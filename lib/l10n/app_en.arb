@@ -339,5 +339,15 @@
     "copiedToClipboard": "Copied to clipboard",
     "@copiedToClipboard": {},
     "close": "Close",
-    "@close": {}
+    "@close": {},
+    "autoTranslation": "Automatic Translation",
+    "@autoTranslation": {},
+    "selectLanguages": "Select languages:",
+    "@selectLanguages": {},
+    "sourceLanguage": "Source",
+    "@sourceLanguage": {},
+    "targetLanguage": "Target",
+    "@targetLanguage": {},
+    "originalText": "Original Text",
+    "@originalText": {}
 }
