@@ -15,6 +15,8 @@ class AppConstants {
   static const String themeScheme = 'ThemeScheme';
   static const String language = 'language';
   static const String region = 'region';
+  static const String translationSource = 'translation_source';
+  static const String translationTarget = 'translation_target';
   static const String lastBackgroundRun = 'last_background_run';
   static const String updateLogs = 'update_logs';
   static const String notificationsEnabled = 'notifications_enabled';
@@ -60,7 +62,7 @@ class AppConstants {
   static const String biography = 'biography';
   static const String overview = 'overview';
   static const String nativeName = 'native_name';
-  
+
   static const String sessionId = 'session_id';
   static const String accessToken = 'access_token';
   static const String accountId = 'account_id';

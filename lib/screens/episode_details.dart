@@ -195,6 +195,9 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
       return const SizedBox.shrink();
     }
 
+    final String editUrl =
+        'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/${widget.seasonNumber}/episode/$_currentEpisodeNumber/edit';
+
     return Row(
       children: [
         Expanded(
@@ -206,13 +209,14 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        EditButton(
-            url:
-                'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/${widget.seasonNumber}/episode/$_currentEpisodeNumber/edit'),
+        EditButton(url: editUrl),
         TranslationsButton(
+            editUrl: editUrl,
             fetchTranslations: () => TmdbTranslationService()
                 .getEpisodeTranslations(widget.title.tmdbId,
-                    widget.seasonNumber, _currentEpisodeNumber)),
+                    widget.seasonNumber, _currentEpisodeNumber),
+            originalTitle: episode.name,
+            originalDescription: episode.overview),
         IconButton(
           icon: const Icon(Icons.chevron_left),
           onPressed: _currentEpisodeNumber > 1 ? _goToPreviousEpisode : null,

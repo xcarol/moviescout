@@ -71,6 +71,7 @@ dependencies:
   youtube_player_flutter: ^9.0.1
   youtube_explode_dart: ^2.2.2
   android_intent_plus: ^5.0.3
+  translator: ^1.0.0
 
 dev_dependencies:
   flutter_test:

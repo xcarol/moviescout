@@ -406,6 +406,9 @@ class _PersonDetailsState extends State<PersonDetails> {
       return const SizedBox.shrink();
     }
 
+    final String editUrl =
+        'https://www.themoviedb.org/person/${person.tmdbId}/edit';
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -416,11 +419,13 @@ class _PersonDetailsState extends State<PersonDetails> {
             textAlign: TextAlign.start,
           ),
         ),
-        EditButton(
-            url: 'https://www.themoviedb.org/person/${person.tmdbId}/edit'),
+        EditButton(url: editUrl),
         TranslationsButton(
+            editUrl: editUrl,
             fetchTranslations: () => TmdbTranslationService()
-                .getTranslations('person', person.tmdbId)),
+                .getTranslations('person', person.tmdbId),
+            originalTitle: person.name,
+            originalDescription: person.biography),
       ],
     );
   }
