@@ -500,22 +500,41 @@ class _TitleDetailsState extends State<TitleDetails> {
       return const SizedBox.shrink();
     }
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
       children: [
-        Expanded(
-          child: Text(
-            title.name,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            textAlign: TextAlign.start,
-          ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Text(
+                title.name,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                textAlign: TextAlign.start,
+              ),
+            ),
+            EditButton(
+                url:
+                    'https://www.themoviedb.org/${title.mediaType}/${title.tmdbId}/edit'),
+            TranslationsButton(
+                fetchTranslations: () => TmdbTranslationService()
+                    .getTranslations(title.mediaType, title.tmdbId)),
+          ],
         ),
-        EditButton(
-            url:
-                'https://www.themoviedb.org/${title.mediaType}/${title.tmdbId}/edit'),
-        TranslationsButton(
-            fetchTranslations: () => TmdbTranslationService()
-                .getTranslations(title.mediaType, title.tmdbId)),
+        if (title.tagline.isNotEmpty)
+          Row(
+            children: [
+              Text(
+                title.tagline,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.start,
+              ),
+            ],
+          ),
       ],
     );
   }
