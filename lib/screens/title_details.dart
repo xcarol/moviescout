@@ -506,21 +506,42 @@ class _TitleDetailsState extends State<TitleDetails> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Text(
-            title.name,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            textAlign: TextAlign.start,
-          ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Text(
+                title.name,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                textAlign: TextAlign.start,
+              ),
+            ),
+            EditButton(url: editUrl),
+            TranslationsButton(
+                editUrl: editUrl,
+                fetchTranslations: () => TmdbTranslationService()
+                    .getTranslations(title.mediaType, title.tmdbId),
+                originalTitle: title.originalName.isNotEmpty
+                    ? title.originalName
+                    : title.name,
+                originalDescription: title.overview),
+          ],
         ),
-        EditButton(url: editUrl),
-        TranslationsButton(
-            editUrl: editUrl,
-            fetchTranslations: () => TmdbTranslationService()
-                .getTranslations(title.mediaType, title.tmdbId),
-            originalTitle:
-                title.originalName.isNotEmpty ? title.originalName : title.name,
-            originalDescription: title.overview),
+        if (title.tagline.isNotEmpty)
+          Row(
+            children: [
+              Text(
+                title.tagline,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.start,
+              ),
+            ],
+          ),
       ],
     );
   }

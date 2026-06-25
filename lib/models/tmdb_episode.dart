@@ -11,7 +11,10 @@ class TmdbEpisode implements TmdbItem {
   Id isarId = Isar.autoIncrement;
   @override
   late int tmdbId;
-  @Index(composite: [CompositeIndex('seasonNumber'), CompositeIndex('episodeNumber')])
+  @Index(composite: [
+    CompositeIndex('seasonNumber'),
+    CompositeIndex('episodeNumber')
+  ])
   late int tvId;
   late int seasonNumber;
   late String name;
@@ -57,7 +60,9 @@ class TmdbEpisode implements TmdbItem {
       episodeNumber: data['episode_number'] ?? 0,
       runtime: data['runtime'] ?? 0,
       airDate: data['air_date'] ?? '',
-      voteAverage: (data['vote_average'] ?? 0.0).toDouble(),
+      voteAverage: (data['vote_average'] ?? 0.0).toDouble().isNaN
+          ? 0.0
+          : (data['vote_average'] ?? 0.0).toDouble(),
       stillPathSuffix: data['still_path'],
       lastUpdated: AppConstants.defaultDate,
     )..fillFromMap(data);

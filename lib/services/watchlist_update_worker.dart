@@ -282,6 +282,12 @@ void callbackDispatcher() {
         userMessage: 'Error in background task',
       );
       return Future.value(false);
+    } finally {
+      try {
+        await IsarService.close();
+      } catch (e) {
+        debugPrint('Error closing Isar in background worker: $e');
+      }
     }
   });
 }

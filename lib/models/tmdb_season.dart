@@ -52,7 +52,9 @@ class TmdbSeason implements TmdbItem {
       seasonNumber: data['season_number'] ?? 0,
       airDate: data['air_date'] ?? '',
       posterPathSuffix: data['poster_path'],
-      voteAverage: (data['vote_average'] ?? 0.0).toDouble(),
+      voteAverage: (data['vote_average'] ?? 0.0).toDouble().isNaN
+          ? 0.0
+          : (data['vote_average'] ?? 0.0).toDouble(),
       tvId: tvId,
       lastUpdated: AppConstants.defaultDate,
     )..fillFromMap(data);
@@ -138,7 +140,7 @@ class TmdbSeason implements TmdbItem {
 
   @ignore
   Map<String, dynamic>? _creditsMapCache;
-  
+
   @ignore
   List<TmdbPerson>? _castCache;
   @ignore

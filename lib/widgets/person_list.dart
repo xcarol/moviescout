@@ -60,31 +60,52 @@ class _PersonListState extends State<PersonList> {
   }
 
   Widget _personList() {
-    return Flexible(
-      child: NotificationListener<ScrollNotification>(
-        onNotification: (scrollInfo) {
-          _controller.onScrollNotification(scrollInfo, PersonCard.cardHeight);
-          return false;
-        },
-        child: Scrollbar(
+    return NotificationListener<ScrollNotification>(
+      onNotification: (scrollInfo) {
+        _controller.onScrollNotification(scrollInfo, PersonCard.cardHeight);
+        return false;
+      },
+      child: Scrollbar(
+        controller: _controller.scrollController,
+        child: ListView.builder(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           controller: _controller.scrollController,
-          child: ListView.builder(
-            itemExtent: PersonCard.cardHeight,
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            controller: _controller.scrollController,
-            itemCount: widget.personListService.loadedItemCount,
-            itemBuilder: (context, index) {
-              final person = widget.personListService.getItem(index);
-              if (person == null) return const SizedBox.shrink();
-              return PersonCard(
-                person: person,
-                tmdbListService: widget.titleListService,
-                titleContext: widget.titleContext,
-                seasonContext: widget.seasonContext,
-                episodeContext: widget.episodeContext,
-              );
-            },
-          ),
+          itemCount: widget.personListService.loadedItemCount,
+          itemBuilder: (context, index) {
+            return Builder(
+              builder: (innerContext) {
+                final person = widget.personListService.getItem(index);
+                if (person == null) return const SizedBox.shrink();
+
+                final mediaQuery = MediaQuery.of(innerContext);
+                final clampedScale =
+                    mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
+
+                final titleTheme = Theme.of(context).extension<CustomColors>()!;
+
+                return MediaQuery(
+                  data: mediaQuery.copyWith(
+                    textScaler: TextScaler.linear(clampedScale),
+                  ),
+                  child: Column(
+                    children: [
+                      PersonCard(
+                        person: person,
+                        tmdbListService: widget.titleListService,
+                        titleContext: widget.titleContext,
+                        seasonContext: widget.seasonContext,
+                        episodeContext: widget.episodeContext,
+                      ),
+                      Divider(
+                        height: 1,
+                        color: titleTheme.dividerColor,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
         ),
       ),
     );
@@ -109,7 +130,7 @@ class _PersonListState extends State<PersonList> {
                 focusNode: _controller.searchFocusNode,
                 onTextChanged: (value) => _controller.setTextFilter(value),
               ),
-            _personList(),
+            Expanded(child: _personList()),
           ],
         );
       },
