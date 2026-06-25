@@ -342,12 +342,6 @@
     "@close": {},
     "autoTranslation": "Traducción Automática",
     "@autoTranslation": {},
-    "selectLanguages": "Selecciona los idiomas:",
-    "@selectLanguages": {},
-    "sourceLanguage": "Origen",
-    "@sourceLanguage": {},
-    "targetLanguage": "Destino",
-    "@targetLanguage": {},
     "originalText": "Texto Original",
     "@originalText": {}
 }

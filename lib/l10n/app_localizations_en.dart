@@ -495,14 +495,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get autoTranslation => 'Automatic Translation';
 
   @override
-  String get selectLanguages => 'Select languages:';
-
-  @override
-  String get sourceLanguage => 'Source';
-
-  @override
-  String get targetLanguage => 'Target';
-
-  @override
   String get originalText => 'Original Text';
 }

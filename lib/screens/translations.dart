@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/widgets/edit_button.dart';
+import 'package:moviescout/widgets/drop_down_selector.dart';
 import 'package:moviescout/models/tmdb_translation.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/web_translation_service.dart';
+import 'package:moviescout/utils/translation_languages.dart';
 
 class _CopyIconButton extends StatefulWidget {
   final String textToCopy;
@@ -78,11 +80,37 @@ class TranslationsScreenState extends State<TranslationsScreen> {
   String _translatedTitle = '';
   String _translatedDescription = '';
   bool _isTranslating = false;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
     _performTranslation();
+  }
+
+  String _getEffectiveSourceCode(String serviceSourceCode) {
+    var sourceCode = serviceSourceCode;
+    final uniqueSourceCodes = <String>{};
+    for (var t in widget.translations) {
+      if (t.description.isNotEmpty || t.translatedTitle.isNotEmpty) {
+        uniqueSourceCodes.add(t.iso639_1);
+      }
+    }
+
+    if (!uniqueSourceCodes.contains(sourceCode)) {
+      if (uniqueSourceCodes.contains('en')) {
+        sourceCode = 'en';
+      } else if (uniqueSourceCodes.isNotEmpty) {
+        sourceCode = uniqueSourceCodes.first;
+      }
+    }
+    return sourceCode;
   }
 
   Future<void> _performTranslation() async {
@@ -91,7 +119,7 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     });
 
     final service = context.read<WebTranslationService>();
-    final sourceCode = service.sourceLanguageCode;
+    final sourceCode = _getEffectiveSourceCode(service.sourceLanguageCode);
 
     String sourceTitle = widget.originalTitle;
     String sourceDesc = widget.originalDescription;
@@ -151,8 +179,25 @@ class TranslationsScreenState extends State<TranslationsScreen> {
 
   Widget _buildMagicCard() {
     final service = context.watch<WebTranslationService>();
-    final sourceName = service.sourceLanguageName;
-    final targetName = service.targetLanguageName;
+    final targetCode = service.targetLanguageCode;
+    final sourceCode = _getEffectiveSourceCode(service.sourceLanguageCode);
+
+    final uniqueSourceCodes = <String, String>{};
+    for (var t in widget.translations) {
+      if (t.description.isNotEmpty || t.translatedTitle.isNotEmpty) {
+        uniqueSourceCodes[t.iso639_1] = t.englishName;
+      }
+    }
+
+    final List<String> sourceOptions = uniqueSourceCodes.values.toList();
+    sourceOptions.sort();
+
+    final allLangs = TranslationLanguages.supportedLanguages.entries.toList();
+    final List<String> targetOptions = allLangs.map((e) => e.value).toList();
+    targetOptions.sort();
+
+    final selectedSourceOption = uniqueSourceCodes[sourceCode] ?? (sourceOptions.isNotEmpty ? sourceOptions.first : '');
+    final selectedTargetOption = TranslationLanguages.supportedLanguages[targetCode] ?? '';
 
     return Card(
       color: Theme.of(context).colorScheme.primaryContainer,
@@ -168,11 +213,65 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    "${AppLocalizations.of(context)!.autoTranslation} ($sourceName ➔ $targetName)",
+                    AppLocalizations.of(context)!.autoTranslation,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 8),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final bool useRow = constraints.maxWidth > 350.0;
+                final sourceDropdown = DropdownSelector(
+                  selectedOption: selectedSourceOption,
+                  options: sourceOptions,
+                  maxMenuHeight: 300,
+                  isExpanded: true,
+                  onSelected: (val) {
+                    final code = uniqueSourceCodes.entries.firstWhere((e) => e.value == val).key;
+                    service.setSourceLanguageCode(code);
+                    _performTranslation();
+                  },
+                );
+
+                final targetDropdown = DropdownSelector(
+                  selectedOption: selectedTargetOption,
+                  options: targetOptions,
+                  maxMenuHeight: 300,
+                  isExpanded: true,
+                  onSelected: (val) {
+                    final code = TranslationLanguages.supportedLanguages.entries.firstWhere((e) => e.value == val).key;
+                    service.setTargetLanguageCode(code);
+                    _performTranslation();
+                  },
+                );
+
+                if (useRow) {
+                  return Row(
+                    children: [
+                      Expanded(child: sourceDropdown),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Icon(Icons.arrow_forward, size: 16),
+                      ),
+                      Expanded(child: targetDropdown),
+                    ],
+                  );
+                } else {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      sourceDropdown,
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
+                        child: Icon(Icons.arrow_downward, size: 16),
+                      ),
+                      targetDropdown,
+                    ],
+                  );
+                }
+              },
             ),
             const SizedBox(height: 12),
             if (_isTranslating)
@@ -198,8 +297,8 @@ class TranslationsScreenState extends State<TranslationsScreen> {
 
   Widget _buildSourceCard() {
     final service = context.watch<WebTranslationService>();
-    final sourceCode = service.sourceLanguageCode;
-    final sourceName = service.sourceLanguageName;
+    final sourceCode = _getEffectiveSourceCode(service.sourceLanguageCode);
+    final sourceName = TranslationLanguages.supportedLanguages[sourceCode] ?? sourceCode.toUpperCase();
 
     String sourceTitle = widget.originalTitle;
     String sourceDesc = widget.originalDescription;
@@ -233,7 +332,7 @@ class TranslationsScreenState extends State<TranslationsScreen> {
             if (sourceTitle.isNotEmpty && sourceDesc.isNotEmpty)
               const SizedBox(height: 8),
             if (sourceDesc.isNotEmpty)
-              _buildCopyableTextRow(sourceDesc, maxLines: 5),
+              _buildCopyableTextRow(sourceDesc),
           ],
         ),
       ),
@@ -260,6 +359,7 @@ class TranslationsScreenState extends State<TranslationsScreen> {
               child: Text(AppLocalizations.of(context)!.emptyList),
             )
           : ListView.builder(
+              controller: _scrollController,
               itemCount: validTranslations.length + 1,
               itemBuilder: (context, index) {
                 if (index == 0) {
@@ -287,28 +387,56 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              trans.englishName,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        trans.englishName,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      if (trans.name.isNotEmpty &&
+                                          trans.name != trans.englishName)
+                                        Text(
+                                            '${trans.name} ${trans.iso639_1}-${trans.iso3166_1}',
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurfaceVariant)),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.auto_awesome),
+                                  tooltip: AppLocalizations.of(context)!.autoTranslation,
+                                  onPressed: () {
+                                    context
+                                        .read<WebTranslationService>()
+                                        .setSourceLanguageCode(trans.iso639_1);
+                                    _performTranslation();
+                                    _scrollController.animateTo(
+                                      0.0,
+                                      duration: const Duration(milliseconds: 300),
+                                      curve: Curves.easeOut,
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
-                            if (trans.name.isNotEmpty &&
-                                trans.name != trans.englishName)
-                              Text(
-                                  '${trans.name} ${trans.iso639_1}-${trans.iso3166_1}',
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant)),
                             const SizedBox(height: 8),
-                            if (trans.translatedTitle.isNotEmpty)
-                              _buildCopyableTextRow(trans.translatedTitle,
-                                  isTitle: true),
-                            if (trans.translatedTitle.isNotEmpty &&
-                                trans.description.isNotEmpty)
+                            _buildCopyableTextRow(
+                                trans.translatedTitle.isNotEmpty
+                                    ? trans.translatedTitle
+                                    : widget.originalTitle,
+                                isTitle: true),
+                            if (trans.description.isNotEmpty) ...[
                               const SizedBox(height: 8),
-                            if (trans.description.isNotEmpty)
                               _buildCopyableTextRow(trans.description),
+                            ],
                           ],
                         ),
                       ),
