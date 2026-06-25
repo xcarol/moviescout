@@ -18,7 +18,7 @@ class DeepLinkService {
   StreamSubscription<Uri>? _linkSubscription;
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   late TmdbTitleListService _tmdbListService;
-  
+
   bool _isInitialized = false;
   String? _lastNavigatedId;
   String? _lastNavigatedType;
@@ -78,9 +78,9 @@ class DeepLinkService {
 
     // Prevent duplicate navigations to the same title within a short timeframe
     // (Resolves double pushes caused by redundant cold start notification handling)
-    if (_lastNavigatedId == idClean && 
-        _lastNavigatedType == type && 
-        _lastNavigatedTime != null && 
+    if (_lastNavigatedId == idClean &&
+        _lastNavigatedType == type &&
+        _lastNavigatedTime != null &&
         DateTime.now().difference(_lastNavigatedTime!).inMilliseconds < 1500) {
       return;
     }

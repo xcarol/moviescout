@@ -13,12 +13,15 @@ class EditSettingsService extends ChangeNotifier {
 
   Future<void> init() async {
     _showEditContent =
-        PreferencesService().prefs.getBool(AppConstants.showEditContent) ?? false;
+        PreferencesService().prefs.getBool(AppConstants.showEditContent) ??
+            false;
   }
 
   Future<void> setShowEditContent(bool value) async {
     _showEditContent = value;
-    await PreferencesService().prefs.setBool(AppConstants.showEditContent, value);
+    await PreferencesService()
+        .prefs
+        .setBool(AppConstants.showEditContent, value);
     notifyListeners();
   }
 }

@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 
-abstract class TmdbBaseListService<T> extends TmdbBaseService with ChangeNotifier {
+abstract class TmdbBaseListService<T> extends TmdbBaseService
+    with ChangeNotifier {
   @protected
   String listNameVal = '';
   String get listName => listNameVal;
@@ -117,7 +118,8 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService with ChangeNotifie
   }
 
   @protected
-  Future<void> _loadNPagesFromStart(int pagesToLoad, int currentRequestId) async {
+  Future<void> _loadNPagesFromStart(
+      int pagesToLoad, int currentRequestId) async {
     isDbLoading = true;
     try {
       final limit = pagesToLoad * pageSizeVal;
@@ -150,7 +152,8 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService with ChangeNotifie
       }
       final currentRequestId = ++filterRequestId;
 
-      final items = await fetchItems(offset: pageVal * pageSizeVal, limit: pageSizeVal);
+      final items =
+          await fetchItems(offset: pageVal * pageSizeVal, limit: pageSizeVal);
 
       if (currentRequestId != filterRequestId) return;
 

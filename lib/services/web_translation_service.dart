@@ -15,8 +15,6 @@ class WebTranslationService with ChangeNotifier {
 
   final _translator = GoogleTranslator();
 
-
-
   String get sourceLanguageCode =>
       PreferencesService().prefs.getString(AppConstants.translationSource) ??
       'en';
@@ -45,11 +43,10 @@ class WebTranslationService with ChangeNotifier {
     notifyListeners();
   }
 
-
-
   String _getLanguageName(String code) {
     try {
-      return TranslationLanguages.supportedLanguages[code.toLowerCase()] ?? code.toUpperCase();
+      return TranslationLanguages.supportedLanguages[code.toLowerCase()] ??
+          code.toUpperCase();
     } catch (e) {
       return code.toUpperCase();
     }

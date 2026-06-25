@@ -196,8 +196,10 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     final List<String> targetOptions = allLangs.map((e) => e.value).toList();
     targetOptions.sort();
 
-    final selectedSourceOption = uniqueSourceCodes[sourceCode] ?? (sourceOptions.isNotEmpty ? sourceOptions.first : '');
-    final selectedTargetOption = TranslationLanguages.supportedLanguages[targetCode] ?? '';
+    final selectedSourceOption = uniqueSourceCodes[sourceCode] ??
+        (sourceOptions.isNotEmpty ? sourceOptions.first : '');
+    final selectedTargetOption =
+        TranslationLanguages.supportedLanguages[targetCode] ?? '';
 
     return Card(
       color: Theme.of(context).colorScheme.primaryContainer,
@@ -229,7 +231,9 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                   maxMenuHeight: 300,
                   isExpanded: true,
                   onSelected: (val) {
-                    final code = uniqueSourceCodes.entries.firstWhere((e) => e.value == val).key;
+                    final code = uniqueSourceCodes.entries
+                        .firstWhere((e) => e.value == val)
+                        .key;
                     service.setSourceLanguageCode(code);
                     _performTranslation();
                   },
@@ -241,7 +245,9 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                   maxMenuHeight: 300,
                   isExpanded: true,
                   onSelected: (val) {
-                    final code = TranslationLanguages.supportedLanguages.entries.firstWhere((e) => e.value == val).key;
+                    final code = TranslationLanguages.supportedLanguages.entries
+                        .firstWhere((e) => e.value == val)
+                        .key;
                     service.setTargetLanguageCode(code);
                     _performTranslation();
                   },
@@ -298,7 +304,8 @@ class TranslationsScreenState extends State<TranslationsScreen> {
   Widget _buildSourceCard() {
     final service = context.watch<WebTranslationService>();
     final sourceCode = _getEffectiveSourceCode(service.sourceLanguageCode);
-    final sourceName = TranslationLanguages.supportedLanguages[sourceCode] ?? sourceCode.toUpperCase();
+    final sourceName = TranslationLanguages.supportedLanguages[sourceCode] ??
+        sourceCode.toUpperCase();
 
     String sourceTitle = widget.originalTitle;
     String sourceDesc = widget.originalDescription;
@@ -331,8 +338,7 @@ class TranslationsScreenState extends State<TranslationsScreen> {
               _buildCopyableTextRow(sourceTitle, isTitle: true),
             if (sourceTitle.isNotEmpty && sourceDesc.isNotEmpty)
               const SizedBox(height: 8),
-            if (sourceDesc.isNotEmpty)
-              _buildCopyableTextRow(sourceDesc),
+            if (sourceDesc.isNotEmpty) _buildCopyableTextRow(sourceDesc),
           ],
         ),
       ),
@@ -412,7 +418,8 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.auto_awesome),
-                                  tooltip: AppLocalizations.of(context)!.autoTranslation,
+                                  tooltip: AppLocalizations.of(context)!
+                                      .autoTranslation,
                                   onPressed: () {
                                     context
                                         .read<WebTranslationService>()
@@ -420,7 +427,8 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                                     _performTranslation();
                                     _scrollController.animateTo(
                                       0.0,
-                                      duration: const Duration(milliseconds: 300),
+                                      duration:
+                                          const Duration(milliseconds: 300),
                                       curve: Curves.easeOut,
                                     );
                                   },

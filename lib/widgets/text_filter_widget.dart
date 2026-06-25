@@ -43,7 +43,8 @@ class TextFilterWidget extends StatelessWidget {
               style: TextStyle(
                 color: titleTheme.controlPanelForeground,
                 fontSize: 14,
-                fontWeight: value.text.isEmpty ? FontWeight.normal : FontWeight.bold,
+                fontWeight:
+                    value.text.isEmpty ? FontWeight.normal : FontWeight.bold,
               ),
               cursorColor: titleTheme.searchCursorColor,
               cursorHeight: 16,
@@ -55,15 +56,18 @@ class TextFilterWidget extends StatelessWidget {
                 contentPadding: contentPadding,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
-                  borderSide: BorderSide(color: titleTheme.controlPanelForeground),
+                  borderSide:
+                      BorderSide(color: titleTheme.controlPanelForeground),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
-                  borderSide: BorderSide(color: titleTheme.controlPanelForeground),
+                  borderSide:
+                      BorderSide(color: titleTheme.controlPanelForeground),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
-                  borderSide: BorderSide(color: titleTheme.controlPanelForeground),
+                  borderSide:
+                      BorderSide(color: titleTheme.controlPanelForeground),
                 ),
                 suffixIcon: value.text.isNotEmpty
                     ? GestureDetector(

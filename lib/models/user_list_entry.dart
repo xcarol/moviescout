@@ -6,7 +6,10 @@ part 'user_list_entry.g.dart';
 class UserListEntry {
   Id id = Isar.autoIncrement;
 
-  @Index(composite: [CompositeIndex('tmdbId'), CompositeIndex('mediaType')], unique: true, replace: true)
+  @Index(
+      composite: [CompositeIndex('tmdbId'), CompositeIndex('mediaType')],
+      unique: true,
+      replace: true)
   late String listName;
 
   late int tmdbId;

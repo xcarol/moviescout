@@ -56,7 +56,7 @@ class _SearchListState extends State<SearchList> {
       listenable: widget.searchService,
       builder: (context, _) {
         final customColors = Theme.of(context).extension<CustomColors>()!;
-        
+
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -78,14 +78,15 @@ class _SearchListState extends State<SearchList> {
                 child: ListView.builder(
                   key: const PageStorageKey('SearchListView'),
                   controller: _scrollController,
-                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   itemCount: widget.searchService.loadedItemCount,
                   itemBuilder: (context, index) {
                     final item = widget.searchService.getItem(index);
                     if (item == null) {
                       return const SizedBox.shrink();
                     }
-                    
+
                     return Builder(
                       builder: (innerContext) {
                         final mediaQuery = MediaQuery.of(innerContext);
@@ -101,12 +102,14 @@ class _SearchListState extends State<SearchList> {
                               if (item is TmdbTitle)
                                 TitleCard(
                                   title: item,
-                                  tmdbListService: widget.titleListServiceSupport,
+                                  tmdbListService:
+                                      widget.titleListServiceSupport,
                                 )
                               else if (item is TmdbPerson)
                                 PersonCard(
                                   person: item,
-                                  tmdbListService: widget.titleListServiceSupport,
+                                  tmdbListService:
+                                      widget.titleListServiceSupport,
                                 ),
                               Divider(
                                 height: 1,

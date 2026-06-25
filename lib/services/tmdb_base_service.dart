@@ -42,7 +42,9 @@ class TmdbBaseService {
 
   Uri _buildUri(ApiVersion version, String endpoint) {
     final String baseUrl = version == ApiVersion.v3 ? _baseUrlv3 : _baseUrlv4;
-    final cleanBase = baseUrl.endsWith('/') ? baseUrl.substring(0, baseUrl.length - 1) : baseUrl;
+    final cleanBase = baseUrl.endsWith('/')
+        ? baseUrl.substring(0, baseUrl.length - 1)
+        : baseUrl;
     final cleanEndpoint = endpoint.startsWith('/') ? endpoint : '/$endpoint';
     return Uri.parse('$cleanBase$cleanEndpoint');
   }
@@ -89,7 +91,8 @@ class TmdbBaseService {
         }).timeout(const Duration(seconds: 10));
 
         if (response.statusCode == 429) {
-          delay = await _handleRetry('TmdbBaseService get Rate limit exceeded', delay, maxDelay);
+          delay = await _handleRetry(
+              'TmdbBaseService get Rate limit exceeded', delay, maxDelay);
           retryCount++;
           continue;
         }
@@ -139,15 +142,17 @@ class TmdbBaseService {
           : accessToken;
       final uri = _buildUri(version, endpoint);
 
-      return await http.post(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(body),
-      ).timeout(const Duration(seconds: 10));
+      return await http
+          .post(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode(body),
+          )
+          .timeout(const Duration(seconds: 10));
     } catch (error, stackTrace) {
       final message = 'TmdbBaseService post Error: ${error.toString()}';
       ErrorService.log(
@@ -170,15 +175,17 @@ class TmdbBaseService {
           : accessToken;
       final uri = _buildUri(version, endpoint);
 
-      return await http.put(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(body),
-      ).timeout(const Duration(seconds: 10));
+      return await http
+          .put(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode(body),
+          )
+          .timeout(const Duration(seconds: 10));
     } catch (error, stackTrace) {
       final message = 'TmdbBaseService put Error: ${error.toString()}';
       ErrorService.log(
@@ -201,15 +208,17 @@ class TmdbBaseService {
           : accessToken;
       final uri = _buildUri(version, endpoint);
 
-      return await http.delete(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: body != null ? jsonEncode(body) : null,
-      ).timeout(const Duration(seconds: 10));
+      return await http
+          .delete(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: body != null ? jsonEncode(body) : null,
+          )
+          .timeout(const Duration(seconds: 10));
     } catch (error, stackTrace) {
       final message = 'TmdbBaseService delete Error: ${error.toString()}';
       ErrorService.log(
