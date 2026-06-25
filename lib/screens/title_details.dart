@@ -503,7 +503,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     final String editUrl =
         'https://www.themoviedb.org/${title.mediaType}/${title.tmdbId}/edit';
 
-    return Row(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
@@ -531,14 +531,19 @@ class _TitleDetailsState extends State<TitleDetails> {
         if (title.tagline.isNotEmpty)
           Row(
             children: [
-              Text(
-                title.tagline,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontStyle: FontStyle.italic,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Text(
+                    title.tagline,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    textAlign: TextAlign.start,
+                  ),
                 ),
-                textAlign: TextAlign.start,
               ),
             ],
           ),
