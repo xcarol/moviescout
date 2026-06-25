@@ -12,6 +12,7 @@ class DropdownSelector extends StatelessWidget {
   final Widget Function(BuildContext, String, bool, VoidCallback)? itemBuilder;
   final Widget? leading;
   final double? maxMenuHeight;
+  final bool isExpanded;
 
   const DropdownSelector({
     super.key,
@@ -26,6 +27,7 @@ class DropdownSelector extends StatelessWidget {
     this.itemBuilder,
     this.leading,
     this.maxMenuHeight,
+    this.isExpanded = false,
   });
 
   @override
@@ -56,13 +58,22 @@ class DropdownSelector extends StatelessWidget {
               borderRadius: borderRadius,
             ),
             child: Row(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: isExpanded ? MainAxisSize.max : MainAxisSize.min,
               children: [
                 if (leading != null) ...[
                   leading!,
                   const SizedBox(width: 8),
                 ],
-                Text(selectedOption, style: effectiveTextStyle),
+                if (isExpanded)
+                  Expanded(
+                    child: Text(
+                      selectedOption,
+                      style: effectiveTextStyle,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  )
+                else
+                  Text(selectedOption, style: effectiveTextStyle),
                 effectiveArrowIcon,
               ],
             ),

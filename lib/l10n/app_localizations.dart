@@ -1045,24 +1045,6 @@ abstract class AppLocalizations {
   /// **'Automatic Translation'**
   String get autoTranslation;
 
-  /// No description provided for @selectLanguages.
-  ///
-  /// In en, this message translates to:
-  /// **'Select languages:'**
-  String get selectLanguages;
-
-  /// No description provided for @sourceLanguage.
-  ///
-  /// In en, this message translates to:
-  /// **'Source'**
-  String get sourceLanguage;
-
-  /// No description provided for @targetLanguage.
-  ///
-  /// In en, this message translates to:
-  /// **'Target'**
-  String get targetLanguage;
-
   /// No description provided for @originalText.
   ///
   /// In en, this message translates to:

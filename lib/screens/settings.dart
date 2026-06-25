@@ -12,9 +12,7 @@ import 'package:moviescout/utils/deep_link_utils.dart';
 import 'package:moviescout/widgets/language_form.dart';
 import 'package:moviescout/widgets/notification_permission_dialog.dart';
 import 'package:moviescout/widgets/region_form.dart';
-import 'package:moviescout/widgets/translation_language_form.dart';
 import 'package:moviescout/services/edit_settings_service.dart';
-import 'package:moviescout/services/web_translation_service.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -35,7 +33,6 @@ class SettingsScreen extends StatelessWidget {
           if (isUserLoggedIn) _providersTile(context),
           _languageTile(context),
           _regionTile(context),
-          _translationTile(context),
           _showEditContentTile(context),
           _notificationsTile(context),
           _notifyCompleteSeasonTile(context),
@@ -182,43 +179,6 @@ class SettingsScreen extends StatelessWidget {
 
         if (selectedRegion != regionProvider.manualRegion) {
           regionProvider.setManualRegion(selectedRegion);
-        }
-      },
-    );
-  }
-
-  Widget _translationTile(BuildContext context) {
-    final translationService = Provider.of<WebTranslationService>(context);
-    final sourceCode = translationService.sourceLanguageCode;
-    final targetCode = translationService.targetLanguageCode;
-    final sourceName = translationService.sourceLanguageName;
-    final targetName = translationService.targetLanguageName;
-
-    return ListTile(
-      leading: const Icon(Icons.translate),
-      title: Text(AppLocalizations.of(context)!.autoTranslation),
-      subtitle: Text("$sourceName ➔ $targetName"),
-      onTap: () async {
-        final Map<String, String>? result =
-            await showDialog<Map<String, String>>(
-          context: context,
-          builder: (context) {
-            return TranslationLanguageForm(
-              sourceLanguageCode: sourceCode,
-              targetLanguageCode: targetCode,
-            );
-          },
-        );
-
-        if (result != null) {
-          if (result[TranslationLanguageForm.keySource] != sourceCode) {
-            await translationService.setSourceLanguageCode(
-                result[TranslationLanguageForm.keySource]!);
-          }
-          if (result[TranslationLanguageForm.keyTarget] != targetCode) {
-            await translationService.setTargetLanguageCode(
-                result[TranslationLanguageForm.keyTarget]!);
-          }
         }
       },
     );
