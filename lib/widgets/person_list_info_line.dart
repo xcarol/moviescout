@@ -55,6 +55,19 @@ class PersonListInfoLine extends StatelessWidget {
       onToggleFilters: () => controller.toggleFilters(),
       showFilters: controller.showFilters,
       anyFilterActive: anyFilterActive,
+      trailingWidgets: [
+        ListenableBuilder(
+          listenable: controller,
+          builder: (context, _) {
+            return IconButton(
+              icon: Icon(
+                controller.isGridView ? Icons.view_list : Icons.grid_view,
+              ),
+              onPressed: () => controller.toggleGridView(),
+            );
+          },
+        ),
+      ],
     );
   }
 }

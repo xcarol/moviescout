@@ -9,6 +9,7 @@ class ListInfoLine extends StatelessWidget {
   final VoidCallback? onToggleFilters;
   final bool showFilters;
   final bool anyFilterActive;
+  final List<Widget> trailingWidgets;
 
   const ListInfoLine({
     super.key,
@@ -19,6 +20,7 @@ class ListInfoLine extends StatelessWidget {
     this.onToggleFilters,
     this.showFilters = false,
     this.anyFilterActive = false,
+    this.trailingWidgets = const [],
   });
 
   @override
@@ -62,6 +64,7 @@ class ListInfoLine extends StatelessWidget {
               icon: const Icon(Icons.swap_vert),
               onPressed: onSwapSort,
             ),
+          ...trailingWidgets,
           if (onToggleFilters != null)
             IconButton(
               style: ButtonStyle(
