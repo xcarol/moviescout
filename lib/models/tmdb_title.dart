@@ -307,6 +307,7 @@ class TmdbTitle implements TmdbItem {
 
     voteAverage =
         (title[TmdbTitleFields.voteAverage] ?? voteAverage).toDouble();
+    if (voteAverage.isNaN) voteAverage = 0.0;
     voteCount = title[TmdbTitleFields.voteCount] ?? voteCount;
 
     if (title[TmdbTitleFields.accountRating] is Map) {
@@ -327,12 +328,14 @@ class TmdbTitle implements TmdbItem {
       rating = title[TmdbTitleFields.rating].toDouble();
       if (dateRated.year < 2000) dateRated = DateTime.now();
     }
+    if (rating.isNaN) rating = 0.0;
 
     runtime = title[TmdbTitleFields.runtime] ?? runtime;
     numberOfEpisodes =
         title[TmdbTitleFields.numberOfEpisodes] ?? numberOfEpisodes;
     numberOfSeasons = title[TmdbTitleFields.numberOfSeasons] ?? numberOfSeasons;
     popularity = (title[TmdbTitleFields.popularity] ?? popularity).toDouble();
+    if (popularity.isNaN) popularity = 0.0;
     budget = title[TmdbTitleFields.budget] ?? budget;
     revenue = title[TmdbTitleFields.revenue] ?? revenue;
     isPinned = title[TmdbTitleFields.isPinned] ?? isPinned;
