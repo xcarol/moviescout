@@ -124,7 +124,7 @@ class _MediaCarouselState extends State<MediaCarousel> {
           ),
           if (totalItems > 1)
             Positioned(
-              bottom: 10,
+              bottom: 25,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(totalItems, (index) {
