@@ -15,7 +15,7 @@ class PersonAttributes {
   static const name = 'name';
   static const known_for_department = 'known_for_department';
   static const gender = 'gender';
-  static const original_name = 'original_name';
+  static const also_known_as = 'also_known_as';
   static const profile_path = 'profile_path';
   static const character = 'character';
   static const job = 'job';
@@ -67,7 +67,7 @@ class TmdbPerson implements TmdbItem {
   late String lastUpdated;
   late String knownForDepartment;
   late int gender;
-  late String originalName;
+  late List<String> alsoKnownAs;
   late String profilePath;
   late String character;
   late String job;
@@ -100,7 +100,7 @@ class TmdbPerson implements TmdbItem {
     required this.lastUpdated,
     required this.knownForDepartment,
     required this.gender,
-    required this.originalName,
+    this.alsoKnownAs = const [],
     required this.profilePath,
     required this.character,
     required this.job,
@@ -126,7 +126,7 @@ class TmdbPerson implements TmdbItem {
             person[PersonAttributes.last_updated] ?? AppConstants.defaultDate,
         knownForDepartment: person[PersonAttributes.known_for_department],
         gender: person[PersonAttributes.gender],
-        originalName: person[PersonAttributes.original_name],
+        alsoKnownAs: List<String>.from(person[PersonAttributes.also_known_as] ?? []),
         profilePath: person[PersonAttributes.profile_path] ?? '',
         character: person[PersonAttributes.character] ?? '',
         job: person[PersonAttributes.job] ?? '',
@@ -154,7 +154,7 @@ class TmdbPerson implements TmdbItem {
       PersonAttributes.last_updated: lastUpdated,
       PersonAttributes.known_for_department: knownForDepartment,
       PersonAttributes.gender: gender,
-      PersonAttributes.original_name: originalName,
+      PersonAttributes.also_known_as: alsoKnownAs,
       PersonAttributes.profile_path: profilePath,
       PersonAttributes.character: character,
       PersonAttributes.job: job,
@@ -231,7 +231,7 @@ class TmdbPerson implements TmdbItem {
         lastUpdated: AppConstants.defaultDate,
         knownForDepartment: person[PersonAttributes.known_for_department] ?? '',
         gender: person[PersonAttributes.gender] ?? 0,
-        originalName: person[PersonAttributes.original_name] ?? '',
+        alsoKnownAs: List<String>.from(person[PersonAttributes.also_known_as] ?? []),
         profilePath: person[PersonAttributes.profile_path] ?? '',
         character: character,
         job: job,

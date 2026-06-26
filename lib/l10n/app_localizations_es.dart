@@ -27,8 +27,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get messageEmptyList => 'Aún no se ha seleccionado ninguna película.';
 
   @override
-  String get messageEmptySearch =>
-      'Puedes hacer una búsqueda utilizando la lupa de la barra inferior.';
+  String get messageEmptySearch => 'Puedes hacer una búsqueda utilizando la lupa de la barra inferior.';
 
   @override
   String get messageEmptyOptions => 'También puedes';
@@ -100,8 +99,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get signupToTmdb => 'Registrate en TMDb';
 
   @override
-  String get signInToWatchlist =>
-      'Es necesario iniciar sesión para añadir títulos.';
+  String get signInToWatchlist => 'Es necesario iniciar sesión para añadir títulos.';
 
   @override
   String get tvShow => 'Serie';
@@ -137,12 +135,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get imdbConfirmationTitle => 'ATENCIÓN';
 
   @override
-  String get imdbResetWatchlistConfirmation =>
-      '¿Seguro que quieres eliminar los títulos Para Ver?';
+  String get imdbResetWatchlistConfirmation => '¿Seguro que quieres eliminar los títulos Para Ver?';
 
   @override
-  String get imdbResetRateslistConfirmation =>
-      '¿Seguro que quieres eliminar las Valoraciones?';
+  String get imdbResetRateslistConfirmation => '¿Seguro que quieres eliminar las Valoraciones?';
 
   @override
   String get resetWatchlistCount => 'Títulos para ver: ';
@@ -277,8 +273,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get about => 'Sobre...';
 
   @override
-  String get aboutDescription =>
-      'Movie Scout tu rastreador de películas y series con datos de TMDb, OMDb y JustWatch.';
+  String get aboutDescription => 'Movie Scout tu rastreador de películas y series con datos de TMDb, OMDb y JustWatch.';
 
   @override
   String get aboutGithub => 'Visita el proyecto en ';
@@ -320,9 +315,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get ratedCredits => 'Creditos valorados';
 
   @override
-  String get originalName => 'Nombre original';
-
-  @override
   String get birthDate => 'Fecha de nacimiento';
 
   @override
@@ -344,8 +336,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get languageChangeTitle => 'Cambio de idioma';
 
   @override
-  String get languageChangeContent =>
-      'Has cambiado el idioma de la aplicación. Para que los títulos se actualicen al nuevo idioma, es necesario que cierres la sesión y vuelvas a entrar.';
+  String get languageChangeContent => 'Has cambiado el idioma de la aplicación. Para que los títulos se actualicen al nuevo idioma, es necesario que cierres la sesión y vuelvas a entrar.';
 
   @override
   String get watchingNow => 'Mirando ahora';
@@ -423,12 +414,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notifications => 'Notificaciones';
 
   @override
-  String get notificationsPermissionRequired =>
-      'Debes permitir las notificaciones en los ajustes del sistema.';
+  String get notificationsPermissionRequired => 'Debes permitir las notificaciones en los ajustes del sistema.';
 
   @override
-  String get notificationsPermissionDescription =>
-      'Para recibir avisos de disponibilidad de películas y nuevas temporadas, debes activar las notificaciones en los ajustes del sistema.';
+  String get notificationsPermissionDescription => 'Para recibir avisos de disponibilidad de películas y nuevas temporadas, debes activar las notificaciones en los ajustes del sistema.';
 
   @override
   String get openSettings => 'Abrir ajustes';
@@ -437,8 +426,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settings => 'Configuración';
 
   @override
-  String get errorMessageGeneric =>
-      'Ha ocurrido un error. Inténtalo de nuevo más tarde.';
+  String get errorMessageGeneric => 'Ha ocurrido un error. Inténtalo de nuevo más tarde.';
 
   @override
   String get youtubeSearch => 'Búsqueda en YouTube';
@@ -450,8 +438,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notifyCompleteSeason => 'Notificar temporada completa';
 
   @override
-  String get notifyCompleteSeasonSubtitle =>
-      'Solo notifica cuando toda la temporada está disponible.';
+  String get notifyCompleteSeasonSubtitle => 'Solo notifica cuando toda la temporada está disponible.';
 
   @override
   String get episodes => 'Episodios';
@@ -468,8 +455,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notifyTitle => 'Notificar nuevas temporadas';
 
   @override
-  String get notifyMessage =>
-      '¿Quieres recibir una notificación cuando se emita una nueva temporada?';
+  String get notifyMessage => '¿Quieres recibir una notificación cuando se emita una nueva temporada?';
 
   @override
   String get no => 'No';
