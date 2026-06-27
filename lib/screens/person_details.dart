@@ -48,13 +48,6 @@ class PersonDetails extends StatefulWidget {
 class _PersonDetailsState extends State<PersonDetails> {
   late Future<TmdbPerson> _personFuture;
   List<TmdbTitle> _userRatedTitles = [];
-  final ScrollController _characterDetailsScrollController = ScrollController();
-
-  @override
-  void dispose() {
-    _characterDetailsScrollController.dispose();
-    super.dispose();
-  }
 
   @override
   void initState() {
@@ -463,15 +456,10 @@ class _PersonDetailsState extends State<PersonDetails> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: Scrollbar(
-                      controller: _characterDetailsScrollController,
-                      thumbVisibility: true,
-                      child: SingleChildScrollView(
-                        controller: _characterDetailsScrollController,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 15),
-                          child: _characterDetails(person),
-                        ),
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: _characterDetails(person),
                       ),
                     ),
                   ),
