@@ -32,6 +32,15 @@ class PersonAttributes {
   static const jobs = 'jobs';
 }
 
+class CrewJobs {
+  static const director = 'Director';
+  static const executiveProducer = 'Executive Producer';
+  static const creator = 'Creator';
+  static const writer = 'Writer';
+  static const screenplay = 'Screenplay';
+  static const author = 'Author';
+}
+
 class CombinedCredits {
   final List<TmdbTitle> cast;
   final List<TmdbTitle> crew;
@@ -126,7 +135,8 @@ class TmdbPerson implements TmdbItem {
             person[PersonAttributes.last_updated] ?? AppConstants.defaultDate,
         knownForDepartment: person[PersonAttributes.known_for_department],
         gender: person[PersonAttributes.gender],
-        alsoKnownAs: List<String>.from(person[PersonAttributes.also_known_as] ?? []),
+        alsoKnownAs:
+            List<String>.from(person[PersonAttributes.also_known_as] ?? []),
         profilePath: person[PersonAttributes.profile_path] ?? '',
         character: person[PersonAttributes.character] ?? '',
         job: person[PersonAttributes.job] ?? '',
@@ -231,7 +241,8 @@ class TmdbPerson implements TmdbItem {
         lastUpdated: AppConstants.defaultDate,
         knownForDepartment: person[PersonAttributes.known_for_department] ?? '',
         gender: person[PersonAttributes.gender] ?? 0,
-        alsoKnownAs: List<String>.from(person[PersonAttributes.also_known_as] ?? []),
+        alsoKnownAs:
+            List<String>.from(person[PersonAttributes.also_known_as] ?? []),
         profilePath: person[PersonAttributes.profile_path] ?? '',
         character: character,
         job: job,
