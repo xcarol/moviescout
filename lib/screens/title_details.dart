@@ -6,7 +6,6 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
-import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -113,11 +112,23 @@ class _TitleDetailsState extends State<TitleDetails> {
   @override
   Widget build(BuildContext context) {
     String appTitle = _currentTitle.name;
+    final String editUrl =
+        'https://www.themoviedb.org/${_currentTitle.mediaType}/${_currentTitle.tmdbId}/edit';
 
     return Scaffold(
       appBar: AppBar(
         title: Text(appTitle),
         actions: [
+          EditButton(url: editUrl),
+          TranslationsButton(
+            editUrl: editUrl,
+            fetchTranslations: () => TmdbTranslationService()
+                .getTranslations(_currentTitle.mediaType, _currentTitle.tmdbId),
+            originalTitle: _currentTitle.originalName.isNotEmpty
+                ? _currentTitle.originalName
+                : _currentTitle.name,
+            originalDescription: _currentTitle.overview,
+          ),
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () {
@@ -205,16 +216,77 @@ class _TitleDetailsState extends State<TitleDetails> {
     }
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MediaCarousel(
-            images: title.images,
-            videos: title.videos,
-            backdropPath: title.backdropPath,
-            posterPath: title.posterPath,
-            isMovie: title.isMovie,
-            isLoading: _isUpdating),
-        const SizedBox(height: 20),
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            MediaCarousel(
+                images: title.images,
+                videos: const [],
+                backdropPath: title.backdropPath,
+                posterPath: title.posterPath,
+                isMovie: title.isMovie,
+                isLoading: _isUpdating),
+            Positioned(
+              left: 10,
+              bottom: -150,
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    width: 10,
+                  ),
+                ),
+                child: title.posterPath.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl:
+                            'https://image.tmdb.org/t/p/w500${title.posterPath}',
+                        width: 100,
+                        height: 150,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => Image.asset(
+                          title.isMovie
+                              ? 'assets/movie_poster.png'
+                              : 'assets/tvshow_poster.png',
+                          width: 100,
+                          height: 150,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : Image.asset(
+                        title.isMovie
+                            ? 'assets/movie_poster.png'
+                            : 'assets/tvshow_poster.png',
+                        width: 100,
+                        height: 150,
+                        fit: BoxFit.cover,
+                      ),
+              ),
+            ),
+          ],
+        ),
+        Container(
+          height: 150,
+          padding:
+              const EdgeInsets.only(left: 140, right: 5, top: 10, bottom: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _titleLine(title),
+                  _dateAndDuration(title),
+                  _primaryCreator(title),
+                ],
+              ),
+              _genres(title),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
         _details(title),
       ],
     );
@@ -283,7 +355,9 @@ class _TitleDetailsState extends State<TitleDetails> {
 
     Widget? creatorsWidget;
     if (title.isMovie) {
-      final directors = title.crew.where((c) => c.job == 'Director').toList();
+      final directors = title.crew
+          .where((c) => c.job.split(', ').contains(CrewJobs.director))
+          .toList();
       if (directors.isNotEmpty) {
         creatorsWidget = SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -293,7 +367,11 @@ class _TitleDetailsState extends State<TitleDetails> {
       }
     } else {
       final creators = title.crew
-          .where((c) => c.job == 'Executive Producer' || c.job == 'Creator')
+          .where((c) {
+            final jobs = c.job.split(', ');
+            return jobs.contains(CrewJobs.executiveProducer) ||
+                jobs.contains(CrewJobs.creator);
+          })
           .take(3)
           .toList();
       if (creators.isNotEmpty) {
@@ -306,10 +384,12 @@ class _TitleDetailsState extends State<TitleDetails> {
     }
 
     Widget? writersWidget;
-    final writers = title.crew
-        .where((c) =>
-            c.job == 'Writer' || c.job == 'Screenplay' || c.job == 'Author')
-        .toList();
+    final writers = title.crew.where((c) {
+      final jobs = c.job.split(', ');
+      return jobs.contains(CrewJobs.writer) ||
+          jobs.contains(CrewJobs.screenplay) ||
+          jobs.contains(CrewJobs.author);
+    }).toList();
 
     if (writers.isNotEmpty) {
       writersWidget = SingleChildScrollView(
@@ -459,12 +539,9 @@ class _TitleDetailsState extends State<TitleDetails> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _titleLine(title),
-          _durationAndWatchlist(title),
+          _actionButtons(title),
           const SizedBox(height: 10),
           _rating(title),
-          const SizedBox(height: 10),
-          _genres(title),
           const SizedBox(height: 10),
           _description(title),
           if (!title.isMovie && title.numberOfSeasons > 0) ...[
@@ -500,9 +577,6 @@ class _TitleDetailsState extends State<TitleDetails> {
       return const SizedBox.shrink();
     }
 
-    final String editUrl =
-        'https://www.themoviedb.org/${title.mediaType}/${title.tmdbId}/edit';
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -517,15 +591,6 @@ class _TitleDetailsState extends State<TitleDetails> {
                 textAlign: TextAlign.start,
               ),
             ),
-            EditButton(url: editUrl),
-            TranslationsButton(
-                editUrl: editUrl,
-                fetchTranslations: () => TmdbTranslationService()
-                    .getTranslations(title.mediaType, title.tmdbId),
-                originalTitle: title.originalName.isNotEmpty
-                    ? title.originalName
-                    : title.name,
-                originalDescription: title.overview),
           ],
         ),
         if (title.tagline.isNotEmpty)
@@ -551,32 +616,79 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  Widget _durationAndWatchlist(TmdbTitle title) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Text(
-              '${_releaseDates(title)} - ${_duration(title)}',
-              maxLines: 1,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
+  Widget _dateAndDuration(TmdbTitle title) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Text(
+        '${_releaseDates(title)} - ${_duration(title)}',
+        maxLines: 1,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+      ),
+    );
+  }
+
+  Widget _primaryCreator(TmdbTitle title) {
+    if (title.creditsJson == null) return const SizedBox.shrink();
+
+    String label = '';
+    List<TmdbPerson> people = [];
+
+    final directors = title.crew
+        .where((c) => c.job.split(', ').contains(CrewJobs.director))
+        .toList();
+    final creators = title.crew.where((c) {
+      final jobs = c.job.split(', ');
+      return jobs.contains(CrewJobs.executiveProducer) ||
+          jobs.contains(CrewJobs.creator);
+    }).toList();
+    final writers = title.crew.where((c) {
+      final jobs = c.job.split(', ');
+      return jobs.contains(CrewJobs.writer) ||
+          jobs.contains(CrewJobs.screenplay) ||
+          jobs.contains(CrewJobs.author);
+    }).toList();
+
+    if (directors.isNotEmpty) {
+      label = AppLocalizations.of(context)!.director;
+      people = [directors.first];
+    } else if (creators.isNotEmpty) {
+      label = AppLocalizations.of(context)!.creator;
+      people = [creators.first];
+    } else if (writers.isNotEmpty) {
+      label = AppLocalizations.of(context)!.writer;
+      people = [writers.first];
+    }
+
+    if (people.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 4.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
           ),
-        ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: _clickableNames(people),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _actionButtons(TmdbTitle title) {
+    return Row(
+      children: [
+        notifyButton(context, title),
         const SizedBox(width: 8),
-        Row(
-          children: [
-            notifyButton(context, title),
-            const SizedBox(width: 8),
-            pinButton(context, title),
-            const SizedBox(width: 8),
-            watchlistButton(context, title),
-          ],
-        ),
+        pinButton(context, title),
+        const SizedBox(width: 8),
+        watchlistButton(context, title),
       ],
     );
   }
@@ -823,35 +935,21 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   Widget _genres(TmdbTitle title) {
-    List<Widget> genres = [];
-
     if (title.genres.isEmpty) {
-      return const SizedBox();
+      return const SizedBox.shrink();
     }
 
-    for (TmdbGenre genre in title.genres) {
-      genres.add(Chip(
-        label: Text(genre.name),
-        padding: EdgeInsets.all(5),
-      ));
-      genres.add(const SizedBox(width: 5));
-    }
+    final String genresText = title.genres.map((g) => g.name).join(', ');
 
-    return Row(
-      children: [
-        Flexible(
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: genres,
-              ),
-            ),
-          ),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Text(
+        genresText,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          fontStyle: FontStyle.italic,
         ),
-      ],
+      ),
     );
   }
 
