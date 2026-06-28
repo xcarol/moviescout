@@ -127,8 +127,6 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     try {
       final sourceTrans =
           widget.translations.firstWhere((t) => t.iso639_1 == sourceCode);
-      debugPrint(
-          'sourceTrans: ${sourceTrans.name}, ${sourceTrans.translatedTitle}, ${sourceTrans.description}');
       if (sourceTrans.translatedTitle.isNotEmpty) {
         sourceTitle = sourceTrans.translatedTitle;
       }
