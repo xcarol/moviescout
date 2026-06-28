@@ -81,11 +81,22 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   @override
   Widget build(BuildContext context) {
     String appTitle = widget.title.name;
+    final cachedSeason = _loadedSeasons[_currentSeasonNumber];
+    final String editUrl =
+        'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/$_currentSeasonNumber/edit';
 
     return Scaffold(
       appBar: AppBar(
         title: Text(appTitle),
         actions: [
+          EditButton(url: editUrl),
+          TranslationsButton(
+              editUrl: editUrl,
+              fetchTranslations: () => TmdbTranslationService()
+                  .getSeasonTranslations(
+                      widget.title.tmdbId, _currentSeasonNumber),
+              originalTitle: cachedSeason?.name ?? '',
+              originalDescription: cachedSeason?.overview ?? ''),
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () {
@@ -202,9 +213,6 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   Widget _titleLine(TmdbSeason season) {
     if (season.name.isEmpty) return const SizedBox.shrink();
 
-    final String editUrl =
-        'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/$_currentSeasonNumber/edit';
-
     return Row(
       children: [
         Expanded(
@@ -216,14 +224,6 @@ class _SeasonDetailsState extends State<SeasonDetails> {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        EditButton(url: editUrl),
-        TranslationsButton(
-            editUrl: editUrl,
-            fetchTranslations: () => TmdbTranslationService()
-                .getSeasonTranslations(
-                    widget.title.tmdbId, _currentSeasonNumber),
-            originalTitle: season.name,
-            originalDescription: season.overview),
         IconButton(
           icon: const Icon(Icons.chevron_left),
           onPressed: _currentSeasonNumber > 1 ? _goToPreviousSeason : null,

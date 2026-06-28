@@ -95,10 +95,23 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
   @override
   Widget build(BuildContext context) {
     String appTitle = widget.title.name;
+    final cachedEpisode = _loadedEpisodes[_currentEpisodeNumber];
+    final String editUrl =
+        'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/${widget.seasonNumber}/episode/$_currentEpisodeNumber/edit';
 
     return Scaffold(
       appBar: AppBar(
         title: Text(appTitle),
+        actions: [
+          EditButton(url: editUrl),
+          TranslationsButton(
+              editUrl: editUrl,
+              fetchTranslations: () => TmdbTranslationService()
+                  .getEpisodeTranslations(widget.title.tmdbId,
+                      widget.seasonNumber, _currentEpisodeNumber),
+              originalTitle: cachedEpisode?.name ?? '',
+              originalDescription: cachedEpisode?.overview ?? ''),
+        ],
       ),
       body: PageView.builder(
         controller: _pageController,
@@ -195,9 +208,6 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
       return const SizedBox.shrink();
     }
 
-    final String editUrl =
-        'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/${widget.seasonNumber}/episode/$_currentEpisodeNumber/edit';
-
     return Row(
       children: [
         Expanded(
@@ -209,14 +219,6 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        EditButton(url: editUrl),
-        TranslationsButton(
-            editUrl: editUrl,
-            fetchTranslations: () => TmdbTranslationService()
-                .getEpisodeTranslations(widget.title.tmdbId,
-                    widget.seasonNumber, _currentEpisodeNumber),
-            originalTitle: episode.name,
-            originalDescription: episode.overview),
         IconButton(
           icon: const Icon(Icons.chevron_left),
           onPressed: _currentEpisodeNumber > 1 ? _goToPreviousEpisode : null,
