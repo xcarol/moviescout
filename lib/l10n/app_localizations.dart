@@ -175,6 +175,12 @@ abstract class AppLocalizations {
   /// **'Search for a provider'**
   String get searchProvider;
 
+  /// No description provided for @trailer.
+  ///
+  /// In en, this message translates to:
+  /// **'Trailer'**
+  String get trailer;
+
   /// No description provided for @includeGenres.
   ///
   /// In en, this message translates to:

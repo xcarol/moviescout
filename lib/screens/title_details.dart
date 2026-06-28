@@ -17,6 +17,7 @@ import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/region_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
+import 'package:moviescout/widgets/trailer_dialog.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
@@ -223,7 +224,6 @@ class _TitleDetailsState extends State<TitleDetails> {
           children: [
             MediaCarousel(
                 images: title.images,
-                videos: const [],
                 backdropPath: title.backdropPath,
                 posterPath: title.posterPath,
                 isMovie: title.isMovie,
@@ -414,38 +414,53 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  Widget _clickableNames(List<TmdbPerson> people) {
+  Widget _clickableNames(List<TmdbPerson> people, {bool useEllipsis = false}) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: people.asMap().entries.map((entry) {
         final index = entry.key;
         final person = entry.value;
         final isLast = index == people.length - 1;
 
-        return Row(
-          children: [
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PersonDetails(
-                      person: person,
-                      tmdbListService: widget._tmdbListService,
-                    ),
-                  ),
-                );
-              },
-              child: Text(
-                person.name,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  decoration: TextDecoration.underline,
+        Widget nameWidget = InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PersonDetails(
+                  person: person,
+                  tmdbListService: widget._tmdbListService,
                 ),
               ),
+            );
+          },
+          child: Text(
+            person.name,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              decoration: TextDecoration.underline,
             ),
+            overflow: useEllipsis ? TextOverflow.ellipsis : null,
+          ),
+        );
+
+        if (useEllipsis) {
+          nameWidget = Flexible(child: nameWidget);
+        }
+
+        Widget child = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            nameWidget,
             if (!isLast) const Text(', '),
           ],
         );
+
+        if (useEllipsis) {
+          child = Flexible(child: child);
+        }
+
+        return child;
       }).toList(),
     );
   }
@@ -663,19 +678,56 @@ class _TitleDetailsState extends State<TitleDetails> {
 
     if (people.isEmpty) return const SizedBox.shrink();
 
+    String? trailerVideoId;
+    if (title.videos.isNotEmpty) {
+      final youtubeVideos = title.videos.where((v) =>
+          (v['site'] == 'YouTube' || v['site'] == null) && v['key'] != null);
+      if (youtubeVideos.isNotEmpty) {
+        trailerVideoId = youtubeVideos.first['key'] as String;
+      } else {
+        trailerVideoId = title.videos.first['key'] as String?;
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.only(top: 4.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                ),
+                _clickableNames(people, useEllipsis: true),
+              ],
+            ),
           ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: _clickableNames(people),
-          ),
+          if (trailerVideoId != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  final topMargin = kToolbarHeight + 16.0;
+                  showDialog(
+                    context: context,
+                    builder: (context) => TrailerDialog(
+                      videoId: trailerVideoId!,
+                      topMargin: topMargin,
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.play_arrow, size: 16),
+                label: Text(AppLocalizations.of(context)!.trailer),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                  minimumSize: const Size(0, 32),
+                ),
+              ),
+            ),
         ],
       ),
     );

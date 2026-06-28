@@ -26,6 +26,8 @@
     "@searchPerson": {},
     "searchProvider": "Search for a provider",
     "@searchProvider": {},
+    "trailer": "Trailer",
+    "@trailer": {},
     "includeGenres": "Include",
     "@includeGenres": {},
     "excludeGenres": "Exclude",

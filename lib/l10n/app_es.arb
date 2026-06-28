@@ -24,6 +24,8 @@
     "@searchPerson": {},
     "searchProvider": "Busca un proveedor",
     "@searchProvider": {},
+    "trailer": "Tráiler",
+    "@trailer": {},
     "includeGenres": "Incluir",
     "@includeGenres": {},
     "excludeGenres": "Excluir",

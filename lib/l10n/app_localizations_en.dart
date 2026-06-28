@@ -48,6 +48,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchProvider => 'Search for a provider';
 
   @override
+  String get trailer => 'Trailer';
+
+  @override
   String get includeGenres => 'Include';
 
   @override
