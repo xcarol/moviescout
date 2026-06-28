@@ -168,7 +168,6 @@ class _SeasonDetailsState extends State<SeasonDetails> {
       children: [
         MediaCarousel(
           images: season.images,
-          videos: season.videos,
           backdropPath: '',
           posterPath: season.posterPath,
           isMovie: false,

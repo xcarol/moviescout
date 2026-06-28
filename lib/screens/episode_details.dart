@@ -172,7 +172,6 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
       children: [
         MediaCarousel(
             images: episode.images,
-            videos: episode.videos,
             backdropPath: '',
             posterPath: episode.stillPath, // Usually episodes have stills
             isMovie: false,
