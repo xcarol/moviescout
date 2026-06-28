@@ -331,7 +331,7 @@ class _PersonDetailsState extends State<PersonDetails> {
       );
     }
 
-    if (person.homepage.isEmpty) {
+    if (person.homepage.isNotEmpty) {
       links.add(
         ElevatedButton(
           style: buttonStyle,
