@@ -48,7 +48,9 @@ class TmdbEpisode implements TmdbItem {
     this.imagesJson,
     this.videosJson,
     required this.lastUpdated,
-  });
+  }) {
+    if (voteAverage.isNaN) voteAverage = 0.0;
+  }
 
   factory TmdbEpisode.fromMap(Map<String, dynamic> data, {int tvId = 0}) {
     return TmdbEpisode(
