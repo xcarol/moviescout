@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
-import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_season_service.dart';
 import 'package:moviescout/widgets/episode_card.dart';
@@ -12,10 +10,13 @@ import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:moviescout/utils/date_formatter.dart';
-import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/widgets/edit_button.dart';
 import 'package:moviescout/widgets/translations_button.dart';
 import 'package:moviescout/services/tmdb_translation_service.dart';
+import 'package:moviescout/widgets/trailer_buttons.dart';
+import 'package:moviescout/widgets/boxed_widget.dart';
+import 'package:moviescout/widgets/expandable_description.dart';
+import 'package:moviescout/widgets/clickable_names.dart';
 
 class SeasonDetails extends StatefulWidget {
   final TmdbTitle title;
@@ -192,14 +193,16 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           _description(season),
           const SizedBox(height: 30),
           _creditsInfo(season),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20.0),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: TrailerButtons(videos: season.videos),
+            ),
+          ),
           Divider(
               color: Theme.of(context).extension<CustomColors>()!.dividerColor),
           _externalLinks(),
-          Divider(
-              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
-          const SizedBox(height: 10),
-          _castAndCrew(season, PersonAttributes.cast),
-          _castAndCrew(season, PersonAttributes.crew),
           Divider(
               color: Theme.of(context).extension<CustomColors>()!.dividerColor),
           const SizedBox(height: 10),
@@ -275,10 +278,9 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   }
 
   Widget _description(TmdbSeason season) {
-    return Text(
-      season.overview.isEmpty
-          ? AppLocalizations.of(context)!.missingDescription
-          : season.overview,
+    return ExpandableDescription(
+      text: season.overview,
+      initialMaxLines: 5,
     );
   }
 
@@ -308,7 +310,12 @@ class _SeasonDetailsState extends State<SeasonDetails> {
       creatorsWidget = SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: _infoColumn(
-            AppLocalizations.of(context)!.creator, _clickableNames(creators)),
+          AppLocalizations.of(context)!.creator,
+          ClickableNames(
+            people: creators,
+            tmdbListService: widget.tmdbListService,
+          ),
+        ),
       );
     }
 
@@ -322,7 +329,12 @@ class _SeasonDetailsState extends State<SeasonDetails> {
       writersWidget = SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: _infoColumn(
-            AppLocalizations.of(context)!.writer, _clickableNames(writers)),
+          AppLocalizations.of(context)!.writer,
+          ClickableNames(
+            people: writers,
+            tmdbListService: widget.tmdbListService,
+          ),
+        ),
       );
     }
 
@@ -341,55 +353,11 @@ class _SeasonDetailsState extends State<SeasonDetails> {
     );
   }
 
-  Widget _clickableNames(List<TmdbPerson> people) {
-    final colors = Theme.of(context).colorScheme;
-
-    return Row(
-      children: people.asMap().entries.map((entry) {
-        final index = entry.key;
-        final person = entry.value;
-        final isLast = index == people.length - 1;
-
-        return Row(
-          children: [
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PersonDetails(
-                      person: person,
-                      tmdbListService: widget.tmdbListService,
-                    ),
-                  ),
-                );
-              },
-              child: Text(
-                person.name,
-                style: TextStyle(
-                  color: colors.onSurfaceVariant,
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-            ),
-            if (!isLast) const Text(', '),
-          ],
-        );
-      }).toList(),
-    );
-  }
-
   Widget _externalLinks() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-          ),
+        BoxedWidget(
           onPressed: () {
             launchUrl(
               Uri.parse(
@@ -397,6 +365,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
               mode: LaunchMode.inAppWebView,
             );
           },
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: SizedBox(
             height: 30,
             child: Image.asset(
@@ -442,49 +411,6 @@ class _SeasonDetailsState extends State<SeasonDetails> {
             ],
           );
         }),
-      ],
-    );
-  }
-
-  Widget _castAndCrew(TmdbSeason season, String type) {
-    if (type == PersonAttributes.cast && season.cast.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    if (type == PersonAttributes.crew && season.crew.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Text(
-            type == PersonAttributes.cast
-                ? AppLocalizations.of(context)!.cast
-                : AppLocalizations.of(context)!.crew,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => TitlePeopleList(
-                        title: widget.title,
-                        type: type,
-                        tmdbListService: widget.tmdbListService,
-                        season: season,
-                      )),
-            );
-          },
-          child: Text(
-            AppLocalizations.of(context)!.seeThemAll,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-        ),
       ],
     );
   }

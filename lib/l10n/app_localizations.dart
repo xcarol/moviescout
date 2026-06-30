@@ -496,7 +496,7 @@ abstract class AppLocalizations {
   /// No description provided for @your_rate.
   ///
   /// In en, this message translates to:
-  /// **'Your rating'**
+  /// **'YOUR RATING'**
   String get your_rate;
 
   /// No description provided for @reset_rate.

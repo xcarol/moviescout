@@ -207,7 +207,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rate_date => 'Rated date';
 
   @override
-  String get your_rate => 'Your rating';
+  String get your_rate => 'YOUR RATING';
 
   @override
   String get reset_rate => 'Reset rating';

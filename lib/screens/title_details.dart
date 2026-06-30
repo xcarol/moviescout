@@ -11,17 +11,17 @@ import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart'
     show TmdbTitleRepository;
-import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/screens/season_details.dart';
 import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/services/language_service.dart';
 import 'package:moviescout/services/region_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
-import 'package:moviescout/widgets/trailer_dialog.dart';
+import 'package:moviescout/widgets/trailer_buttons.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/widgets/person_chip.dart';
+import 'package:moviescout/widgets/boxed_widget.dart';
 import 'package:moviescout/widgets/edit_button.dart';
 import 'package:moviescout/widgets/translations_button.dart';
 import 'package:moviescout/services/tmdb_translation_service.dart';
@@ -32,6 +32,8 @@ import 'package:moviescout/widgets/watchlist_button.dart';
 import 'package:moviescout/widgets/drop_down_selector.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/omdb_rating_widget.dart';
+import 'package:moviescout/widgets/expandable_description.dart';
+import 'package:moviescout/widgets/clickable_names.dart';
 import 'package:moviescout/widgets/pin_button.dart';
 import 'package:moviescout/widgets/notify_button.dart';
 import 'package:moviescout/services/omdb_service.dart';
@@ -267,7 +269,7 @@ class _TitleDetailsState extends State<TitleDetails> {
           ],
         ),
         Container(
-          height: 150,
+          constraints: const BoxConstraints(minHeight: 150),
           padding:
               const EdgeInsets.only(left: 140, right: 5, top: 10, bottom: 10),
           child: Column(
@@ -361,8 +363,13 @@ class _TitleDetailsState extends State<TitleDetails> {
       if (directors.isNotEmpty) {
         creatorsWidget = SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          child: _infoColumn(AppLocalizations.of(context)!.director,
-              _clickableNames(directors)),
+          child: _infoColumn(
+            AppLocalizations.of(context)!.director,
+            ClickableNames(
+              people: directors,
+              tmdbListService: widget._tmdbListService,
+            ),
+          ),
         );
       }
     } else {
@@ -378,7 +385,12 @@ class _TitleDetailsState extends State<TitleDetails> {
         creatorsWidget = SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: _infoColumn(
-              AppLocalizations.of(context)!.creator, _clickableNames(creators)),
+            AppLocalizations.of(context)!.creator,
+            ClickableNames(
+              people: creators,
+              tmdbListService: widget._tmdbListService,
+            ),
+          ),
         );
       }
     }
@@ -395,7 +407,12 @@ class _TitleDetailsState extends State<TitleDetails> {
       writersWidget = SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: _infoColumn(
-            AppLocalizations.of(context)!.writer, _clickableNames(writers)),
+          AppLocalizations.of(context)!.writer,
+          ClickableNames(
+            people: writers,
+            tmdbListService: widget._tmdbListService,
+          ),
+        ),
       );
     }
 
@@ -414,70 +431,11 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
   }
 
-  Widget _clickableNames(List<TmdbPerson> people, {bool useEllipsis = false}) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: people.asMap().entries.map((entry) {
-        final index = entry.key;
-        final person = entry.value;
-        final isLast = index == people.length - 1;
-
-        Widget nameWidget = InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PersonDetails(
-                  person: person,
-                  tmdbListService: widget._tmdbListService,
-                ),
-              ),
-            );
-          },
-          child: Text(
-            person.name,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              decoration: TextDecoration.underline,
-            ),
-            overflow: useEllipsis ? TextOverflow.ellipsis : null,
-          ),
-        );
-
-        if (useEllipsis) {
-          nameWidget = Flexible(child: nameWidget);
-        }
-
-        Widget child = Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            nameWidget,
-            if (!isLast) const Text(', '),
-          ],
-        );
-
-        if (useEllipsis) {
-          child = Flexible(child: child);
-        }
-
-        return child;
-      }).toList(),
-    );
-  }
-
   Widget _externalLinks(TmdbTitle title) {
     List<Widget> links = [];
 
-    final buttonStyle = OutlinedButton.styleFrom(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
-      ),
-    );
-
     links.add(
-      OutlinedButton(
-        style: buttonStyle,
+      BoxedWidget(
         onPressed: () {
           launchUrl(
             Uri.parse(
@@ -486,6 +444,7 @@ class _TitleDetailsState extends State<TitleDetails> {
             mode: LaunchMode.inAppWebView,
           );
         },
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         child: SizedBox(
           height: 30,
           child: Image.asset(
@@ -499,14 +458,14 @@ class _TitleDetailsState extends State<TitleDetails> {
     if (title.imdbId.isNotEmpty) {
       links.add(const SizedBox(width: 10));
       links.add(
-        OutlinedButton(
-          style: buttonStyle,
+        BoxedWidget(
           onPressed: () {
             launchUrl(
               Uri.parse('https://www.imdb.com/title/${title.imdbId}'),
               mode: LaunchMode.inAppBrowserView,
             );
           },
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: SizedBox(
             height: 30,
             child: Image.asset(
@@ -521,14 +480,14 @@ class _TitleDetailsState extends State<TitleDetails> {
     if (title.homepage.isNotEmpty) {
       links.add(const SizedBox(width: 10));
       links.add(
-        OutlinedButton(
-          style: buttonStyle,
+        BoxedWidget(
           onPressed: () {
             launchUrl(
               Uri.parse(title.homepage),
               mode: LaunchMode.externalApplication,
             );
           },
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: SizedBox(
             height: 30,
             width: 30,
@@ -563,7 +522,7 @@ class _TitleDetailsState extends State<TitleDetails> {
             const SizedBox(height: 15),
             _seasonsDropdown(title),
           ],
-          const SizedBox(height: 30),
+          const SizedBox(height: 10),
           _infoLine(title),
           const SizedBox(height: 10),
           _creditsInfo(title),
@@ -576,7 +535,9 @@ class _TitleDetailsState extends State<TitleDetails> {
           ),
           const SizedBox(height: 10),
           _providers(title),
-          const SizedBox(height: 30),
+          Divider(
+            color: Theme.of(context).extension<CustomColors>()!.dividerColor,
+          ),
           _recommended(title),
           const SizedBox(height: 30),
           _castAndCrew(title, PersonAttributes.cast),
@@ -678,17 +639,6 @@ class _TitleDetailsState extends State<TitleDetails> {
 
     if (people.isEmpty) return const SizedBox.shrink();
 
-    String? trailerVideoId;
-    if (title.videos.isNotEmpty) {
-      final youtubeVideos = title.videos.where((v) =>
-          (v['site'] == 'YouTube' || v['site'] == null) && v['key'] != null);
-      if (youtubeVideos.isNotEmpty) {
-        trailerVideoId = youtubeVideos.first['key'] as String;
-      } else {
-        trailerVideoId = title.videos.first['key'] as String?;
-      }
-    }
-
     return Padding(
       padding: const EdgeInsets.only(top: 4.0),
       child: Row(
@@ -700,34 +650,21 @@ class _TitleDetailsState extends State<TitleDetails> {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.bold),
                 ),
-                _clickableNames(people, useEllipsis: true),
+                ClickableNames(
+                  people: people,
+                  tmdbListService: widget._tmdbListService,
+                  useEllipsis: true,
+                ),
               ],
             ),
           ),
-          if (trailerVideoId != null)
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  final topMargin = kToolbarHeight + 16.0;
-                  showDialog(
-                    context: context,
-                    builder: (context) => TrailerDialog(
-                      videoId: trailerVideoId!,
-                      topMargin: topMargin,
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.play_arrow, size: 16),
-                label: Text(AppLocalizations.of(context)!.trailer),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                  minimumSize: const Size(0, 32),
-                ),
-              ),
-            ),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: TrailerButtons(videos: title.videos),
+          ),
         ],
       ),
     );
@@ -735,12 +672,13 @@ class _TitleDetailsState extends State<TitleDetails> {
 
   Widget _actionButtons(TmdbTitle title) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        notifyButton(context, title),
+        watchlistButton(context, title),
         const SizedBox(width: 8),
         pinButton(context, title),
         const SizedBox(width: 8),
-        watchlistButton(context, title),
+        notifyButton(context, title),
       ],
     );
   }
@@ -753,7 +691,6 @@ class _TitleDetailsState extends State<TitleDetails> {
         DateTime.parse(title.firstAirDate).isAfter(DateTime.now())) {
       return Text(AppLocalizations.of(context)!.notReleasedYet);
     }
-
     if (title.voteAverage > 0) {
       titleVoteAverage = title.voteAverage.toStringAsFixed(1);
     }
@@ -763,12 +700,21 @@ class _TitleDetailsState extends State<TitleDetails> {
       topChildren.addAll([
         Tooltip(
           message: 'The Movie Database',
-          child: Row(
-            children: [
-              Image.asset('assets/tmdb-logo-square.png', height: 16),
-              const SizedBox(width: 5),
-              Text(titleVoteAverage),
-            ],
+          child: BoxedWidget(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/tmdb-logo-square.png', height: 16),
+                const SizedBox(width: 5),
+                Text(
+                  titleVoteAverage,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSecondary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ]);
@@ -794,25 +740,8 @@ class _TitleDetailsState extends State<TitleDetails> {
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (topChildren.isNotEmpty)
-          Row(
-            children: [
-              Icon(
-                Icons.star,
-                color: titleTheme.ratedTitle,
-              ),
-              const SizedBox(width: 5),
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(children: topChildren),
-                ),
-              ),
-            ],
-          ),
-        const SizedBox(height: 5),
         Consumer<TmdbRateslistService>(
           builder: (context, ratingService, child) {
             return FutureBuilder<List<dynamic>>(
@@ -826,155 +755,158 @@ class _TitleDetailsState extends State<TitleDetails> {
                     Provider.of<TmdbUserService>(context).isUserLoggedIn;
                 final titleRatingDate = snapshot.data?[0] as DateTime? ??
                     DateTime.fromMillisecondsSinceEpoch(0);
-                final titleIsRated = snapshot.data?[1] as bool? ?? false;
                 final titleRating = snapshot.data?[2] as double? ?? 0.0;
 
-                return Row(
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.star,
-                      color: titleTheme.userRatedTitle,
-                    ),
-                    const SizedBox(width: 5),
-                    if (titleIsRated)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: Text(
-                          titleRating == AppConstants.seenRating
-                              ? AppLocalizations.of(context)!.seen
-                              : '$titleRating',
-                        ),
+                    Text(
+                      AppLocalizations.of(context)!.your_rate.toUpperCase(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
                       ),
-                    Flexible(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: IntrinsicHeight(
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        const Expanded(child: SizedBox()),
+                        OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: !isUserLoggedIn
+                                  ? Theme.of(context).disabledColor
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                              width: 2,
+                            ),
+                            shape: const StadiumBorder(),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 6, horizontal: 10),
+                            minimumSize: const Size(0, 0),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          onPressed: !isUserLoggedIn
+                              ? null
+                              : () => showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return RateForm(
+                                        title: title.name,
+                                        initialRate: titleRating,
+                                        initialDate: titleRatingDate,
+                                        onSubmit: (double rating) async {
+                                          await _updateTitleRate(title, rating);
+                                        },
+                                      );
+                                    },
+                                  ),
                           child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              TextButton(
-                                style: TextButton.styleFrom(
-                                  side: BorderSide(
-                                    color: !isUserLoggedIn
-                                        ? Theme.of(context).disabledColor
-                                        : titleRating > AppConstants.seenRating
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
-                                    width: 1,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 14),
-                                  minimumSize: const Size(0, 0),
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
-                                onPressed: !isUserLoggedIn
-                                    ? null
-                                    : () => showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return RateForm(
-                                              title: title.name,
-                                              initialRate: titleRating,
-                                              initialDate: titleRatingDate,
-                                              onSubmit: (double rating) async {
-                                                await _updateTitleRate(
-                                                    title, rating);
-                                              },
-                                            );
-                                          },
-                                        ),
-                                child: Text(
-                                  AppLocalizations.of(context)!.rate,
-                                  style: TextStyle(
-                                    color: !isUserLoggedIn
-                                        ? Theme.of(context).disabledColor
-                                        : titleRating > AppConstants.seenRating
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
-                                  ),
-                                ),
+                              Icon(
+                                Icons.star,
+                                size: 32,
+                                color: !isUserLoggedIn
+                                    ? Theme.of(context).disabledColor
+                                    : titleTheme.userRatedTitle,
                               ),
-                              const SizedBox(width: 10),
-                              TextButton(
-                                style: TextButton.styleFrom(
-                                  side: BorderSide(
-                                    color: !isUserLoggedIn ||
-                                            titleRating >
-                                                AppConstants.seenRating
-                                        ? Theme.of(context).disabledColor
-                                        : (titleRating ==
-                                                AppConstants.seenRating
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .onSurface),
-                                    width: 1,
+                              const SizedBox(width: 8),
+                              Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  const Text(
+                                    '9.99',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22,
+                                      color: Colors.transparent,
+                                    ),
                                   ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 14),
-                                  minimumSize: const Size(0, 0),
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
-                                onPressed: !isUserLoggedIn ||
-                                        titleRating > AppConstants.seenRating
-                                    ? null
-                                    : () async {
-                                        final newRating = titleRating ==
-                                                AppConstants.seenRating
-                                            ? 0.0
-                                            : AppConstants.seenRating;
-
-                                        await _updateTitleRate(
-                                            title, newRating);
-                                      },
-                                child: Tooltip(
-                                  message:
-                                      titleRating == AppConstants.seenRating
-                                          ? AppLocalizations.of(context)!.seen
-                                          : AppLocalizations.of(context)!
-                                              .markAsSeen,
-                                  child: Icon(
-                                    titleRating > 0
-                                        ? Symbols.done_outline
-                                        : Symbols.check,
-                                    color: titleRating > 0
-                                        ? (!isUserLoggedIn ||
-                                                titleRating >
-                                                    AppConstants.seenRating
+                                  if (titleRating > AppConstants.seenRating)
+                                    Text(
+                                      '$titleRating',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 22,
+                                        color: !isUserLoggedIn
                                             ? Theme.of(context).disabledColor
                                             : Theme.of(context)
                                                 .colorScheme
-                                                .primary)
-                                        : (isUserLoggedIn
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .onSurface
-                                            : Theme.of(context).disabledColor),
-                                  ),
-                                ),
+                                                .onSurfaceVariant,
+                                      ),
+                                    ),
+                                ],
                               ),
                             ],
                           ),
                         ),
-                      ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  color: !isUserLoggedIn ||
+                                          titleRating > AppConstants.seenRating
+                                      ? Theme.of(context).disabledColor
+                                      : (titleRating == AppConstants.seenRating
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface),
+                                  width: 1,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 14),
+                                minimumSize: const Size(0, 0),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              onPressed: !isUserLoggedIn ||
+                                      titleRating > AppConstants.seenRating
+                                  ? null
+                                  : () async {
+                                      final newRating =
+                                          titleRating == AppConstants.seenRating
+                                              ? 0.0
+                                              : AppConstants.seenRating;
+
+                                      await _updateTitleRate(title, newRating);
+                                    },
+                              child: Tooltip(
+                                message: titleRating == AppConstants.seenRating
+                                    ? AppLocalizations.of(context)!.seen
+                                    : AppLocalizations.of(context)!.markAsSeen,
+                                child: Icon(
+                                  titleRating > 0
+                                      ? Symbols.done_outline
+                                      : Symbols.check,
+                                  size: 16,
+                                  color: titleRating > 0
+                                      ? (!isUserLoggedIn ||
+                                              titleRating >
+                                                  AppConstants.seenRating
+                                          ? Theme.of(context).disabledColor
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .primary)
+                                      : (isUserLoggedIn
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                          : Theme.of(context).disabledColor),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 );
@@ -982,6 +914,12 @@ class _TitleDetailsState extends State<TitleDetails> {
             );
           },
         ),
+        if (topChildren.isNotEmpty) const SizedBox(height: 15),
+        if (topChildren.isNotEmpty)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: topChildren,
+          ),
       ],
     );
   }
@@ -1052,14 +990,21 @@ class _TitleDetailsState extends State<TitleDetails> {
     return text;
   }
 
-  Text _description(TmdbTitle title) {
-    return Text(
-      title.overview.isEmpty
-          ? AppLocalizations.of(context)!.missingDescription
-          : title.overview,
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
-      ),
+  Widget _description(TmdbTitle title) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Divider(
+          color: Theme.of(context).extension<CustomColors>()!.dividerColor,
+        ),
+        ExpandableDescription(
+          text: title.overview,
+          initialMaxLines: 3,
+        ),
+        Divider(
+          color: Theme.of(context).extension<CustomColors>()!.dividerColor,
+        ),
+      ],
     );
   }
 
@@ -1174,44 +1119,44 @@ class _TitleDetailsState extends State<TitleDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        DropdownSelector(
-          maxMenuHeight: 250,
-          selectedOption:
-              _selectedSeason.isEmpty ? selectSeasonText : _selectedSeason,
-          options: seasonOptions,
-          border: Border.all(
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-          borderRadius: BorderRadius.circular(5),
-          onSelected: (option) {
-            if (option == selectSeasonText) return;
+        BoxedWidget(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: DropdownSelector(
+            maxMenuHeight: 250,
+            isExpanded: true,
+            selectedOption:
+                _selectedSeason.isEmpty ? selectSeasonText : _selectedSeason,
+            options: seasonOptions,
+            onSelected: (option) {
+              if (option == selectSeasonText) return;
 
-            // Reconstruct the season number by matching the option inside seasonOptions
-            final seasonIndex = seasonOptions.indexOf(option);
-            if (seasonIndex < 1) return;
-            final seasonNumber = seasonIndex;
+              // Reconstruct the season number by matching the option inside seasonOptions
+              final seasonIndex = seasonOptions.indexOf(option);
+              if (seasonIndex < 1) return;
+              final seasonNumber = seasonIndex;
 
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SeasonDetails(
-                  title: title,
-                  seasonNumber: seasonNumber,
-                  tmdbListService: widget._tmdbListService,
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SeasonDetails(
+                    title: title,
+                    seasonNumber: seasonNumber,
+                    tmdbListService: widget._tmdbListService,
+                  ),
                 ),
-              ),
-            ).then((_) {
-              if (mounted) {
-                setState(() {
-                  _selectedSeason = '';
-                });
-              }
-            });
+              ).then((_) {
+                if (mounted) {
+                  setState(() {
+                    _selectedSeason = '';
+                  });
+                }
+              });
 
-            setState(() {
-              _selectedSeason = option;
-            });
-          },
+              setState(() {
+                _selectedSeason = option;
+              });
+            },
+          ),
         ),
       ],
     );

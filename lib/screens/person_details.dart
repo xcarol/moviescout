@@ -14,6 +14,7 @@ import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/widgets/person_title_chip.dart';
+import 'package:moviescout/widgets/expandable_description.dart';
 import 'package:moviescout/screens/person_titles.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
@@ -23,6 +24,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:moviescout/widgets/edit_button.dart';
 import 'package:moviescout/widgets/translations_button.dart';
 import 'package:moviescout/services/tmdb_translation_service.dart';
+import 'package:moviescout/widgets/boxed_widget.dart';
 
 class PersonDetails extends StatefulWidget {
   final TmdbPerson _person;
@@ -274,34 +276,20 @@ class _PersonDetailsState extends State<PersonDetails> {
   Widget _externalLinks(TmdbPerson person) {
     List<Widget> links = [];
 
-    final buttonStyle = ElevatedButton.styleFrom(
-      elevation: 4,
-      backgroundColor: Theme.of(context).colorScheme.secondary,
-      padding: EdgeInsets.zero,
-      minimumSize: const Size(0, 0),
-      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(6),
-      ),
-    );
-
     links.add(
-      ElevatedButton(
-        style: buttonStyle,
+      BoxedWidget(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
         onPressed: () {
           launchUrl(
             Uri.parse('https://www.themoviedb.org/person/${person.tmdbId}'),
             mode: LaunchMode.inAppWebView,
           );
         },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-          child: SizedBox(
-            height: 20,
-            child: Image.asset(
-              'assets/tmdb-logo.png',
-              fit: BoxFit.cover,
-            ),
+        child: SizedBox(
+          height: 20,
+          child: Image.asset(
+            'assets/tmdb-logo.png',
+            fit: BoxFit.cover,
           ),
         ),
       ),
@@ -309,22 +297,19 @@ class _PersonDetailsState extends State<PersonDetails> {
 
     if (person.imdbId.isNotEmpty) {
       links.add(
-        ElevatedButton(
-          style: buttonStyle,
+        BoxedWidget(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           onPressed: () {
             launchUrl(
               Uri.parse('https://www.imdb.com/name/${person.imdbId}'),
               mode: LaunchMode.inAppBrowserView,
             );
           },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-            child: SizedBox(
-              height: 20,
-              child: Image.asset(
-                'assets/imdb-logo.png',
-                fit: BoxFit.cover,
-              ),
+          child: SizedBox(
+            height: 20,
+            child: Image.asset(
+              'assets/imdb-logo.png',
+              fit: BoxFit.cover,
             ),
           ),
         ),
@@ -333,22 +318,19 @@ class _PersonDetailsState extends State<PersonDetails> {
 
     if (person.homepage.isNotEmpty) {
       links.add(
-        ElevatedButton(
-          style: buttonStyle,
+        BoxedWidget(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           onPressed: () {
             launchUrl(
               Uri.parse(person.homepage),
               mode: LaunchMode.inAppBrowserView,
             );
           },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-            child: SizedBox(
-              height: 20,
-              child: Image.asset(
-                'assets/person_web.png',
-                fit: BoxFit.cover,
-              ),
+          child: SizedBox(
+            height: 20,
+            child: Image.asset(
+              'assets/person_web.png',
+              fit: BoxFit.cover,
             ),
           ),
         ),
@@ -494,11 +476,9 @@ class _PersonDetailsState extends State<PersonDetails> {
   Widget _description(TmdbPerson person) {
     return Padding(
       padding: EdgeInsets.only(left: 5, right: 5, top: 10),
-      child: Text(
-        person.biography.isEmpty
-            ? AppLocalizations.of(context)!.missingDescription
-            : person.biography,
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+      child: ExpandableDescription(
+        text: person.biography,
+        initialMaxLines: 10,
       ),
     );
   }

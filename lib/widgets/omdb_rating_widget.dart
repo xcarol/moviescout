@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/widgets/boxed_widget.dart';
 
 class OmdbRatingWidget extends StatelessWidget {
   final Map<String, dynamic> rating;
@@ -45,12 +46,21 @@ class OmdbRatingWidget extends StatelessWidget {
 
     return Tooltip(
       message: source,
-      child: Row(
-        children: [
-          Image.asset(logoPath, height: 16),
-          const SizedBox(width: 5),
-          Text(value),
-        ],
+      child: BoxedWidget(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(logoPath, height: 16),
+            const SizedBox(width: 5),
+            Text(
+              value,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSecondary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

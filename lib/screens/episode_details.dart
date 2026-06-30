@@ -10,6 +10,7 @@ import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/person_chip.dart';
 import 'package:moviescout/utils/date_formatter.dart';
+import 'package:moviescout/widgets/expandable_description.dart';
 import 'package:moviescout/widgets/edit_button.dart';
 import 'package:moviescout/widgets/translations_button.dart';
 import 'package:moviescout/services/tmdb_translation_service.dart';
@@ -283,11 +284,9 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
       return const SizedBox.shrink();
     }
 
-    return Text(
-      episode.overview.isEmpty
-          ? AppLocalizations.of(context)!.missingDescription
-          : episode.overview,
-      textAlign: TextAlign.justify,
+    return ExpandableDescription(
+      text: episode.overview,
+      initialMaxLines: 5,
     );
   }
 

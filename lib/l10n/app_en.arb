@@ -128,8 +128,7 @@
     "@genres": {},
     "titles": "Titles",
     "@titles": {},
-    "rate": "Rate",
-    "@rate": {},
+
     "rate_date": "Rated date",
     "@rate_date": {},
     "your_rate": "Your rating",

@@ -207,7 +207,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get rate_date => 'Data de valoració';
 
   @override
-  String get your_rate => 'La teva valoració';
+  String get your_rate => 'LA TEVA VALORACIÓ';
 
   @override
   String get reset_rate => 'Elimina la valoració';
