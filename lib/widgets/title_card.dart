@@ -236,8 +236,6 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-
-
   Row _titleBottomRow(BuildContext context, TmdbTitle tmdbTitle) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -413,4 +411,3 @@ String titleSubtitle(BuildContext context, TmdbTitle tmdbTitle) {
     return typeOrDuration;
   }
 }
-

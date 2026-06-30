@@ -48,6 +48,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get searchProvider => 'Busca un proveedor';
 
   @override
+  String get trailer => 'Tráiler';
+
+  @override
   String get includeGenres => 'Incluir';
 
   @override
@@ -204,7 +207,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get rate_date => 'Fecha de valoración';
 
   @override
-  String get your_rate => 'Tu valoración';
+  String get your_rate => 'TU VALORACIÓN';
 
   @override
   String get reset_rate => 'Elimina tu valoración';
@@ -313,9 +316,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get ratedCredits => 'Creditos valorados';
-
-  @override
-  String get originalName => 'Nombre original';
 
   @override
   String get birthDate => 'Fecha de nacimiento';

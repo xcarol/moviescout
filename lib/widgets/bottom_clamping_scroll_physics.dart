@@ -13,7 +13,8 @@ class BottomClampingScrollPhysics extends ScrollPhysics {
     assert(() {
       if (value == position.pixels) {
         throw FlutterError.fromParts(<DiagnosticsNode>[
-          ErrorSummary('$runtimeType.applyBoundaryConditions() was called redundantly.'),
+          ErrorSummary(
+              '$runtimeType.applyBoundaryConditions() was called redundantly.'),
           ErrorDescription(
             'The proposed new position, $value, is exactly equal to the current position of the '
             'given ${position.runtimeType}, ${position.pixels}.\n'
@@ -29,11 +30,13 @@ class BottomClampingScrollPhysics extends ScrollPhysics {
       return true;
     }());
 
-    if (position.maxScrollExtent <= position.pixels && position.pixels < value) {
+    if (position.maxScrollExtent <= position.pixels &&
+        position.pixels < value) {
       // Overscroll at bottom. Clamp it.
       return value - position.pixels;
     }
-    if (position.pixels < position.maxScrollExtent && position.maxScrollExtent < value) {
+    if (position.pixels < position.maxScrollExtent &&
+        position.maxScrollExtent < value) {
       // Hit bottom edge. Clamp it.
       return value - position.maxScrollExtent;
     }

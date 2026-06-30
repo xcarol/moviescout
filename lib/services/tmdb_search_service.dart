@@ -85,7 +85,9 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
 
   Future<List<TmdbItem>> _getAllSortedAndFiltered() async {
     List<TmdbItem> allItems = [];
-    if (_selectedType == '' || _selectedType == ApiConstants.movie || _selectedType == ApiConstants.tv) {
+    if (_selectedType == '' ||
+        _selectedType == ApiConstants.movie ||
+        _selectedType == ApiConstants.tv) {
       final titles = await titleRepository.getTitles(
         listName: listNameVal,
         filterText: '',
@@ -97,7 +99,7 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
         allItems.addAll(titles.where((t) => t.mediaType == _selectedType));
       }
     }
-    
+
     if (_selectedType == '' || _selectedType == ApiConstants.person) {
       if (filterText.isEmpty) {
         allItems.addAll(_memoryPersons);
@@ -105,8 +107,8 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
         final query = filterText.toLowerCase().trim();
         allItems.addAll(_memoryPersons.where((p) {
           return p.name.toLowerCase().contains(query) ||
-                 p.character.toLowerCase().contains(query) ||
-                 p.job.toLowerCase().contains(query);
+              p.character.toLowerCase().contains(query) ||
+              p.job.toLowerCase().contains(query);
         }));
       }
     }
@@ -114,8 +116,10 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
     final String query = filterText.toLowerCase().trim();
 
     allItems.sort((a, b) {
-      String nameA = (a is TmdbTitle ? a.name : (a as TmdbPerson).name).toLowerCase();
-      String nameB = (b is TmdbTitle ? b.name : (b as TmdbPerson).name).toLowerCase();
+      String nameA =
+          (a is TmdbTitle ? a.name : (a as TmdbPerson).name).toLowerCase();
+      String nameB =
+          (b is TmdbTitle ? b.name : (b as TmdbPerson).name).toLowerCase();
 
       if (query.isNotEmpty) {
         bool exactA = nameA == query;
@@ -141,13 +145,14 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
   }
 
   @override
-  Future<List<TmdbItem>> fetchItems({required int offset, required int limit}) async {
+  Future<List<TmdbItem>> fetchItems(
+      {required int offset, required int limit}) async {
     final allItems = await _getAllSortedAndFiltered();
-    
+
     int end = offset + limit;
     if (end > allItems.length) end = allItems.length;
     if (offset >= allItems.length) return [];
-    
+
     return allItems.sublist(offset, end);
   }
 
@@ -160,11 +165,10 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
 
   Future<void> retrieveSearchlist(
       String accountId, String searchTerm, Locale locale) async {
-      
     isLoading.value = true;
     filterText = searchTerm;
     notifyListeners();
-    
+
     try {
       await titleRepository.clearList(listNameVal);
       _memoryPersons.clear();
@@ -174,123 +178,127 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
         _fetchAndSaveTvShows(searchTerm, locale),
         _fetchAndSavePersons(searchTerm, locale),
       ]);
-      
+
       await filterItems();
     } catch (e) {
-       // Ignore or log error
+      // Ignore or log error
     } finally {
       isLoading.value = false;
       notifyListeners();
     }
   }
-  
+
   Future<void> _fetchAndSaveMovies(String searchTerm, Locale locale) async {
-      int page = 1;
-      int totalPages = 1;
-      List<dynamic> rawItems = [];
-      
-      do {
-        dynamic response = await get(
-          _tmdbSearchMovies
-              .replaceFirst('{PAGE}', page.toString())
-              .replaceFirst('{SEARCH}', searchTerm)
-              .replaceFirst(
-                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-        );
-        
-        if (response.statusCode == 200) {
-          final Map responseBody = body(response);
-          if (responseBody['total_pages'] != null) {
-            totalPages = _totalPagesFromResponse(response, maxSearchMovies);
-          }
-          if (responseBody['results'] != null) {
-            for (var item in responseBody['results']) {
-               item[TmdbTitleFields.mediaType] = ApiConstants.movie;
-               rawItems.add(item);
-            }
+    int page = 1;
+    int totalPages = 1;
+    List<dynamic> rawItems = [];
+
+    do {
+      dynamic response = await get(
+        _tmdbSearchMovies
+            .replaceFirst('{PAGE}', page.toString())
+            .replaceFirst('{SEARCH}', searchTerm)
+            .replaceFirst(
+                '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+      );
+
+      if (response.statusCode == 200) {
+        final Map responseBody = body(response);
+        if (responseBody['total_pages'] != null) {
+          totalPages = _totalPagesFromResponse(response, maxSearchMovies);
+        }
+        if (responseBody['results'] != null) {
+          for (var item in responseBody['results']) {
+            item[TmdbTitleFields.mediaType] = ApiConstants.movie;
+            rawItems.add(item);
           }
         }
-      } while (page++ < totalPages);
-      
-      if (rawItems.isNotEmpty) {
-          final mergedTitles = await _mergeRawItemsWithExisting(rawItems, ApiConstants.movie);
-          final updated = await Future.wait(
-              mergedTitles.map((t) => TmdbTitleService().updateTitleDetails(t)));
-          await titleRepository.saveTitles(updated.cast<TmdbTitle>(), listNameVal);
       }
+    } while (page++ < totalPages);
+
+    if (rawItems.isNotEmpty) {
+      final mergedTitles =
+          await _mergeRawItemsWithExisting(rawItems, ApiConstants.movie);
+      final updated = await Future.wait(
+          mergedTitles.map((t) => TmdbTitleService().updateTitleDetails(t)));
+      await titleRepository.saveTitles(updated.cast<TmdbTitle>(), listNameVal);
+    }
   }
 
   Future<void> _fetchAndSaveTvShows(String searchTerm, Locale locale) async {
-      int page = 1;
-      int totalPages = 1;
-      List<dynamic> rawItems = [];
-      
-      do {
-        dynamic response = await get(
-          _tmdbSearchTvShows
-              .replaceFirst('{PAGE}', page.toString())
-              .replaceFirst('{SEARCH}', searchTerm)
-              .replaceFirst(
-                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-        );
-        
-        if (response.statusCode == 200) {
-          final Map responseBody = body(response);
-          if (responseBody['total_pages'] != null) {
-            totalPages = _totalPagesFromResponse(response, maxSearchTvShows);
-          }
-          if (responseBody['results'] != null) {
-            for (var item in responseBody['results']) {
-               item[TmdbTitleFields.mediaType] = ApiConstants.tv;
-               rawItems.add(item);
-            }
+    int page = 1;
+    int totalPages = 1;
+    List<dynamic> rawItems = [];
+
+    do {
+      dynamic response = await get(
+        _tmdbSearchTvShows
+            .replaceFirst('{PAGE}', page.toString())
+            .replaceFirst('{SEARCH}', searchTerm)
+            .replaceFirst(
+                '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+      );
+
+      if (response.statusCode == 200) {
+        final Map responseBody = body(response);
+        if (responseBody['total_pages'] != null) {
+          totalPages = _totalPagesFromResponse(response, maxSearchTvShows);
+        }
+        if (responseBody['results'] != null) {
+          for (var item in responseBody['results']) {
+            item[TmdbTitleFields.mediaType] = ApiConstants.tv;
+            rawItems.add(item);
           }
         }
-      } while (page++ < totalPages);
-      
-      if (rawItems.isNotEmpty) {
-          final mergedTitles = await _mergeRawItemsWithExisting(rawItems, ApiConstants.tv);
-          final updated = await Future.wait(
-              mergedTitles.map((t) => TmdbTitleService().updateTitleDetails(t)));
-          await titleRepository.saveTitles(updated.cast<TmdbTitle>(), listNameVal);
       }
+    } while (page++ < totalPages);
+
+    if (rawItems.isNotEmpty) {
+      final mergedTitles =
+          await _mergeRawItemsWithExisting(rawItems, ApiConstants.tv);
+      final updated = await Future.wait(
+          mergedTitles.map((t) => TmdbTitleService().updateTitleDetails(t)));
+      await titleRepository.saveTitles(updated.cast<TmdbTitle>(), listNameVal);
+    }
   }
 
   Future<void> _fetchAndSavePersons(String searchTerm, Locale locale) async {
-      int page = 1;
-      int totalPages = 1;
-      List<TmdbPerson> persons = [];
-      
-      do {
-        dynamic response = await get(
-          _tmdbSearchPersons
-              .replaceFirst('{PAGE}', page.toString())
-              .replaceFirst('{SEARCH}', searchTerm)
-              .replaceFirst(
-                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-        );
-        
-        if (response.statusCode == 200) {
-          final Map responseBody = body(response);
-          if (responseBody['total_pages'] != null) {
-            totalPages = _totalPagesFromResponse(response, maxSearchPersons);
-          }
-          if (responseBody['results'] != null) {
-            for (var item in responseBody['results']) {
-               final person = TmdbPerson.fromMap(person: item);
-               persons.add(person);
-            }
+    int page = 1;
+    int totalPages = 1;
+    List<TmdbPerson> persons = [];
+
+    do {
+      dynamic response = await get(
+        _tmdbSearchPersons
+            .replaceFirst('{PAGE}', page.toString())
+            .replaceFirst('{SEARCH}', searchTerm)
+            .replaceFirst(
+                '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+      );
+
+      if (response.statusCode == 200) {
+        final Map responseBody = body(response);
+        if (responseBody['total_pages'] != null) {
+          totalPages = _totalPagesFromResponse(response, maxSearchPersons);
+        }
+        if (responseBody['results'] != null) {
+          for (var item in responseBody['results']) {
+            final person = TmdbPerson.fromMap(person: item);
+            persons.add(person);
           }
         }
-      } while (page++ < totalPages);
-      
-      if (persons.isNotEmpty) {
-          _memoryPersons.addAll(persons);
       }
+    } while (page++ < totalPages);
+
+    if (persons.isNotEmpty) {
+      _memoryPersons.addAll(persons);
+    }
   }
 
-  Future<List<TmdbTitle>> _mergeRawItemsWithExisting(List<dynamic> rawItems, String mediaType) async {
-    final allTmdbIds = rawItems.map((item) => item[TmdbTitleFields.id] as int).toList();
+  Future<List<TmdbTitle>> _mergeRawItemsWithExisting(
+      List<dynamic> rawItems, String mediaType) async {
+    final allTmdbIds =
+        rawItems.map((item) => item[TmdbTitleFields.id] as int).toList();
     final existingTitles = await titleRepository.getTitlesByTmdbIds(allTmdbIds);
     final existingMap = {
       for (var t in existingTitles) '${t.tmdbId}_${t.mediaType}': t

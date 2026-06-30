@@ -1,17 +1,9 @@
-import 'dart:io';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/models/tmdb_title.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MediaCarousel extends StatefulWidget {
   final List<String> images;
-  final List<Map<String, dynamic>> videos;
   final String backdropPath;
   final String posterPath;
   final bool isMovie;
@@ -20,7 +12,6 @@ class MediaCarousel extends StatefulWidget {
 
   const MediaCarousel({
     required this.images,
-    required this.videos,
     required this.backdropPath,
     required this.posterPath,
     required this.isMovie,
@@ -54,24 +45,13 @@ class _MediaCarouselState extends State<MediaCarousel> {
   Widget build(BuildContext context) {
     final images = widget.images;
 
-    final allVideos = widget.videos;
-    final tmdbVideos = allVideos
-        .where((v) => v[TmdbTitleFields.isSearchResult] != true)
-        .toList()
-        .reversed;
-    final ytVideos = allVideos
-        .where((v) => v[TmdbTitleFields.isSearchResult] == true)
-        .toList();
-
-    final videos = [...tmdbVideos, ...ytVideos];
-
-    if (images.isEmpty && videos.isEmpty) {
+    if (images.isEmpty) {
       return _buildFallbackBanner();
     }
 
-    final totalItems = images.length + videos.length;
+    final totalItems = images.length;
 
-    return _buildCarousel(context, totalItems, images, videos);
+    return _buildCarousel(context, totalItems, images);
   }
 
   int _getRealIndex(int index, int total) {
@@ -80,7 +60,7 @@ class _MediaCarouselState extends State<MediaCarousel> {
   }
 
   Widget _buildCarousel(BuildContext context, int totalItems,
-      List<String> images, List<Map<String, dynamic>> videos) {
+      List<String> images) {
     return RepaintBoundary(
         child: AspectRatio(
       aspectRatio: 16 / 9,
@@ -111,20 +91,12 @@ class _MediaCarouselState extends State<MediaCarousel> {
             },
             itemBuilder: (context, index) {
               final realIndex = _getRealIndex(index, totalItems);
-              if (realIndex < images.length) {
-                return _buildImage(images[realIndex]);
-              } else {
-                return VideoPlayerItem(
-                  key: ValueKey(videos[realIndex - images.length]['key']),
-                  video: videos[realIndex - images.length],
-                  isCurrentPage: realIndex == _currentPage,
-                );
-              }
+              return _buildImage(images[realIndex]);
             },
           ),
           if (totalItems > 1)
             Positioned(
-              bottom: 10,
+              bottom: 25,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(totalItems, (index) {
@@ -205,446 +177,3 @@ class _MediaCarouselState extends State<MediaCarousel> {
   }
 }
 
-class VideoPlayerItem extends StatefulWidget {
-  final Map<String, dynamic> video;
-  final bool isCurrentPage;
-
-  const VideoPlayerItem({
-    required this.video,
-    required this.isCurrentPage,
-    super.key,
-  });
-
-  @override
-  State<VideoPlayerItem> createState() => _VideoPlayerItemState();
-}
-
-class _VideoPlayerItemState extends State<VideoPlayerItem>
-    with AutomaticKeepAliveClientMixin {
-  YoutubePlayerController? _controller;
-  bool _isPlaying = false;
-  bool _isFullScreen = false;
-  ScrollPosition? _scrollPosition;
-  Orientation? _lastOrientation;
-
-  @override
-  bool get wantKeepAlive => _isPlaying;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _scrollPosition?.removeListener(_onScroll);
-    try {
-      // Specifically look for the vertical scrollable (the screen)
-      // instead of the horizontal PageView.
-      _scrollPosition =
-          Scrollable.maybeOf(context, axis: Axis.vertical)?.position;
-      _scrollPosition?.addListener(_onScroll);
-    } catch (_) {}
-  }
-
-  @override
-  void didUpdateWidget(VideoPlayerItem oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Pause if we swipe away, but keep the player in the tree
-    if (!widget.isCurrentPage && _isPlaying) {
-      _controller?.pause();
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollPosition?.removeListener(_onScroll);
-    _controller?.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (!_isPlaying || _controller == null || !mounted) return;
-
-    final RenderObject? renderObject = context.findRenderObject();
-    if (renderObject is RenderBox) {
-      final offset = renderObject.localToGlobal(Offset.zero).dy;
-      final screenHeight = MediaQuery.of(context).size.height;
-      // Stop video if it's 80% out of view at the top OR entirely out at the bottom
-      if (offset < -renderObject.size.height * 0.8 || offset > screenHeight) {
-        _stopPlayback();
-      }
-    }
-  }
-
-  void _stopPlayback() {
-    if (mounted) {
-      setState(() {
-        _isPlaying = false;
-        _controller?.dispose();
-        _controller = null;
-      });
-      updateKeepAlive();
-    }
-  }
-
-  void _startPlayback() async {
-    final key = widget.video['key'] as String;
-
-    if (!kIsWeb && Platform.isLinux) {
-      final url = Uri.parse('https://www.youtube.com/watch?v=$key');
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url);
-      }
-      return;
-    }
-
-    setState(() {
-      _controller = YoutubePlayerController(
-        initialVideoId: key,
-        flags: const YoutubePlayerFlags(
-          autoPlay: true,
-          mute: false,
-          useHybridComposition: true,
-          disableDragSeek: true,
-          // Hide the default fullscreen button to force using our custom one
-          // which correctly handles the navigation and orientation.
-        ),
-      );
-      _isPlaying = true;
-    });
-    updateKeepAlive();
-  }
-
-  void _enterFullScreen() {
-    if (_controller == null || _isFullScreen) return;
-    _isFullScreen = true;
-
-    final currentPosition = _controller!.value.position;
-    _controller!.pause();
-
-    Navigator.of(context)
-        .push(
-      MaterialPageRoute(
-        builder: (context) => FullScreenPlayer(
-          videoId: widget.video['key'] as String,
-          startAt: currentPosition,
-          autoPlay: _controller?.value.isPlaying ?? true,
-        ),
-      ),
-    )
-        .then((resumePosition) {
-      if (mounted) {
-        if (resumePosition != null && resumePosition is Duration) {
-          _controller?.seekTo(resumePosition);
-        }
-        setState(() {
-          _isFullScreen = false;
-        });
-        _controller?.play();
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    final key = widget.video['key'] as String;
-    final name = widget.video['name'] as String;
-    final isSearch = widget.video[TmdbTitleFields.isSearchResult] == true;
-    final currentOrientation = MediaQuery.orientationOf(context);
-    final colorScheme = Theme.of(context).colorScheme;
-
-    if (_isPlaying &&
-        !_isFullScreen &&
-        (_controller?.value.isPlaying ?? false) &&
-        _lastOrientation == Orientation.portrait &&
-        currentOrientation == Orientation.landscape) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _enterFullScreen();
-      });
-    }
-    _lastOrientation = currentOrientation;
-
-    if (_isPlaying && _controller != null) {
-      return Container(
-        color: colorScheme.surface,
-        child: Stack(
-          children: [
-            YoutubePlayer(
-              controller: _controller!,
-              showVideoProgressIndicator: true,
-              progressIndicatorColor: colorScheme.primary,
-              thumbnail: Container(color: colorScheme.onPrimary),
-              onEnded: (meta) => _stopPlayback(),
-              // Ensure we don't show the package's internal fullscreen button
-              bottomActions: [
-                const SizedBox(width: 14.0),
-                CurrentPosition(),
-                const SizedBox(width: 8.0),
-                ProgressBar(isExpanded: true),
-                RemainingDuration(),
-              ],
-            ),
-            if (isSearch)
-              Positioned(
-                top: 8,
-                left: 8,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface.withValues(alpha: 0.6),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: colorScheme.onSurface),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.search,
-                        color: colorScheme.onSurface,
-                        size: 14,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        AppLocalizations.of(context)!.youtubeSearch,
-                        style: TextStyle(
-                            color: colorScheme.onSurface,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-          ],
-        ),
-      );
-    }
-
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        CachedNetworkImage(
-          imageUrl: 'https://img.youtube.com/vi/$key/0.jpg',
-          fit: BoxFit.cover,
-          errorWidget: (context, url, error) => Container(
-            color: colorScheme.surface,
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                colorScheme.surface.withValues(alpha: 0.7),
-              ],
-            ),
-          ),
-        ),
-        if (isSearch)
-          Positioned(
-            top: 8,
-            left: 8,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: colorScheme.surface.withValues(alpha: 0.6),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: colorScheme.onSurface),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.search,
-                    color: colorScheme.onSurface,
-                    size: 14,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    AppLocalizations.of(context)!.youtubeSearch,
-                    style: TextStyle(
-                        color: colorScheme.onSurface,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        Center(
-          child: Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: colorScheme.primary.withValues(alpha: 0.4),
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              icon: Icon(
-                Icons.play_arrow_rounded,
-                size: 56,
-                color: colorScheme.onPrimary,
-              ),
-              onPressed: _startPlayback,
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 20,
-          left: 8,
-          right: 8,
-          child: Text(
-            name,
-            style: TextStyle(
-              color: colorScheme.onSurface,
-              fontWeight: FontWeight.bold,
-              shadows: [
-                Shadow(
-                  color: colorScheme.surface,
-                  blurRadius: 4,
-                )
-              ],
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class FullScreenPlayer extends StatefulWidget {
-  final String videoId;
-  final Duration startAt;
-  final bool autoPlay;
-
-  const FullScreenPlayer({
-    required this.videoId,
-    required this.startAt,
-    this.autoPlay = true,
-    super.key,
-  });
-
-  @override
-  State<FullScreenPlayer> createState() => _FullScreenPlayerState();
-}
-
-class _FullScreenPlayerState extends State<FullScreenPlayer> {
-  late YoutubePlayerController _controller;
-  bool _isEnded = false;
-
-  Future<void> _popWithPortrait({Duration? forcePosition}) async {
-    if (!mounted) return;
-    // Force portrait mode before exiting to ensure the details screen looks good
-    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    if (mounted) {
-      final position = forcePosition ??
-          (_controller.value.isReady
-              ? _controller.value.position
-              : widget.startAt);
-      Navigator.of(context).pop(position);
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = YoutubePlayerController(
-      initialVideoId: widget.videoId,
-      flags: YoutubePlayerFlags(
-        autoPlay: widget.autoPlay,
-        mute: false,
-        startAt: widget.startAt.inSeconds,
-        useHybridComposition: true,
-      ),
-    );
-
-    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-  }
-
-  @override
-  void dispose() {
-    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values);
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final orientation = MediaQuery.orientationOf(context);
-    final colorScheme = Theme.of(context).colorScheme;
-
-    // Handle auto-exit when rotating back to portrait
-    if (orientation == Orientation.portrait) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _popWithPortrait();
-      });
-    }
-
-    return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Center(
-            child: YoutubePlayer(
-              controller: _controller,
-              showVideoProgressIndicator: true,
-              progressIndicatorColor: colorScheme.primary,
-              thumbnail: Container(color: colorScheme.onPrimary),
-              onEnded: (meta) => setState(() => _isEnded = true),
-              bottomActions: [
-                const SizedBox(width: 14.0),
-                CurrentPosition(),
-                const SizedBox(width: 8.0),
-                ProgressBar(isExpanded: true),
-                RemainingDuration(),
-              ],
-            ),
-          ),
-          if (_isEnded) ...[
-            CachedNetworkImage(
-              imageUrl:
-                  'https://img.youtube.com/vi/${widget.videoId}/maxresdefault.jpg',
-              fit: BoxFit.cover,
-              placeholder: (context, url) => CachedNetworkImage(
-                imageUrl: 'https://img.youtube.com/vi/${widget.videoId}/0.jpg',
-                fit: BoxFit.cover,
-              ),
-              errorWidget: (context, url, error) => CachedNetworkImage(
-                imageUrl: 'https://img.youtube.com/vi/${widget.videoId}/0.jpg',
-                fit: BoxFit.cover,
-              ),
-            ),
-            Container(
-              color: colorScheme.surface.withValues(alpha: 0.4),
-            ),
-            Center(
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: colorScheme.primary.withValues(alpha: 0.4),
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.replay_rounded,
-                    size: 80,
-                    color: colorScheme.onPrimary,
-                  ),
-                  onPressed: () {
-                    _controller.play();
-                    setState(() => _isEnded = false);
-                  },
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}

@@ -175,6 +175,12 @@ abstract class AppLocalizations {
   /// **'Search for a provider'**
   String get searchProvider;
 
+  /// No description provided for @trailer.
+  ///
+  /// In en, this message translates to:
+  /// **'Trailer'**
+  String get trailer;
+
   /// No description provided for @includeGenres.
   ///
   /// In en, this message translates to:
@@ -490,7 +496,7 @@ abstract class AppLocalizations {
   /// No description provided for @your_rate.
   ///
   /// In en, this message translates to:
-  /// **'Your rating'**
+  /// **'YOUR RATING'**
   String get your_rate;
 
   /// No description provided for @reset_rate.
@@ -708,12 +714,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rated credits'**
   String get ratedCredits;
-
-  /// No description provided for @originalName.
-  ///
-  /// In en, this message translates to:
-  /// **'Original name'**
-  String get originalName;
 
   /// No description provided for @birthDate.
   ///

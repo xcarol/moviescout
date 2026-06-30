@@ -33,7 +33,9 @@ Widget notifyButton(
               rateslistService.toggleNotify(titleFromList);
             },
             icon: Icon(
-              notifyNewSeasons ? Icons.notifications_active : Icons.notifications_off_outlined,
+              notifyNewSeasons
+                  ? Icons.notifications_active
+                  : Icons.notifications_off_outlined,
               size: 20,
               color: notifyNewSeasons
                   ? Theme.of(context).extension<CustomColors>()!.followingTitle

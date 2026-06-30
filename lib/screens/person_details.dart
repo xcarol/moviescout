@@ -14,6 +14,7 @@ import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/widgets/person_title_chip.dart';
+import 'package:moviescout/widgets/expandable_description.dart';
 import 'package:moviescout/screens/person_titles.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
@@ -23,6 +24,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:moviescout/widgets/edit_button.dart';
 import 'package:moviescout/widgets/translations_button.dart';
 import 'package:moviescout/services/tmdb_translation_service.dart';
+import 'package:moviescout/widgets/boxed_widget.dart';
 
 class PersonDetails extends StatefulWidget {
   final TmdbPerson _person;
@@ -93,10 +95,21 @@ class _PersonDetailsState extends State<PersonDetails> {
               body: Center(child: CircularProgressIndicator()));
         }
 
+        final person = snapshot.data as TmdbPerson;
+        final String editUrl =
+            'https://www.themoviedb.org/person/${person.tmdbId}/edit';
+
         return Scaffold(
           appBar: AppBar(
             title: Text(appTitle),
             actions: [
+              EditButton(url: editUrl),
+              TranslationsButton(
+                  editUrl: editUrl,
+                  fetchTranslations: () => TmdbTranslationService()
+                      .getTranslations('person', person.tmdbId),
+                  originalTitle: person.name,
+                  originalDescription: person.biography),
               IconButton(
                 icon: const Icon(Icons.share),
                 onPressed: () {
@@ -112,7 +125,7 @@ class _PersonDetailsState extends State<PersonDetails> {
           ),
           body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            child: _detailsBody(snapshot.data as TmdbPerson),
+            child: _detailsBody(person),
           ),
         );
       },
@@ -129,13 +142,12 @@ class _PersonDetailsState extends State<PersonDetails> {
         children: [
           _banner(person),
           const SizedBox(height: 20),
-          _details(person),
-          const SizedBox(height: 20),
+          if (widget.titleContext != null) ...[
+            _roleInContext(person),
+            const SizedBox(height: 20)
+          ],
           _description(person),
           const SizedBox(height: 10),
-          Divider(
-              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
-          _externalLinks(person),
           Divider(
               color: Theme.of(context).extension<CustomColors>()!.dividerColor),
           const SizedBox(height: 10),
@@ -151,28 +163,22 @@ class _PersonDetailsState extends State<PersonDetails> {
   }
 
   Widget _characterDetails(TmdbPerson person) {
-    return Wrap(
-      spacing: 20.0,
-      runSpacing: 10.0,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (person.originalName.isNotEmpty &&
-            person.originalName != person.name)
-          _originalName(person),
-        _birthDay(person),
-        _deathDay(person),
-        _characterPlaceOfBirth(person),
+        if (person.birthday.isNotEmpty) ...[
+          _birthDay(person),
+          const SizedBox(height: 10),
+        ],
+        if (person.deathday.isNotEmpty) ...[
+          _deathDay(person),
+          const SizedBox(height: 10),
+        ],
+        if (person.placeOfBirth.isNotEmpty) ...[
+          _characterPlaceOfBirth(person),
+        ],
       ],
     );
-  }
-
-  Widget _originalName(TmdbPerson person) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(
-        AppLocalizations.of(context)!.originalName,
-        style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-      ),
-      Text(person.originalName),
-    ]);
   }
 
   Widget _birthDay(TmdbPerson person) {
@@ -191,11 +197,13 @@ class _PersonDetailsState extends State<PersonDetails> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
         AppLocalizations.of(context)!.birthDate,
-        style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+        style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
       ),
       Text(
         '${_formatDate(context, person.birthday)}$ageString',
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     ]);
   }
@@ -213,10 +221,12 @@ class _PersonDetailsState extends State<PersonDetails> {
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(AppLocalizations.of(context)!.deathDate,
-          style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
+          style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic)),
       Text(
         '${_formatDate(context, person.deathday)}$ageString',
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     ]);
   }
@@ -266,16 +276,9 @@ class _PersonDetailsState extends State<PersonDetails> {
   Widget _externalLinks(TmdbPerson person) {
     List<Widget> links = [];
 
-    final buttonStyle = OutlinedButton.styleFrom(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
-      ),
-    );
-
     links.add(
-      OutlinedButton(
-        style: buttonStyle,
+      BoxedWidget(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
         onPressed: () {
           launchUrl(
             Uri.parse('https://www.themoviedb.org/person/${person.tmdbId}'),
@@ -283,7 +286,7 @@ class _PersonDetailsState extends State<PersonDetails> {
           );
         },
         child: SizedBox(
-          height: 30,
+          height: 20,
           child: Image.asset(
             'assets/tmdb-logo.png',
             fit: BoxFit.cover,
@@ -293,10 +296,9 @@ class _PersonDetailsState extends State<PersonDetails> {
     );
 
     if (person.imdbId.isNotEmpty) {
-      links.add(const SizedBox(width: 20));
       links.add(
-        OutlinedButton(
-          style: buttonStyle,
+        BoxedWidget(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           onPressed: () {
             launchUrl(
               Uri.parse('https://www.imdb.com/name/${person.imdbId}'),
@@ -304,7 +306,7 @@ class _PersonDetailsState extends State<PersonDetails> {
             );
           },
           child: SizedBox(
-            height: 30,
+            height: 20,
             child: Image.asset(
               'assets/imdb-logo.png',
               fit: BoxFit.cover,
@@ -315,10 +317,9 @@ class _PersonDetailsState extends State<PersonDetails> {
     }
 
     if (person.homepage.isNotEmpty) {
-      links.add(const SizedBox(width: 20));
       links.add(
-        OutlinedButton(
-          style: buttonStyle,
+        BoxedWidget(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           onPressed: () {
             launchUrl(
               Uri.parse(person.homepage),
@@ -326,7 +327,7 @@ class _PersonDetailsState extends State<PersonDetails> {
             );
           },
           child: SizedBox(
-            height: 30,
+            height: 20,
             child: Image.asset(
               'assets/person_web.png',
               fit: BoxFit.cover,
@@ -336,27 +337,23 @@ class _PersonDetailsState extends State<PersonDetails> {
       );
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: links,
-    );
-  }
-
-  Widget _details(TmdbPerson person) {
-    return Padding(
-      padding: EdgeInsets.only(left: 5, right: 5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _characterNameAndDepartment(person),
-          if (widget.titleContext != null) ...[
-            const SizedBox(height: 5),
-            _roleInContext(person),
-          ],
-          const SizedBox(height: 10),
-          _characterDetails(person),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Obre amb',
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Wrap(
+          spacing: 4.0,
+          runSpacing: 4.0,
+          children: links,
+        ),
+      ],
     );
   }
 
@@ -392,65 +389,86 @@ class _PersonDetailsState extends State<PersonDetails> {
     String? cTitle = _buildContextTitle(context);
     if (cTitle == null) return const SizedBox.shrink();
 
-    return Text(
-      '$rolesText${AppLocalizations.of(context)!.inRoleContext(cTitle)}',
-      style: TextStyle(
-          fontSize: 14,
-          fontStyle: FontStyle.italic,
-          color: Theme.of(context).colorScheme.onSurfaceVariant),
-    );
-  }
-
-  Widget _characterNameAndDepartment(TmdbPerson person) {
-    if (person.name.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    final String editUrl =
-        'https://www.themoviedb.org/person/${person.tmdbId}/edit';
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Text(
-            person.name,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            textAlign: TextAlign.start,
+    return Padding(
+      padding: EdgeInsets.only(left: 5, right: 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 5),
+          Text(
+            '$rolesText${AppLocalizations.of(context)!.inRoleContext(cTitle)}',
+            style: TextStyle(
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+                color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
-        ),
-        EditButton(url: editUrl),
-        TranslationsButton(
-            editUrl: editUrl,
-            fetchTranslations: () => TmdbTranslationService()
-                .getTranslations('person', person.tmdbId),
-            originalTitle: person.name,
-            originalDescription: person.biography),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _banner(TmdbPerson person) {
-    double posterWidth = min(MediaQuery.sizeOf(context).width, 200);
+    double posterWidth = min(MediaQuery.sizeOf(context).width * 0.4, 150) + 30;
+    double posterHeight = posterWidth * 1.5;
     String image = person.posterPath.isNotEmpty ? person.posterPath : '';
 
     return Padding(
-      padding: EdgeInsets.only(left: 5),
-      child: SizedBox(
-        width: posterWidth,
-        child: AspectRatio(
-          aspectRatio: 2 / 3,
-          child: CachedNetworkImage(
-            imageUrl: image,
-            fit: BoxFit.cover,
-            errorWidget: (context, error, stackTrace) {
-              return SvgPicture.asset(
-                'assets/person.svg',
-                fit: BoxFit.contain,
-              );
-            },
+      padding: EdgeInsets.only(left: 5, right: 5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: posterWidth,
+            height: posterHeight,
+            child: CachedNetworkImage(
+              imageUrl: image,
+              fit: BoxFit.cover,
+              errorWidget: (context, error, stackTrace) {
+                return SvgPicture.asset(
+                  'assets/person.svg',
+                  fit: BoxFit.contain,
+                );
+              },
+            ),
           ),
-        ),
+          Expanded(
+            child: SizedBox(
+              height: posterHeight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: _characterDetails(person),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 10),
+                      Divider(
+                          color: Theme.of(context)
+                              .extension<CustomColors>()!
+                              .dividerColor),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15, bottom: 8),
+                        child: _externalLinks(person),
+                      ),
+                      Divider(
+                          height: 1,
+                          color: Theme.of(context)
+                              .extension<CustomColors>()!
+                              .dividerColor),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -458,11 +476,9 @@ class _PersonDetailsState extends State<PersonDetails> {
   Widget _description(TmdbPerson person) {
     return Padding(
       padding: EdgeInsets.only(left: 5, right: 5, top: 10),
-      child: Text(
-        person.biography.isEmpty
-            ? AppLocalizations.of(context)!.missingDescription
-            : person.biography,
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+      child: ExpandableDescription(
+        text: person.biography,
+        initialMaxLines: 10,
       ),
     );
   }
@@ -475,11 +491,13 @@ class _PersonDetailsState extends State<PersonDetails> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
         AppLocalizations.of(context)!.placeOfBirth,
-        style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+        style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
       ),
       Text(
         person.placeOfBirth,
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     ]);
   }

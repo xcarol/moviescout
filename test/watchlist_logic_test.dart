@@ -16,7 +16,8 @@ void main() {
         'last_updated': AppConstants.defaultDate,
         'last_providers_update': AppConstants.defaultDate,
       });
-      expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now), UpdateType.full);
+      expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now),
+          UpdateType.full);
     });
 
     test('Should return full update if uninitialized serie', () {
@@ -28,10 +29,12 @@ void main() {
         'last_updated': AppConstants.defaultDate,
         'last_providers_update': AppConstants.defaultDate,
       });
-      expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now), UpdateType.full);
+      expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now),
+          UpdateType.full);
     });
 
-    test('Serie: Does NOT full update every hour if already initialized to 0', () {
+    test('Serie: Does NOT full update every hour if already initialized to 0',
+        () {
       final title = TmdbTitle.fromMap(title: {
         TmdbTitleFields.id: 1,
         TmdbTitleFields.mediaType: 'tv',
@@ -39,42 +42,57 @@ void main() {
         'last_updated': now.toIso8601String(),
         'last_providers_update': now.toIso8601String(),
       });
-      expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now), UpdateType.none);
+      expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now),
+          UpdateType.none);
     });
 
     test('Should return none if recently updated', () {
       final title = TmdbTitle.fromMap(title: {
         TmdbTitleFields.id: 1,
         TmdbTitleFields.title: 'Test',
-        'last_updated': now.subtract(const Duration(hours: 1)).toIso8601String(),
-        'last_providers_update': now.subtract(const Duration(hours: 1)).toIso8601String(),
+        'last_updated':
+            now.subtract(const Duration(hours: 1)).toIso8601String(),
+        'last_providers_update':
+            now.subtract(const Duration(hours: 1)).toIso8601String(),
       });
-      expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now), UpdateType.none);
+      expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now),
+          UpdateType.none);
     });
 
-    test('Should return light update if providers are stale but details are fresh', () {
+    test(
+        'Should return light update if providers are stale but details are fresh',
+        () {
       final title = TmdbTitle.fromMap(title: {
         TmdbTitleFields.id: 1,
         TmdbTitleFields.title: 'Test',
-        'last_updated': now.subtract(const Duration(hours: 1)).toIso8601String(),
-        'last_providers_update': now.subtract(const Duration(days: 2)).toIso8601String(),
+        'last_updated':
+            now.subtract(const Duration(hours: 1)).toIso8601String(),
+        'last_providers_update':
+            now.subtract(const Duration(days: 2)).toIso8601String(),
       });
-      expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now), UpdateType.light);
+      expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now),
+          UpdateType.light);
     });
   });
 
   group('WatchlistNotificationEvaluator - evaluateNotification', () {
     final now = DateTime(2026, 3, 29);
-    final enabledProviders = {8, 1796, 337}; // Netflix, Netflix with Ads, Disney Plus
+    final enabledProviders = {
+      8,
+      1796,
+      337
+    }; // Netflix, Netflix with Ads, Disney Plus
 
     Map<String, dynamic> loadJson(String fileName) {
       final file = File('test/$fileName');
       return jsonDecode(file.readAsStringSync());
     }
 
-    Map<String, dynamic> prepareTitleMap(Map<String, dynamic> json, {String region = 'ES'}) {
+    Map<String, dynamic> prepareTitleMap(Map<String, dynamic> json,
+        {String region = 'ES'}) {
       final map = Map<String, dynamic>.from(json);
-      if (map.containsKey('watch/providers') && map['watch/providers']['results'] != null) {
+      if (map.containsKey('watch/providers') &&
+          map['watch/providers']['results'] != null) {
         map['providers'] = map['watch/providers']['results'][region] ?? {};
       }
       // Ensure media_type is present for tests if it's a serie or movie
@@ -92,14 +110,18 @@ void main() {
       final serverJson = loadJson('[Lamar Odom]_future_documentary.json');
       serverJson['watch/providers'] = {
         'results': {
-          'ES': {'flatrate': [{'provider_id': 8}]}
+          'ES': {
+            'flatrate': [
+              {'provider_id': 8}
+            ]
+          }
         }
       };
-      
+
       final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       localTitle.flatrateProviderIds = []; // Locally not available
-      
+
       final trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: localTitle,
         titleAfterUpdate: serverTitle,
@@ -107,7 +129,7 @@ void main() {
         now: now,
         notifyCompleteSeason: false,
       );
-      
+
       expect(trigger, NotificationTrigger.newAvailability);
     });
 
@@ -116,7 +138,7 @@ void main() {
       final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       localTitle.lastNotifiedSeason = 0; // Uninitialized
-      
+
       final trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: localTitle,
         titleAfterUpdate: serverTitle,
@@ -124,7 +146,7 @@ void main() {
         now: now,
         notifyCompleteSeason: false,
       );
-      
+
       expect(trigger, NotificationTrigger.none);
     });
 
@@ -138,13 +160,16 @@ void main() {
       serverJson['number_of_seasons'] = 2;
       serverJson['seasons'] = [
         {'season_number': 1, 'air_date': '2020-01-12'},
-        {'season_number': 2, 'air_date': '2026-03-28'}, // 1 day before 'now' (2026-03-29)
+        {
+          'season_number': 2,
+          'air_date': '2026-03-28'
+        }, // 1 day before 'now' (2026-03-29)
       ];
-      
+
       final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
-      localTitle.lastNotifiedSeason = 1; 
-      
+      localTitle.lastNotifiedSeason = 1;
+
       final trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: localTitle,
         titleAfterUpdate: serverTitle,
@@ -152,25 +177,27 @@ void main() {
         now: now,
         notifyCompleteSeason: false,
       );
-      
+
       expect(trigger, NotificationTrigger.newSeason);
     });
 
-    test('Serie: Notifies on new season if premiere date reached (next_episode)', () {
+    test(
+        'Serie: Notifies on new season if premiere date reached (next_episode)',
+        () {
       final serverJson = loadJson('[Dorohedoro]_serie_new_season.json');
-      // next_episode is S2E1 on 2026-04-01. 
+      // next_episode is S2E1 on 2026-04-01.
       final testNow = DateTime(2026, 4, 1);
-      
+
       serverJson['seasons'] = [
         {'season_number': 1, 'air_date': '2020-01-12'},
         {'season_number': 2, 'air_date': '2026-04-01'},
       ];
-      
+
       final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       localTitle.lastNotifiedSeason = 1;
-      serverTitle.numberOfSeasons = 2; 
-      
+      serverTitle.numberOfSeasons = 2;
+
       final trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: localTitle,
         titleAfterUpdate: serverTitle,
@@ -178,20 +205,21 @@ void main() {
         now: testNow,
         notifyCompleteSeason: false,
       );
-      
+
       expect(trigger, NotificationTrigger.newSeason);
     });
 
-    test('Serie: Does NOT notify if newest season is too old (14 day rule)', () {
+    test('Serie: Does NOT notify if newest season is too old (14 day rule)',
+        () {
       final serverJson = loadJson('[Paradise]_no_notification.json');
       // Season 2 started Feb 23, 2026. 'now' is March 30, 2026.
       // 35 days difference.
       final testNow = DateTime(2026, 3, 30);
-      
+
       final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
-      localTitle.lastNotifiedSeason = 1; 
-      
+      localTitle.lastNotifiedSeason = 1;
+
       final trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: localTitle,
         titleAfterUpdate: serverTitle,
@@ -199,7 +227,7 @@ void main() {
         now: testNow,
         notifyCompleteSeason: false,
       );
-      
+
       expect(trigger, NotificationTrigger.none);
     });
 
@@ -218,13 +246,21 @@ void main() {
           {'season_number': 1, 'air_date': '2025-01-01'},
           {'season_number': 2, 'air_date': '2026-03-25'}, // 4 days ago
         ],
-        'watch/providers': {'results': {'ES': {'flatrate': [{'provider_id': 8}]}}}
+        'watch/providers': {
+          'results': {
+            'ES': {
+              'flatrate': [
+                {'provider_id': 8}
+              ]
+            }
+          }
+        }
       };
-      
+
       final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
-      localTitle.lastNotifiedSeason = 1; 
-      
+      localTitle.lastNotifiedSeason = 1;
+
       final trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: localTitle,
         titleAfterUpdate: serverTitle,
@@ -232,19 +268,19 @@ void main() {
         now: DateTime(2026, 3, 29),
         notifyCompleteSeason: false,
       );
-      
+
       expect(trigger, NotificationTrigger.newSeason);
     });
 
     test('Serie: Does NOT notify if premiere date is in the future', () {
       final serverJson = loadJson('[Dorohedoro]_serie_new_season.json');
-      // next_episode is S2E1 on 2026-04-01. 
-      
+      // next_episode is S2E1 on 2026-04-01.
+
       final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       localTitle.lastNotifiedSeason = 1;
       serverTitle.numberOfSeasons = 2;
-      
+
       final trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: localTitle,
         titleAfterUpdate: serverTitle,
@@ -252,34 +288,38 @@ void main() {
         now: now,
         notifyCompleteSeason: false,
       );
-      
+
       expect(trigger, NotificationTrigger.none);
     });
 
-    test('Serie: Does NOT notify for S1 even if recently premiered, if it is the first sync', () {
+    test(
+        'Serie: Does NOT notify for S1 even if recently premiered, if it is the first sync',
+        () {
       final serverJson = {
         'id': 316324,
         'name': 'Korean Series',
         'first_air_date': '2026-03-24',
         'number_of_seasons': 1,
         'media_type': 'tv',
-        'last_episode_to_air': {
-          'season_number': 1,
-          'air_date': '2026-03-24'
-        },
+        'last_episode_to_air': {'season_number': 1, 'air_date': '2026-03-24'},
         'watch/providers': {
           'results': {
-            'ES': {'flatrate': [{'provider_id': 8}]}
+            'ES': {
+              'flatrate': [
+                {'provider_id': 8}
+              ]
+            }
           }
         }
       };
-      
+
       final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
-      
+
       // Mimic worker initialization flow
-      localTitle.lastNotifiedSeason = WatchlistNotificationEvaluator.getBaselineSeason(serverTitle, now);
-      
+      localTitle.lastNotifiedSeason =
+          WatchlistNotificationEvaluator.getBaselineSeason(serverTitle, now);
+
       final trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: localTitle,
         titleAfterUpdate: serverTitle,
@@ -287,16 +327,16 @@ void main() {
         now: now,
         notifyCompleteSeason: false,
       );
-      
+
       expect(trigger, NotificationTrigger.none);
     });
 
     test('Serie: Does NOT notify if already airing', () {
       final serverJson = loadJson('[Paradise]_no_notification.json');
-      
+
       final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
-      
+
       final trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: localTitle,
         titleAfterUpdate: serverTitle,
@@ -304,11 +344,13 @@ void main() {
         now: now,
         notifyCompleteSeason: false,
       );
-      
+
       expect(trigger, NotificationTrigger.none);
     });
 
-    test('Serie [notifyCompleteSeason: true]: Does NOT notify if next episode belongs to current season', () {
+    test(
+        'Serie [notifyCompleteSeason: true]: Does NOT notify if next episode belongs to current season',
+        () {
       final serverJson = {
         'id': 12345,
         'name': 'Weekly Show',
@@ -326,15 +368,23 @@ void main() {
         },
         'seasons': [
           {'season_number': 1, 'air_date': '2025-01-01'},
-          {'season_number': 2, 'air_date': '2026-03-01'}, 
+          {'season_number': 2, 'air_date': '2026-03-01'},
         ],
-        'watch/providers': {'results': {'ES': {'flatrate': [{'provider_id': 8}]}}}
+        'watch/providers': {
+          'results': {
+            'ES': {
+              'flatrate': [
+                {'provider_id': 8}
+              ]
+            }
+          }
+        }
       };
-      
+
       final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
-      localTitle.lastNotifiedSeason = 1; 
-      
+      localTitle.lastNotifiedSeason = 1;
+
       final trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: localTitle,
         titleAfterUpdate: serverTitle,
@@ -342,12 +392,14 @@ void main() {
         now: now,
         notifyCompleteSeason: true,
       );
-      
+
       // Should wait till it ends
       expect(trigger, NotificationTrigger.none);
     });
 
-    test('Serie [notifyCompleteSeason: true]: Notifies when season finishes airing completely', () {
+    test(
+        'Serie [notifyCompleteSeason: true]: Notifies when season finishes airing completely',
+        () {
       final serverJson = {
         'id': 12345,
         'name': 'Weekly Show',
@@ -363,15 +415,23 @@ void main() {
         'next_episode_to_air': null,
         'seasons': [
           {'season_number': 1, 'air_date': '2025-01-01'},
-          {'season_number': 2, 'air_date': '2026-01-01'}, 
+          {'season_number': 2, 'air_date': '2026-01-01'},
         ],
-        'watch/providers': {'results': {'ES': {'flatrate': [{'provider_id': 8}]}}}
+        'watch/providers': {
+          'results': {
+            'ES': {
+              'flatrate': [
+                {'provider_id': 8}
+              ]
+            }
+          }
+        }
       };
-      
+
       final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
-      localTitle.lastNotifiedSeason = 1; 
-      
+      localTitle.lastNotifiedSeason = 1;
+
       final trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: localTitle,
         titleAfterUpdate: serverTitle,
@@ -379,7 +439,7 @@ void main() {
         now: now,
         notifyCompleteSeason: true,
       );
-      
+
       expect(trigger, NotificationTrigger.newSeason);
     });
   });

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/services/tmdb_person_list_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_person.dart';
+import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 class PersonSortOption {
   static const name = 'name';
@@ -21,17 +23,22 @@ class PersonListController with ChangeNotifier {
   bool _isSortAsc = true;
   String _selectedSort = PersonSortOption.original;
   List<String> _personSorts = [];
+  bool _isGridView = false;
 
   PersonListController(this.listService, this.type) {
     textFilterController = TextEditingController();
     listService.addListener(_onListServiceChanged);
+    _isGridView =
+        PreferencesService().prefs.getBool(AppConstants.personListIsGridView) ??
+            false;
   }
 
   bool get showFilters => _showFilters;
   bool get isSortAsc => _isSortAsc;
   String get selectedSort => _selectedSort;
   List<String> get personSorts => _personSorts;
-  
+  bool get isGridView => _isGridView;
+
   int get itemCount => listService.selectedItemCount.value;
 
   void initializeControlLocalizations(BuildContext context) {
@@ -90,24 +97,30 @@ class PersonListController with ChangeNotifier {
     notifyListeners();
   }
 
-  void onScrollNotification(ScrollNotification scrollInfo, double itemHeight) {
+  void onScrollNotification(ScrollNotification scrollInfo) {
     final metrics = scrollInfo.metrics;
     final currentScroll = metrics.pixels;
 
-    final firstVisibleIndex = (currentScroll / itemHeight).floor();
-    final visibleItemCount = (metrics.viewportDimension / itemHeight).ceil();
-    final lastVisibleIndex = firstVisibleIndex + visibleItemCount;
+    final double scrollThreshold = metrics.viewportDimension;
 
     if (currentScroll > 0 &&
         !listService.isLoading.value &&
         listService.hasMore &&
-        lastVisibleIndex >= listService.loadedItemCount - 3) {
+        currentScroll >= metrics.maxScrollExtent - scrollThreshold) {
       listService.loadNextPage();
     }
   }
 
   void toggleFilters() {
     _showFilters = !_showFilters;
+    notifyListeners();
+  }
+
+  void toggleGridView() {
+    _isGridView = !_isGridView;
+    PreferencesService()
+        .prefs
+        .setBool(AppConstants.personListIsGridView, _isGridView);
     notifyListeners();
   }
 

@@ -41,9 +41,8 @@ class SavedNotification {
       timestamp: map['timestamp'] != null
           ? DateTime.parse(map['timestamp'])
           : DateTime.now(),
-      providerIds: map['providerIds'] != null
-          ? List<int>.from(map['providerIds'])
-          : [],
+      providerIds:
+          map['providerIds'] != null ? List<int>.from(map['providerIds']) : [],
     );
   }
 
