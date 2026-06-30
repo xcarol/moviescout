@@ -241,6 +241,9 @@ class TmdbTitle implements TmdbItem {
       effectiveRuntime =
           mediaType == ApiConstants.movie ? runtime : numberOfEpisodes;
     }
+    if (voteAverage.isNaN) voteAverage = 0.0;
+    if (rating.isNaN) rating = 0.0;
+    if (popularity.isNaN) popularity = 0.0;
   }
 
   factory TmdbTitle.fromMap({required Map<dynamic, dynamic> title}) {
