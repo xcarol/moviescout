@@ -42,7 +42,9 @@ class TmdbSeason implements TmdbItem {
     this.creditsJson,
     required this.tvId,
     required this.lastUpdated,
-  });
+  }) {
+    if (voteAverage.isNaN) voteAverage = 0.0;
+  }
 
   factory TmdbSeason.fromMap(Map<String, dynamic> data, {int tvId = 0}) {
     return TmdbSeason(
