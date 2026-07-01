@@ -3,7 +3,7 @@ class UrlConstants {
   static const String tmdbApiV4Url = 'https://api.themoviedb.org/4/';
   static const String tmdbApiV3Url = 'https://api.themoviedb.org/3/';
   static const String tmdbWebUrl = 'https://www.themoviedb.org';
-  static const String moviescoutWebUrl = 'https://moviescout-tmdb.vercel.app';
+  static const String moviescoutWebUrl = 'https://moviescout.xicra.com';
   static const String tmdbImageOriginalUrl =
       'https://image.tmdb.org/t/p/original';
   static const String tmdbImageW45Url = 'https://image.tmdb.org/t/p/w45';
