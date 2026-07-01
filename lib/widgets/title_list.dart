@@ -272,8 +272,6 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
