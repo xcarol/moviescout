@@ -25,6 +25,9 @@ import 'package:moviescout/widgets/edit_button.dart';
 import 'package:moviescout/widgets/translations_button.dart';
 import 'package:moviescout/services/tmdb_translation_service.dart';
 import 'package:moviescout/widgets/boxed_widget.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
+import 'package:moviescout/widgets/custom_refresh_builder.dart';
+import 'package:moviescout/widgets/bottom_clamping_scroll_physics.dart';
 
 class PersonDetails extends StatefulWidget {
   final TmdbPerson _person;
@@ -50,6 +53,7 @@ class PersonDetails extends StatefulWidget {
 class _PersonDetailsState extends State<PersonDetails> {
   late Future<TmdbPerson> _personFuture;
   List<TmdbTitle> _userRatedTitles = [];
+  final _refreshController = IndicatorController();
 
   @override
   void initState() {
@@ -57,9 +61,15 @@ class _PersonDetailsState extends State<PersonDetails> {
     _personFuture = _loadPersonAndRates();
   }
 
-  Future<TmdbPerson> _loadPersonAndRates() async {
-    final person =
-        await TmdbPersonService().updatePersonDetails(widget._person);
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
+  }
+
+  Future<TmdbPerson> _loadPersonAndRates({bool force = false}) async {
+    final person = await TmdbPersonService()
+        .updatePersonDetails(widget._person, force: force);
 
     if (!mounted) return person;
     final tmdbRateslistService =
@@ -90,7 +100,7 @@ class _PersonDetailsState extends State<PersonDetails> {
     return FutureBuilder(
       future: _personFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
+        if (!snapshot.hasData) {
           return const Scaffold(
               body: Center(child: CircularProgressIndicator()));
         }
@@ -123,9 +133,29 @@ class _PersonDetailsState extends State<PersonDetails> {
               ),
             ],
           ),
-          body: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: _detailsBody(person),
+          body: CustomRefreshIndicator(
+            controller: _refreshController,
+            offsetToArmed: 100,
+            onRefresh: () async {
+              final newFuture = _loadPersonAndRates(force: true);
+              setState(() {
+                _personFuture = newFuture;
+              });
+              await newFuture;
+            },
+            builder: customRefreshBuilder,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              physics: AlwaysScrollableScrollPhysics(
+                parent: BottomClampingScrollPhysics(
+                  topRefreshController: _refreshController,
+                  parent: ClampingWithOverscrollPhysics(
+                    state: _refreshController,
+                  ),
+                ),
+              ),
+              child: _detailsBody(person),
+            ),
           ),
         );
       },
