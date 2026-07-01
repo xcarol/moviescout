@@ -14,6 +14,11 @@
       "source": "/person/:path*",
       "destination": "https://www.themoviedb.org/person/:path*",
       "permanent": false
+    },
+    {
+      "source": "/",
+      "destination": "https://xcarol.github.io/moviescout/",
+      "permanent": false
     }
   ]
 }
