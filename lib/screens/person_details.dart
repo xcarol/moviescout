@@ -123,7 +123,7 @@ class _PersonDetailsState extends State<PersonDetails> {
               IconButton(
                 icon: const Icon(Icons.share),
                 onPressed: () {
-                  final String link = UrlConstants.tmdbPersonWebTemplate
+                  final String link = UrlConstants.moviescoutPersonWebTemplate
                       .replaceFirst('{ID}', widget._person.tmdbId.toString());
                   SharePlus.instance.share(
                     ShareParams(text: '${widget._person.name}\n$link'),

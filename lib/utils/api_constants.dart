@@ -15,4 +15,5 @@ class ApiConstants {
   // Hosts
   static const String tmdbHost = 'www.themoviedb.org';
   static const String tmdbHostAlternative = 'themoviedb.org';
+  static const String moviescoutHost = 'moviescout-tmdb.vercel.app';
 }

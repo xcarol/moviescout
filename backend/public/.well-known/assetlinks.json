@@ -1,0 +1,11 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.xicra.moviescout",
+    "sha256_cert_fingerprints": [
+      "AC:1A:F5:B1:2C:8F:A3:40:24:9B:72:30:B8:C3:A2:7A:37:7B:4A:23:7F:A6:51:46:D4:62:DE:BB:3F:2D:BC:E5",
+      "A2:F3:82:CE:61:B6:E3:94:8A:9A:28:A3:1F:1A:5F:D3:3E:52:FC:03:24:B2:7A:EE:F8:CD:95:01:F1:F5:FE:28"
+    ]
+  }
+}]

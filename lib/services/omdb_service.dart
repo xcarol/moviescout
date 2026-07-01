@@ -21,7 +21,8 @@ class OmdbService {
       return [];
     }
 
-    final uri = Uri.parse('${UrlConstants.omdbApiUrl}?i=$imdbId&apikey=$apiKey');
+    final uri =
+        Uri.parse('${UrlConstants.omdbApiUrl}?i=$imdbId&apikey=$apiKey');
 
     try {
       final response = await http.get(uri);

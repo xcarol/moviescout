@@ -103,7 +103,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () {
-              final String link = UrlConstants.tmdbTvSeasonWebTemplate
+              final String link = UrlConstants.moviescoutTvSeasonWebTemplate
                   .replaceFirst('{ID}', widget.title.tmdbId.toString())
                   .replaceFirst(
                       '{SEASON_NUMBER}', _currentSeasonNumber.toString());
