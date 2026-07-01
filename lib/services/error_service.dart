@@ -76,6 +76,11 @@ class ErrorService {
       return false;
     }
 
+    if (error.toString().contains('permission-denied') || 
+        error.toString().contains('PERMISSION_DENIED')) {
+      return false;
+    }
+
     if (error is PlatformException &&
         error.message!.contains('Unable to establish connection on channel') &&
         error.message!.contains('FirebaseCoreHostApi.initializeCore')) {
