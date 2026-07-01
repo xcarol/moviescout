@@ -4,6 +4,7 @@ import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_cacheable_service.dart';
 import 'package:moviescout/services/update_manager.dart';
+import 'package:moviescout/utils/genre_translator.dart';
 
 class TmdbGenreService extends TmdbCacheableService<Map<int, String>> {
   static final TmdbGenreService _instance = TmdbGenreService._internal();
@@ -98,20 +99,24 @@ class TmdbGenreService extends TmdbCacheableService<Map<int, String>> {
     return map;
   }
 
-  String? getName(int id) => _genreMap[id];
+  String? getName(int id) =>
+      _genreMap[id] ?? GenreTranslator.translate(id, getLanguageCode());
 
   List<TmdbGenre> getGenresFromIds(List<dynamic> ids) {
     return ids
-        .map((id) => _genreMap.containsKey(id)
-            ? TmdbGenre(genre: {id: _genreMap[id]!})
-            : null)
+        .map((id) {
+          String? name =
+              _genreMap[id] ?? GenreTranslator.translate(id, getLanguageCode());
+          return name != null ? TmdbGenre(genre: {id: name}) : null;
+        })
         .whereType<TmdbGenre>()
         .toList();
   }
 
   List<String> getNamesFromIds(List<dynamic> ids) {
     return ids
-        .map((id) => _genreMap.containsKey(id) ? _genreMap[id]! : null)
+        .map((id) =>
+            _genreMap[id] ?? GenreTranslator.translate(id, getLanguageCode()))
         .whereType<String>()
         .toList();
   }
