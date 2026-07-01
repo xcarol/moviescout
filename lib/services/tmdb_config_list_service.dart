@@ -112,6 +112,10 @@ abstract class TmdbConfigListService extends TmdbBaseService
             (snapshot.data() as Map<String, dynamic>)[firestoreFieldName];
         await applyData(data);
       }
+    }, onError: (error, stackTrace) {
+      ErrorService.log(error,
+          stackTrace: stackTrace,
+          userMessage: 'Error listening to config $firestoreFieldName');
     });
   }
 
