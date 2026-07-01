@@ -34,6 +34,7 @@ import 'package:moviescout/screens/main_screen.dart';
 import 'package:moviescout/services/deep_link_service.dart';
 import 'package:moviescout/utils/language_translator.dart';
 import 'package:moviescout/utils/person_translator.dart';
+import 'package:moviescout/utils/genre_translator.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/services/watchlist_update_worker.dart';
 import 'package:moviescout/services/notification_service.dart';
@@ -86,6 +87,7 @@ void main() async {
       TmdbConfigurationService().init(),
       LanguageTranslator.init(),
       PersonTranslator.init(),
+      GenreTranslator.init(),
       NotificationService().init(),
       EditSettingsService().init(),
     ]).timeout(const Duration(seconds: 5), onTimeout: () => []);
