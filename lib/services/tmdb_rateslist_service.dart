@@ -137,6 +137,11 @@ class TmdbRateslistService extends TmdbTitleListService {
           title.inLists = title.inLists.toList()
             ..remove(AppConstants.watchlist);
         }
+      } else {
+        if (title.notifyNewSeasons && followingService != null) {
+          await followingService!.removeFollowingFromServer(title);
+          title.notifyNewSeasons = false;
+        }
       }
       await updateTitle(accountId, sessionId, title, rating > 0,
           (String accountId, String sessionId) async {
