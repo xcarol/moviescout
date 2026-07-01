@@ -71,6 +71,11 @@ class TmdbWatchlistService extends TmdbTitleListService {
       if (add) {
         title.id = Isar.autoIncrement;
         title.isPinned = false;
+      } else {
+        if (title.isPinned && pinnedService != null) {
+          await pinnedService!.removePinnedFromServer(title);
+          title.isPinned = false;
+        }
       }
 
       await updateTitle(accountId, sessionId, title, add,
