@@ -24,8 +24,9 @@ class TmdbPersonService extends TmdbBaseService {
         DateTime.daysPerWeek;
   }
 
-  Future<TmdbPerson> updatePersonDetails(TmdbPerson person) async {
-    if (isUpToDate(person)) {
+  Future<TmdbPerson> updatePersonDetails(TmdbPerson person,
+      {bool force = false}) async {
+    if (!force && isUpToDate(person)) {
       return person;
     }
 
