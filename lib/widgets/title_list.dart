@@ -6,6 +6,7 @@ import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
+import 'package:moviescout/widgets/custom_refresh_builder.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/widgets/bottom_clamping_scroll_physics.dart';
 import 'package:moviescout/widgets/title_card.dart';
@@ -152,10 +153,7 @@ class _TitleListState extends State<TitleList> {
                 locale: Localizations.localeOf(context),
               );
             },
-            builder: (BuildContext context, Widget child,
-                IndicatorController controller) {
-              return _refreshIndicator(context, child, controller);
-            },
+            builder: customRefreshBuilder,
             child: content,
           );
         }
@@ -274,27 +272,7 @@ class _TitleListState extends State<TitleList> {
     );
   }
 
-  Widget _refreshIndicator(
-      BuildContext context, Widget child, IndicatorController controller) {
-    return Stack(
-      children: [
-        child,
-        if (!controller.side.isNone)
-          Positioned(
-            top: -40.0 + (80.0 * controller.value),
-            left: 0,
-            right: 0,
-            child: Center(
-              child: RefreshProgressIndicator(
-                value: controller.isLoading || controller.isFinalizing
-                    ? null
-                    : controller.value.clamp(0.0, 1.0),
-              ),
-            ),
-          ),
-      ],
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
