@@ -76,6 +76,7 @@ class _TitleListState extends State<TitleList> {
             controller: _controller.scrollController,
             physics: AlwaysScrollableScrollPhysics(
               parent: BottomClampingScrollPhysics(
+                topRefreshController: _refreshController,
                 parent: ClampingWithOverscrollPhysics(
                   state: _refreshController,
                 ),

@@ -1,11 +1,27 @@
 import 'package:flutter/widgets.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
+import 'dart:math' as math;
 
 class BottomClampingScrollPhysics extends ScrollPhysics {
-  const BottomClampingScrollPhysics({super.parent});
+  final IndicatorController? topRefreshController;
+
+  const BottomClampingScrollPhysics({super.parent, this.topRefreshController});
 
   @override
   BottomClampingScrollPhysics applyTo(ScrollPhysics? ancestor) {
-    return BottomClampingScrollPhysics(parent: buildParent(ancestor));
+    return BottomClampingScrollPhysics(
+      parent: buildParent(ancestor),
+      topRefreshController: topRefreshController,
+    );
+  }
+
+  @override
+  double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
+    if (topRefreshController != null && topRefreshController!.value > 0.0) {
+      final double multiplier = math.exp(-topRefreshController!.value);
+      return super.applyPhysicsToUserOffset(position, offset * multiplier);
+    }
+    return super.applyPhysicsToUserOffset(position, offset);
   }
 
   @override
@@ -21,10 +37,6 @@ class BottomClampingScrollPhysics extends ScrollPhysics {
             'The applyBoundaryConditions method should only be called when the value is '
             'going to actually change the pixels, otherwise it is redundant.',
           ),
-          // DiagnosticsProperty<ScrollPhysics>('The physics object in question was', this,
-          //     style: DiagnosticsTreeStyle.errorProperty),
-          // DiagnosticsProperty<ScrollMetrics>('The position object in question was', position,
-          //     style: DiagnosticsTreeStyle.errorProperty),
         ]);
       }
       return true;
