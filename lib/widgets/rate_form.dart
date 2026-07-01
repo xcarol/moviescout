@@ -36,7 +36,7 @@ class RateForm extends Dialog {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 if (value > 0)
                   Text(
-                    '${AppLocalizations.of(context)!.your_rate}: ${value.toInt()}',
+                    '${AppLocalizations.of(context)!.your_rate}: ${value.toStringAsFixed(1)}',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
@@ -65,6 +65,17 @@ class RateForm extends Dialog {
                     },
                   );
                 }),
+              ),
+              const SizedBox(height: 10),
+              Slider(
+                value: rating.value,
+                min: 0.0,
+                max: 10.0,
+                divisions: 20,
+                label: rating.value.toStringAsFixed(1),
+                onChanged: (double newValue) {
+                  rating.value = newValue;
+                },
               ),
               const SizedBox(height: 20),
               OverflowBar(

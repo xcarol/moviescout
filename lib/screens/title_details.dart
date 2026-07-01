@@ -846,31 +846,19 @@ class _TitleDetailsState extends State<TitleDetails> {
                                     : titleTheme.userRatedTitle,
                               ),
                               const SizedBox(width: 8),
-                              Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  const Text(
-                                    '9.99',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 22,
-                                      color: Colors.transparent,
-                                    ),
-                                  ),
-                                  if (titleRating > AppConstants.seenRating)
-                                    Text(
-                                      '$titleRating',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 22,
-                                        color: !isUserLoggedIn
-                                            ? Theme.of(context).disabledColor
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .onSurfaceVariant,
-                                      ),
-                                    ),
-                                ],
+                              Text(
+                                titleRating > AppConstants.seenRating
+                                    ? titleRating.toStringAsFixed(1)
+                                    : '-.-',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22,
+                                  color: !isUserLoggedIn
+                                      ? Theme.of(context).disabledColor
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                ),
                               ),
                             ],
                           ),
