@@ -1,0 +1,19 @@
+{
+  "redirects": [
+    {
+      "source": "/movie/:path*",
+      "destination": "https://www.themoviedb.org/movie/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/tv/:path*",
+      "destination": "https://www.themoviedb.org/tv/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/person/:path*",
+      "destination": "https://www.themoviedb.org/person/:path*",
+      "permanent": false
+    }
+  ]
+}

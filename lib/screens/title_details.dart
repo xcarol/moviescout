@@ -146,7 +146,7 @@ class _TitleDetailsState extends State<TitleDetails> {
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () {
-              final String link = UrlConstants.tmdbTitleWebTemplate
+              final String link = UrlConstants.moviescoutTitleWebTemplate
                   .replaceFirst('{MEDIA_TYPE}', _currentTitle.mediaType)
                   .replaceFirst('{ID}', _currentTitle.tmdbId.toString());
               SharePlus.instance.share(
