@@ -1,15 +1,10 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
-
-const String _tmdbEpisodeDetails =
-    '/tv/{ID}/season/{SEASON_NUMBER}/episode/{EPISODE_NUMBER}?append_to_response=images%2Cvideos%2Ccredits&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
-
-const String _tmdbEpisodeBrief =
-    '/tv/{ID}/season/{SEASON_NUMBER}/episode/{EPISODE_NUMBER}?append_to_response=images,videos&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
 
 class TmdbEpisodeService extends TmdbBaseService {
   final _repository = TmdbTitleRepository();
@@ -21,7 +16,7 @@ class TmdbEpisodeService extends TmdbBaseService {
     String locale,
   ) async {
     return get(
-      _tmdbEpisodeDetails
+      UrlConstants.tmdbEpisodeDetailsEndpoint
           .replaceFirst('{ID}', id.toString())
           .replaceFirst('{SEASON_NUMBER}', seasonNumber.toString())
           .replaceFirst('{EPISODE_NUMBER}', episodeNumber.toString())
@@ -36,7 +31,7 @@ class TmdbEpisodeService extends TmdbBaseService {
     String locale,
   ) async {
     return get(
-      _tmdbEpisodeBrief
+      UrlConstants.tmdbEpisodeBriefEndpoint
           .replaceFirst('{ID}', id.toString())
           .replaceFirst('{SEASON_NUMBER}', seasonNumber.toString())
           .replaceFirst('{EPISODE_NUMBER}', episodeNumber.toString())

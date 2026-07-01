@@ -1,9 +1,7 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
-
-const String _tmdbDetails =
-    '/person/{ID}?append_to_response=combined_credits&language={LOCALE}';
 
 class TmdbPersonService extends TmdbBaseService {
   Future<dynamic> _retrievePersonDetailsByLocale(
@@ -11,7 +9,7 @@ class TmdbPersonService extends TmdbBaseService {
     String locale,
   ) async {
     return get(
-      _tmdbDetails
+      UrlConstants.tmdbPersonDetailsEndpoint
           .replaceFirst('{ID}', id.toString())
           .replaceFirst('{LOCALE}', locale),
     );

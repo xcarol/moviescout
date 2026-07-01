@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -12,7 +13,6 @@ import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_person_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/error_service.dart';
-import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/widgets/person_title_chip.dart';
 import 'package:moviescout/widgets/expandable_description.dart';
 import 'package:moviescout/screens/person_titles.dart';
@@ -96,8 +96,8 @@ class _PersonDetailsState extends State<PersonDetails> {
         }
 
         final person = snapshot.data as TmdbPerson;
-        final String editUrl =
-            'https://www.themoviedb.org/person/${person.tmdbId}/edit';
+        final String editUrl = UrlConstants.tmdbPersonEditWebTemplate
+            .replaceFirst('{ID}', person.tmdbId.toString());
 
         return Scaffold(
           appBar: AppBar(
@@ -113,8 +113,8 @@ class _PersonDetailsState extends State<PersonDetails> {
               IconButton(
                 icon: const Icon(Icons.share),
                 onPressed: () {
-                  final String link =
-                      'https://${ApiConstants.tmdbHost}/person/${widget._person.tmdbId}';
+                  final String link = UrlConstants.tmdbPersonWebTemplate
+                      .replaceFirst('{ID}', widget._person.tmdbId.toString());
                   SharePlus.instance.share(
                     ShareParams(text: '${widget._person.name}\n$link'),
                   );
@@ -281,7 +281,8 @@ class _PersonDetailsState extends State<PersonDetails> {
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
         onPressed: () {
           launchUrl(
-            Uri.parse('https://www.themoviedb.org/person/${person.tmdbId}'),
+            Uri.parse(UrlConstants.tmdbPersonWebTemplate
+                .replaceFirst('{ID}', person.tmdbId.toString())),
             mode: LaunchMode.inAppWebView,
           );
         },
@@ -301,7 +302,8 @@ class _PersonDetailsState extends State<PersonDetails> {
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           onPressed: () {
             launchUrl(
-              Uri.parse('https://www.imdb.com/name/${person.imdbId}'),
+              Uri.parse(UrlConstants.imdbNameTemplate
+                  .replaceFirst('{ID}', person.imdbId.toString())),
               mode: LaunchMode.inAppBrowserView,
             );
           },

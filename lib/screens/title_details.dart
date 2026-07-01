@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -38,7 +39,6 @@ import 'package:moviescout/widgets/pin_button.dart';
 import 'package:moviescout/widgets/notify_button.dart';
 import 'package:moviescout/services/omdb_service.dart';
 import 'package:provider/provider.dart';
-import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
@@ -115,8 +115,9 @@ class _TitleDetailsState extends State<TitleDetails> {
   @override
   Widget build(BuildContext context) {
     String appTitle = _currentTitle.name;
-    final String editUrl =
-        'https://www.themoviedb.org/${_currentTitle.mediaType}/${_currentTitle.tmdbId}/edit';
+    final String editUrl = UrlConstants.tmdbTitleEditWebTemplate
+        .replaceFirst('{MEDIA_TYPE}', _currentTitle.mediaType)
+        .replaceFirst('{ID}', _currentTitle.tmdbId.toString());
 
     return Scaffold(
       appBar: AppBar(
@@ -135,8 +136,9 @@ class _TitleDetailsState extends State<TitleDetails> {
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () {
-              final String link =
-                  'https://${ApiConstants.tmdbHost}/${_currentTitle.mediaType}/${_currentTitle.tmdbId}';
+              final String link = UrlConstants.tmdbTitleWebTemplate
+                  .replaceFirst('{MEDIA_TYPE}', _currentTitle.mediaType)
+                  .replaceFirst('{ID}', _currentTitle.tmdbId.toString());
               SharePlus.instance.share(
                 ShareParams(text: '${_currentTitle.name}\n$link'),
               );
@@ -242,8 +244,8 @@ class _TitleDetailsState extends State<TitleDetails> {
                 ),
                 child: title.posterPath.isNotEmpty
                     ? CachedNetworkImage(
-                        imageUrl:
-                            'https://image.tmdb.org/t/p/w500${title.posterPath}',
+                        imageUrl: UrlConstants.tmdbImageW500Template
+                            .replaceFirst('{PATH}', title.posterPath),
                         width: 100,
                         height: 150,
                         fit: BoxFit.cover,
@@ -439,7 +441,9 @@ class _TitleDetailsState extends State<TitleDetails> {
         onPressed: () {
           launchUrl(
             Uri.parse(
-              'https://www.themoviedb.org/${title.mediaType}/${title.tmdbId}',
+              UrlConstants.tmdbTitleWebTemplate
+                  .replaceFirst('{MEDIA_TYPE}', title.mediaType)
+                  .replaceFirst('{ID}', title.tmdbId.toString()),
             ),
             mode: LaunchMode.inAppWebView,
           );
@@ -461,7 +465,8 @@ class _TitleDetailsState extends State<TitleDetails> {
         BoxedWidget(
           onPressed: () {
             launchUrl(
-              Uri.parse('https://www.imdb.com/title/${title.imdbId}'),
+              Uri.parse(UrlConstants.imdbTitleTemplate
+                  .replaceFirst('{ID}', title.imdbId.toString())),
               mode: LaunchMode.inAppBrowserView,
             );
           },

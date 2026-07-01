@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'package:flutter/widgets.dart';
 import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -10,8 +11,6 @@ const String _tmdbWatchlistMovies =
     'account/{ACCOUNT_ID}/movie/watchlist?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
 const String _tmdbWatchlistTv =
     'account/{ACCOUNT_ID}/tv/watchlist?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
-const String _updateWatchlistTitle =
-    'account/{ACCOUNT_ID}/watchlist?session_id={SESSION_ID}';
 
 class TmdbWatchlistService extends TmdbTitleListService {
   TmdbPinnedService? pinnedService;
@@ -60,7 +59,7 @@ class TmdbWatchlistService extends TmdbTitleListService {
     bool add,
   ) async {
     return post(
-        _updateWatchlistTitle
+        UrlConstants.tmdbUpdateWatchlistEndpoint
             .replaceFirst('{ACCOUNT_ID}', accountId)
             .replaceFirst('{SESSION_ID}', sessionId),
         {'media_type': mediaType, 'media_id': id, 'watchlist': add});

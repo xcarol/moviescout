@@ -22,7 +22,7 @@ class TrailerButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ytVideos = videos.where((v) => v['site'] == 'YouTube').toList();
-    
+
     if (ytVideos.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -33,8 +33,9 @@ class TrailerButtons extends StatelessWidget {
     );
 
     final String mainVideoId = mainVideo['key'] as String;
-    
-    final remainingVideos = ytVideos.where((v) => v['key'] != mainVideoId).toList();
+
+    final remainingVideos =
+        ytVideos.where((v) => v['key'] != mainVideoId).toList();
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -67,7 +68,8 @@ class TrailerButtons extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(20),
               onSelected: (selectedName) {
-                final video = remainingVideos.firstWhere((v) => v['name'] == selectedName);
+                final video = remainingVideos
+                    .firstWhere((v) => v['name'] == selectedName);
                 _playVideo(context, video['key'] as String);
               },
             ),

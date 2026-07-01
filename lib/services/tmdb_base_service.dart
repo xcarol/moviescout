@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -13,9 +14,6 @@ import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 enum ApiVersion { v3, v4 }
-
-const String _baseUrlv4 = 'https://api.themoviedb.org/4/';
-const String _baseUrlv3 = 'https://api.themoviedb.org/3/';
 
 const int _maxRequestsCount = 40;
 const int _initialDelayMs = 200;
@@ -41,7 +39,9 @@ class TmdbBaseService {
   }
 
   Uri _buildUri(ApiVersion version, String endpoint) {
-    final String baseUrl = version == ApiVersion.v3 ? _baseUrlv3 : _baseUrlv4;
+    final String baseUrl = version == ApiVersion.v3
+        ? UrlConstants.tmdbApiV3Url
+        : UrlConstants.tmdbApiV4Url;
     final cleanBase = baseUrl.endsWith('/')
         ? baseUrl.substring(0, baseUrl.length - 1)
         : baseUrl;

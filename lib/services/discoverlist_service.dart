@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
@@ -7,10 +8,6 @@ import 'package:moviescout/services/isar_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
-
-const String _tmdbPopularlistMovies =
-    'movie/popular?page={PAGE}&language={LOCALE}';
-const String _tmdbPopularlistTv = 'tv/popular?page={PAGE}&language={LOCALE}';
 
 class TmdbDiscoverlistService extends TmdbTitleListService {
   bool _isRefreshPaused = false;
@@ -48,10 +45,10 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
         accountId.isEmpty ? AppConstants.anonymousAccountId : accountId,
         forceUpdate: forceUpdate, retrieveMovies: () async {
       return _getDiscoveryTitles(accountId, sessionId, locale,
-          ApiConstants.movie, _tmdbPopularlistMovies);
+          ApiConstants.movie, UrlConstants.tmdbPopularMoviesEndpoint);
     }, retrieveTvshows: () async {
-      return _getDiscoveryTitles(
-          accountId, sessionId, locale, ApiConstants.tv, _tmdbPopularlistTv);
+      return _getDiscoveryTitles(accountId, sessionId, locale, ApiConstants.tv,
+          UrlConstants.tmdbPopularTvEndpoint);
     }).whenComplete(() {
       isRefreshing.value = false;
     });

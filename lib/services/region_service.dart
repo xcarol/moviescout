@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
@@ -45,7 +46,7 @@ class RegionService with ChangeNotifier {
     while (retryCount < 5) {
       try {
         final response = await http
-            .get(Uri.parse('https://ipapi.co/json/'))
+            .get(Uri.parse(UrlConstants.ipApiUrl))
             .timeout(const Duration(seconds: 3));
 
         if (response.statusCode == 200) {

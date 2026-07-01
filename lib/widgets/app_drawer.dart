@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -75,12 +76,14 @@ class AppDrawer extends StatelessWidget {
     ImageProvider<Object>? userImage;
 
     if (user != null) {
-      userImage = user['avatar']['tmdb'] != null &&
-              user['avatar']['tmdb'].isNotEmpty
-          ? CachedNetworkImageProvider(
-              'https://image.tmdb.org/t/p/w185/${user['avatar']['tmdb']['avatar_path']}')
-          : CachedNetworkImageProvider(
-              'https://www.gravatar.com/avatar/${user['avatar']['gravatar']['hash']}?s=200');
+      userImage =
+          user['avatar']['tmdb'] != null && user['avatar']['tmdb'].isNotEmpty
+              ? CachedNetworkImageProvider(UrlConstants.tmdbImageW185Template
+                  .replaceFirst(
+                      '{PATH}', '/${user['avatar']['tmdb']['avatar_path']}'))
+              : CachedNetworkImageProvider(UrlConstants.gravatarTemplate
+                  .replaceFirst('{HASH}', user['avatar']['gravatar']['hash'])
+                  .replaceFirst('{SIZE}', '200'));
     }
 
     var userName = user != null
@@ -144,8 +147,8 @@ class AppDrawer extends StatelessWidget {
                   decoration: TextDecoration.underline,
                 ),
                 recognizer: TapGestureRecognizer()
-                  ..onTap = () => launchUrl(
-                      Uri.parse('https://github.com/xcarol/moviescout')),
+                  ..onTap =
+                      () => launchUrl(Uri.parse(UrlConstants.githubRepoUrl)),
               ),
             ],
           ),

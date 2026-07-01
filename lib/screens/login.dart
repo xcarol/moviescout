@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart'
@@ -142,7 +143,7 @@ class _LoginState extends State<Login> {
         const SizedBox(height: 20),
         OutlinedButton(
           onPressed: () => launchUrlString(
-            'https://www.themoviedb.org/account/signup',
+            UrlConstants.tmdbSignupWebTemplate,
             mode: LaunchMode.externalApplication,
           ),
           child: Text(AppLocalizations.of(context)!.signupToTmdb),

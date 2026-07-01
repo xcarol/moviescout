@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -59,8 +60,8 @@ class _MediaCarouselState extends State<MediaCarousel> {
     return ((((index - _infiniteBase) % total) + total) % total).toInt();
   }
 
-  Widget _buildCarousel(BuildContext context, int totalItems,
-      List<String> images) {
+  Widget _buildCarousel(
+      BuildContext context, int totalItems, List<String> images) {
     return RepaintBoundary(
         child: AspectRatio(
       aspectRatio: 16 / 9,
@@ -149,7 +150,8 @@ class _MediaCarouselState extends State<MediaCarousel> {
 
   Widget _buildImage(String path) {
     final colorScheme = Theme.of(context).colorScheme;
-    final url = 'https://image.tmdb.org/t/p/original$path';
+    final url =
+        UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', path);
 
     return Stack(
       fit: StackFit.expand,
@@ -176,4 +178,3 @@ class _MediaCarouselState extends State<MediaCarousel> {
     );
   }
 }
-

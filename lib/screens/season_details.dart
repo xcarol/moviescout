@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
@@ -83,8 +84,9 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   Widget build(BuildContext context) {
     String appTitle = widget.title.name;
     final cachedSeason = _loadedSeasons[_currentSeasonNumber];
-    final String editUrl =
-        'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/$_currentSeasonNumber/edit';
+    final String editUrl = UrlConstants.tmdbTvSeasonEditWebTemplate
+        .replaceFirst('{ID}', widget.title.tmdbId.toString())
+        .replaceFirst('{SEASON_NUMBER}', _currentSeasonNumber.toString());
 
     return Scaffold(
       appBar: AppBar(
@@ -101,8 +103,10 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () {
-              final String link =
-                  'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/$_currentSeasonNumber';
+              final String link = UrlConstants.tmdbTvSeasonWebTemplate
+                  .replaceFirst('{ID}', widget.title.tmdbId.toString())
+                  .replaceFirst(
+                      '{SEASON_NUMBER}', _currentSeasonNumber.toString());
               SharePlus.instance.share(
                 ShareParams(text: '$appTitle\n$link'),
               );
@@ -360,8 +364,10 @@ class _SeasonDetailsState extends State<SeasonDetails> {
         BoxedWidget(
           onPressed: () {
             launchUrl(
-              Uri.parse(
-                  'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/${widget.seasonNumber}'),
+              Uri.parse(UrlConstants.tmdbTvSeasonWebTemplate
+                  .replaceFirst('{ID}', widget.title.tmdbId.toString())
+                  .replaceFirst(
+                      '{SEASON_NUMBER}', widget.seasonNumber.toString())),
               mode: LaunchMode.inAppWebView,
             );
           },

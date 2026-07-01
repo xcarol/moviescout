@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_item.dart';
 import 'package:isar_community/isar.dart';
@@ -488,12 +489,14 @@ class TmdbTitle implements TmdbItem {
 
   String get posterPath =>
       posterPathSuffix != null && posterPathSuffix!.isNotEmpty
-          ? 'https://image.tmdb.org/t/p/original$posterPathSuffix'
+          ? UrlConstants.tmdbImageOriginalTemplate
+              .replaceFirst('{PATH}', posterPathSuffix!)
           : '';
 
   String get backdropPath =>
       backdropPathSuffix != null && backdropPathSuffix!.isNotEmpty
-          ? 'https://image.tmdb.org/t/p/original$backdropPathSuffix'
+          ? UrlConstants.tmdbImageOriginalTemplate
+              .replaceFirst('{PATH}', backdropPathSuffix!)
           : '';
 
   @ignore
@@ -619,9 +622,11 @@ class TmdbTitle implements TmdbItem {
   @ignore
   String get titleLink {
     if (mediaType == ApiConstants.movie) {
-      return 'https://www.themoviedb.org/movie/$tmdbId';
+      return UrlConstants.tmdbMovieWebTemplate
+          .replaceFirst('{ID}', tmdbId.toString());
     } else {
-      return 'https://www.themoviedb.org/tv/$tmdbId';
+      return UrlConstants.tmdbTvWebTemplate
+          .replaceFirst('{ID}', tmdbId.toString());
     }
   }
 

@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/tmdb_person.dart';
@@ -87,7 +88,8 @@ class TmdbSeason implements TmdbItem {
   @ignore
   String get posterPath =>
       posterPathSuffix != null && posterPathSuffix!.isNotEmpty
-          ? 'https://image.tmdb.org/t/p/original$posterPathSuffix'
+          ? UrlConstants.tmdbImageOriginalTemplate
+              .replaceFirst('{PATH}', posterPathSuffix!)
           : '';
 
   @ignore

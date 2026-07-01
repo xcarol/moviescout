@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_item.dart';
@@ -6,16 +7,6 @@ import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/youtube_service.dart';
-
-const String _tmdbDetails =
-    '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids%2Cwatch%2Fproviders%2Crecommendations%2Cimages%2Cvideos%2C{CREDITS_TYPE}&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
-
-const String _tmdbBrief =
-    '/{MEDIA_TYPE}/{ID}?append_to_response=images,videos&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
-
-const String _tmdbProviders = '/{MEDIA_TYPE}/{ID}/watch%2Fproviders';
-const String _tmdbLight =
-    '/{MEDIA_TYPE}/{ID}?append_to_response=watch%2Fproviders&language={LOCALE}';
 
 class TmdbTitleService extends TmdbBaseService {
   Future<dynamic> _retrieveTitleDetails(
@@ -28,7 +19,7 @@ class TmdbTitleService extends TmdbBaseService {
         : TmdbTitleFields.aggregateCredits;
 
     return get(
-      _tmdbDetails
+      UrlConstants.tmdbDetailsEndpoint
           .replaceFirst('{MEDIA_TYPE}', mediaType)
           .replaceFirst('{ID}', id.toString())
           .replaceFirst('{LOCALE}', locale)
@@ -42,7 +33,7 @@ class TmdbTitleService extends TmdbBaseService {
     String locale,
   ) async {
     return get(
-      _tmdbBrief
+      UrlConstants.tmdbBriefEndpoint
           .replaceFirst('{MEDIA_TYPE}', mediaType)
           .replaceFirst('{ID}', id.toString())
           .replaceFirst('{LOCALE}', locale),
@@ -54,7 +45,7 @@ class TmdbTitleService extends TmdbBaseService {
     String mediaType,
   ) async {
     return get(
-      _tmdbProviders
+      UrlConstants.tmdbProvidersEndpoint
           .replaceFirst('{MEDIA_TYPE}', mediaType)
           .replaceFirst('{ID}', id.toString()),
     );
@@ -66,7 +57,7 @@ class TmdbTitleService extends TmdbBaseService {
     String locale,
   ) async {
     return get(
-      _tmdbLight
+      UrlConstants.tmdbLightEndpoint
           .replaceFirst('{MEDIA_TYPE}', mediaType)
           .replaceFirst('{ID}', id.toString())
           .replaceFirst('{LOCALE}', locale),

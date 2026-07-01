@@ -1,11 +1,9 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_cacheable_service.dart';
 import 'package:moviescout/services/update_manager.dart';
-
-const String _tmdbMovieGenres = 'genre/movie/list?language={LOCALE}';
-const String _tmdbTvGenres = 'genre/tv/list?language={LOCALE}';
 
 class TmdbGenreService extends TmdbCacheableService<Map<int, String>> {
   static final TmdbGenreService _instance = TmdbGenreService._internal();
@@ -23,7 +21,10 @@ class TmdbGenreService extends TmdbCacheableService<Map<int, String>> {
 
   @override
   Future<void> fetchAndCache() async {
-    List<String> genreUrls = [_tmdbMovieGenres, _tmdbTvGenres];
+    List<String> genreUrls = [
+      UrlConstants.tmdbMovieGenresEndpoint,
+      UrlConstants.tmdbTvGenresEndpoint
+    ];
     final Map<int, String> newGenreMap = {};
     bool reportError = false;
     dynamic lastResponse;
