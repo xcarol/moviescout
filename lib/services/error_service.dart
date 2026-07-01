@@ -76,7 +76,7 @@ class ErrorService {
       return false;
     }
 
-    if (error.toString().contains('permission-denied') || 
+    if (error.toString().contains('permission-denied') ||
         error.toString().contains('PERMISSION_DENIED')) {
       return false;
     }

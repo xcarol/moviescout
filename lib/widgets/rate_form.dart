@@ -71,7 +71,8 @@ class RateForm extends Dialog {
                 value: rating.value,
                 min: 0.0,
                 max: 10.0,
-                divisions: 20, // TMDB only accepts half points (.5) but decimals from .0 to .9 
+                divisions:
+                    20, // TMDB only accepts half points (.5) but decimals from .0 to .9
                 label: rating.value.toStringAsFixed(1),
                 onChanged: (double newValue) {
                   rating.value = newValue;
