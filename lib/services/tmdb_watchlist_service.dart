@@ -11,6 +11,7 @@ const String _tmdbWatchlistMovies =
     'account/{ACCOUNT_ID}/movie/watchlist?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
 const String _tmdbWatchlistTv =
     'account/{ACCOUNT_ID}/tv/watchlist?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
+
 class TmdbWatchlistService extends TmdbTitleListService {
   TmdbPinnedService? pinnedService;
 

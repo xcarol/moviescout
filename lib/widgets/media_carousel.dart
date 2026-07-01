@@ -60,8 +60,8 @@ class _MediaCarouselState extends State<MediaCarousel> {
     return ((((index - _infiniteBase) % total) + total) % total).toInt();
   }
 
-  Widget _buildCarousel(BuildContext context, int totalItems,
-      List<String> images) {
+  Widget _buildCarousel(
+      BuildContext context, int totalItems, List<String> images) {
     return RepaintBoundary(
         child: AspectRatio(
       aspectRatio: 16 / 9,
@@ -150,7 +150,8 @@ class _MediaCarouselState extends State<MediaCarousel> {
 
   Widget _buildImage(String path) {
     final colorScheme = Theme.of(context).colorScheme;
-    final url = UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', path);
+    final url =
+        UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', path);
 
     return Stack(
       fit: StackFit.expand,
@@ -177,4 +178,3 @@ class _MediaCarouselState extends State<MediaCarousel> {
     );
   }
 }
-

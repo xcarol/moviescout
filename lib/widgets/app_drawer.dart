@@ -76,12 +76,14 @@ class AppDrawer extends StatelessWidget {
     ImageProvider<Object>? userImage;
 
     if (user != null) {
-      userImage = user['avatar']['tmdb'] != null &&
-              user['avatar']['tmdb'].isNotEmpty
-          ? CachedNetworkImageProvider(
-              UrlConstants.tmdbImageW185Template.replaceFirst('{PATH}', '/${user['avatar']['tmdb']['avatar_path']}'))
-          : CachedNetworkImageProvider(
-              UrlConstants.gravatarTemplate.replaceFirst('{HASH}', user['avatar']['gravatar']['hash']).replaceFirst('{SIZE}', '200'));
+      userImage =
+          user['avatar']['tmdb'] != null && user['avatar']['tmdb'].isNotEmpty
+              ? CachedNetworkImageProvider(UrlConstants.tmdbImageW185Template
+                  .replaceFirst(
+                      '{PATH}', '/${user['avatar']['tmdb']['avatar_path']}'))
+              : CachedNetworkImageProvider(UrlConstants.gravatarTemplate
+                  .replaceFirst('{HASH}', user['avatar']['gravatar']['hash'])
+                  .replaceFirst('{SIZE}', '200'));
     }
 
     var userName = user != null
@@ -145,8 +147,8 @@ class AppDrawer extends StatelessWidget {
                   decoration: TextDecoration.underline,
                 ),
                 recognizer: TapGestureRecognizer()
-                  ..onTap = () => launchUrl(
-                      Uri.parse(UrlConstants.githubRepoUrl)),
+                  ..onTap =
+                      () => launchUrl(Uri.parse(UrlConstants.githubRepoUrl)),
               ),
             ],
           ),

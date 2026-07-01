@@ -94,7 +94,8 @@ class TmdbEpisode implements TmdbItem {
 
   @ignore
   String get stillPath => stillPathSuffix != null && stillPathSuffix!.isNotEmpty
-      ? UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', stillPathSuffix!)
+      ? UrlConstants.tmdbImageOriginalTemplate
+          .replaceFirst('{PATH}', stillPathSuffix!)
       : '';
 
   @ignore

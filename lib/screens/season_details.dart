@@ -84,8 +84,9 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   Widget build(BuildContext context) {
     String appTitle = widget.title.name;
     final cachedSeason = _loadedSeasons[_currentSeasonNumber];
-    final String editUrl =
-        UrlConstants.tmdbTvSeasonEditWebTemplate.replaceFirst('{ID}', widget.title.tmdbId.toString()).replaceFirst('{SEASON_NUMBER}', _currentSeasonNumber.toString());
+    final String editUrl = UrlConstants.tmdbTvSeasonEditWebTemplate
+        .replaceFirst('{ID}', widget.title.tmdbId.toString())
+        .replaceFirst('{SEASON_NUMBER}', _currentSeasonNumber.toString());
 
     return Scaffold(
       appBar: AppBar(
@@ -102,8 +103,10 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () {
-              final String link =
-                  UrlConstants.tmdbTvSeasonWebTemplate.replaceFirst('{ID}', widget.title.tmdbId.toString()).replaceFirst('{SEASON_NUMBER}', _currentSeasonNumber.toString());
+              final String link = UrlConstants.tmdbTvSeasonWebTemplate
+                  .replaceFirst('{ID}', widget.title.tmdbId.toString())
+                  .replaceFirst(
+                      '{SEASON_NUMBER}', _currentSeasonNumber.toString());
               SharePlus.instance.share(
                 ShareParams(text: '$appTitle\n$link'),
               );
@@ -361,8 +364,10 @@ class _SeasonDetailsState extends State<SeasonDetails> {
         BoxedWidget(
           onPressed: () {
             launchUrl(
-              Uri.parse(
-                  UrlConstants.tmdbTvSeasonWebTemplate.replaceFirst('{ID}', widget.title.tmdbId.toString()).replaceFirst('{SEASON_NUMBER}', widget.seasonNumber.toString())),
+              Uri.parse(UrlConstants.tmdbTvSeasonWebTemplate
+                  .replaceFirst('{ID}', widget.title.tmdbId.toString())
+                  .replaceFirst(
+                      '{SEASON_NUMBER}', widget.seasonNumber.toString())),
               mode: LaunchMode.inAppWebView,
             );
           },

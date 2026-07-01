@@ -115,8 +115,9 @@ class _TitleDetailsState extends State<TitleDetails> {
   @override
   Widget build(BuildContext context) {
     String appTitle = _currentTitle.name;
-    final String editUrl =
-        UrlConstants.tmdbTitleEditWebTemplate.replaceFirst('{MEDIA_TYPE}', _currentTitle.mediaType).replaceFirst('{ID}', _currentTitle.tmdbId.toString());
+    final String editUrl = UrlConstants.tmdbTitleEditWebTemplate
+        .replaceFirst('{MEDIA_TYPE}', _currentTitle.mediaType)
+        .replaceFirst('{ID}', _currentTitle.tmdbId.toString());
 
     return Scaffold(
       appBar: AppBar(
@@ -135,8 +136,9 @@ class _TitleDetailsState extends State<TitleDetails> {
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () {
-              final String link =
-                  UrlConstants.tmdbTitleWebTemplate.replaceFirst('{MEDIA_TYPE}', _currentTitle.mediaType).replaceFirst('{ID}', _currentTitle.tmdbId.toString());
+              final String link = UrlConstants.tmdbTitleWebTemplate
+                  .replaceFirst('{MEDIA_TYPE}', _currentTitle.mediaType)
+                  .replaceFirst('{ID}', _currentTitle.tmdbId.toString());
               SharePlus.instance.share(
                 ShareParams(text: '${_currentTitle.name}\n$link'),
               );
@@ -242,8 +244,8 @@ class _TitleDetailsState extends State<TitleDetails> {
                 ),
                 child: title.posterPath.isNotEmpty
                     ? CachedNetworkImage(
-                        imageUrl:
-                            UrlConstants.tmdbImageW500Template.replaceFirst('{PATH}', title.posterPath),
+                        imageUrl: UrlConstants.tmdbImageW500Template
+                            .replaceFirst('{PATH}', title.posterPath),
                         width: 100,
                         height: 150,
                         fit: BoxFit.cover,
@@ -439,7 +441,9 @@ class _TitleDetailsState extends State<TitleDetails> {
         onPressed: () {
           launchUrl(
             Uri.parse(
-              UrlConstants.tmdbTitleWebTemplate.replaceFirst('{MEDIA_TYPE}', title.mediaType).replaceFirst('{ID}', title.tmdbId.toString()),
+              UrlConstants.tmdbTitleWebTemplate
+                  .replaceFirst('{MEDIA_TYPE}', title.mediaType)
+                  .replaceFirst('{ID}', title.tmdbId.toString()),
             ),
             mode: LaunchMode.inAppWebView,
           );
@@ -461,7 +465,8 @@ class _TitleDetailsState extends State<TitleDetails> {
         BoxedWidget(
           onPressed: () {
             launchUrl(
-              Uri.parse(UrlConstants.imdbTitleTemplate.replaceFirst('{ID}', title.imdbId.toString())),
+              Uri.parse(UrlConstants.imdbTitleTemplate
+                  .replaceFirst('{ID}', title.imdbId.toString())),
               mode: LaunchMode.inAppBrowserView,
             );
           },

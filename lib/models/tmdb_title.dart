@@ -489,12 +489,14 @@ class TmdbTitle implements TmdbItem {
 
   String get posterPath =>
       posterPathSuffix != null && posterPathSuffix!.isNotEmpty
-          ? UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', posterPathSuffix!)
+          ? UrlConstants.tmdbImageOriginalTemplate
+              .replaceFirst('{PATH}', posterPathSuffix!)
           : '';
 
   String get backdropPath =>
       backdropPathSuffix != null && backdropPathSuffix!.isNotEmpty
-          ? UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', backdropPathSuffix!)
+          ? UrlConstants.tmdbImageOriginalTemplate
+              .replaceFirst('{PATH}', backdropPathSuffix!)
           : '';
 
   @ignore
@@ -620,9 +622,11 @@ class TmdbTitle implements TmdbItem {
   @ignore
   String get titleLink {
     if (mediaType == ApiConstants.movie) {
-      return UrlConstants.tmdbMovieWebTemplate.replaceFirst('{ID}', tmdbId.toString());
+      return UrlConstants.tmdbMovieWebTemplate
+          .replaceFirst('{ID}', tmdbId.toString());
     } else {
-      return UrlConstants.tmdbTvWebTemplate.replaceFirst('{ID}', tmdbId.toString());
+      return UrlConstants.tmdbTvWebTemplate
+          .replaceFirst('{ID}', tmdbId.toString());
     }
   }
 

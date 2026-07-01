@@ -1,4 +1,5 @@
 import 'package:moviescout/utils/url_constants.dart';
+
 class TmdbProvider {
   static const logoPathName = 'logo_path';
   static const providerId = 'provider_id';
@@ -27,7 +28,8 @@ class TmdbProvider {
   String get logoPath {
     if (_provider[logoPathName] != null) {
       return (_provider[logoPathName] as String).isNotEmpty
-          ? UrlConstants.tmdbImageW45Template.replaceFirst('{PATH}', _provider[logoPathName])
+          ? UrlConstants.tmdbImageW45Template
+              .replaceFirst('{PATH}', _provider[logoPathName])
           : '';
     }
     return '';

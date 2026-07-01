@@ -15,6 +15,7 @@ const String _tmdbRateslistMovies =
     'account/{ACCOUNT_ID}/movie/rated?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
 const String _tmdbRateslistTv =
     'account/{ACCOUNT_ID}/tv/rated?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
+
 class TmdbRateslistService extends TmdbTitleListService {
   TmdbFollowingService? followingService;
 

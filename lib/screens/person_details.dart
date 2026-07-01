@@ -96,8 +96,8 @@ class _PersonDetailsState extends State<PersonDetails> {
         }
 
         final person = snapshot.data as TmdbPerson;
-        final String editUrl =
-            UrlConstants.tmdbPersonEditWebTemplate.replaceFirst('{ID}', person.tmdbId.toString());
+        final String editUrl = UrlConstants.tmdbPersonEditWebTemplate
+            .replaceFirst('{ID}', person.tmdbId.toString());
 
         return Scaffold(
           appBar: AppBar(
@@ -113,8 +113,8 @@ class _PersonDetailsState extends State<PersonDetails> {
               IconButton(
                 icon: const Icon(Icons.share),
                 onPressed: () {
-                  final String link =
-                      UrlConstants.tmdbPersonWebTemplate.replaceFirst('{ID}', widget._person.tmdbId.toString());
+                  final String link = UrlConstants.tmdbPersonWebTemplate
+                      .replaceFirst('{ID}', widget._person.tmdbId.toString());
                   SharePlus.instance.share(
                     ShareParams(text: '${widget._person.name}\n$link'),
                   );
@@ -281,7 +281,8 @@ class _PersonDetailsState extends State<PersonDetails> {
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
         onPressed: () {
           launchUrl(
-            Uri.parse(UrlConstants.tmdbPersonWebTemplate.replaceFirst('{ID}', person.tmdbId.toString())),
+            Uri.parse(UrlConstants.tmdbPersonWebTemplate
+                .replaceFirst('{ID}', person.tmdbId.toString())),
             mode: LaunchMode.inAppWebView,
           );
         },
@@ -301,7 +302,8 @@ class _PersonDetailsState extends State<PersonDetails> {
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           onPressed: () {
             launchUrl(
-              Uri.parse(UrlConstants.imdbNameTemplate.replaceFirst('{ID}', person.imdbId.toString())),
+              Uri.parse(UrlConstants.imdbNameTemplate
+                  .replaceFirst('{ID}', person.imdbId.toString())),
               mode: LaunchMode.inAppBrowserView,
             );
           },

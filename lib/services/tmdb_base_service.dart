@@ -39,7 +39,9 @@ class TmdbBaseService {
   }
 
   Uri _buildUri(ApiVersion version, String endpoint) {
-    final String baseUrl = version == ApiVersion.v3 ? UrlConstants.tmdbApiV3Url : UrlConstants.tmdbApiV4Url;
+    final String baseUrl = version == ApiVersion.v3
+        ? UrlConstants.tmdbApiV3Url
+        : UrlConstants.tmdbApiV4Url;
     final cleanBase = baseUrl.endsWith('/')
         ? baseUrl.substring(0, baseUrl.length - 1)
         : baseUrl;

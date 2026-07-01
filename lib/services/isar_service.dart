@@ -25,7 +25,7 @@ class IsarService {
     );
 
     final prefs = await SharedPreferences.getInstance();
-    
+
     // TODO: [NaN Migration] Remove this migration block in a few months (e.g., late 2026).
     // This is a one-time migration to clean up existing NaN values stored in Isar.
     // It triggers the Dart constructors to convert any NaN values to 0.0,

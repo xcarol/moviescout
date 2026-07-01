@@ -88,7 +88,8 @@ class TmdbSeason implements TmdbItem {
   @ignore
   String get posterPath =>
       posterPathSuffix != null && posterPathSuffix!.isNotEmpty
-          ? UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', posterPathSuffix!)
+          ? UrlConstants.tmdbImageOriginalTemplate
+              .replaceFirst('{PATH}', posterPathSuffix!)
           : '';
 
   @ignore

@@ -134,8 +134,8 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
       final json = jsonDecode(response.body);
       _requestToken = json[AppConstants.requestToken];
 
-      final authUrl =
-          UrlConstants.tmdbAuthAccessWebTemplate.replaceFirst('{REQUEST_TOKEN}', _requestToken!);
+      final authUrl = UrlConstants.tmdbAuthAccessWebTemplate
+          .replaceFirst('{REQUEST_TOKEN}', _requestToken!);
 
       try {
         await launchUrl(

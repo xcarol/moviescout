@@ -47,8 +47,8 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
       return _getDiscoveryTitles(accountId, sessionId, locale,
           ApiConstants.movie, UrlConstants.tmdbPopularMoviesEndpoint);
     }, retrieveTvshows: () async {
-      return _getDiscoveryTitles(
-          accountId, sessionId, locale, ApiConstants.tv, UrlConstants.tmdbPopularTvEndpoint);
+      return _getDiscoveryTitles(accountId, sessionId, locale, ApiConstants.tv,
+          UrlConstants.tmdbPopularTvEndpoint);
     }).whenComplete(() {
       isRefreshing.value = false;
     });

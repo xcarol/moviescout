@@ -154,7 +154,8 @@ class TmdbPerson implements TmdbItem {
 
   String get posterPath {
     return profilePath.isNotEmpty
-        ? UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', profilePath)
+        ? UrlConstants.tmdbImageOriginalTemplate
+            .replaceFirst('{PATH}', profilePath)
         : '';
   }
 

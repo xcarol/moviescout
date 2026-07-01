@@ -21,7 +21,10 @@ class TmdbGenreService extends TmdbCacheableService<Map<int, String>> {
 
   @override
   Future<void> fetchAndCache() async {
-    List<String> genreUrls = [UrlConstants.tmdbMovieGenresEndpoint, UrlConstants.tmdbTvGenresEndpoint];
+    List<String> genreUrls = [
+      UrlConstants.tmdbMovieGenresEndpoint,
+      UrlConstants.tmdbTvGenresEndpoint
+    ];
     final Map<int, String> newGenreMap = {};
     bool reportError = false;
     dynamic lastResponse;
