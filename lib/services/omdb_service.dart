@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -6,8 +7,6 @@ import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class OmdbService {
-  static const String _baseUrl = 'https://www.omdbapi.com/';
-
   static final Map<String, List<Map<String, dynamic>>> _cache = {};
 
   Future<List<Map<String, dynamic>>> getRatings(String imdbId) async {
@@ -22,7 +21,7 @@ class OmdbService {
       return [];
     }
 
-    final uri = Uri.parse('$_baseUrl?i=$imdbId&apikey=$apiKey');
+    final uri = Uri.parse('$UrlConstants.omdbApiUrl?i=$imdbId&apikey=$apiKey');
 
     try {
       final response = await http.get(uri);

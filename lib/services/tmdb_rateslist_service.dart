@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -14,9 +15,6 @@ const String _tmdbRateslistMovies =
     'account/{ACCOUNT_ID}/movie/rated?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
 const String _tmdbRateslistTv =
     'account/{ACCOUNT_ID}/tv/rated?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
-const String _rateMovie = 'movie/{ID}/rating?session_id={SESSION_ID}';
-const String _rateTv = 'tv/{ID}/rating?session_id={SESSION_ID}';
-
 class TmdbRateslistService extends TmdbTitleListService {
   TmdbFollowingService? followingService;
 
@@ -91,13 +89,13 @@ class TmdbRateslistService extends TmdbTitleListService {
     if (rate > 0) {
       if (mediaType == ApiConstants.movie) {
         return post(
-            _rateMovie
+            UrlConstants.tmdbRateMovieEndpoint
                 .replaceFirst('{ID}', id.toString())
                 .replaceFirst('{SESSION_ID}', sessionId),
             {'value': rate});
       } else if (mediaType == ApiConstants.tv) {
         return post(
-            _rateTv
+            UrlConstants.tmdbRateTvEndpoint
                 .replaceFirst('{ID}', id.toString())
                 .replaceFirst('{SESSION_ID}', sessionId),
             {'value': rate});
@@ -106,11 +104,11 @@ class TmdbRateslistService extends TmdbTitleListService {
           'Invalid media type: $mediaType. Expected "${ApiConstants.movie}" or "${ApiConstants.tv}".');
     } else {
       if (mediaType == ApiConstants.movie) {
-        return delete(_rateMovie
+        return delete(UrlConstants.tmdbRateMovieEndpoint
             .replaceFirst('{ID}', id.toString())
             .replaceFirst('{SESSION_ID}', sessionId));
       } else if (mediaType == ApiConstants.tv) {
-        return delete(_rateTv
+        return delete(UrlConstants.tmdbRateTvEndpoint
             .replaceFirst('{ID}', id.toString())
             .replaceFirst('{SESSION_ID}', sessionId));
       }

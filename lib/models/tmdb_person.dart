@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_item.dart';
 import 'package:flutter/widgets.dart';
@@ -153,7 +154,7 @@ class TmdbPerson implements TmdbItem {
 
   String get posterPath {
     return profilePath.isNotEmpty
-        ? 'https://image.tmdb.org/t/p/original$profilePath'
+        ? UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', profilePath)
         : '';
   }
 

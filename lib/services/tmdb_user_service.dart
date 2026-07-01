@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -134,7 +135,7 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
       _requestToken = json[AppConstants.requestToken];
 
       final authUrl =
-          'https://www.themoviedb.org/auth/access?request_token=$_requestToken';
+          UrlConstants.tmdbAuthAccessWebTemplate.replaceFirst('{REQUEST_TOKEN}', _requestToken!);
 
       try {
         await launchUrl(

@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
@@ -97,8 +98,10 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
   Widget build(BuildContext context) {
     String appTitle = widget.title.name;
     final cachedEpisode = _loadedEpisodes[_currentEpisodeNumber];
-    final String editUrl =
-        'https://www.themoviedb.org/tv/${widget.title.tmdbId}/season/${widget.seasonNumber}/episode/$_currentEpisodeNumber/edit';
+    final String editUrl = UrlConstants.tmdbTvEpisodeEditWebTemplate
+        .replaceFirst('{ID}', widget.title.tmdbId.toString())
+        .replaceFirst('{SEASON_NUMBER}', widget.seasonNumber.toString())
+        .replaceFirst('{EPISODE_NUMBER}', _currentEpisodeNumber.toString());
 
     return Scaffold(
       appBar: AppBar(

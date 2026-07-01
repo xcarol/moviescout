@@ -1,3 +1,4 @@
+import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:isar_community/isar.dart';
@@ -93,7 +94,7 @@ class TmdbEpisode implements TmdbItem {
 
   @ignore
   String get stillPath => stillPathSuffix != null && stillPathSuffix!.isNotEmpty
-      ? 'https://image.tmdb.org/t/p/original$stillPathSuffix'
+      ? UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', stillPathSuffix!)
       : '';
 
   @ignore
