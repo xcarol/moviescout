@@ -25,6 +25,8 @@ import 'package:moviescout/widgets/edit_button.dart';
 import 'package:moviescout/widgets/translations_button.dart';
 import 'package:moviescout/services/tmdb_translation_service.dart';
 import 'package:moviescout/widgets/boxed_widget.dart';
+import 'package:moviescout/services/home_screen_shortcut_service.dart';
+import 'package:moviescout/utils/snack_bar.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:moviescout/widgets/custom_refresh_builder.dart';
 import 'package:moviescout/widgets/bottom_clamping_scroll_physics.dart';
@@ -120,6 +122,18 @@ class _PersonDetailsState extends State<PersonDetails> {
                       .getTranslations('person', person.tmdbId),
                   originalTitle: person.name,
                   originalDescription: person.biography),
+              IconButton(
+                icon: const Icon(Icons.add_to_home_screen),
+                onPressed: () async {
+                  final loc = AppLocalizations.of(context)!;
+                  final success =
+                      await HomeScreenShortcutService.pinPersonShortcut(person);
+                  if (!success) {
+                    SnackMessage.showSnackBar(loc.shortcutFailed);
+                  }
+                },
+                tooltip: AppLocalizations.of(context)!.addToHomeScreen,
+              ),
               IconButton(
                 icon: const Icon(Icons.share),
                 onPressed: () {

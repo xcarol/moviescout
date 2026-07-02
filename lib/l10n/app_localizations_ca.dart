@@ -27,7 +27,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get messageEmptyList => 'Encara no s\'ha escollit cap pel·lícula.';
 
   @override
-  String get messageEmptySearch => 'Pots fer una cerca utilitzant la lupa de la barra inferior.';
+  String get messageEmptySearch =>
+      'Pots fer una cerca utilitzant la lupa de la barra inferior.';
 
   @override
   String get messageEmptyOptions => 'També pots';
@@ -138,10 +139,12 @@ class AppLocalizationsCa extends AppLocalizations {
   String get imdbConfirmationTitle => 'ATENCIÓ';
 
   @override
-  String get imdbResetWatchlistConfirmation => 'Segur que vols eliminar els títols Per Veure?';
+  String get imdbResetWatchlistConfirmation =>
+      'Segur que vols eliminar els títols Per Veure?';
 
   @override
-  String get imdbResetRateslistConfirmation => 'Segur que vols eliminar les Valoracions?';
+  String get imdbResetRateslistConfirmation =>
+      'Segur que vols eliminar les Valoracions?';
 
   @override
   String get resetWatchlistCount => 'Títols Per Veure: ';
@@ -201,13 +204,10 @@ class AppLocalizationsCa extends AppLocalizations {
   String get titles => 'Títols';
 
   @override
-  String get rate => 'Valora';
-
-  @override
   String get rate_date => 'Data de valoració';
 
   @override
-  String get your_rate => 'LA TEVA VALORACIÓ';
+  String get your_rate => 'La teva valoració';
 
   @override
   String get reset_rate => 'Elimina la valoració';
@@ -276,7 +276,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get about => 'Quant a...';
 
   @override
-  String get aboutDescription => 'Movie Scout el teu rastrejador de pel·lícules i sèries amb dades de TMDb, OMDb i JustWatch.';
+  String get aboutDescription =>
+      'Movie Scout el teu rastrejador de pel·lícules i sèries amb dades de TMDb, OMDb i JustWatch.';
 
   @override
   String get aboutGithub => 'Visita el projecte a ';
@@ -339,7 +340,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get languageChangeTitle => 'Canvi d\'idioma';
 
   @override
-  String get languageChangeContent => 'Has canviat l\'idioma de l\'aplicació. Perquè els títols s\'actualitzin al nou idioma, cal que tanquis la sessió i tornis a entrar.';
+  String get languageChangeContent =>
+      'Has canviat l\'idioma de l\'aplicació. Perquè els títols s\'actualitzin al nou idioma, cal que tanquis la sessió i tornis a entrar.';
 
   @override
   String get watchingNow => 'Mirant ara';
@@ -417,10 +419,12 @@ class AppLocalizationsCa extends AppLocalizations {
   String get notifications => 'Notificacions';
 
   @override
-  String get notificationsPermissionRequired => 'Cal que permetis les notificacions a la configuració del sistema.';
+  String get notificationsPermissionRequired =>
+      'Cal que permetis les notificacions a la configuració del sistema.';
 
   @override
-  String get notificationsPermissionDescription => 'Per rebre avisos de disponibilitat de pel·lícules i noves temporades, cal que activis les notificacions als ajustos del sistema.';
+  String get notificationsPermissionDescription =>
+      'Per rebre avisos de disponibilitat de pel·lícules i noves temporades, cal que activis les notificacions als ajustos del sistema.';
 
   @override
   String get openSettings => 'Obrir ajustos';
@@ -429,7 +433,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get settings => 'Configuració';
 
   @override
-  String get errorMessageGeneric => 'S\'ha produït un error. Torna-ho a provar més tard.';
+  String get errorMessageGeneric =>
+      'S\'ha produït un error. Torna-ho a provar més tard.';
 
   @override
   String get youtubeSearch => 'Cerca a YouTube';
@@ -441,7 +446,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get notifyCompleteSeason => 'Notificar temporada completa';
 
   @override
-  String get notifyCompleteSeasonSubtitle => 'Només notifica quan tota la temporada està disponible.';
+  String get notifyCompleteSeasonSubtitle =>
+      'Només notifica quan tota la temporada està disponible.';
 
   @override
   String get episodes => 'Episodis';
@@ -458,7 +464,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get notifyTitle => 'Notificar noves temporades';
 
   @override
-  String get notifyMessage => 'Vols que t\'avisem quan hi hagi una nova temporada?';
+  String get notifyMessage =>
+      'Vols que t\'avisem quan hi hagi una nova temporada?';
 
   @override
   String get no => 'No';
@@ -496,4 +503,16 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get originalText => 'Text Original';
+
+  @override
+  String get addToHomeScreen => 'Afegeix a la pantalla d\'inici';
+
+  @override
+  String get shortcutAdded => 'Drecera afegida';
+
+  @override
+  String get shortcutFailed => 'No s\'ha pogut afegir la drecera';
+
+  @override
+  String get rate => 'Valora';
 }
