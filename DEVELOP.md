@@ -128,6 +128,22 @@ Add the key to your `.env` file:
 OMDB_API_KEY=yourOmdbApiKey
 ```
 
+## Backend API & Vercel Deployment
+
+MovieScout relies on a Vercel-hosted backend (located in the `backend/` directory) for two primary features:
+1. **Deep Linking (Android App Links):** Serving the `/.well-known/assetlinks.json` file for Android verification and handling redirects (`vercel.json`) to either the app or fallback URLs (TMDB, Github Pages).
+2. **Firebase Custom Auth:** Providing the `/api/auth` endpoint used to bridge TMDB login with Firebase Authentication.
+
+### Setup from scratch
+If you need to deploy the backend environment from scratch:
+1. **Deploy to Vercel:** Push the `backend/` folder to a GitHub repository and link it to a new project in Vercel. 
+2. **Custom Domain:** In the Vercel project settings, add your custom domain (e.g., `moviescout.xicra.com`). Configure the DNS `CNAME` record in your domain provider as requested by Vercel to automatically provision the SSL (HTTPS) certificate.
+3. **App Links Fingerprints:** Ensure the `backend/public/.well-known/assetlinks.json` file contains the exact SHA-256 certificate fingerprints for both your local debug keystore and Google Play App Signing key.
+4. **Environment Variables:** Update the `.env` file in the Flutter app to point to your backend URL so Firebase Auth works:
+   ```env
+   FIREBASE_AUTH_URL=https://moviescout.xicra.com/api/auth
+   ```
+
 ## Assets
 
 Images like tvshow_poster.png are created with [Cool Text](https://cooltext.com/) tool using [FUN](https://cooltext.com/Logo-Design-Fun) text style.  
