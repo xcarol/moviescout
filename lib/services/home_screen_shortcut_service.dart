@@ -11,8 +11,8 @@ class HomeScreenShortcutService {
   static Future<Uint8List?> _getIconBytes(String path) async {
     if (path.isEmpty) return null;
     try {
-      final imageUrl = UrlConstants.tmdbImageW185Template
-          .replaceFirst('{PATH}', path);
+      final imageUrl =
+          UrlConstants.tmdbImageW185Template.replaceFirst('{PATH}', path);
       final response = await http.get(Uri.parse(imageUrl));
       if (response.statusCode == 200) {
         return response.bodyBytes;

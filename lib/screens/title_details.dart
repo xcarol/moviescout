@@ -149,8 +149,8 @@ class _TitleDetailsState extends State<TitleDetails> {
             icon: const Icon(Icons.add_to_home_screen),
             onPressed: () async {
               final loc = AppLocalizations.of(context)!;
-              final success =
-                  await HomeScreenShortcutService.pinTitleShortcut(_currentTitle);
+              final success = await HomeScreenShortcutService.pinTitleShortcut(
+                  _currentTitle);
               if (!success) {
                 SnackMessage.showSnackBar(loc.shortcutFailed);
               }
@@ -275,28 +275,28 @@ class _TitleDetailsState extends State<TitleDetails> {
                 isMovie: title.isMovie,
                 isLoading: _isUpdating),
             Positioned(
-              left: 10,
+              left: 8,
               bottom: -150,
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
                     color: Theme.of(context).scaffoldBackgroundColor,
-                    width: 10,
+                    width: 4,
                   ),
                 ),
                 child: title.posterPath.isNotEmpty
                     ? CachedNetworkImage(
                         imageUrl: UrlConstants.tmdbImageW500Template
                             .replaceFirst('{PATH}', title.posterPath),
-                        width: 100,
-                        height: 150,
+                        width: 120,
+                        height: 170,
                         fit: BoxFit.cover,
                         errorWidget: (context, url, error) => Image.asset(
                           title.isMovie
                               ? 'assets/movie_poster.png'
                               : 'assets/tvshow_poster.png',
-                          width: 100,
-                          height: 150,
+                          width: 120,
+                          height: 170,
                           fit: BoxFit.cover,
                         ),
                       )
@@ -304,8 +304,8 @@ class _TitleDetailsState extends State<TitleDetails> {
                         title.isMovie
                             ? 'assets/movie_poster.png'
                             : 'assets/tvshow_poster.png',
-                        width: 100,
-                        height: 150,
+                        width: 120,
+                        height: 170,
                         fit: BoxFit.cover,
                       ),
               ),
@@ -315,7 +315,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         Container(
           constraints: const BoxConstraints(minHeight: 150),
           padding:
-              const EdgeInsets.only(left: 140, right: 5, top: 10, bottom: 10),
+              const EdgeInsets.only(left: 136, right: 5, top: 10, bottom: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -492,7 +492,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         },
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         child: SizedBox(
-          height: 30,
+          height: 20,
           child: Image.asset(
             'assets/tmdb-logo.png',
             fit: BoxFit.cover,
@@ -514,7 +514,7 @@ class _TitleDetailsState extends State<TitleDetails> {
           },
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: SizedBox(
-            height: 30,
+            height: 20,
             child: Image.asset(
               'assets/imdb-logo.png',
               fit: BoxFit.cover,
@@ -536,11 +536,11 @@ class _TitleDetailsState extends State<TitleDetails> {
           },
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: SizedBox(
-            height: 30,
-            width: 30,
+            height: 20,
+            width: 20,
             child: Icon(
               Icons.language,
-              size: 30,
+              size: 20,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
@@ -548,9 +548,19 @@ class _TitleDetailsState extends State<TitleDetails> {
       );
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: links,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.watchOn,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: links,
+        ),
+      ],
     );
   }
 
@@ -688,29 +698,17 @@ class _TitleDetailsState extends State<TitleDetails> {
 
     return Padding(
       padding: const EdgeInsets.only(top: 4.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.bold),
-                ),
-                ClickableNames(
-                  people: people,
-                  tmdbListService: widget._tmdbListService,
-                  useEllipsis: true,
-                ),
-              ],
-            ),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: TrailerButtons(videos: title.videos),
+          ClickableNames(
+            people: people,
+            tmdbListService: widget._tmdbListService,
+            useEllipsis: true,
           ),
         ],
       ),
@@ -726,6 +724,8 @@ class _TitleDetailsState extends State<TitleDetails> {
         pinButton(context, title),
         const SizedBox(width: 8),
         notifyButton(context, title),
+        const Spacer(),
+        TrailerButtons(videos: title.videos),
       ],
     );
   }
@@ -769,13 +769,11 @@ class _TitleDetailsState extends State<TitleDetails> {
 
     if (_omdbRatings != null && _omdbRatings!.isNotEmpty) {
       for (var rating in _omdbRatings!) {
-        if (topChildren.isNotEmpty) topChildren.add(const SizedBox(width: 15));
         topChildren.add(OmdbRatingWidget(rating: rating));
       }
     }
 
     if (_isUpdatingRatings) {
-      if (topChildren.isNotEmpty) topChildren.add(const SizedBox(width: 15));
       topChildren.add(
         const SizedBox(
           width: 15,
@@ -785,28 +783,61 @@ class _TitleDetailsState extends State<TitleDetails> {
       );
     }
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Consumer<TmdbRateslistService>(
-          builder: (context, ratingService, child) {
-            return FutureBuilder<List<dynamic>>(
-              future: Future.wait([
-                ratingService.getRatingDate(title.tmdbId, title.mediaType),
-                ratingService.contains(title),
-                ratingService.getRatingAsync(title.tmdbId, title.mediaType),
-              ]),
-              builder: (context, snapshot) {
-                final isUserLoggedIn =
-                    Provider.of<TmdbUserService>(context).isUserLoggedIn;
-                final titleRatingDate = snapshot.data?[0] as DateTime? ??
-                    DateTime.fromMillisecondsSinceEpoch(0);
-                final titleRating = snapshot.data?[2] as double? ?? 0.0;
+    List<Widget> leftColChildren = [];
+    List<Widget> rightColChildren = [];
+    for (int i = 0; i < 2; i++) {
+      leftColChildren.add(topChildren.length > i * 2
+          ? topChildren[i * 2]
+          : const SizedBox(height: 24));
+      rightColChildren.add(topChildren.length > i * 2 + 1
+          ? topChildren[i * 2 + 1]
+          : const SizedBox(height: 24));
+    }
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          if (topChildren.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 4.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: leftColChildren,
+                  ),
+                  const SizedBox(width: 15),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: rightColChildren,
+                  ),
+                ],
+              ),
+            ),
+          Consumer<TmdbRateslistService>(
+            builder: (context, ratingService, child) {
+              return FutureBuilder<List<dynamic>>(
+                future: Future.wait([
+                  ratingService.getRatingDate(title.tmdbId, title.mediaType),
+                  ratingService.contains(title),
+                  ratingService.getRatingAsync(title.tmdbId, title.mediaType),
+                ]),
+                builder: (context, snapshot) {
+                  final isUserLoggedIn =
+                      Provider.of<TmdbUserService>(context).isUserLoggedIn;
+                  final titleRatingDate = snapshot.data?[0] as DateTime? ??
+                      DateTime.fromMillisecondsSinceEpoch(0);
+                  final titleRating = snapshot.data?[2] as double? ?? 0.0;
+  
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
                     Text(
                       AppLocalizations.of(context)!.your_rate.toUpperCase(),
                       style: const TextStyle(
@@ -816,8 +847,8 @@ class _TitleDetailsState extends State<TitleDetails> {
                     ),
                     const SizedBox(height: 5),
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Expanded(child: SizedBox()),
                         OutlinedButton(
                           style: OutlinedButton.styleFrom(
                             side: BorderSide(
@@ -877,10 +908,8 @@ class _TitleDetailsState extends State<TitleDetails> {
                             ],
                           ),
                         ),
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: OutlinedButton(
+                        const SizedBox(width: 8),
+                        OutlinedButton(
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide(
                                   color: !isUserLoggedIn ||
@@ -939,8 +968,6 @@ class _TitleDetailsState extends State<TitleDetails> {
                                 ),
                               ),
                             ),
-                          ),
-                        ),
                       ],
                     ),
                   ],
@@ -949,13 +976,8 @@ class _TitleDetailsState extends State<TitleDetails> {
             );
           },
         ),
-        if (topChildren.isNotEmpty) const SizedBox(height: 15),
-        if (topChildren.isNotEmpty)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: topChildren,
-          ),
       ],
+      ),
     );
   }
 

@@ -27,8 +27,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageEmptyList => 'No films slected yet.';
 
   @override
-  String get messageEmptySearch =>
-      'You can do a search by using the magnifying glass in the bottom bar.';
+  String get messageEmptySearch => 'You can do a search by using the magnifying glass in the bottom bar.';
 
   @override
   String get messageEmptyOptions => 'You can also';
@@ -139,12 +138,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get imdbConfirmationTitle => 'WARNING';
 
   @override
-  String get imdbResetWatchlistConfirmation =>
-      'Do you really want to reset Watchlist?';
+  String get imdbResetWatchlistConfirmation => 'Do you really want to reset Watchlist?';
 
   @override
-  String get imdbResetRateslistConfirmation =>
-      'Do you really want to reset Ratings?';
+  String get imdbResetRateslistConfirmation => 'Do you really want to reset Ratings?';
 
   @override
   String get resetWatchlistCount => 'Watchlist titles: ';
@@ -276,8 +273,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get about => 'About...';
 
   @override
-  String get aboutDescription =>
-      'Movie Scout your movie and series tracker powered by TMDb, OMDb & JustWatch.';
+  String get aboutDescription => 'Movie Scout your movie and series tracker powered by TMDb, OMDb & JustWatch.';
 
   @override
   String get aboutGithub => 'Visit project on ';
@@ -340,15 +336,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageChangeTitle => 'Language Change';
 
   @override
-  String get languageChangeContent =>
-      'You have changed the application language. In order for titles to be updated to the new language, you need to log out and log back in.';
+  String get languageChangeContent => 'You have changed the application language. In order for titles to be updated to the new language, you need to log out and log back in.';
 
   @override
   String get watchingNow => 'Watching now';
 
   @override
-  String get pinLimitReached =>
-      'You have reached the limit of 5 pinned titles.';
+  String get pinLimitReached => 'You have reached the limit of 5 pinned titles.';
 
   @override
   String get pin => 'Pin';
@@ -420,12 +414,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifications => 'Notifications';
 
   @override
-  String get notificationsPermissionRequired =>
-      'You need to allow notifications in the system settings.';
+  String get notificationsPermissionRequired => 'You need to allow notifications in the system settings.';
 
   @override
-  String get notificationsPermissionDescription =>
-      'To receive updates on movie availability and new seasons, you must enable notifications in your system settings.';
+  String get notificationsPermissionDescription => 'To receive updates on movie availability and new seasons, you must enable notifications in your system settings.';
 
   @override
   String get openSettings => 'Open Settings';
@@ -434,8 +426,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
 
   @override
-  String get errorMessageGeneric =>
-      'An error occurred. Please try again later.';
+  String get errorMessageGeneric => 'An error occurred. Please try again later.';
 
   @override
   String get youtubeSearch => 'YouTube Search';
@@ -447,8 +438,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifyCompleteSeason => 'Notify complete season';
 
   @override
-  String get notifyCompleteSeasonSubtitle =>
-      'Only notifies when the whole season is available.';
+  String get notifyCompleteSeasonSubtitle => 'Only notifies when the whole season is available.';
 
   @override
   String get episodes => 'Episodes';
@@ -465,8 +455,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifyTitle => 'Notify new seasons';
 
   @override
-  String get notifyMessage =>
-      'Do you want to be notified when a new season airs?';
+  String get notifyMessage => 'Do you want to be notified when a new season airs?';
 
   @override
   String get no => 'No';
@@ -516,4 +505,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rate => 'Rate';
+
+  @override
+  String get watchOn => 'Watch on';
 }

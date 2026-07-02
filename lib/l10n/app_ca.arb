@@ -349,5 +349,7 @@
   "shortcutFailed": "No s'ha pogut afegir la drecera",
   "@shortcutFailed": {},
   "rate": "Valora",
-  "@rate": {}
+  "@rate": {},
+  "watchOn": "Veure a",
+  "@watchOn": {}
 }
