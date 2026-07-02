@@ -5,6 +5,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
+import 'package:moviescout/utils/snack_bar.dart';
 import 'package:provider/provider.dart';
 
 Widget watchlistButton(
@@ -20,10 +21,8 @@ Widget watchlistButton(
             return IconButton(
               icon: const Icon(Icons.highlight_off),
               onPressed: () {
-                ErrorService.log(
-                  'User not logged in',
-                  userMessage: AppLocalizations.of(context)!.signInToWatchlist,
-                );
+                SnackMessage.showSnackBar(
+                    AppLocalizations.of(context)!.signInToWatchlist);
               },
             );
           }

@@ -18,6 +18,8 @@ import 'package:moviescout/widgets/trailer_buttons.dart';
 import 'package:moviescout/widgets/boxed_widget.dart';
 import 'package:moviescout/widgets/expandable_description.dart';
 import 'package:moviescout/widgets/clickable_names.dart';
+import 'package:moviescout/services/home_screen_shortcut_service.dart';
+import 'package:moviescout/utils/snack_bar.dart';
 
 class SeasonDetails extends StatefulWidget {
   final TmdbTitle title;
@@ -100,6 +102,21 @@ class _SeasonDetailsState extends State<SeasonDetails> {
                       widget.title.tmdbId, _currentSeasonNumber),
               originalTitle: cachedSeason?.name ?? '',
               originalDescription: cachedSeason?.overview ?? ''),
+          IconButton(
+            icon: const Icon(Icons.add_to_home_screen),
+            onPressed: () async {
+              final loc = AppLocalizations.of(context)!;
+              final success = await HomeScreenShortcutService.pinSeasonShortcut(
+                  widget.title,
+                  _currentSeasonNumber,
+                  cachedSeason?.name ?? '',
+                  cachedSeason?.posterPath ?? '');
+              if (!success) {
+                SnackMessage.showSnackBar(loc.shortcutFailed);
+              }
+            },
+            tooltip: AppLocalizations.of(context)!.addToHomeScreen,
+          ),
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: () {

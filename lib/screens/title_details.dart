@@ -26,6 +26,8 @@ import 'package:moviescout/widgets/boxed_widget.dart';
 import 'package:moviescout/widgets/edit_button.dart';
 import 'package:moviescout/widgets/translations_button.dart';
 import 'package:moviescout/services/tmdb_translation_service.dart';
+import 'package:moviescout/services/home_screen_shortcut_service.dart';
+import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/widgets/rate_form.dart';
 import 'package:moviescout/widgets/notify_dialog.dart';
 import 'package:moviescout/widgets/title_chip.dart';
@@ -142,6 +144,18 @@ class _TitleDetailsState extends State<TitleDetails> {
                 ? _currentTitle.originalName
                 : _currentTitle.name,
             originalDescription: _currentTitle.overview,
+          ),
+          IconButton(
+            icon: const Icon(Icons.add_to_home_screen),
+            onPressed: () async {
+              final loc = AppLocalizations.of(context)!;
+              final success =
+                  await HomeScreenShortcutService.pinTitleShortcut(_currentTitle);
+              if (!success) {
+                SnackMessage.showSnackBar(loc.shortcutFailed);
+              }
+            },
+            tooltip: AppLocalizations.of(context)!.addToHomeScreen,
           ),
           IconButton(
             icon: const Icon(Icons.share),
