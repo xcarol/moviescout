@@ -1,21 +1,13 @@
 import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_person.dart';
-import 'package:isar_community/isar.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/models/tmdb_item.dart';
 
-part 'tmdb_episode.g.dart';
-
-@collection
 class TmdbEpisode implements TmdbItem {
-  Id isarId = Isar.autoIncrement;
   @override
   late int tmdbId;
-  @Index(composite: [
-    CompositeIndex('seasonNumber'),
-    CompositeIndex('episodeNumber')
-  ])
+
   late int tvId;
   late int seasonNumber;
   late String name;
@@ -92,15 +84,13 @@ class TmdbEpisode implements TmdbItem {
     }
   }
 
-  @ignore
   String get stillPath => stillPathSuffix != null && stillPathSuffix!.isNotEmpty
       ? UrlConstants.tmdbImageOriginalTemplate
           .replaceFirst('{PATH}', stillPathSuffix!)
       : '';
 
-  @ignore
   List<String>? _imagesCache;
-  @ignore
+
   List<String> get images {
     if (_imagesCache != null) return _imagesCache!;
     if (imagesJson == null) return [];
@@ -114,9 +104,7 @@ class TmdbEpisode implements TmdbItem {
     return [];
   }
 
-  @ignore
   List<Map<String, dynamic>>? _videosCache;
-  @ignore
   List<Map<String, dynamic>> get videos {
     if (_videosCache != null) return _videosCache!;
     if (videosJson == null) return [];
@@ -130,9 +118,7 @@ class TmdbEpisode implements TmdbItem {
     return [];
   }
 
-  @ignore
   List<TmdbPerson>? _castCache;
-  @ignore
   List<TmdbPerson> get cast {
     if (_castCache != null) return _castCache!;
     if (guestStarsJson == null) return [];
@@ -142,9 +128,7 @@ class TmdbEpisode implements TmdbItem {
     return _castCache!;
   }
 
-  @ignore
   List<TmdbPerson>? _crewCache;
-  @ignore
   List<TmdbPerson> get crew {
     if (_crewCache != null) return _crewCache!;
     if (crewJson == null) return [];

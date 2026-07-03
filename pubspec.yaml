@@ -16,12 +16,11 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.22.0+99
+version: 1.23.0+100
 
 environment:
   sdk: ^3.6.0
 
-isar_version: &isar_version 3.3.2
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -55,11 +54,9 @@ dependencies:
   app_links: ^7.0.0
   file_picker: ^10.1.2
   csv: ^6.0.0
-  isar_community: 
-    version: *isar_version
-  isar_community_flutter_libs:
-    version: *isar_version
+
   custom_refresh_indicator: ^4.0.1
+  realm: any
   diacritic: ^0.1.6
   material_symbols_icons: ^4.2873.0
   flutter_native_splash: ^2.4.6
@@ -78,9 +75,8 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.3
-  build_runner: ^2.7.1
-  isar_community_generator: 
-    version: *isar_version
+  build_runner: any
+  realm_generator: ^20.2.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -66,12 +66,12 @@ class TmdbFollowingService extends TmdbConfigListService {
       filterRating: RatingFilter.followingOnly,
     );
 
-    final Map<int, TmdbTitle> toUpdate = {};
+    final Map<String, TmdbTitle> toUpdate = {};
 
     // Reset current following
     for (var title in currentFollowing) {
       title.notifyNewSeasons = false;
-      toUpdate[title.id] = title;
+      toUpdate['${title.tmdbId}_${title.mediaType}'] = title;
     }
 
     // Set new following
@@ -81,12 +81,16 @@ class TmdbFollowingService extends TmdbConfigListService {
         final mediaType = parts[0];
         final tmdbId = int.tryParse(parts[1]);
         if (tmdbId != null) {
-          final title = await repository.getTitleByTmdbId(
+          var title = await repository.getTitleByTmdbId(
               AppConstants.rateslist, tmdbId, mediaType);
-          if (title != null) {
-            title.notifyNewSeasons = true;
-            toUpdate[title.id] = title;
-          }
+          title ??= TmdbTitle(
+              tmdbId: tmdbId,
+              name: '',
+              mediaType: mediaType,
+              dateRated: DateTime.fromMillisecondsSinceEpoch(0),
+              lastUpdated: AppConstants.defaultDate);
+          title.notifyNewSeasons = true;
+          toUpdate['${title.tmdbId}_${title.mediaType}'] = title;
         }
       }
     }

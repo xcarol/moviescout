@@ -11,7 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/services/discoverlist_service.dart';
 import 'package:moviescout/services/error_service.dart';
-import 'package:moviescout/services/isar_service.dart';
+import 'package:moviescout/services/realm_service.dart';
 import 'package:moviescout/services/app_lifecycle_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/language_service.dart';
@@ -78,7 +78,7 @@ void main() async {
     await Future.wait([
       dotenv.load(fileName: ".env"),
       PreferencesService().init(),
-      IsarService.init(),
+      RealmService.init(),
     ]);
 
     await Future.wait([

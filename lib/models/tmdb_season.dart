@@ -2,16 +2,10 @@ import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/tmdb_person.dart';
-import 'package:isar_community/isar.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/models/tmdb_item.dart';
 
-part 'tmdb_season.g.dart';
-
-@collection
 class TmdbSeason implements TmdbItem {
-  Id isarId = Isar.autoIncrement;
-  @Index(composite: [CompositeIndex('seasonNumber')])
   late int tvId;
   @override
   late int tmdbId;
@@ -85,16 +79,13 @@ class TmdbSeason implements TmdbItem {
     }
   }
 
-  @ignore
   String get posterPath =>
       posterPathSuffix != null && posterPathSuffix!.isNotEmpty
           ? UrlConstants.tmdbImageOriginalTemplate
               .replaceFirst('{PATH}', posterPathSuffix!)
           : '';
 
-  @ignore
   List<TmdbEpisode>? _episodesCache;
-  @ignore
   List<TmdbEpisode> get episodes {
     if (_episodesCache != null) return _episodesCache!;
     List<TmdbEpisode> epList = [];
@@ -110,9 +101,7 @@ class TmdbSeason implements TmdbItem {
     return epList;
   }
 
-  @ignore
   List<String>? _imagesCache;
-  @ignore
   List<String> get images {
     if (_imagesCache != null) return _imagesCache!;
     if (imagesJson == null) return [];
@@ -126,9 +115,7 @@ class TmdbSeason implements TmdbItem {
     return [];
   }
 
-  @ignore
   List<Map<String, dynamic>>? _videosCache;
-  @ignore
   List<Map<String, dynamic>> get videos {
     if (_videosCache != null) return _videosCache!;
     if (videosJson == null) return [];
@@ -142,12 +129,9 @@ class TmdbSeason implements TmdbItem {
     return [];
   }
 
-  @ignore
   Map<String, dynamic>? _creditsMapCache;
 
-  @ignore
   List<TmdbPerson>? _castCache;
-  @ignore
   List<TmdbPerson> get cast {
     if (_castCache != null) return _castCache!;
     if (creditsJson == null) return [];
@@ -160,9 +144,7 @@ class TmdbSeason implements TmdbItem {
     return _castCache!;
   }
 
-  @ignore
   List<TmdbPerson>? _crewCache;
-  @ignore
   List<TmdbPerson> get crew {
     if (_crewCache != null) return _crewCache!;
     if (creditsJson == null) return [];

@@ -1309,7 +1309,7 @@ class _TitleDetailsState extends State<TitleDetails> {
             itemCount: title.recommendations.length,
             itemBuilder: (context, index) {
               return TitleChip(
-                title: TmdbTitle.fromMap(title: title.recommendations[index]),
+                title: title.recommendations[index],
                 tmdbListService: widget._tmdbListService,
               );
             },
