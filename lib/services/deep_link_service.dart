@@ -5,6 +5,7 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/screens/title_details.dart';
+import 'package:moviescout/screens/season_details.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
@@ -13,6 +14,8 @@ class DeepLinkService {
   static final DeepLinkService _instance = DeepLinkService._internal();
   factory DeepLinkService() => _instance;
   DeepLinkService._internal();
+
+  bool isShortcutMode = false;
 
   final _appLinks = AppLinks();
   StreamSubscription<Uri>? _linkSubscription;
@@ -46,8 +49,11 @@ class DeepLinkService {
   void _handleDeepLink(Uri uri) {
     if (uri.scheme == 'moviescout') return;
 
+    if (isShortcutMode && uri.queryParameters['shortcut'] == 'true') return;
+
     String? type;
     String? id;
+    int? seasonNumber;
 
     if (uri.host == ApiConstants.tmdbHost ||
         uri.host == ApiConstants.tmdbHostAlternative ||
@@ -56,11 +62,16 @@ class DeepLinkService {
       if (segments.length >= 2) {
         type = segments[0];
         id = segments[1];
+        if (type == ApiConstants.tv &&
+            segments.length >= 4 &&
+            segments[2] == 'season') {
+          seasonNumber = int.tryParse(segments[3]);
+        }
       }
     }
 
     if (type != null && id != null) {
-      unawaited(_navigate(type, id));
+      unawaited(_navigate(type, id, seasonNumber: seasonNumber));
     }
   }
 
@@ -68,7 +79,7 @@ class DeepLinkService {
     unawaited(_navigate(type, tmdbId.toString()));
   }
 
-  Future<void> _navigate(String type, String id) async {
+  Future<void> _navigate(String type, String id, {int? seasonNumber}) async {
     while (!_isInitialized || navigatorKey.currentState == null) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
@@ -100,14 +111,26 @@ class DeepLinkService {
             TmdbTitleFields.mediaType: type,
           });
 
-      navigatorKey.currentState?.push(
-        MaterialPageRoute(
-          builder: (context) => TitleDetails(
-            title: title,
-            tmdbListService: _tmdbListService,
+      if (type == ApiConstants.tv && seasonNumber != null) {
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (context) => SeasonDetails(
+              title: title,
+              seasonNumber: seasonNumber,
+              tmdbListService: _tmdbListService,
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (context) => TitleDetails(
+              title: title,
+              tmdbListService: _tmdbListService,
+            ),
+          ),
+        );
+      }
     } else if (type == ApiConstants.person) {
       navigatorKey.currentState?.push(
         MaterialPageRoute(
