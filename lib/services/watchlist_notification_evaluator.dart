@@ -41,11 +41,11 @@ class WatchlistNotificationEvaluator {
     final nextEpisode = title.nextEpisodeToAir;
 
     if (nextEpisode != null &&
-        nextEpisode['episode_number'] == 1 &&
-        nextEpisode['season_number'] != null) {
-      final nextSeason = nextEpisode['season_number'] as int;
-      final airDateStr = nextEpisode['air_date'] as String?;
-      if (airDateStr != null) {
+        nextEpisode.episodeNumber == 1 &&
+        nextEpisode.seasonNumber > 0) {
+      final nextSeason = nextEpisode.seasonNumber;
+      final airDateStr = nextEpisode.airDate;
+      if (airDateStr.isNotEmpty) {
         final airDate = DateTime.tryParse(airDateStr);
         if (airDate != null && airDate.isAfter(now)) {
           return nextSeason - 1;
@@ -115,17 +115,15 @@ class WatchlistNotificationEvaluator {
     final titleName = title.name;
 
     if (notifyCompleteSeason) {
-      if (lastEpisode != null &&
-          (lastEpisode['season_number'] as int) == currentSeason) {
-        if (nextEpisode != null &&
-            (nextEpisode['season_number'] as int) == currentSeason) {
+      if (lastEpisode != null && lastEpisode.seasonNumber == currentSeason) {
+        if (nextEpisode != null && nextEpisode.seasonNumber == currentSeason) {
           logLines.add(
               '- check (NotifyCompleteSeason): $titleName S$currentSeason is not complete yet (next episode is in the same season).');
           return false;
         }
 
-        final airDateStr = lastEpisode['air_date'] as String?;
-        if (airDateStr != null) {
+        final airDateStr = lastEpisode.airDate;
+        if (airDateStr.isNotEmpty) {
           final airDate = DateTime.tryParse(airDateStr);
           if (airDate != null &&
               airDate.isBefore(now.add(const Duration(seconds: 1)))) {
@@ -146,8 +144,7 @@ class WatchlistNotificationEvaluator {
       return false;
     }
 
-    if (lastEpisode != null &&
-        (lastEpisode['season_number'] as int) == currentSeason) {
+    if (lastEpisode != null && lastEpisode.seasonNumber == currentSeason) {
       final seasonAirDate = _getSeasonAirDate(title, currentSeason);
       if (seasonAirDate != null) {
         final daysSinceStart = now.difference(seasonAirDate).inDays;
@@ -163,7 +160,7 @@ class WatchlistNotificationEvaluator {
         }
       } else {
         // Fallback if no season air date: use the old "Episode 1" rule as a safe default
-        if ((lastEpisode['episode_number'] as int) == 1) {
+        if (lastEpisode.episodeNumber == 1) {
           logLines.add(
               '- check: $titleName S$currentSeason has no date but episode is 1. Notify.');
           return true;
@@ -173,11 +170,11 @@ class WatchlistNotificationEvaluator {
 
     if (nextEpisode != null) {
       try {
-        final nextSeason = nextEpisode['season_number'] as int;
-        final nextEpisodeNum = nextEpisode['episode_number'] as int;
+        final nextSeason = nextEpisode.seasonNumber;
+        final nextEpisodeNum = nextEpisode.episodeNumber;
         if (nextSeason == currentSeason && nextEpisodeNum == 1) {
-          final airDateStr = nextEpisode['air_date'] as String?;
-          if (airDateStr != null) {
+          final airDateStr = nextEpisode.airDate;
+          if (airDateStr.isNotEmpty) {
             final airDate = DateTime.tryParse(airDateStr);
             if (airDate != null &&
                 airDate.isBefore(now.add(const Duration(seconds: 1)))) {

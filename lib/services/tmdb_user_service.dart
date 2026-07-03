@@ -31,9 +31,7 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
 
   Future<void> _setupUserDetails() async {
     if (user != null) return;
-
     user = await _getUserDetails();
-    notifyListeners();
   }
 
   Future<void> setup() async {
@@ -49,6 +47,7 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
             FirebaseAuth.instance.currentUser == null) {
           await _firebaseSignIn();
         }
+        notifyListeners();
       }
     }
   }
@@ -80,6 +79,7 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
 
     await _setupUserDetails();
     await _firebaseSignIn();
+    notifyListeners();
 
     return {AppConstants.success: true};
   }

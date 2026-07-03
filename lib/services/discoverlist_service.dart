@@ -2,9 +2,8 @@ import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
-import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/isar_service.dart';
+import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -55,19 +54,14 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
   }
 
   Future<Map<int, double>> _calculateGenrePreferences() async {
-    final isar = IsarService.instance;
+    final titleRepo = TmdbTitleRepository();
     final Map<int, double> genreWeights = {};
     final Map<int, int> genreCounts = {};
 
-    final ratedTitles = await isar.tmdbTitles
-        .filter()
-        .inListsElementEqualTo(AppConstants.rateslist)
-        .findAll();
-
-    final watchlistTitles = await isar.tmdbTitles
-        .filter()
-        .inListsElementEqualTo(AppConstants.watchlist)
-        .findAll();
+    final ratedTitles =
+        await titleRepo.getAllTitlesInList(AppConstants.rateslist);
+    final watchlistTitles =
+        await titleRepo.getAllTitlesInList(AppConstants.watchlist);
 
     final allTitles = {...ratedTitles, ...watchlistTitles}.toList();
     final totalTitles = allTitles.length;
@@ -126,37 +120,28 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     final Set<int> excludedTmdbIds = {};
 
     if (accountId.isNotEmpty) {
-      final isar = IsarService.instance;
+      final titleRepo = TmdbTitleRepository();
 
       final genrePreferences = await _calculateGenrePreferences();
 
-      final positiveSignalTitles = await isar.tmdbTitles
-          .filter()
-          .group((q) => q
-              .group((q1) => q1
-                  .inListsElementEqualTo(AppConstants.rateslist)
-                  .ratingGreaterThan(2.5))
-              .or()
-              .inListsElementEqualTo(AppConstants.watchlist))
-          .and()
-          .mediaTypeEqualTo(mediaType)
-          .findAll();
+      final ratedTitles =
+          await titleRepo.getAllTitlesInList(AppConstants.rateslist);
+      final watchlistTitles =
+          await titleRepo.getAllTitlesInList(AppConstants.watchlist);
 
-      final ratedIds = await isar.tmdbTitles
-          .filter()
-          .inListsElementEqualTo(AppConstants.rateslist)
-          .and()
-          .mediaTypeEqualTo(mediaType)
-          .tmdbIdProperty()
-          .findAll();
+      final positiveSignalTitles = [
+        ...ratedTitles.where((t) => t.rating > 2.5 && t.mediaType == mediaType),
+        ...watchlistTitles.where((t) => t.mediaType == mediaType)
+      ];
 
-      final watchlistIds = await isar.tmdbTitles
-          .filter()
-          .inListsElementEqualTo(AppConstants.watchlist)
-          .and()
-          .mediaTypeEqualTo(mediaType)
-          .tmdbIdProperty()
-          .findAll();
+      final ratedIds = ratedTitles
+          .where((t) => t.mediaType == mediaType)
+          .map((t) => t.tmdbId)
+          .toList();
+      final watchlistIds = watchlistTitles
+          .where((t) => t.mediaType == mediaType)
+          .map((t) => t.tmdbId)
+          .toList();
 
       excludedTmdbIds.addAll(ratedIds);
       excludedTmdbIds.addAll(watchlistIds);

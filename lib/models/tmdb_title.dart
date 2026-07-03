@@ -1,7 +1,6 @@
 import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_item.dart';
-import 'package:isar_community/isar.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -11,8 +10,7 @@ import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_providers.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
-
-part 'tmdb_title.g.dart';
+import 'package:moviescout/models/tmdb_episode.dart';
 
 class TmdbTitleFields {
   static const String adult = 'adult';
@@ -110,13 +108,8 @@ class SortOption {
   static const addedOrder = 'addedOrder';
 }
 
-@collection
 class TmdbTitle implements TmdbItem {
-  @Index(unique: true)
-  Id id = Isar.autoIncrement;
-
   @override
-  @Index(unique: true, replace: true, composite: [CompositeIndex('mediaType')])
   late int tmdbId;
 
   List<String> inLists = [];
@@ -156,7 +149,6 @@ class TmdbTitle implements TmdbItem {
   // Calculated/Logic fields
   late int effectiveRuntime;
   late String effectiveReleaseDate;
-  @ignore
   int addedOrder = 0;
   late bool isPinned;
   late bool notifyNewSeasons;
@@ -180,15 +172,11 @@ class TmdbTitle implements TmdbItem {
   late int lastNotifiedSeason; // New field for notification tracking
   late String lastProvidersUpdate;
 
-  @ignore
   String character = '';
-  @ignore
   String job = '';
-  @ignore
   String department = '';
 
   TmdbTitle({
-    required this.id,
     required this.tmdbId,
     required this.name,
     this.originalName = '',
@@ -249,7 +237,6 @@ class TmdbTitle implements TmdbItem {
 
   factory TmdbTitle.fromMap({required Map<dynamic, dynamic> title}) {
     return TmdbTitle(
-      id: Isar.autoIncrement,
       tmdbId: title[TmdbTitleFields.id] ?? 0,
       name: '',
       lastUpdated: AppConstants.defaultDate,
@@ -499,7 +486,6 @@ class TmdbTitle implements TmdbItem {
               .replaceFirst('{PATH}', backdropPathSuffix!)
           : '';
 
-  @ignore
   List<TmdbGenre> get genres => TmdbGenreService().getGenresFromIds(genreIds);
 
   void updateRating(double value) {
@@ -507,59 +493,59 @@ class TmdbTitle implements TmdbItem {
     dateRated = DateTime.now();
   }
 
-  @ignore
-  List? _recommendationsCache;
+  List<TmdbTitle>? _recommendationsCache;
 
-  @ignore
-  List get recommendations {
+  List<TmdbTitle> get recommendations {
     if (_recommendationsCache != null) return _recommendationsCache!;
     if (recommendationsJson == null) return [];
     try {
-      _recommendationsCache = jsonDecode(recommendationsJson!) as List;
-      return _recommendationsCache!;
+      final decoded = jsonDecode(recommendationsJson!);
+      if (decoded is List) {
+        _recommendationsCache = decoded
+            .map((e) => TmdbTitle.fromMap(title: e as Map<String, dynamic>))
+            .toList();
+        return _recommendationsCache!;
+      }
+      return [];
     } catch (_) {
       return [];
     }
   }
 
-  @ignore
-  Map<String, dynamic>? _nextEpisodeToAirCache;
+  TmdbEpisode? _nextEpisodeToAirCache;
 
-  @ignore
-  Map<String, dynamic>? get nextEpisodeToAir {
+  TmdbEpisode? get nextEpisodeToAir {
     if (_nextEpisodeToAirCache != null) return _nextEpisodeToAirCache;
     if (nextEpisodeToAirJson == null) return null;
-    _nextEpisodeToAirCache =
-        jsonDecode(nextEpisodeToAirJson!) as Map<String, dynamic>;
+    try {
+      final map = jsonDecode(nextEpisodeToAirJson!) as Map<String, dynamic>;
+      _nextEpisodeToAirCache = TmdbEpisode.fromMap(map, tvId: tmdbId);
+    } catch (_) {}
     return _nextEpisodeToAirCache;
   }
 
-  @ignore
-  Map<String, dynamic>? _lastEpisodeToAirCache;
+  TmdbEpisode? _lastEpisodeToAirCache;
 
-  @ignore
-  Map<String, dynamic>? get lastEpisodeToAir {
+  TmdbEpisode? get lastEpisodeToAir {
     if (_lastEpisodeToAirCache != null) return _lastEpisodeToAirCache;
     if (lastEpisodeToAirJson == null) return null;
-    _lastEpisodeToAirCache =
-        jsonDecode(lastEpisodeToAirJson!) as Map<String, dynamic>;
+    try {
+      final map = jsonDecode(lastEpisodeToAirJson!) as Map<String, dynamic>;
+      _lastEpisodeToAirCache = TmdbEpisode.fromMap(map, tvId: tmdbId);
+    } catch (_) {}
     return _lastEpisodeToAirCache;
   }
 
-  @ignore
   String get nextEpisodeAirDate {
-    return nextEpisodeToAir?[TmdbTitleFields.airDate] ?? '';
+    return nextEpisodeToAir?.airDate ?? '';
   }
 
-  @ignore
   String get lastEpisodeAirDate {
-    return lastEpisodeToAir?[TmdbTitleFields.airDate] ?? '';
+    return lastEpisodeToAir?.airDate ?? '';
   }
 
-  @ignore
   TmdbProviders? _providersCache;
 
-  @ignore
   TmdbProviders get providers {
     if (_providersCache != null) return _providersCache!;
     if (providersJson == null) return TmdbProviders(providers: {});
@@ -567,13 +553,10 @@ class TmdbTitle implements TmdbItem {
     return _providersCache!;
   }
 
-  @ignore
   Map<String, dynamic>? _creditsMapCache;
 
-  @ignore
   List<TmdbPerson>? _castCache;
 
-  @ignore
   List<TmdbPerson> get cast {
     if (_castCache != null) return _castCache!;
     if (creditsJson == null) return [];
@@ -586,10 +569,8 @@ class TmdbTitle implements TmdbItem {
     return _castCache!;
   }
 
-  @ignore
   List<TmdbPerson>? _crewCache;
 
-  @ignore
   List<TmdbPerson> get crew {
     if (_crewCache != null) return _crewCache!;
     if (creditsJson == null) return [];
@@ -602,7 +583,6 @@ class TmdbTitle implements TmdbItem {
     return _crewCache!;
   }
 
-  @ignore
   String get duration {
     String duration = '';
 
@@ -619,7 +599,6 @@ class TmdbTitle implements TmdbItem {
     return duration;
   }
 
-  @ignore
   String get titleLink {
     if (mediaType == ApiConstants.movie) {
       return UrlConstants.tmdbMovieWebTemplate
@@ -630,10 +609,8 @@ class TmdbTitle implements TmdbItem {
     }
   }
 
-  @ignore
   List<String>? _imagesCache;
 
-  @ignore
   List<String> get images {
     if (_imagesCache != null) return _imagesCache!;
     if (imagesJson == null) return [];
@@ -647,10 +624,8 @@ class TmdbTitle implements TmdbItem {
     return [];
   }
 
-  @ignore
   List<Map<String, dynamic>>? _videosCache;
 
-  @ignore
   List<Map<String, dynamic>> get videos {
     if (_videosCache != null) return _videosCache!;
     if (videosJson == null) return [];
