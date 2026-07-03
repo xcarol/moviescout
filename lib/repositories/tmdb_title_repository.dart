@@ -2,7 +2,6 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/user_list_entry.dart';
-import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/realm_service.dart';
 import 'package:moviescout/database/realm_models.dart';
 import 'package:moviescout/database/realm_mappers.dart';
@@ -10,60 +9,9 @@ import 'package:moviescout/services/tmdb_title_list_service.dart'
     show RatingFilter;
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/utils/save_logs.dart';
 
 class TmdbTitleRepository {
   final _realm = RealmService.instance;
-
-  Future<void> _logZeroRatingError(TmdbTitle title, {String? listName}) async {
-    if (title.rating > 0) return;
-
-    if (listName != null && listName == AppConstants.rateslist) {
-      ErrorService.log(
-        [
-          'listName: $listName',
-          'title: ${title.name} rating: ${title.rating} stackTrace: ${StackTrace.current}',
-        ],
-        stackTrace: StackTrace.current,
-        userMessage: 'Zero rating error',
-      );
-      return saveLogs([
-        '== ZERO ERROR ==',
-        'listName: $listName',
-        'title: ${title.name} rating: ${title.rating} stackTrace: ${StackTrace.current}',
-        '== ZERO ERROR ==',
-      ]);
-    }
-
-    final inRatesList = _realm.query<UserListEntryRealm>(
-        r'tmdbId == $0 AND mediaType == $1', [title.tmdbId, title.mediaType]);
-
-    final lists = inRatesList.map((e) => e.listName).toList().join(', ');
-
-    if (inRatesList.any((e) => e.listName == AppConstants.rateslist)) {
-      ErrorService.log(
-        [
-          'lists: [$lists]',
-          'title: ${title.name} rating: ${title.rating} stackTrace: ${StackTrace.current}',
-        ],
-        stackTrace: StackTrace.current,
-        userMessage: 'Zero rating error',
-      );
-      saveLogs([
-        '== ZERO ERROR ==',
-        'lists: [$lists]',
-        'title: ${title.name} rating: ${title.rating} stackTrace: ${StackTrace.current}',
-        '== ZERO ERROR ==',
-      ]);
-    }
-  }
-
-  Future<void> _logMultipleZeroRatingError(List<TmdbTitle> titles,
-      {String? listName}) async {
-    for (final title in titles) {
-      await _logZeroRatingError(title, listName: listName);
-    }
-  }
 
   void _mergeTitleMetadata(TmdbTitle newTitle, TmdbTitle currentTitle,
       {String? listNameToAdd}) {
@@ -417,17 +365,25 @@ class TmdbTitleRepository {
         if (filterMediaType == AppConstants.miniseries) {
           if (t.mediaType != ApiConstants.tv ||
               t.numberOfSeasons != 1 ||
-              t.status != TvShowStatus.ended) return false;
+              t.status != TvShowStatus.ended) {
+            return false;
+          }
         } else {
-          if (t.mediaType != filterMediaType) return false;
+          if (t.mediaType != filterMediaType) {
+            return false;
+          }
         }
       }
       if (filterByProviders && filterProvidersIds.isNotEmpty) {
-        if (!filterProvidersIds.any((id) => t.flatrateProviderIds.contains(id)))
+        if (!filterProvidersIds
+            .any((id) => t.flatrateProviderIds.contains(id))) {
           return false;
+        }
       }
       if (filterRating == RatingFilter.rated) {
-        if (t.rating <= AppConstants.seenRating) return false;
+        if (t.rating <= AppConstants.seenRating) {
+          return false;
+        }
       } else if (filterRating == RatingFilter.seenOnly) {
         if (t.rating != AppConstants.seenRating) return false;
       } else if (filterRating == RatingFilter.followingOnly) {
