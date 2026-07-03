@@ -1,6 +1,5 @@
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:flutter/widgets.dart';
-import 'package:isar_community/isar.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
@@ -69,7 +68,6 @@ class TmdbWatchlistService extends TmdbTitleListService {
       String accountId, String sessionId, TmdbTitle title, bool add) async {
     try {
       if (add) {
-        title.id = Isar.autoIncrement;
         title.isPinned = false;
       } else {
         if (title.isPinned && pinnedService != null) {

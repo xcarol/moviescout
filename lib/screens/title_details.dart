@@ -149,8 +149,8 @@ class _TitleDetailsState extends State<TitleDetails> {
             icon: const Icon(Icons.add_to_home_screen),
             onPressed: () async {
               final loc = AppLocalizations.of(context)!;
-              final success =
-                  await HomeScreenShortcutService.pinTitleShortcut(_currentTitle);
+              final success = await HomeScreenShortcutService.pinTitleShortcut(
+                  _currentTitle);
               if (!success) {
                 SnackMessage.showSnackBar(loc.shortcutFailed);
               }
@@ -1287,7 +1287,7 @@ class _TitleDetailsState extends State<TitleDetails> {
             itemCount: title.recommendations.length,
             itemBuilder: (context, index) {
               return TitleChip(
-                title: TmdbTitle.fromMap(title: title.recommendations[index]),
+                title: title.recommendations[index],
                 tmdbListService: widget._tmdbListService,
               );
             },

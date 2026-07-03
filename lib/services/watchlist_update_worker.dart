@@ -4,7 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/error_service.dart';
-import 'package:moviescout/services/isar_service.dart';
+import 'package:moviescout/services/realm_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -166,7 +166,7 @@ void callbackDispatcher() {
     try {
       await dotenv.load(fileName: ".env");
       await PreferencesService().init();
-      await IsarService.init();
+      await RealmService.init();
       await NotificationService().init();
 
       logLines.add('---------------------------');

@@ -65,12 +65,12 @@ class TmdbPinnedService extends TmdbConfigListService {
       pinned: true,
     );
 
-    final Map<int, TmdbTitle> toUpdate = {};
+    final Map<String, TmdbTitle> toUpdate = {};
 
     // Reset current pins
     for (var title in currentPinned) {
       title.isPinned = false;
-      toUpdate[title.id] = title;
+      toUpdate['${title.tmdbId}_${title.mediaType}'] = title;
     }
 
     // Set new pins
@@ -80,12 +80,16 @@ class TmdbPinnedService extends TmdbConfigListService {
         final mediaType = parts[0];
         final tmdbId = int.tryParse(parts[1]);
         if (tmdbId != null) {
-          final title = await repository.getTitleByTmdbId(
+          var title = await repository.getTitleByTmdbId(
               AppConstants.watchlist, tmdbId, mediaType);
-          if (title != null) {
-            title.isPinned = true;
-            toUpdate[title.id] = title;
-          }
+          title ??= TmdbTitle(
+              tmdbId: tmdbId,
+              name: '',
+              mediaType: mediaType,
+              dateRated: DateTime.fromMillisecondsSinceEpoch(0),
+              lastUpdated: AppConstants.defaultDate);
+          title.isPinned = true;
+          toUpdate['${title.tmdbId}_${title.mediaType}'] = title;
         }
       }
     }
