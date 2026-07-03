@@ -39,6 +39,9 @@ import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/services/watchlist_update_worker.dart';
 import 'package:moviescout/services/notification_service.dart';
 import 'package:moviescout/services/edit_settings_service.dart';
+import 'package:app_links/app_links.dart';
+import 'package:moviescout/widgets/shortcut_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -46,8 +49,26 @@ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
 final RouteObserver<ModalRoute<void>> routeObserver =
     RouteObserver<ModalRoute<void>>();
 
-void main() async {
+@pragma('vm:entry-point')
+void mainShortcut() {
+  main(isFromShortcutActivity: true);
+}
+
+void main({bool isFromShortcutActivity = false}) async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final appLinks = AppLinks();
+  Uri? initialUri = await appLinks.getInitialLink();
+
+  if (isFromShortcutActivity && initialUri == null) {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString('last_shortcut_uri');
+    if (saved != null) {
+      initialUri = Uri.tryParse(saved);
+    }
+  }
+
+  final isShortcut = isFromShortcutActivity;
 
   try {
     if (defaultTargetPlatform == TargetPlatform.android) {
@@ -92,21 +113,26 @@ void main() async {
       EditSettingsService().init(),
     ]).timeout(const Duration(seconds: 5), onTimeout: () => []);
 
-    if (defaultTargetPlatform == TargetPlatform.android ||
-        defaultTargetPlatform == TargetPlatform.iOS) {
-      await Workmanager().initialize(
-        callbackDispatcher,
-        isInDebugMode: kDebugMode,
-      );
-      await Workmanager().registerPeriodicTask(
-        "watchlistUpdateTask",
-        "updateWatchlistProviders",
-        frequency: const Duration(hours: 1),
-        existingWorkPolicy: ExistingWorkPolicy.replace,
-        constraints: Constraints(
-          networkType: NetworkType.connected,
-        ),
-      );
+    if (!isShortcut &&
+        (defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS)) {
+      try {
+        await Workmanager().initialize(
+          callbackDispatcher,
+          isInDebugMode: kDebugMode,
+        );
+        await Workmanager().registerPeriodicTask(
+          "watchlistUpdateTask",
+          "updateWatchlistProviders",
+          frequency: const Duration(hours: 1),
+          existingWorkPolicy: ExistingWorkPolicy.replace,
+          constraints: Constraints(
+            networkType: NetworkType.connected,
+          ),
+        );
+      } catch (e) {
+        // Ignore Workmanager initialization errors (especially in separate processes)
+      }
     }
   } catch (error, stackTrace) {
     ErrorService.log(
@@ -176,12 +202,15 @@ void main() async {
       ChangeNotifierProvider(create: (_) => EditSettingsService()),
       ChangeNotifierProvider(create: (_) => WebTranslationService()),
     ],
-    child: const MyApp(),
+    child: MyApp(isShortcut: isShortcut, initialUri: initialUri),
   ));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final bool isShortcut;
+  final Uri? initialUri;
+
+  const MyApp({super.key, this.isShortcut = false, this.initialUri});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -196,6 +225,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     final watchlistService =
         Provider.of<TmdbWatchlistService>(context, listen: false);
+    DeepLinkService().isShortcutMode = widget.isShortcut;
     DeepLinkService().init(watchlistService);
     NotificationService().handleColdStartNotification();
 
@@ -287,7 +317,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ],
       ),
       title: 'Movie Scout',
-      home: const MainScreen(),
+      home: widget.isShortcut
+          ? (widget.initialUri != null
+              ? ShortcutRouter(uri: widget.initialUri!)
+              : const Scaffold(body: Center(child: Text('Shortcut not found'))))
+          : const MainScreen(),
       scaffoldMessengerKey: scaffoldMessengerKey,
       navigatorKey: DeepLinkService().navigatorKey,
       navigatorObservers: [routeObserver],

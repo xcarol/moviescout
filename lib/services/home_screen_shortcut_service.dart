@@ -45,9 +45,8 @@ class HomeScreenShortcutService {
   }
 
   static Future<bool> pinTitleShortcut(TmdbTitle title) async {
-    final String url = UrlConstants.moviescoutTitleWebTemplate
-        .replaceFirst('{MEDIA_TYPE}', title.mediaType)
-        .replaceFirst('{ID}', title.tmdbId.toString());
+    final String url =
+        '${UrlConstants.moviescoutTitleWebTemplate.replaceFirst('{MEDIA_TYPE}', title.mediaType).replaceFirst('{ID}', title.tmdbId.toString())}?shortcut=true';
 
     final iconBytes = await _getIconBytes(title.posterPath);
 
@@ -60,8 +59,8 @@ class HomeScreenShortcutService {
   }
 
   static Future<bool> pinPersonShortcut(TmdbPerson person) async {
-    final String url = UrlConstants.moviescoutPersonWebTemplate
-        .replaceFirst('{ID}', person.tmdbId.toString());
+    final String url =
+        '${UrlConstants.moviescoutPersonWebTemplate.replaceFirst('{ID}', person.tmdbId.toString())}?shortcut=true';
 
     final iconBytes = await _getIconBytes(person.profilePath);
 
@@ -75,9 +74,8 @@ class HomeScreenShortcutService {
 
   static Future<bool> pinSeasonShortcut(TmdbTitle title, int seasonNumber,
       String seasonName, String posterPath) async {
-    final String url = UrlConstants.moviescoutTvSeasonWebTemplate
-        .replaceFirst('{ID}', title.tmdbId.toString())
-        .replaceFirst('{SEASON_NUMBER}', seasonNumber.toString());
+    final String url =
+        '${UrlConstants.moviescoutTvSeasonWebTemplate.replaceFirst('{ID}', title.tmdbId.toString()).replaceFirst('{SEASON_NUMBER}', seasonNumber.toString())}?shortcut=true';
 
     Uint8List? iconBytes = await _getIconBytes(posterPath);
     iconBytes ??= await _getIconBytes(title.posterPath);
