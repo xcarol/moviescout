@@ -49,10 +49,18 @@ class TrailerButtons extends StatelessWidget {
             foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
             minimumSize: const Size(0, 32),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.horizontal(
+                left: const Radius.circular(20),
+                right: remainingVideos.isNotEmpty
+                    ? Radius.zero
+                    : const Radius.circular(20),
+              ),
+            ),
           ),
         ),
         if (remainingVideos.isNotEmpty) ...[
-          const SizedBox(width: 4),
+          const SizedBox(width: 1),
           SizedBox(
             height: 32,
             child: DropdownSelector(
@@ -63,10 +71,11 @@ class TrailerButtons extends StatelessWidget {
                 size: 20,
                 color: Theme.of(context).colorScheme.onPrimaryContainer,
               ),
-              border: Border.all(
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              buttonBackgroundColor: Theme.of(context).colorScheme.primary,
+              borderRadius: const BorderRadius.horizontal(
+                left: Radius.zero,
+                right: Radius.circular(20),
               ),
-              borderRadius: BorderRadius.circular(20),
               onSelected: (selectedName) {
                 final video = remainingVideos
                     .firstWhere((v) => v['name'] == selectedName);

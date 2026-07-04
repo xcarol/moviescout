@@ -349,5 +349,7 @@
   "shortcutFailed": "Failed to add shortcut",
   "@shortcutFailed": {},
   "rate": "Rate",
-  "@rate": {}
+  "@rate": {},
+  "watchOn": "Watch on",
+  "@watchOn": {}
 }

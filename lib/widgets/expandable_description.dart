@@ -55,47 +55,45 @@ class _ExpandableDescriptionState extends State<ExpandableDescription> {
         ? AppLocalizations.of(context)!.missingDescription
         : widget.text;
 
-    return InkWell(
-      onTap: () {
-        setState(() {
-          _isExpanded = !_isExpanded;
-        });
-      },
-      child: Padding(
-        padding: const EdgeInsets.only(top: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final textStyle = TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                );
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final textStyle = TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          );
 
-                final bool isOverflowing = _checkOverflow(
-                    constraints.maxWidth, displayText, textStyle);
+          final bool isOverflowing = _checkOverflow(
+              constraints.maxWidth, displayText, textStyle);
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      displayText,
-                      maxLines: _isExpanded ? null : widget.initialMaxLines,
-                      overflow: _isExpanded ? null : TextOverflow.clip,
-                      style: textStyle,
-                      textAlign: TextAlign.justify,
-                    ),
-                    if (isOverflowing || _isExpanded)
-                      Icon(
-                        Icons.more_horiz,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                displayText,
+                maxLines: _isExpanded ? null : widget.initialMaxLines,
+                overflow: _isExpanded ? null : TextOverflow.clip,
+                style: textStyle,
+                textAlign: TextAlign.justify,
+              ),
+              if (isOverflowing)
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    setState(() {
+                      _isExpanded = !_isExpanded;
+                    });
+                  },
+                  child: Icon(
+                    Icons.more_horiz,
+                    color: _isExpanded 
+                        ? Colors.transparent 
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+            ],
+          );
+        },
       ),
     );
   }

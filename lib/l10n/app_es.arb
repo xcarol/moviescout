@@ -349,5 +349,7 @@
   "shortcutFailed": "No se ha podido añadir el acceso directo",
   "@shortcutFailed": {},
   "rate": "Valora",
-  "@rate": {}
+  "@rate": {},
+  "watchOn": "Ver en",
+  "@watchOn": {}
 }

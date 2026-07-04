@@ -6,6 +6,7 @@ class DropdownSelector extends StatelessWidget {
   final ValueChanged<String> onSelected;
   final Icon? arrowIcon;
   final TextStyle? textStyle;
+  final Color? buttonBackgroundColor;
   final Color? backgroundColor;
   final BoxBorder? border;
   final BorderRadiusGeometry? borderRadius;
@@ -22,6 +23,7 @@ class DropdownSelector extends StatelessWidget {
     this.arrowIcon,
     this.textStyle,
     this.backgroundColor,
+    this.buttonBackgroundColor,
     this.border,
     this.borderRadius,
     this.itemBuilder,
@@ -53,7 +55,7 @@ class DropdownSelector extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
-              color: backgroundColor,
+              color: buttonBackgroundColor,
               border: border,
               borderRadius: borderRadius,
             ),
