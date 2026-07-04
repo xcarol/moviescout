@@ -131,11 +131,11 @@ class TmdbPerson implements TmdbItem {
   factory TmdbPerson.fromMap({required Map<dynamic, dynamic> person}) {
     return TmdbPerson(
         tmdbId: person[PersonAttributes.id] ?? 0,
-        name: person[PersonAttributes.name],
+        name: person[PersonAttributes.name] ?? '',
         lastUpdated:
             person[PersonAttributes.last_updated] ?? AppConstants.defaultDate,
-        knownForDepartment: person[PersonAttributes.known_for_department],
-        gender: person[PersonAttributes.gender],
+        knownForDepartment: person[PersonAttributes.known_for_department] ?? '',
+        gender: person[PersonAttributes.gender] ?? 0,
         alsoKnownAs:
             List<String>.from(person[PersonAttributes.also_known_as] ?? []),
         profilePath: person[PersonAttributes.profile_path] ?? '',

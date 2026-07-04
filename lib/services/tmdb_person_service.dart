@@ -47,7 +47,7 @@ class TmdbPersonService extends TmdbBaseService {
 
     personMap.addAll(body(result));
 
-    if (personMap['biography'].isEmpty) {
+    if (personMap['biography']?.isEmpty ?? true) {
       final result = await _retrievePersonDetailsByLocale(
         person.tmdbId,
         getCountryCode().toLowerCase(),
