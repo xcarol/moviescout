@@ -375,27 +375,37 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   }
 
   Widget _externalLinks() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        BoxedWidget(
-          onPressed: () {
-            launchUrl(
-              Uri.parse(UrlConstants.tmdbTvSeasonWebTemplate
-                  .replaceFirst('{ID}', widget.title.tmdbId.toString())
-                  .replaceFirst(
-                      '{SEASON_NUMBER}', widget.seasonNumber.toString())),
-              mode: LaunchMode.inAppWebView,
-            );
-          },
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          child: SizedBox(
-            height: 20,
-            child: Image.asset(
-              'assets/tmdb-logo.png',
-              fit: BoxFit.cover,
+        Text(
+          AppLocalizations.of(context)!.watchOn,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            BoxedWidget(
+              onPressed: () {
+                launchUrl(
+                  Uri.parse(UrlConstants.tmdbTvSeasonWebTemplate
+                      .replaceFirst('{ID}', widget.title.tmdbId.toString())
+                      .replaceFirst(
+                          '{SEASON_NUMBER}', widget.seasonNumber.toString())),
+                  mode: LaunchMode.inAppWebView,
+                );
+              },
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: SizedBox(
+                height: 20,
+                child: Image.asset(
+                  'assets/tmdb-logo.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ],
     );
