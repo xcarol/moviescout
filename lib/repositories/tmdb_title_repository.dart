@@ -1,3 +1,4 @@
+import 'package:realm/realm.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
@@ -149,7 +150,7 @@ class TmdbTitleRepository {
       String listName, int tmdbId, String mediaType) async {
     _realm.write(() {
       final entries = _realm.query<UserListEntryRealm>(
-          r'listName == $0 AND tmdbId == $1 AND mediaType == $2',
+          '${UserListEntryRealmFields.listName} == \$0 AND ${UserListEntryRealmFields.tmdbId} == \$1 AND ${UserListEntryRealmFields.mediaType} == \$2',
           [listName, tmdbId, mediaType]);
       _realm.deleteMany(entries);
 
@@ -162,11 +163,11 @@ class TmdbTitleRepository {
           _realm.delete(title);
           if (mediaType == ApiConstants.tv ||
               mediaType == AppConstants.miniseries) {
-            final seasons =
-                _realm.query<TmdbSeasonRealm>(r'tvId == $0', [tmdbId]);
+            final seasons = _realm.query<TmdbSeasonRealm>(
+                '${TmdbSeasonRealmFields.tvId} == \$0', [tmdbId]);
             _realm.deleteMany(seasons);
-            final episodes =
-                _realm.query<TmdbEpisodeRealm>(r'tvId == $0', [tmdbId]);
+            final episodes = _realm.query<TmdbEpisodeRealm>(
+                '${TmdbEpisodeRealmFields.tvId} == \$0', [tmdbId]);
             _realm.deleteMany(episodes);
           }
         }
@@ -184,7 +185,7 @@ class TmdbTitleRepository {
         final type = mediaTypes[i];
 
         final entries = _realm.query<UserListEntryRealm>(
-            r'listName == $0 AND tmdbId == $1 AND mediaType == $2',
+            '${UserListEntryRealmFields.listName} == \$0 AND ${UserListEntryRealmFields.tmdbId} == \$1 AND ${UserListEntryRealmFields.mediaType} == \$2',
             [listName, id, type]);
         _realm.deleteMany(entries);
 
@@ -198,11 +199,11 @@ class TmdbTitleRepository {
             _realm.delete(title);
             if (mediaType == ApiConstants.tv ||
                 mediaType == AppConstants.miniseries) {
-              final seasons =
-                  _realm.query<TmdbSeasonRealm>(r'tvId == $0', [titleTmdbId]);
+              final seasons = _realm.query<TmdbSeasonRealm>(
+                  '${TmdbSeasonRealmFields.tvId} == \$0', [titleTmdbId]);
               _realm.deleteMany(seasons);
-              final episodes =
-                  _realm.query<TmdbEpisodeRealm>(r'tvId == $0', [titleTmdbId]);
+              final episodes = _realm.query<TmdbEpisodeRealm>(
+                  '${TmdbEpisodeRealmFields.tvId} == \$0', [titleTmdbId]);
               _realm.deleteMany(episodes);
             }
           }
@@ -213,12 +214,12 @@ class TmdbTitleRepository {
 
   Future<void> clearList(String listName) async {
     _realm.write(() {
-      final entriesToRemove =
-          _realm.query<UserListEntryRealm>(r'listName == $0', [listName]);
+      final entriesToRemove = _realm.query<UserListEntryRealm>(
+          '${UserListEntryRealmFields.listName} == \$0', [listName]);
       _realm.deleteMany(entriesToRemove);
 
-      final titlesToClean = _realm
-          .query<TmdbTitleRealm>(r'inLists CONTAINS $0', [listName]).toList();
+      final titlesToClean = _realm.query<TmdbTitleRealm>(
+          '\$0 IN ${TmdbTitleRealmFields.inLists}', [listName]).toList();
 
       for (final title in titlesToClean) {
         title.inLists.remove(listName);
@@ -228,11 +229,11 @@ class TmdbTitleRepository {
           _realm.delete(title);
           if (mediaType == ApiConstants.tv ||
               mediaType == AppConstants.miniseries) {
-            final seasons =
-                _realm.query<TmdbSeasonRealm>(r'tvId == $0', [titleTmdbId]);
+            final seasons = _realm.query<TmdbSeasonRealm>(
+                '${TmdbSeasonRealmFields.tvId} == \$0', [titleTmdbId]);
             _realm.deleteMany(seasons);
-            final episodes =
-                _realm.query<TmdbEpisodeRealm>(r'tvId == $0', [titleTmdbId]);
+            final episodes = _realm.query<TmdbEpisodeRealm>(
+                '${TmdbEpisodeRealmFields.tvId} == \$0', [titleTmdbId]);
             _realm.deleteMany(episodes);
           }
         }
@@ -242,25 +243,27 @@ class TmdbTitleRepository {
 
   Future<bool> hasRatedTitles(String listName) async {
     final count = _realm.query<TmdbTitleRealm>(
-        r'$0 IN inLists AND rating > 0.0', [listName]).length;
+        '\$0 IN ${TmdbTitleRealmFields.inLists} AND ${TmdbTitleRealmFields.rating} > \$1',
+        [listName, AppConstants.seenRating]).length;
     return count > 0;
+  }
+
+  int countTitlesSync(String listName) {
+    return _realm.query<UserListEntryRealm>(
+        '${UserListEntryRealmFields.listName} == \$0', [listName]).length;
   }
 
   Future<int> getMaxAddedOrder(String listName) async {
     final entries = _realm.query<UserListEntryRealm>(
-        r'listName == $0 SORT(addedOrder DESC)', [listName]);
+        '${UserListEntryRealmFields.listName} == \$0 SORT(${UserListEntryRealmFields.addedOrder} DESC)',
+        [listName]);
     return entries.isNotEmpty ? entries.first.addedOrder : -1;
-  }
-
-  int countTitlesSync(String listName) {
-    return _realm
-        .query<UserListEntryRealm>(r'listName == $0', [listName]).length;
   }
 
   Future<TmdbTitle?> getTitleByTmdbId(
       String listName, int tmdbId, String mediaType) async {
     final realmObj = _realm.query<TmdbTitleRealm>(
-        r'$0 IN inLists AND tmdbId == $1 AND mediaType == $2',
+        '\$0 IN ${TmdbTitleRealmFields.inLists} AND ${TmdbTitleRealmFields.tmdbId} == \$1 AND ${TmdbTitleRealmFields.mediaType} == \$2',
         [listName, tmdbId, mediaType]).firstOrNull;
     return realmObj != null ? RealmMapper.toDomainTitle(realmObj) : null;
   }
@@ -268,7 +271,7 @@ class TmdbTitleRepository {
   TmdbTitle? getTitleByTmdbIdSync(
       String listName, int tmdbId, String mediaType) {
     final realmObj = _realm.query<TmdbTitleRealm>(
-        r'$0 IN inLists AND tmdbId == $1 AND mediaType == $2',
+        '\$0 IN ${TmdbTitleRealmFields.inLists} AND ${TmdbTitleRealmFields.tmdbId} == \$1 AND ${TmdbTitleRealmFields.mediaType} == \$2',
         [listName, tmdbId, mediaType]).firstOrNull;
     return realmObj != null ? RealmMapper.toDomainTitle(realmObj) : null;
   }
@@ -298,40 +301,45 @@ class TmdbTitleRepository {
   }
 
   Future<TmdbTitle?> getTitleGlobal(int tmdbId, String mediaType) async {
-    final realmObj = _realm.find<TmdbTitleRealm>('${tmdbId}_$mediaType');
+    final realmObj = _realm.query<TmdbTitleRealm>(
+        '${TmdbTitleRealmFields.tmdbId} == \$0 AND ${TmdbTitleRealmFields.mediaType} == \$1',
+        [tmdbId, mediaType]).firstOrNull;
     return realmObj != null ? RealmMapper.toDomainTitle(realmObj) : null;
   }
 
   Future<List<TmdbTitle>> getTitlesByTmdbIds(List<int> tmdbIds) async {
     if (tmdbIds.isEmpty) return [];
-    final realmObjs = _realm.query<TmdbTitleRealm>(r'tmdbId IN $0', [tmdbIds]);
+    final realmObjs = _realm.query<TmdbTitleRealm>(
+        '${TmdbTitleRealmFields.tmdbId} IN \$0', [tmdbIds]);
     return realmObjs.map((e) => RealmMapper.toDomainTitle(e)).toList();
   }
 
   Future<List<int>> getAllTmdbIds(String listName) async {
-    final entries =
-        _realm.query<UserListEntryRealm>(r'listName == $0', [listName]);
+    final entries = _realm.query<UserListEntryRealm>(
+        '${UserListEntryRealmFields.listName} == \$0', [listName]);
     return entries.map((e) => e.tmdbId).toList();
   }
 
   Future<List<UserListEntry>> getAllEntries(String listName) async {
-    final entries =
-        _realm.query<UserListEntryRealm>(r'listName == $0', [listName]);
+    final entries = _realm.query<UserListEntryRealm>(
+        '${UserListEntryRealmFields.listName} == \$0', [listName]);
     return entries.map((e) => RealmMapper.toDomainUserListEntry(e)).toList();
   }
 
   Future<List<List<int>>> getAllGenreIds(String listName) async {
-    final titles = _realm.query<TmdbTitleRealm>(r'$0 IN inLists', [listName]);
+    final titles = _realm.query<TmdbTitleRealm>(
+        '\$0 IN ${TmdbTitleRealmFields.inLists}', [listName]);
     return titles.map((e) => e.genreIds.toList()).toList();
   }
 
   Future<List<TmdbTitle>> getAllTitlesInList(String listName) async {
-    final titles = _realm.query<TmdbTitleRealm>(r'$0 IN inLists', [listName]);
+    final titles = _realm.query<TmdbTitleRealm>(
+        '\$0 IN ${TmdbTitleRealmFields.inLists}', [listName]);
     return titles.map((e) => RealmMapper.toDomainTitle(e)).toList();
   }
 
-  List<TmdbTitle> _filterAndSortTitles(
-    List<TmdbTitle> titles, {
+  RealmResults<TmdbTitleRealm> _buildQuery({
+    required String listName,
     String filterText = '',
     String filterMediaType = '',
     List<int> filterGenres = const [],
@@ -343,87 +351,119 @@ class TmdbTitleRepository {
     RatingFilter filterRating = RatingFilter.all,
     bool? pinned,
   }) {
-    var filtered = titles.where((t) {
-      if (pinned != null && t.isPinned != pinned) return false;
-      if (filterText.isNotEmpty) {
-        final lower = filterText.toLowerCase();
-        if (!t.name.toLowerCase().contains(lower) &&
-            !t.originalName.toLowerCase().contains(lower) &&
-            !t.overview.toLowerCase().contains(lower) &&
-            !t.tagline.toLowerCase().contains(lower)) {
-          return false;
-        }
-      }
-      if (filterGenres.isNotEmpty) {
-        if (filterExcludeGenres) {
-          if (filterGenres.any((id) => t.genreIds.contains(id))) return false;
-        } else {
-          if (!filterGenres.any((id) => t.genreIds.contains(id))) return false;
-        }
-      }
-      if (filterMediaType.isNotEmpty) {
-        if (filterMediaType == AppConstants.miniseries) {
-          if (t.mediaType != ApiConstants.tv ||
-              t.numberOfSeasons != 1 ||
-              t.status != TvShowStatus.ended) {
-            return false;
-          }
-        } else {
-          if (t.mediaType != filterMediaType) {
-            return false;
-          }
-        }
-      }
-      if (filterByProviders && filterProvidersIds.isNotEmpty) {
-        if (!filterProvidersIds
-            .any((id) => t.flatrateProviderIds.contains(id))) {
-          return false;
-        }
-      }
-      if (filterRating == RatingFilter.rated) {
-        if (t.rating <= AppConstants.seenRating) {
-          return false;
-        }
-      } else if (filterRating == RatingFilter.seenOnly) {
-        if (t.rating != AppConstants.seenRating) return false;
-      } else if (filterRating == RatingFilter.followingOnly) {
-        if (t.notifyNewSeasons != true) return false;
-      }
-      return true;
-    }).toList();
+    final queryBuffer = StringBuffer();
+    final args = <Object?>[];
 
-    filtered.sort((a, b) {
-      int result = 0;
+    queryBuffer.write('\$0 IN ${TmdbTitleRealmFields.inLists}');
+    args.add(listName);
+
+    if (pinned != null) {
+      queryBuffer
+          .write(' AND ${TmdbTitleRealmFields.isPinned} == \$${args.length}');
+      args.add(pinned);
+    }
+
+    if (filterText.isNotEmpty) {
+      final index = args.length;
+      queryBuffer.write(
+          ' AND (${TmdbTitleRealmFields.name} CONTAINS[c] \$$index OR ${TmdbTitleRealmFields.originalName} CONTAINS[c] \$$index OR ${TmdbTitleRealmFields.overview} CONTAINS[c] \$$index OR ${TmdbTitleRealmFields.tagline} CONTAINS[c] \$$index)');
+      args.add(filterText);
+    }
+
+    if (filterGenres.isNotEmpty) {
+      if (filterExcludeGenres) {
+        for (final genre in filterGenres) {
+          queryBuffer.write(
+              ' AND NOT (${TmdbTitleRealmFields.genreIds} == \$${args.length})');
+          args.add(genre);
+        }
+      } else {
+        queryBuffer.write(' AND (');
+        for (int i = 0; i < filterGenres.length; i++) {
+          queryBuffer
+              .write('${TmdbTitleRealmFields.genreIds} == \$${args.length}');
+          args.add(filterGenres[i]);
+          if (i < filterGenres.length - 1) {
+            queryBuffer.write(' OR ');
+          }
+        }
+        queryBuffer.write(')');
+      }
+    }
+
+    if (filterMediaType.isNotEmpty) {
+      if (filterMediaType == AppConstants.miniseries) {
+        queryBuffer.write(
+            ' AND ${TmdbTitleRealmFields.mediaType} == \$${args.length} AND ${TmdbTitleRealmFields.numberOfSeasons} == 1 AND ${TmdbTitleRealmFields.status} == \$${args.length + 1}');
+        args.add(ApiConstants.tv);
+        args.add('Ended');
+      } else {
+        queryBuffer.write(
+            ' AND ${TmdbTitleRealmFields.mediaType} == \$${args.length}');
+        args.add(filterMediaType);
+      }
+    }
+
+    if (filterByProviders && filterProvidersIds.isNotEmpty) {
+      queryBuffer.write(' AND (');
+      for (int i = 0; i < filterProvidersIds.length; i++) {
+        queryBuffer.write(
+            '${TmdbTitleRealmFields.providersJson} CONTAINS \$${args.length}');
+        args.add('"provider_id":${filterProvidersIds[i]}');
+        if (i < filterProvidersIds.length - 1) {
+          queryBuffer.write(' OR ');
+        }
+      }
+      queryBuffer.write(')');
+    }
+
+    if (filterRating == RatingFilter.rated) {
+      queryBuffer
+          .write(' AND ${TmdbTitleRealmFields.rating} > \$${args.length}');
+      args.add(AppConstants.seenRating);
+    } else if (filterRating == RatingFilter.seenOnly) {
+      queryBuffer
+          .write(' AND ${TmdbTitleRealmFields.rating} == \$${args.length}');
+      args.add(AppConstants.seenRating);
+    } else if (filterRating == RatingFilter.followingOnly) {
+      queryBuffer.write(
+          ' AND ${TmdbTitleRealmFields.notifyNewSeasons} == \$${args.length}');
+      args.add(true);
+    }
+
+    if (sortOption != SortOption.addedOrder) {
+      String sortField = TmdbTitleRealmFields.name;
       switch (sortOption) {
         case SortOption.rating:
-          result = a.voteAverage.compareTo(b.voteAverage);
+          sortField = TmdbTitleRealmFields.voteAverage;
           break;
         case SortOption.userRating:
-          result = a.rating.compareTo(b.rating);
+          sortField = TmdbTitleRealmFields.rating;
           break;
         case SortOption.dateRated:
-          result = a.dateRated.compareTo(b.dateRated);
+          sortField = TmdbTitleRealmFields.dateRated;
           break;
         case SortOption.releaseDate:
-          result = a.effectiveReleaseDate.compareTo(b.effectiveReleaseDate);
+          sortField = TmdbTitleRealmFields.effectiveReleaseDate;
           break;
         case SortOption.runtime:
-          final isMovieA = a.mediaType == ApiConstants.movie ? 1 : 0;
-          final isMovieB = b.mediaType == ApiConstants.movie ? 1 : 0;
-          result = isMovieB.compareTo(isMovieA);
-          if (result == 0) {
-            result = a.effectiveRuntime.compareTo(b.effectiveRuntime);
-          }
+          sortField = TmdbTitleRealmFields.effectiveRuntime;
           break;
         case SortOption.alphabetically:
         default:
-          result = a.name.compareTo(b.name);
+          sortField = TmdbTitleRealmFields.name;
           break;
       }
-      return sortAscending ? result : -result;
-    });
+      final ascDesc = sortAscending ? 'ASC' : 'DESC';
+      if (sortOption == SortOption.runtime) {
+        queryBuffer.write(
+            ' SORT(${TmdbTitleRealmFields.mediaType} ASC, ${TmdbTitleRealmFields.effectiveRuntime} $ascDesc)');
+      } else {
+        queryBuffer.write(' SORT($sortField $ascDesc)');
+      }
+    }
 
-    return filtered;
+    return _realm.query<TmdbTitleRealm>(queryBuffer.toString(), args);
   }
 
   Future<List<TmdbTitle>> getTitles({
@@ -441,45 +481,8 @@ class TmdbTitleRepository {
     int offset = 0,
     int limit = 10,
   }) async {
-    final titles = await getAllTitlesInList(listName);
-
-    if (sortOption == SortOption.addedOrder) {
-      final entries = await getAllEntries(listName);
-      final orderMap = {
-        for (var e in entries) '${e.tmdbId}_${e.mediaType}': e.addedOrder
-      };
-
-      var filtered = _filterAndSortTitles(
-        titles,
-        filterText: filterText,
-        filterMediaType: filterMediaType,
-        filterGenres: filterGenres,
-        filterExcludeGenres: filterExcludeGenres,
-        filterByProviders: filterByProviders,
-        filterProvidersIds: filterProvidersIds,
-        filterRating: filterRating,
-        pinned: pinned,
-        sortOption: SortOption.alphabetically,
-      );
-
-      filtered.sort((a, b) {
-        final orderA = orderMap['${a.tmdbId}_${a.mediaType}'] ?? 0;
-        final orderB = orderMap['${b.tmdbId}_${b.mediaType}'] ?? 0;
-        return sortAscending
-            ? orderA.compareTo(orderB)
-            : orderB.compareTo(orderA);
-      });
-
-      final start = offset;
-      final end = (offset + limit) > filtered.length
-          ? filtered.length
-          : (offset + limit);
-      if (start >= filtered.length) return [];
-      return filtered.sublist(start, end);
-    }
-
-    final filtered = _filterAndSortTitles(
-      titles,
+    final results = _buildQuery(
+      listName: listName,
       filterText: filterText,
       filterMediaType: filterMediaType,
       filterGenres: filterGenres,
@@ -492,11 +495,37 @@ class TmdbTitleRepository {
       sortAscending: sortAscending,
     );
 
-    final start = offset;
-    final end =
-        (offset + limit) > filtered.length ? filtered.length : (offset + limit);
-    if (start >= filtered.length) return [];
-    return filtered.sublist(start, end);
+    if (sortOption == SortOption.addedOrder) {
+      final entries = await getAllEntries(listName);
+      final orderMap = {
+        for (var e in entries) '${e.tmdbId}_${e.mediaType}': e.addedOrder
+      };
+      var filtered = results.toList();
+      filtered.sort((a, b) {
+        final orderA = orderMap[a.id] ?? 0;
+        final orderB = orderMap[b.id] ?? 0;
+        return sortAscending
+            ? orderA.compareTo(orderB)
+            : orderB.compareTo(orderA);
+      });
+
+      final start = offset;
+      final end = (offset + limit) > filtered.length
+          ? filtered.length
+          : (offset + limit);
+      if (start >= filtered.length) return [];
+
+      return filtered
+          .sublist(start, end)
+          .map((e) => RealmMapper.toDomainTitle(e))
+          .toList();
+    }
+
+    return results
+        .skip(offset)
+        .take(limit)
+        .map((e) => RealmMapper.toDomainTitle(e))
+        .toList();
   }
 
   Future<int> countTitlesFiltered({
@@ -510,9 +539,8 @@ class TmdbTitleRepository {
     RatingFilter filterRating = RatingFilter.all,
     bool? pinned,
   }) async {
-    final titles = await getAllTitlesInList(listName);
-    return _filterAndSortTitles(
-      titles,
+    return _buildQuery(
+      listName: listName,
       filterText: filterText,
       filterMediaType: filterMediaType,
       filterGenres: filterGenres,
@@ -526,8 +554,25 @@ class TmdbTitleRepository {
 
   Future<bool> hasTitlesFiltered({
     required String listName,
+    String filterText = '',
+    String filterMediaType = '',
+    List<int> filterGenres = const [],
+    bool filterExcludeGenres = false,
+    bool filterByProviders = false,
+    List<int> filterProvidersIds = const [],
+    RatingFilter filterRating = RatingFilter.all,
+    bool? pinned,
   }) async {
-    final count = await countTitlesFiltered(listName: listName);
-    return count > 0;
+    return _buildQuery(
+      listName: listName,
+      filterText: filterText,
+      filterMediaType: filterMediaType,
+      filterGenres: filterGenres,
+      filterExcludeGenres: filterExcludeGenres,
+      filterByProviders: filterByProviders,
+      filterProvidersIds: filterProvidersIds,
+      filterRating: filterRating,
+      pinned: pinned,
+    ).isNotEmpty;
   }
 }

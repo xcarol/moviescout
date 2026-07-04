@@ -51,10 +51,14 @@ final RouteObserver<ModalRoute<void>> routeObserver =
 
 @pragma('vm:entry-point')
 void mainShortcut() {
-  main(isFromShortcutActivity: true);
+  _runMain(isFromShortcutActivity: true);
 }
 
-void main({bool isFromShortcutActivity = false}) async {
+void main(List<String> args) async {
+  _runMain(isFromShortcutActivity: args.contains('--from-shortcut-activity'));
+}
+
+void _runMain({bool isFromShortcutActivity = false}) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final appLinks = AppLinks();
