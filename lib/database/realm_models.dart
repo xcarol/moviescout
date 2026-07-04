@@ -121,3 +121,23 @@ class _TmdbEpisodeRealm {
   late String? imagesJson;
   late String? videosJson;
 }
+
+class TmdbTitleRealmFields {
+  static const String inLists = 'inLists';
+  static const String isPinned = 'isPinned';
+  static const String name = 'name';
+  static const String originalName = 'originalName';
+  static const String overview = 'overview';
+  static const String tagline = 'tagline';
+  static const String genreIds = 'genreIds';
+  static const String mediaType = 'mediaType';
+  static const String numberOfSeasons = 'numberOfSeasons';
+  static const String status = 'status';
+  static const String providersJson = 'providersJson';
+  static const String rating = 'rating';
+  static const String notifyNewSeasons = 'notifyNewSeasons';
+  static const String voteAverage = 'voteAverage';
+  static const String dateRated = 'dateRated';
+  static const String effectiveReleaseDate = 'effectiveReleaseDate';
+  static const String effectiveRuntime = 'effectiveRuntime';
+}

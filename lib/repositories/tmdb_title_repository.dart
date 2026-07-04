@@ -1,3 +1,4 @@
+import 'package:realm/realm.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
@@ -241,8 +242,8 @@ class TmdbTitleRepository {
   }
 
   Future<bool> hasRatedTitles(String listName) async {
-    final count = _realm.query<TmdbTitleRealm>(
-        r'$0 IN inLists AND rating > 0.0', [listName]).length;
+    final count = _realm.query<TmdbTitleRealm>(r'$0 IN inLists AND rating > $1',
+        [listName, AppConstants.seenRating]).length;
     return count > 0;
   }
 
@@ -330,8 +331,8 @@ class TmdbTitleRepository {
     return titles.map((e) => RealmMapper.toDomainTitle(e)).toList();
   }
 
-  List<TmdbTitle> _filterAndSortTitles(
-    List<TmdbTitle> titles, {
+  RealmResults<TmdbTitleRealm> _buildQuery({
+    required String listName,
     String filterText = '',
     String filterMediaType = '',
     List<int> filterGenres = const [],
@@ -343,87 +344,119 @@ class TmdbTitleRepository {
     RatingFilter filterRating = RatingFilter.all,
     bool? pinned,
   }) {
-    var filtered = titles.where((t) {
-      if (pinned != null && t.isPinned != pinned) return false;
-      if (filterText.isNotEmpty) {
-        final lower = filterText.toLowerCase();
-        if (!t.name.toLowerCase().contains(lower) &&
-            !t.originalName.toLowerCase().contains(lower) &&
-            !t.overview.toLowerCase().contains(lower) &&
-            !t.tagline.toLowerCase().contains(lower)) {
-          return false;
-        }
-      }
-      if (filterGenres.isNotEmpty) {
-        if (filterExcludeGenres) {
-          if (filterGenres.any((id) => t.genreIds.contains(id))) return false;
-        } else {
-          if (!filterGenres.any((id) => t.genreIds.contains(id))) return false;
-        }
-      }
-      if (filterMediaType.isNotEmpty) {
-        if (filterMediaType == AppConstants.miniseries) {
-          if (t.mediaType != ApiConstants.tv ||
-              t.numberOfSeasons != 1 ||
-              t.status != TvShowStatus.ended) {
-            return false;
-          }
-        } else {
-          if (t.mediaType != filterMediaType) {
-            return false;
-          }
-        }
-      }
-      if (filterByProviders && filterProvidersIds.isNotEmpty) {
-        if (!filterProvidersIds
-            .any((id) => t.flatrateProviderIds.contains(id))) {
-          return false;
-        }
-      }
-      if (filterRating == RatingFilter.rated) {
-        if (t.rating <= AppConstants.seenRating) {
-          return false;
-        }
-      } else if (filterRating == RatingFilter.seenOnly) {
-        if (t.rating != AppConstants.seenRating) return false;
-      } else if (filterRating == RatingFilter.followingOnly) {
-        if (t.notifyNewSeasons != true) return false;
-      }
-      return true;
-    }).toList();
+    final queryBuffer = StringBuffer();
+    final args = <Object?>[];
 
-    filtered.sort((a, b) {
-      int result = 0;
+    queryBuffer.write('\$0 IN ${TmdbTitleRealmFields.inLists}');
+    args.add(listName);
+
+    if (pinned != null) {
+      queryBuffer
+          .write(' AND ${TmdbTitleRealmFields.isPinned} == \$${args.length}');
+      args.add(pinned);
+    }
+
+    if (filterText.isNotEmpty) {
+      final index = args.length;
+      queryBuffer.write(
+          ' AND (${TmdbTitleRealmFields.name} CONTAINS[c] \$$index OR ${TmdbTitleRealmFields.originalName} CONTAINS[c] \$$index OR ${TmdbTitleRealmFields.overview} CONTAINS[c] \$$index OR ${TmdbTitleRealmFields.tagline} CONTAINS[c] \$$index)');
+      args.add(filterText);
+    }
+
+    if (filterGenres.isNotEmpty) {
+      if (filterExcludeGenres) {
+        for (final genre in filterGenres) {
+          queryBuffer.write(
+              ' AND NOT (${TmdbTitleRealmFields.genreIds} == \$${args.length})');
+          args.add(genre);
+        }
+      } else {
+        queryBuffer.write(' AND (');
+        for (int i = 0; i < filterGenres.length; i++) {
+          queryBuffer
+              .write('${TmdbTitleRealmFields.genreIds} == \$${args.length}');
+          args.add(filterGenres[i]);
+          if (i < filterGenres.length - 1) {
+            queryBuffer.write(' OR ');
+          }
+        }
+        queryBuffer.write(')');
+      }
+    }
+
+    if (filterMediaType.isNotEmpty) {
+      if (filterMediaType == AppConstants.miniseries) {
+        queryBuffer.write(
+            ' AND ${TmdbTitleRealmFields.mediaType} == \$${args.length} AND ${TmdbTitleRealmFields.numberOfSeasons} == 1 AND ${TmdbTitleRealmFields.status} == \$${args.length + 1}');
+        args.add(ApiConstants.tv);
+        args.add('Ended');
+      } else {
+        queryBuffer.write(
+            ' AND ${TmdbTitleRealmFields.mediaType} == \$${args.length}');
+        args.add(filterMediaType);
+      }
+    }
+
+    if (filterByProviders && filterProvidersIds.isNotEmpty) {
+      queryBuffer.write(' AND (');
+      for (int i = 0; i < filterProvidersIds.length; i++) {
+        queryBuffer.write(
+            '${TmdbTitleRealmFields.providersJson} CONTAINS \$${args.length}');
+        args.add('"provider_id":${filterProvidersIds[i]}');
+        if (i < filterProvidersIds.length - 1) {
+          queryBuffer.write(' OR ');
+        }
+      }
+      queryBuffer.write(')');
+    }
+
+    if (filterRating == RatingFilter.rated) {
+      queryBuffer
+          .write(' AND ${TmdbTitleRealmFields.rating} > \$${args.length}');
+      args.add(AppConstants.seenRating);
+    } else if (filterRating == RatingFilter.seenOnly) {
+      queryBuffer
+          .write(' AND ${TmdbTitleRealmFields.rating} == \$${args.length}');
+      args.add(AppConstants.seenRating);
+    } else if (filterRating == RatingFilter.followingOnly) {
+      queryBuffer.write(
+          ' AND ${TmdbTitleRealmFields.notifyNewSeasons} == \$${args.length}');
+      args.add(true);
+    }
+
+    if (sortOption != SortOption.addedOrder) {
+      String sortField = TmdbTitleRealmFields.name;
       switch (sortOption) {
         case SortOption.rating:
-          result = a.voteAverage.compareTo(b.voteAverage);
+          sortField = TmdbTitleRealmFields.voteAverage;
           break;
         case SortOption.userRating:
-          result = a.rating.compareTo(b.rating);
+          sortField = TmdbTitleRealmFields.rating;
           break;
         case SortOption.dateRated:
-          result = a.dateRated.compareTo(b.dateRated);
+          sortField = TmdbTitleRealmFields.dateRated;
           break;
         case SortOption.releaseDate:
-          result = a.effectiveReleaseDate.compareTo(b.effectiveReleaseDate);
+          sortField = TmdbTitleRealmFields.effectiveReleaseDate;
           break;
         case SortOption.runtime:
-          final isMovieA = a.mediaType == ApiConstants.movie ? 1 : 0;
-          final isMovieB = b.mediaType == ApiConstants.movie ? 1 : 0;
-          result = isMovieB.compareTo(isMovieA);
-          if (result == 0) {
-            result = a.effectiveRuntime.compareTo(b.effectiveRuntime);
-          }
+          sortField = TmdbTitleRealmFields.effectiveRuntime;
           break;
         case SortOption.alphabetically:
         default:
-          result = a.name.compareTo(b.name);
+          sortField = TmdbTitleRealmFields.name;
           break;
       }
-      return sortAscending ? result : -result;
-    });
+      final ascDesc = sortAscending ? 'ASC' : 'DESC';
+      if (sortOption == SortOption.runtime) {
+        queryBuffer.write(
+            ' SORT(${TmdbTitleRealmFields.mediaType} ASC, ${TmdbTitleRealmFields.effectiveRuntime} $ascDesc)');
+      } else {
+        queryBuffer.write(' SORT($sortField $ascDesc)');
+      }
+    }
 
-    return filtered;
+    return _realm.query<TmdbTitleRealm>(queryBuffer.toString(), args);
   }
 
   Future<List<TmdbTitle>> getTitles({
@@ -441,45 +474,8 @@ class TmdbTitleRepository {
     int offset = 0,
     int limit = 10,
   }) async {
-    final titles = await getAllTitlesInList(listName);
-
-    if (sortOption == SortOption.addedOrder) {
-      final entries = await getAllEntries(listName);
-      final orderMap = {
-        for (var e in entries) '${e.tmdbId}_${e.mediaType}': e.addedOrder
-      };
-
-      var filtered = _filterAndSortTitles(
-        titles,
-        filterText: filterText,
-        filterMediaType: filterMediaType,
-        filterGenres: filterGenres,
-        filterExcludeGenres: filterExcludeGenres,
-        filterByProviders: filterByProviders,
-        filterProvidersIds: filterProvidersIds,
-        filterRating: filterRating,
-        pinned: pinned,
-        sortOption: SortOption.alphabetically,
-      );
-
-      filtered.sort((a, b) {
-        final orderA = orderMap['${a.tmdbId}_${a.mediaType}'] ?? 0;
-        final orderB = orderMap['${b.tmdbId}_${b.mediaType}'] ?? 0;
-        return sortAscending
-            ? orderA.compareTo(orderB)
-            : orderB.compareTo(orderA);
-      });
-
-      final start = offset;
-      final end = (offset + limit) > filtered.length
-          ? filtered.length
-          : (offset + limit);
-      if (start >= filtered.length) return [];
-      return filtered.sublist(start, end);
-    }
-
-    final filtered = _filterAndSortTitles(
-      titles,
+    final results = _buildQuery(
+      listName: listName,
       filterText: filterText,
       filterMediaType: filterMediaType,
       filterGenres: filterGenres,
@@ -492,11 +488,37 @@ class TmdbTitleRepository {
       sortAscending: sortAscending,
     );
 
-    final start = offset;
-    final end =
-        (offset + limit) > filtered.length ? filtered.length : (offset + limit);
-    if (start >= filtered.length) return [];
-    return filtered.sublist(start, end);
+    if (sortOption == SortOption.addedOrder) {
+      final entries = await getAllEntries(listName);
+      final orderMap = {
+        for (var e in entries) '${e.tmdbId}_${e.mediaType}': e.addedOrder
+      };
+      var filtered = results.toList();
+      filtered.sort((a, b) {
+        final orderA = orderMap[a.id] ?? 0;
+        final orderB = orderMap[b.id] ?? 0;
+        return sortAscending
+            ? orderA.compareTo(orderB)
+            : orderB.compareTo(orderA);
+      });
+
+      final start = offset;
+      final end = (offset + limit) > filtered.length
+          ? filtered.length
+          : (offset + limit);
+      if (start >= filtered.length) return [];
+
+      return filtered
+          .sublist(start, end)
+          .map((e) => RealmMapper.toDomainTitle(e))
+          .toList();
+    }
+
+    return results
+        .skip(offset)
+        .take(limit)
+        .map((e) => RealmMapper.toDomainTitle(e))
+        .toList();
   }
 
   Future<int> countTitlesFiltered({
@@ -510,9 +532,8 @@ class TmdbTitleRepository {
     RatingFilter filterRating = RatingFilter.all,
     bool? pinned,
   }) async {
-    final titles = await getAllTitlesInList(listName);
-    return _filterAndSortTitles(
-      titles,
+    return _buildQuery(
+      listName: listName,
       filterText: filterText,
       filterMediaType: filterMediaType,
       filterGenres: filterGenres,
@@ -526,8 +547,25 @@ class TmdbTitleRepository {
 
   Future<bool> hasTitlesFiltered({
     required String listName,
+    String filterText = '',
+    String filterMediaType = '',
+    List<int> filterGenres = const [],
+    bool filterExcludeGenres = false,
+    bool filterByProviders = false,
+    List<int> filterProvidersIds = const [],
+    RatingFilter filterRating = RatingFilter.all,
+    bool? pinned,
   }) async {
-    final count = await countTitlesFiltered(listName: listName);
-    return count > 0;
+    return _buildQuery(
+      listName: listName,
+      filterText: filterText,
+      filterMediaType: filterMediaType,
+      filterGenres: filterGenres,
+      filterExcludeGenres: filterExcludeGenres,
+      filterByProviders: filterByProviders,
+      filterProvidersIds: filterProvidersIds,
+      filterRating: filterRating,
+      pinned: pinned,
+    ).isNotEmpty;
   }
 }
