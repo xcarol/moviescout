@@ -150,7 +150,7 @@ class TmdbTitleRepository {
       String listName, int tmdbId, String mediaType) async {
     _realm.write(() {
       final entries = _realm.query<UserListEntryRealm>(
-          r'listName == $0 AND tmdbId == $1 AND mediaType == $2',
+          '${UserListEntryRealmFields.listName} == \$0 AND ${UserListEntryRealmFields.tmdbId} == \$1 AND ${UserListEntryRealmFields.mediaType} == \$2',
           [listName, tmdbId, mediaType]);
       _realm.deleteMany(entries);
 
@@ -163,11 +163,11 @@ class TmdbTitleRepository {
           _realm.delete(title);
           if (mediaType == ApiConstants.tv ||
               mediaType == AppConstants.miniseries) {
-            final seasons =
-                _realm.query<TmdbSeasonRealm>(r'tvId == $0', [tmdbId]);
+            final seasons = _realm.query<TmdbSeasonRealm>(
+                '${TmdbSeasonRealmFields.tvId} == \$0', [tmdbId]);
             _realm.deleteMany(seasons);
-            final episodes =
-                _realm.query<TmdbEpisodeRealm>(r'tvId == $0', [tmdbId]);
+            final episodes = _realm.query<TmdbEpisodeRealm>(
+                '${TmdbEpisodeRealmFields.tvId} == \$0', [tmdbId]);
             _realm.deleteMany(episodes);
           }
         }
@@ -185,7 +185,7 @@ class TmdbTitleRepository {
         final type = mediaTypes[i];
 
         final entries = _realm.query<UserListEntryRealm>(
-            r'listName == $0 AND tmdbId == $1 AND mediaType == $2',
+            '${UserListEntryRealmFields.listName} == \$0 AND ${UserListEntryRealmFields.tmdbId} == \$1 AND ${UserListEntryRealmFields.mediaType} == \$2',
             [listName, id, type]);
         _realm.deleteMany(entries);
 
@@ -199,11 +199,11 @@ class TmdbTitleRepository {
             _realm.delete(title);
             if (mediaType == ApiConstants.tv ||
                 mediaType == AppConstants.miniseries) {
-              final seasons =
-                  _realm.query<TmdbSeasonRealm>(r'tvId == $0', [titleTmdbId]);
+              final seasons = _realm.query<TmdbSeasonRealm>(
+                  '${TmdbSeasonRealmFields.tvId} == \$0', [titleTmdbId]);
               _realm.deleteMany(seasons);
-              final episodes =
-                  _realm.query<TmdbEpisodeRealm>(r'tvId == $0', [titleTmdbId]);
+              final episodes = _realm.query<TmdbEpisodeRealm>(
+                  '${TmdbEpisodeRealmFields.tvId} == \$0', [titleTmdbId]);
               _realm.deleteMany(episodes);
             }
           }
@@ -214,12 +214,12 @@ class TmdbTitleRepository {
 
   Future<void> clearList(String listName) async {
     _realm.write(() {
-      final entriesToRemove =
-          _realm.query<UserListEntryRealm>(r'listName == $0', [listName]);
+      final entriesToRemove = _realm.query<UserListEntryRealm>(
+          '${UserListEntryRealmFields.listName} == \$0', [listName]);
       _realm.deleteMany(entriesToRemove);
 
-      final titlesToClean = _realm
-          .query<TmdbTitleRealm>(r'inLists CONTAINS $0', [listName]).toList();
+      final titlesToClean = _realm.query<TmdbTitleRealm>(
+          '\$0 IN ${TmdbTitleRealmFields.inLists}', [listName]).toList();
 
       for (final title in titlesToClean) {
         title.inLists.remove(listName);
@@ -229,11 +229,11 @@ class TmdbTitleRepository {
           _realm.delete(title);
           if (mediaType == ApiConstants.tv ||
               mediaType == AppConstants.miniseries) {
-            final seasons =
-                _realm.query<TmdbSeasonRealm>(r'tvId == $0', [titleTmdbId]);
+            final seasons = _realm.query<TmdbSeasonRealm>(
+                '${TmdbSeasonRealmFields.tvId} == \$0', [titleTmdbId]);
             _realm.deleteMany(seasons);
-            final episodes =
-                _realm.query<TmdbEpisodeRealm>(r'tvId == $0', [titleTmdbId]);
+            final episodes = _realm.query<TmdbEpisodeRealm>(
+                '${TmdbEpisodeRealmFields.tvId} == \$0', [titleTmdbId]);
             _realm.deleteMany(episodes);
           }
         }
@@ -242,26 +242,28 @@ class TmdbTitleRepository {
   }
 
   Future<bool> hasRatedTitles(String listName) async {
-    final count = _realm.query<TmdbTitleRealm>(r'$0 IN inLists AND rating > $1',
+    final count = _realm.query<TmdbTitleRealm>(
+        '\$0 IN ${TmdbTitleRealmFields.inLists} AND ${TmdbTitleRealmFields.rating} > \$1',
         [listName, AppConstants.seenRating]).length;
     return count > 0;
   }
 
-  Future<int> getMaxAddedOrder(String listName) async {
-    final entries = _realm.query<UserListEntryRealm>(
-        r'listName == $0 SORT(addedOrder DESC)', [listName]);
-    return entries.isNotEmpty ? entries.first.addedOrder : -1;
+  int countTitlesSync(String listName) {
+    return _realm.query<UserListEntryRealm>(
+        '${UserListEntryRealmFields.listName} == \$0', [listName]).length;
   }
 
-  int countTitlesSync(String listName) {
-    return _realm
-        .query<UserListEntryRealm>(r'listName == $0', [listName]).length;
+  Future<int> getMaxAddedOrder(String listName) async {
+    final entries = _realm.query<UserListEntryRealm>(
+        '${UserListEntryRealmFields.listName} == \$0 SORT(${UserListEntryRealmFields.addedOrder} DESC)',
+        [listName]);
+    return entries.isNotEmpty ? entries.first.addedOrder : -1;
   }
 
   Future<TmdbTitle?> getTitleByTmdbId(
       String listName, int tmdbId, String mediaType) async {
     final realmObj = _realm.query<TmdbTitleRealm>(
-        r'$0 IN inLists AND tmdbId == $1 AND mediaType == $2',
+        '\$0 IN ${TmdbTitleRealmFields.inLists} AND ${TmdbTitleRealmFields.tmdbId} == \$1 AND ${TmdbTitleRealmFields.mediaType} == \$2',
         [listName, tmdbId, mediaType]).firstOrNull;
     return realmObj != null ? RealmMapper.toDomainTitle(realmObj) : null;
   }
@@ -269,7 +271,7 @@ class TmdbTitleRepository {
   TmdbTitle? getTitleByTmdbIdSync(
       String listName, int tmdbId, String mediaType) {
     final realmObj = _realm.query<TmdbTitleRealm>(
-        r'$0 IN inLists AND tmdbId == $1 AND mediaType == $2',
+        '\$0 IN ${TmdbTitleRealmFields.inLists} AND ${TmdbTitleRealmFields.tmdbId} == \$1 AND ${TmdbTitleRealmFields.mediaType} == \$2',
         [listName, tmdbId, mediaType]).firstOrNull;
     return realmObj != null ? RealmMapper.toDomainTitle(realmObj) : null;
   }
@@ -299,35 +301,40 @@ class TmdbTitleRepository {
   }
 
   Future<TmdbTitle?> getTitleGlobal(int tmdbId, String mediaType) async {
-    final realmObj = _realm.find<TmdbTitleRealm>('${tmdbId}_$mediaType');
+    final realmObj = _realm.query<TmdbTitleRealm>(
+        '${TmdbTitleRealmFields.tmdbId} == \$0 AND ${TmdbTitleRealmFields.mediaType} == \$1',
+        [tmdbId, mediaType]).firstOrNull;
     return realmObj != null ? RealmMapper.toDomainTitle(realmObj) : null;
   }
 
   Future<List<TmdbTitle>> getTitlesByTmdbIds(List<int> tmdbIds) async {
     if (tmdbIds.isEmpty) return [];
-    final realmObjs = _realm.query<TmdbTitleRealm>(r'tmdbId IN $0', [tmdbIds]);
+    final realmObjs = _realm.query<TmdbTitleRealm>(
+        '${TmdbTitleRealmFields.tmdbId} IN \$0', [tmdbIds]);
     return realmObjs.map((e) => RealmMapper.toDomainTitle(e)).toList();
   }
 
   Future<List<int>> getAllTmdbIds(String listName) async {
-    final entries =
-        _realm.query<UserListEntryRealm>(r'listName == $0', [listName]);
+    final entries = _realm.query<UserListEntryRealm>(
+        '${UserListEntryRealmFields.listName} == \$0', [listName]);
     return entries.map((e) => e.tmdbId).toList();
   }
 
   Future<List<UserListEntry>> getAllEntries(String listName) async {
-    final entries =
-        _realm.query<UserListEntryRealm>(r'listName == $0', [listName]);
+    final entries = _realm.query<UserListEntryRealm>(
+        '${UserListEntryRealmFields.listName} == \$0', [listName]);
     return entries.map((e) => RealmMapper.toDomainUserListEntry(e)).toList();
   }
 
   Future<List<List<int>>> getAllGenreIds(String listName) async {
-    final titles = _realm.query<TmdbTitleRealm>(r'$0 IN inLists', [listName]);
+    final titles = _realm.query<TmdbTitleRealm>(
+        '\$0 IN ${TmdbTitleRealmFields.inLists}', [listName]);
     return titles.map((e) => e.genreIds.toList()).toList();
   }
 
   Future<List<TmdbTitle>> getAllTitlesInList(String listName) async {
-    final titles = _realm.query<TmdbTitleRealm>(r'$0 IN inLists', [listName]);
+    final titles = _realm.query<TmdbTitleRealm>(
+        '\$0 IN ${TmdbTitleRealmFields.inLists}', [listName]);
     return titles.map((e) => RealmMapper.toDomainTitle(e)).toList();
   }
 
