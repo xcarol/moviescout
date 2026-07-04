@@ -390,7 +390,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           },
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: SizedBox(
-            height: 30,
+            height: 20,
             child: Image.asset(
               'assets/tmdb-logo.png',
               fit: BoxFit.cover,
