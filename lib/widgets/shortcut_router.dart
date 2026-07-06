@@ -31,7 +31,11 @@ class _ShortcutRouterState extends State<ShortcutRouter> {
     super.initState();
     _loadContent(widget.uri);
     _linkSubscription = AppLinks().uriLinkStream.listen((uri) {
+      if (!mounted) return;
       if (uri.queryParameters['shortcut'] == 'true') {
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
         _loadContent(uri);
       }
     });

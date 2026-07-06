@@ -31,7 +31,7 @@ class MainActivity: FlutterActivity() {
                     val intent = Intent(context, ShortcutActivity::class.java).apply {
                         action = Intent.ACTION_VIEW
                         data = Uri.parse(url)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
 
                     val builder = ShortcutInfoCompat.Builder(context, id)

@@ -60,7 +60,7 @@
             android:process=":shortcut"
             android:theme="@style/LaunchTheme"
             android:taskAffinity="com.xicra.moviescout.ShortcutActivity"
-            android:launchMode="standard"
+            android:launchMode="singleTask"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
