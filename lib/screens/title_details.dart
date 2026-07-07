@@ -607,8 +607,8 @@ class _TitleDetailsState extends State<TitleDetails> {
 
   bool _isAnyProvider(TmdbTitle title) {
     return title.providers.flatrate.isNotEmpty ||
-            title.providers.rent.isNotEmpty ||
-            title.providers.buy.isNotEmpty;
+        title.providers.rent.isNotEmpty ||
+        title.providers.buy.isNotEmpty;
   }
 
   Widget _titleLine(TmdbTitle title) {

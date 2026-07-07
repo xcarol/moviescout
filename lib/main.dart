@@ -91,7 +91,7 @@ void _runMain({bool isFromShortcutActivity = false}) async {
 
       await FirebaseCrashlytics.instance
           .setCrashlyticsCollectionEnabled(kDebugMode);
-          
+
       if (isShortcut) {
         FirebaseFirestore.instance.settings =
             const Settings(persistenceEnabled: false);
