@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/widgets/trailer_dialog.dart';
+
 import 'package:moviescout/widgets/drop_down_selector.dart';
+import 'package:moviescout/services/video_player_service.dart';
 
 class TrailerButtons extends StatelessWidget {
   final List<Map<String, dynamic>> videos;
@@ -9,14 +10,7 @@ class TrailerButtons extends StatelessWidget {
   const TrailerButtons({super.key, required this.videos});
 
   void _playVideo(BuildContext context, String videoId) {
-    final topMargin = kToolbarHeight + 16.0;
-    showDialog(
-      context: context,
-      builder: (context) => TrailerDialog(
-        videoId: videoId,
-        topMargin: topMargin,
-      ),
-    );
+    VideoPlayerService().playVideo(videoId);
   }
 
   @override
