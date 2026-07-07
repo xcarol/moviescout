@@ -3,6 +3,9 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 
+import 'package:flutter/gestures.dart';
+import 'package:moviescout/widgets/expandable_text.dart';
+
 class ClickableNames extends StatelessWidget {
   final List<TmdbPerson> people;
   final bool useEllipsis;
@@ -17,15 +20,17 @@ class ClickableNames extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: people.asMap().entries.map((entry) {
-        final index = entry.key;
-        final person = entry.value;
-        final isLast = index == people.length - 1;
+    final List<InlineSpan> spans = [];
 
-        Widget nameWidget = InkWell(
-          onTap: () {
+    for (int i = 0; i < people.length; i++) {
+      final person = people[i];
+      final isLast = i == people.length - 1;
+
+      spans.add(TextSpan(
+        text: person.name,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+        recognizer: TapGestureRecognizer()
+          ..onTap = () {
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -36,33 +41,26 @@ class ClickableNames extends StatelessWidget {
               ),
             );
           },
-          child: Text(
-            person.name,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-            overflow: useEllipsis ? TextOverflow.ellipsis : null,
-          ),
-        );
+      ));
 
-        if (useEllipsis) {
-          nameWidget = Flexible(child: nameWidget);
-        }
+      if (!isLast) {
+        spans.add(const TextSpan(text: ', '));
+      }
+    }
 
-        Widget child = Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            nameWidget,
-            if (!isLast) const Text(', '),
-          ],
-        );
+    final textSpan = TextSpan(children: spans);
 
-        if (useEllipsis) {
-          child = Flexible(child: child);
-        }
-
-        return child;
-      }).toList(),
-    );
+    if (useEllipsis) {
+      return Text.rich(
+        textSpan,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+      );
+    } else {
+      return ExpandableText(
+        textSpan: textSpan,
+        initialMaxLines: 1,
+      );
+    }
   }
 }
