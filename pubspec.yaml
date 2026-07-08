@@ -69,6 +69,7 @@ dependencies:
   android_intent_plus: ^5.0.3
   translator: ^1.0.0
   youtube_player_iframe: ^6.0.2
+  simple_pip_mode: ^1.1.0
 
 dev_dependencies:
   flutter_test:
