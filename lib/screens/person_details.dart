@@ -194,6 +194,9 @@ class _PersonDetailsState extends State<PersonDetails> {
           const SizedBox(height: 10),
           Divider(
               color: Theme.of(context).extension<CustomColors>()!.dividerColor),
+          _externalLinks(person),
+          Divider(
+              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
           const SizedBox(height: 10),
           _credits(person),
           const SizedBox(height: 10),
@@ -241,13 +244,11 @@ class _PersonDetailsState extends State<PersonDetails> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
         AppLocalizations.of(context)!.birthDate,
-        style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
+        style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
       ),
       Text(
         '${_formatDate(context, person.birthday)}$ageString',
-        style: TextStyle(
-            fontSize: 12,
-            color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     ]);
   }
@@ -265,12 +266,10 @@ class _PersonDetailsState extends State<PersonDetails> {
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(AppLocalizations.of(context)!.deathDate,
-          style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic)),
+          style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
       Text(
         '${_formatDate(context, person.deathday)}$ageString',
-        style: TextStyle(
-            fontSize: 12,
-            color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     ]);
   }
@@ -386,17 +385,15 @@ class _PersonDetailsState extends State<PersonDetails> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Obre amb',
-          style: TextStyle(
-            fontSize: 10,
+        Text(
+          AppLocalizations.of(context)!.watchOn,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 4),
-        Wrap(
+        const SizedBox(height: 8),
+        Row(
           spacing: 4.0,
-          runSpacing: 4.0,
           children: links,
         ),
       ],
@@ -478,40 +475,9 @@ class _PersonDetailsState extends State<PersonDetails> {
             ),
           ),
           Expanded(
-            child: SizedBox(
-              height: posterHeight,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 15),
-                        child: _characterDetails(person),
-                      ),
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 10),
-                      Divider(
-                          color: Theme.of(context)
-                              .extension<CustomColors>()!
-                              .dividerColor),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15, bottom: 8),
-                        child: _externalLinks(person),
-                      ),
-                      Divider(
-                          height: 1,
-                          color: Theme.of(context)
-                              .extension<CustomColors>()!
-                              .dividerColor),
-                    ],
-                  ),
-                ],
-              ),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15),
+              child: _characterDetails(person),
             ),
           ),
         ],
@@ -541,9 +507,7 @@ class _PersonDetailsState extends State<PersonDetails> {
       ),
       Text(
         person.placeOfBirth,
-        style: TextStyle(
-            fontSize: 12,
-            color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     ]);
   }
@@ -566,9 +530,14 @@ class _PersonDetailsState extends State<PersonDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              AppLocalizations.of(context)!.cast,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            Expanded(
+              child: Text(
+                AppLocalizations.of(context)!.cast,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -623,9 +592,14 @@ class _PersonDetailsState extends State<PersonDetails> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              AppLocalizations.of(context)!.crew,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            Expanded(
+              child: Text(
+                AppLocalizations.of(context)!.crew,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -675,6 +649,8 @@ class _PersonDetailsState extends State<PersonDetails> {
         Text(
           AppLocalizations.of(context)!.ratedCredits,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 10),
         SizedBox(
