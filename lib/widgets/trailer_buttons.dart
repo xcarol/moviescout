@@ -22,8 +22,38 @@ class TrailerButtons extends StatelessWidget {
     }
 
     final mainVideo = ytVideos.firstWhere(
-      (v) => v['type'] == 'Trailer',
-      orElse: () => ytVideos.first,
+      (v) {
+        final name = (v['name'] as String?)?.toLowerCase() ?? '';
+        final isSearchResult = v['is_search_result'] == true;
+        final lang = v['iso_639_1'] as String?;
+        return isSearchResult &&
+            lang != 'en' &&
+            name.contains('official trailer');
+      },
+      orElse: () => ytVideos.firstWhere(
+        (v) {
+          final name = (v['name'] as String?)?.toLowerCase() ?? '';
+          final isSearchResult = v['is_search_result'] == true;
+          final lang = v['iso_639_1'] as String?;
+          return isSearchResult && lang != 'en' && name.contains('trailer');
+        },
+        orElse: () => ytVideos.firstWhere(
+          (v) =>
+              (v['name'] as String?)
+                  ?.toLowerCase()
+                  .contains('official trailer') ??
+              false,
+          orElse: () => ytVideos.firstWhere(
+            (v) => v['type'] == 'Trailer',
+            orElse: () => ytVideos.firstWhere(
+              (v) =>
+                  (v['name'] as String?)?.toLowerCase().contains('trailer') ??
+                  false,
+              orElse: () => ytVideos.first,
+            ),
+          ),
+        ),
+      ),
     );
 
     final String mainVideoId = mainVideo['key'] as String;
