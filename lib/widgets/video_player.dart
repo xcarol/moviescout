@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:moviescout/services/video_player_service.dart';
 import 'package:simple_pip_mode/simple_pip.dart';
@@ -37,6 +38,8 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
   void dispose() {
     VideoPlayerService().removeListener(_onPlayerStateChanged);
     _controller?.close();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
     if (Platform.isAndroid) {
       SimplePip().setAutoPipMode(autoEnter: false);
@@ -51,6 +54,8 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
         _controller?.close();
         _controller = null;
         _currentVideoId = null;
+        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
         if (mounted) setState(() {});
       } else {
         _controller?.close();
@@ -64,6 +69,21 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
             showFullscreenButton: true,
           ),
         );
+
+        _controller!.setFullScreenListener((isFullScreen) {
+          if (isFullScreen) {
+            SystemChrome.setPreferredOrientations([
+              DeviceOrientation.landscapeLeft,
+              DeviceOrientation.landscapeRight,
+            ]);
+            SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+          } else {
+            SystemChrome.setPreferredOrientations([
+              DeviceOrientation.portraitUp,
+            ]);
+            SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+          }
+        });
 
         if (mounted) setState(() {});
       }
