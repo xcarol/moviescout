@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/widgets/video_player.dart';
 import 'package:moviescout/services/deep_link_service.dart';
 
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:url_launcher/url_launcher.dart';
+
 class VideoPlayerService extends ChangeNotifier {
   static final VideoPlayerService _instance = VideoPlayerService._internal();
   factory VideoPlayerService() => _instance;
@@ -12,7 +16,20 @@ class VideoPlayerService extends ChangeNotifier {
 
   OverlayEntry? _overlayEntry;
 
+  bool get _isPlayerSupported {
+    if (kIsWeb) return true;
+    return Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
+  }
+
   void playVideo(String videoId) {
+    if (!_isPlayerSupported) {
+      launchUrl(
+        Uri.parse('https://www.youtube.com/watch?v=$videoId'),
+        mode: LaunchMode.externalApplication,
+      );
+      return;
+    }
+
     _videoId = videoId;
 
     if (_overlayEntry == null) {
