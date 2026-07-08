@@ -63,8 +63,8 @@ class _ExpandableDescriptionState extends State<ExpandableDescription> {
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           );
 
-          final bool isOverflowing = _checkOverflow(
-              constraints.maxWidth, displayText, textStyle);
+          final bool isOverflowing =
+              _checkOverflow(constraints.maxWidth, displayText, textStyle);
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -86,8 +86,8 @@ class _ExpandableDescriptionState extends State<ExpandableDescription> {
                   },
                   child: Icon(
                     Icons.more_horiz,
-                    color: _isExpanded 
-                        ? Colors.transparent 
+                    color: _isExpanded
+                        ? Colors.transparent
                         : Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
