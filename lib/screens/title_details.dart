@@ -782,9 +782,11 @@ class _TitleDetailsState extends State<TitleDetails> {
           : const SizedBox(height: 24));
     }
 
-    return Wrap(
-      alignment: WrapAlignment.spaceBetween,
-      runSpacing: 15,
+    return SizedBox(
+      width: double.infinity,
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        runSpacing: 15,
       children: [
         if (topChildren.isNotEmpty)
           Padding(
@@ -954,6 +956,7 @@ class _TitleDetailsState extends State<TitleDetails> {
           },
         ),
       ],
+    ),
     );
   }
 
