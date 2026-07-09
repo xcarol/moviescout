@@ -404,17 +404,21 @@ class TmdbTitleRepository {
       }
     }
 
-    if (filterByProviders && filterProvidersIds.isNotEmpty) {
-      queryBuffer.write(' AND (');
-      for (int i = 0; i < filterProvidersIds.length; i++) {
-        queryBuffer.write(
-            '${TmdbTitleRealmFields.providersJson} CONTAINS \$${args.length}');
-        args.add('"provider_id":${filterProvidersIds[i]}');
-        if (i < filterProvidersIds.length - 1) {
-          queryBuffer.write(' OR ');
+    if (filterByProviders) {
+      if (filterProvidersIds.isNotEmpty) {
+        queryBuffer.write(' AND (');
+        for (int i = 0; i < filterProvidersIds.length; i++) {
+          queryBuffer.write(
+              'ANY ${TmdbTitleRealmFields.flatrateProviderIds} == \$${args.length}');
+          args.add(filterProvidersIds[i]);
+          if (i < filterProvidersIds.length - 1) {
+            queryBuffer.write(' OR ');
+          }
         }
+        queryBuffer.write(')');
+      } else {
+        queryBuffer.write(' AND FALSEPREDICATE');
       }
-      queryBuffer.write(')');
     }
 
     if (filterRating == RatingFilter.rated) {
