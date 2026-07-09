@@ -41,7 +41,6 @@ class RealmService {
                   .map((p) => p['provider_id'] as int)
                   .toList();
               t.flatrateProviderIds.addAll(ids);
-              debugPrint('flatrateProviderIds: ${ids.toString()}');
             }
           } catch (_) {}
         }
