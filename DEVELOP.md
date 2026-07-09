@@ -14,10 +14,9 @@
 
 ## Firebase & Crashlytics
 
-Got configuration steps from _https://firebase.google.com/docs/crashlytics/get-started?platform=flutter_  
+Got configuration steps from _<https://firebase.google.com/docs/crashlytics/get-started?platform=flutter>_  
 
 Project configuration at Firebase [Movie Scout](https://console.firebase.google.com/project/movie-scout-a6608/overview)
-
 
 Install Flutter Fire
 
@@ -38,11 +37,13 @@ Configure project
 Select  
 
 ✔ Select a Firebase project to configure your Flutter application with  
+
 - movie-scout-a6608 (MovieScout)  
 
 ✔ Which platforms should your configuration support (use arrow keys & space to select)?  
+
 - android  
-- web 
+- web
 
 This process will generate the files:  
 
@@ -113,17 +114,20 @@ After updating the logo run:  $ `dart run flutter_launcher_icons`
 
 ## Tmdb integration
 
-Get the **API Read Access Token** from [The Movie DB API Settings](https://www.themoviedb.org/settings/api)     
+Get the **API Read Access Token** from [The Movie DB API Settings](https://www.themoviedb.org/settings/api)
 Create a file called _.env_ in the root directory and add the key:
+
 ```
 TMDB_API_RAT=apiReadAccessTokenGotFromTmdb
-``` 
+```
+
 NOTICE! As stated in the [TMDB API Documentation about Providers](https://developer.themoviedb.org/reference/movie-watch-providers), the data source is [**JustWatch**](https://www.justwatch.com/).  
 
 ## OMDB integration
 
-Get the **API Key** from [OMDb API](https://www.omdbapi.com/apikey.aspx)     
+Get the **API Key** from [OMDb API](https://www.omdbapi.com/apikey.aspx)
 Add the key to your `.env` file:
+
 ```
 OMDB_API_KEY=yourOmdbApiKey
 ```
@@ -131,15 +135,19 @@ OMDB_API_KEY=yourOmdbApiKey
 ## Backend API & Vercel Deployment
 
 MovieScout relies on a Vercel-hosted backend (located in the `backend/` directory) for two primary features:
+
 1. **Deep Linking (Android App Links):** Serving the `/.well-known/assetlinks.json` file for Android verification and handling redirects (`vercel.json`) to either the app or fallback URLs (TMDB, Github Pages).
 2. **Firebase Custom Auth:** Providing the `/api/auth` endpoint used to bridge TMDB login with Firebase Authentication.
 
 ### Setup from scratch
+
 If you need to deploy the backend environment from scratch:
-1. **Deploy to Vercel:** Push the `backend/` folder to a GitHub repository and link it to a new project in Vercel. 
+
+1. **Deploy to Vercel:** Push the `backend/` folder to a GitHub repository and link it to a new project in Vercel.
 2. **Custom Domain:** In the Vercel project settings, add your custom domain (e.g., `moviescout.xicra.com`). Configure the DNS `CNAME` record in your domain provider as requested by Vercel to automatically provision the SSL (HTTPS) certificate.
 3. **App Links Fingerprints:** Ensure the `backend/public/.well-known/assetlinks.json` file contains the exact SHA-256 certificate fingerprints for both your local debug keystore and Google Play App Signing key.
 4. **Environment Variables:** Update the `.env` file in the Flutter app to point to your backend URL so Firebase Auth works:
+
    ```env
    FIREBASE_AUTH_URL=https://moviescout.xicra.com/api/auth
    ```
@@ -151,7 +159,7 @@ Images like tvshow_poster.png are created with [Cool Text](https://cooltext.com/
 ## Flutter tool box
 
 Use the shell script `./flutter_tool.sh` to execute most used commands in the project.  
-Run `./flutter_tool.sh --help` to view the tool options.    
+Run `./flutter_tool.sh --help` to view the tool options.
 
 ## Application signing and publishing
 
@@ -167,6 +175,7 @@ Setup this file in the path _./android_:
 ### Check app > build.gradle
 
 This attribute shuld be like this
+
 ```
     buildTypes {
         release {
@@ -174,6 +183,7 @@ This attribute shuld be like this
         }
     }
 ```
+
 it is worth comparing it with the same Overmaps file to imitate it as much as possible.
 
 ### Publishing a new version for internal test
@@ -196,6 +206,7 @@ If the build takes an eternity and CPU usage is very low (e.g., < 10%), it is us
 
 **Solution:**
 You can resolve this by running the provided script, which safely clears the broken cache and rebuilds the project:
+
 ```bash
 ./clean-gradle.sh
 ```
@@ -210,6 +221,7 @@ Alternatively, if you want to perform the fix manually:
 ### Watchlist worker logs
 
 By default logs are disabled. You can see what watchlist worker is doing by enabling the logs in _.env_ file with:
+
 ```
 ENABLE_LOGS=true
 ```
@@ -217,20 +229,26 @@ ENABLE_LOGS=true
 ### adb cannot start a debug session with error: Access Denied  
 
 With the mobile connected and developer option _Enable USB install_ ON
-- Run `lsusb` to see the Android device. 
+
+- Run `lsusb` to see the Android device.
 - It will output something like `Bus 001 Device 005: ID 18d1:4ee2 Google Inc.` we need the ID, usually the `18d1`.
 - Create or open the file _/etc/udev/rules.d/51-android.rules_ and add
+
 ```
 SUBSYSTEM=="usb", ATTR{idVendor}=="18d1", MODE="0666", GROUP="plugdev"
 ```
+
 Check the `ATTR{idVendor}` corresponds with the ouput of `lsusb`.
-- Give read permissions if the file didn't exist
+
+- Give read permissions if the file didn't exist  
 `sudo chmod a+r /etc/udev/rules.d/51-android.rules`
 - Restart _udev_
+
 ```
 sudo udevadm control --reload-rules
 sudo udevadm trigger
 ```
+
 Now the device should appear in the output of `adb devices` and debugger should be able to connect.  
 
 ## Other
@@ -241,4 +259,3 @@ To import titles from IMDB go to your Imdb account > [Watchlist](https://www.imd
 and Imdb account > [Ratings](https://www.imdb.com/es-es/user/ur49413795/ratings) > Export.  
 
 Download the CSV files from [Exports](https://www.imdb.com/exports/?ref_=wl) and import them with the menu option _Import From IMDB_.
-
