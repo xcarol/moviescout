@@ -10,12 +10,8 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
-class ShortcutActivity: FlutterActivity() {
+class MainActivity: FlutterActivity() {
     private val CHANNEL = "com.xicra.moviescout/shortcut"
-
-    override fun getDartEntrypointFunctionName(): String {
-        return "mainShortcut"
-    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -28,30 +24,29 @@ class ShortcutActivity: FlutterActivity() {
 
                 if (id == null || shortLabel == null || url == null) {
                     result.error("INVALID_ARGS", "Missing required arguments", null)
-                    return@setMethodCallHandler
-                }
-
-                if (ShortcutManagerCompat.isRequestPinShortcutSupported(context)) {
-                    val intent = Intent(context, ShortcutActivity::class.java).apply {
-                        action = Intent.ACTION_VIEW
-                        data = Uri.parse(url)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
-
-                    val builder = ShortcutInfoCompat.Builder(context, id)
-                        .setShortLabel(shortLabel)
-                        .setIntent(intent)
-
-                    if (iconBytes != null) {
-                        val bitmap = BitmapFactory.decodeByteArray(iconBytes, 0, iconBytes.size)
-                        builder.setIcon(IconCompat.createWithBitmap(bitmap))
-                    }
-
-                    val shortcutInfo = builder.build()
-                    ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
-                    result.success(true)
                 } else {
-                    result.success(false)
+                    if (ShortcutManagerCompat.isRequestPinShortcutSupported(context)) {
+                        val intent = Intent(context, ShortcutActivity::class.java).apply {
+                            action = Intent.ACTION_VIEW
+                            data = Uri.parse(url)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+
+                        val builder = ShortcutInfoCompat.Builder(context, id)
+                            .setShortLabel(shortLabel)
+                            .setIntent(intent)
+
+                        if (iconBytes != null) {
+                            val bitmap = BitmapFactory.decodeByteArray(iconBytes, 0, iconBytes.size)
+                            builder.setIcon(IconCompat.createWithBitmap(bitmap))
+                        }
+
+                        val shortcutInfo = builder.build()
+                        ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
+                        result.success(true)
+                    } else {
+                        result.success(false)
+                    }
                 }
             } else {
                 result.notImplemented()

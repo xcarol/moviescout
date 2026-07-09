@@ -1,4 +1,4 @@
-const admin = require('firebase-admin');
+import admin from 'firebase-admin';
 
 // Parse the service account from an environment variable
 const serviceAccountParams = process.env.FIREBASE_SERVICE_ACCOUNT;
@@ -16,6 +16,23 @@ if (!admin.apps.length && serviceAccountParams) {
   } catch (e) {
     console.error("Error parsing FIREBASE_SERVICE_ACCOUNT:", e);
   }
+}
+
+async function getTmdbAccount(account_id, session_id) {
+  const tmdbToken = process.env.TMDB_API_KEY || process.env.TMDB_API_RAT;
+  if (!tmdbToken) throw new Error('500:Missing TMDB API Token environment variable');
+
+  const tmdbUrl = `https://api.themoviedb.org/3/account/${account_id}?session_id=${session_id}`;
+  const tmdbResponse = await fetch(tmdbUrl, {
+    headers: {
+      'Authorization': `Bearer ${tmdbToken}`,
+      'Accept': 'application/json'
+    }
+  });
+  
+  if (!tmdbResponse.ok) throw new Error('401:Invalid TMDB session or account ID');
+
+  return tmdbResponse.json();
 }
 
 export default async function handler(req, res) {
@@ -43,25 +60,7 @@ export default async function handler(req, res) {
 
   try {
     // 1. Validate the session directly with TMDB
-    const tmdbToken = process.env.TMDB_API_KEY || process.env.TMDB_API_RAT;
-    if (!tmdbToken) {
-      return res.status(500).json({ error: 'Missing TMDB API Token environment variable' });
-    }
-
-    // Pass the token as a Bearer token, which supports TMDB v4 Read Access Tokens
-    const tmdbUrl = `https://api.themoviedb.org/3/account/${account_id}?session_id=${session_id}`;
-    const tmdbResponse = await fetch(tmdbUrl, {
-      headers: {
-        'Authorization': `Bearer ${tmdbToken}`,
-        'Accept': 'application/json'
-      }
-    });
-    
-    if (!tmdbResponse.ok) {
-      return res.status(401).json({ error: 'Invalid TMDB session or account ID' });
-    }
-
-    const tmdbData = await tmdbResponse.json();
+    const tmdbData = await getTmdbAccount(account_id, session_id);
 
     // 2. Generate a Firebase Custom Token
     const uid = `tmdb_${account_id}`;
@@ -76,6 +75,10 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error("Auth error:", error);
+    if (error.message && error.message.includes(':')) {
+      const [status, msg] = error.message.split(':');
+      return res.status(parseInt(status, 10)).json({ error: msg });
+    }
     return res.status(500).json({ error: 'Internal server error generating token' });
   }
 }
