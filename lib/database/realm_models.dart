@@ -72,6 +72,7 @@ class _TmdbTitleRealm {
   late String? seasonsJson;
 
   late List<int> genreIds;
+  late List<int> flatrateProviderIds;
   late int lastNotifiedSeason;
   late String lastProvidersUpdate;
 
@@ -141,6 +142,7 @@ class TmdbTitleRealmFields {
   static const String tagline = 'tagline';
   static const String tmdbId = 'tmdbId';
   static const String voteAverage = 'voteAverage';
+  static const String flatrateProviderIds = 'flatrateProviderIds';
 }
 
 class UserListEntryRealmFields {

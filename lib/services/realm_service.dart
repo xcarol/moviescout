@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:realm/realm.dart';
 
@@ -15,10 +17,36 @@ class RealmService {
         TmdbSeasonRealm.schema,
         TmdbEpisodeRealm.schema,
       ],
-      schemaVersion: 1,
+      schemaVersion: 2,
+      migrationCallback: (migration, oldSchemaVersion) {
+        if (oldSchemaVersion < 2) {
+          _migrateProvidersJson(migration.newRealm);
+        }
+      },
       path: '${dir.path}/moviescout.realm',
     );
     _realm = Realm(config);
+  }
+
+  static void _migrateProvidersJson(Realm realm) {
+    final titles = realm.all<TmdbTitleRealm>();
+    for (final t in titles) {
+      if (t.flatrateProviderIds.isEmpty) {
+        final providersJson = t.providersJson;
+        if (providersJson != null && providersJson.isNotEmpty) {
+          try {
+            final map = jsonDecode(providersJson) as Map<String, dynamic>;
+            if (map['flatrate'] is List) {
+              final ids = (map['flatrate'] as List)
+                  .map((p) => p['provider_id'] as int)
+                  .toList();
+              t.flatrateProviderIds.addAll(ids);
+              debugPrint('flatrateProviderIds: ${ids.toString()}');
+            }
+          } catch (_) {}
+        }
+      }
+    }
   }
 
   static Realm get instance => _realm;

@@ -167,6 +167,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
     String? creditsJson,
     String? seasonsJson,
     Iterable<int> genreIds = const [],
+    Iterable<int> flatrateProviderIds = const [],
   }) {
     RealmObjectBase.set(this, 'id', id);
     RealmObjectBase.set(this, 'tmdbId', tmdbId);
@@ -212,6 +213,8 @@ class TmdbTitleRealm extends _TmdbTitleRealm
     RealmObjectBase.set(this, 'seasonsJson', seasonsJson);
     RealmObjectBase.set<RealmList<int>>(
         this, 'genreIds', RealmList<int>(genreIds));
+    RealmObjectBase.set<RealmList<int>>(
+        this, 'flatrateProviderIds', RealmList<int>(flatrateProviderIds));
     RealmObjectBase.set(this, 'lastNotifiedSeason', lastNotifiedSeason);
     RealmObjectBase.set(this, 'lastProvidersUpdate', lastProvidersUpdate);
     RealmObjectBase.set(this, 'character', character);
@@ -487,6 +490,13 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       throw RealmUnsupportedSetError();
 
   @override
+  RealmList<int> get flatrateProviderIds =>
+      RealmObjectBase.get<int>(this, 'flatrateProviderIds') as RealmList<int>;
+  @override
+  set flatrateProviderIds(covariant RealmList<int> value) =>
+      throw RealmUnsupportedSetError();
+
+  @override
   int get lastNotifiedSeason =>
       RealmObjectBase.get<int>(this, 'lastNotifiedSeason') as int;
   @override
@@ -574,6 +584,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       'creditsJson': creditsJson.toEJson(),
       'seasonsJson': seasonsJson.toEJson(),
       'genreIds': genreIds.toEJson(),
+      'flatrateProviderIds': flatrateProviderIds.toEJson(),
       'lastNotifiedSeason': lastNotifiedSeason.toEJson(),
       'lastProvidersUpdate': lastProvidersUpdate.toEJson(),
       'character': character.toEJson(),
@@ -671,6 +682,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
           creditsJson: fromEJson(ejson['creditsJson']),
           seasonsJson: fromEJson(ejson['seasonsJson']),
           genreIds: fromEJson(ejson['genreIds']),
+          flatrateProviderIds: fromEJson(ejson['flatrateProviderIds']),
         ),
       _ => raiseInvalidEJson(ejson),
     };
@@ -729,6 +741,8 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       SchemaProperty('creditsJson', RealmPropertyType.string, optional: true),
       SchemaProperty('seasonsJson', RealmPropertyType.string, optional: true),
       SchemaProperty('genreIds', RealmPropertyType.int,
+          collectionType: RealmCollectionType.list),
+      SchemaProperty('flatrateProviderIds', RealmPropertyType.int,
           collectionType: RealmCollectionType.list),
       SchemaProperty('lastNotifiedSeason', RealmPropertyType.int),
       SchemaProperty('lastProvidersUpdate', RealmPropertyType.string),
