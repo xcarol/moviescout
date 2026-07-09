@@ -77,7 +77,7 @@ export default async function handler(req, res) {
     console.error("Auth error:", error);
     if (error.message && error.message.includes(':')) {
       const [status, msg] = error.message.split(':');
-      return res.status(parseInt(status)).json({ error: msg });
+      return res.status(parseInt(status, 10)).json({ error: msg });
     }
     return res.status(500).json({ error: 'Internal server error generating token' });
   }
