@@ -20,9 +20,7 @@ if (!admin.apps.length && serviceAccountParams) {
 
 async function getTmdbAccount(account_id, session_id) {
   const tmdbToken = process.env.TMDB_API_KEY || process.env.TMDB_API_RAT;
-  if (!tmdbToken) {
-    return { errorStatus: 500, errorMessage: 'Missing TMDB API Token environment variable' };
-  }
+  if (!tmdbToken) throw new Error('500:Missing TMDB API Token environment variable');
 
   const tmdbUrl = `https://api.themoviedb.org/3/account/${account_id}?session_id=${session_id}`;
   const tmdbResponse = await fetch(tmdbUrl, {
@@ -32,12 +30,9 @@ async function getTmdbAccount(account_id, session_id) {
     }
   });
   
-  if (!tmdbResponse.ok) {
-    return { errorStatus: 401, errorMessage: 'Invalid TMDB session or account ID' };
-  }
+  if (!tmdbResponse.ok) throw new Error('401:Invalid TMDB session or account ID');
 
-  const data = await tmdbResponse.json();
-  return { data };
+  return tmdbResponse.json();
 }
 
 export default async function handler(req, res) {
@@ -65,17 +60,14 @@ export default async function handler(req, res) {
 
   try {
     // 1. Validate the session directly with TMDB
-    const tmdbResult = await getTmdbAccount(account_id, session_id);
-    if (tmdbResult.errorStatus) {
-      return res.status(tmdbResult.errorStatus).json({ error: tmdbResult.errorMessage });
-    }
+    const tmdbData = await getTmdbAccount(account_id, session_id);
 
     // 2. Generate a Firebase Custom Token
     const uid = `tmdb_${account_id}`;
     
     // Pass the TMDB username as a custom claim so it's visible in Firebase Auth
     const customToken = await admin.auth().createCustomToken(uid, {
-      tmdb_username: tmdbResult.data.username
+      tmdb_username: tmdbData.username
     });
 
     // 3. Return the token to the Flutter app
@@ -83,6 +75,10 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error("Auth error:", error);
+    if (error.message && error.message.includes(':')) {
+      const [status, msg] = error.message.split(':');
+      return res.status(parseInt(status)).json({ error: msg });
+    }
     return res.status(500).json({ error: 'Internal server error generating token' });
   }
 }
