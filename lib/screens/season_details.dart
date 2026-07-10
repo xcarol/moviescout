@@ -125,7 +125,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
                   .replaceFirst(
                       '{SEASON_NUMBER}', _currentSeasonNumber.toString());
               SharePlus.instance.share(
-                ShareParams(text: '$appTitle\n$link'),
+                ShareParams(uri: Uri.parse(link)),
               );
             },
             tooltip: AppLocalizations.of(context)!.shareLink,

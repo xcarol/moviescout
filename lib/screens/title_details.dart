@@ -164,7 +164,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                   .replaceFirst('{MEDIA_TYPE}', _currentTitle.mediaType)
                   .replaceFirst('{ID}', _currentTitle.tmdbId.toString());
               SharePlus.instance.share(
-                ShareParams(text: '${_currentTitle.name}\n$link'),
+                ShareParams(uri: Uri.parse(link)),
               );
             },
             tooltip: AppLocalizations.of(context)!.shareLink,

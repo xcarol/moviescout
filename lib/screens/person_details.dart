@@ -140,7 +140,7 @@ class _PersonDetailsState extends State<PersonDetails> {
                   final String link = UrlConstants.moviescoutPersonWebTemplate
                       .replaceFirst('{ID}', widget._person.tmdbId.toString());
                   SharePlus.instance.share(
-                    ShareParams(text: '${widget._person.name}\n$link'),
+                    ShareParams(uri: Uri.parse(link)),
                   );
                 },
                 tooltip: AppLocalizations.of(context)!.shareLink,
