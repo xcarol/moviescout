@@ -20,49 +20,35 @@ class ExpandableText extends StatefulWidget {
 
 class _ExpandableTextState extends State<ExpandableText> {
   bool _isExpanded = false;
-  double? _lastMaxWidth;
-  bool _isOverflowing = false;
-
-  bool _checkOverflow(double maxWidth, InlineSpan span) {
-    if (_lastMaxWidth == maxWidth) {
-      return _isOverflowing;
-    }
-
+  bool _checkOverflow(double maxWidth, InlineSpan span, TextScaler textScaler, TextDirection textDirection) {
     final tp = TextPainter(
       text: span,
       maxLines: widget.initialMaxLines,
-      textDirection: TextDirection.ltr,
+      textDirection: textDirection,
       textAlign: TextAlign.start,
+      textScaler: textScaler,
     );
     tp.layout(maxWidth: maxWidth);
-
-    _lastMaxWidth = maxWidth;
-    _isOverflowing = tp.didExceedMaxLines;
-
-    return _isOverflowing;
+    return tp.didExceedMaxLines;
   }
 
-  @override
-  void didUpdateWidget(ExpandableText oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.text != widget.text ||
-        oldWidget.textSpan != widget.textSpan ||
-        oldWidget.initialMaxLines != widget.initialMaxLines ||
-        oldWidget.style != widget.style) {
-      _lastMaxWidth = null;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final textStyle = widget.style ?? DefaultTextStyle.of(context).style;
+        final defaultTextStyle = DefaultTextStyle.of(context).style;
+        final textStyle = widget.style != null
+            ? defaultTextStyle.merge(widget.style)
+            : defaultTextStyle;
 
         final InlineSpan span = widget.textSpan ??
             TextSpan(text: widget.text ?? '', style: textStyle);
 
-        final bool isOverflowing = _checkOverflow(constraints.maxWidth, span);
+        final textScaler = MediaQuery.textScalerOf(context);
+        final textDirection = Directionality.of(context);
+
+        final bool isOverflowing = _checkOverflow(constraints.maxWidth, span, textScaler, textDirection);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

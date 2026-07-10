@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:realm/realm.dart';
 
@@ -41,7 +40,6 @@ class RealmService {
                   .map((p) => p['provider_id'] as int)
                   .toList();
               t.flatrateProviderIds.addAll(ids);
-              debugPrint('flatrateProviderIds: ${ids.toString()}');
             }
           } catch (_) {}
         }

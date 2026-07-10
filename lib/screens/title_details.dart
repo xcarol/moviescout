@@ -315,7 +315,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         Container(
           constraints: const BoxConstraints(minHeight: 150),
           padding:
-              const EdgeInsets.only(left: 136, right: 5, top: 10, bottom: 10),
+              const EdgeInsets.only(left: 144, right: 5, top: 10, bottom: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -774,6 +774,10 @@ class _TitleDetailsState extends State<TitleDetails> {
     List<Widget> leftColChildren = [];
     List<Widget> rightColChildren = [];
     for (int i = 0; i < 2; i++) {
+      if (i > 0) {
+        leftColChildren.add(const SizedBox(height: 12));
+        rightColChildren.add(const SizedBox(height: 12));
+      }
       leftColChildren.add(topChildren.length > i * 2
           ? topChildren[i * 2]
           : const SizedBox(height: 24));
@@ -786,6 +790,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       width: double.infinity,
       child: Wrap(
         alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.end,
         runSpacing: 15,
       children: [
         if (topChildren.isNotEmpty)
