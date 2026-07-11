@@ -792,176 +792,180 @@ class _TitleDetailsState extends State<TitleDetails> {
         alignment: WrapAlignment.spaceBetween,
         crossAxisAlignment: WrapCrossAlignment.end,
         runSpacing: 15,
-      children: [
-        if (topChildren.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 4.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: leftColChildren,
-                ),
-                const SizedBox(width: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: rightColChildren,
-                ),
-              ],
+        children: [
+          if (topChildren.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 4.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: leftColChildren,
+                  ),
+                  const SizedBox(width: 15),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: rightColChildren,
+                  ),
+                ],
+              ),
             ),
-          ),
-        Consumer<TmdbRateslistService>(
-          builder: (context, ratingService, child) {
-            return FutureBuilder<List<dynamic>>(
-              future: Future.wait([
-                ratingService.getRatingDate(title.tmdbId, title.mediaType),
-                ratingService.contains(title),
-                ratingService.getRatingAsync(title.tmdbId, title.mediaType),
-              ]),
-              builder: (context, snapshot) {
-                final isUserLoggedIn =
-                    Provider.of<TmdbUserService>(context).isUserLoggedIn;
-                final titleRatingDate = snapshot.data?[0] as DateTime? ??
-                    DateTime.fromMillisecondsSinceEpoch(0);
-                final titleRating = snapshot.data?[2] as double? ?? 0.0;
+          Consumer<TmdbRateslistService>(
+            builder: (context, ratingService, child) {
+              return FutureBuilder<List<dynamic>>(
+                future: Future.wait([
+                  ratingService.getRatingDate(title.tmdbId, title.mediaType),
+                  ratingService.contains(title),
+                  ratingService.getRatingAsync(title.tmdbId, title.mediaType),
+                ]),
+                builder: (context, snapshot) {
+                  final isUserLoggedIn =
+                      Provider.of<TmdbUserService>(context).isUserLoggedIn;
+                  final titleRatingDate = snapshot.data?[0] as DateTime? ??
+                      DateTime.fromMillisecondsSinceEpoch(0);
+                  final titleRating = snapshot.data?[2] as double? ?? 0.0;
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.your_rate.toUpperCase(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.your_rate.toUpperCase(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(
-                              color: !isUserLoggedIn
-                                  ? Theme.of(context).disabledColor
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
-                              width: 2,
-                            ),
-                            shape: const StadiumBorder(),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 6, horizontal: 10),
-                            minimumSize: const Size(0, 0),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          onPressed: !isUserLoggedIn
-                              ? null
-                              : () => showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return RateForm(
-                                        title: title.name,
-                                        initialRate: titleRating,
-                                        initialDate: titleRatingDate,
-                                        onSubmit: (double rating) async {
-                                          await _updateTitleRate(title, rating);
-                                        },
-                                      );
-                                    },
-                                  ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.star,
-                                size: 32,
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
                                 color: !isUserLoggedIn
                                     ? Theme.of(context).disabledColor
-                                    : titleTheme.userRatedTitle,
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                width: 2,
                               ),
-                              const SizedBox(width: 8),
-                              Text(
-                                titleRating > AppConstants.seenRating
-                                    ? titleRating.toStringAsFixed(1)
-                                    : '-.-',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 22,
+                              shape: const StadiumBorder(),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 6, horizontal: 10),
+                              minimumSize: const Size(0, 0),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            onPressed: !isUserLoggedIn
+                                ? null
+                                : () => showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return RateForm(
+                                          title: title.name,
+                                          initialRate: titleRating,
+                                          initialDate: titleRatingDate,
+                                          onSubmit: (double rating) async {
+                                            await _updateTitleRate(
+                                                title, rating);
+                                          },
+                                        );
+                                      },
+                                    ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  size: 32,
                                   color: !isUserLoggedIn
                                       ? Theme.of(context).disabledColor
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant,
+                                      : titleTheme.userRatedTitle,
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(
-                              color: !isUserLoggedIn ||
-                                      titleRating > AppConstants.seenRating
-                                  ? Theme.of(context).disabledColor
-                                  : (titleRating == AppConstants.seenRating
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .onSurface),
-                              width: 1,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 14),
-                            minimumSize: const Size(0, 0),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          onPressed: !isUserLoggedIn ||
+                                const SizedBox(width: 8),
+                                Text(
                                   titleRating > AppConstants.seenRating
-                              ? null
-                              : () async {
-                                  final newRating =
-                                      titleRating == AppConstants.seenRating
-                                          ? 0.0
-                                          : AppConstants.seenRating;
-
-                                  await _updateTitleRate(title, newRating);
-                                },
-                          child: Tooltip(
-                            message: titleRating == AppConstants.seenRating
-                                ? AppLocalizations.of(context)!.seen
-                                : AppLocalizations.of(context)!.markAsSeen,
-                            child: Icon(
-                              titleRating > 0
-                                  ? Symbols.done_outline
-                                  : Symbols.check,
-                              size: 16,
-                              color: titleRating > 0
-                                  ? (!isUserLoggedIn ||
-                                          titleRating > AppConstants.seenRating
-                                      ? Theme.of(context).disabledColor
-                                      : Theme.of(context).colorScheme.primary)
-                                  : (isUserLoggedIn
-                                      ? Theme.of(context).colorScheme.onSurface
-                                      : Theme.of(context).disabledColor),
+                                      ? titleRating.toStringAsFixed(1)
+                                      : '-.-',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 22,
+                                    color: !isUserLoggedIn
+                                        ? Theme.of(context).disabledColor
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-        ),
-      ],
-    ),
+                          const SizedBox(width: 8),
+                          OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                color: !isUserLoggedIn ||
+                                        titleRating > AppConstants.seenRating
+                                    ? Theme.of(context).disabledColor
+                                    : (titleRating == AppConstants.seenRating
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .onSurface),
+                                width: 1,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 14),
+                              minimumSize: const Size(0, 0),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            onPressed: !isUserLoggedIn ||
+                                    titleRating > AppConstants.seenRating
+                                ? null
+                                : () async {
+                                    final newRating =
+                                        titleRating == AppConstants.seenRating
+                                            ? 0.0
+                                            : AppConstants.seenRating;
+
+                                    await _updateTitleRate(title, newRating);
+                                  },
+                            child: Tooltip(
+                              message: titleRating == AppConstants.seenRating
+                                  ? AppLocalizations.of(context)!.seen
+                                  : AppLocalizations.of(context)!.markAsSeen,
+                              child: Icon(
+                                titleRating > 0
+                                    ? Symbols.done_outline
+                                    : Symbols.check,
+                                size: 16,
+                                color: titleRating > 0
+                                    ? (!isUserLoggedIn ||
+                                            titleRating >
+                                                AppConstants.seenRating
+                                        ? Theme.of(context).disabledColor
+                                        : Theme.of(context).colorScheme.primary)
+                                    : (isUserLoggedIn
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                        : Theme.of(context).disabledColor),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 

@@ -14,9 +14,8 @@ class ExpandableDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayText = text.isEmpty
-        ? AppLocalizations.of(context)!.missingDescription
-        : text;
+    final displayText =
+        text.isEmpty ? AppLocalizations.of(context)!.missingDescription : text;
 
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
