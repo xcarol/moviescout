@@ -46,7 +46,7 @@ Future<bool> updateTitle(
   if (title.lastNotifiedSeason == 0 && title.isSerie) {
     title.lastNotifiedSeason =
         WatchlistNotificationEvaluator.getBaselineSeason(title, now);
-    await repository.updateTitleMetadata(title);
+    await repository.updateNotifyNewSeasons(title);
   }
 
   final trigger = WatchlistNotificationEvaluator.evaluateNotification(
@@ -106,7 +106,7 @@ Future<bool> updateTitle(
       title.lastNotifiedSeason = title.numberOfSeasons;
     }
     title.notifyNewSeasons = false;
-    await repository.updateTitleMetadata(title);
+    await repository.updateNotifyNewSeasons(title);
     return true;
   }
 
@@ -147,7 +147,7 @@ Future<bool> updateTitle(
       }
     }
 
-    await repository.updateTitleMetadata(title);
+    await repository.updateNotifyNewSeasons(title);
     return true;
   }
 

@@ -43,6 +43,7 @@ import 'package:app_links/app_links.dart';
 import 'package:moviescout/widgets/shortcut_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:moviescout/services/uninitialized_titles_worker.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -154,6 +155,10 @@ void _runMain({bool isFromShortcutActivity = false}) async {
 
   debugPrint('Running Movie Scout...');
   final repository = TmdbTitleRepository();
+
+  if (!isShortcut) {
+    UninitializedTitlesWorker.dispatch();
+  }
 
   runApp(MultiProvider(
     providers: [

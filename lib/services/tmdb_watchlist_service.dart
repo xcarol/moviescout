@@ -81,6 +81,8 @@ class TmdbWatchlistService extends TmdbTitleListService {
         return _updateTitleInWatchlistToTmdb(
             accountId, sessionId, title.tmdbId, title.mediaType, add);
       });
+
+      await repository.updateIsPinned(title);
     } catch (error, stackTrace) {
       ErrorService.log(
         error,
@@ -108,7 +110,7 @@ class TmdbWatchlistService extends TmdbTitleListService {
     }
 
     title.isPinned = !title.isPinned;
-    await repository.updateTitleMetadata(title);
+    await repository.updateIsPinned(title);
 
     if (pinnedService != null) {
       if (title.isPinned) {

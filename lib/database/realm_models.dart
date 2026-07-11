@@ -143,6 +143,7 @@ class TmdbTitleRealmFields {
   static const String tmdbId = 'tmdbId';
   static const String voteAverage = 'voteAverage';
   static const String flatrateProviderIds = 'flatrateProviderIds';
+  static const String lastUpdated = 'lastUpdated';
 }
 
 class UserListEntryRealmFields {
