@@ -169,7 +169,7 @@ class TmdbTitle implements TmdbItem {
   late String? videosJson;
   late String? omdbRatingsJson;
 
-  late int lastNotifiedSeason; // New field for notification tracking
+  late int lastNotifiedSeason;
   late String lastProvidersUpdate;
 
   String character = '';

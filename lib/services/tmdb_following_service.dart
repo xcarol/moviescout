@@ -88,7 +88,8 @@ class TmdbFollowingService extends TmdbConfigListService {
               name: '',
               mediaType: mediaType,
               dateRated: DateTime.fromMillisecondsSinceEpoch(0),
-              lastUpdated: AppConstants.defaultDate);
+              lastUpdated: AppConstants.defaultDate)
+            ..inLists = [AppConstants.rateslist];
           title.notifyNewSeasons = true;
           toUpdate['${title.tmdbId}_${title.mediaType}'] = title;
         }
@@ -96,7 +97,7 @@ class TmdbFollowingService extends TmdbConfigListService {
     }
 
     if (toUpdate.isNotEmpty) {
-      await repository.updateTitlesMetadata(toUpdate.values.toList());
+      await repository.updateNotifyNewSeasonsList(toUpdate.values.toList());
       notifyListeners();
     }
   }

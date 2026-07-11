@@ -1,5 +1,31 @@
 {
   "@@locale": "es",
+  "notificationDownloadingTitle": "Descargando Detalles",
+  "@notificationDownloadingTitle": {},
+  "notificationFetchingData": "Obteniendo datos de títulos ({progress}/{total})...",
+  "@notificationFetchingData": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationUpdatingProviders": "Actualizando Plataformas",
+  "@notificationUpdatingProviders": {},
+  "notificationCheckingAvailability": "Comprobando disponibilidad ({progress}/{total})...",
+  "@notificationCheckingAvailability": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "appTitle": "Movie Scout",
   "@appTitle": {},
   "catalan": "Català",

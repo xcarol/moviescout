@@ -6,8 +6,9 @@ import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
-import 'package:moviescout/services/tmdb_title_service.dart';
+import 'package:moviescout/services/uninitialized_titles_worker.dart';
 import 'package:moviescout/services/update_manager.dart';
+import 'package:moviescout/services/update_providers_worker.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -49,6 +50,12 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
   TmdbTitleListService(String listName, this.repository,
       {List<TmdbTitle>? titles}) {
     listNameVal = listName;
+    UninitializedTitlesWorker.onFinished.stream.listen((_) {
+      filterItems();
+    });
+    UpdateProvidersWorker.onFinished.stream.listen((_) {
+      filterItems();
+    });
   }
 
   @protected
@@ -280,6 +287,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
           localEntries.map((e) => '${e.tmdbId}_${e.mediaType}').toSet();
 
       final keysToAdd = serverKeys.difference(localKeys);
+
       final titlesToAdd = serverList
           .where((t) => keysToAdd.contains('${t.tmdbId}_${t.mediaType}'))
           .toList();
@@ -287,9 +295,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
 
       if (titlesToAdd.isNotEmpty) {
         int currentMax = await repository.getMaxAddedOrder(listNameVal);
-        final updated = await _updateTitlesInChunks(
-            titlesToAdd, (t) => TmdbTitleService().updateTitleDetails(t));
-        await repository.saveTitles(updated.cast<TmdbTitle>(), listNameVal,
+        await repository.saveTitles(titlesToAdd, listNameVal,
             addedOrders: titlesToAdd.map((t) => ++currentMax).toList());
         await filterItems();
       }
@@ -305,61 +311,13 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       }
     }
 
-    if (isInitialLoad) {
-      final totalCount = listTitleCount;
-      const batchSize = AppConstants.defaultBatchSize;
-
-      for (var i = 0; i < totalCount; i += batchSize) {
-        final batch = await repository.getTitles(
-          listName: listNameVal,
-          offset: i,
-          limit: batchSize,
-          sortOption: SortOption.addedOrder,
-          sortAscending: true,
-        );
-
-        final updated = await _updateTitlesInChunks(
-            batch, (t) => TmdbTitleService().updateTitleDetails(t));
-
-        int startOrder = i;
-        await repository.saveTitles(updated.cast<TmdbTitle>(), listNameVal,
-            addedOrders: batch.map((t) => startOrder++).toList());
-      }
-    }
+    UninitializedTitlesWorker.dispatch();
 
     await filterItems();
   }
 
   Future<void> updateProviders() async {
-    isLoading.value = true;
-    try {
-      final totalCount = listTitleCount;
-      const batchSize = AppConstants.defaultBatchSize;
-
-      for (var i = 0; i < totalCount; i += batchSize) {
-        final batch = await repository.getTitles(
-          listName: listNameVal,
-          offset: i,
-          limit: batchSize,
-        );
-
-        final updated = await _updateTitlesInChunks(
-            batch, (t) => TmdbTitleService().updateTitleProviders(t));
-
-        await repository.updateTitlesMetadata(updated.cast<TmdbTitle>());
-      }
-
-      await filterItems();
-    } catch (error, stackTrace) {
-      ErrorService.log(
-        error,
-        stackTrace: stackTrace,
-        userMessage: 'Error updating platform availability',
-      );
-    } finally {
-      isLoading.value = false;
-      notifyListeners();
-    }
+    UpdateProvidersWorker.dispatch(listNameVal);
   }
 
   @protected
@@ -580,22 +538,6 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     listGenresVal = TmdbGenreService().getNamesFromIds(uniqueGenres);
     listGenresVal.sort();
     listGenres.value = [...listGenresVal];
-  }
-
-  Future<List<TmdbTitle>> _updateTitlesInChunks(
-    List<TmdbTitle> titles,
-    Future<TmdbTitle> Function(TmdbTitle) updateFn,
-  ) async {
-    List<TmdbTitle> updated = [];
-    const chunkSize = 5;
-    for (int i = 0; i < titles.length; i += chunkSize) {
-      final end =
-          (i + chunkSize < titles.length) ? i + chunkSize : titles.length;
-      final chunk = titles.sublist(i, end);
-      updated.addAll(await Future.wait(chunk.map(updateFn)));
-      await Future.delayed(const Duration(milliseconds: 50));
-    }
-    return updated;
   }
 
   Future<TmdbTitle?> getTitleByTmdbId(int tmdbId, String mediaType) async {

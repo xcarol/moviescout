@@ -262,4 +262,49 @@ class NotificationService extends ChangeNotifier {
     await _notificationsPlugin.show(id, title, body, notificationDetails,
         payload: payload);
   }
+
+  Future<void> showProgressNotification({
+    required int id,
+    required String title,
+    required String body,
+    required int progress,
+    required int maxProgress,
+  }) async {
+    if (!_enabled ||
+        kIsWeb ||
+        (defaultTargetPlatform != TargetPlatform.android &&
+            defaultTargetPlatform != TargetPlatform.iOS)) {
+      return;
+    }
+
+    final AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+      AppConstants.notificationProgressChannelId,
+      AppConstants.notificationProgressChannelName,
+      channelDescription: AppConstants.notificationProgressChannelDesc,
+      channelShowBadge: false,
+      importance: Importance.low,
+      priority: Priority.low,
+      onlyAlertOnce: true,
+      showProgress: true,
+      styleInformation: BigTextStyleInformation(
+        body,
+        contentTitle: title,
+      ),
+      maxProgress: maxProgress,
+      progress: progress,
+      ongoing: true,
+      autoCancel: false,
+    );
+
+    final NotificationDetails notificationDetails = NotificationDetails(
+      android: androidDetails,
+    );
+
+    await _notificationsPlugin.show(id, title, body, notificationDetails);
+  }
+
+  Future<void> cancelNotification(int id) async {
+    await _notificationsPlugin.cancel(id);
+  }
 }

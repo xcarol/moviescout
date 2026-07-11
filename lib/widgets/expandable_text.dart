@@ -20,7 +20,8 @@ class ExpandableText extends StatefulWidget {
 
 class _ExpandableTextState extends State<ExpandableText> {
   bool _isExpanded = false;
-  bool _checkOverflow(double maxWidth, InlineSpan span, TextScaler textScaler, TextDirection textDirection) {
+  bool _checkOverflow(double maxWidth, InlineSpan span, TextScaler textScaler,
+      TextDirection textDirection) {
     final tp = TextPainter(
       text: span,
       maxLines: widget.initialMaxLines,
@@ -31,7 +32,6 @@ class _ExpandableTextState extends State<ExpandableText> {
     tp.layout(maxWidth: maxWidth);
     return tp.didExceedMaxLines;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,8 @@ class _ExpandableTextState extends State<ExpandableText> {
         final textScaler = MediaQuery.textScalerOf(context);
         final textDirection = Directionality.of(context);
 
-        final bool isOverflowing = _checkOverflow(constraints.maxWidth, span, textScaler, textDirection);
+        final bool isOverflowing = _checkOverflow(
+            constraints.maxWidth, span, textScaler, textDirection);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

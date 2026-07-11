@@ -9,6 +9,22 @@ class AppLocalizationsCa extends AppLocalizations {
   AppLocalizationsCa([String locale = 'ca']) : super(locale);
 
   @override
+  String get notificationDownloadingTitle => 'Descarregant Detalls';
+
+  @override
+  String notificationFetchingData(int progress, int total) {
+    return 'Obtenint dades de títols ($progress/$total)...';
+  }
+
+  @override
+  String get notificationUpdatingProviders => 'Actualitzant Plataformes';
+
+  @override
+  String notificationCheckingAvailability(int progress, int total) {
+    return 'Comprovant disponibilitat ($progress/$total)...';
+  }
+
+  @override
   String get appTitle => 'Movie Scout';
 
   @override

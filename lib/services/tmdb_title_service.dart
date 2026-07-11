@@ -186,11 +186,10 @@ class TmdbTitleService extends TmdbBaseService {
         final List<Map<String, dynamic>> newVideos = youtubeVideos
             .where((v) => !existingKeys.contains(v[TmdbTitleFields.key]))
             .map((v) {
-              final newV = Map<String, dynamic>.from(v);
-              newV[TmdbTitleFields.name] = '* ${newV[TmdbTitleFields.name]}';
-              return newV;
-            })
-            .toList();
+          final newV = Map<String, dynamic>.from(v);
+          newV[TmdbTitleFields.name] = '* ${newV[TmdbTitleFields.name]}';
+          return newV;
+        }).toList();
 
         if (newVideos.isNotEmpty) {
           details[TmdbTitleFields.videos] = [...videos, ...newVideos];

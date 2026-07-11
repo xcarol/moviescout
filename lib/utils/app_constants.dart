@@ -47,6 +47,13 @@ class AppConstants {
   static const int watchlistNewSeasonNotificationWindowDays = 14;
   static const int defaultBatchSize = 25;
 
+  static const String notificationProgressChannelId = 'progress_channel';
+  static const String notificationProgressChannelName = 'Background Tasks';
+  static const String notificationProgressChannelDesc =
+      'Notifications for background processes';
+  static const int uninitializedTitlesNotificationId = 9991;
+  static const int updateProvidersNotificationId = 9992;
+
   static const String defaultDate = '1970-01-01';
 
   static const String tmdbApiRat = 'TMDB_API_RAT';

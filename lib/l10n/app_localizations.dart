@@ -100,6 +100,30 @@ abstract class AppLocalizations {
     Locale('es')
   ];
 
+  /// No description provided for @notificationDownloadingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading Title Details'**
+  String get notificationDownloadingTitle;
+
+  /// No description provided for @notificationFetchingData.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetching data for titles ({progress}/{total})...'**
+  String notificationFetchingData(int progress, int total);
+
+  /// No description provided for @notificationUpdatingProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Updating Providers'**
+  String get notificationUpdatingProviders;
+
+  /// No description provided for @notificationCheckingAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking availability for titles ({progress}/{total})...'**
+  String notificationCheckingAvailability(int progress, int total);
+
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:

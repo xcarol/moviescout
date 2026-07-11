@@ -148,6 +148,10 @@ class TmdbRateslistService extends TmdbTitleListService {
         return _updateTitleRateToTmdb(
             accountId, sessionId, title.tmdbId, title.mediaType, rating);
       });
+
+      await repository.updateRating(title);
+      await repository.updateIsPinned(title);
+      await repository.updateNotifyNewSeasons(title);
     } catch (error, stackTrace) {
       ErrorService.log(
         error,
@@ -159,7 +163,7 @@ class TmdbRateslistService extends TmdbTitleListService {
 
   Future<void> toggleNotify(TmdbTitle title) async {
     title.notifyNewSeasons = !title.notifyNewSeasons;
-    await repository.updateTitleMetadata(title);
+    await repository.updateNotifyNewSeasons(title);
 
     if (followingService != null) {
       if (title.notifyNewSeasons) {

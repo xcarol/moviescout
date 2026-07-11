@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:realm/realm.dart';
 
@@ -8,7 +9,12 @@ class RealmService {
   static late final Realm _realm;
 
   static Future<void> init() async {
-    final dir = await getApplicationCacheDirectory();
+    String? customPath;
+    if (!kIsWeb) {
+      final dir = await getApplicationCacheDirectory();
+      customPath = '${dir.path}/moviescout.realm';
+    }
+
     final config = Configuration.local(
       [
         UserListEntryRealm.schema,
@@ -22,7 +28,7 @@ class RealmService {
           _migrateProvidersJson(migration.newRealm);
         }
       },
-      path: '${dir.path}/moviescout.realm',
+      path: customPath,
     );
     _realm = Realm(config);
   }

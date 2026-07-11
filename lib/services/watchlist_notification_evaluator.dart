@@ -64,6 +64,10 @@ class WatchlistNotificationEvaluator {
     required bool notifyCompleteSeason,
     List<String>? logLines,
   }) {
+    if (titleBeforeUpdate.lastUpdated == AppConstants.defaultDate) {
+      return NotificationTrigger.none;
+    }
+
     final oldProviders = titleBeforeUpdate.flatrateProviderIds.toSet();
     final wasAvailable =
         oldProviders.intersection(enabledProviderIds).isNotEmpty;

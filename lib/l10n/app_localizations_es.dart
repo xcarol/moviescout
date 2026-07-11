@@ -9,6 +9,22 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
+  String get notificationDownloadingTitle => 'Descargando Detalles';
+
+  @override
+  String notificationFetchingData(int progress, int total) {
+    return 'Obteniendo datos de títulos ($progress/$total)...';
+  }
+
+  @override
+  String get notificationUpdatingProviders => 'Actualizando Plataformas';
+
+  @override
+  String notificationCheckingAvailability(int progress, int total) {
+    return 'Comprobando disponibilidad ($progress/$total)...';
+  }
+
+  @override
   String get appTitle => 'Movie Scout';
 
   @override

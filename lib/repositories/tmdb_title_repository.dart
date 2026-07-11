@@ -16,8 +16,6 @@ class TmdbTitleRepository {
 
   void _mergeTitleMetadata(TmdbTitle newTitle, TmdbTitle currentTitle,
       {String? listNameToAdd}) {
-    bool inListsIsEmpty = newTitle.inLists.isEmpty;
-
     if (listNameToAdd != null) {
       final mergedLists = Set<String>.from(currentTitle.inLists);
       mergedLists.add(listNameToAdd);
@@ -26,15 +24,13 @@ class TmdbTitleRepository {
       newTitle.inLists = currentTitle.inLists;
     }
 
-    if (inListsIsEmpty) {
-      newTitle.isPinned = currentTitle.isPinned;
-      newTitle.notifyNewSeasons = currentTitle.notifyNewSeasons;
-    }
+    newTitle.isPinned = currentTitle.isPinned;
+    newTitle.notifyNewSeasons = currentTitle.notifyNewSeasons;
+    newTitle.lastNotifiedSeason = currentTitle.lastNotifiedSeason;
+    newTitle.rating = currentTitle.rating;
+    newTitle.dateRated = currentTitle.dateRated;
 
-    if (newTitle.rating == 0.0 && currentTitle.rating > 0.0) {
-      newTitle.rating = currentTitle.rating;
-      newTitle.dateRated = currentTitle.dateRated;
-    }
+    newTitle.omdbRatingsJson ??= currentTitle.omdbRatingsJson;
   }
 
   Future<void> saveTitle(
@@ -146,6 +142,88 @@ class TmdbTitleRepository {
     }
   }
 
+  Future<void> updateIsPinned(TmdbTitle title) async {
+    _realm.write(() {
+      final existing =
+          _realm.find<TmdbTitleRealm>('${title.tmdbId}_${title.mediaType}');
+      if (existing != null) {
+        existing.isPinned = title.isPinned;
+      } else {
+        _realm.add(RealmMapper.toRealmTitle(title));
+      }
+    });
+  }
+
+  Future<void> updateIsPinnedList(List<TmdbTitle> titles) async {
+    _realm.write(() {
+      for (var title in titles) {
+        final existing =
+            _realm.find<TmdbTitleRealm>('${title.tmdbId}_${title.mediaType}');
+        if (existing != null) {
+          existing.isPinned = title.isPinned;
+        } else {
+          _realm.add(RealmMapper.toRealmTitle(title));
+        }
+      }
+    });
+  }
+
+  Future<void> updateRating(TmdbTitle title) async {
+    _realm.write(() {
+      final existing =
+          _realm.find<TmdbTitleRealm>('${title.tmdbId}_${title.mediaType}');
+      if (existing != null) {
+        existing.rating = title.rating;
+        existing.dateRated = title.dateRated;
+      } else {
+        _realm.add(RealmMapper.toRealmTitle(title));
+      }
+    });
+  }
+
+  Future<void> updateRatingList(List<TmdbTitle> titles) async {
+    _realm.write(() {
+      for (var title in titles) {
+        final existing =
+            _realm.find<TmdbTitleRealm>('${title.tmdbId}_${title.mediaType}');
+        if (existing != null) {
+          existing.rating = title.rating;
+          existing.dateRated = title.dateRated;
+        } else {
+          _realm.add(RealmMapper.toRealmTitle(title));
+        }
+      }
+    });
+  }
+
+  Future<void> updateNotifyNewSeasons(TmdbTitle title) async {
+    _realm.write(() {
+      final existing =
+          _realm.find<TmdbTitleRealm>('${title.tmdbId}_${title.mediaType}');
+      if (existing != null) {
+        existing.notifyNewSeasons = title.notifyNewSeasons;
+        existing.lastNotifiedSeason = title.lastNotifiedSeason;
+      } else {
+        _realm.add(RealmMapper.toRealmTitle(title));
+      }
+    });
+  }
+
+  Future<void> updateNotifyNewSeasonsList(List<TmdbTitle> titles) async {
+    _realm.write(() {
+      for (var title in titles) {
+        final existing =
+            _realm.find<TmdbTitleRealm>('${title.tmdbId}_${title.mediaType}');
+        if (existing != null) {
+          existing.notifyNewSeasons = title.notifyNewSeasons;
+          existing.lastNotifiedSeason = title.lastNotifiedSeason;
+        } else {
+          _realm.add(RealmMapper.toRealmTitle(title));
+        }
+      }
+    });
+  }
+
   Future<void> deleteTitle(
       String listName, int tmdbId, String mediaType) async {
     _realm.write(() {
@@ -246,6 +324,14 @@ class TmdbTitleRepository {
         '\$0 IN ${TmdbTitleRealmFields.inLists} AND ${TmdbTitleRealmFields.rating} > \$1',
         [listName, AppConstants.seenRating]).length;
     return count > 0;
+  }
+
+  Future<List<TmdbTitle>> getUninitializedTitles() async {
+    final query = _realm.query<TmdbTitleRealm>(
+        '${TmdbTitleRealmFields.lastUpdated} == \$0',
+        [AppConstants.defaultDate]);
+    final results = query.toList();
+    return results.map(RealmMapper.toDomainTitle).toList();
   }
 
   int countTitlesSync(String listName) {
