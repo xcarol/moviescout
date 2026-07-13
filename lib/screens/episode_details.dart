@@ -1,4 +1,5 @@
 import 'package:moviescout/utils/url_constants.dart';
+import 'package:moviescout/utils/api_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
@@ -178,7 +179,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
             images: episode.images,
             backdropPath: '',
             posterPath: episode.stillPath, // Usually episodes have stills
-            isMovie: false,
+            mediaType: ApiConstants.tv,
             isLoading: _isUpdating),
         const SizedBox(height: 20),
         _details(episode),

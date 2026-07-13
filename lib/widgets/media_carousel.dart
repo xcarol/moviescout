@@ -2,21 +2,24 @@ import 'package:moviescout/utils/url_constants.dart';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:moviescout/utils/api_constants.dart';
 
 class MediaCarousel extends StatefulWidget {
   final List<String> images;
   final String backdropPath;
   final String posterPath;
-  final bool isMovie;
-
+  final String mediaType;
   final bool isLoading;
+  final double aspectRatio;
 
   const MediaCarousel({
     required this.images,
     required this.backdropPath,
     required this.posterPath,
-    required this.isMovie,
+    required this.mediaType,
     this.isLoading = false,
+    this.aspectRatio = 16 / 9,
     super.key,
   });
 
@@ -64,8 +67,9 @@ class _MediaCarouselState extends State<MediaCarousel> {
       BuildContext context, int totalItems, List<String> images) {
     return RepaintBoundary(
         child: AspectRatio(
-      aspectRatio: 16 / 9,
+      aspectRatio: widget.aspectRatio,
       child: Stack(
+        clipBehavior: Clip.hardEdge,
         alignment: Alignment.bottomCenter,
         children: [
           if (widget.isLoading)
@@ -126,24 +130,30 @@ class _MediaCarouselState extends State<MediaCarousel> {
     final image = widget.backdropPath.isNotEmpty
         ? widget.backdropPath
         : widget.posterPath;
-    final isMovie = widget.isMovie;
+    final mediaType = widget.mediaType;
 
     return AspectRatio(
-      aspectRatio: 16 / 9,
+      aspectRatio: widget.aspectRatio,
       child: image.isNotEmpty
           ? CachedNetworkImage(
               imageUrl: image,
               fit: BoxFit.fill,
               errorWidget: (context, error, stackTrace) =>
-                  _buildPlaceholder(isMovie),
+                  _buildPlaceholder(mediaType),
             )
-          : _buildPlaceholder(isMovie),
+          : _buildPlaceholder(mediaType),
     );
   }
 
-  Widget _buildPlaceholder(bool isMovie) {
+  Widget _buildPlaceholder(String mediaType) {
+    if (mediaType == ApiConstants.person) {
+      return SvgPicture.asset(
+        'assets/person.svg',
+        fit: BoxFit.contain,
+      );
+    }
     return Image.asset(
-      isMovie ? 'assets/movie_poster.png' : 'assets/tvshow_poster.png',
+      mediaType == ApiConstants.movie ? 'assets/movie_poster.png' : 'assets/tvshow_poster.png',
       fit: BoxFit.fitWidth,
     );
   }
