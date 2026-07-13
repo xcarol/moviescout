@@ -3,6 +3,8 @@ package com.xicra.moviescout
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Bundle
+import androidx.core.view.WindowCompat
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
@@ -12,6 +14,11 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "com.xicra.moviescout/shortcut"
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -37,7 +44,15 @@ class MainActivity: FlutterActivity() {
                             .setIntent(intent)
 
                         if (iconBytes != null) {
-                            val bitmap = BitmapFactory.decodeByteArray(iconBytes, 0, iconBytes.size)
+                            val options = BitmapFactory.Options().apply {
+                                inJustDecodeBounds = true
+                            }
+                            BitmapFactory.decodeByteArray(iconBytes, 0, iconBytes.size, options)
+                            
+                            options.inSampleSize = calculateInSampleSize(options, 192, 192)
+                            options.inJustDecodeBounds = false
+                            
+                            val bitmap = BitmapFactory.decodeByteArray(iconBytes, 0, iconBytes.size, options)
                             builder.setIcon(IconCompat.createWithBitmap(bitmap))
                         }
 
@@ -52,5 +67,20 @@ class MainActivity: FlutterActivity() {
                 result.notImplemented()
             }
         }
+    }
+
+    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+        val height = options.outHeight
+        val width = options.outWidth
+        var inSampleSize = 1
+
+        if (height > reqHeight || width > reqWidth) {
+            val halfHeight = height / 2
+            val halfWidth = width / 2
+            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+                inSampleSize *= 2
+            }
+        }
+        return inSampleSize
     }
 }
