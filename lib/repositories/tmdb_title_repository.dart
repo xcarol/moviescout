@@ -326,6 +326,14 @@ class TmdbTitleRepository {
     return count > 0;
   }
 
+  Future<bool> hasTitlesInList(List<int> tmdbIds, String listName) async {
+    if (tmdbIds.isEmpty) return false;
+    final count = _realm.query<TmdbTitleRealm>(
+        '\$0 IN ${TmdbTitleRealmFields.inLists} AND ${TmdbTitleRealmFields.tmdbId} IN \$1',
+        [listName, tmdbIds]).length;
+    return count > 0;
+  }
+
   Future<List<TmdbTitle>> getUninitializedTitles() async {
     final query = _realm.query<TmdbTitleRealm>(
         '${TmdbTitleRealmFields.lastUpdated} == \$0',
