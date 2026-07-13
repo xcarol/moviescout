@@ -43,6 +43,11 @@ Future<bool> updateTitle(
     await titleService.updateTitleLight(title);
   }
 
+  if (fullUpdate ||
+      titleBeforeUpdate.lastProvidersUpdate != title.lastProvidersUpdate) {
+    await repository.updateTitleMetadata(title);
+  }
+
   if (title.lastNotifiedSeason == 0 && title.isSerie) {
     title.lastNotifiedSeason =
         WatchlistNotificationEvaluator.getBaselineSeason(title, now);
@@ -59,10 +64,6 @@ Future<bool> updateTitle(
   );
 
   if (trigger == NotificationTrigger.none) {
-    if (fullUpdate ||
-        titleBeforeUpdate.lastProvidersUpdate != title.lastProvidersUpdate) {
-      await repository.updateTitleMetadata(title);
-    }
     return false;
   }
 
@@ -107,6 +108,7 @@ Future<bool> updateTitle(
     }
     title.notifyNewSeasons = false;
     await repository.updateNotifyNewSeasons(title);
+
     return true;
   }
 
