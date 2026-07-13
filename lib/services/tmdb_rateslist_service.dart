@@ -5,16 +5,10 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/error_service.dart';
-import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_following_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
-
-const String _tmdbRateslistMovies =
-    'account/{ACCOUNT_ID}/movie/rated?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
-const String _tmdbRateslistTv =
-    'account/{ACCOUNT_ID}/tv/rated?session_id={SESSION_ID}&page={PAGE}&sort_by=created_at.asc&language={LOCALE}';
 
 class TmdbRateslistService extends TmdbTitleListService {
   TmdbFollowingService? followingService;
@@ -54,24 +48,24 @@ class TmdbRateslistService extends TmdbTitleListService {
         retrieveMovies: () async {
       return getTitlesFromServer((int page) async {
         return get(
-            _tmdbRateslistMovies
-                .replaceFirst('{ACCOUNT_ID}', accountId)
-                .replaceFirst('{SESSION_ID}', sessionId)
-                .replaceFirst('{PAGE}', page.toString())
-                .replaceFirst(
-                    '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-            version: ApiVersion.v4);
+          UrlConstants.tmdbRateslistMoviesEndpoint
+              .replaceFirst('{ACCOUNT_ID}', accountId)
+              .replaceFirst('{SESSION_ID}', sessionId)
+              .replaceFirst('{PAGE}', page.toString())
+              .replaceFirst(
+                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+        );
       });
     }, retrieveTvshows: () async {
       return getTitlesFromServer((int page) async {
         return get(
-            _tmdbRateslistTv
-                .replaceFirst('{ACCOUNT_ID}', accountId)
-                .replaceFirst('{SESSION_ID}', sessionId)
-                .replaceFirst('{PAGE}', page.toString())
-                .replaceFirst(
-                    '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-            version: ApiVersion.v4);
+          UrlConstants.tmdbRateslistTvEndpoint
+              .replaceFirst('{ACCOUNT_ID}', accountId)
+              .replaceFirst('{SESSION_ID}', sessionId)
+              .replaceFirst('{PAGE}', page.toString())
+              .replaceFirst(
+                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+        );
       });
     });
 

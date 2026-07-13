@@ -88,16 +88,16 @@ class UrlConstants {
       'find/{ID}?external_source=imdb_id&language={LOCALE}';
 
   static const String tmdbWatchlistMoviesEndpoint =
-      'account/{ACCOUNT_ID}/watchlist/movies?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.desc';
+      'account/{ACCOUNT_ID}/watchlist/movies?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.asc';
   static const String tmdbWatchlistTvEndpoint =
-      'account/{ACCOUNT_ID}/watchlist/tv?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.desc';
+      'account/{ACCOUNT_ID}/watchlist/tv?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.asc';
   static const String tmdbUpdateWatchlistEndpoint =
       'account/{ACCOUNT_ID}/watchlist?session_id={SESSION_ID}';
 
   static const String tmdbRateslistMoviesEndpoint =
-      'account/{ACCOUNT_ID}/rated/movies?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.desc';
+      'account/{ACCOUNT_ID}/rated/movies?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.asc';
   static const String tmdbRateslistTvEndpoint =
-      'account/{ACCOUNT_ID}/rated/tv?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.desc';
+      'account/{ACCOUNT_ID}/rated/tv?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.asc';
   static const String tmdbRateMovieEndpoint =
       'movie/{ID}/rating?session_id={SESSION_ID}';
   static const String tmdbRateTvEndpoint =
