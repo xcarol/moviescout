@@ -55,7 +55,7 @@ class PersonTitleCard extends TitleCard {
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             titleHeader(tmdbTitle.name),
             if (dateString.isNotEmpty) ...[
@@ -81,6 +81,8 @@ class PersonTitleCard extends TitleCard {
                 ),
               ),
             ],
+            const SizedBox(height: 5),
+            titleRating(context, tmdbTitle),
           ],
         ),
       ),
