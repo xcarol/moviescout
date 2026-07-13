@@ -346,13 +346,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           final iconBrightness = theme.brightness == Brightness.dark
               ? Brightness.light
               : Brightness.dark;
-          final backgroundColor = theme.colorScheme.onPrimary;
 
           SystemChrome.setSystemUIOverlayStyle(
             SystemUiOverlayStyle(
-              systemNavigationBarColor: backgroundColor,
               systemNavigationBarIconBrightness: iconBrightness,
-              statusBarColor: Colors.transparent,
               statusBarIconBrightness: iconBrightness,
             ),
           );
