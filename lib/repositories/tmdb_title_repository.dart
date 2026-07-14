@@ -27,8 +27,10 @@ class TmdbTitleRepository {
     newTitle.isPinned = currentTitle.isPinned;
     newTitle.notifyNewSeasons = currentTitle.notifyNewSeasons;
     newTitle.lastNotifiedSeason = currentTitle.lastNotifiedSeason;
-    newTitle.rating = currentTitle.rating;
-    newTitle.dateRated = currentTitle.dateRated;
+    if (newTitle.rating == 0.0 && currentTitle.rating > 0.0) {
+      newTitle.rating = currentTitle.rating;
+      newTitle.dateRated = currentTitle.dateRated;
+    }
 
     newTitle.omdbRatingsJson ??= currentTitle.omdbRatingsJson;
   }
