@@ -1,0 +1,34 @@
+name: Auto Release on Merge
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+jobs:
+  create-release:
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract version and create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          
+          VERSION=${BRANCH_NAME#release/}
+          
+          echo "Creanting a release for version: $VERSION"
+          
+          gh release create "$VERSION" \
+            --target "${{ github.event.pull_request.base.ref }}" \
+            --title "$VERSION" \
+            --generate-notes
