@@ -728,7 +728,9 @@ class _TitleDetailsState extends State<TitleDetails> {
       return Text(AppLocalizations.of(context)!.notReleasedYet);
     }
     if (title.voteAverage > 0) {
-      titleVoteAverage = title.voteAverage.toStringAsFixed(1);
+      titleVoteAverage = title.voteAverage == 10.0 
+          ? '10' 
+          : title.voteAverage.toStringAsFixed(1);
     }
 
     List<Widget> topChildren = [];
@@ -799,6 +801,7 @@ class _TitleDetailsState extends State<TitleDetails> {
               padding: const EdgeInsets.only(top: 4.0),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -886,7 +889,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                                 const SizedBox(width: 8),
                                 Text(
                                   titleRating > AppConstants.seenRating
-                                      ? titleRating.toStringAsFixed(1)
+                                      ? (titleRating == 10.0 ? '10' : titleRating.toStringAsFixed(1))
                                       : '-.-',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,

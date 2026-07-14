@@ -290,7 +290,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
               ),
               const SizedBox(width: 5),
               Text(
-                season.voteAverage.toStringAsFixed(1),
+                season.voteAverage == 10.0 ? '10' : season.voteAverage.toStringAsFixed(1),
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],

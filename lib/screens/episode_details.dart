@@ -278,7 +278,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
           color: Theme.of(context).extension<CustomColors>()!.ratedTitle,
         ),
         const SizedBox(width: 5),
-        Text(episode.voteAverage.toStringAsFixed(1)),
+        Text(episode.voteAverage == 10.0 ? '10' : episode.voteAverage.toStringAsFixed(1)),
       ],
     );
   }
