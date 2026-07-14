@@ -6,6 +6,9 @@ firebase.json
 .env*
 .cxx
 .kotlin
+coverage/
+default.realm.lock
+
 
 # Miscellaneous
 *.class
