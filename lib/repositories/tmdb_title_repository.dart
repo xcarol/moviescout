@@ -27,8 +27,10 @@ class TmdbTitleRepository {
     newTitle.isPinned = currentTitle.isPinned;
     newTitle.notifyNewSeasons = currentTitle.notifyNewSeasons;
     newTitle.lastNotifiedSeason = currentTitle.lastNotifiedSeason;
-    newTitle.rating = currentTitle.rating;
-    newTitle.dateRated = currentTitle.dateRated;
+    if (newTitle.rating == 0.0 && currentTitle.rating > 0.0) {
+      newTitle.rating = currentTitle.rating;
+      newTitle.dateRated = currentTitle.dateRated;
+    }
 
     newTitle.omdbRatingsJson ??= currentTitle.omdbRatingsJson;
   }
@@ -323,6 +325,14 @@ class TmdbTitleRepository {
     final count = _realm.query<TmdbTitleRealm>(
         '\$0 IN ${TmdbTitleRealmFields.inLists} AND ${TmdbTitleRealmFields.rating} > \$1',
         [listName, AppConstants.seenRating]).length;
+    return count > 0;
+  }
+
+  Future<bool> hasTitlesInList(List<int> tmdbIds, String listName) async {
+    if (tmdbIds.isEmpty) return false;
+    final count = _realm.query<TmdbTitleRealm>(
+        '\$0 IN ${TmdbTitleRealmFields.inLists} AND ${TmdbTitleRealmFields.tmdbId} IN \$1',
+        [listName, tmdbIds]).length;
     return count > 0;
   }
 

@@ -100,13 +100,13 @@ class TmdbGenreService extends TmdbCacheableService<Map<int, String>> {
   }
 
   String? getName(int id) =>
-      _genreMap[id] ?? GenreTranslator.translate(id, getLanguageCode());
+      GenreTranslator.translate(id, getLanguageCode()) ?? _genreMap[id];
 
   List<TmdbGenre> getGenresFromIds(List<dynamic> ids) {
     return ids
         .map((id) {
           String? name =
-              _genreMap[id] ?? GenreTranslator.translate(id, getLanguageCode());
+              GenreTranslator.translate(id, getLanguageCode()) ?? _genreMap[id];
           return name != null ? TmdbGenre(genre: {id: name}) : null;
         })
         .whereType<TmdbGenre>()
@@ -116,7 +116,7 @@ class TmdbGenreService extends TmdbCacheableService<Map<int, String>> {
   List<String> getNamesFromIds(List<dynamic> ids) {
     return ids
         .map((id) =>
-            _genreMap[id] ?? GenreTranslator.translate(id, getLanguageCode()))
+            GenreTranslator.translate(id, getLanguageCode()) ?? _genreMap[id])
         .whereType<String>()
         .toList();
   }

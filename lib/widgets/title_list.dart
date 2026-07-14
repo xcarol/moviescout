@@ -68,8 +68,6 @@ class _TitleListState extends State<TitleList> {
   Widget _titleList() {
     return Consumer<TmdbTitleListService>(
       builder: (context, service, _) {
-        _controller.initializeControlLocalizations(context);
-
         Widget listView = Scrollbar(
           controller: _controller.scrollController,
           child: ListView.builder(
@@ -277,6 +275,7 @@ class _TitleListState extends State<TitleList> {
     return ListenableBuilder(
         listenable: _controller,
         builder: (context, child) {
+          _controller.initializeControlLocalizations(context);
           return Consumer<TmdbProviderService>(
             builder: (context, providerService, _) {
               final providerList = _retrieveUserProviders(providerService);

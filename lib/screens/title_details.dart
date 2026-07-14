@@ -1,4 +1,5 @@
 import 'package:moviescout/utils/url_constants.dart';
+import 'package:moviescout/utils/api_constants.dart';
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -272,7 +273,7 @@ class _TitleDetailsState extends State<TitleDetails> {
                 images: title.images,
                 backdropPath: title.backdropPath,
                 posterPath: title.posterPath,
-                isMovie: title.isMovie,
+                mediaType: title.isMovie ? ApiConstants.movie : ApiConstants.tv,
                 isLoading: _isUpdating),
             Positioned(
               left: 8,

@@ -1,11 +1,10 @@
 import 'package:moviescout/utils/url_constants.dart';
+import 'package:moviescout/utils/api_constants.dart';
 import 'dart:math';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -21,6 +20,7 @@ import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/edit_button.dart';
 import 'package:moviescout/widgets/translations_button.dart';
 import 'package:moviescout/services/tmdb_translation_service.dart';
@@ -463,15 +463,13 @@ class _PersonDetailsState extends State<PersonDetails> {
           SizedBox(
             width: posterWidth,
             height: posterHeight,
-            child: CachedNetworkImage(
-              imageUrl: image,
-              fit: BoxFit.cover,
-              errorWidget: (context, error, stackTrace) {
-                return SvgPicture.asset(
-                  'assets/person.svg',
-                  fit: BoxFit.contain,
-                );
-              },
+            child: MediaCarousel(
+              images: person.images,
+              backdropPath: '',
+              posterPath: image,
+              mediaType: ApiConstants.person,
+              isLoading: false,
+              aspectRatio: posterWidth / posterHeight,
             ),
           ),
           Expanded(

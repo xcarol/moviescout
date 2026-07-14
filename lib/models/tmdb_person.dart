@@ -31,6 +31,7 @@ class PersonAttributes {
   static const crew = 'crew';
   static const roles = 'roles';
   static const jobs = 'jobs';
+  static const images = 'images';
 }
 
 class CrewJobs {
@@ -89,6 +90,24 @@ class TmdbPerson implements TmdbItem {
   late String homepage;
 
   late String? combinedCreditsJson;
+  String? imagesJson;
+
+  List<String>? _imagesCache;
+
+  List<String> get images {
+    if (_imagesCache != null) return _imagesCache!;
+    if (imagesJson == null) return [];
+    try {
+      final decoded = jsonDecode(imagesJson!);
+      if (decoded['profiles'] != null) {
+        _imagesCache = (decoded['profiles'] as List)
+            .map((e) => e['file_path'].toString())
+            .toList();
+        return _imagesCache!;
+      }
+    } catch (_) {}
+    return [];
+  }
 
   CombinedCredits? _combinedCreditsCache;
 
@@ -121,6 +140,7 @@ class TmdbPerson implements TmdbItem {
     required this.placeOfBirth,
     required this.homepage,
     this.combinedCreditsJson,
+    this.imagesJson,
     CombinedCredits? combinedCredits,
   }) {
     if (combinedCredits != null) {
@@ -149,6 +169,9 @@ class TmdbPerson implements TmdbItem {
         homepage: person[PersonAttributes.homepage] ?? '',
         combinedCreditsJson: person[PersonAttributes.combined_credits] != null
             ? jsonEncode(person[PersonAttributes.combined_credits])
+            : null,
+        imagesJson: person[PersonAttributes.images] != null
+            ? jsonEncode(person[PersonAttributes.images])
             : null);
   }
 
@@ -178,6 +201,8 @@ class TmdbPerson implements TmdbItem {
       PersonAttributes.homepage: homepage,
       PersonAttributes.combined_credits:
           combinedCreditsJson != null ? jsonDecode(combinedCreditsJson!) : null,
+      PersonAttributes.images:
+          imagesJson != null ? jsonDecode(imagesJson!) : null,
     };
   }
 

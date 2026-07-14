@@ -177,7 +177,31 @@ class TmdbPersonTitlesService extends TmdbTitleListService
         'Update operations are not supported in TmdbPersonTitlesService');
   }
 
+  bool _localUserRatingAvailable = false;
+
+  @override
+  bool get userRatingAvailable => _localUserRatingAvailable;
+
   Future<void> updateTitles() async {
+    if (allItems.isNotEmpty) {
+      final tmdbIds = allItems.map((t) => t.tmdbId).toList();
+      _localUserRatingAvailable =
+          await repository.hasTitlesInList(tmdbIds, AppConstants.rateslist);
+
+      if (_localUserRatingAvailable) {
+        final dbTitles = await repository.getTitlesByTmdbIds(tmdbIds);
+        final dbTitlesMap = {
+          for (var t in dbTitles) '${t.tmdbId}_${t.mediaType}': t
+        };
+        for (var title in allItems) {
+          final dbTitle = dbTitlesMap['${title.tmdbId}_${title.mediaType}'];
+          if (dbTitle != null) {
+            title.rating = dbTitle.rating;
+            title.dateRated = dbTitle.dateRated;
+          }
+        }
+      }
+    }
     await Future.delayed(Duration.zero);
     notifyListeners();
   }
