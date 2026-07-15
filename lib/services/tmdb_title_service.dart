@@ -89,32 +89,18 @@ class TmdbTitleService extends TmdbBaseService {
 
     final Map<String, dynamic> details = body(result);
 
-    details[TmdbTitleFields.providers] =
-        details['watch/providers']?['results']?[getCountryCode()] ?? {};
+    _extractProviders(details);
+    _extractRecommendations(details);
+    _extractExternalIds(details);
 
-    if (details['recommendations'] != null &&
-        details['recommendations']['results'] != null) {
-      details[TmdbTitleFields.recommendations] =
-          details['recommendations']['results'];
-    }
-
-    final externalIds = details['external_ids'];
-    if (externalIds != null && externalIds['imdb_id'] != null) {
-      details[TmdbTitleFields.imdbId] = externalIds['imdb_id'];
-    }
-
-    // Extracts, sorts, and flattens the nested structures for images and videos
-    // from the raw API response into the expected format within the same map.
     _mergeMediaFallback(details, details);
-
-    details[TmdbTitleFields.homepage] = details['homepage'];
-
     _mergeTranslationsFallback(details, mediaType);
 
     if (includeYoutubeSearch) {
       await _addYoutubeTrailers(details);
     }
 
+    details[TmdbTitleFields.homepage] = details['homepage'];
     details[TmdbTitleFields.mediaType] = mediaType;
     details[TmdbTitleFields.lastUpdated] = DateTime.now().toIso8601String();
     details[TmdbTitleFields.lastProvidersUpdate] =
@@ -329,6 +315,26 @@ class TmdbTitleService extends TmdbBaseService {
 
     if (target[TmdbTitleFields.videos] is! List) {
       target[TmdbTitleFields.videos] = [];
+    }
+  }
+
+  void _extractProviders(Map<String, dynamic> details) {
+    details[TmdbTitleFields.providers] =
+        details['watch/providers']?['results']?[getCountryCode()] ?? {};
+  }
+
+  void _extractRecommendations(Map<String, dynamic> details) {
+    if (details['recommendations'] != null &&
+        details['recommendations']['results'] != null) {
+      details[TmdbTitleFields.recommendations] =
+          details['recommendations']['results'];
+    }
+  }
+
+  void _extractExternalIds(Map<String, dynamic> details) {
+    final externalIds = details['external_ids'];
+    if (externalIds != null && externalIds['imdb_id'] != null) {
+      details[TmdbTitleFields.imdbId] = externalIds['imdb_id'];
     }
   }
 }
