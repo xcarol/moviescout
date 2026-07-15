@@ -673,6 +673,12 @@ abstract class AppLocalizations {
   /// **'Visit project on '**
   String get aboutGithub;
 
+  /// No description provided for @privacyDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Data privacy: We store your followed titles, pinned items and platforms in Firebase to keep them safe and synced in the cloud.'**
+  String get privacyDisclaimer;
+
   /// No description provided for @recommended.
   ///
   /// In en, this message translates to:

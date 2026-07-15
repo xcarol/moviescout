@@ -17,3 +17,6 @@ Whether you’re keeping track of what to watch next or exploring new favorites,
 **Discover. Track. Watch.**  
 Download Movie Scout now and streamline your streaming experience! [https://xcarol.github.io/moviescout/](https://xcarol.github.io/moviescout/)
 
+## Data privacy
+
+We store your followed titles, pinned items and platforms in a private Firebase instance to keep them safe and synced in the cloud. No personal identifying data is collected.

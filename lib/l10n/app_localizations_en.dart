@@ -301,6 +301,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutGithub => 'Visit project on ';
 
   @override
+  String get privacyDisclaimer => 'Data privacy: We store your followed titles, pinned items and platforms in Firebase to keep them safe and synced in the cloud.';
+
+  @override
   String get recommended => 'Recommended';
 
   @override

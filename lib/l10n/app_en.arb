@@ -210,6 +210,8 @@
   "@aboutDescription": {},
   "aboutGithub": "Visit project on ",
   "@aboutGithub": {},
+  "privacyDisclaimer": "Data privacy: We store your followed titles, pinned items and platforms in Firebase to keep them safe and synced in the cloud.",
+  "@privacyDisclaimer": {},
   "recommended": "Recommended",
   "@recommended": {},
   "providersTitle": "Content platforms",

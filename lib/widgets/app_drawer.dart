@@ -154,6 +154,11 @@ class AppDrawer extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
+        Text(
+          AppLocalizations.of(context)!.privacyDisclaimer,
+          style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+        ),
+        const SizedBox(height: 16),
         if (kDebugMode || dotenv.env[AppConstants.enableLogs] == 'true')
           Row(
             mainAxisAlignment: MainAxisAlignment.end,

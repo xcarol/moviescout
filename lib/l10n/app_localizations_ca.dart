@@ -301,6 +301,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get aboutGithub => 'Visita el projecte a ';
 
   @override
+  String get privacyDisclaimer => 'Privadesa de dades: Desem els teus títols seguits, fixats i plataformes a Firebase per mantenir-los segurs i sincronitzats al núvol.';
+
+  @override
   String get recommended => 'Recomanats';
 
   @override
