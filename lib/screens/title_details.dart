@@ -814,7 +814,9 @@ class _TitleDetailsState extends State<TitleDetails> {
                   ),
                 ],
               ),
-            ),
+            )
+          else
+            const SizedBox.shrink(),
           Consumer<TmdbRateslistService>(
             builder: (context, ratingService, child) {
               return FutureBuilder<List<dynamic>>(
