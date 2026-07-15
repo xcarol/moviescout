@@ -1,0 +1,31 @@
+name: Flutter Tests & Codacy Coverage
+
+on: [pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'any'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Install Realm binaries
+        run: dart run realm install
+
+      - name: Create dummy .env file
+        run: touch .env
+
+      - name: Run tests with coverage
+        run: flutter test --coverage
+
+      - name: Upload coverage to Codacy
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r coverage/lcov.info
