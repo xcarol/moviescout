@@ -332,7 +332,7 @@ class _PersonDetailsState extends State<PersonDetails> {
         child: SizedBox(
           height: 20,
           child: Image.asset(
-            'assets/tmdb-logo.png',
+            'assets/tmdb-logo-square.png',
             fit: BoxFit.cover,
           ),
         ),
@@ -353,13 +353,22 @@ class _PersonDetailsState extends State<PersonDetails> {
           child: SizedBox(
             height: 20,
             child: Image.asset(
-              'assets/imdb-logo.png',
+              'assets/imdb-logo-square.png',
               fit: BoxFit.cover,
             ),
           ),
         ),
       );
     }
+
+    final externalIds = person.externalIds;
+
+    _addSocialLink(links, externalIds['wikidata_id'], 'https://www.wikidata.org/wiki/{ID}', 'assets/wikidata.png');
+    _addSocialLink(links, externalIds['facebook_id'], 'https://facebook.com/{ID}', 'assets/facebook.png');
+    _addSocialLink(links, externalIds['instagram_id'], 'https://instagram.com/{ID}', 'assets/instagram.png');
+    _addSocialLink(links, externalIds['twitter_id'], 'https://x.com/{ID}', 'assets/X.png');
+    _addSocialLink(links, externalIds['tiktok_id'], 'https://tiktok.com/@{ID}', 'assets/tiktok.png');
+    _addSocialLink(links, externalIds['youtube_id'], 'https://youtube.com/{ID}', 'assets/youtube.png');
 
     if (person.homepage.isNotEmpty) {
       links.add(
@@ -392,12 +401,36 @@ class _PersonDetailsState extends State<PersonDetails> {
           ),
         ),
         const SizedBox(height: 8),
-        Row(
+        Wrap(
           spacing: 4.0,
+          runSpacing: 4.0,
           children: links,
         ),
       ],
     );
+  }
+
+  void _addSocialLink(List<Widget> links, String? id, String urlTemplate, String logo) {
+    if (id != null && id.isNotEmpty) {
+      links.add(
+        BoxedWidget(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+          onPressed: () {
+            launchUrl(
+              Uri.parse(urlTemplate.replaceFirst('{ID}', id)),
+              mode: LaunchMode.externalApplication,
+            );
+          },
+          child: SizedBox(
+            height: 20,
+            child: Image.asset(
+              logo,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   String? _buildContextTitle(BuildContext context) {

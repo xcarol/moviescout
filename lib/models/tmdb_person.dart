@@ -32,6 +32,7 @@ class PersonAttributes {
   static const roles = 'roles';
   static const jobs = 'jobs';
   static const images = 'images';
+  static const external_ids = 'external_ids';
 }
 
 class CrewJobs {
@@ -91,6 +92,20 @@ class TmdbPerson implements TmdbItem {
 
   late String? combinedCreditsJson;
   String? imagesJson;
+  String? externalIdsJson;
+
+  Map<String, dynamic>? _externalIdsCache;
+
+  Map<String, dynamic> get externalIds {
+    if (_externalIdsCache != null) return _externalIdsCache!;
+    if (externalIdsJson == null) return {};
+    try {
+      _externalIdsCache = jsonDecode(externalIdsJson!);
+      return _externalIdsCache!;
+    } catch (_) {
+      return {};
+    }
+  }
 
   List<String>? _imagesCache;
 
@@ -141,6 +156,7 @@ class TmdbPerson implements TmdbItem {
     required this.homepage,
     this.combinedCreditsJson,
     this.imagesJson,
+    this.externalIdsJson,
     CombinedCredits? combinedCredits,
   }) {
     if (combinedCredits != null) {
@@ -172,6 +188,9 @@ class TmdbPerson implements TmdbItem {
             : null,
         imagesJson: person[PersonAttributes.images] != null
             ? jsonEncode(person[PersonAttributes.images])
+            : null,
+        externalIdsJson: person[PersonAttributes.external_ids] != null
+            ? jsonEncode(person[PersonAttributes.external_ids])
             : null);
   }
 
@@ -203,6 +222,8 @@ class TmdbPerson implements TmdbItem {
           combinedCreditsJson != null ? jsonDecode(combinedCreditsJson!) : null,
       PersonAttributes.images:
           imagesJson != null ? jsonDecode(imagesJson!) : null,
+      PersonAttributes.external_ids:
+          externalIdsJson != null ? jsonDecode(externalIdsJson!) : null,
     };
   }
 
