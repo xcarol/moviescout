@@ -12,7 +12,9 @@ import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class TmdbTitleRepository {
-  final _realm = RealmService.instance;
+  final Realm _realm;
+
+  TmdbTitleRepository({Realm? realm}) : _realm = realm ?? RealmService.instance;
 
   void _mergeTitleMetadata(TmdbTitle newTitle, TmdbTitle currentTitle,
       {String? listNameToAdd}) {
