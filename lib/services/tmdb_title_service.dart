@@ -27,18 +27,7 @@ class TmdbTitleService extends TmdbBaseService {
     );
   }
 
-  Future<dynamic> _retrieveTitleBrief(
-    int id,
-    String mediaType,
-    String locale,
-  ) async {
-    return get(
-      UrlConstants.tmdbBriefEndpoint
-          .replaceFirst('{MEDIA_TYPE}', mediaType)
-          .replaceFirst('{ID}', id.toString())
-          .replaceFirst('{LOCALE}', locale),
-    );
-  }
+
 
   Future<dynamic> _retrieveTitleProviders(
     int id,
@@ -120,39 +109,7 @@ class TmdbTitleService extends TmdbBaseService {
 
     details[TmdbTitleFields.homepage] = details['homepage'];
 
-    final hasOverview = (details[TmdbTitleFields.overview] ?? '').isNotEmpty;
-    final hasMedia = (details[TmdbTitleFields.images] as List).isNotEmpty ||
-        (details[TmdbTitleFields.videos] as List).isNotEmpty;
-
-    if (!hasOverview || !hasMedia) {
-      final fallbackResult = await _retrieveTitleBrief(
-        title.tmdbId,
-        mediaType,
-        getCountryCode().toLowerCase(),
-      );
-
-      if (fallbackResult.statusCode == 200) {
-        _mergeFallback(details, body(fallbackResult), mediaType);
-      }
-    }
-
-    final hasOverviewFinal =
-        (details[TmdbTitleFields.overview] ?? '').isNotEmpty;
-    final hasMediaFinal =
-        (details[TmdbTitleFields.images] as List).isNotEmpty ||
-            (details[TmdbTitleFields.videos] as List).isNotEmpty;
-
-    if (!hasOverviewFinal || !hasMediaFinal) {
-      final enResult = await _retrieveTitleBrief(
-        title.tmdbId,
-        mediaType,
-        'en-US',
-      );
-
-      if (enResult.statusCode == 200) {
-        _mergeFallback(details, body(enResult), mediaType);
-      }
-    }
+    _mergeTranslationsFallback(details, mediaType);
 
     if (includeYoutubeSearch) {
       await _addYoutubeTrailers(details);
@@ -238,17 +195,7 @@ class TmdbTitleService extends TmdbBaseService {
 
     final Map<String, dynamic> details = body(result);
 
-    if ((details[TmdbTitleFields.overview] ?? '').isEmpty) {
-      final result = await _retrieveTitleLight(
-        title.tmdbId,
-        mediaType,
-        getCountryCode().toLowerCase(),
-      );
-
-      if (result.statusCode == 200) {
-        _mergeFallback(details, body(result), mediaType);
-      }
-    }
+    _mergeTranslationsFallback(details, mediaType);
 
     title.numberOfSeasons =
         details[TmdbTitleFields.numberOfSeasons] ?? title.numberOfSeasons;
@@ -288,33 +235,48 @@ class TmdbTitleService extends TmdbBaseService {
     return title;
   }
 
-  void _mergeFallback(Map<String, dynamic> target,
-      Map<String, dynamic> fallback, String mediaType) {
-    final String fallbackOverview = fallback[TmdbTitleFields.overview] ?? '';
+  void _mergeTranslationsFallback(
+      Map<String, dynamic> target, String mediaType) {
+    if (target['translations'] == null ||
+        target['translations']['translations'] == null) {
+      return;
+    }
 
-    if (fallbackOverview.isNotEmpty) {
-      target[TmdbTitleFields.overview] = fallbackOverview;
+    final List<dynamic> translations = target['translations']['translations'];
+    final fallbacks = [getCountryCode().toLowerCase(), 'en'];
 
-      if (mediaType == ApiConstants.movie) {
-        if (fallback[TmdbTitleFields.title] != null) {
-          target[TmdbTitleFields.title] = fallback[TmdbTitleFields.title];
-        }
-        if (fallback[TmdbTitleFields.originalTitle] != null) {
-          target[TmdbTitleFields.originalTitle] =
-              fallback[TmdbTitleFields.originalTitle];
-        }
-      } else {
-        if (fallback[TmdbTitleFields.name] != null) {
-          target[TmdbTitleFields.name] = fallback[TmdbTitleFields.name];
-        }
-        if (fallback[TmdbTitleFields.originalName] != null) {
-          target[TmdbTitleFields.originalName] =
-              fallback[TmdbTitleFields.originalName];
+    for (final fallbackLang in fallbacks) {
+      final String currentOverview = target[TmdbTitleFields.overview] ?? '';
+
+      if (currentOverview.isEmpty) {
+        final translation = translations.firstWhere(
+          (t) =>
+              (t['iso_639_1'] ?? '').toString().toLowerCase() == fallbackLang,
+          orElse: () => null,
+        );
+
+        if (translation != null && translation['data'] != null) {
+          final data = translation['data'];
+          final String fallbackOverview = data['overview'] ?? '';
+          
+          if (fallbackOverview.isNotEmpty) {
+            target[TmdbTitleFields.overview] = fallbackOverview;
+
+            if (mediaType == ApiConstants.movie) {
+              if (data['title'] != null &&
+                  data['title'].toString().isNotEmpty) {
+                target[TmdbTitleFields.title] = data['title'];
+              }
+            } else {
+              if (data['name'] != null && data['name'].toString().isNotEmpty) {
+                target[TmdbTitleFields.name] = data['name'];
+              }
+            }
+            break;
+          }
         }
       }
     }
-
-    _mergeMediaFallback(target, fallback, overwriteIfEmpty: true);
   }
 
   void _mergeMediaFallback(
