@@ -203,6 +203,8 @@ class _PersonDetailsState extends State<PersonDetails> {
           _crewCredits(person),
           const SizedBox(height: 30),
           _ratedCredits(person, userRatedTitles),
+          const SizedBox(height: 30),
+          _taggedImages(person),
           const SizedBox(height: 50),
         ],
       ),
@@ -663,6 +665,35 @@ class _PersonDetailsState extends State<PersonDetails> {
                 role: PersonTitleRole.crew,
               );
             },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _taggedImages(TmdbPerson person) {
+    if (person.taggedImages.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.gallery,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: 200.0,
+          child: MediaCarousel(
+            images: person.taggedImages,
+            backdropPath: '',
+            posterPath: '',
+            mediaType: ApiConstants.person,
+            aspectRatio: 16 / 9,
           ),
         ),
       ],

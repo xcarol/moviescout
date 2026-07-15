@@ -33,6 +33,7 @@ class PersonAttributes {
   static const jobs = 'jobs';
   static const images = 'images';
   static const external_ids = 'external_ids';
+  static const tagged_images = 'tagged_images';
 }
 
 class CrewJobs {
@@ -93,6 +94,63 @@ class TmdbPerson implements TmdbItem {
   late String? combinedCreditsJson;
   String? imagesJson;
   String? externalIdsJson;
+  String? taggedImagesJson;
+
+  List<String>? _taggedImagesCache;
+
+  void _initImages() {
+    if (_imagesCache != null && _taggedImagesCache != null) return;
+    
+    final List<String> allImages = [];
+    final List<String> horizImages = [];
+    
+    if (imagesJson != null) {
+      try {
+        final decoded = jsonDecode(imagesJson!);
+        if (decoded['profiles'] != null) {
+          allImages.addAll((decoded['profiles'] as List)
+              .map((e) => e['file_path'].toString()));
+        }
+      } catch (_) {}
+    }
+
+    if (taggedImagesJson != null) {
+      try {
+        final decoded = jsonDecode(taggedImagesJson!);
+        if (decoded['results'] != null) {
+          for (var item in decoded['results']) {
+            final aspectRatio = (item['aspect_ratio'] as num?) ?? 1.0;
+            final path = item['file_path']?.toString();
+            
+            if (aspectRatio >= 1.0) {
+              if (path != null && !horizImages.contains(path)) {
+                horizImages.add(path);
+              }
+            } else {
+              if (path != null && !allImages.contains(path)) {
+                allImages.add(path);
+              }
+            }
+            
+            if (item['media'] != null) {
+              final backdropPath = item['media']['backdrop_path']?.toString();
+              if (backdropPath != null && !horizImages.contains(backdropPath)) {
+                horizImages.add(backdropPath);
+              }
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    _imagesCache ??= allImages;
+    _taggedImagesCache ??= horizImages;
+  }
+
+  List<String> get taggedImages {
+    _initImages();
+    return _taggedImagesCache!;
+  }
 
   Map<String, dynamic>? _externalIdsCache;
 
@@ -110,18 +168,8 @@ class TmdbPerson implements TmdbItem {
   List<String>? _imagesCache;
 
   List<String> get images {
-    if (_imagesCache != null) return _imagesCache!;
-    if (imagesJson == null) return [];
-    try {
-      final decoded = jsonDecode(imagesJson!);
-      if (decoded['profiles'] != null) {
-        _imagesCache = (decoded['profiles'] as List)
-            .map((e) => e['file_path'].toString())
-            .toList();
-        return _imagesCache!;
-      }
-    } catch (_) {}
-    return [];
+    _initImages();
+    return _imagesCache!;
   }
 
   CombinedCredits? _combinedCreditsCache;
@@ -157,6 +205,7 @@ class TmdbPerson implements TmdbItem {
     this.combinedCreditsJson,
     this.imagesJson,
     this.externalIdsJson,
+    this.taggedImagesJson,
     CombinedCredits? combinedCredits,
   }) {
     if (combinedCredits != null) {
@@ -191,6 +240,9 @@ class TmdbPerson implements TmdbItem {
             : null,
         externalIdsJson: person[PersonAttributes.external_ids] != null
             ? jsonEncode(person[PersonAttributes.external_ids])
+            : null,
+        taggedImagesJson: person[PersonAttributes.tagged_images] != null
+            ? jsonEncode(person[PersonAttributes.tagged_images])
             : null);
   }
 
@@ -224,6 +276,8 @@ class TmdbPerson implements TmdbItem {
           imagesJson != null ? jsonDecode(imagesJson!) : null,
       PersonAttributes.external_ids:
           externalIdsJson != null ? jsonDecode(externalIdsJson!) : null,
+      PersonAttributes.tagged_images:
+          taggedImagesJson != null ? jsonDecode(taggedImagesJson!) : null,
     };
   }
 

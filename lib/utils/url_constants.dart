@@ -76,7 +76,7 @@ class UrlConstants {
       '/tv/{ID}/season/{SEASON_NUMBER}?append_to_response=images,videos&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
 
   static const String tmdbPersonDetailsEndpoint =
-      '/person/{ID}?append_to_response=combined_credits,images,external_ids&language={LOCALE}';
+      '/person/{ID}?append_to_response=combined_credits,images,external_ids,tagged_images&language={LOCALE}';
 
   static const String tmdbSearchMoviesEndpoint =
       'search/movie?query={QUERY}&page={PAGE}&language={LOCALE}';
