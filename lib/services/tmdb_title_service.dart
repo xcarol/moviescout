@@ -183,6 +183,15 @@ class TmdbTitleService extends TmdbBaseService {
     final Map<String, dynamic> details = body(result);
 
     _mergeTranslationsFallback(details, mediaType);
+    _extractKeywords(details, mediaType);
+    _extractRecommendations(details);
+
+    if (details.containsKey(TmdbTitleFields.keywordIds)) {
+      title.keywordIds = details[TmdbTitleFields.keywordIds];
+    }
+    if (details.containsKey(TmdbTitleFields.recommendations)) {
+      title.recommendationsJson = jsonEncode(details[TmdbTitleFields.recommendations]);
+    }
 
     title.numberOfSeasons =
         details[TmdbTitleFields.numberOfSeasons] ?? title.numberOfSeasons;

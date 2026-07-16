@@ -61,7 +61,7 @@ class UrlConstants {
   static const String tmdbProvidersEndpoint =
       '/{MEDIA_TYPE}/{ID}/watch/providers';
   static const String tmdbLightEndpoint =
-      '/{MEDIA_TYPE}/{ID}?append_to_response=translations,watch/providers&language={LOCALE}';
+      '/{MEDIA_TYPE}/{ID}?append_to_response=translations,watch/providers,keywords,recommendations&language={LOCALE}';
 
   static const String tmdbEpisodeDetailsEndpoint =
       '/tv/{ID}/season/{SEASON_NUMBER}/episode/{EPISODE_NUMBER}?append_to_response=translations,images,videos,credits&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
