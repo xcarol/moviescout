@@ -92,6 +92,7 @@ class TmdbTitleService extends TmdbBaseService {
     _extractProviders(details);
     _extractRecommendations(details);
     _extractExternalIds(details);
+    _extractKeywords(details, mediaType);
 
     _mergeMediaFallback(details, details);
     _mergeTranslationsFallback(details, mediaType);
@@ -335,6 +336,20 @@ class TmdbTitleService extends TmdbBaseService {
     final externalIds = details['external_ids'];
     if (externalIds != null && externalIds['imdb_id'] != null) {
       details[TmdbTitleFields.imdbId] = externalIds['imdb_id'];
+    }
+  }
+
+  void _extractKeywords(Map<String, dynamic> details, String mediaType) {
+    if (details['keywords'] != null) {
+      final List<dynamic>? keywordsList = mediaType == ApiConstants.movie
+          ? details['keywords']['keywords']
+          : details['keywords']['results'];
+          
+      if (keywordsList != null) {
+        details[TmdbTitleFields.keywordIds] = keywordsList
+            .map((k) => k['id'] as int)
+            .toList();
+      }
     }
   }
 }

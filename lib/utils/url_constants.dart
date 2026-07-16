@@ -57,7 +57,7 @@ class UrlConstants {
 
   // Endpoints
   static const String tmdbDetailsEndpoint =
-      '/{MEDIA_TYPE}/{ID}?append_to_response=translations,external_ids,watch/providers,recommendations,images,videos,{CREDITS_TYPE}&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
+      '/{MEDIA_TYPE}/{ID}?append_to_response=translations,keywords,external_ids,watch/providers,recommendations,images,videos,{CREDITS_TYPE}&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
   static const String tmdbProvidersEndpoint =
       '/{MEDIA_TYPE}/{ID}/watch/providers';
   static const String tmdbLightEndpoint =
@@ -109,6 +109,11 @@ class UrlConstants {
       'movie/popular?page={PAGE}&language={LOCALE}';
   static const String tmdbPopularTvEndpoint =
       'tv/popular?page={PAGE}&language={LOCALE}';
+
+  static const String tmdbDiscoverMoviesEndpoint =
+      'discover/movie?page={PAGE}&language={LOCALE}&with_genres={GENRES}&with_keywords={KEYWORDS}';
+  static const String tmdbDiscoverTvEndpoint =
+      'discover/tv?page={PAGE}&language={LOCALE}&with_genres={GENRES}&with_keywords={KEYWORDS}';
 
   static const String tmdbMovieProvidersEndpoint = 'movie/{ID}/watch/providers';
   static const String tmdbTvProvidersEndpoint = 'tv/{ID}/watch/providers';

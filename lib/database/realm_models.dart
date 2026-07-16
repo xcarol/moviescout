@@ -72,6 +72,7 @@ class _TmdbTitleRealm {
   late String? seasonsJson;
 
   late List<int> genreIds;
+  late List<int> keywordIds;
   late List<int> flatrateProviderIds;
   late int lastNotifiedSeason;
   late String lastProvidersUpdate;

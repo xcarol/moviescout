@@ -1,0 +1,1208 @@
+{
+  "adult": false,
+  "backdrop_path": "/vjMvFSmGUxEtqVdaZgvFee9XkZl.jpg",
+  "belongs_to_collection": {
+    "id": 531241,
+    "name": "Spider-Man (Venjadors) - Col·lecció",
+    "poster_path": "/yeba3Y820OjApZO9aJevDsNeMEd.jpg",
+    "backdrop_path": "/AvnqpRwlEaYNVL6wzC4RN94EdSd.jpg"
+  },
+  "budget": 275000000,
+  "genres": [
+    {
+      "id": 878,
+      "name": "Science Fiction"
+    },
+    {
+      "id": 28,
+      "name": "Action"
+    },
+    {
+      "id": 12,
+      "name": "Adventure"
+    }
+  ],
+  "homepage": "",
+  "id": 969681,
+  "imdb_id": "tt22084616",
+  "origin_country": [
+    "US"
+  ],
+  "original_language": "en",
+  "original_title": "Spider-Man: Brand New Day",
+  "overview": "Han passat quatre anys des dels esdeveniments de No Way Home, i Peter Parker ara és un adult que viu completament sol, ha desaparegut voluntàriament de les vides i records dels que estima. Combatent el crim en una Nova York que ja no coneix el seu nom, s'ha dedicat completament a protegir la seva ciutat, però a mesura que augmenten les exigències sobre ell, la pressió desencadena una evolució física que amenaça la seva existència, alhora que un estrany nou patró de crims dóna lloc a una de les amenaces més poderoses a què s'ha enfrontat.",
+  "popularity": 104.7492,
+  "poster_path": "/yyB2VJEW3an2xCdcYCPQhn9QERR.jpg",
+  "production_companies": [
+    {
+      "id": 420,
+      "logo_path": "/hUzeosd33nzE5MCNsZxCGEKTXaQ.png",
+      "name": "Marvel Studios",
+      "origin_country": "US"
+    },
+    {
+      "id": 5,
+      "logo_path": "/71BqEFAF4V3qjjMPCpLuyJFB9A.png",
+      "name": "Columbia Pictures",
+      "origin_country": "US"
+    },
+    {
+      "id": 84041,
+      "logo_path": "/nw4kyc29QRpNtFbdsBHkRSFavvt.png",
+      "name": "Pascal Pictures",
+      "origin_country": "US"
+    },
+    {
+      "id": 207837,
+      "logo_path": "/7BlXnMNjX5jwo4AsxNW0gsejrGz.png",
+      "name": "TSG Entertainment II",
+      "origin_country": "US"
+    }
+  ],
+  "production_countries": [
+    {
+      "iso_3166_1": "US",
+      "name": "United States of America"
+    }
+  ],
+  "release_date": "2026-07-29",
+  "revenue": 0,
+  "runtime": 145,
+  "softcore": false,
+  "spoken_languages": [
+    {
+      "english_name": "English",
+      "iso_639_1": "en",
+      "name": "English"
+    }
+  ],
+  "status": "Post Production",
+  "tagline": "",
+  "title": "Spider-Man: Un nou dia",
+  "video": false,
+  "vote_average": 0,
+  "vote_count": 0,
+  "translations": {
+    "translations": [
+      {
+        "iso_3166_1": "US",
+        "iso_639_1": "en",
+        "name": "English",
+        "english_name": "English",
+        "data": {
+          "homepage": "https://spidermanbrandnewday.movie",
+          "overview": "Fighting crime full-time as Spider-Man in a world that doesn't remember him—and the pressure of seeing his old friends move on without him—sparks a change in Peter Parker he may not have the power to control. But that transformation might also be the only thing that can stop a shocking new threat to the city and those he loves - a powerful villain no one can even see.",
+          "runtime": 145,
+          "tagline": "A brand new day starts now.",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "ES",
+        "iso_639_1": "es",
+        "name": "Español",
+        "english_name": "Spanish",
+        "data": {
+          "homepage": "",
+          "overview": "Han pasado cuatro años desde los acontecimientos de No Way Home, y Peter Parker ahora es un adulto que vive completamente solo, ha desaparecido voluntariamente de las vidas y recuerdos de quienes ama. Combatiendo el crimen en una Nueva York que ya no conoce su nombre, se ha dedicado por completo a proteger su ciudad, pero a medida que aumentan las exigencias sobre él, la presión desencadena una evolución física que amenaza su existencia, al mismo tiempo que un extraño nuevo patrón de crímenes da lugar a una de las amenazas más poderosas a las que se ha enfrentado.",
+          "runtime": 180,
+          "tagline": "",
+          "title": "Spider-Man: Un nuevo día"
+        }
+      },
+      {
+        "iso_3166_1": "DE",
+        "iso_639_1": "de",
+        "name": "Deutsch",
+        "english_name": "German",
+        "data": {
+          "homepage": "https://www.sonypictures.de/filme/spider-man-brand-new-day",
+          "overview": "Vier Jahre sind seit den Ereignissen von „No Way Home“ vergangen. Peter ist nun erwachsen und lebt für sich allein, nachdem er sich freiwillig aus dem Leben und den Erinnerungen derer, die er liebt, ausgelöscht hat. Er bekämpft Verbrechen in einem New York, das ihn und seinen Namen nicht mehr kennt, und widmet sich ganz dem Schutz seiner Stadt: Spider-Man in Vollzeit. Doch mit den steigenden Anforderungen löst der Druck eine überraschende körperliche Veränderung aus, die seine Existenz bedroht – gerade als eine seltsame neue Art von Verbrechen eine der mächtigsten Bedrohungen hervorbringt, denen er je gegenüberstand.",
+          "runtime": 150,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "KR",
+        "iso_639_1": "ko",
+        "name": "한국어/조선말",
+        "english_name": "Korean",
+        "data": {
+          "homepage": "",
+          "overview": "모두에게 잊힌 ‘피터 파커’가 자신의 정체를 기억하는 의문의 적의 등장과 DNA 변이로 통제 불가능한 힘을 얻으며 더 깊은 혼란에 빠진 가운데, 소중한 이들을 지키기 위해 새로운 위협에 맞서는 액션 블록버스터",
+          "runtime": 150,
+          "tagline": "",
+          "title": "스파이더맨: 브랜드 뉴 데이"
+        }
+      },
+      {
+        "iso_3166_1": "VN",
+        "iso_639_1": "vi",
+        "name": "Tiếng Việt",
+        "english_name": "Vietnamese",
+        "data": {
+          "homepage": "",
+          "overview": "Không còn Tony Stark, MJ hay Ned kề cận, Peter buộc phải đơn thân độc mã đối diện với phe đối đầu bí ẩn. Tuy nhiên, khi áp lực ngày càng gia tăng, nó kích hoạt một sự biến đổi thể chất bất ngờ, đe dọa chính sự tồn tại của anh. Đồng thời, một chuỗi tội phạm bí ẩn mới xuất hiện, kéo theo một trong những mối đe dọa mạnh mẽ nhất mà Spider-Man từng đối mặt.",
+          "runtime": 150,
+          "tagline": "",
+          "title": "Người Nhện: Khởi Đầu Mới"
+        }
+      },
+      {
+        "iso_3166_1": "GR",
+        "iso_639_1": "el",
+        "name": "ελληνικά",
+        "english_name": "Greek",
+        "data": {
+          "homepage": "",
+          "overview": "Έχουν περάσει τέσσερα χρόνια από τα γεγονότα της ταινίας «No Way Home» και ο Peter είναι πλέον ένας ενήλικας που ζει εντελώς μόνος, έχοντας εθελοντικά εξαφανιστεί από τη ζωή και τις αναμνήσεις των ανθρώπων που αγαπά. Καταπολεμώντας το έγκλημα σε μια Νέα Υόρκη που δεν γνωρίζει πλέον το όνομά του, έχει αφιερωθεί εξ ολοκλήρου στην προστασία της πόλης του – ως Spider-Man πλήρους απασχόλησης – αλλά καθώς οι απαιτήσεις προς αυτόν μεγαλώνουν, η πίεση πυροδοτεί μια εκπληκτική φυσική εξέλιξη που απειλεί την ύπαρξή του, την ίδια στιγμή που ένα παράξενο νέο μοτίβο εγκλημάτων δημιουργεί μία από τις πιο ισχυρές απειλές που έχει αντιμετωπίσει ποτέ.",
+          "runtime": 0,
+          "tagline": "Μία Ολοκαίνουρια Μέρα αρχίζει τώρα.",
+          "title": "Spider-Man: Μια Ολοκαίνουρια Μέρα"
+        }
+      },
+      {
+        "iso_3166_1": "FR",
+        "iso_639_1": "fr",
+        "name": "Français",
+        "english_name": "French",
+        "data": {
+          "homepage": "",
+          "overview": "Quatre ans se sont écoulés, Peter, désormais adulte, vit seul, s'est volontairement effacé de la vie et des souvenirs de ses proches. Luttant contre le crime dans un New York qui ne le reconnaît plus, il se consacre entièrement à la protection de la ville - un Spider-Man à plein temps - mais à mesure que les responsabilités s'intensifient, la pression provoque une transformation physique surprenante qui menace son existence, tandis qu'une étrange nouvelle vague de crimes donne naissance à l'une des menaces les plus redoutables qu'il ait jamais affrontées.",
+          "runtime": 150,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "RO",
+        "iso_639_1": "ro",
+        "name": "Română",
+        "english_name": "Romanian",
+        "data": {
+          "homepage": "",
+          "overview": "Este O ZI CU TOTUL NOUĂ pentru Peter Parker. Lupta sa cu normă întreagă, ca Spider-Man, împotriva criminalității, într-o lume care nu-și amintește de el - și presiunea de a-și vedea vechii prieteni mergând mai departe - declanșează o schimbare în Peter pe care s-ar putea să nu o poată controla. Dar această transformare ar putea fi, de asemenea, singurul lucru care poate opri o nouă amenințare șocantă la adresa orașului și a celor pe care îi iubește - un răufăcător extrem de puternic pe care nimeni nu-l poate vedea.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Omul-Păianjen 4"
+        }
+      },
+      {
+        "iso_3166_1": "GE",
+        "iso_639_1": "ka",
+        "name": "ქართული",
+        "english_name": "Georgian",
+        "data": {
+          "homepage": "",
+          "overview": "პიტერ პარკერი ცდილობს, მთელი დრო სწავლას დაუთმოს და ადამიანი ობობა წარსულში დატოვოს. თუმცა როცა მის მეგობრებს ახალი საფრთხე დაემუქრებათ, პირობის დარღვევა და ისევ კოსტიუმში გამოწყობა მოუწევს. საყვარელი ადამიანების გადარჩენის გზაზე ის მოულოდნელ თანამებრძოლს შეიძენს.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "ადამიანი-ობობა: ახალი დღე"
+        }
+      },
+      {
+        "iso_3166_1": "BR",
+        "iso_639_1": "pt",
+        "name": "Português",
+        "english_name": "Portuguese",
+        "data": {
+          "homepage": "https://homemaranhaumnovodia.com.br/",
+          "overview": "Quatro anos se passaram desde os eventos de Sem Volta Para Casa, e Peter agora é um adulto vivendo completamente sozinho, tendo se apagado voluntariamente da vida e das memórias de quem ama. Combatendo o crime em uma Nova York que já não sabe mais o seu nome, ele se dedica integralmente a proteger a cidade — um Homem-Aranha em tempo integral —, mas, à medida que as exigências aumentam, a pressão desencadeia uma surpreendente evolução física que ameaça sua própria existência, enquanto um estranho padrão de crimes dá origem a uma das ameaças mais poderosas que ele já enfrentou.",
+          "runtime": 120,
+          "tagline": "",
+          "title": "Homem-Aranha: Um Novo Dia"
+        }
+      },
+      {
+        "iso_3166_1": "TR",
+        "iso_639_1": "tr",
+        "name": "Türkçe",
+        "english_name": "Turkish",
+        "data": {
+          "homepage": "",
+          "overview": "Kendisini artık hatırlamayan bir dünyada tam zamanlı olarak Örümcek Adamlık yapmak ve eski arkadaşlarının hayatlarına onsuz devam ettiğini görmenin yarattığı baskı, Peter Parker'da kontrol edemeyeceği bir değişimi tetikler. Ancak bu dönüşüm; şehre ve sevdiklerine yönelik şoke edici yeni bir tehdidi, yani kimsenin göremediği güçlü bir düşmanı durdurabilecek tek şey de olabilir.",
+          "runtime": 0,
+          "tagline": "Yepyeni bir gün başlıyor.",
+          "title": "Örümcek-Adam: Yepyeni Bir Gün"
+        }
+      },
+      {
+        "iso_3166_1": "MX",
+        "iso_639_1": "es",
+        "name": "Español",
+        "english_name": "Spanish",
+        "data": {
+          "homepage": "",
+          "overview": "A medida qué Spider-Man está en la cima de su carrera protegiendo la ciudad de Nueva York, una serie de crímenes inusuales lo arrastran a una red de misterios más grande de lo que jamás haya enfrentado.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Spider-Man: Un nuevo día"
+        }
+      },
+      {
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "homepage": "",
+          "overview": "重建普通生活后，彼得一边在大学完成学业、一边从事兼职以维持生计，同时仍肩负着守护纽约街头的蜘蛛侠责任。然而，当一个神秘力量从内部腐蚀这座城市的安全与秩序，彼得被迫再次披上战衣。他必须在强大的敌人与昔日纽带之间找到平衡，并重新定义英雄的意义。",
+          "runtime": 0,
+          "tagline": "纵使被遗忘，依然在守护",
+          "title": "蜘蛛侠：崭新之日"
+        }
+      },
+      {
+        "iso_3166_1": "PT",
+        "iso_639_1": "pt",
+        "name": "Português",
+        "english_name": "Portuguese",
+        "data": {
+          "homepage": "",
+          "overview": "Passaram-se quatro anos desde os acontecimentos de «Sem Volta a Casa», e Peter é agora um adulto que vive totalmente sozinho, tendo-se apagado voluntariamente da vida e das memórias daqueles que ama. A combater o crime numa Nova Iorque que já não conhece o seu nome, dedicou-se inteiramente a proteger a sua cidade — um Homem-Aranha a tempo inteiro — mas, à medida que as exigências sobre ele se intensificam, a pressão desencadeia uma surpreendente evolução física que ameaça a sua existência, mesmo quando um novo e estranho padrão de crimes dá origem a uma das ameaças mais poderosas que alguma vez enfrentou.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Homem-Aranha: Um Novo Dia"
+        }
+      },
+      {
+        "iso_3166_1": "RU",
+        "iso_639_1": "ru",
+        "name": "Pусский",
+        "english_name": "Russian",
+        "data": {
+          "homepage": "https://spidermanbrandnewday.movie/",
+          "overview": "Одинокий и повзрослевший Питер Паркер полностью посвящает себя борьбе с преступностью в Нью-Йорке, поскольку 4 года назад после заклинания Доктора Стренджа мир и все близкие забыли его. Но с ростом угроз и нагрузки на Человека-паука его способности претерпевают странные изменения, способные поставить под угрозу его существование. Тем временем в городе случается новая цепочка преступлений, которая приводит к появлению одного из самых опасных противников в жизни Питера.",
+          "runtime": 0,
+          "tagline": "«Начинается новый день»",
+          "title": "Человек-паук: Новый день"
+        }
+      },
+      {
+        "iso_3166_1": "HU",
+        "iso_639_1": "hu",
+        "name": "Magyar",
+        "english_name": "Hungarian",
+        "data": {
+          "homepage": "",
+          "overview": "A Végítélet napja után Peter Parker megpróbál a főiskolára koncentrálni, és maga mögött hagyni Pókembert. De amikor egy új fenyegetés veszélyezteti barátait, meg kell szegnie ígéretét, és újra be kell öltöznie, hogy egy váratlan szövetségessel összefogva megvédje szeretteit.",
+          "runtime": 150,
+          "tagline": "",
+          "title": "Pókember: Vadonatúj nap"
+        }
+      },
+      {
+        "iso_3166_1": "IT",
+        "iso_639_1": "it",
+        "name": "Italiano",
+        "english_name": "Italian",
+        "data": {
+          "homepage": "https://eaglepictures.com/spiderman-brand-new-day",
+          "overview": "Sono trascorsi quattro anni dagli eventi di No Way Home e Peter è ormai un adulto che vive completamente da solo, essendosi volontariamente cancellato dalla vita e dai ricordi di coloro che ama. Combattendo il crimine in una New York che non conosce più il suo nome, si è dedicato interamente alla protezione della sua città. Uno Spider-Man a tempo pieno. Ma con l'intensificarsi delle richieste, la pressione innesca una sorprendente evoluzione fisica che minaccia la sua stessa esistenza, mentre, una strana nuova serie di crimini, dà origine a una delle minacce più potenti che abbia mai affrontato.",
+          "runtime": 144,
+          "tagline": "Un nuovo giorno inizia ora.",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "TW",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "homepage": "",
+          "overview": "彼得帕克努力專注於大學生活，把蜘蛛人拋在腦後。然而，當新的威脅危及到他的朋友時，他不得不違背諾言，再次穿上戰衣，與一位意想不到的盟友聯手，保護他所愛的人。",
+          "runtime": 0,
+          "tagline": "重生日從現在開始⋯⋯",
+          "title": "蜘蛛人：重生日"
+        }
+      },
+      {
+        "iso_3166_1": "UA",
+        "iso_639_1": "uk",
+        "name": "Український",
+        "english_name": "Ukrainian",
+        "data": {
+          "homepage": "",
+          "overview": "Минуло чотири роки від подій «Додому шляху немає». Пітер подорослішав і живе в цілковитій самотності, добровільно стерши себе з пам’яті тих, кого любить. Продовжуючи боротися зі злочинністю у Нью-Йорку, який більше не знає його імені, він цілковито присвятив себе захисту міста. Та зі зростанням навантаження тиск на нього лише посилюється, спричиняючи несподівану фізичну трансформацію, що загрожує самому його існуванню. Водночас дивна нова хвиля злочинів призводить до появи одного з наймогутніших ворогів, з якими йому коли-небудь доводилося зіштовхнутися.",
+          "runtime": 0,
+          "tagline": "Абсолютно новий день починається зараз.",
+          "title": "Людина-павук: Абсолютно новий день"
+        }
+      },
+      {
+        "iso_3166_1": "CZ",
+        "iso_639_1": "cs",
+        "name": "Český",
+        "english_name": "Czech",
+        "data": {
+          "homepage": "",
+          "overview": "Peter Parker dnes žije osamělý život. Jeho oběť pro záchranu multivesmíru jej vymazala z paměti a srdcí nejbližších přátel, a tak se z něj stal Spider-Man na plný úvazek. Ochrana města si však vybírá svoji daň a Petr čelí nečekaným fyzickým následkům. Zatímco bojuje o holý život, ve městě se vynořuje temná hrozba s nevídanou mocí. Dokáže Peter zachránit New York, když riskuje, že ztratí i to poslední, co mu zbylo – sama sebe?",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Spider-Man: Zbrusu nový den"
+        }
+      },
+      {
+        "iso_3166_1": "TH",
+        "iso_639_1": "th",
+        "name": "ภาษาไทย",
+        "english_name": "Thai",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "สไปเดอร์-แมน: แบรนด์ นิว เดย์"
+        }
+      },
+      {
+        "iso_3166_1": "IL",
+        "iso_639_1": "he",
+        "name": "עִבְרִית",
+        "english_name": "Hebrew",
+        "data": {
+          "homepage": "",
+          "overview": "לאחר שבחר מרצונו למחוק את עצמו מחייהם ומזיכרונותיהם של האנשים שהוא אוהב, פיטר פארקר הוא כעת אדם בוגר שחי לגמרי לבדו. בעודו נלחם בפשע בניו יורק שכבר אינה מכירה את שמו, הוא מקדיש את עצמו לחלוטין להגנה על העיר שלו- ספיידרמן במשרה מלאה, אך ככל שהדרישות ממנו הולכות וגוברות, הלחץ מחולל שינוי פיזי מפתיע המאיים על עצם קיומו. באותה שעה, דפוס חדש ומסתורי של פשעים מוביל להופעתו של אחד האיומים החזקים ביותר שניצב מולם אי פעם.",
+          "runtime": 0,
+          "tagline": "יום חדש לגמרי מתחיל עכשיו.",
+          "title": "ספיידרמן: יום חדש"
+        }
+      },
+      {
+        "iso_3166_1": "PL",
+        "iso_639_1": "pl",
+        "name": "Polski",
+        "english_name": "Polish",
+        "data": {
+          "homepage": "",
+          "overview": "Walcząc z przestępczością w Nowym Jorku, który nie zna już jego imienia, w pełni poświęcił się ochronie miasta. Gdy rosnące wymagania zaczynają go przytłaczać, presja wywołuje zaskakującą fizyczną przemianę, która zagraża jego istnieniu, podczas gdy nowy, niepokojący schemat zbrodni prowadzi do pojawienia się jednego z najpotężniejszych przeciwników, z jakimi kiedykolwiek się zmierzył.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Spider-Man: Całkiem nowy dzień"
+        }
+      },
+      {
+        "iso_3166_1": "JP",
+        "iso_639_1": "ja",
+        "name": "日本語",
+        "english_name": "Japanese",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "誰一人、僕を覚えていなくても守り続ける。",
+          "title": "スパイダーマン：ブランド・ニュー・デイ"
+        }
+      },
+      {
+        "iso_3166_1": "BG",
+        "iso_639_1": "bg",
+        "name": "български език",
+        "english_name": "Bulgarian",
+        "data": {
+          "homepage": "",
+          "overview": "Четири години след събитията в „Спайдър-Мен: Няма път към дома“, Питър Паркър вече не съществува, а Спайдър-Мен е в пика на силите си, грижейки се за безопасността на Ню Йорк. Нещата вървят добре, докато необичайна поредица от престъпления не вкарва Спайдър-Мен в мрежа от мистерии, по-мащабна от всичко, с което се е сблъсквал досега. За да се справи с предстоятщото, Спайдър-Мен не само трябва да бъде в най-добрата си физическа и ментална форма, но и да бъде готов да се изправи пред последствията от своето минало!",
+          "runtime": 150,
+          "tagline": "",
+          "title": "Спайдър-мен: Нов ден"
+        }
+      },
+      {
+        "iso_3166_1": "AZ",
+        "iso_639_1": "az",
+        "name": "Azərbaycan",
+        "english_name": "Azerbaijani",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Hörümçək-Adam: Tamamilə Yeni Gün"
+        }
+      },
+      {
+        "iso_3166_1": "HK",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "homepage": "",
+          "overview": "繼《蜘蛛俠：不戰無歸》引發連場激戰後，Peter Parker（湯賀蘭 飾）為了守護大局，決定徹底「捨棄」原有身份，將自己從所有摯愛的記憶中完全抹除。四年過後，長大成人的 Peter 於紐約市過著真正「隱姓埋名」的生活。這位無名英雄如今化身為「全職蜘蛛俠」，日以繼夜守護著這個無人知曉他真實身份的城市。 點知守護者唔易做，長期爆肝壓力太大，竟然令佢身體竟然產生恐怖異變，甚至威脅生命！與此同時，一連串離奇罪案席捲紐約，而隱藏背後的，正是Peter有史以來最強大、最深不可測嘅宿敵⋯⋯",
+          "runtime": 0,
+          "tagline": "",
+          "title": "蜘蛛俠：英雄重生"
+        }
+      },
+      {
+        "iso_3166_1": "ID",
+        "iso_639_1": "id",
+        "name": "Bahasa indonesia",
+        "english_name": "Indonesian",
+        "data": {
+          "homepage": "",
+          "overview": "Empat tahun setelah peristiwa Spider-Man: No Way Home, Peter Parker sudah tidak ada lagi dan Spider-Man kini berada di puncak kemampuannya dalam menjaga Kota New York tetap aman. Semuanya berjalan dengan baik hingga serangkaian kejahatan yang tidak biasa menyeret Spider-Man ke dalam jaring misteri yang lebih besar dari apa pun yang pernah ia hadapi sebelumnya. Untuk menghadapi apa yang akan datang, Spider-Man tidak hanya harus berada dalam kondisi fisik dan mental terbaiknya, tetapi juga harus siap menghadapi konsekuensi dari masa lalunya!",
+          "runtime": 0,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "IN",
+        "iso_639_1": "hi",
+        "name": "हिन्दी",
+        "english_name": "Hindi",
+        "data": {
+          "homepage": "https://spidermanbrandnewday.movie",
+          "overview": "स्पाइडर-मैन: नो वे होम की घटनाओं के चार साल बाद, पीटर पार्कर अब इस दुनिया में नहीं है और स्पाइडर-मैन न्यूयॉर्क शहर को सुरक्षित रखने में अपनी पूरी ताकत लगा रहा है। सब कुछ ठीक चल रहा था, तभी अचानक अपराधों की एक असामान्य श्रृंखला शुरू हो जाती है।",
+          "runtime": 0,
+          "tagline": "",
+          "title": "स्पाइडर-मैन: ब्रैंड न्यू डे"
+        }
+      },
+      {
+        "iso_3166_1": "IN",
+        "iso_639_1": "ta",
+        "name": "தமிழ்",
+        "english_name": "Tamil",
+        "data": {
+          "homepage": "https://spidermanbrandnewday.movie",
+          "overview": "ஸ்பைடர்-மேன்: நோ வே ஹோம் நிகழ்வுகளுக்கு நான்கு ஆண்டுகளுக்குப் பிறகு, பீட்டர் பார்க்கர் உயிருடன் இல்லை, மேலும் ஸ்பைடர்-மேன் நியூயார்க் நகரத்தைப் பாதுகாப்பதில் தனது உச்சகட்ட திறமையுடன் இருக்கிறான். ஒரு அசாதாரணமான குற்றச் சம்பவம் நிகழும் வரை, எல்லாம் நன்றாகப் போய்க்கொண்டிருந்தது.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "ஸ்பைடர் மேன்: புத்தம் புதிய நாள்"
+        }
+      },
+      {
+        "iso_3166_1": "SE",
+        "iso_639_1": "sv",
+        "name": "svenska",
+        "english_name": "Swedish",
+        "data": {
+          "homepage": "",
+          "overview": "Det är en helt ny dag för Peter Parker. I en värld som inte längre minns honom bekämpar han brott som Spider-Man, men stressen över att se sina vänner gå vidare utan honom gör att något inom Peter förändras. Samtidigt är det en förändring som kan vara den enda möjligheten för honom att rädda staden och de som han älskar från en mäktig ny fiende som ingen ens kan se. Världen må ha glömt Peter Parker, men han har inte glömt dem.",
+          "runtime": 0,
+          "tagline": "Världen må ha glömt Peter Parker, men han har inte glömt dem.",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "EE",
+        "iso_639_1": "et",
+        "name": "Eesti",
+        "english_name": "Estonian",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Ämblikmees. Täitsa uus päev"
+        }
+      },
+      {
+        "iso_3166_1": "LT",
+        "iso_639_1": "lt",
+        "name": "Lietuvių",
+        "english_name": "Lithuanian",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Žmogus-voras: nauja diena"
+        }
+      },
+      {
+        "iso_3166_1": "SA",
+        "iso_639_1": "ar",
+        "name": "العربية",
+        "english_name": "Arabic",
+        "data": {
+          "homepage": "",
+          "overview": "بينما يواصل \"بيتر باركر\" حماية المدينة بصفته \"الرجل العنكبوت\" في عالمٍ لم يعد يتذكره أحد، يجد نفسه وحيدًا وهو يشاهد أصدقاءه القدامى يمضون في حياتهم من دونه. ومع تصاعد الضغوط، يبدأ بالتغير بطريقة قد تعجز قواه عن كبحها. لكن هذا التحول قد يكون أمله الوحيد لمواجهة تهديدٍ غامض وخطير يلوح في الأفق، عدو يمتلك قوة مرعبة لا يستطيع أحد حتى رؤيته، ويهدد المدينة وكل من يهتم \"بيتر\" لأمرهم.",
+          "runtime": 150,
+          "tagline": "يوم جديد يبدأ الآن.",
+          "title": "الرجل العنكبوت: يوم جديد"
+        }
+      },
+      {
+        "iso_3166_1": "LV",
+        "iso_639_1": "lv",
+        "name": "Latviešu",
+        "english_name": "Latvian",
+        "data": {
+          "homepage": "",
+          "overview": "Aizmirstais Pīters Parkers dzīvo viens pats, pilna laika nodarbojoties ar Zirnekļcilvēka pienākumiem, līdz pieaugošais spiediens izraisa bīstamas pārmaiņas un parādās jauns, spēcīgs ienaidnieks.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Zirnekļcilvēks: Jauna diena"
+        }
+      },
+      {
+        "iso_3166_1": "SI",
+        "iso_639_1": "sl",
+        "name": "Slovenščina",
+        "english_name": "Slovenian",
+        "data": {
+          "homepage": "",
+          "overview": "Minila so štiri leta, odkar smo nazadnje spremljali dogodivščine našega priljubljenega junaka iz soseske. Petra Parkerja ni več, a Spider-Man je na vrhuncu svojih moči in še naprej varuje New York. Našemu anonimnemu junaku gre vse kot po maslu, dokler ga nepričakovana sled zločinov ne potegne v mrežo skrivnosti, kakršne še ni doživel. Da bi se usepešno soočil z izzivi, ki ga čakajo, mora biti Spider-Man ne le telesno, ampak tudi duševno v svoji najboljši formi, prav tako pa mora biti pripravljen sprejeti tudi posledice svoje preteklosti.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Spider-Man: Nov dan"
+        }
+      },
+      {
+        "iso_3166_1": "BY",
+        "iso_639_1": "be",
+        "name": "беларуская мова",
+        "english_name": "Belarusian",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Чалавек-павук: Абсалютна новы дзень"
+        }
+      },
+      {
+        "iso_3166_1": "BD",
+        "iso_639_1": "bn",
+        "name": "বাংলা",
+        "english_name": "Bengali",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "স্পাইডার-ম্যান: ব্র্যান্ড নিউ ডে"
+        }
+      },
+      {
+        "iso_3166_1": "IR",
+        "iso_639_1": "fa",
+        "name": "فارسی",
+        "english_name": "Persian",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "مرد عنکبوتی: روز کاملاً جدید"
+        }
+      },
+      {
+        "iso_3166_1": "NP",
+        "iso_639_1": "ne",
+        "name": "",
+        "english_name": "Nepali",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "स्पाइडर-म्यान: ब्रान्ड न्यु डे"
+        }
+      },
+      {
+        "iso_3166_1": "LK",
+        "iso_639_1": "si",
+        "name": "සිංහල",
+        "english_name": "Sinhalese",
+        "data": {
+          "homepage": "",
+          "overview": "ස්පයිඩර් මෑන් ලෙස පූර්ණ කාලීනව අපරාධවලට එරෙහිව සටන් කිරීම - සහ ඔහුගේ පැරණි මිතුරන් ඔහු නොමැතිව ඉදිරියට යන ආකාරය දැකීමේ පීඩනය - පීටර් පාකර් තුළ වෙනසක් ඇති කරයි, ඔහුට පාලනය කිරීමට බලයක් නොතිබිය හැකිය. නමුත් එම පරිවර්තනය නගරයට සහ ඔහු ආදරය කරන අයට කම්පන සහගත නව තර්ජනයක් නැවැත්විය හැකි එකම දෙය විය හැකිය - කිසිවෙකුට නොපෙනෙන බලවත් දුෂ්ටයෙක්.",
+          "runtime": 0,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "IN",
+        "iso_639_1": "mr",
+        "name": "",
+        "english_name": "Marathi",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "स्पाइडर-मैन: ब्रांड न्यू डे"
+        }
+      },
+      {
+        "iso_3166_1": "KZ",
+        "iso_639_1": "kk",
+        "name": "қазақ",
+        "english_name": "Kazakh",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Өрмекші-адам: Жаңа күн"
+        }
+      },
+      {
+        "iso_3166_1": "NL",
+        "iso_639_1": "nl",
+        "name": "Nederlands",
+        "english_name": "Dutch",
+        "data": {
+          "homepage": "",
+          "overview": "Het fulltime bestrijden van misdaad als Spider-Man in een wereld die hem niet meer herinnert – en de druk om zijn oude vrienden zonder hem verder te zien gaan – zet een verandering in gang in Peter Parker die hij misschien niet in de hand heeft. Maar die transformatie is wellicht ook het enige dat een schokkende nieuwe dreiging voor de stad en zijn geliefden kan stoppen: een machtige schurk die niemand kan zien.",
+          "runtime": 150,
+          "tagline": "",
+          "title": ""
+        }
+      },
+      {
+        "iso_3166_1": "RS",
+        "iso_639_1": "sr",
+        "name": "Srpski",
+        "english_name": "Serbian",
+        "data": {
+          "homepage": "",
+          "overview": "",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Спајдермен: Нови дан"
+        }
+      },
+      {
+        "iso_3166_1": "ES",
+        "iso_639_1": "ca",
+        "name": "Català",
+        "english_name": "Catalan",
+        "data": {
+          "homepage": "",
+          "overview": "Han passat quatre anys des dels esdeveniments de No Way Home, i Peter Parker ara és un adult que viu completament sol, ha desaparegut voluntàriament de les vides i records dels que estima. Combatent el crim en una Nova York que ja no coneix el seu nom, s'ha dedicat completament a protegir la seva ciutat, però a mesura que augmenten les exigències sobre ell, la pressió desencadena una evolució física que amenaça la seva existència, alhora que un estrany nou patró de crims dóna lloc a una de les amenaces més poderoses a què s'ha enfrontat.",
+          "runtime": 0,
+          "tagline": "",
+          "title": "Spider-Man: Un nou dia"
+        }
+      }
+    ]
+  },
+  "keywords": {
+    "keywords": [
+      {
+        "id": 9678,
+        "name": "mind control"
+      },
+      {
+        "id": 242,
+        "name": "new york city"
+      },
+      {
+        "id": 2766,
+        "name": "mutation"
+      },
+      {
+        "id": 9715,
+        "name": "superhero"
+      },
+      {
+        "id": 3986,
+        "name": "spider"
+      },
+      {
+        "id": 9717,
+        "name": "based on comic"
+      },
+      {
+        "id": 9663,
+        "name": "sequel"
+      },
+      {
+        "id": 10278,
+        "name": "ninja"
+      },
+      {
+        "id": 33637,
+        "name": "super power"
+      },
+      {
+        "id": 158456,
+        "name": "masked vigilante"
+      },
+      {
+        "id": 180547,
+        "name": "marvel cinematic universe (mcu)"
+      },
+      {
+        "id": 180734,
+        "name": "masked superhero"
+      }
+    ]
+  },
+  "external_ids": {
+    "imdb_id": "tt22084616",
+    "wikidata_id": "Q113244935",
+    "facebook_id": "SpiderManMovie",
+    "instagram_id": "spidermanmovie",
+    "twitter_id": "SpiderManMovie"
+  },
+  "watch/providers": {
+    "results": {}
+  },
+  "recommendations": {
+    "page": 1,
+    "results": [
+      {
+        "adult": false,
+        "backdrop_path": "/k0hlAzTryCYX1O1LyC6P8tAa8s0.jpg",
+        "id": 102382,
+        "title": "The Amazing Spider-Man 2: El poder de l'Electro",
+        "original_title": "The Amazing Spider-Man 2",
+        "overview": "En Peter Parker ha de dividir el seu temps entre lluitar contra el crim com a Spider-Man i festejar amb la seva xicota Gwen, a qui manté allunyada de qualsevol perill. Tot canvia quan apareix un nou dolent, l'Electro. A més a més, torna un vell amic, en Harry Osborn, que li donarà més pistes per entendre el seu passat tèrbol.",
+        "poster_path": "/kV61FAIsRWZP6JhgWFOKug9RbBx.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          28,
+          12,
+          878
+        ],
+        "popularity": 16.5649,
+        "release_date": "2014-04-16",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.547,
+        "vote_count": 14364
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/tPpYGm2mVecue7Bk3gNVoSPA5qn.jpg",
+        "id": 315635,
+        "title": "Spider-Man: Homecoming",
+        "original_title": "Spider-Man: Homecoming",
+        "overview": "Peter Parker comença a experimentar la seva recent descoberta identitat com el superheroi Spider-Man. Després de l'experiència viscuda amb els Venjadors, Peter torna a casa, on viu amb la seva tia. Sota l'atenta mirada del seu mentor Tony Stark, Peter intenta mantenir una vida normal com qualsevol jove de la seva edat, però interromp a la seva rutina diària el nou dolent Vulture i, amb ell, el més important de la vida de Peter començarà a veure's amenaçat .",
+        "poster_path": "/c24sv2weTHPsmDa7jEMN0m2P3RT.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          28,
+          12,
+          878
+        ],
+        "popularity": 31.0369,
+        "release_date": "2017-07-05",
+        "softcore": false,
+        "video": false,
+        "vote_average": 7.331,
+        "vote_count": 23324
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/eezsbzYPbYKjjh6E1XHDBNlLynh.jpg",
+        "id": 98566,
+        "title": "Teenage Mutant Ninja Turtles",
+        "original_title": "Teenage Mutant Ninja Turtles",
+        "overview": "When a kingpin threatens New York City, a group of mutated turtle warriors must emerge from the shadows to protect their home.",
+        "poster_path": "/azL2ThbJMIkts3ZMt3j1YgBUeDB.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          878,
+          28,
+          12,
+          35
+        ],
+        "popularity": 9.2914,
+        "release_date": "2014-08-07",
+        "softcore": false,
+        "video": false,
+        "vote_average": 5.9,
+        "vote_count": 7233
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/wdwcOBMkt3zmPQuEMxB3FUtMio2.jpg",
+        "id": 271110,
+        "title": "Capità Amèrica: Civil War",
+        "original_title": "Captain America: Civil War",
+        "overview": "Continua la història d'Els Venjadors: Era d'Ultron, amb Steve Rogers liderant un nou equip de Venjadors en el seu esforç per protegir la humanitat. Després d'un altre incident internacional relacionat amb els Venjadors que ocasiona danys col·laterals, la pressió política força a crear un sistema de registre i un cos governamental per determinar quan es requereixen els serveis de l'equip. El nou status quo divideix els Venjadors mentre intenten salvar el món d'un nou i pervers dolent.",
+        "poster_path": "/fyIMNoyC5YaSAgTk067Xg5QNh5B.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          12,
+          28,
+          878
+        ],
+        "popularity": 16.306,
+        "release_date": "2016-04-27",
+        "softcore": false,
+        "video": false,
+        "vote_average": 7.4,
+        "vote_count": 24158
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/19Ed4XgjahPm4U8JT7SnntERIlt.jpg",
+        "id": 284054,
+        "title": "Black Panther",
+        "original_title": "Black Panther",
+        "overview": "Després dels esdeveniments de \"Capità Amèrica: Civil War\", T'Challa torna a casa, la nació aïllada i molt avançada tecnològicament de Wakanda, per ser proclamat Rei. Però la reaparició d'un vell enemic posa a prova el tremp de T'Challa com a Rei i Black Panther ja que es veu arrossegat a un conflicte que posa en perill tot el destí de Wakanda i del món.",
+        "poster_path": "/uxzzxijgPIY7slzFvMotPv8wjKA.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          28,
+          12,
+          878
+        ],
+        "popularity": 15.8932,
+        "release_date": "2018-02-13",
+        "softcore": false,
+        "video": false,
+        "vote_average": 7.4,
+        "vote_count": 23611
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/7lmBufEG7P7Y1HClYK3gCxYrkgS.jpg",
+        "id": 10138,
+        "title": "Iron Man 2",
+        "original_title": "Iron Man 2",
+        "overview": "El món sap que el multimilionari Tony Stark és Iron Man, el superheroi emmascarat. Sotmès a pressions per part del govern, la premsa i l'opinió pública perquè comparteixi la seva tecnologia amb l'exèrcit, Tony és poc inclinat a revelar els secrets de l'armadura d'Iron Man perquè tem que aquesta informació pugui caure en mans indesitjables.",
+        "poster_path": "/6WBeq4fCfn7AN0o21W9qNcRF2l9.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          12,
+          28,
+          878
+        ],
+        "popularity": 19.2556,
+        "release_date": "2010-04-28",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.855,
+        "vote_count": 22527
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/8eRscFbRYl681zDfkjv1jjW1KAA.jpg",
+        "id": 1452,
+        "title": "Superman: el retorn",
+        "original_title": "Superman Returns",
+        "overview": "A Superman el retorn li resultarà difícil: mentre un dels seus antics enemics ordeix un pla per desposseir-lo dels seus poders i destruir el món, Superman es troba que la dona que estima està refent la seva vida amb un altre.",
+        "poster_path": "/iPU6jsDUu5wPSMa4qOmCAitmImr.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          878,
+          28,
+          12
+        ],
+        "popularity": 6.1642,
+        "release_date": "2006-06-28",
+        "softcore": false,
+        "video": false,
+        "vote_average": 5.821,
+        "vote_count": 4617
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/1RWLMyC9KcFfcaoViMiJGSSZzzr.jpg",
+        "id": 100402,
+        "title": "Capità Amèrica: El soldat d’hivern",
+        "original_title": "Captain America: The Winter Soldier",
+        "overview": "Capità Amèrica, Vídua Negra i un nou aliat, Falcon, s'enfronten a un enemic inesperat mentre intenten treure a la llum una conspiració que posa en risc el món.",
+        "poster_path": "/eYfKnaVQ884ZWHzSc7bsjo5eSZX.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          28,
+          12,
+          878
+        ],
+        "popularity": 8.6575,
+        "release_date": "2014-03-20",
+        "softcore": false,
+        "video": false,
+        "vote_average": 7.7,
+        "vote_count": 20126
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/5YZbUmjbMa3ClvSW1Wj3D6XGolb.jpg",
+        "id": 447365,
+        "title": "Guardians of the Galaxy Vol. 3",
+        "original_title": "Guardians of the Galaxy Vol. 3",
+        "overview": "Star-Lord, encara recuperant-se de la pèrdua de Gamora, ha de reunir el seu equip per defensar l'univers juntament amb la protecció d'un dels seus. Una missió que, si no es completa, podria portar al final dels Guardians tal com els coneixem.",
+        "poster_path": "/r2J02Z2OpNTctfOSN1Ydgii51I3.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          878,
+          12,
+          28
+        ],
+        "popularity": 16.7363,
+        "release_date": "2023-05-03",
+        "softcore": false,
+        "video": false,
+        "vote_average": 7.931,
+        "vote_count": 8483
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/eENEf62tMXbhyVvdcXlnQz2wcuT.jpg",
+        "id": 580489,
+        "title": "Venom: Hi haurà matança",
+        "original_title": "Venom: Let There Be Carnage",
+        "overview": "Eddie Brock i el seu simbiont Venom encara estan intentant descobrir com viure junts quan un pres que està al corredor de la mort s'infecta amb un simbiont propi.",
+        "poster_path": "/pzKsRuKLFmYrW5Q0q8E8G78Tcgo.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          878,
+          28,
+          12
+        ],
+        "popularity": 8.1965,
+        "release_date": "2021-09-30",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.741,
+        "vote_count": 11236
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/pGFQCp12a8andfPlpnmXz44IIvY.jpg",
+        "id": 24428,
+        "title": "Els Venjadors",
+        "original_title": "The Avengers",
+        "overview": "Quan un enemic inesperat sorgeix com una gran amenaça per a la seguretat mundial, Nick Fury, director de l'Agència SHIELD, decideix reclutar un equip per salvar el món d'un desastre gairebé segur.",
+        "poster_path": "/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          878,
+          28,
+          12
+        ],
+        "popularity": 37.9454,
+        "release_date": "2012-04-25",
+        "softcore": false,
+        "video": false,
+        "vote_average": 8.056,
+        "vote_count": 38756
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/bW93ycPSSi3Hxx1NvlMX5qm2mQu.jpg",
+        "id": 283995,
+        "title": "Guardians de la galàxia Vol. 2",
+        "original_title": "Guardians of the Galaxy Vol. 2",
+        "overview": "Una poderosa raça alienígena contracta els Guardians perquè protegeixin les seves valuoses bateries d'energia, però, quan Rocket les roba, els alienígenes envien les seves tropes de combat a venjar-se'n. Mentre intenten escapar amb vida, intenten resoldre el misteri dels veritables orígens de Peter Quill.",
+        "poster_path": "/y4MBh0EjBlMuOzv9axM4qJlmhzz.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          878,
+          12,
+          28
+        ],
+        "popularity": 12.9201,
+        "release_date": "2017-04-25",
+        "softcore": false,
+        "video": false,
+        "vote_average": 7.611,
+        "vote_count": 23061
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/jPu8yiadqgzwFPGKJmGo637ASVP.jpg",
+        "id": 1724,
+        "title": "L'increïble Hulk",
+        "original_title": "The Incredible Hulk",
+        "overview": "El fugitiu doctor Bruce Banner ha d'utilitzar la seva accidental habilitat d'esdevenir un gegantesc monstre forçut, per tal d'aturar un antic soldat. Aquest s'ha sotmès a un tractament per tal de ser una versió encara més perillosa del monstre verd.",
+        "poster_path": "/vnPo1poSu1LQEPM5zKtJwOTgpfR.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          878,
+          28,
+          12
+        ],
+        "popularity": 20.5465,
+        "release_date": "2008-06-12",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.247,
+        "vote_count": 12805
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/9xfDWXAUbFXQK585JvByT5pEAhe.jpg",
+        "id": 569094,
+        "title": "Spider-Man: Creuant el Multivers",
+        "original_title": "Spider-Man: Across the Spider-Verse",
+        "overview": "Miles Morales i Gwen Stacyes sumen forces amb la Spider-Society, protectora del Multivers, per fer front a un malvat molt poderós que amenaça de provocar una gran catàstrofe. Però l’equip no es posa d’acord sobre com fer front al desafiament i Morales haurà de replantejar-se què significa ser un heroi.",
+        "poster_path": "/wbhY69ax3mq1UzGwHwaQcZxFE4S.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          16,
+          28,
+          12,
+          878
+        ],
+        "popularity": 27.4903,
+        "release_date": "2023-05-31",
+        "softcore": false,
+        "video": false,
+        "vote_average": 8.34,
+        "vote_count": 8789
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/iIdmQwDP3rOS1XMZKMPFCPkA1Do.jpg",
+        "id": 1497,
+        "title": "Teenage Mutant Ninja Turtles II: The Secret of the Ooze",
+        "original_title": "Teenage Mutant Ninja Turtles II: The Secret of the Ooze",
+        "overview": "The Turtles and the Shredder battle once again, this time for the last cannister of the ooze that created the Turtles, which Shredder wants to create an army of new mutants. Meanwhile Splinter is coming... to a decision.",
+        "poster_path": "/Hyvvz9Z3le1is8a0EeFJQm0aSC.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          878,
+          12,
+          28,
+          35,
+          10751
+        ],
+        "popularity": 3.4674,
+        "release_date": "1991-03-22",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.23,
+        "vote_count": 1260
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/sTQNRqLbfCXolrb5CizAW1dj528.jpg",
+        "id": 246655,
+        "title": "X-Men: Apocalipsi",
+        "original_title": "X-Men: Apocalypse",
+        "overview": "Des de les albors de la civilització, va ser adorat com un déu. Apocalypse, el primer i més poderós mutant de l'univers X-Men de Marvel, va acumular els poders de molts altres mutants, convertint-se en immortal i invencible. Però en despertar després de milers d'anys, es troba desil·lusionat amb el món en què es troba i decideix reclutar un equip de mutants poderosos, entre ells un descoratjat Magneto (Michael Fassbender), per tal de netejar la humanitat i crear una nova ordre mundial, sobre la qual regnarà. A mesura que el destí de la terra està en joc, Raven (Jennifer Lawrence) amb l'ajuda del Professor X (James McAvoy) s'uniran al costat d'un equip de joves X-Men per aturar el seu enemic més gran i salvar així la humanitat de la destrucció total.",
+        "poster_path": "/ikA8UhYdTGpqbatFa93nIf6noSr.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          878,
+          14,
+          28
+        ],
+        "popularity": 12.9883,
+        "release_date": "2016-05-18",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.527,
+        "vote_count": 13863
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/6al048Lat3eLVQOuKtc9h6Tu94d.jpg",
+        "id": 558,
+        "title": "Spider-Man 2",
+        "original_title": "Spider-Man 2",
+        "overview": "Han passat dos anys des que en Peter Parker aconseguís dominar els seus nous poders. Encara no s'ha acostumat a la seva doble vida de fotògraf i superheroi, ha de fer front a tota mena de problemes personals i, a més a més, la Mary Jane continua fora del seu abast. Però haurà de deixar de banda les crisis existencials per enfrontar-se a un problema molt més gros: el Dr. Octopus.",
+        "poster_path": "/aGuvNAaaZuWXYQQ6N2v7DeuP6mB.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          28,
+          12,
+          878
+        ],
+        "popularity": 8.7387,
+        "release_date": "2004-06-25",
+        "softcore": false,
+        "video": false,
+        "vote_average": 7.315,
+        "vote_count": 16502
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/2nyaeISu2xIxIgZYNpX4UayY8PN.jpg",
+        "id": 141052,
+        "title": "La Lliga de la Justícia",
+        "original_title": "Justice League",
+        "overview": "Quan la Terra encara està de dol per la mort de Superman, un greu perill amenaça el planeta. Steppenwolf, el destructor de mons, ha tornat per recuperar les tres caixes que li han de permetre arrasar la Terra i transformar-la en un infern. Molts segles enrere, amazones, atlants i totes les tribus humanes van lluitar junts i van aconseguir repel·lir l'atac d'Steppenwolf. Com que era massa perillós guardar les tres caixes juntes, una se la van quedar les amazones, una altra els atlants i la tercera se la van quedar els humans, que la van enterrar en un lloc secret. Ara Steppenwolf ha tornat disposat a recuperar les tres caixes amb l'ajuda del seu exèrcit de paradimonis, uns insectes gegants atrets per l'olor de la por. Batman decideix formar un equip de superherois per enfrontar-s'hi.",
+        "poster_path": "/zjKMzbHWTlqK6Vhbbreyn3G9Rin.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          28,
+          12,
+          878
+        ],
+        "popularity": 10.3802,
+        "release_date": "2017-11-15",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.071,
+        "vote_count": 13743
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/cjRUhKyt2Jo3V1KNzc5tpPNfccG.jpg",
+        "id": 320288,
+        "title": "X-Men: Fènix Obscura",
+        "original_title": "Dark Phoenix",
+        "overview": "Els X-Men s'enfronten al seu enemic més poderós: un dels membres, Jean Grey. Durant una missió de rescat a l'espai, Jean gairebé mor en ser aconseguida per una misteriosa força còsmica. Quan torna a casa, aquesta radiació l'ha fet més poderosa però molt més inestable. Mentre lluita amb l'entitat que habita al seu interior, Jean deslliga els seus poders de maneres que no pot controlar ni comprendre. Jean cau en una espiral fora de control fent mal a aquells que més estima i comença a destruir els llaços que mantenen units als X-Men.",
+        "poster_path": "/cCTJPelKGLhALq3r51A9uMonxKj.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          878,
+          28,
+          12
+        ],
+        "popularity": 8.8523,
+        "release_date": "2019-06-05",
+        "softcore": false,
+        "video": false,
+        "vote_average": 5.969,
+        "vote_count": 7136
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/5fX1oSGuYdKgwWmUTAN5MNSQGzr.jpg",
+        "id": 209112,
+        "title": "Batman contra Superman: L'alba de la justícia",
+        "original_title": "Batman v Superman: Dawn of Justice",
+        "overview": "Són temps difícils per als superherois: al Superman encara hi ha una part important de la societat que no li perdona la destrucció que va provocar amb la batalla de fa dos anys contra els kryptonians; fins i tot, el Senat ha obert una comissió per estudiar el cas i veure si se li ha d'imposar alguna mena de control. Alhora, també hi ha grups de defensa dels drets humans que critiquen els mètodes expeditius del Batman i el costum que ha agafat de marcar els delinqüents amb un ferro roent. I per acabar-ho d'adobar, el malvat Lex Luthor mirarà d'aprofitar la situació per enfrontar els dos superherois entre ells.",
+        "poster_path": "/1Qt7G9UfjE84BCmipALM9fnrFBe.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          28,
+          12,
+          14
+        ],
+        "popularity": 15.5601,
+        "release_date": "2016-03-23",
+        "softcore": false,
+        "video": false,
+        "vote_average": 6.005,
+        "vote_count": 19117
+      }
+    ],
+    "total_pages": 30,
+    "total_results": 584
+  },
+  "images": {
+    "backdrops": [],
+    "logos": [],
+    "posters": []
+  },
+  "videos": {
+    "results": []
+  }
+}

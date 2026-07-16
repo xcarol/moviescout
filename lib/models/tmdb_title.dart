@@ -19,6 +19,8 @@ class TmdbTitleFields {
   static const String budget = 'budget';
   static const String genres = 'genres';
   static const String genreIds = 'genre_ids';
+  static const String keywordIds = 'keyword_ids';
+  static const String flatrateProviderIds = 'flatrate_provider_ids';
   static const String homepage = 'homepage';
   static const String id = 'id';
   static const String imdbId = 'imdb_id';
@@ -155,6 +157,7 @@ class TmdbTitle implements TmdbItem {
 
   // Lists (Simple)
   late List<int> genreIds;
+  late List<int> keywordIds;
   late List<int> flatrateProviderIds;
   late List<String> originCountry;
 
@@ -205,6 +208,7 @@ class TmdbTitle implements TmdbItem {
     this.effectiveRuntime = 0,
     this.effectiveReleaseDate = '',
     this.genreIds = const [],
+    this.keywordIds = const [],
     this.flatrateProviderIds = const [],
     this.originCountry = const [],
     this.creditsJson,
@@ -386,6 +390,11 @@ class TmdbTitle implements TmdbItem {
 
     updateGenreIds(
         this, title[TmdbTitleFields.genres], title[TmdbTitleFields.genreIds]);
+    
+    if (title[TmdbTitleFields.keywordIds] is List) {
+      keywordIds = List<int>.from(title[TmdbTitleFields.keywordIds]);
+    }
+
     updateProviderIds(this, title[TmdbTitleFields.providers]);
   }
 
@@ -426,6 +435,8 @@ class TmdbTitle implements TmdbItem {
       TmdbTitleFields.lastNotifiedSeason: lastNotifiedSeason,
       TmdbTitleFields.lastProvidersUpdate: lastProvidersUpdate,
       TmdbTitleFields.genreIds: genreIds,
+      TmdbTitleFields.keywordIds: keywordIds,
+      TmdbTitleFields.flatrateProviderIds: flatrateProviderIds,
       TmdbTitleFields.originCountry: originCountry,
       TmdbTitleFields.credits:
           creditsJson != null ? jsonDecode(creditsJson!) : null,

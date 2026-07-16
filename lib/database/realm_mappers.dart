@@ -49,6 +49,7 @@ class RealmMapper {
       ..creditsJson = realmObj.creditsJson
       ..seasonsJson = realmObj.seasonsJson
       ..genreIds = realmObj.genreIds.toList()
+      ..keywordIds = realmObj.keywordIds.toList()
       ..flatrateProviderIds = realmObj.flatrateProviderIds.toList()
       ..lastNotifiedSeason = realmObj.lastNotifiedSeason
       ..lastProvidersUpdate = realmObj.lastProvidersUpdate
@@ -106,6 +107,7 @@ class RealmMapper {
       creditsJson: domainObj.creditsJson,
       seasonsJson: domainObj.seasonsJson,
       genreIds: domainObj.genreIds,
+      keywordIds: domainObj.keywordIds,
       flatrateProviderIds: domainObj.flatrateProviderIds,
     );
   }

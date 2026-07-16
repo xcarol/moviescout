@@ -1,4 +1,9 @@
-import 'package:moviescout/utils/url_constants.dart';
+import re
+
+with open('/home/xcarol/workspace/moviescout/lib/services/discoverlist_service.dart', 'r') as f:
+    content = f.read()
+
+new_content = """import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
@@ -60,8 +65,7 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     });
   }
 
-  Map<int, double> _normalizeWeights(
-      Map<int, double> weights, Map<int, int> counts, int totalTitles) {
+  Map<int, double> _normalizeWeights(Map<int, double> weights, Map<int, int> counts, int totalTitles) {
     final Map<int, double> normalizedWeights = {};
     weights.forEach((id, totalWeight) {
       final count = counts[id] ?? 1;
@@ -72,40 +76,11 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
       // specificity = log(Total / Count)
       // Since this is a mobile app with few titles, we use a smoothed version:
       final frequency = count / totalTitles;
-      final specificityPenalty = 1.0 /
-          (1.0 +
-              (frequency *
-                  2.0)); // If frequency is 1.0, penalty is 0.33. If 0.1, penalty is 0.83.
+      final specificityPenalty = 1.0 / (1.0 + (frequency * 2.0));
 
       normalizedWeights[id] = (avgWeight * specificityPenalty).clamp(-0.4, 0.6);
     });
     return normalizedWeights;
-  }
-
-  void _addWeights(
-      List<int> genres,
-      List<int> keywords,
-      double weight,
-      Map<int, double> genreWeights,
-      Map<int, int> genreCounts,
-      Map<int, double> keywordWeights,
-      Map<int, int> keywordCounts) {
-    for (final id in genres) {
-      genreWeights[id] = (genreWeights[id] ?? 0.0) + weight;
-      genreCounts[id] = (genreCounts[id] ?? 0) + 1;
-    }
-    for (final id in keywords) {
-      keywordWeights[id] = (keywordWeights[id] ?? 0.0) + weight;
-      keywordCounts[id] = (keywordCounts[id] ?? 0) + 1;
-    }
-  }
-
-  double _getWeightForRating(double rating) {
-    if (rating >= 4.5) return 1.0;
-    if (rating >= 3.5) return 0.7;
-    if (rating >= 2.5) return 0.3;
-    if (rating > 0) return -0.5;
-    return 0.0;
   }
 
   Future<UserPreferences> _calculatePreferences() async {
@@ -115,25 +90,41 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     final Map<int, double> keywordWeights = {};
     final Map<int, int> keywordCounts = {};
 
-    final ratedTitles =
-        await titleRepo.getAllTitlesInList(AppConstants.rateslist);
-    final watchlistTitles =
-        await titleRepo.getAllTitlesInList(AppConstants.watchlist);
+    final ratedTitles = await titleRepo.getAllTitlesInList(AppConstants.rateslist);
+    final watchlistTitles = await titleRepo.getAllTitlesInList(AppConstants.watchlist);
 
     final allTitles = {...ratedTitles, ...watchlistTitles}.toList();
     final totalTitles = allTitles.length;
 
     if (totalTitles == 0) return UserPreferences({}, {});
 
+    void addWeights(List<int> genres, List<int> keywords, double weight) {
+      for (final id in genres) {
+        genreWeights[id] = (genreWeights[id] ?? 0.0) + weight;
+        genreCounts[id] = (genreCounts[id] ?? 0) + 1;
+      }
+      for (final id in keywords) {
+        keywordWeights[id] = (keywordWeights[id] ?? 0.0) + weight;
+        keywordCounts[id] = (keywordCounts[id] ?? 0) + 1;
+      }
+    }
+
     for (final title in ratedTitles) {
-      final weight = _getWeightForRating(title.rating);
-      _addWeights(title.genreIds, title.keywordIds, weight, genreWeights,
-          genreCounts, keywordWeights, keywordCounts);
+      double weight = 0.0;
+      if (title.rating >= 4.5) {
+        weight = 1.0;
+      } else if (title.rating >= 3.5) {
+        weight = 0.7;
+      } else if (title.rating >= 2.5) {
+        weight = 0.3;
+      } else if (title.rating > 0) {
+        weight = -0.5;
+      }
+      addWeights(title.genreIds, title.keywordIds, weight);
     }
 
     for (final title in watchlistTitles) {
-      _addWeights(title.genreIds, title.keywordIds, 0.4, genreWeights,
-          genreCounts, keywordWeights, keywordCounts);
+      addWeights(title.genreIds, title.keywordIds, 0.4);
     }
 
     return UserPreferences(
@@ -142,16 +133,9 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     );
   }
 
-  Future<List<dynamic>> _fetchDiscoverTitles(String discoverEndpoint,
-      Locale locale, UserPreferences preferences) async {
-    final topGenres = preferences.genreWeights.entries
-        .where((e) => e.value > 0)
-        .toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-    final topKeywords = preferences.keywordWeights.entries
-        .where((e) => e.value > 0)
-        .toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
+  Future<List<dynamic>> _fetchDiscoverTitles(String discoverEndpoint, Locale locale, UserPreferences preferences) async {
+    final topGenres = preferences.genreWeights.entries.where((e) => e.value > 0).toList()..sort((a, b) => b.value.compareTo(a.value));
+    final topKeywords = preferences.keywordWeights.entries.where((e) => e.value > 0).toList()..sort((a, b) => b.value.compareTo(a.value));
 
     final genresQuery = topGenres.take(3).map((e) => e.key).join('|');
     final keywordsQuery = topKeywords.take(3).map((e) => e.key).join('|');
@@ -160,13 +144,10 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
 
     try {
       return await getTitlesFromServer((int page) async {
-        if (page > 1) {
-          return http.Response('{"page":$page,"total_pages":$page}', 200);
-        }
+        if (page > 1) return http.Response('{"page":$page,"total_pages":$page}', 200);
         return get(discoverEndpoint
             .replaceFirst('{PAGE}', '1')
-            .replaceFirst(
-                '{LOCALE}', '${locale.languageCode}-${locale.countryCode}')
+            .replaceFirst('{LOCALE}', '${locale.languageCode}-${locale.countryCode}')
             .replaceFirst('{GENRES}', genresQuery)
             .replaceFirst('{KEYWORDS}', keywordsQuery));
       });
@@ -189,13 +170,10 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     return allRecommendations;
   }
 
-  void _scoreAndSortRecommendations(
-      List<dynamic> recommendations, UserPreferences preferences) {
+  void _scoreAndSortRecommendations(List<dynamic> recommendations, UserPreferences preferences) {
     recommendations.sort((a, b) {
-      double scoreA =
-          (a[TmdbTitleFields.voteAverage] as num?)?.toDouble() ?? 0.0;
-      double scoreB =
-          (b[TmdbTitleFields.voteAverage] as num?)?.toDouble() ?? 0.0;
+      double scoreA = (a[TmdbTitleFields.voteAverage] as num?)?.toDouble() ?? 0.0;
+      double scoreB = (b[TmdbTitleFields.voteAverage] as num?)?.toDouble() ?? 0.0;
 
       double boostA = 0.0;
       final List<dynamic>? genresA = a[TmdbTitleFields.genreIds];
@@ -220,10 +198,9 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     });
   }
 
-  Future<List> _getDiscoveryTitles(String accountId, String sessionId,
-      Locale locale, String mediaType, String popularEndpoint) async {
-    final String discoverEndpoint = mediaType == ApiConstants.movie
-        ? UrlConstants.tmdbDiscoverMoviesEndpoint
+  Future<List> _getDiscoveryTitles(String accountId, String sessionId, Locale locale, String mediaType, String popularEndpoint) async {
+    final String discoverEndpoint = mediaType == ApiConstants.movie 
+        ? UrlConstants.tmdbDiscoverMoviesEndpoint 
         : UrlConstants.tmdbDiscoverTvEndpoint;
     final List<dynamic> recommendations = [];
     final Set<int> excludedTmdbIds = {};
@@ -232,28 +209,20 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
       final titleRepo = TmdbTitleRepository();
       final preferences = await _calculatePreferences();
 
-      final ratedTitles =
-          await titleRepo.getAllTitlesInList(AppConstants.rateslist);
-      final watchlistTitles =
-          await titleRepo.getAllTitlesInList(AppConstants.watchlist);
+      final ratedTitles = await titleRepo.getAllTitlesInList(AppConstants.rateslist);
+      final watchlistTitles = await titleRepo.getAllTitlesInList(AppConstants.watchlist);
 
       final positiveSignalTitles = [
         ...ratedTitles.where((t) => t.rating > 2.5 && t.mediaType == mediaType),
         ...watchlistTitles.where((t) => t.mediaType == mediaType)
       ];
 
-      excludedTmdbIds.addAll(ratedTitles
-          .where((t) => t.mediaType == mediaType)
-          .map((t) => t.tmdbId));
-      excludedTmdbIds.addAll(watchlistTitles
-          .where((t) => t.mediaType == mediaType)
-          .map((t) => t.tmdbId));
+      excludedTmdbIds.addAll(ratedTitles.where((t) => t.mediaType == mediaType).map((t) => t.tmdbId));
+      excludedTmdbIds.addAll(watchlistTitles.where((t) => t.mediaType == mediaType).map((t) => t.tmdbId));
 
       final List<dynamic> allRecommendations = [];
-      allRecommendations.addAll(
-          await _fetchDiscoverTitles(discoverEndpoint, locale, preferences));
-      allRecommendations.addAll(_extractRecommendationsFromSeeds(
-          [...positiveSignalTitles]..shuffle()));
+      allRecommendations.addAll(await _fetchDiscoverTitles(discoverEndpoint, locale, preferences));
+      allRecommendations.addAll(_extractRecommendationsFromSeeds([...positiveSignalTitles]..shuffle()));
 
       _scoreAndSortRecommendations(allRecommendations, preferences);
 
@@ -268,40 +237,26 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     }
 
     if (recommendations.length < 40) {
-      await _addPopularFallbackTitles(recommendations, excludedTmdbIds,
-          popularEndpoint, accountId, sessionId, locale);
+      final popularTitles = await getTitlesFromServer((int page) async {
+        if (page > 2) return http.Response('{"page":$page,"total_pages":$page}', 200);
+        return get(popularEndpoint
+            .replaceFirst('{ACCOUNT_ID}', accountId)
+            .replaceFirst('{SESSION_ID}', sessionId)
+            .replaceFirst('{PAGE}', page.toString())
+            .replaceFirst('{LOCALE}', '${locale.languageCode}-${locale.countryCode}'));
+      });
+
+      for (final title in popularTitles) {
+        if (recommendations.length >= 40) break;
+        final id = title[TmdbTitleFields.id];
+        if (!excludedTmdbIds.contains(id)) {
+          recommendations.add(title);
+          excludedTmdbIds.add(id);
+        }
+      }
     }
 
     return recommendations;
-  }
-
-  Future<void> _addPopularFallbackTitles(
-      List<dynamic> recommendations,
-      Set<int> excludedTmdbIds,
-      String popularEndpoint,
-      String accountId,
-      String sessionId,
-      Locale locale) async {
-    final popularTitles = await getTitlesFromServer((int page) async {
-      if (page > 2) {
-        return http.Response('{"page":$page,"total_pages":$page}', 200);
-      }
-      return get(popularEndpoint
-          .replaceFirst('{ACCOUNT_ID}', accountId)
-          .replaceFirst('{SESSION_ID}', sessionId)
-          .replaceFirst('{PAGE}', page.toString())
-          .replaceFirst(
-              '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'));
-    });
-
-    for (final title in popularTitles) {
-      if (recommendations.length >= 40) break;
-      final id = title[TmdbTitleFields.id];
-      if (!excludedTmdbIds.contains(id)) {
-        recommendations.add(title);
-        excludedTmdbIds.add(id);
-      }
-    }
   }
 
   void setRefreshPaused(bool paused) {
@@ -326,3 +281,7 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     await retrieveDiscoverlist(accountId, sessionId, locale, forceUpdate: true);
   }
 }
+"""
+
+with open('/home/xcarol/workspace/moviescout/lib/services/discoverlist_service.dart', 'w') as f:
+    f.write(new_content)
