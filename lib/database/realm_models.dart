@@ -32,6 +32,7 @@ class _TmdbTitleRealm {
   late String mediaType;
   late String imdbId;
   late String homepage;
+  late String certification;
 
   late String? posterPathSuffix;
   late String? backdropPathSuffix;

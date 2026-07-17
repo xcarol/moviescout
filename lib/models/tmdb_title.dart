@@ -22,6 +22,7 @@ class TmdbTitleFields {
   static const String keywordIds = 'keyword_ids';
   static const String flatrateProviderIds = 'flatrate_provider_ids';
   static const String homepage = 'homepage';
+  static const String certification = 'certification';
   static const String id = 'id';
   static const String imdbId = 'imdb_id';
   static const String originCountry = 'origin_country';
@@ -125,6 +126,7 @@ class TmdbTitle implements TmdbItem {
   late String mediaType;
   late String imdbId;
   late String homepage;
+  late String certification;
 
   late String? posterPathSuffix;
   late String? backdropPathSuffix;
@@ -221,6 +223,7 @@ class TmdbTitle implements TmdbItem {
     this.videosJson,
     this.omdbRatingsJson,
     this.homepage = '',
+    this.certification = '',
     this.isPinned = false,
     this.notifyNewSeasons = false,
     this.lastNotifiedSeason = 0,
@@ -287,6 +290,7 @@ class TmdbTitle implements TmdbItem {
     status = title[TmdbTitleFields.status] ?? status;
     imdbId = title[TmdbTitleFields.imdbId] ?? imdbId;
     homepage = title[TmdbTitleFields.homepage] ?? homepage;
+    certification = title[TmdbTitleFields.certification] ?? certification;
 
     if (title.containsKey(TmdbTitleFields.posterPath)) {
       posterPathSuffix = title[TmdbTitleFields.posterPath];
@@ -412,6 +416,7 @@ class TmdbTitle implements TmdbItem {
       TmdbTitleFields.mediaType: mediaType,
       TmdbTitleFields.imdbId: imdbId,
       TmdbTitleFields.homepage: homepage,
+      TmdbTitleFields.certification: certification,
       TmdbTitleFields.posterPath: posterPathSuffix,
       TmdbTitleFields.backdropPath: backdropPathSuffix,
       TmdbTitleFields.releaseDate: releaseDate,

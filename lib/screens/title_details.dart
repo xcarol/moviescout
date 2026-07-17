@@ -626,10 +626,38 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   Widget _dateAndDuration(TmdbTitle title) {
-    return Text(
-      '${_releaseDates(title)} - ${_duration(title)}',
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        Text(
+          '${_releaseDates(title)} - ${_duration(title)}',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        if (title.certification.isNotEmpty) ...[
+          const SizedBox(width: 8),
+          _certificationBadge(title),
+        ],
+      ],
+    );
+  }
+
+  Widget _certificationBadge(TmdbTitle title) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+        ),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        title.certification,
+        style: TextStyle(
+          fontSize: 11,
+          color: Theme.of(context).colorScheme.primary,
+        ),
       ),
     );
   }

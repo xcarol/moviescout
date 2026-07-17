@@ -57,7 +57,7 @@ class UrlConstants {
 
   // Endpoints
   static const String tmdbDetailsEndpoint =
-      '/{MEDIA_TYPE}/{ID}?append_to_response=translations,keywords,external_ids,watch/providers,recommendations,images,videos,{CREDITS_TYPE}&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
+      '/{MEDIA_TYPE}/{ID}?append_to_response=translations,keywords,external_ids,watch/providers,recommendations,images,videos,{CREDITS_TYPE},release_dates,content_ratings&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
   static const String tmdbProvidersEndpoint =
       '/{MEDIA_TYPE}/{ID}/watch/providers';
   static const String tmdbLightEndpoint =

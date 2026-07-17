@@ -89,6 +89,7 @@ class TmdbTitleService extends TmdbBaseService {
 
     _extractProviders(details);
     _extractRecommendations(details);
+    _extractCertification(details, mediaType);
     _extractExternalIds(details);
     _extractKeywords(details, mediaType);
 
@@ -183,6 +184,7 @@ class TmdbTitleService extends TmdbBaseService {
     _mergeTranslationsFallback(details, mediaType);
     _extractKeywords(details, mediaType);
     _extractRecommendations(details);
+    _extractCertification(details, mediaType);
 
     if (details.containsKey(TmdbTitleFields.keywordIds)) {
       title.keywordIds = details[TmdbTitleFields.keywordIds];
@@ -357,6 +359,44 @@ class TmdbTitleService extends TmdbBaseService {
         details[TmdbTitleFields.keywordIds] =
             keywordsList.map((k) => k['id'] as int).toList();
       }
+    }
+  }
+
+  void _extractCertification(Map<String, dynamic> details, String mediaType) {
+    final country = getCountryCode();
+    String? certification;
+
+    if (mediaType == ApiConstants.movie) {
+      if (details['release_dates'] != null &&
+          details['release_dates']['results'] != null) {
+        final results = details['release_dates']['results'] as List<dynamic>;
+        final targetCountry = results.firstWhere(
+            (r) => r['iso_3166_1'] == country,
+            orElse: () => null);
+        
+        if (targetCountry != null && targetCountry['release_dates'] != null) {
+          final dates = targetCountry['release_dates'] as List<dynamic>;
+          if (dates.isNotEmpty) {
+            certification = dates[0]['certification'];
+          }
+        }
+      }
+    } else {
+      if (details['content_ratings'] != null &&
+          details['content_ratings']['results'] != null) {
+        final results = details['content_ratings']['results'] as List<dynamic>;
+        final targetCountry = results.firstWhere(
+            (r) => r['iso_3166_1'] == country,
+            orElse: () => null);
+        
+        if (targetCountry != null) {
+          certification = targetCountry['rating'];
+        }
+      }
+    }
+
+    if (certification != null && certification.isNotEmpty) {
+      details[TmdbTitleFields.certification] = certification;
     }
   }
 }
