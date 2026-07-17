@@ -23,6 +23,7 @@ class TmdbTitleFields {
   static const String flatrateProviderIds = 'flatrate_provider_ids';
   static const String homepage = 'homepage';
   static const String certification = 'certification';
+  static const String externalIds = 'external_ids';
   static const String id = 'id';
   static const String imdbId = 'imdb_id';
   static const String originCountry = 'origin_country';
@@ -146,6 +147,19 @@ class TmdbTitle implements TmdbItem {
   late int runtime;
   late int numberOfEpisodes;
   late int numberOfSeasons;
+
+  Map<String, dynamic>? _externalIdsCache;
+
+  Map<String, dynamic> get externalIds {
+    if (_externalIdsCache != null) return _externalIdsCache!;
+    if (externalIdsJson == null) return {};
+    try {
+      _externalIdsCache = jsonDecode(externalIdsJson!);
+      return _externalIdsCache!;
+    } catch (e) {
+      return {};
+    }
+  }
   late double popularity;
   late int budget;
   late int revenue;
@@ -173,6 +187,7 @@ class TmdbTitle implements TmdbItem {
   late String? imagesJson;
   late String? videosJson;
   late String? omdbRatingsJson;
+  late String? externalIdsJson;
 
   late int lastNotifiedSeason;
   late String lastProvidersUpdate;
@@ -222,6 +237,7 @@ class TmdbTitle implements TmdbItem {
     this.imagesJson,
     this.videosJson,
     this.omdbRatingsJson,
+    this.externalIdsJson,
     this.homepage = '',
     this.certification = '',
     this.isPinned = false,
@@ -387,6 +403,11 @@ class TmdbTitle implements TmdbItem {
     if (title[TmdbTitleFields.omdbRatings] != null) {
       omdbRatingsJson = jsonEncode(title[TmdbTitleFields.omdbRatings]);
     }
+    if (title.containsKey(TmdbTitleFields.externalIds)) {
+      externalIdsJson = title[TmdbTitleFields.externalIds] != null
+          ? jsonEncode(title[TmdbTitleFields.externalIds])
+          : null;
+    }
 
     character = title[TmdbTitleFields.character] ?? character;
     job = title[TmdbTitleFields.job] ?? job;
@@ -443,6 +464,8 @@ class TmdbTitle implements TmdbItem {
       TmdbTitleFields.keywordIds: keywordIds,
       TmdbTitleFields.flatrateProviderIds: flatrateProviderIds,
       TmdbTitleFields.originCountry: originCountry,
+      TmdbTitleFields.externalIds:
+          externalIdsJson != null ? jsonDecode(externalIdsJson!) : null,
       TmdbTitleFields.credits:
           creditsJson != null ? jsonDecode(creditsJson!) : null,
       TmdbTitleFields.providers:

@@ -344,8 +344,11 @@ class TmdbTitleService extends TmdbBaseService {
 
   void _extractExternalIds(Map<String, dynamic> details) {
     final externalIds = details['external_ids'];
-    if (externalIds != null && externalIds['imdb_id'] != null) {
-      details[TmdbTitleFields.imdbId] = externalIds['imdb_id'];
+    if (externalIds != null) {
+      if (externalIds['imdb_id'] != null) {
+        details[TmdbTitleFields.imdbId] = externalIds['imdb_id'];
+      }
+      details[TmdbTitleFields.externalIds] = externalIds;
     }
   }
 

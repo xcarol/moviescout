@@ -43,6 +43,8 @@ class _TmdbTitleRealm {
   late String lastAirDate;
   late String lastUpdated;
 
+  late String? externalIdsJson;
+
   // Numbers
   late double voteAverage;
   late int voteCount;

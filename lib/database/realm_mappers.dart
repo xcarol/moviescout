@@ -46,6 +46,7 @@ class RealmMapper {
       ..recommendationsJson = realmObj.recommendationsJson
       ..nextEpisodeToAirJson = realmObj.nextEpisodeToAirJson
       ..lastEpisodeToAirJson = realmObj.lastEpisodeToAirJson
+      ..externalIdsJson = realmObj.externalIdsJson
       ..providersJson = realmObj.providersJson
       ..creditsJson = realmObj.creditsJson
       ..seasonsJson = realmObj.seasonsJson
@@ -105,6 +106,7 @@ class RealmMapper {
       recommendationsJson: domainObj.recommendationsJson,
       nextEpisodeToAirJson: domainObj.nextEpisodeToAirJson,
       lastEpisodeToAirJson: domainObj.lastEpisodeToAirJson,
+      externalIdsJson: domainObj.externalIdsJson,
       providersJson: domainObj.providersJson,
       creditsJson: domainObj.creditsJson,
       seasonsJson: domainObj.seasonsJson,

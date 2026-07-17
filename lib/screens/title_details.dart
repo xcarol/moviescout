@@ -23,6 +23,7 @@ import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/widgets/person_chip.dart';
+import 'package:moviescout/widgets/social_link.dart';
 import 'package:moviescout/widgets/boxed_widget.dart';
 import 'package:moviescout/widgets/edit_button.dart';
 import 'package:moviescout/widgets/translations_button.dart';
@@ -467,71 +468,46 @@ class _TitleDetailsState extends State<TitleDetails> {
     List<Widget> links = [];
 
     links.add(
-      BoxedWidget(
-        onPressed: () {
-          launchUrl(
-            Uri.parse(
-              UrlConstants.tmdbTitleWebTemplate
-                  .replaceFirst('{MEDIA_TYPE}', title.mediaType)
-                  .replaceFirst('{ID}', title.tmdbId.toString()),
-            ),
-            mode: LaunchMode.inAppWebView,
-          );
-        },
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        child: SizedBox(
-          height: 20,
-          child: Image.asset(
-            'assets/tmdb-logo.png',
-            fit: BoxFit.cover,
-          ),
-        ),
+      SocialLink.image(
+        url: UrlConstants.tmdbTitleWebTemplate
+            .replaceFirst('{MEDIA_TYPE}', title.mediaType)
+            .replaceFirst('{ID}', title.tmdbId.toString()),
+        assetPath: 'assets/tmdb-logo-square.png',
+        launchMode: LaunchMode.inAppWebView,
       ),
     );
 
     if (title.imdbId.isNotEmpty) {
-      links.add(const SizedBox(width: 10));
       links.add(
-        BoxedWidget(
-          onPressed: () {
-            launchUrl(
-              Uri.parse(UrlConstants.imdbTitleTemplate
-                  .replaceFirst('{ID}', title.imdbId.toString())),
-              mode: LaunchMode.inAppBrowserView,
-            );
-          },
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          child: SizedBox(
-            height: 20,
-            child: Image.asset(
-              'assets/imdb-logo.png',
-              fit: BoxFit.cover,
-            ),
-          ),
+        SocialLink.image(
+          url: UrlConstants.imdbTitleTemplate
+              .replaceFirst('{ID}', title.imdbId.toString()),
+          assetPath: 'assets/imdb-logo-square.png',
+          launchMode: LaunchMode.inAppBrowserView,
         ),
       );
     }
 
+    final externalIds = title.externalIds;
+    _addSocialLink(links, externalIds['wikidata_id'],
+        'https://www.wikidata.org/wiki/{ID}', 'assets/wikidata.png');
+    _addSocialLink(links, externalIds['facebook_id'],
+        'https://facebook.com/{ID}', 'assets/facebook.png');
+    _addSocialLink(links, externalIds['instagram_id'],
+        'https://instagram.com/{ID}', 'assets/instagram.png');
+    _addSocialLink(
+        links, externalIds['twitter_id'], 'https://x.com/{ID}', 'assets/X.png');
+    _addSocialLink(links, externalIds['tiktok_id'], 'https://tiktok.com/@{ID}',
+        'assets/tiktok.png');
+    _addSocialLink(links, externalIds['youtube_id'], 'https://youtube.com/{ID}',
+        'assets/youtube.png');
+
     if (title.homepage.isNotEmpty) {
-      links.add(const SizedBox(width: 10));
       links.add(
-        BoxedWidget(
-          onPressed: () {
-            launchUrl(
-              Uri.parse(title.homepage),
-              mode: LaunchMode.externalApplication,
-            );
-          },
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          child: SizedBox(
-            height: 20,
-            width: 20,
-            child: Icon(
-              Icons.language,
-              size: 20,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
+        SocialLink.icon(
+          url: title.homepage,
+          iconData: Icons.language,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       );
     }
@@ -544,12 +520,25 @@ class _TitleDetailsState extends State<TitleDetails> {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+        Wrap(
+          spacing: 10.0,
+          runSpacing: 10.0,
           children: links,
         ),
       ],
     );
+  }
+
+  void _addSocialLink(
+      List<Widget> links, String? id, String urlTemplate, String logo) {
+    if (id != null && id.isNotEmpty) {
+      links.add(
+        SocialLink.image(
+          url: urlTemplate.replaceFirst('{ID}', id),
+          assetPath: logo,
+        ),
+      );
+    }
   }
 
   Widget _details(TmdbTitle title) {

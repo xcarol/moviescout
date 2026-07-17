@@ -159,6 +159,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
     Iterable<String> inLists = const [],
     String? posterPathSuffix,
     String? backdropPathSuffix,
+    String? externalIdsJson,
     String? imagesJson,
     String? videosJson,
     String? recommendationsJson,
@@ -191,6 +192,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
     RealmObjectBase.set(this, 'firstAirDate', firstAirDate);
     RealmObjectBase.set(this, 'lastAirDate', lastAirDate);
     RealmObjectBase.set(this, 'lastUpdated', lastUpdated);
+    RealmObjectBase.set(this, 'externalIdsJson', externalIdsJson);
     RealmObjectBase.set(this, 'voteAverage', voteAverage);
     RealmObjectBase.set(this, 'voteCount', voteCount);
     RealmObjectBase.set(this, 'rating', rating);
@@ -346,6 +348,13 @@ class TmdbTitleRealm extends _TmdbTitleRealm
   @override
   set lastUpdated(String value) =>
       RealmObjectBase.set(this, 'lastUpdated', value);
+
+  @override
+  String? get externalIdsJson =>
+      RealmObjectBase.get<String>(this, 'externalIdsJson') as String?;
+  @override
+  set externalIdsJson(String? value) =>
+      RealmObjectBase.set(this, 'externalIdsJson', value);
 
   @override
   double get voteAverage =>
@@ -580,6 +589,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       'firstAirDate': firstAirDate.toEJson(),
       'lastAirDate': lastAirDate.toEJson(),
       'lastUpdated': lastUpdated.toEJson(),
+      'externalIdsJson': externalIdsJson.toEJson(),
       'voteAverage': voteAverage.toEJson(),
       'voteCount': voteCount.toEJson(),
       'rating': rating.toEJson(),
@@ -696,6 +706,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
           inLists: fromEJson(ejson['inLists']),
           posterPathSuffix: fromEJson(ejson['posterPathSuffix']),
           backdropPathSuffix: fromEJson(ejson['backdropPathSuffix']),
+          externalIdsJson: fromEJson(ejson['externalIdsJson']),
           imagesJson: fromEJson(ejson['imagesJson']),
           videosJson: fromEJson(ejson['videosJson']),
           recommendationsJson: fromEJson(ejson['recommendationsJson']),
@@ -739,6 +750,8 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       SchemaProperty('firstAirDate', RealmPropertyType.string),
       SchemaProperty('lastAirDate', RealmPropertyType.string),
       SchemaProperty('lastUpdated', RealmPropertyType.string),
+      SchemaProperty('externalIdsJson', RealmPropertyType.string,
+          optional: true),
       SchemaProperty('voteAverage', RealmPropertyType.double),
       SchemaProperty('voteCount', RealmPropertyType.int),
       SchemaProperty('rating', RealmPropertyType.double),

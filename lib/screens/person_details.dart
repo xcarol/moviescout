@@ -24,7 +24,7 @@ import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/edit_button.dart';
 import 'package:moviescout/widgets/translations_button.dart';
 import 'package:moviescout/services/tmdb_translation_service.dart';
-import 'package:moviescout/widgets/boxed_widget.dart';
+import 'package:moviescout/widgets/social_link.dart';
 import 'package:moviescout/services/home_screen_shortcut_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
@@ -195,7 +195,7 @@ class _PersonDetailsState extends State<PersonDetails> {
           const SizedBox(height: 10),
           Divider(
               color: Theme.of(context).extension<CustomColors>()!.dividerColor),
-          _externalLinks(person),
+          _socialLinks(person),
           Divider(
               color: Theme.of(context).extension<CustomColors>()!.dividerColor),
           const SizedBox(height: 10),
@@ -319,47 +319,25 @@ class _PersonDetailsState extends State<PersonDetails> {
     }
   }
 
-  Widget _externalLinks(TmdbPerson person) {
+  Widget _socialLinks(TmdbPerson person) {
     List<Widget> links = [];
 
     links.add(
-      BoxedWidget(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-        onPressed: () {
-          launchUrl(
-            Uri.parse(UrlConstants.tmdbPersonWebTemplate
-                .replaceFirst('{ID}', person.tmdbId.toString())),
-            mode: LaunchMode.inAppWebView,
-          );
-        },
-        child: SizedBox(
-          height: 20,
-          child: Image.asset(
-            'assets/tmdb-logo-square.png',
-            fit: BoxFit.cover,
-          ),
-        ),
+      SocialLink.image(
+        url: UrlConstants.tmdbPersonWebTemplate
+            .replaceFirst('{ID}', person.tmdbId.toString()),
+        assetPath: 'assets/tmdb-logo-square.png',
+        launchMode: LaunchMode.inAppWebView,
       ),
     );
 
     if (person.imdbId.isNotEmpty) {
       links.add(
-        BoxedWidget(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-          onPressed: () {
-            launchUrl(
-              Uri.parse(UrlConstants.imdbNameTemplate
-                  .replaceFirst('{ID}', person.imdbId.toString())),
-              mode: LaunchMode.inAppBrowserView,
-            );
-          },
-          child: SizedBox(
-            height: 20,
-            child: Image.asset(
-              'assets/imdb-logo-square.png',
-              fit: BoxFit.cover,
-            ),
-          ),
+        SocialLink.image(
+          url: UrlConstants.imdbNameTemplate
+              .replaceFirst('{ID}', person.imdbId.toString()),
+          assetPath: 'assets/imdb-logo-square.png',
+          launchMode: LaunchMode.inAppBrowserView,
         ),
       );
     }
@@ -381,21 +359,10 @@ class _PersonDetailsState extends State<PersonDetails> {
 
     if (person.homepage.isNotEmpty) {
       links.add(
-        BoxedWidget(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-          onPressed: () {
-            launchUrl(
-              Uri.parse(person.homepage),
-              mode: LaunchMode.inAppBrowserView,
-            );
-          },
-          child: SizedBox(
-            height: 20,
-            child: Image.asset(
-              'assets/person_web.png',
-              fit: BoxFit.cover,
-            ),
-          ),
+        SocialLink.image(
+          url: person.homepage,
+          assetPath: 'assets/person_web.png',
+          launchMode: LaunchMode.inAppBrowserView,
         ),
       );
     }
@@ -423,21 +390,9 @@ class _PersonDetailsState extends State<PersonDetails> {
       List<Widget> links, String? id, String urlTemplate, String logo) {
     if (id != null && id.isNotEmpty) {
       links.add(
-        BoxedWidget(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-          onPressed: () {
-            launchUrl(
-              Uri.parse(urlTemplate.replaceFirst('{ID}', id)),
-              mode: LaunchMode.externalApplication,
-            );
-          },
-          child: SizedBox(
-            height: 20,
-            child: Image.asset(
-              logo,
-              fit: BoxFit.cover,
-            ),
-          ),
+        SocialLink.image(
+          url: urlTemplate.replaceFirst('{ID}', id),
+          assetPath: logo,
         ),
       );
     }

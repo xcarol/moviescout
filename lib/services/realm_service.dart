@@ -22,7 +22,7 @@ class RealmService {
         TmdbSeasonRealm.schema,
         TmdbEpisodeRealm.schema,
       ],
-      schemaVersion: 4,
+      schemaVersion: 5,
       migrationCallback: (migration, oldSchemaVersion) {
         if (oldSchemaVersion < 2) {
           _migrateProvidersJson(migration.newRealm);
