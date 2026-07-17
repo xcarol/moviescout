@@ -390,7 +390,7 @@ class TmdbTitle implements TmdbItem {
 
     updateGenreIds(
         this, title[TmdbTitleFields.genres], title[TmdbTitleFields.genreIds]);
-    
+
     if (title[TmdbTitleFields.keywordIds] is List) {
       keywordIds = List<int>.from(title[TmdbTitleFields.keywordIds]);
     }

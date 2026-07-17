@@ -100,10 +100,10 @@ class TmdbPerson implements TmdbItem {
 
   void _initImages() {
     if (_imagesCache != null && _taggedImagesCache != null) return;
-    
+
     final List<String> allImages = [];
     final List<String> horizImages = [];
-    
+
     if (imagesJson != null) {
       try {
         final decoded = jsonDecode(imagesJson!);
@@ -121,7 +121,7 @@ class TmdbPerson implements TmdbItem {
           for (var item in decoded['results']) {
             final aspectRatio = (item['aspect_ratio'] as num?) ?? 1.0;
             final path = item['file_path']?.toString();
-            
+
             if (aspectRatio >= 1.0) {
               if (path != null && !horizImages.contains(path)) {
                 horizImages.add(path);
@@ -131,7 +131,7 @@ class TmdbPerson implements TmdbItem {
                 allImages.add(path);
               }
             }
-            
+
             if (item['media'] != null) {
               final backdropPath = item['media']['backdrop_path']?.toString();
               if (backdropPath != null && !horizImages.contains(backdropPath)) {

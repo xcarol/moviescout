@@ -728,8 +728,8 @@ class _TitleDetailsState extends State<TitleDetails> {
       return Text(AppLocalizations.of(context)!.notReleasedYet);
     }
     if (title.voteAverage > 0) {
-      titleVoteAverage = title.voteAverage == 10.0 
-          ? '10' 
+      titleVoteAverage = title.voteAverage == 10.0
+          ? '10'
           : title.voteAverage.toStringAsFixed(1);
     }
 
@@ -891,7 +891,9 @@ class _TitleDetailsState extends State<TitleDetails> {
                                 const SizedBox(width: 8),
                                 Text(
                                   titleRating > AppConstants.seenRating
-                                      ? (titleRating == 10.0 ? '10' : titleRating.toStringAsFixed(1))
+                                      ? (titleRating == 10.0
+                                          ? '10'
+                                          : titleRating.toStringAsFixed(1))
                                       : '-.-',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,

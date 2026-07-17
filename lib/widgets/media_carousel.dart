@@ -161,7 +161,9 @@ class _MediaCarouselState extends State<MediaCarousel> {
       );
     }
     return Image.asset(
-      mediaType == ApiConstants.movie ? 'assets/movie_poster.png' : 'assets/tvshow_poster.png',
+      mediaType == ApiConstants.movie
+          ? 'assets/movie_poster.png'
+          : 'assets/tvshow_poster.png',
       fit: BoxFit.fitWidth,
     );
   }

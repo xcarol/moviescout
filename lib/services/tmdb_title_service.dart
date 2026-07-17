@@ -27,8 +27,6 @@ class TmdbTitleService extends TmdbBaseService {
     );
   }
 
-
-
   Future<dynamic> _retrieveTitleProviders(
     int id,
     String mediaType,
@@ -190,7 +188,8 @@ class TmdbTitleService extends TmdbBaseService {
       title.keywordIds = details[TmdbTitleFields.keywordIds];
     }
     if (details.containsKey(TmdbTitleFields.recommendations)) {
-      title.recommendationsJson = jsonEncode(details[TmdbTitleFields.recommendations]);
+      title.recommendationsJson =
+          jsonEncode(details[TmdbTitleFields.recommendations]);
     }
 
     title.numberOfSeasons =
@@ -254,7 +253,7 @@ class TmdbTitleService extends TmdbBaseService {
         if (translation != null && translation['data'] != null) {
           final data = translation['data'];
           final String fallbackOverview = data['overview'] ?? '';
-          
+
           if (fallbackOverview.isNotEmpty) {
             target[TmdbTitleFields.overview] = fallbackOverview;
 
@@ -353,11 +352,10 @@ class TmdbTitleService extends TmdbBaseService {
       final List<dynamic>? keywordsList = mediaType == ApiConstants.movie
           ? details['keywords']['keywords']
           : details['keywords']['results'];
-          
+
       if (keywordsList != null) {
-        details[TmdbTitleFields.keywordIds] = keywordsList
-            .map((k) => k['id'] as int)
-            .toList();
+        details[TmdbTitleFields.keywordIds] =
+            keywordsList.map((k) => k['id'] as int).toList();
       }
     }
   }
