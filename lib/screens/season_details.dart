@@ -238,20 +238,25 @@ class _SeasonDetailsState extends State<SeasonDetails> {
     if (season.name.isEmpty) return const SizedBox.shrink();
 
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Text(
-            season.name,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            textAlign: TextAlign.start,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          child: Padding(
+            padding: EdgeInsetsGeometry.only(top: 8),
+            child: Text(
+              season.name,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              textAlign: TextAlign.start,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ),
         IconButton(
           icon: const Icon(Icons.chevron_left),
           onPressed: _currentSeasonNumber > 1 ? _goToPreviousSeason : null,
         ),
+        const SizedBox(width: 16),
         IconButton(
           icon: const Icon(Icons.chevron_right),
           onPressed: _currentSeasonNumber < widget.title.numberOfSeasons
@@ -290,7 +295,9 @@ class _SeasonDetailsState extends State<SeasonDetails> {
               ),
               const SizedBox(width: 5),
               Text(
-                season.voteAverage == 10.0 ? '10' : season.voteAverage.toStringAsFixed(1),
+                season.voteAverage == 10.0
+                    ? '10'
+                    : season.voteAverage.toStringAsFixed(1),
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],

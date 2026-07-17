@@ -191,6 +191,7 @@ class _PersonDetailsState extends State<PersonDetails> {
             const SizedBox(height: 20)
           ],
           _description(person),
+          if (person.biography.isEmpty) _name(person),
           const SizedBox(height: 10),
           Divider(
               color: Theme.of(context).extension<CustomColors>()!.dividerColor),
@@ -365,12 +366,18 @@ class _PersonDetailsState extends State<PersonDetails> {
 
     final externalIds = person.externalIds;
 
-    _addSocialLink(links, externalIds['wikidata_id'], 'https://www.wikidata.org/wiki/{ID}', 'assets/wikidata.png');
-    _addSocialLink(links, externalIds['facebook_id'], 'https://facebook.com/{ID}', 'assets/facebook.png');
-    _addSocialLink(links, externalIds['instagram_id'], 'https://instagram.com/{ID}', 'assets/instagram.png');
-    _addSocialLink(links, externalIds['twitter_id'], 'https://x.com/{ID}', 'assets/X.png');
-    _addSocialLink(links, externalIds['tiktok_id'], 'https://tiktok.com/@{ID}', 'assets/tiktok.png');
-    _addSocialLink(links, externalIds['youtube_id'], 'https://youtube.com/{ID}', 'assets/youtube.png');
+    _addSocialLink(links, externalIds['wikidata_id'],
+        'https://www.wikidata.org/wiki/{ID}', 'assets/wikidata.png');
+    _addSocialLink(links, externalIds['facebook_id'],
+        'https://facebook.com/{ID}', 'assets/facebook.png');
+    _addSocialLink(links, externalIds['instagram_id'],
+        'https://instagram.com/{ID}', 'assets/instagram.png');
+    _addSocialLink(
+        links, externalIds['twitter_id'], 'https://x.com/{ID}', 'assets/X.png');
+    _addSocialLink(links, externalIds['tiktok_id'], 'https://tiktok.com/@{ID}',
+        'assets/tiktok.png');
+    _addSocialLink(links, externalIds['youtube_id'], 'https://youtube.com/{ID}',
+        'assets/youtube.png');
 
     if (person.homepage.isNotEmpty) {
       links.add(
@@ -412,7 +419,8 @@ class _PersonDetailsState extends State<PersonDetails> {
     );
   }
 
-  void _addSocialLink(List<Widget> links, String? id, String urlTemplate, String logo) {
+  void _addSocialLink(
+      List<Widget> links, String? id, String urlTemplate, String logo) {
     if (id != null && id.isNotEmpty) {
       links.add(
         BoxedWidget(
@@ -515,6 +523,16 @@ class _PersonDetailsState extends State<PersonDetails> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _name(TmdbPerson person) {
+    return Text(
+      person.name,
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      textAlign: TextAlign.start,
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
     );
   }
 

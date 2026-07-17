@@ -213,20 +213,25 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
     }
 
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Text(
-            '${episode.episodeNumber}. ${episode.name}',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            textAlign: TextAlign.start,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          child: Padding(
+            padding: EdgeInsetsGeometry.only(top: 8),
+            child: Text(
+              '${episode.episodeNumber}. ${episode.name}',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              textAlign: TextAlign.start,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ),
         IconButton(
           icon: const Icon(Icons.chevron_left),
           onPressed: _currentEpisodeNumber > 1 ? _goToPreviousEpisode : null,
         ),
+        const SizedBox(width: 16),
         IconButton(
           icon: const Icon(Icons.chevron_right),
           onPressed: (widget.totalEpisodes == null ||
@@ -278,7 +283,9 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
           color: Theme.of(context).extension<CustomColors>()!.ratedTitle,
         ),
         const SizedBox(width: 5),
-        Text(episode.voteAverage == 10.0 ? '10' : episode.voteAverage.toStringAsFixed(1)),
+        Text(episode.voteAverage == 10.0
+            ? '10'
+            : episode.voteAverage.toStringAsFixed(1)),
       ],
     );
   }

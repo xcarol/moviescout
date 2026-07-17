@@ -52,7 +52,7 @@ class _ExpandableTextState extends State<ExpandableText> {
             constraints.maxWidth, span, textScaler, textDirection);
 
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text.rich(
               span,
