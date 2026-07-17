@@ -648,7 +648,10 @@ class _TitleDetailsState extends State<TitleDetails> {
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+          color: Theme.of(context)
+              .colorScheme
+              .onSurfaceVariant
+              .withValues(alpha: 0.5),
         ),
         borderRadius: BorderRadius.circular(4),
       ),
@@ -656,7 +659,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         title.certification,
         style: TextStyle(
           fontSize: 11,
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       ),
     );
