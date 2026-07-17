@@ -77,12 +77,6 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.3
   build_runner: any
-  realm_generator: ^20.2.0
-
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter packages.
 flutter:
 
   # The following line ensures that the Material Icons font is
@@ -95,19 +89,24 @@ flutter:
     - .env
     - assets/l10n/
     - assets/account.svg
+    - assets/facebook.png
+    - assets/imdb-logo-square.png
     - assets/imdb-logo.png
+    - assets/instagram.png
     - assets/logo-icon.png
+    - assets/metacritic-logo.png
     - assets/movie_poster.png
     - assets/movie.svg
     - assets/person_web.png
     - assets/person.svg
-    - assets/tmdb-logo.png
-    - assets/tmdb-logo-square.png
-    - assets/imdb-logo.png
-    - assets/imdb-logo-square.png
     - assets/rotten-logo.png
-    - assets/metacritic-logo.png
+    - assets/tiktok.png
+    - assets/tmdb-logo-square.png
+    - assets/tmdb-logo.png
     - assets/tvshow_poster.png
+    - assets/wikidata.png
+    - assets/X.png
+    - assets/youtube.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

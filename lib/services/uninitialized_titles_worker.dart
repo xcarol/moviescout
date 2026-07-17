@@ -54,7 +54,7 @@ class UninitializedTitlesWorker {
           );
 
           final chunk = uninitializedTitles.sublist(i, end);
-          final futures = chunk.map((t) => titleService.updateTitleDetails(t));
+          final futures = chunk.map((t) => titleService.updateTitleLight(t));
           final updated = await Future.wait(futures);
 
           await repository.updateTitlesMetadata(updated.cast<TmdbTitle>());

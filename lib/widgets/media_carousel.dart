@@ -102,23 +102,31 @@ class _MediaCarouselState extends State<MediaCarousel> {
           if (totalItems > 1)
             Positioned(
               bottom: 25,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(totalItems, (index) {
-                  final colorScheme = Theme.of(context).colorScheme;
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    height: 8,
-                    width: _currentPage == index ? 16 : 8,
-                    decoration: BoxDecoration(
-                      color: _currentPage == index
-                          ? colorScheme.primary
-                          : colorScheme.onPrimary.withValues(alpha: 0.5),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  );
-                }),
+              left: 10,
+              right: 10,
+              child: Align(
+                alignment: Alignment.center,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(totalItems, (index) {
+                      final colorScheme = Theme.of(context).colorScheme;
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        height: 8,
+                        width: _currentPage == index ? 16 : 8,
+                        decoration: BoxDecoration(
+                          color: _currentPage == index
+                              ? colorScheme.primary
+                              : colorScheme.onPrimary.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
               ),
             ),
         ],
@@ -153,7 +161,9 @@ class _MediaCarouselState extends State<MediaCarousel> {
       );
     }
     return Image.asset(
-      mediaType == ApiConstants.movie ? 'assets/movie_poster.png' : 'assets/tvshow_poster.png',
+      mediaType == ApiConstants.movie
+          ? 'assets/movie_poster.png'
+          : 'assets/tvshow_poster.png',
       fit: BoxFit.fitWidth,
     );
   }

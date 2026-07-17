@@ -131,6 +131,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
     String mediaType,
     String imdbId,
     String homepage,
+    String certification,
     String releaseDate,
     String firstAirDate,
     String lastAirDate,
@@ -158,6 +159,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
     Iterable<String> inLists = const [],
     String? posterPathSuffix,
     String? backdropPathSuffix,
+    String? externalIdsJson,
     String? imagesJson,
     String? videosJson,
     String? recommendationsJson,
@@ -167,6 +169,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
     String? creditsJson,
     String? seasonsJson,
     Iterable<int> genreIds = const [],
+    Iterable<int> keywordIds = const [],
     Iterable<int> flatrateProviderIds = const [],
   }) {
     RealmObjectBase.set(this, 'id', id);
@@ -182,12 +185,14 @@ class TmdbTitleRealm extends _TmdbTitleRealm
     RealmObjectBase.set(this, 'mediaType', mediaType);
     RealmObjectBase.set(this, 'imdbId', imdbId);
     RealmObjectBase.set(this, 'homepage', homepage);
+    RealmObjectBase.set(this, 'certification', certification);
     RealmObjectBase.set(this, 'posterPathSuffix', posterPathSuffix);
     RealmObjectBase.set(this, 'backdropPathSuffix', backdropPathSuffix);
     RealmObjectBase.set(this, 'releaseDate', releaseDate);
     RealmObjectBase.set(this, 'firstAirDate', firstAirDate);
     RealmObjectBase.set(this, 'lastAirDate', lastAirDate);
     RealmObjectBase.set(this, 'lastUpdated', lastUpdated);
+    RealmObjectBase.set(this, 'externalIdsJson', externalIdsJson);
     RealmObjectBase.set(this, 'voteAverage', voteAverage);
     RealmObjectBase.set(this, 'voteCount', voteCount);
     RealmObjectBase.set(this, 'rating', rating);
@@ -213,6 +218,8 @@ class TmdbTitleRealm extends _TmdbTitleRealm
     RealmObjectBase.set(this, 'seasonsJson', seasonsJson);
     RealmObjectBase.set<RealmList<int>>(
         this, 'genreIds', RealmList<int>(genreIds));
+    RealmObjectBase.set<RealmList<int>>(
+        this, 'keywordIds', RealmList<int>(keywordIds));
     RealmObjectBase.set<RealmList<int>>(
         this, 'flatrateProviderIds', RealmList<int>(flatrateProviderIds));
     RealmObjectBase.set(this, 'lastNotifiedSeason', lastNotifiedSeason);
@@ -294,6 +301,13 @@ class TmdbTitleRealm extends _TmdbTitleRealm
   set homepage(String value) => RealmObjectBase.set(this, 'homepage', value);
 
   @override
+  String get certification =>
+      RealmObjectBase.get<String>(this, 'certification') as String;
+  @override
+  set certification(String value) =>
+      RealmObjectBase.set(this, 'certification', value);
+
+  @override
   String? get posterPathSuffix =>
       RealmObjectBase.get<String>(this, 'posterPathSuffix') as String?;
   @override
@@ -334,6 +348,13 @@ class TmdbTitleRealm extends _TmdbTitleRealm
   @override
   set lastUpdated(String value) =>
       RealmObjectBase.set(this, 'lastUpdated', value);
+
+  @override
+  String? get externalIdsJson =>
+      RealmObjectBase.get<String>(this, 'externalIdsJson') as String?;
+  @override
+  set externalIdsJson(String? value) =>
+      RealmObjectBase.set(this, 'externalIdsJson', value);
 
   @override
   double get voteAverage =>
@@ -490,6 +511,13 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       throw RealmUnsupportedSetError();
 
   @override
+  RealmList<int> get keywordIds =>
+      RealmObjectBase.get<int>(this, 'keywordIds') as RealmList<int>;
+  @override
+  set keywordIds(covariant RealmList<int> value) =>
+      throw RealmUnsupportedSetError();
+
+  @override
   RealmList<int> get flatrateProviderIds =>
       RealmObjectBase.get<int>(this, 'flatrateProviderIds') as RealmList<int>;
   @override
@@ -554,12 +582,14 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       'mediaType': mediaType.toEJson(),
       'imdbId': imdbId.toEJson(),
       'homepage': homepage.toEJson(),
+      'certification': certification.toEJson(),
       'posterPathSuffix': posterPathSuffix.toEJson(),
       'backdropPathSuffix': backdropPathSuffix.toEJson(),
       'releaseDate': releaseDate.toEJson(),
       'firstAirDate': firstAirDate.toEJson(),
       'lastAirDate': lastAirDate.toEJson(),
       'lastUpdated': lastUpdated.toEJson(),
+      'externalIdsJson': externalIdsJson.toEJson(),
       'voteAverage': voteAverage.toEJson(),
       'voteCount': voteCount.toEJson(),
       'rating': rating.toEJson(),
@@ -584,6 +614,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       'creditsJson': creditsJson.toEJson(),
       'seasonsJson': seasonsJson.toEJson(),
       'genreIds': genreIds.toEJson(),
+      'keywordIds': keywordIds.toEJson(),
       'flatrateProviderIds': flatrateProviderIds.toEJson(),
       'lastNotifiedSeason': lastNotifiedSeason.toEJson(),
       'lastProvidersUpdate': lastProvidersUpdate.toEJson(),
@@ -609,6 +640,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
         'mediaType': EJsonValue mediaType,
         'imdbId': EJsonValue imdbId,
         'homepage': EJsonValue homepage,
+        'certification': EJsonValue certification,
         'releaseDate': EJsonValue releaseDate,
         'firstAirDate': EJsonValue firstAirDate,
         'lastAirDate': EJsonValue lastAirDate,
@@ -646,6 +678,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
           fromEJson(mediaType),
           fromEJson(imdbId),
           fromEJson(homepage),
+          fromEJson(certification),
           fromEJson(releaseDate),
           fromEJson(firstAirDate),
           fromEJson(lastAirDate),
@@ -673,6 +706,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
           inLists: fromEJson(ejson['inLists']),
           posterPathSuffix: fromEJson(ejson['posterPathSuffix']),
           backdropPathSuffix: fromEJson(ejson['backdropPathSuffix']),
+          externalIdsJson: fromEJson(ejson['externalIdsJson']),
           imagesJson: fromEJson(ejson['imagesJson']),
           videosJson: fromEJson(ejson['videosJson']),
           recommendationsJson: fromEJson(ejson['recommendationsJson']),
@@ -682,6 +716,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
           creditsJson: fromEJson(ejson['creditsJson']),
           seasonsJson: fromEJson(ejson['seasonsJson']),
           genreIds: fromEJson(ejson['genreIds']),
+          keywordIds: fromEJson(ejson['keywordIds']),
           flatrateProviderIds: fromEJson(ejson['flatrateProviderIds']),
         ),
       _ => raiseInvalidEJson(ejson),
@@ -706,6 +741,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       SchemaProperty('mediaType', RealmPropertyType.string),
       SchemaProperty('imdbId', RealmPropertyType.string),
       SchemaProperty('homepage', RealmPropertyType.string),
+      SchemaProperty('certification', RealmPropertyType.string),
       SchemaProperty('posterPathSuffix', RealmPropertyType.string,
           optional: true),
       SchemaProperty('backdropPathSuffix', RealmPropertyType.string,
@@ -714,6 +750,8 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       SchemaProperty('firstAirDate', RealmPropertyType.string),
       SchemaProperty('lastAirDate', RealmPropertyType.string),
       SchemaProperty('lastUpdated', RealmPropertyType.string),
+      SchemaProperty('externalIdsJson', RealmPropertyType.string,
+          optional: true),
       SchemaProperty('voteAverage', RealmPropertyType.double),
       SchemaProperty('voteCount', RealmPropertyType.int),
       SchemaProperty('rating', RealmPropertyType.double),
@@ -741,6 +779,8 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       SchemaProperty('creditsJson', RealmPropertyType.string, optional: true),
       SchemaProperty('seasonsJson', RealmPropertyType.string, optional: true),
       SchemaProperty('genreIds', RealmPropertyType.int,
+          collectionType: RealmCollectionType.list),
+      SchemaProperty('keywordIds', RealmPropertyType.int,
           collectionType: RealmCollectionType.list),
       SchemaProperty('flatrateProviderIds', RealmPropertyType.int,
           collectionType: RealmCollectionType.list),

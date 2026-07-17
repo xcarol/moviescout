@@ -62,6 +62,12 @@ class AppLocalizationsCa extends AppLocalizations {
   String get searchPerson => 'Cerca algú';
 
   @override
+  String get searchPlaceholder => 'Search Movies or TV Shows...';
+
+  @override
+  String get gallery => 'Galeria';
+
+  @override
   String get searchProvider => 'Cerca un proveïdor';
 
   @override
@@ -297,6 +303,10 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get aboutGithub => 'Visita el projecte a ';
+
+  @override
+  String get privacyDisclaimer =>
+      'Privadesa de dades: Desem els teus títols seguits, fixats i plataformes a Firebase per mantenir-los segurs i sincronitzats al núvol.';
 
   @override
   String get recommended => 'Recomanats';

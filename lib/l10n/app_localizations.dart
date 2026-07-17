@@ -196,6 +196,18 @@ abstract class AppLocalizations {
   /// **'Search for somebody'**
   String get searchPerson;
 
+  /// No description provided for @searchPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Movies or TV Shows...'**
+  String get searchPlaceholder;
+
+  /// No description provided for @gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get gallery;
+
   /// No description provided for @searchProvider.
   ///
   /// In en, this message translates to:
@@ -663,6 +675,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Visit project on '**
   String get aboutGithub;
+
+  /// No description provided for @privacyDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Data privacy: We store your followed titles, pinned items and platforms in Firebase to keep them safe and synced in the cloud.'**
+  String get privacyDisclaimer;
 
   /// No description provided for @recommended.
   ///

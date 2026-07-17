@@ -17,6 +17,7 @@ class RealmMapper {
       mediaType: realmObj.mediaType,
       imdbId: realmObj.imdbId,
       homepage: realmObj.homepage,
+      certification: realmObj.certification,
       posterPathSuffix: realmObj.posterPathSuffix,
       backdropPathSuffix: realmObj.backdropPathSuffix,
       releaseDate: realmObj.releaseDate,
@@ -45,10 +46,12 @@ class RealmMapper {
       ..recommendationsJson = realmObj.recommendationsJson
       ..nextEpisodeToAirJson = realmObj.nextEpisodeToAirJson
       ..lastEpisodeToAirJson = realmObj.lastEpisodeToAirJson
+      ..externalIdsJson = realmObj.externalIdsJson
       ..providersJson = realmObj.providersJson
       ..creditsJson = realmObj.creditsJson
       ..seasonsJson = realmObj.seasonsJson
       ..genreIds = realmObj.genreIds.toList()
+      ..keywordIds = realmObj.keywordIds.toList()
       ..flatrateProviderIds = realmObj.flatrateProviderIds.toList()
       ..lastNotifiedSeason = realmObj.lastNotifiedSeason
       ..lastProvidersUpdate = realmObj.lastProvidersUpdate
@@ -70,6 +73,7 @@ class RealmMapper {
       domainObj.mediaType,
       domainObj.imdbId,
       domainObj.homepage,
+      domainObj.certification,
       domainObj.releaseDate,
       domainObj.firstAirDate,
       domainObj.lastAirDate,
@@ -102,10 +106,12 @@ class RealmMapper {
       recommendationsJson: domainObj.recommendationsJson,
       nextEpisodeToAirJson: domainObj.nextEpisodeToAirJson,
       lastEpisodeToAirJson: domainObj.lastEpisodeToAirJson,
+      externalIdsJson: domainObj.externalIdsJson,
       providersJson: domainObj.providersJson,
       creditsJson: domainObj.creditsJson,
       seasonsJson: domainObj.seasonsJson,
       genreIds: domainObj.genreIds,
+      keywordIds: domainObj.keywordIds,
       flatrateProviderIds: domainObj.flatrateProviderIds,
     );
   }

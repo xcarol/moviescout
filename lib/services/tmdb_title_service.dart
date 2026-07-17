@@ -27,19 +27,6 @@ class TmdbTitleService extends TmdbBaseService {
     );
   }
 
-  Future<dynamic> _retrieveTitleBrief(
-    int id,
-    String mediaType,
-    String locale,
-  ) async {
-    return get(
-      UrlConstants.tmdbBriefEndpoint
-          .replaceFirst('{MEDIA_TYPE}', mediaType)
-          .replaceFirst('{ID}', id.toString())
-          .replaceFirst('{LOCALE}', locale),
-    );
-  }
-
   Future<dynamic> _retrieveTitleProviders(
     int id,
     String mediaType,
@@ -100,64 +87,20 @@ class TmdbTitleService extends TmdbBaseService {
 
     final Map<String, dynamic> details = body(result);
 
-    details[TmdbTitleFields.providers] =
-        details['watch/providers']?['results']?[getCountryCode()] ?? {};
+    _extractProviders(details);
+    _extractRecommendations(details);
+    _extractCertification(details, mediaType);
+    _extractExternalIds(details);
+    _extractKeywords(details, mediaType);
 
-    if (details['recommendations'] != null &&
-        details['recommendations']['results'] != null) {
-      details[TmdbTitleFields.recommendations] =
-          details['recommendations']['results'];
-    }
-
-    final externalIds = details['external_ids'];
-    if (externalIds != null && externalIds['imdb_id'] != null) {
-      details[TmdbTitleFields.imdbId] = externalIds['imdb_id'];
-    }
-
-    // Extracts, sorts, and flattens the nested structures for images and videos
-    // from the raw API response into the expected format within the same map.
     _mergeMediaFallback(details, details);
-
-    details[TmdbTitleFields.homepage] = details['homepage'];
-
-    final hasOverview = (details[TmdbTitleFields.overview] ?? '').isNotEmpty;
-    final hasMedia = (details[TmdbTitleFields.images] as List).isNotEmpty ||
-        (details[TmdbTitleFields.videos] as List).isNotEmpty;
-
-    if (!hasOverview || !hasMedia) {
-      final fallbackResult = await _retrieveTitleBrief(
-        title.tmdbId,
-        mediaType,
-        getCountryCode().toLowerCase(),
-      );
-
-      if (fallbackResult.statusCode == 200) {
-        _mergeFallback(details, body(fallbackResult), mediaType);
-      }
-    }
-
-    final hasOverviewFinal =
-        (details[TmdbTitleFields.overview] ?? '').isNotEmpty;
-    final hasMediaFinal =
-        (details[TmdbTitleFields.images] as List).isNotEmpty ||
-            (details[TmdbTitleFields.videos] as List).isNotEmpty;
-
-    if (!hasOverviewFinal || !hasMediaFinal) {
-      final enResult = await _retrieveTitleBrief(
-        title.tmdbId,
-        mediaType,
-        'en-US',
-      );
-
-      if (enResult.statusCode == 200) {
-        _mergeFallback(details, body(enResult), mediaType);
-      }
-    }
+    _mergeTranslationsFallback(details, mediaType);
 
     if (includeYoutubeSearch) {
       await _addYoutubeTrailers(details);
     }
 
+    details[TmdbTitleFields.homepage] = details['homepage'];
     details[TmdbTitleFields.mediaType] = mediaType;
     details[TmdbTitleFields.lastUpdated] = DateTime.now().toIso8601String();
     details[TmdbTitleFields.lastProvidersUpdate] =
@@ -238,16 +181,17 @@ class TmdbTitleService extends TmdbBaseService {
 
     final Map<String, dynamic> details = body(result);
 
-    if ((details[TmdbTitleFields.overview] ?? '').isEmpty) {
-      final result = await _retrieveTitleLight(
-        title.tmdbId,
-        mediaType,
-        getCountryCode().toLowerCase(),
-      );
+    _mergeTranslationsFallback(details, mediaType);
+    _extractKeywords(details, mediaType);
+    _extractRecommendations(details);
+    _extractCertification(details, mediaType);
 
-      if (result.statusCode == 200) {
-        _mergeFallback(details, body(result), mediaType);
-      }
+    if (details.containsKey(TmdbTitleFields.keywordIds)) {
+      title.keywordIds = details[TmdbTitleFields.keywordIds];
+    }
+    if (details.containsKey(TmdbTitleFields.recommendations)) {
+      title.recommendationsJson =
+          jsonEncode(details[TmdbTitleFields.recommendations]);
     }
 
     title.numberOfSeasons =
@@ -288,33 +232,48 @@ class TmdbTitleService extends TmdbBaseService {
     return title;
   }
 
-  void _mergeFallback(Map<String, dynamic> target,
-      Map<String, dynamic> fallback, String mediaType) {
-    final String fallbackOverview = fallback[TmdbTitleFields.overview] ?? '';
+  void _mergeTranslationsFallback(
+      Map<String, dynamic> target, String mediaType) {
+    if (target['translations'] == null ||
+        target['translations']['translations'] == null) {
+      return;
+    }
 
-    if (fallbackOverview.isNotEmpty) {
-      target[TmdbTitleFields.overview] = fallbackOverview;
+    final List<dynamic> translations = target['translations']['translations'];
+    final fallbacks = [getCountryCode().toLowerCase(), 'en'];
 
-      if (mediaType == ApiConstants.movie) {
-        if (fallback[TmdbTitleFields.title] != null) {
-          target[TmdbTitleFields.title] = fallback[TmdbTitleFields.title];
-        }
-        if (fallback[TmdbTitleFields.originalTitle] != null) {
-          target[TmdbTitleFields.originalTitle] =
-              fallback[TmdbTitleFields.originalTitle];
-        }
-      } else {
-        if (fallback[TmdbTitleFields.name] != null) {
-          target[TmdbTitleFields.name] = fallback[TmdbTitleFields.name];
-        }
-        if (fallback[TmdbTitleFields.originalName] != null) {
-          target[TmdbTitleFields.originalName] =
-              fallback[TmdbTitleFields.originalName];
+    for (final fallbackLang in fallbacks) {
+      final String currentOverview = target[TmdbTitleFields.overview] ?? '';
+
+      if (currentOverview.isEmpty) {
+        final translation = translations.firstWhere(
+          (t) =>
+              (t['iso_639_1'] ?? '').toString().toLowerCase() == fallbackLang,
+          orElse: () => null,
+        );
+
+        if (translation != null && translation['data'] != null) {
+          final data = translation['data'];
+          final String fallbackOverview = data['overview'] ?? '';
+
+          if (fallbackOverview.isNotEmpty) {
+            target[TmdbTitleFields.overview] = fallbackOverview;
+
+            if (mediaType == ApiConstants.movie) {
+              if (data['title'] != null &&
+                  data['title'].toString().isNotEmpty) {
+                target[TmdbTitleFields.title] = data['title'];
+              }
+            } else {
+              if (data['name'] != null && data['name'].toString().isNotEmpty) {
+                target[TmdbTitleFields.name] = data['name'];
+              }
+            }
+            break;
+          }
         }
       }
     }
-
-    _mergeMediaFallback(target, fallback, overwriteIfEmpty: true);
   }
 
   void _mergeMediaFallback(
@@ -367,6 +326,80 @@ class TmdbTitleService extends TmdbBaseService {
 
     if (target[TmdbTitleFields.videos] is! List) {
       target[TmdbTitleFields.videos] = [];
+    }
+  }
+
+  void _extractProviders(Map<String, dynamic> details) {
+    details[TmdbTitleFields.providers] =
+        details['watch/providers']?['results']?[getCountryCode()] ?? {};
+  }
+
+  void _extractRecommendations(Map<String, dynamic> details) {
+    if (details['recommendations'] != null &&
+        details['recommendations']['results'] != null) {
+      details[TmdbTitleFields.recommendations] =
+          details['recommendations']['results'];
+    }
+  }
+
+  void _extractExternalIds(Map<String, dynamic> details) {
+    final externalIds = details['external_ids'];
+    if (externalIds != null) {
+      if (externalIds['imdb_id'] != null) {
+        details[TmdbTitleFields.imdbId] = externalIds['imdb_id'];
+      }
+      details[TmdbTitleFields.externalIds] = externalIds;
+    }
+  }
+
+  void _extractKeywords(Map<String, dynamic> details, String mediaType) {
+    if (details['keywords'] != null) {
+      final List<dynamic>? keywordsList = mediaType == ApiConstants.movie
+          ? details['keywords']['keywords']
+          : details['keywords']['results'];
+
+      if (keywordsList != null) {
+        details[TmdbTitleFields.keywordIds] =
+            keywordsList.map((k) => k['id'] as int).toList();
+      }
+    }
+  }
+
+  void _extractCertification(Map<String, dynamic> details, String mediaType) {
+    final country = getCountryCode();
+    String? certification;
+
+    if (mediaType == ApiConstants.movie) {
+      if (details['release_dates'] != null &&
+          details['release_dates']['results'] != null) {
+        final results = details['release_dates']['results'] as List<dynamic>;
+        final targetCountry = results.firstWhere(
+            (r) => r['iso_3166_1'] == country,
+            orElse: () => null);
+        
+        if (targetCountry != null && targetCountry['release_dates'] != null) {
+          final dates = targetCountry['release_dates'] as List<dynamic>;
+          if (dates.isNotEmpty) {
+            certification = dates[0]['certification'];
+          }
+        }
+      }
+    } else {
+      if (details['content_ratings'] != null &&
+          details['content_ratings']['results'] != null) {
+        final results = details['content_ratings']['results'] as List<dynamic>;
+        final targetCountry = results.firstWhere(
+            (r) => r['iso_3166_1'] == country,
+            orElse: () => null);
+        
+        if (targetCountry != null) {
+          certification = targetCountry['rating'];
+        }
+      }
+    }
+
+    if (certification != null && certification.isNotEmpty) {
+      details[TmdbTitleFields.certification] = certification;
     }
   }
 }

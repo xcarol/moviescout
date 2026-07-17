@@ -57,26 +57,24 @@ class UrlConstants {
 
   // Endpoints
   static const String tmdbDetailsEndpoint =
-      '/{MEDIA_TYPE}/{ID}?append_to_response=external_ids,watch/providers,recommendations,images,videos,{CREDITS_TYPE}&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
-  static const String tmdbBriefEndpoint =
-      '/{MEDIA_TYPE}/{ID}?append_to_response=images,videos&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
+      '/{MEDIA_TYPE}/{ID}?append_to_response=translations,keywords,external_ids,watch/providers,recommendations,images,videos,{CREDITS_TYPE},release_dates,content_ratings&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
   static const String tmdbProvidersEndpoint =
       '/{MEDIA_TYPE}/{ID}/watch/providers';
   static const String tmdbLightEndpoint =
-      '/{MEDIA_TYPE}/{ID}?append_to_response=watch/providers&language={LOCALE}';
+      '/{MEDIA_TYPE}/{ID}?append_to_response=translations,watch/providers,keywords,recommendations&language={LOCALE}';
 
   static const String tmdbEpisodeDetailsEndpoint =
-      '/tv/{ID}/season/{SEASON_NUMBER}/episode/{EPISODE_NUMBER}?append_to_response=images,videos,credits&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
+      '/tv/{ID}/season/{SEASON_NUMBER}/episode/{EPISODE_NUMBER}?append_to_response=translations,images,videos,credits&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
   static const String tmdbEpisodeBriefEndpoint =
       '/tv/{ID}/season/{SEASON_NUMBER}/episode/{EPISODE_NUMBER}?append_to_response=images,videos&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
 
   static const String tmdbSeasonDetailsEndpoint =
-      '/tv/{ID}/season/{SEASON_NUMBER}?append_to_response=images,videos,credits&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
+      '/tv/{ID}/season/{SEASON_NUMBER}?append_to_response=translations,images,videos,credits&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
   static const String tmdbSeasonBriefEndpoint =
       '/tv/{ID}/season/{SEASON_NUMBER}?append_to_response=images,videos&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
 
   static const String tmdbPersonDetailsEndpoint =
-      '/person/{ID}?append_to_response=combined_credits,images&language={LOCALE}';
+      '/person/{ID}?append_to_response=combined_credits,images,external_ids,tagged_images&language={LOCALE}';
 
   static const String tmdbSearchMoviesEndpoint =
       'search/movie?query={QUERY}&page={PAGE}&language={LOCALE}';
@@ -111,6 +109,11 @@ class UrlConstants {
       'movie/popular?page={PAGE}&language={LOCALE}';
   static const String tmdbPopularTvEndpoint =
       'tv/popular?page={PAGE}&language={LOCALE}';
+
+  static const String tmdbDiscoverMoviesEndpoint =
+      'discover/movie?page={PAGE}&language={LOCALE}&with_genres={GENRES}&with_keywords={KEYWORDS}';
+  static const String tmdbDiscoverTvEndpoint =
+      'discover/tv?page={PAGE}&language={LOCALE}&with_genres={GENRES}&with_keywords={KEYWORDS}';
 
   static const String tmdbMovieProvidersEndpoint = 'movie/{ID}/watch/providers';
   static const String tmdbTvProvidersEndpoint = 'tv/{ID}/watch/providers';

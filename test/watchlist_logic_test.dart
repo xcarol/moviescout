@@ -103,7 +103,8 @@ void main() {
           map['media_type'] = 'movie';
         }
       }
-      map['last_updated'] = now.subtract(const Duration(days: 1)).toIso8601String();
+      map['last_updated'] =
+          now.subtract(const Duration(days: 1)).toIso8601String();
       return map;
     }
 

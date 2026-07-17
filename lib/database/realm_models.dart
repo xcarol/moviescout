@@ -32,6 +32,7 @@ class _TmdbTitleRealm {
   late String mediaType;
   late String imdbId;
   late String homepage;
+  late String certification;
 
   late String? posterPathSuffix;
   late String? backdropPathSuffix;
@@ -41,6 +42,8 @@ class _TmdbTitleRealm {
   late String firstAirDate;
   late String lastAirDate;
   late String lastUpdated;
+
+  late String? externalIdsJson;
 
   // Numbers
   late double voteAverage;
@@ -72,6 +75,7 @@ class _TmdbTitleRealm {
   late String? seasonsJson;
 
   late List<int> genreIds;
+  late List<int> keywordIds;
   late List<int> flatrateProviderIds;
   late int lastNotifiedSeason;
   late String lastProvidersUpdate;

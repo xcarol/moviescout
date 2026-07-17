@@ -24,7 +24,7 @@ import 'package:moviescout/widgets/media_carousel.dart';
 import 'package:moviescout/widgets/edit_button.dart';
 import 'package:moviescout/widgets/translations_button.dart';
 import 'package:moviescout/services/tmdb_translation_service.dart';
-import 'package:moviescout/widgets/boxed_widget.dart';
+import 'package:moviescout/widgets/social_link.dart';
 import 'package:moviescout/services/home_screen_shortcut_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
@@ -191,10 +191,11 @@ class _PersonDetailsState extends State<PersonDetails> {
             const SizedBox(height: 20)
           ],
           _description(person),
+          if (person.biography.isEmpty) _name(person),
           const SizedBox(height: 10),
           Divider(
               color: Theme.of(context).extension<CustomColors>()!.dividerColor),
-          _externalLinks(person),
+          _socialLinks(person),
           Divider(
               color: Theme.of(context).extension<CustomColors>()!.dividerColor),
           const SizedBox(height: 10),
@@ -203,6 +204,8 @@ class _PersonDetailsState extends State<PersonDetails> {
           _crewCredits(person),
           const SizedBox(height: 30),
           _ratedCredits(person, userRatedTitles),
+          const SizedBox(height: 30),
+          _taggedImages(person),
           const SizedBox(height: 50),
         ],
       ),
@@ -316,68 +319,50 @@ class _PersonDetailsState extends State<PersonDetails> {
     }
   }
 
-  Widget _externalLinks(TmdbPerson person) {
+  Widget _socialLinks(TmdbPerson person) {
     List<Widget> links = [];
 
     links.add(
-      BoxedWidget(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-        onPressed: () {
-          launchUrl(
-            Uri.parse(UrlConstants.tmdbPersonWebTemplate
-                .replaceFirst('{ID}', person.tmdbId.toString())),
-            mode: LaunchMode.inAppWebView,
-          );
-        },
-        child: SizedBox(
-          height: 20,
-          child: Image.asset(
-            'assets/tmdb-logo.png',
-            fit: BoxFit.cover,
-          ),
-        ),
+      SocialLink.image(
+        url: UrlConstants.tmdbPersonWebTemplate
+            .replaceFirst('{ID}', person.tmdbId.toString()),
+        assetPath: 'assets/tmdb-logo-square.png',
+        launchMode: LaunchMode.inAppWebView,
       ),
     );
 
     if (person.imdbId.isNotEmpty) {
       links.add(
-        BoxedWidget(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-          onPressed: () {
-            launchUrl(
-              Uri.parse(UrlConstants.imdbNameTemplate
-                  .replaceFirst('{ID}', person.imdbId.toString())),
-              mode: LaunchMode.inAppBrowserView,
-            );
-          },
-          child: SizedBox(
-            height: 20,
-            child: Image.asset(
-              'assets/imdb-logo.png',
-              fit: BoxFit.cover,
-            ),
-          ),
+        SocialLink.image(
+          url: UrlConstants.imdbNameTemplate
+              .replaceFirst('{ID}', person.imdbId.toString()),
+          assetPath: 'assets/imdb-logo-square.png',
+          launchMode: LaunchMode.inAppBrowserView,
         ),
       );
     }
 
+    final externalIds = person.externalIds;
+
+    _addSocialLink(links, externalIds['wikidata_id'],
+        'https://www.wikidata.org/wiki/{ID}', 'assets/wikidata.png');
+    _addSocialLink(links, externalIds['facebook_id'],
+        'https://facebook.com/{ID}', 'assets/facebook.png');
+    _addSocialLink(links, externalIds['instagram_id'],
+        'https://instagram.com/{ID}', 'assets/instagram.png');
+    _addSocialLink(
+        links, externalIds['twitter_id'], 'https://x.com/{ID}', 'assets/X.png');
+    _addSocialLink(links, externalIds['tiktok_id'], 'https://tiktok.com/@{ID}',
+        'assets/tiktok.png');
+    _addSocialLink(links, externalIds['youtube_id'], 'https://youtube.com/{ID}',
+        'assets/youtube.png');
+
     if (person.homepage.isNotEmpty) {
       links.add(
-        BoxedWidget(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-          onPressed: () {
-            launchUrl(
-              Uri.parse(person.homepage),
-              mode: LaunchMode.inAppBrowserView,
-            );
-          },
-          child: SizedBox(
-            height: 20,
-            child: Image.asset(
-              'assets/person_web.png',
-              fit: BoxFit.cover,
-            ),
-          ),
+        SocialLink.image(
+          url: person.homepage,
+          assetPath: 'assets/person_web.png',
+          launchMode: LaunchMode.inAppBrowserView,
         ),
       );
     }
@@ -392,12 +377,25 @@ class _PersonDetailsState extends State<PersonDetails> {
           ),
         ),
         const SizedBox(height: 8),
-        Row(
+        Wrap(
           spacing: 4.0,
+          runSpacing: 4.0,
           children: links,
         ),
       ],
     );
+  }
+
+  void _addSocialLink(
+      List<Widget> links, String? id, String urlTemplate, String logo) {
+    if (id != null && id.isNotEmpty) {
+      links.add(
+        SocialLink.image(
+          url: urlTemplate.replaceFirst('{ID}', id),
+          assetPath: logo,
+        ),
+      );
+    }
   }
 
   String? _buildContextTitle(BuildContext context) {
@@ -480,6 +478,16 @@ class _PersonDetailsState extends State<PersonDetails> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _name(TmdbPerson person) {
+    return Text(
+      person.name,
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      textAlign: TextAlign.start,
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
     );
   }
 
@@ -630,6 +638,35 @@ class _PersonDetailsState extends State<PersonDetails> {
                 role: PersonTitleRole.crew,
               );
             },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _taggedImages(TmdbPerson person) {
+    if (person.taggedImages.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.gallery,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: 200.0,
+          child: MediaCarousel(
+            images: person.taggedImages,
+            backdropPath: '',
+            posterPath: '',
+            mediaType: ApiConstants.person,
+            aspectRatio: 16 / 9,
           ),
         ),
       ],

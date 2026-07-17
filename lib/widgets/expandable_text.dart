@@ -52,7 +52,7 @@ class _ExpandableTextState extends State<ExpandableText> {
             constraints.maxWidth, span, textScaler, textDirection);
 
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text.rich(
               span,
@@ -69,11 +69,13 @@ class _ExpandableTextState extends State<ExpandableText> {
                     _isExpanded = !_isExpanded;
                   });
                 },
-                child: Icon(
-                  Icons.more_horiz,
-                  color: _isExpanded
-                      ? Colors.transparent
-                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                child: Center(
+                  child: Icon(
+                    Icons.more_horiz,
+                    color: _isExpanded
+                        ? Colors.transparent
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
           ],

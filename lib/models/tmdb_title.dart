@@ -19,7 +19,11 @@ class TmdbTitleFields {
   static const String budget = 'budget';
   static const String genres = 'genres';
   static const String genreIds = 'genre_ids';
+  static const String keywordIds = 'keyword_ids';
+  static const String flatrateProviderIds = 'flatrate_provider_ids';
   static const String homepage = 'homepage';
+  static const String certification = 'certification';
+  static const String externalIds = 'external_ids';
   static const String id = 'id';
   static const String imdbId = 'imdb_id';
   static const String originCountry = 'origin_country';
@@ -123,6 +127,7 @@ class TmdbTitle implements TmdbItem {
   late String mediaType;
   late String imdbId;
   late String homepage;
+  late String certification;
 
   late String? posterPathSuffix;
   late String? backdropPathSuffix;
@@ -142,6 +147,19 @@ class TmdbTitle implements TmdbItem {
   late int runtime;
   late int numberOfEpisodes;
   late int numberOfSeasons;
+
+  Map<String, dynamic>? _externalIdsCache;
+
+  Map<String, dynamic> get externalIds {
+    if (_externalIdsCache != null) return _externalIdsCache!;
+    if (externalIdsJson == null) return {};
+    try {
+      _externalIdsCache = jsonDecode(externalIdsJson!);
+      return _externalIdsCache!;
+    } catch (e) {
+      return {};
+    }
+  }
   late double popularity;
   late int budget;
   late int revenue;
@@ -155,6 +173,7 @@ class TmdbTitle implements TmdbItem {
 
   // Lists (Simple)
   late List<int> genreIds;
+  late List<int> keywordIds;
   late List<int> flatrateProviderIds;
   late List<String> originCountry;
 
@@ -168,6 +187,7 @@ class TmdbTitle implements TmdbItem {
   late String? imagesJson;
   late String? videosJson;
   late String? omdbRatingsJson;
+  late String? externalIdsJson;
 
   late int lastNotifiedSeason;
   late String lastProvidersUpdate;
@@ -205,6 +225,7 @@ class TmdbTitle implements TmdbItem {
     this.effectiveRuntime = 0,
     this.effectiveReleaseDate = '',
     this.genreIds = const [],
+    this.keywordIds = const [],
     this.flatrateProviderIds = const [],
     this.originCountry = const [],
     this.creditsJson,
@@ -216,7 +237,9 @@ class TmdbTitle implements TmdbItem {
     this.imagesJson,
     this.videosJson,
     this.omdbRatingsJson,
+    this.externalIdsJson,
     this.homepage = '',
+    this.certification = '',
     this.isPinned = false,
     this.notifyNewSeasons = false,
     this.lastNotifiedSeason = 0,
@@ -283,6 +306,7 @@ class TmdbTitle implements TmdbItem {
     status = title[TmdbTitleFields.status] ?? status;
     imdbId = title[TmdbTitleFields.imdbId] ?? imdbId;
     homepage = title[TmdbTitleFields.homepage] ?? homepage;
+    certification = title[TmdbTitleFields.certification] ?? certification;
 
     if (title.containsKey(TmdbTitleFields.posterPath)) {
       posterPathSuffix = title[TmdbTitleFields.posterPath];
@@ -379,6 +403,11 @@ class TmdbTitle implements TmdbItem {
     if (title[TmdbTitleFields.omdbRatings] != null) {
       omdbRatingsJson = jsonEncode(title[TmdbTitleFields.omdbRatings]);
     }
+    if (title.containsKey(TmdbTitleFields.externalIds)) {
+      externalIdsJson = title[TmdbTitleFields.externalIds] != null
+          ? jsonEncode(title[TmdbTitleFields.externalIds])
+          : null;
+    }
 
     character = title[TmdbTitleFields.character] ?? character;
     job = title[TmdbTitleFields.job] ?? job;
@@ -386,6 +415,11 @@ class TmdbTitle implements TmdbItem {
 
     updateGenreIds(
         this, title[TmdbTitleFields.genres], title[TmdbTitleFields.genreIds]);
+
+    if (title[TmdbTitleFields.keywordIds] is List) {
+      keywordIds = List<int>.from(title[TmdbTitleFields.keywordIds]);
+    }
+
     updateProviderIds(this, title[TmdbTitleFields.providers]);
   }
 
@@ -403,6 +437,7 @@ class TmdbTitle implements TmdbItem {
       TmdbTitleFields.mediaType: mediaType,
       TmdbTitleFields.imdbId: imdbId,
       TmdbTitleFields.homepage: homepage,
+      TmdbTitleFields.certification: certification,
       TmdbTitleFields.posterPath: posterPathSuffix,
       TmdbTitleFields.backdropPath: backdropPathSuffix,
       TmdbTitleFields.releaseDate: releaseDate,
@@ -426,7 +461,11 @@ class TmdbTitle implements TmdbItem {
       TmdbTitleFields.lastNotifiedSeason: lastNotifiedSeason,
       TmdbTitleFields.lastProvidersUpdate: lastProvidersUpdate,
       TmdbTitleFields.genreIds: genreIds,
+      TmdbTitleFields.keywordIds: keywordIds,
+      TmdbTitleFields.flatrateProviderIds: flatrateProviderIds,
       TmdbTitleFields.originCountry: originCountry,
+      TmdbTitleFields.externalIds:
+          externalIdsJson != null ? jsonDecode(externalIdsJson!) : null,
       TmdbTitleFields.credits:
           creditsJson != null ? jsonDecode(creditsJson!) : null,
       TmdbTitleFields.providers:

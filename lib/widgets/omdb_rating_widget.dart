@@ -9,18 +9,18 @@ class OmdbRatingWidget extends StatelessWidget {
   String _normalizeValue(String source, String value) {
     if (source == 'Internet Movie Database' && value.contains('/')) {
       double? num = double.tryParse(value.split('/')[0]);
-      if (num != null) return num.toStringAsFixed(1);
+      if (num != null) return num == 10.0 ? '10' : num.toStringAsFixed(1);
     } else if (source == 'Rotten Tomatoes' && value.contains('%')) {
       String clean = value.replaceAll('%', '');
       double? num = double.tryParse(clean);
       if (num != null) {
-        return (num / 10).toStringAsFixed(1);
+        return (num / 10) == 10.0 ? '10' : (num / 10).toStringAsFixed(1);
       }
     } else if (source == 'Metacritic' && value.contains('/')) {
       String numStr = value.split('/')[0];
       double? num = double.tryParse(numStr);
       if (num != null) {
-        return (num / 10).toStringAsFixed(1);
+        return (num / 10) == 10.0 ? '10' : (num / 10).toStringAsFixed(1);
       }
     }
     return value;
