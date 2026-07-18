@@ -18,7 +18,8 @@ class RateForm extends Dialog {
   @override
   Widget build(BuildContext context) {
     String rate = AppLocalizations.of(context)!.rate;
-    ValueNotifier<double> rating = ValueNotifier(initialRate ?? 0.0);
+    ValueNotifier<double> rating = ValueNotifier(
+        initialRate == null || initialRate! < 1.0 ? 1.0 : initialRate!);
 
     return AlertDialog(
       title: Text(
@@ -69,10 +70,9 @@ class RateForm extends Dialog {
               const SizedBox(height: 10),
               Slider(
                 value: rating.value,
-                min: 0.0,
+                min: 1.0,
                 max: 10.0,
-                divisions:
-                    20, // TMDB only accepts half points (.5) but decimals from .0 to .9
+                divisions: 18, // TMDB only accepts half points (.5)
                 label: rating.value.toStringAsFixed(1),
                 onChanged: (double newValue) {
                   rating.value = newValue;
