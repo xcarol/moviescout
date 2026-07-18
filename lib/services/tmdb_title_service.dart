@@ -373,10 +373,9 @@ class TmdbTitleService extends TmdbBaseService {
       if (details['release_dates'] != null &&
           details['release_dates']['results'] != null) {
         final results = details['release_dates']['results'] as List<dynamic>;
-        final targetCountry = results.firstWhere(
-            (r) => r['iso_3166_1'] == country,
-            orElse: () => null);
-        
+        final targetCountry = results
+            .firstWhere((r) => r['iso_3166_1'] == country, orElse: () => null);
+
         if (targetCountry != null && targetCountry['release_dates'] != null) {
           final dates = targetCountry['release_dates'] as List<dynamic>;
           if (dates.isNotEmpty) {
@@ -388,10 +387,9 @@ class TmdbTitleService extends TmdbBaseService {
       if (details['content_ratings'] != null &&
           details['content_ratings']['results'] != null) {
         final results = details['content_ratings']['results'] as List<dynamic>;
-        final targetCountry = results.firstWhere(
-            (r) => r['iso_3166_1'] == country,
-            orElse: () => null);
-        
+        final targetCountry = results
+            .firstWhere((r) => r['iso_3166_1'] == country, orElse: () => null);
+
         if (targetCountry != null) {
           certification = targetCountry['rating'];
         }

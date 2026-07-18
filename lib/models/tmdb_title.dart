@@ -160,6 +160,7 @@ class TmdbTitle implements TmdbItem {
       return {};
     }
   }
+
   late double popularity;
   late int budget;
   late int revenue;

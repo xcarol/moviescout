@@ -144,7 +144,8 @@ class TmdbRateslistService extends TmdbTitleListService {
             accountId, sessionId, title.tmdbId, title.mediaType, rating);
       });
 
-      final globalTitle = await repository.getTitleGlobal(title.tmdbId, title.mediaType);
+      final globalTitle =
+          await repository.getTitleGlobal(title.tmdbId, title.mediaType);
       if (rating > 0 || globalTitle != null) {
         await repository.updateRating(title);
         await repository.updateIsPinned(title);
