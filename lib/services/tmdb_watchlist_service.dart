@@ -76,7 +76,10 @@ class TmdbWatchlistService extends TmdbTitleListService {
             accountId, sessionId, title.tmdbId, title.mediaType, add);
       });
 
-      await repository.updateIsPinned(title);
+      final globalTitle = await repository.getTitleGlobal(title.tmdbId, title.mediaType);
+      if (add || globalTitle != null) {
+        await repository.updateIsPinned(title);
+      }
     } catch (error, stackTrace) {
       ErrorService.log(
         error,
