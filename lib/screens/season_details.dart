@@ -274,14 +274,10 @@ class _SeasonDetailsState extends State<SeasonDetails> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Text(
-              DateFormatter.formatDate(context, season.airDate),
-              maxLines: 1,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+          child: Text(
+            DateFormatter.formatDate(context, season.airDate),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -336,14 +332,11 @@ class _SeasonDetailsState extends State<SeasonDetails> {
 
     Widget? creatorsWidget;
     if (creators.isNotEmpty) {
-      creatorsWidget = SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: _infoColumn(
-          AppLocalizations.of(context)!.creator,
-          ClickableNames(
-            people: creators,
-            tmdbListService: widget.tmdbListService,
-          ),
+      creatorsWidget = _infoColumn(
+        AppLocalizations.of(context)!.creator,
+        ClickableNames(
+          people: creators,
+          tmdbListService: widget.tmdbListService,
         ),
       );
     }
@@ -355,14 +348,11 @@ class _SeasonDetailsState extends State<SeasonDetails> {
 
     Widget? writersWidget;
     if (writers.isNotEmpty) {
-      writersWidget = SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: _infoColumn(
-          AppLocalizations.of(context)!.writer,
-          ClickableNames(
-            people: writers,
-            tmdbListService: widget.tmdbListService,
-          ),
+      writersWidget = _infoColumn(
+        AppLocalizations.of(context)!.writer,
+        ClickableNames(
+          people: writers,
+          tmdbListService: widget.tmdbListService,
         ),
       );
     }

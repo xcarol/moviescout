@@ -248,33 +248,30 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                if (episode.airDate.isNotEmpty)
-                  Text(
-                    DateFormatter.formatDate(context, episode.airDate),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+          child: Wrap(
+            children: [
+              if (episode.airDate.isNotEmpty)
+                Text(
+                  DateFormatter.formatDate(context, episode.airDate),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
-                if (episode.airDate.isNotEmpty && episode.runtime > 0)
-                  Text(
-                    ' - ',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                ),
+              if (episode.airDate.isNotEmpty && episode.runtime > 0)
+                Text(
+                  ' - ',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
-                if (episode.runtime > 0)
-                  Text(
-                    '${episode.runtime} min',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                ),
+              if (episode.runtime > 0)
+                Text(
+                  '${episode.runtime} min',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         ),
         Icon(
