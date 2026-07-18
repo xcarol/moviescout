@@ -228,6 +228,7 @@ class TmdbTitleService extends TmdbBaseService {
     title.providersJson = jsonEncode(providers);
     TmdbTitle.updateProviderIds(title, providers);
     title.lastProvidersUpdate = DateTime.now().toIso8601String();
+    title.lastUpdated = DateTime.now().toIso8601String();
 
     return title;
   }
