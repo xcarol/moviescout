@@ -84,7 +84,7 @@ void main() {
     }; // Netflix, Netflix with Ads, Disney Plus
 
     Map<String, dynamic> loadJson(String fileName) {
-      final file = File('test/$fileName');
+      final file = File('test/test_data/$fileName');
       return jsonDecode(file.readAsStringSync());
     }
 
