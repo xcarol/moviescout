@@ -105,8 +105,9 @@ Future<bool> updateTitle(
 
     if (title.isSerie) {
       title.lastNotifiedSeason = title.numberOfSeasons;
+    } else {
+      title.notifyNewSeasons = false;
     }
-    title.notifyNewSeasons = false;
     await repository.updateNotifyNewSeasons(title);
 
     return true;
@@ -135,7 +136,6 @@ Future<bool> updateTitle(
     ));
 
     title.lastNotifiedSeason = title.numberOfSeasons;
-    title.notifyNewSeasons = false;
 
     if (!title.inLists.contains(AppConstants.watchlist)) {
       title.inLists = [...title.inLists, AppConstants.watchlist];
