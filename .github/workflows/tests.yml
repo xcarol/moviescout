@@ -12,6 +12,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: 'any'
+          fetch-depth: 0
 
       - name: Install dependencies
         run: flutter pub get
@@ -26,6 +27,7 @@ jobs:
         run: flutter test --coverage
 
       - name: Upload coverage to Codacy
-        env:
-          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
-        run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r coverage/lcov.info
+        uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: coverage/lcov.info
