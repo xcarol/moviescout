@@ -4,7 +4,7 @@ This is a serverless function designed to be deployed to Vercel. It bridges TMDB
 
 ## Why is this needed?
 
-MovieScout relies on TMDB for user authentication. However, TMDB's v4 custom lists have significant latency issues (eventual consistency) making them unsuitable for real-time state synchronization across devices (e.g., for Pinned Titles or Following/Snoozed). 
+MovieScout relies on TMDB for user authentication. However, TMDB's v4 custom lists have significant latency issues (eventual consistency) making them unsuitable for real-time state synchronization across devices (e.g., for Pinned Titles or Following/Snoozed).
 
 To solve this, MovieScout uses Firebase Firestore. Since we don't want the user to perform a "Double Login" (TMDB + Google), this function validates the TMDB `session_id` and securely generates a **Firebase Custom Token**. The Flutter app then uses this token to connect to Firebase silently.
 
