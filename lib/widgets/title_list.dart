@@ -23,6 +23,8 @@ import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/widgets/pinned_title_chip.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/widgets/searchable_list_state.dart';
+import 'package:moviescout/utils/ui_utils.dart';
 
 class TitleList extends StatefulWidget {
   final TmdbTitleListService listService;
@@ -33,11 +35,14 @@ class TitleList extends StatefulWidget {
   State<TitleList> createState() => _TitleListState();
 }
 
-class _TitleListState extends State<TitleList> {
+class _TitleListState extends SearchableListState<TitleList> {
   late final TitleListController _controller;
   final _refreshController = IndicatorController();
   bool _isPinnedSectionExpanded =
       PreferencesService().prefs.getBool('isPinnedSectionExpanded') ?? true;
+
+  @override
+  FocusNode get searchFocusNode => _controller.searchFocusNode;
 
   @override
   void initState() {
@@ -56,14 +61,6 @@ class _TitleListState extends State<TitleList> {
     super.dispose();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final isCurrent = ModalRoute.of(context)?.isCurrent ?? false;
-    if (!isCurrent && _controller.searchFocusNode.hasFocus) {
-      _controller.searchFocusNode.unfocus();
-    }
-  }
 
   Widget _titleList() {
     return Consumer<TmdbTitleListService>(
@@ -91,15 +88,13 @@ class _TitleListState extends State<TitleList> {
               return Builder(
                 builder: (innerContext) {
                   final mediaQuery = MediaQuery.of(innerContext);
-                  final clampedScale =
-                      mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
 
                   final titleTheme =
                       Theme.of(context).extension<CustomColors>()!;
 
                   return MediaQuery(
                     data: mediaQuery.copyWith(
-                      textScaler: TextScaler.linear(clampedScale),
+                      textScaler: TextScaler.linear(UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
                     ),
                     child: Column(
                       children: [

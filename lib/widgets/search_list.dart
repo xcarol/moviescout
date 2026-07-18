@@ -7,6 +7,7 @@ import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/search_list_info_line.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/person_card.dart';
+import 'package:moviescout/utils/ui_utils.dart';
 
 class SearchList extends StatefulWidget {
   final TmdbSearchService searchService;
@@ -90,12 +91,10 @@ class _SearchListState extends State<SearchList> {
                     return Builder(
                       builder: (innerContext) {
                         final mediaQuery = MediaQuery.of(innerContext);
-                        final clampedScale =
-                            mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
 
                         return MediaQuery(
                           data: mediaQuery.copyWith(
-                            textScaler: TextScaler.linear(clampedScale),
+                            textScaler: TextScaler.linear(UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
                           ),
                           child: Column(
                             children: [
