@@ -136,6 +136,7 @@ class TmdbRateslistService extends TmdbTitleListService {
           await followingService!.removeFollowingFromServer(title);
           title.notifyNewSeasons = false;
         }
+        title.rating = 0.0;
       }
       await updateTitle(accountId, sessionId, title, rating > 0,
           (String accountId, String sessionId) async {
@@ -143,9 +144,13 @@ class TmdbRateslistService extends TmdbTitleListService {
             accountId, sessionId, title.tmdbId, title.mediaType, rating);
       });
 
-      await repository.updateRating(title);
-      await repository.updateIsPinned(title);
-      await repository.updateNotifyNewSeasons(title);
+      final globalTitle =
+          await repository.getTitleGlobal(title.tmdbId, title.mediaType);
+      if (rating > 0 || globalTitle != null) {
+        await repository.updateRating(title);
+        await repository.updateIsPinned(title);
+        await repository.updateNotifyNewSeasons(title);
+      }
     } catch (error, stackTrace) {
       ErrorService.log(
         error,
