@@ -124,17 +124,14 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                           ),
                           if (notification.providerIds.isNotEmpty) ...[
                             const SizedBox(height: 8),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: notification.providerIds.map((id) {
-                                  final providerData = allProviders[id];
-                                  if (providerData == null) {
-                                    return const SizedBox.shrink();
-                                  }
-                                  return _providerLogo(providerData);
-                                }).toList(),
-                              ),
+                            Wrap(
+                              children: notification.providerIds.map((id) {
+                                final providerData = allProviders[id];
+                                if (providerData == null) {
+                                  return const SizedBox.shrink();
+                                }
+                                return _providerLogo(providerData);
+                              }).toList(),
                             ),
                           ],
                         ],
