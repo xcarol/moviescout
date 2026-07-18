@@ -347,9 +347,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               ? Brightness.light
               : Brightness.dark;
 
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
           SystemChrome.setSystemUIOverlayStyle(
             SystemUiOverlayStyle(
+              systemNavigationBarColor: Colors.transparent,
               systemNavigationBarIconBrightness: iconBrightness,
+              statusBarColor: Colors.transparent,
               statusBarIconBrightness: iconBrightness,
             ),
           );
