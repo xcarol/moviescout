@@ -1,6 +1,7 @@
 # Movie Scout
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7487a433b43b4c8781d753122b470d5b)](https://app.codacy.com/gh/xcarol/moviescout/dashboard)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7487a433b43b4c8781d753122b470d5b)](https://app.codacy.com/gh/xcarol/moviescout/dashboard) 
+[![Codecov](https://codecov.io/github/xcarol/moviescout/graph/badge.svg?token=YVFRRROX48)](https://codecov.io/github/xcarol/moviescout)
 
 Movie Scout is a movie and TV tracker powered by TMDB. Built around your watchlist, not around streaming catalogs.  
 
