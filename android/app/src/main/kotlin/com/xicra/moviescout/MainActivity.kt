@@ -12,6 +12,11 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
+/**
+ * Main activity of the application.
+ * Sets up the Flutter engine and provides a MethodChannel
+ * to handle shortcut creation requests from Dart.
+ */
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "com.xicra.moviescout/shortcut"
 

@@ -21,14 +21,16 @@ jobs:
       - name: Extract version and create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: |
-          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          BRANCH_NAME="$HEAD_REF"
           
           VERSION=${BRANCH_NAME#release/}
           
           echo "Creanting a release for version: $VERSION"
           
           gh release create "$VERSION" \
-            --target "${{ github.event.pull_request.base.ref }}" \
+            --target "$BASE_REF" \
             --title "$VERSION" \
             --generate-notes
