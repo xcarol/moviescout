@@ -12,6 +12,11 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
+/**
+ * Activity for handling and creating shortcuts in Android.
+ * This activity acts as the entry point for shortcuts and handles
+ * the creation of new shortcuts via a Flutter MethodChannel.
+ */
 class ShortcutActivity: FlutterActivity() {
     private val CHANNEL = "com.xicra.moviescout/shortcut"
 
