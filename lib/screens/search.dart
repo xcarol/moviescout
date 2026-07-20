@@ -299,6 +299,8 @@ class _SearchState extends State<Search> {
   void searchTitle(BuildContext context, String title) async {
     final term = title;
 
+    _removeOverlay();
+
     if (term.isNotEmpty) {
       _historyService.add(term);
     }

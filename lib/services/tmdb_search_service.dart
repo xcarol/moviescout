@@ -309,7 +309,6 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
       final tmdbId = item[TmdbTitleFields.id] as int;
       final existing = existingMap['${tmdbId}_$mediaType'];
       if (existing != null) {
-        existing.fillFromMap(item);
         mergedTitles.add(existing);
       } else {
         mergedTitles.add(TmdbTitle.fromMap(title: item));

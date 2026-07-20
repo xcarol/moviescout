@@ -237,7 +237,6 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
         final tmdbId = element[TmdbTitleFields.id] as int;
         final existing = existingMap['${tmdbId}_${ApiConstants.movie}'];
         if (existing != null) {
-          existing.fillFromMap(element);
           serverList.add(existing);
         } else {
           serverList.add(TmdbTitle.fromMap(title: element));
@@ -249,7 +248,6 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
         final tmdbId = element[TmdbTitleFields.id] as int;
         final existing = existingMap['${tmdbId}_${ApiConstants.tv}'];
         if (existing != null) {
-          existing.fillFromMap(element);
           serverList.add(existing);
         } else {
           serverList.add(TmdbTitle.fromMap(title: element));
