@@ -47,15 +47,15 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
     super.dispose();
   }
 
-  void _onPlayerStateChanged() {
+  Future<void> _onPlayerStateChanged() async {
     final videoId = VideoPlayerService().videoId;
     if (videoId != _currentVideoId) {
       if (videoId == null) {
         _controller?.close();
         _controller = null;
         _currentVideoId = null;
-        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+        await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
         if (mounted) setState(() {});
       } else {
         _controller?.close();
@@ -70,18 +70,18 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
           ),
         );
 
-        _controller!.setFullScreenListener((isFullScreen) {
+        _controller!.setFullScreenListener((isFullScreen) async {
           if (isFullScreen) {
-            SystemChrome.setPreferredOrientations([
+            await SystemChrome.setPreferredOrientations([
               DeviceOrientation.landscapeLeft,
               DeviceOrientation.landscapeRight,
             ]);
-            SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+            await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
           } else {
-            SystemChrome.setPreferredOrientations([
+            await SystemChrome.setPreferredOrientations([
               DeviceOrientation.portraitUp,
             ]);
-            SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+            await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
           }
         });
 
