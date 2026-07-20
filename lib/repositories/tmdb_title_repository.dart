@@ -206,6 +206,17 @@ class TmdbTitleRepository {
     }
   }
 
+  Future<void> invalidateSeasonsAndEpisodes(int tvId) async {
+    _realm.write(() {
+      final seasons = _realm.query<TmdbSeasonRealm>(
+          '${TmdbSeasonRealmFields.tvId} == \$0', [tvId]);
+      _realm.deleteMany(seasons);
+      final episodes = _realm.query<TmdbEpisodeRealm>(
+          '${TmdbEpisodeRealmFields.tvId} == \$0', [tvId]);
+      _realm.deleteMany(episodes);
+    });
+  }
+
   Future<void> deleteTitles(
       String listName, List<int> tmdbIds, List<String> mediaTypes) async {
     if (tmdbIds.isEmpty) return;
