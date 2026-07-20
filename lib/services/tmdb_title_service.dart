@@ -7,6 +7,8 @@ import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/youtube_service.dart';
+import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:flutter/foundation.dart';
 
 class TmdbTitleService extends TmdbBaseService {
   Future<dynamic> _retrieveTitleDetails(
@@ -69,6 +71,13 @@ class TmdbTitleService extends TmdbBaseService {
     String mediaType = title.mediaType;
     if (mediaType == '') {
       mediaType = title.isMovie ? ApiConstants.movie : ApiConstants.tv;
+    }
+
+
+    if (force &&
+        (mediaType == ApiConstants.tv ||
+            mediaType == AppConstants.miniseries)) {
+      await TmdbTitleRepository().invalidateSeasonsAndEpisodes(title.tmdbId);
     }
 
     final result = await _retrieveTitleDetails(
