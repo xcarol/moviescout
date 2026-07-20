@@ -114,7 +114,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       rating,
     );
 
-    if (rating > 0 &&
+    if (rating > AppConstants.seenRating &&
         title.status == TvShowStatus.returning &&
         !title.notifyNewSeasons) {
       if (mounted) {
