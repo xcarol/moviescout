@@ -138,7 +138,9 @@ class TitleCard extends StatelessWidget {
                     color: customColors.userRatedTitle,
                   ),
                   SizedBox(width: iconTextSpacing),
-                  Text(ratedTitle.rating.toStringAsFixed(0)),
+                  Text(ratedTitle.rating == 10.0
+                      ? '10'
+                      : ratedTitle.rating.toStringAsFixed(1)),
                 ]);
               }
             }
