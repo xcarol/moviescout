@@ -143,12 +143,7 @@ class _MediaCarouselState extends State<MediaCarousel> {
     return AspectRatio(
       aspectRatio: widget.aspectRatio,
       child: image.isNotEmpty
-          ? CachedNetworkImage(
-              imageUrl: image,
-              fit: BoxFit.fill,
-              errorWidget: (context, error, stackTrace) =>
-                  _buildPlaceholder(mediaType),
-            )
+          ? _buildImageFromUrl(image)
           : _buildPlaceholder(mediaType),
     );
   }
@@ -169,10 +164,12 @@ class _MediaCarouselState extends State<MediaCarousel> {
   }
 
   Widget _buildImage(String path) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final url =
-        UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', path);
+    return _buildImageFromUrl(
+        UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', path));
+  }
 
+  Widget _buildImageFromUrl(String url) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Stack(
       fit: StackFit.expand,
       children: [
