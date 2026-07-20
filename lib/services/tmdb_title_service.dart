@@ -8,7 +8,6 @@ import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/youtube_service.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
-import 'package:flutter/foundation.dart';
 
 class TmdbTitleService extends TmdbBaseService {
   Future<dynamic> _retrieveTitleDetails(
