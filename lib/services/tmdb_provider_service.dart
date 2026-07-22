@@ -17,6 +17,14 @@ class TmdbProviderService extends TmdbConfigListService {
 
   bool get isInitialized => _isInitialized;
 
+  List<int> get enabledProviderIds {
+    if (!_isInitialized) return [];
+    return _providerMap.entries
+        .where((entry) => entry.value[TmdbProvider.providerEnabled] == 'true')
+        .map((entry) => int.parse(entry.value[TmdbProvider.providerId]!))
+        .toList();
+  }
+
   TmdbProviderService()
       : super(
           configListName: 'providers',

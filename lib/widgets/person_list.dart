@@ -56,7 +56,6 @@ class _PersonListState extends SearchableListState<PersonList> {
     super.dispose();
   }
 
-
   Widget _buildListView() {
     return ListView.builder(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -74,7 +73,8 @@ class _PersonListState extends SearchableListState<PersonList> {
 
             return MediaQuery(
               data: mediaQuery.copyWith(
-                textScaler: TextScaler.linear(UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
+                textScaler: TextScaler.linear(
+                    UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
               ),
               child: Column(
                 children: [
@@ -120,7 +120,8 @@ class _PersonListState extends SearchableListState<PersonList> {
 
             return MediaQuery(
               data: mediaQuery.copyWith(
-                textScaler: TextScaler.linear(UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
+                textScaler: TextScaler.linear(
+                    UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
               ),
               child: PersonChip(
                 person: person,

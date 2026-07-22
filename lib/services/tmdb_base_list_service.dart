@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/error_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
+import 'package:moviescout/services/tmdb_genre_service.dart';
+
+enum RatingFilter { all, rated, seenOnly, followingOnly }
 
 abstract class TmdbBaseListService<T> extends TmdbBaseService
     with ChangeNotifier {
@@ -13,6 +17,8 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
   @protected
   final List<T> loadedItemsVal = List.empty(growable: true);
   int get loadedItemCount => loadedItemsVal.length;
+
+  bool get userRatingAvailable => false;
 
   @protected
   bool isDbLoading = false;
@@ -36,6 +42,30 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
   String filterText = '';
 
   ValueNotifier<int> selectedItemCount = ValueNotifier(0);
+
+  @protected
+  String filterMediaType = '';
+  @protected
+  List<int> filterGenres = [];
+  @protected
+  bool filterExcludeGenres = false;
+  @protected
+  List<int> filterProvidersIds = [];
+  @protected
+  bool filterByProviders = false;
+  @protected
+  String selectedSort = SortOption.alphabetically;
+  @protected
+  bool isSortAsc = true;
+  @protected
+  RatingFilter filterRating = RatingFilter.all;
+
+  String get defaultSort => selectedSort;
+  bool get defaultSortAsc => isSortAsc;
+
+  @protected
+  List<String> listGenresVal = [];
+  ValueNotifier<List<String>> listGenres = ValueNotifier([]);
 
   bool get isRefreshable => true;
 
@@ -169,5 +199,73 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
       isDbLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> setFilters({
+    String text = '',
+    String type = '',
+    List<String> genres = const [],
+    bool excludeGenres = false,
+    bool filterByProviders = false,
+    List<int> providerListIds = const [],
+    RatingFilter ratingFilter = RatingFilter.all,
+    String sort = SortOption.alphabetically,
+    bool ascending = true,
+  }) async {
+    filterText = text;
+    filterMediaType = type;
+    filterGenres = TmdbGenreService().getIdsFromNames(genres);
+    filterExcludeGenres = excludeGenres;
+    this.filterByProviders = filterByProviders;
+    filterProvidersIds = providerListIds;
+    filterRating = ratingFilter;
+    selectedSort = sort;
+    isSortAsc = computeSortDirection(sort, ascending);
+    await filterItems();
+  }
+
+  void setGenresFilter(List<String> genres, bool excludeGenres) {
+    filterGenres = TmdbGenreService().getIdsFromNames(genres);
+    filterExcludeGenres = excludeGenres;
+    filterItems();
+  }
+
+  void setProvidersFilter(bool filterByProviders, List<int> providerIds) {
+    this.filterByProviders = filterByProviders;
+    filterProvidersIds = providerIds;
+    filterItems();
+  }
+
+  void setTypeFilter(String type) {
+    filterMediaType = type;
+    filterItems();
+  }
+
+  void setRatingFilter(RatingFilter filter) {
+    filterRating = filter;
+    filterItems();
+  }
+
+  @protected
+  bool computeSortDirection(String sort, bool ascending) {
+    switch (sort) {
+      case SortOption.alphabetically:
+        return ascending;
+      case SortOption.rating:
+      case SortOption.userRating:
+      case SortOption.releaseDate:
+      case SortOption.dateRated:
+      case SortOption.runtime:
+      case SortOption.addedOrder:
+        return !ascending;
+      default:
+        return ascending;
+    }
+  }
+
+  void setSort(String sort, bool ascending) {
+    selectedSort = sort;
+    isSortAsc = computeSortDirection(sort, ascending);
+    filterItems();
   }
 }

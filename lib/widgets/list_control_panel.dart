@@ -3,69 +3,73 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/screens/genres.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/widgets/text_filter_widget.dart';
+import 'package:moviescout/widgets/list_controller.dart';
+import 'package:moviescout/widgets/rating_filter_tabs.dart';
+import 'package:moviescout/services/tmdb_base_list_service.dart';
 
-class TitleListControlPanel extends StatelessWidget {
-  final Function textFilterChanged;
-  final TextEditingController textFilterController;
-  final List<String> genresList;
-  final List<String> selectedGenres;
-  final bool excludeGenres;
-  final Function genresChanged;
-  final bool filterByProviders;
-  final Function providersChanged;
-  final FocusNode focusNode;
-  final Widget? ratingFilter;
+class ListControlPanel extends StatelessWidget {
+  final ListController controller;
+  final TmdbBaseListService listService;
+  final bool showRatingFilter;
 
-  const TitleListControlPanel({
+  const ListControlPanel({
     super.key,
-    required this.textFilterChanged,
-    required this.textFilterController,
-    required this.genresList,
-    required this.selectedGenres,
-    required this.excludeGenres,
-    required this.genresChanged,
-    required this.filterByProviders,
-    required this.providersChanged,
-    required this.focusNode,
-    this.ratingFilter,
+    required this.controller,
+    required this.listService,
+    this.showRatingFilter = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(4.0),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
+    return ValueListenableBuilder(
+      valueListenable: listService.listGenres,
+      builder: (context, genres, child) {
+        final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+        return Container(
+          color: titleTheme.controlPanelBackground,
+          child: Column(
             children: [
-              _genresSelector(context, genresChanged),
-              _providersSelector(context, filterByProviders),
+              Container(
+                padding: const EdgeInsets.all(4.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _genresSelector(context, genres),
+                        _providersSelector(context),
+                      ],
+                    ),
+                    TextFilterWidget(
+                      controller: controller.textFilterController,
+                      focusNode: controller.searchFocusNode,
+                      hintText: AppLocalizations.of(context)!.search,
+                      onChanged: (String value) {
+                        controller.setTextFilter(value);
+                      },
+                    ),
+                    const SizedBox(height: 5),
+                    if (showRatingFilter)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [RatingFilterTabs(controller: controller)],
+                      ),
+                  ],
+                ),
+              ),
             ],
           ),
-          TextFilterWidget(
-            controller: textFilterController,
-            focusNode: focusNode,
-            hintText: AppLocalizations.of(context)!.search,
-            onChanged: (String value) {
-              textFilterChanged(value);
-            },
-          ),
-          const SizedBox(height: 5),
-          if (ratingFilter != null)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [ratingFilter!],
-            ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _genresSelector(BuildContext context, Function genresChanged) {
+  Widget _genresSelector(BuildContext context, List<String> genresList) {
     final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+    final selectedGenres = controller.selectedGenres.toList();
+    final excludeGenres = controller.excludeGenres;
     final foregroundColor = selectedGenres.isNotEmpty
         ? titleTheme.controlPanelActiveFilterForeground
         : titleTheme.controlPanelInactiveFilterForeground;
@@ -83,7 +87,7 @@ class TitleListControlPanel extends StatelessWidget {
               selectedGenres: selectedGenres,
               excludeGenres: excludeGenres,
               onGenresChanged: (genres, exclude) {
-                genresChanged(genres, exclude);
+                controller.setGenres(genres, exclude);
               },
             ),
           ),
@@ -121,7 +125,7 @@ class TitleListControlPanel extends StatelessWidget {
     );
   }
 
-  Widget _providersSelector(BuildContext context, bool filterByProviders) {
+  Widget _providersSelector(BuildContext context) {
     final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -137,9 +141,9 @@ class TitleListControlPanel extends StatelessWidget {
         Switch(
           activeThumbColor: titleTheme.controlPanelActiveFilterBackground,
           inactiveThumbColor: titleTheme.controlPanelInactiveFilterForeground,
-          value: filterByProviders,
+          value: controller.filterByProviders,
           onChanged: (value) {
-            providersChanged(value);
+            controller.setFilterByProviders(value);
           },
         ),
       ],

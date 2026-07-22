@@ -12,37 +12,15 @@ import 'package:moviescout/services/update_providers_worker.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
-enum RatingFilter { all, rated, seenOnly, followingOnly }
-
 class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
   @protected
   final List<TmdbTitle> pinnedTitlesVal = List.empty(growable: true);
   @protected
   final TmdbTitleRepository repository;
 
-  @protected
-  String filterMediaType = '';
-  @protected
-  List<int> filterGenres = [];
-  @protected
-  bool filterExcludeGenres = false;
-  @protected
-  List<int> filterProvidersIds = [];
-  @protected
-  bool filterByProviders = false;
-  @protected
-  String selectedSort = SortOption.alphabetically;
-  @protected
-  bool isSortAsc = true;
-  @protected
-  RatingFilter filterRating = RatingFilter.all;
   int get loadedTitleCount => loadedItemsVal.length;
   List<TmdbTitle> get pinnedTitles => pinnedTitlesVal;
-  String get defaultSort => selectedSort;
-  bool get defaultSortAsc => isSortAsc;
-  @protected
-  List<String> listGenresVal = [];
-  ValueNotifier<List<String>> listGenres = ValueNotifier([]);
+
   bool _userRatingAvailableVal = false;
 
   static Future<void> _syncQueue = Future.value();
@@ -77,6 +55,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     UpdateManager().updateLastUpdate(listNameVal);
   }
 
+  @override
   bool get userRatingAvailable {
     return listNameVal == AppConstants.rateslist || _userRatingAvailableVal;
   }
@@ -414,73 +393,6 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     required String sessionId,
     required Locale locale,
   }) async {}
-
-  Future<void> setFilters(
-      {String text = '',
-      String type = '',
-      List<String> genres = const [],
-      bool excludeGenres = false,
-      bool filterByProviders = false,
-      List<int> providerListIds = const [],
-      RatingFilter ratingFilter = RatingFilter.all,
-      String sort = SortOption.alphabetically,
-      bool ascending = true}) async {
-    filterText = text;
-    filterMediaType = type;
-    filterGenres = TmdbGenreService().getIdsFromNames(genres);
-    filterExcludeGenres = excludeGenres;
-    this.filterByProviders = filterByProviders;
-    filterProvidersIds = providerListIds;
-    filterRating = ratingFilter;
-    selectedSort = sort;
-    isSortAsc = computeSortDirection(sort, ascending);
-    await filterItems();
-  }
-
-  void setGenresFilter(List<String> genres, bool excludeGenres) {
-    filterGenres = TmdbGenreService().getIdsFromNames(genres);
-    filterExcludeGenres = excludeGenres;
-    filterItems();
-  }
-
-  void setProvidersFilter(bool filterByProviders, List<int> providerIds) {
-    this.filterByProviders = filterByProviders;
-    filterProvidersIds = providerIds;
-    filterItems();
-  }
-
-  void setTypeFilter(String type) {
-    filterMediaType = type;
-    filterItems();
-  }
-
-  void setRatingFilter(RatingFilter filter) {
-    filterRating = filter;
-    filterItems();
-  }
-
-  @protected
-  bool computeSortDirection(String sort, bool ascending) {
-    switch (sort) {
-      case SortOption.alphabetically:
-        return ascending;
-      case SortOption.rating:
-      case SortOption.userRating:
-      case SortOption.releaseDate:
-      case SortOption.dateRated:
-      case SortOption.runtime:
-      case SortOption.addedOrder:
-        return !ascending;
-      default:
-        return ascending;
-    }
-  }
-
-  void setSort(String sort, bool ascending) {
-    selectedSort = sort;
-    isSortAsc = computeSortDirection(sort, ascending);
-    filterItems();
-  }
 
   Future<void> updateTitle(
     String accountId,

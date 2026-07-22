@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:moviescout/models/custom_colors.dart';
-import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
@@ -11,32 +10,35 @@ import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/widgets/bottom_clamping_scroll_physics.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/person_title_card.dart';
-import 'package:moviescout/widgets/title_list_info_line.dart';
-import 'package:moviescout/widgets/title_list_control_panel.dart';
+import 'package:moviescout/widgets/list_info_line_header.dart';
+import 'package:moviescout/widgets/list_control_panel.dart';
 import 'package:moviescout/services/tmdb_person_titles_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
-import 'package:moviescout/widgets/title_list_controller.dart';
-import 'package:moviescout/models/title_list_theme.dart';
-import 'package:moviescout/widgets/rating_filter_tabs.dart';
+import 'package:moviescout/widgets/list_controller.dart';
+import 'package:moviescout/services/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/widgets/pinned_title_chip.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/widgets/searchable_list_state.dart';
+import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/models/tmdb_person.dart';
+import 'package:moviescout/widgets/person_card.dart';
 import 'package:moviescout/utils/ui_utils.dart';
 
-class TitleList extends StatefulWidget {
-  final TmdbTitleListService listService;
+class ItemList extends StatefulWidget {
+  final TmdbBaseListService listService;
+  final TmdbTitleListService? titleListServiceSupport;
 
-  const TitleList(this.listService, {super.key});
+  const ItemList(this.listService, {super.key, this.titleListServiceSupport});
 
   @override
-  State<TitleList> createState() => _TitleListState();
+  State<ItemList> createState() => _ItemListState();
 }
 
-class _TitleListState extends SearchableListState<TitleList> {
-  late final TitleListController _controller;
+class _ItemListState extends SearchableListState<ItemList> {
+  late final ListController _controller;
   final _refreshController = IndicatorController();
   bool _isPinnedSectionExpanded =
       PreferencesService().prefs.getBool('isPinnedSectionExpanded') ?? true;
@@ -47,7 +49,7 @@ class _TitleListState extends SearchableListState<TitleList> {
   @override
   void initState() {
     super.initState();
-    _controller = TitleListController(widget.listService);
+    _controller = ListController(widget.listService);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _controller.setupFilters();
@@ -61,10 +63,11 @@ class _TitleListState extends SearchableListState<TitleList> {
     super.dispose();
   }
 
-
   Widget _titleList() {
-    return Consumer<TmdbTitleListService>(
-      builder: (context, service, _) {
+    return ListenableBuilder(
+      listenable: widget.listService,
+      builder: (context, _) {
+        final service = widget.listService;
         Widget listView = Scrollbar(
           controller: _controller.scrollController,
           child: ListView.builder(
@@ -79,10 +82,10 @@ class _TitleListState extends SearchableListState<TitleList> {
               ),
             ),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            itemCount: service.loadedTitleCount,
+            itemCount: service.loadedItemCount,
             itemBuilder: (context, index) {
-              final title = service.getItem(index);
-              if (title == null) {
+              final item = service.getItem(index);
+              if (item == null) {
                 return const SizedBox.shrink();
               }
               return Builder(
@@ -92,23 +95,40 @@ class _TitleListState extends SearchableListState<TitleList> {
                   final titleTheme =
                       Theme.of(context).extension<CustomColors>()!;
 
+                  TmdbTitleListService supportService =
+                      widget.titleListServiceSupport ??
+                          widget.listService as TmdbTitleListService;
+                  Widget card;
+                  if (item is TmdbTitle) {
+                    if (service is TmdbPersonTitlesService) {
+                      card = PersonTitleCard(
+                        title: item,
+                        tmdbListService: supportService,
+                        role: service.role,
+                      );
+                    } else {
+                      card = TitleCard(
+                        title: item,
+                        tmdbListService: supportService,
+                      );
+                    }
+                  } else if (item is TmdbPerson) {
+                    card = PersonCard(
+                      person: item,
+                      tmdbListService: supportService,
+                    );
+                  } else {
+                    card = const SizedBox.shrink();
+                  }
+
                   return MediaQuery(
                     data: mediaQuery.copyWith(
-                      textScaler: TextScaler.linear(UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
+                      textScaler: TextScaler.linear(
+                          UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
                     ),
                     child: Column(
                       children: [
-                        if (service is TmdbPersonTitlesService)
-                          PersonTitleCard(
-                            title: title,
-                            tmdbListService: widget.listService,
-                            role: service.role,
-                          )
-                        else
-                          TitleCard(
-                            title: title,
-                            tmdbListService: widget.listService,
-                          ),
+                        card,
                         Divider(
                           height: 1,
                           color: titleTheme.dividerColor,
@@ -140,11 +160,14 @@ class _TitleListState extends SearchableListState<TitleList> {
               }
               final userService =
                   Provider.of<TmdbUserService>(context, listen: false);
-              await widget.listService.syncFromServer(
-                accountId: userService.accountId,
-                sessionId: userService.sessionId,
-                locale: Localizations.localeOf(context),
-              );
+              final service = widget.listService;
+              if (service is TmdbTitleListService) {
+                await service.syncFromServer(
+                  accountId: userService.accountId,
+                  sessionId: userService.sessionId,
+                  locale: Localizations.localeOf(context),
+                );
+              }
             },
             builder: customRefreshBuilder,
             child: content,
@@ -156,47 +179,13 @@ class _TitleListState extends SearchableListState<TitleList> {
     );
   }
 
-  Widget _controlPanel() {
-    return ValueListenableBuilder(
-      valueListenable: widget.listService.listGenres,
-      builder: (context, genres, child) {
-        final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
-        return Container(
-          color: titleTheme.controlPanelBackground,
-          child: Column(
-            children: [
-              TitleListControlPanel(
-                textFilterChanged: (newTextFilter) {
-                  _controller.setTextFilter(newTextFilter);
-                },
-                textFilterController: _controller.textFilterController,
-                selectedGenres: _controller.selectedGenres.toList(),
-                excludeGenres: _controller.excludeGenres,
-                genresList: genres,
-                genresChanged:
-                    (List<String> genresChanged, bool excludeGenres) {
-                  _controller.setGenres(genresChanged, excludeGenres);
-                },
-                filterByProviders: _controller.filterByProviders,
-                providersChanged: (bool providersChanged) {
-                  _controller.setFilterByProviders(providersChanged);
-                },
-                focusNode: _controller.searchFocusNode,
-                ratingFilter: widget.listService is TmdbRateslistService
-                    ? RatingFilterTabs(controller: _controller)
-                    : null,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   Widget _pinnedTitlesRow() {
-    return Consumer<TmdbTitleListService>(
-      builder: (context, service, _) {
-        if (service.pinnedTitles.isEmpty ||
+    return ListenableBuilder(
+      listenable: widget.listService,
+      builder: (context, _) {
+        final service = widget.listService;
+        if (service is! TmdbTitleListService ||
+            service.pinnedTitles.isEmpty ||
             service.listName != AppConstants.watchlist) {
           return const SizedBox.shrink();
         }
@@ -273,7 +262,7 @@ class _TitleListState extends SearchableListState<TitleList> {
           _controller.initializeControlLocalizations(context);
           return Consumer<TmdbProviderService>(
             builder: (context, providerService, _) {
-              final providerList = _retrieveUserProviders(providerService);
+              final providerList = providerService.enabledProviderIds;
 
               if (!const ListEquality()
                   .equals(providerList, _controller.providerListIds)) {
@@ -282,16 +271,22 @@ class _TitleListState extends SearchableListState<TitleList> {
                 });
               }
 
-              return ChangeNotifierProvider<TmdbTitleListService>.value(
+              return ChangeNotifierProvider<TmdbBaseListService>.value(
                 value: widget.listService,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    TitleListInfoLine(
+                    ListInfoLineHeader(
                       controller: _controller,
                       listService: widget.listService,
                     ),
-                    if (_controller.showFilters) _controlPanel(),
+                    if (_controller.showFilters)
+                      ListControlPanel(
+                        controller: _controller,
+                        listService: widget.listService,
+                        showRatingFilter:
+                            widget.listService is TmdbRateslistService,
+                      ),
                     _pinnedTitlesRow(),
                     Expanded(child: _titleList()),
                   ],
@@ -300,20 +295,5 @@ class _TitleListState extends SearchableListState<TitleList> {
             },
           );
         });
-  }
-
-  List<int> _retrieveUserProviders(TmdbProviderService providerService) {
-    if (providerService.isInitialized == false) {
-      return [];
-    }
-
-    final map = providerService.providers;
-
-    final enabledProviders = map.entries
-        .where((entry) => entry.value[TmdbProvider.providerEnabled] == 'true')
-        .map((entry) => int.parse(entry.value[TmdbProvider.providerId]!))
-        .toList();
-
-    return enabledProviders;
   }
 }

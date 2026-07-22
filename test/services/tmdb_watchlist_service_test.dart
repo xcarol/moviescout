@@ -10,9 +10,11 @@ import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:moviescout/services/tmdb_title_list_service.dart';
+import 'package:moviescout/services/tmdb_base_list_service.dart'
+    show RatingFilter;
 
 class MockTmdbTitleRepository extends Mock implements TmdbTitleRepository {}
+
 class MockTmdbPinnedService extends Mock implements TmdbPinnedService {}
 
 class TestTmdbWatchlistService extends TmdbWatchlistService {
@@ -22,7 +24,8 @@ class TestTmdbWatchlistService extends TmdbWatchlistService {
   http.Response? mockPostResponse;
 
   @override
-  Future<dynamic> get(String query, {ApiVersion version = ApiVersion.v3, String accessToken = ''}) async {
+  Future<dynamic> get(String query,
+      {ApiVersion version = ApiVersion.v3, String accessToken = ''}) async {
     if (mockGetResponse != null) {
       return mockGetResponse!;
     }
@@ -30,7 +33,8 @@ class TestTmdbWatchlistService extends TmdbWatchlistService {
   }
 
   @override
-  Future<dynamic> post(String endpoint, Map<String, dynamic> bodyParam, {ApiVersion version = ApiVersion.v3, String accessToken = ''}) async {
+  Future<dynamic> post(String endpoint, Map<String, dynamic> bodyParam,
+      {ApiVersion version = ApiVersion.v3, String accessToken = ''}) async {
     if (mockPostResponse != null) {
       return mockPostResponse!;
     }
@@ -55,7 +59,7 @@ void main() {
   setUp(() {
     mockRepository = MockTmdbTitleRepository();
     mockPinnedService = MockTmdbPinnedService();
-    
+
     // Stub basic repository methods
     when(() => mockRepository.countTitlesFiltered(
           listName: any(named: 'listName'),
@@ -85,8 +89,10 @@ void main() {
           limit: any(named: 'limit'),
           offset: any(named: 'offset'),
         )).thenAnswer((_) async => <TmdbTitle>[]);
-    when(() => mockRepository.hasRatedTitles(any())).thenAnswer((_) async => false);
-    when(() => mockRepository.hasTitlesFiltered(listName: AppConstants.watchlist))
+    when(() => mockRepository.hasRatedTitles(any()))
+        .thenAnswer((_) async => false);
+    when(() =>
+            mockRepository.hasTitlesFiltered(listName: AppConstants.watchlist))
         .thenAnswer((_) async => false);
     when(() => mockRepository.getAllGenreIds(AppConstants.watchlist))
         .thenAnswer((_) async => []);
@@ -96,44 +102,76 @@ void main() {
   });
 
   group('TmdbWatchlistService', () {
-    test('updateWatchlistTitle add=true posts to TMDB and updates locally', () async {
-      final title = TmdbTitle(tmdbId: 1, mediaType: ApiConstants.movie, name: 'Test', lastUpdated: DateTime.now().toIso8601String(), dateRated: DateTime.now());
+    test('updateWatchlistTitle add=true posts to TMDB and updates locally',
+        () async {
+      final title = TmdbTitle(
+          tmdbId: 1,
+          mediaType: ApiConstants.movie,
+          name: 'Test',
+          lastUpdated: DateTime.now().toIso8601String(),
+          dateRated: DateTime.now());
       title.isPinned = true;
 
-      when(() => mockRepository.saveTitle(title, AppConstants.watchlist, any())).thenAnswer((_) async {});
-      when(() => mockRepository.getMaxAddedOrder(AppConstants.watchlist)).thenAnswer((_) async => 0);
-      when(() => mockRepository.getTitleGlobal(title.tmdbId, title.mediaType)).thenAnswer((_) async => null);
+      when(() => mockRepository.saveTitle(title, AppConstants.watchlist, any()))
+          .thenAnswer((_) async {});
+      when(() => mockRepository.getMaxAddedOrder(AppConstants.watchlist))
+          .thenAnswer((_) async => 0);
+      when(() => mockRepository.getTitleGlobal(title.tmdbId, title.mediaType))
+          .thenAnswer((_) async => null);
       when(() => mockRepository.updateIsPinned(title)).thenAnswer((_) async {});
 
       await service.updateWatchlistTitle('accountId', 'sessionId', title, true);
 
       expect(title.isPinned, false); // add forces isPinned to false
-      verify(() => mockRepository.saveTitle(title, AppConstants.watchlist, any())).called(1);
+      verify(() =>
+              mockRepository.saveTitle(title, AppConstants.watchlist, any()))
+          .called(1);
     });
 
-    test('updateWatchlistTitle add=false deletes from TMDB and unpins if needed', () async {
-      final title = TmdbTitle(tmdbId: 1, mediaType: ApiConstants.movie, name: 'Test', lastUpdated: DateTime.now().toIso8601String(), dateRated: DateTime.now());
+    test(
+        'updateWatchlistTitle add=false deletes from TMDB and unpins if needed',
+        () async {
+      final title = TmdbTitle(
+          tmdbId: 1,
+          mediaType: ApiConstants.movie,
+          name: 'Test',
+          lastUpdated: DateTime.now().toIso8601String(),
+          dateRated: DateTime.now());
       title.isPinned = true;
       title.inLists = [AppConstants.watchlist];
 
-      when(() => mockPinnedService.removePinnedFromServer(title)).thenAnswer((_) async => true);
-      when(() => mockRepository.deleteTitle(AppConstants.watchlist, title.tmdbId, title.mediaType)).thenAnswer((_) async {});
-      when(() => mockRepository.getTitleGlobal(title.tmdbId, title.mediaType)).thenAnswer((_) async => null);
+      when(() => mockPinnedService.removePinnedFromServer(title))
+          .thenAnswer((_) async => true);
+      when(() => mockRepository.deleteTitle(
+              AppConstants.watchlist, title.tmdbId, title.mediaType))
+          .thenAnswer((_) async {});
+      when(() => mockRepository.getTitleGlobal(title.tmdbId, title.mediaType))
+          .thenAnswer((_) async => null);
 
-      await service.updateWatchlistTitle('accountId', 'sessionId', title, false);
+      await service.updateWatchlistTitle(
+          'accountId', 'sessionId', title, false);
 
       expect(title.isPinned, false);
       verify(() => mockPinnedService.removePinnedFromServer(title)).called(1);
-      verify(() => mockRepository.deleteTitle(AppConstants.watchlist, title.tmdbId, title.mediaType)).called(1);
+      verify(() => mockRepository.deleteTitle(
+          AppConstants.watchlist, title.tmdbId, title.mediaType)).called(1);
     });
 
     test('togglePin adds pin if not pinned and limit not reached', () async {
-      final title = TmdbTitle(tmdbId: 1, mediaType: ApiConstants.movie, name: 'Test', lastUpdated: DateTime.now().toIso8601String(), dateRated: DateTime.now());
+      final title = TmdbTitle(
+          tmdbId: 1,
+          mediaType: ApiConstants.movie,
+          name: 'Test',
+          lastUpdated: DateTime.now().toIso8601String(),
+          dateRated: DateTime.now());
       title.isPinned = false;
 
-      when(() => mockRepository.countTitlesFiltered(listName: AppConstants.watchlist, pinned: true)).thenAnswer((_) async => 0);
+      when(() => mockRepository.countTitlesFiltered(
+          listName: AppConstants.watchlist,
+          pinned: true)).thenAnswer((_) async => 0);
       when(() => mockRepository.updateIsPinned(title)).thenAnswer((_) async {});
-      when(() => mockPinnedService.addPinnedToServer(title)).thenAnswer((_) async => true);
+      when(() => mockPinnedService.addPinnedToServer(title))
+          .thenAnswer((_) async => true);
 
       await service.togglePin(title);
 
@@ -143,10 +181,17 @@ void main() {
     });
 
     test('togglePin aborts if pin limit is reached', () async {
-      final title = TmdbTitle(tmdbId: 1, mediaType: ApiConstants.movie, name: 'Test', lastUpdated: DateTime.now().toIso8601String(), dateRated: DateTime.now());
+      final title = TmdbTitle(
+          tmdbId: 1,
+          mediaType: ApiConstants.movie,
+          name: 'Test',
+          lastUpdated: DateTime.now().toIso8601String(),
+          dateRated: DateTime.now());
       title.isPinned = false;
 
-      when(() => mockRepository.countTitlesFiltered(listName: AppConstants.watchlist, pinned: true)).thenAnswer((_) async => 5);
+      when(() => mockRepository.countTitlesFiltered(
+          listName: AppConstants.watchlist,
+          pinned: true)).thenAnswer((_) async => 5);
 
       await service.togglePin(title, limitReachedMessage: 'Limit');
 
@@ -156,11 +201,17 @@ void main() {
     });
 
     test('togglePin removes pin if already pinned', () async {
-      final title = TmdbTitle(tmdbId: 1, mediaType: ApiConstants.movie, name: 'Test', lastUpdated: DateTime.now().toIso8601String(), dateRated: DateTime.now());
+      final title = TmdbTitle(
+          tmdbId: 1,
+          mediaType: ApiConstants.movie,
+          name: 'Test',
+          lastUpdated: DateTime.now().toIso8601String(),
+          dateRated: DateTime.now());
       title.isPinned = true;
 
       when(() => mockRepository.updateIsPinned(title)).thenAnswer((_) async {});
-      when(() => mockPinnedService.removePinnedFromServer(title)).thenAnswer((_) async => true);
+      when(() => mockPinnedService.removePinnedFromServer(title))
+          .thenAnswer((_) async => true);
 
       await service.togglePin(title);
 

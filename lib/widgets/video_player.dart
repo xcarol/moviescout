@@ -54,7 +54,8 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
         _controller?.close();
         _controller = null;
         _currentVideoId = null;
-        await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+        await SystemChrome.setPreferredOrientations(
+            [DeviceOrientation.portraitUp]);
         await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
         if (mounted) setState(() {});
       } else {
@@ -76,7 +77,8 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
               DeviceOrientation.landscapeLeft,
               DeviceOrientation.landscapeRight,
             ]);
-            await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+            await SystemChrome.setEnabledSystemUIMode(
+                SystemUiMode.immersiveSticky);
           } else {
             await SystemChrome.setPreferredOrientations([
               DeviceOrientation.portraitUp,
