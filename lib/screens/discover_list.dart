@@ -4,7 +4,7 @@ import 'package:moviescout/services/discoverlist_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
-import 'package:moviescout/widgets/item_list.dart';
+import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:provider/provider.dart';
 
 class DiscoverList extends StatefulWidget {

@@ -5,8 +5,8 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
-import 'package:moviescout/widgets/title_card.dart';
-import 'package:moviescout/widgets/pin_button.dart';
+import 'package:moviescout/widgets/cards/title_card.dart';
+import 'package:moviescout/widgets/buttons/pin_button.dart';
 
 class PinnedTitleChip extends StatelessWidget {
   final TmdbTitle title;

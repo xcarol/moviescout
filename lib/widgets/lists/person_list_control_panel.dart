@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/widgets/text_filter_widget.dart';
+import 'package:moviescout/widgets/inputs_and_filters/text_filter_widget.dart';
 
 class PersonListControlPanel extends StatelessWidget {
   final TextEditingController textFilterController;

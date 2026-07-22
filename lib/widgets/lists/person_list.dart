@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/custom_colors.dart';
-import 'package:moviescout/widgets/person_card.dart';
-import 'package:moviescout/widgets/person_chip.dart';
-import 'package:moviescout/widgets/person_list_control_panel.dart';
-import 'package:moviescout/widgets/person_list_info_line.dart';
-import 'package:moviescout/widgets/person_list_controller.dart';
+import 'package:moviescout/widgets/cards/person_card.dart';
+import 'package:moviescout/widgets/chips/person_chip.dart';
+import 'package:moviescout/widgets/lists/person_list_control_panel.dart';
+import 'package:moviescout/widgets/lists/person_list_info_line.dart';
+import 'package:moviescout/widgets/lists/person_list_controller.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_person_list_service.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
-import 'package:moviescout/widgets/searchable_list_state.dart';
+import 'package:moviescout/widgets/lists/searchable_list_state.dart';
 import 'package:moviescout/utils/ui_utils.dart';
 
 class PersonList extends StatefulWidget {

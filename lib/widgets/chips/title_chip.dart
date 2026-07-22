@@ -4,8 +4,8 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
-import 'package:moviescout/widgets/title_card.dart';
-import 'package:moviescout/widgets/watchlist_button.dart';
+import 'package:moviescout/widgets/cards/title_card.dart';
+import 'package:moviescout/widgets/buttons/watchlist_button.dart';
 
 // ignore: constant_identifier_names
 const double CARD_HEIGHT = 336.0;

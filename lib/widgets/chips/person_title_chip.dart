@@ -3,8 +3,8 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/screens/title_details.dart';
-import 'package:moviescout/widgets/title_card.dart';
-import 'package:moviescout/widgets/title_chip.dart';
+import 'package:moviescout/widgets/cards/title_card.dart';
+import 'package:moviescout/widgets/chips/title_chip.dart';
 import 'package:moviescout/utils/person_translator.dart';
 
 extension TmdbTitleRoleTranslation on TmdbTitle {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:moviescout/models/custom_colors.dart';
-import 'package:moviescout/widgets/edit_button.dart';
-import 'package:moviescout/widgets/drop_down_selector.dart';
+import 'package:moviescout/widgets/buttons/edit_button.dart';
+import 'package:moviescout/widgets/inputs_and_filters/drop_down_selector.dart';
 import 'package:moviescout/models/tmdb_translation.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';

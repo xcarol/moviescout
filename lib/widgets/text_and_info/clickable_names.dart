@@ -4,7 +4,7 @@ import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 
 import 'package:flutter/gestures.dart';
-import 'package:moviescout/widgets/expandable_text.dart';
+import 'package:moviescout/widgets/text_and_info/expandable_text.dart';
 
 class ClickableNames extends StatelessWidget {
   final List<TmdbPerson> people;

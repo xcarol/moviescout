@@ -5,7 +5,7 @@ import 'package:moviescout/services/search_history_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
-import 'package:moviescout/widgets/item_list.dart';
+import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';

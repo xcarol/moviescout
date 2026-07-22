@@ -3,7 +3,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/services/tmdb_person_titles_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
-import 'package:moviescout/widgets/item_list.dart';
+import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
