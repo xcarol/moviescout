@@ -531,7 +531,6 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     return titles;
   }
 
-  @protected
   Future<void> updateListGenres() async {
     listGenresVal.clear();
     final genreSets = await repository.getAllGenreIds(listNameVal);

@@ -7,6 +7,7 @@ import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/search_list.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';
 
 class Search extends StatefulWidget {
@@ -38,11 +39,11 @@ class _SearchState extends State<Search> {
   void initState() {
     super.initState();
     _titleListServiceSupport = TmdbTitleListService(
-      'searchProvider',
+      AppConstants.searchProvider,
       context.read<TmdbTitleRepository>(),
     );
     _searchService = TmdbSearchService(
-      'searchProvider',
+      AppConstants.searchProvider,
       context.read<TmdbTitleRepository>(),
     );
     _searchWidget = SearchList(
@@ -308,5 +309,6 @@ class _SearchState extends State<Search> {
     Locale locale = Localizations.localeOf(context);
     await _resetTitle();
     await _searchService.retrieveSearchlist(anonymousAccountId, term, locale);
+    await _titleListServiceSupport.updateListGenres();
   }
 }

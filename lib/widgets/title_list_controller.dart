@@ -83,6 +83,7 @@ class TitleListController with ChangeNotifier {
 
   void initializeControlLocalizations(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    final isSearchProvider = listService.listName == AppConstants.searchProvider;
 
     _titleTypes = [
       localizations.allTypes,
@@ -98,7 +99,7 @@ class TitleListController with ChangeNotifier {
       if (listService.userRatingAvailable) localizations.sortDateRated,
       localizations.sortReleaseDate,
       localizations.sortRuntime,
-      localizations.sortAddedOrder,
+      if (!isSearchProvider) localizations.sortAddedOrder,
     ];
   }
 
