@@ -8,6 +8,7 @@ import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 const int maxSearchMovies = 20;
 const int maxSearchTvShows = 20;
@@ -74,8 +75,40 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
     return 0;
   }
 
+  String get currentFilterText => filterText;
+
   String _selectedType = '';
   String get selectedType => _selectedType;
+
+  List<int> _filterGenres = [];
+  bool _filterExcludeGenres = false;
+  bool _filterByProviders = false;
+  List<int> _filterProvidersIds = [];
+  String _selectedSort = '';
+  bool _isSortAsc = true;
+  String _localFilterText = '';
+
+  void updateFilters({
+    required List<int> genres,
+    required bool excludeGenres,
+    required bool filterByProviders,
+    required List<int> providerListIds,
+    required String sort,
+    required bool isSortAsc,
+    required String type,
+    required String localFilterText,
+  }) {
+    _filterGenres = genres;
+    _filterExcludeGenres = excludeGenres;
+    _filterByProviders = filterByProviders;
+    _filterProvidersIds = providerListIds;
+    _selectedSort = sort;
+    _isSortAsc = isSortAsc;
+    _selectedType = type;
+    _localFilterText = localFilterText;
+    filterItems();
+    notifyListeners();
+  }
 
   void setTypeFilter(String type) {
     _selectedType = type;
@@ -113,6 +146,47 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
       }
     }
 
+    if (_localFilterText.isNotEmpty) {
+      final localQuery = _localFilterText.toLowerCase().trim();
+      allItems = allItems.where((item) {
+        String name = (item is TmdbTitle
+                ? item.name
+                : (item as TmdbPerson).name)
+            .toLowerCase();
+        return name.contains(localQuery);
+      }).toList();
+    }
+
+    if (_filterGenres.isNotEmpty) {
+      allItems = allItems.where((item) {
+        if (item is! TmdbTitle) return false;
+        
+        bool hasAny = item.genreIds.any((id) => _filterGenres.contains(id));
+        if (_filterExcludeGenres) {
+          if (hasAny) return false;
+        } else {
+          if (!hasAny) return false;
+        }
+        return true;
+      }).toList();
+    }
+
+    if (_filterByProviders) {
+      allItems = allItems.where((item) {
+        if (item is! TmdbTitle) return false;
+        
+        if (_filterProvidersIds.isNotEmpty) {
+          if (!item.flatrateProviderIds
+              .any((id) => _filterProvidersIds.contains(id))) {
+            return false;
+          }
+        } else {
+          return false;
+        }
+        return true;
+      }).toList();
+    }
+
     final String query = filterText.toLowerCase().trim();
 
     allItems.sort((a, b) {
@@ -133,7 +207,37 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
         if (!startsA && startsB) return 1;
       }
 
-      return nameA.compareTo(nameB);
+      int compareResult = 0;
+      if (_selectedSort.isNotEmpty &&
+          _selectedSort != SortOption.alphabetically) {
+        if (_selectedSort == SortOption.rating) {
+          double valA = a is TmdbTitle ? a.voteAverage : 0.0;
+          double valB = b is TmdbTitle ? b.voteAverage : 0.0;
+          compareResult = valA.compareTo(valB);
+        } else if (_selectedSort == SortOption.releaseDate) {
+          String valA = a is TmdbTitle ? a.effectiveReleaseDate : '';
+          String valB = b is TmdbTitle ? b.effectiveReleaseDate : '';
+          compareResult = valA.compareTo(valB);
+        } else if (_selectedSort == SortOption.runtime) {
+          int valA = a is TmdbTitle ? a.runtime : 0;
+          int valB = b is TmdbTitle ? b.runtime : 0;
+          compareResult = valA.compareTo(valB);
+        } else if (_selectedSort == SortOption.userRating) {
+          double valA = a is TmdbTitle ? a.rating : 0.0;
+          double valB = b is TmdbTitle ? b.rating : 0.0;
+          compareResult = valA.compareTo(valB);
+        } else if (_selectedSort == SortOption.dateRated) {
+          DateTime valA = a is TmdbTitle ? a.dateRated : DateTime.fromMillisecondsSinceEpoch(0);
+          DateTime valB = b is TmdbTitle ? b.dateRated : DateTime.fromMillisecondsSinceEpoch(0);
+          compareResult = valA.compareTo(valB);
+        } else {
+          compareResult = nameA.compareTo(nameB);
+        }
+      } else {
+        compareResult = nameA.compareTo(nameB);
+      }
+
+      return _isSortAsc ? compareResult : -compareResult;
     });
     return allItems;
   }
@@ -219,8 +323,10 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
     if (rawItems.isNotEmpty) {
       final mergedTitles =
           await _mergeRawItemsWithExisting(rawItems, ApiConstants.movie);
-      final updated = await Future.wait(
-          mergedTitles.map((t) => TmdbTitleService().updateTitleDetails(t)));
+      final updated = await Future.wait(mergedTitles.map((t) =>
+          TmdbTitleService().updateTitleDetails(t,
+              force:
+                  t.lastProvidersUpdate == AppConstants.defaultDate)));
       await titleRepository.saveTitles(updated.cast<TmdbTitle>(), listNameVal);
     }
   }
@@ -256,8 +362,10 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
     if (rawItems.isNotEmpty) {
       final mergedTitles =
           await _mergeRawItemsWithExisting(rawItems, ApiConstants.tv);
-      final updated = await Future.wait(
-          mergedTitles.map((t) => TmdbTitleService().updateTitleDetails(t)));
+      final updated = await Future.wait(mergedTitles.map((t) =>
+          TmdbTitleService().updateTitleDetails(t,
+              force:
+                  t.lastProvidersUpdate == AppConstants.defaultDate)));
       await titleRepository.saveTitles(updated.cast<TmdbTitle>(), listNameVal);
     }
   }
