@@ -10,7 +10,9 @@ import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:moviescout/widgets/bottom_clamping_scroll_physics.dart';
 import 'package:moviescout/widgets/title_card.dart';
 import 'package:moviescout/widgets/person_title_card.dart';
-import 'package:moviescout/widgets/list_info_line_header.dart';
+import 'package:moviescout/widgets/list_info_line.dart';
+import 'package:moviescout/widgets/drop_down_selector.dart';
+import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/widgets/list_control_panel.dart';
 import 'package:moviescout/services/tmdb_person_titles_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
@@ -63,7 +65,62 @@ class _ItemListState extends SearchableListState<ItemList> {
     super.dispose();
   }
 
-  Widget _titleList() {
+  List<Widget> _buildTypeAndCountWidgets(BuildContext context) {
+    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+    final localizations = AppLocalizations.of(context)!;
+    final typeOption = _controller.selectedType;
+
+    final textColor = typeOption == ''
+        ? titleTheme.infoLineInactiveFilterForeground
+        : titleTheme.infoLineActiveFilterForeground;
+    final backgroundColor = typeOption == ''
+        ? titleTheme.infoLineInactiveFilterBackground
+        : titleTheme.infoLineActiveFilterBackground;
+
+    return [
+      DropdownSelector(
+        backgroundColor: backgroundColor,
+        textStyle: TextStyle(
+          color: textColor,
+          fontSize: 16,
+        ),
+        borderRadius: BorderRadius.circular(5),
+        leading: ValueListenableBuilder(
+          valueListenable: widget.listService.selectedItemCount,
+          builder: (context, count, child) {
+            return Text(
+              count.toString(),
+              style: TextStyle(
+                color: textColor,
+                fontSize: 16,
+              ),
+            );
+          },
+        ),
+        selectedOption: _controller.getSelectedTypeLabel(localizations),
+        options: _controller.titleTypes,
+        onSelected: (value) => _controller.setSelectedType(context, value),
+        arrowIcon: Icon(
+          Icons.arrow_drop_down,
+          color: textColor,
+        ),
+      ),
+    ];
+  }
+
+  Widget _sortSelector(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    return DropdownSelector(
+      selectedOption: _controller.getSelectedSortLabel(localizations),
+      options: _controller.titleSorts,
+      onSelected: (value) => _controller.setSelectedSort(context, value),
+      arrowIcon: _controller.isSortAsc
+          ? const Icon(Icons.arrow_drop_down)
+          : const Icon(Icons.arrow_drop_up),
+    );
+  }
+
+  Widget _itemList() {
     return ListenableBuilder(
       listenable: widget.listService,
       builder: (context, _) {
@@ -271,14 +328,23 @@ class _ItemListState extends SearchableListState<ItemList> {
                 });
               }
 
+              final anyFilterActive = _controller.selectedGenres.isNotEmpty ||
+                  _controller.filterByProviders ||
+                  _controller.textFilterController.text.isNotEmpty;
+
               return ChangeNotifierProvider<TmdbBaseListService>.value(
                 value: widget.listService,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    ListInfoLineHeader(
-                      controller: _controller,
-                      listService: widget.listService,
+                    ListInfoLine(
+                      leadingWidgets: _buildTypeAndCountWidgets(context),
+                      isLoading: widget.listService.isLoading,
+                      sortSelector: _sortSelector(context),
+                      onSwapSort: () => _controller.toggleSortDirection(),
+                      onToggleFilters: () => _controller.toggleFilters(),
+                      showFilters: _controller.showFilters,
+                      anyFilterActive: anyFilterActive,
                     ),
                     if (_controller.showFilters)
                       ListControlPanel(
@@ -288,7 +354,7 @@ class _ItemListState extends SearchableListState<ItemList> {
                             widget.listService is TmdbRateslistService,
                       ),
                     _pinnedTitlesRow(),
-                    Expanded(child: _titleList()),
+                    Expanded(child: _itemList()),
                   ],
                 ),
               );
