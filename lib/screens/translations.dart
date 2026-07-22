@@ -6,7 +6,7 @@ import 'package:moviescout/widgets/inputs_and_filters/drop_down_selector.dart';
 import 'package:moviescout/models/tmdb_translation.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:moviescout/services/web_translation_service.dart';
+import 'package:moviescout/services/api/web_translation_service.dart';
 import 'package:moviescout/utils/translation_languages.dart';
 
 class _CopyIconButton extends StatefulWidget {

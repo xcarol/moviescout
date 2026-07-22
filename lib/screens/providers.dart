@@ -2,7 +2,7 @@ import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
-import 'package:moviescout/services/tmdb_provider_service.dart';
+import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/widgets/inputs_and_filters/text_filter_widget.dart';

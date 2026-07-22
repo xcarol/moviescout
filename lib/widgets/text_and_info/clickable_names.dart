@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/screens/person_details.dart';
-import 'package:moviescout/services/tmdb_title_list_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 
 import 'package:flutter/gestures.dart';
 import 'package:moviescout/widgets/text_and_info/expandable_text.dart';

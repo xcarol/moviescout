@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
-import 'package:moviescout/services/tmdb_base_list_service.dart'
+import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 import 'package:moviescout/widgets/lists/list_controller.dart';
 

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
-import 'package:moviescout/services/tmdb_title_service.dart';
-import 'package:moviescout/services/tmdb_title_list_service.dart';
+import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/cards/title_card.dart';
 import 'package:moviescout/widgets/buttons/watchlist_button.dart';
 

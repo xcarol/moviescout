@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/preferences_service.dart';
-import 'package:moviescout/services/tmdb_base_list_service.dart';
-import 'package:moviescout/services/tmdb_search_service.dart';
-import 'package:moviescout/services/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/settings/preferences_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart';
+import 'package:moviescout/services/tmdb_content/tmdb_search_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 

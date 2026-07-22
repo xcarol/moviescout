@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/services/edit_settings_service.dart';
+import 'package:moviescout/services/settings/edit_settings_service.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:moviescout/services/language_service.dart';
-import 'package:moviescout/services/region_service.dart';
+import 'package:moviescout/services/settings/language_service.dart';
+import 'package:moviescout/services/settings/region_service.dart';
 
 class EditButton extends StatelessWidget {
   final String url;

@@ -4,8 +4,8 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
-import 'package:moviescout/services/tmdb_title_list_service.dart';
-import 'package:moviescout/services/tmdb_person_list_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_person_list_service.dart';
 import 'package:moviescout/widgets/lists/person_list.dart';
 
 class TitlePeopleList extends StatefulWidget {

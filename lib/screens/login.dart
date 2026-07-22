@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
-import 'package:moviescout/services/error_service.dart';
+import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
-import 'package:moviescout/services/tmdb_provider_service.dart';
-import 'package:moviescout/services/tmdb_rateslist_service.dart';
-import 'package:moviescout/services/tmdb_user_service.dart';
+import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:app_links/app_links.dart';
-import 'package:moviescout/services/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 

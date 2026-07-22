@@ -4,7 +4,7 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/screens/discover_list.dart';
 import 'package:moviescout/screens/rates_list.dart';
 import 'package:moviescout/screens/watch_list.dart';
-import 'package:moviescout/services/tmdb_user_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/widgets/layout/app_drawer.dart';
 import 'package:moviescout/widgets/misc/double_back_exit_wrapper.dart';
 import 'package:moviescout/l10n/app_localizations.dart';

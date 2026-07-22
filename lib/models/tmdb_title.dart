@@ -9,7 +9,7 @@ import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/models/tmdb_genre.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_providers.dart';
-import 'package:moviescout/services/tmdb_genre_service.dart';
+import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 
 class TmdbTitleFields {

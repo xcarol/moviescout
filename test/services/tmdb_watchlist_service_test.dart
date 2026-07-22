@@ -2,15 +2,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
-import 'package:moviescout/services/tmdb_pinned_service.dart';
-import 'package:moviescout/services/tmdb_watchlist_service.dart';
-import 'package:moviescout/services/tmdb_base_service.dart';
-import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_pinned_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/core/tmdb_base_service.dart';
+import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:moviescout/services/tmdb_base_list_service.dart'
+import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 
 class MockTmdbTitleRepository extends Mock implements TmdbTitleRepository {}

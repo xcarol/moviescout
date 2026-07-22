@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
 import 'package:provider/provider.dart';
 
 class NotifyDialog extends StatelessWidget {

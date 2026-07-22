@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/services/tmdb_person_list_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_person_list_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_person.dart';
-import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class PersonListController with ChangeNotifier {

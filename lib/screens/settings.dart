@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/screens/providers.dart';
-import 'package:moviescout/services/language_service.dart';
-import 'package:moviescout/services/notification_service.dart';
-import 'package:moviescout/services/region_service.dart';
-import 'package:moviescout/services/tmdb_genre_service.dart';
-import 'package:moviescout/services/tmdb_user_service.dart';
+import 'package:moviescout/services/settings/language_service.dart';
+import 'package:moviescout/services/notifications/notification_service.dart';
+import 'package:moviescout/services/settings/region_service.dart';
+import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/utils/deep_link_utils.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/language_form.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/notification_permission_dialog.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/region_form.dart';
-import 'package:moviescout/services/edit_settings_service.dart';
+import 'package:moviescout/services/settings/edit_settings_service.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatelessWidget {
