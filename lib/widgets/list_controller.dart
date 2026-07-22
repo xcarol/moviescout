@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/preferences_service.dart';
-import 'package:moviescout/services/tmdb_title_list_service.dart';
+import 'package:moviescout/services/tmdb_base_list_service.dart';
+import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
-class TitleListController with ChangeNotifier {
-  final TmdbTitleListService listService;
+class ListController with ChangeNotifier {
+  final TmdbBaseListService listService;
   late final TextEditingController textFilterController;
   final FocusNode searchFocusNode = FocusNode();
   final ScrollController scrollController = ScrollController();
@@ -35,7 +36,7 @@ class TitleListController with ChangeNotifier {
   late final String _ratingFilterPreferencesName;
   late final String _sortPreferencesName;
 
-  TitleListController(this.listService) {
+  ListController(this.listService) {
     textFilterController = TextEditingController();
     _initPreferencesNames();
     _loadPreferences();
@@ -83,24 +84,44 @@ class TitleListController with ChangeNotifier {
 
   void initializeControlLocalizations(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    final isSearchProvider = listService.listName == AppConstants.searchProvider;
+    bool isSearchList = listService.listName == AppConstants.searchList ||
+        listService is TmdbSearchService;
 
-    _titleTypes = [
-      localizations.allTypes,
-      localizations.movies,
-      localizations.tvshows,
-      localizations.miniseries,
-    ];
+    if (isSearchList) {
+      _titleTypes = [
+        localizations.results,
+        localizations.movies,
+        localizations.tvshows,
+        localizations.cast,
+      ];
+    } else {
+      _titleTypes = [
+        localizations.allTypes,
+        localizations.movies,
+        localizations.tvshows,
+        localizations.miniseries,
+      ];
+    }
+
+    bool userRatingAvailable = listService.userRatingAvailable;
 
     _titleSorts = [
       localizations.sortAlphabetically,
       localizations.sortRating,
-      if (listService.userRatingAvailable) localizations.sortUserRating,
-      if (listService.userRatingAvailable) localizations.sortDateRated,
+      if (userRatingAvailable) localizations.sortUserRating,
+      if (userRatingAvailable) localizations.sortDateRated,
       localizations.sortReleaseDate,
       localizations.sortRuntime,
-      if (!isSearchProvider) localizations.sortAddedOrder,
+      if (!isSearchList) localizations.sortAddedOrder,
     ];
+
+    if (!userRatingAvailable &&
+        (_selectedSort == SortOption.userRating ||
+            _selectedSort == SortOption.dateRated)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _resetSort();
+      });
+    }
   }
 
   void onScrollNotification(ScrollNotification scrollInfo, double itemHeight) {
@@ -114,7 +135,7 @@ class TitleListController with ChangeNotifier {
     if (currentScroll > 0 &&
         !listService.isLoading.value &&
         listService.hasMore &&
-        lastVisibleIndex >= listService.loadedTitleCount - 3) {
+        lastVisibleIndex >= listService.loadedItemCount - 3) {
       listService.loadNextPage();
     }
   }
@@ -171,6 +192,7 @@ class TitleListController with ChangeNotifier {
         .prefs
         .setString(_selectedSortPreferencesName, _selectedSort);
     listService.setSort(_selectedSort, _isSortAsc);
+    notifyListeners();
     _scrollToTop();
     notifyListeners();
   }
@@ -207,6 +229,7 @@ class TitleListController with ChangeNotifier {
     _isSortAsc = !_isSortAsc;
     PreferencesService().prefs.setBool(_sortPreferencesName, _isSortAsc);
     listService.setSort(_selectedSort, _isSortAsc);
+    notifyListeners();
     _scrollToTop();
     notifyListeners();
   }
@@ -257,6 +280,15 @@ class TitleListController with ChangeNotifier {
     notifyListeners();
   }
 
+  void _resetSort() {
+    _selectedSort = SortOption.alphabetically;
+    PreferencesService()
+        .prefs
+        .setString(_selectedSortPreferencesName, _selectedSort);
+    listService.setSort(_selectedSort, _isSortAsc);
+    notifyListeners();
+  }
+
   String _sortNameToOption(BuildContext context, String name) {
     final localizations = AppLocalizations.of(context)!;
     if (name == localizations.sortAlphabetically) {
@@ -289,19 +321,28 @@ class TitleListController with ChangeNotifier {
       return ApiConstants.tv;
     } else if (type == localizations.miniseries) {
       return AppConstants.miniseries;
+    } else if (type == localizations.cast) {
+      return ApiConstants.person;
     }
-    return type == localizations.allTypes ? '' : type;
+    return (type == localizations.allTypes || type == localizations.results)
+        ? ''
+        : type;
   }
 
   String _optionToTypeName(AppLocalizations localizations, String option) {
+    bool isSearchList = listService.listName == AppConstants.searchList ||
+        listService is TmdbSearchService;
+
     if (option == ApiConstants.movie) {
       return localizations.movies;
     } else if (option == ApiConstants.tv) {
       return localizations.tvshows;
     } else if (option == AppConstants.miniseries) {
       return localizations.miniseries;
+    } else if (option == ApiConstants.person) {
+      return localizations.cast;
     }
-    return localizations.allTypes;
+    return isSearchList ? localizations.results : localizations.allTypes;
   }
 
   String _optionToSortName(AppLocalizations localizations, String option) {

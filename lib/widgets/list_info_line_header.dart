@@ -3,14 +3,14 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/widgets/list_info_line.dart';
 import 'package:moviescout/widgets/drop_down_selector.dart';
-import 'package:moviescout/widgets/title_list_controller.dart';
-import 'package:moviescout/services/tmdb_title_list_service.dart';
+import 'package:moviescout/widgets/list_controller.dart';
+import 'package:moviescout/services/tmdb_base_list_service.dart';
 
-class TitleListInfoLine extends StatelessWidget {
-  final TitleListController controller;
-  final TmdbTitleListService listService;
+class ListInfoLineHeader extends StatelessWidget {
+  final ListController controller;
+  final TmdbBaseListService listService;
 
-  const TitleListInfoLine({
+  const ListInfoLineHeader({
     super.key,
     required this.controller,
     required this.listService,

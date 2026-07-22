@@ -5,7 +5,7 @@ import 'package:moviescout/services/search_history_service.dart';
 import 'package:moviescout/services/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
-import 'package:moviescout/widgets/search_list.dart';
+import 'package:moviescout/widgets/item_list.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';
@@ -39,15 +39,15 @@ class _SearchState extends State<Search> {
   void initState() {
     super.initState();
     _titleListServiceSupport = TmdbTitleListService(
-      AppConstants.searchProvider,
+      AppConstants.searchList,
       context.read<TmdbTitleRepository>(),
     );
     _searchService = TmdbSearchService(
-      AppConstants.searchProvider,
+      AppConstants.searchList,
       context.read<TmdbTitleRepository>(),
     );
-    _searchWidget = SearchList(
-      searchService: _searchService,
+    _searchWidget = ItemList(
+      _searchService,
       titleListServiceSupport: _titleListServiceSupport,
       key: const ValueKey('search'),
     );
@@ -310,5 +310,6 @@ class _SearchState extends State<Search> {
     await _resetTitle();
     await _searchService.retrieveSearchlist(anonymousAccountId, term, locale);
     await _titleListServiceSupport.updateListGenres();
+    _searchService.listGenres.value = _titleListServiceSupport.listGenres.value;
   }
 }

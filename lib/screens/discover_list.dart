@@ -4,7 +4,7 @@ import 'package:moviescout/services/discoverlist_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
-import 'package:moviescout/widgets/title_list.dart';
+import 'package:moviescout/widgets/item_list.dart';
 import 'package:provider/provider.dart';
 
 class DiscoverList extends StatefulWidget {
@@ -76,7 +76,7 @@ class _DiscoverListState extends State<DiscoverList> {
     _addListeners();
     _discoverlistService.setRefreshPaused(widget.isActive);
 
-    _discoverlistWidget = TitleList(
+    _discoverlistWidget = ItemList(
       _discoverlistService,
       key: ValueKey('discoverlist'),
     );

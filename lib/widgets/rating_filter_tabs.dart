@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
-import 'package:moviescout/services/tmdb_title_list_service.dart'
+import 'package:moviescout/services/tmdb_base_list_service.dart'
     show RatingFilter;
-import 'package:moviescout/widgets/title_list_controller.dart';
+import 'package:moviescout/widgets/list_controller.dart';
 
 class RatingFilterTabs extends StatelessWidget {
-  final TitleListController controller;
+  final ListController controller;
 
   const RatingFilterTabs({
     super.key,

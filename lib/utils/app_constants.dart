@@ -4,7 +4,7 @@ class AppConstants {
   static const String rateslist = 'rateslist';
   static const String discoverlist = 'discoverlist';
   static const String importImdb = 'importImdb';
-  static const String searchProvider = 'searchProvider';
+  static const String searchList = 'searchlist';
   static const String miniseries = 'miniseries';
   static const double seenRating = 0.5;
 

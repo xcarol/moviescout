@@ -72,7 +72,6 @@ class TmdbTitleService extends TmdbBaseService {
       mediaType = title.isMovie ? ApiConstants.movie : ApiConstants.tv;
     }
 
-
     if (force &&
         (mediaType == ApiConstants.tv ||
             mediaType == AppConstants.miniseries)) {

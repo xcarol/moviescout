@@ -5,6 +5,13 @@ import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/services/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_memory_list_mixin.dart';
 
+class PersonSortOption {
+  static const name = 'name';
+  static const department = 'department';
+  static const job = 'job';
+  static const original = 'original';
+}
+
 class TmdbPersonListService extends TmdbBaseListService<TmdbPerson>
     with TmdbMemoryListMixin<TmdbPerson> {
   final TmdbTitle title;
@@ -12,15 +19,13 @@ class TmdbPersonListService extends TmdbBaseListService<TmdbPerson>
   final TmdbSeason? season;
   final TmdbEpisode? episode;
 
-  String _selectedSort = 'original';
-  bool _isSortAsc = true;
-
   TmdbPersonListService({
     required this.title,
     required this.roleType,
     this.season,
     this.episode,
   }) {
+    selectedSort = PersonSortOption.original;
     if (episode != null) {
       listNameVal =
           '${title.tmdbId}_s${episode!.seasonNumber}e${episode!.episodeNumber}_$roleType';
@@ -55,12 +60,6 @@ class TmdbPersonListService extends TmdbBaseListService<TmdbPerson>
     }
   }
 
-  void setSort(String sort, bool ascending) {
-    _selectedSort = sort;
-    _isSortAsc = ascending;
-    filterItems();
-  }
-
   @override
   void applyFiltersAndSort() {
     final filtered = allItems.where((person) {
@@ -75,23 +74,23 @@ class TmdbPersonListService extends TmdbBaseListService<TmdbPerson>
       return true;
     }).toList();
 
-    if (_selectedSort != 'original') {
+    if (selectedSort != PersonSortOption.original) {
       filtered.sort((a, b) {
         int cmp;
-        if (_selectedSort == 'name') {
+        if (selectedSort == PersonSortOption.name) {
           cmp = a.name.compareTo(b.name);
-        } else if (_selectedSort == 'department') {
+        } else if (selectedSort == PersonSortOption.department) {
           cmp = a.knownForDepartment.compareTo(b.knownForDepartment);
-        } else if (_selectedSort == 'job') {
+        } else if (selectedSort == PersonSortOption.job) {
           cmp = a.job.compareTo(b.job);
         } else {
           cmp = 0;
         }
-        return _isSortAsc ? cmp : -cmp;
+        return isSortAsc ? cmp : -cmp;
       });
     }
 
-    if (_selectedSort == 'original' && !_isSortAsc) {
+    if (selectedSort == PersonSortOption.original && !isSortAsc) {
       filteredItems = filtered.reversed.toList();
     } else {
       filteredItems = filtered;

@@ -5,13 +5,6 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
-class PersonSortOption {
-  static const name = 'name';
-  static const department = 'department';
-  static const job = 'job';
-  static const original = 'original';
-}
-
 class PersonListController with ChangeNotifier {
   final TmdbPersonListService listService;
   late final TextEditingController textFilterController;

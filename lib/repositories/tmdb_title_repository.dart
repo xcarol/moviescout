@@ -6,7 +6,7 @@ import 'package:moviescout/models/user_list_entry.dart';
 import 'package:moviescout/services/realm_service.dart';
 import 'package:moviescout/database/realm_models.dart';
 import 'package:moviescout/database/realm_mappers.dart';
-import 'package:moviescout/services/tmdb_title_list_service.dart'
+import 'package:moviescout/services/tmdb_base_list_service.dart'
     show RatingFilter;
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';

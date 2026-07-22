@@ -9,7 +9,7 @@ import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/services/tmdb_title_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/tmdb_watchlist_service.dart';
-import 'package:moviescout/services/tmdb_title_list_service.dart'
+import 'package:moviescout/services/tmdb_base_list_service.dart'
     show RatingFilter;
 import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/services/notification_service.dart';
