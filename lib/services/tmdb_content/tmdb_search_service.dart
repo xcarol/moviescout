@@ -32,6 +32,7 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
 
   TmdbSearchService(String listName, this.titleRepository) {
     listNameVal = listName;
+    selectedSort = SortOption.relevance;
   }
 
   @override
@@ -176,18 +177,6 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
       String nameB =
           (b is TmdbTitle ? b.name : (b as TmdbPerson).name).toLowerCase();
 
-      if (query.isNotEmpty) {
-        bool exactA = nameA == query;
-        bool exactB = nameB == query;
-        if (exactA && !exactB) return -1;
-        if (!exactA && exactB) return 1;
-
-        bool startsA = nameA.startsWith(query);
-        bool startsB = nameB.startsWith(query);
-        if (startsA && !startsB) return -1;
-        if (!startsA && startsB) return 1;
-      }
-
       int compareResult = 0;
       if (selectedSort.isNotEmpty &&
           selectedSort != SortOption.alphabetically) {
@@ -215,10 +204,21 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
               ? b.dateRated
               : DateTime.fromMillisecondsSinceEpoch(0);
           compareResult = valA.compareTo(valB);
-        } else {
-          compareResult = nameA.compareTo(nameB);
         }
-      } else {
+      }
+
+      if (compareResult == 0) {
+        if (selectedSort != SortOption.alphabetically && query.isNotEmpty) {
+          bool exactA = nameA == query;
+          bool exactB = nameB == query;
+          if (exactA && !exactB) return isSortAsc ? -1 : 1;
+          if (!exactA && exactB) return isSortAsc ? 1 : -1;
+
+          bool startsA = nameA.startsWith(query);
+          bool startsB = nameB.startsWith(query);
+          if (startsA && !startsB) return isSortAsc ? -1 : 1;
+          if (!startsA && startsB) return isSortAsc ? 1 : -1;
+        }
         compareResult = nameA.compareTo(nameB);
       }
 

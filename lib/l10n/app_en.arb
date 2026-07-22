@@ -152,6 +152,8 @@
   "@sortRuntime": {},
   "sortDateRated": "Rated date",
   "@sortDateRated": {},
+  "sortRelevance": "Relevance",
+  "@sortRelevance": {},
   "sortAddedOrder": "Added date",
   "@sortAddedOrder": {},
   "genres": "Genres",

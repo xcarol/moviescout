@@ -26,6 +26,9 @@ class ListController with ChangeNotifier {
   List<String> _titleTypes = [];
   List<String> _titleSorts = [];
 
+  bool get isSearchList => listService.listName == AppConstants.searchList ||
+      listService is TmdbSearchService;
+
   late final String _showFiltersPreferencesName;
   late final String _textFilterPreferencesName;
   late final String _selectedGenresPreferencesName;
@@ -84,8 +87,6 @@ class ListController with ChangeNotifier {
 
   void initializeControlLocalizations(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    bool isSearchList = listService.listName == AppConstants.searchList ||
-        listService is TmdbSearchService;
 
     if (isSearchList) {
       _titleTypes = [
@@ -106,6 +107,7 @@ class ListController with ChangeNotifier {
     bool userRatingAvailable = listService.userRatingAvailable;
 
     _titleSorts = [
+      if (isSearchList) localizations.sortRelevance,
       localizations.sortAlphabetically,
       localizations.sortRating,
       if (userRatingAvailable) localizations.sortUserRating,
@@ -281,7 +283,7 @@ class ListController with ChangeNotifier {
   }
 
   void _resetSort() {
-    _selectedSort = SortOption.alphabetically;
+    _selectedSort = isSearchList ? SortOption.relevance : SortOption.alphabetically;
     PreferencesService()
         .prefs
         .setString(_selectedSortPreferencesName, _selectedSort);
@@ -293,6 +295,8 @@ class ListController with ChangeNotifier {
     final localizations = AppLocalizations.of(context)!;
     if (name == localizations.sortAlphabetically) {
       return SortOption.alphabetically;
+    } else if (name == localizations.sortRelevance) {
+      return SortOption.relevance;
     } else if (name == localizations.sortRating) {
       return SortOption.rating;
     } else if (name == localizations.sortUserRating) {
@@ -306,7 +310,7 @@ class ListController with ChangeNotifier {
     } else if (name == localizations.sortAddedOrder) {
       return SortOption.addedOrder;
     } else {
-      return SortOption.alphabetically;
+      return isSearchList ? SortOption.relevance : SortOption.alphabetically;
     }
   }
 
@@ -330,9 +334,6 @@ class ListController with ChangeNotifier {
   }
 
   String _optionToTypeName(AppLocalizations localizations, String option) {
-    bool isSearchList = listService.listName == AppConstants.searchList ||
-        listService is TmdbSearchService;
-
     if (option == ApiConstants.movie) {
       return localizations.movies;
     } else if (option == ApiConstants.tv) {
@@ -348,6 +349,8 @@ class ListController with ChangeNotifier {
   String _optionToSortName(AppLocalizations localizations, String option) {
     if (option == SortOption.alphabetically) {
       return localizations.sortAlphabetically;
+    } else if (option == SortOption.relevance) {
+      return localizations.sortRelevance;
     } else if (option == SortOption.rating) {
       return localizations.sortRating;
     } else if (option == SortOption.userRating) {
@@ -361,6 +364,8 @@ class ListController with ChangeNotifier {
     } else if (option == SortOption.addedOrder) {
       return localizations.sortAddedOrder;
     }
-    return localizations.sortAlphabetically;
+    return isSearchList
+        ? localizations.sortRelevance
+        : localizations.sortAlphabetically;
   }
 }
