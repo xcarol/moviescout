@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/watchlist_notification_evaluator.dart';
+import 'package:moviescout/services/notifications/watchlist_notification_evaluator.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 void main() {

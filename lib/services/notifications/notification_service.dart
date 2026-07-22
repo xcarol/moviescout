@@ -1,0 +1,310 @@
+import 'dart:io';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:moviescout/services/system/deep_link_service.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:moviescout/services/core/error_service.dart';
+import 'package:moviescout/services/settings/preferences_service.dart';
+import 'package:moviescout/services/settings/theme_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
+
+class NotificationService extends ChangeNotifier {
+  static final NotificationService _instance = NotificationService._internal();
+  factory NotificationService() => _instance;
+  NotificationService._internal();
+
+  final FlutterLocalNotificationsPlugin _notificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  bool _enabled = true;
+  bool _notifyCompleteSeason = false;
+
+  bool get enabled => _enabled;
+  bool get notifyCompleteSeason => _notifyCompleteSeason;
+
+  Future<void> init() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('ic_notification');
+
+    const LinuxInitializationSettings initializationSettingsLinux =
+        LinuxInitializationSettings(defaultActionName: 'Open notification');
+
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+      android: initializationSettingsAndroid,
+      linux: initializationSettingsLinux,
+    );
+
+    await _notificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        if (response.payload != null) {
+          _handlePayload(response.payload!);
+        }
+      },
+    );
+
+    _enabled =
+        PreferencesService().prefs.getBool(AppConstants.notificationsEnabled) ??
+            true;
+
+    _notifyCompleteSeason =
+        PreferencesService().prefs.getBool(AppConstants.notifyCompleteSeason) ??
+            false;
+
+    await checkSystemPermission();
+  }
+
+  Future<void> checkSystemPermission() async {
+    bool systemGranted = false;
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+          _notificationsPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+      systemGranted =
+          await androidImplementation?.areNotificationsEnabled() ?? false;
+    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+      // For iOS, a direct check normally requires higher permissions or is assumed granted if requested.
+      // Defaulting for now as it's more complex without permission_handler.
+      systemGranted = true;
+    } else {
+      systemGranted = true;
+    }
+
+    if (systemGranted != _enabled) {
+      _enabled = systemGranted;
+      await PreferencesService()
+          .prefs
+          .setBool(AppConstants.notificationsEnabled, _enabled);
+      notifyListeners();
+    }
+  }
+
+  Future<bool> requestPermission() async {
+    await PreferencesService()
+        .prefs
+        .setBool(AppConstants.notificationsAsked, true);
+
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+          _notificationsPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+
+      final bool granted =
+          await androidImplementation?.requestNotificationsPermission() ??
+              false;
+
+      if (!granted && _enabled) {
+        _enabled = false;
+        await PreferencesService()
+            .prefs
+            .setBool(AppConstants.notificationsEnabled, false);
+        notifyListeners();
+      }
+
+      return granted;
+    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+      final bool granted = await _notificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                  IOSFlutterLocalNotificationsPlugin>()
+              ?.requestPermissions(
+                alert: true,
+                badge: true,
+                sound: true,
+              ) ??
+          false;
+
+      if (!granted && _enabled) {
+        _enabled = false;
+        await PreferencesService()
+            .prefs
+            .setBool(AppConstants.notificationsEnabled, false);
+        notifyListeners();
+      }
+
+      return granted;
+    }
+    return true;
+  }
+
+  Future<void> requestPermissionOnFirstLaunch() async {
+    final hasAsked =
+        PreferencesService().prefs.getBool(AppConstants.notificationsAsked) ??
+            false;
+
+    if (!hasAsked) {
+      await requestPermission();
+    }
+  }
+
+  Future<bool> setEnabled(bool value) async {
+    if (value) {
+      final granted = await requestPermission();
+      if (!granted) return false;
+    }
+
+    _enabled = value;
+    await PreferencesService()
+        .prefs
+        .setBool(AppConstants.notificationsEnabled, value);
+    notifyListeners();
+    return true;
+  }
+
+  Future<void> setNotifyCompleteSeason(bool value) async {
+    _notifyCompleteSeason = value;
+    await PreferencesService()
+        .prefs
+        .setBool(AppConstants.notifyCompleteSeason, value);
+    notifyListeners();
+  }
+
+  void _handlePayload(String payload) {
+    if (payload.isNotEmpty) {
+      final parts = payload.split('|');
+      if (parts.length == 2) {
+        final type = parts[0];
+        final id = int.tryParse(parts[1]);
+        if (id != null) {
+          DeepLinkService().navigateTo(type, id);
+        }
+      }
+    }
+  }
+
+  Future<void> handleColdStartNotification() async {
+    if (kIsWeb ||
+        (defaultTargetPlatform != TargetPlatform.android &&
+            defaultTargetPlatform != TargetPlatform.iOS)) {
+      return;
+    }
+
+    final NotificationAppLaunchDetails? notificationAppLaunchDetails =
+        await _notificationsPlugin.getNotificationAppLaunchDetails();
+
+    if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
+      final payload =
+          notificationAppLaunchDetails?.notificationResponse?.payload;
+      if (payload != null) {
+        // Give the app a moment to settle navigation state
+        Future.delayed(const Duration(milliseconds: 500), () {
+          _handlePayload(payload);
+        });
+      }
+    }
+  }
+
+  Future<void> showNotification({
+    required int id,
+    required String title,
+    required String body,
+    String? imageUrl,
+    String? payload,
+  }) async {
+    if (!_enabled) {
+      return;
+    }
+
+    if (kIsWeb ||
+        (defaultTargetPlatform != TargetPlatform.android &&
+            defaultTargetPlatform != TargetPlatform.iOS &&
+            defaultTargetPlatform != TargetPlatform.linux)) {
+      return;
+    }
+
+    StyleInformation? styleInformation;
+
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      try {
+        final File file = await DefaultCacheManager().getSingleFile(imageUrl);
+        styleInformation = BigPictureStyleInformation(
+          FilePathAndroidBitmap(file.path),
+          largeIcon: FilePathAndroidBitmap(file.path),
+          contentTitle: title,
+          summaryText: body,
+        );
+      } catch (e, stackTrace) {
+        ErrorService.log(
+          e,
+          stackTrace: stackTrace,
+        );
+      }
+    }
+
+    styleInformation ??= BigTextStyleInformation(
+      body,
+      contentTitle: title,
+    );
+
+    final themeService = ThemeService();
+
+    final brightness =
+        WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    final isDarkMode = brightness == Brightness.dark;
+
+    final AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+      'title_availability_channel',
+      'Title Availability',
+      channelDescription: 'Notifications for watchlist title availability',
+      importance: Importance.max,
+      priority: Priority.high,
+      styleInformation: styleInformation,
+      color: isDarkMode
+          ? themeService.darkColorScheme.surface
+          : themeService.lightColorScheme.surface,
+    );
+
+    final NotificationDetails notificationDetails = NotificationDetails(
+      android: androidDetails,
+    );
+
+    await _notificationsPlugin.show(id, title, body, notificationDetails,
+        payload: payload);
+  }
+
+  Future<void> showProgressNotification({
+    required int id,
+    required String title,
+    required String body,
+    required int progress,
+    required int maxProgress,
+  }) async {
+    if (!_enabled ||
+        kIsWeb ||
+        (defaultTargetPlatform != TargetPlatform.android &&
+            defaultTargetPlatform != TargetPlatform.iOS)) {
+      return;
+    }
+
+    final AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+      AppConstants.notificationProgressChannelId,
+      AppConstants.notificationProgressChannelName,
+      channelDescription: AppConstants.notificationProgressChannelDesc,
+      channelShowBadge: false,
+      importance: Importance.low,
+      priority: Priority.low,
+      onlyAlertOnce: true,
+      showProgress: true,
+      styleInformation: BigTextStyleInformation(
+        body,
+        contentTitle: title,
+      ),
+      maxProgress: maxProgress,
+      progress: progress,
+      ongoing: true,
+      autoCancel: false,
+    );
+
+    final NotificationDetails notificationDetails = NotificationDetails(
+      android: androidDetails,
+    );
+
+    await _notificationsPlugin.show(id, title, body, notificationDetails);
+  }
+
+  Future<void> cancelNotification(int id) async {
+    await _notificationsPlugin.cancel(id);
+  }
+}

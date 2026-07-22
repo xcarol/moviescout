@@ -1,0 +1,91 @@
+import 'package:moviescout/utils/url_constants.dart';
+import 'dart:convert';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:moviescout/services/core/error_service.dart';
+import 'package:moviescout/services/settings/preferences_service.dart';
+import 'package:moviescout/services/core/tmdb_configuration_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
+
+class RegionService with ChangeNotifier {
+  static final RegionService _instance = RegionService._internal();
+
+  factory RegionService() {
+    return _instance;
+  }
+
+  RegionService._internal();
+
+  String? _detectedRegion;
+  String? _manualRegion =
+      PreferencesService().prefs.getString(AppConstants.region);
+
+  String? get detectedRegion => _detectedRegion;
+  String? get manualRegion => _manualRegion;
+
+  /// Returns the effective country code: manual override > detected region > null
+  String? get currentRegion => _manualRegion ?? _detectedRegion;
+
+  Future<void> init() async {
+    if (_manualRegion == null) {
+      detectRegion(); // Don't await, run in background
+    }
+  }
+
+  Future<void> detectRegion() async {
+    final String? fallbackCountryCode =
+        ui.PlatformDispatcher.instance.locale.countryCode;
+
+    if (fallbackCountryCode != null && fallbackCountryCode.isNotEmpty) {
+      _detectedRegion = fallbackCountryCode;
+      notifyListeners();
+    }
+
+    int retryCount = 0;
+    while (retryCount < 5) {
+      try {
+        final response = await http
+            .get(Uri.parse(UrlConstants.ipApiUrl))
+            .timeout(const Duration(seconds: 3));
+
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          final newRegion = data['country_code'];
+          if (_detectedRegion != newRegion) {
+            _detectedRegion = newRegion;
+            notifyListeners();
+          }
+          return;
+        }
+      } catch (e, stackTrace) {
+        if (retryCount == 4) {
+          ErrorService.log(
+            e,
+            stackTrace: stackTrace,
+            userMessage: 'Error detecting region',
+          );
+        }
+      }
+      retryCount++;
+      if (retryCount < 5) {
+        await Future.delayed(const Duration(seconds: 2));
+      }
+    }
+  }
+
+  void setManualRegion(String? countryCode) {
+    _manualRegion = countryCode;
+    if (countryCode != null) {
+      PreferencesService().prefs.setString(AppConstants.region, countryCode);
+    } else {
+      PreferencesService().prefs.remove(AppConstants.region);
+    }
+    notifyListeners();
+  }
+
+  String getRegionName(String? countryCode) {
+    if (countryCode == null) return '';
+    return TmdbConfigurationService().getCountryName(countryCode);
+  }
+}

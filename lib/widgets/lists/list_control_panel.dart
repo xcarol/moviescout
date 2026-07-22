@@ -5,7 +5,7 @@ import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/widgets/inputs_and_filters/text_filter_widget.dart';
 import 'package:moviescout/widgets/lists/list_controller.dart';
 import 'package:moviescout/widgets/inputs_and_filters/rating_filter_tabs.dart';
-import 'package:moviescout/services/tmdb_base_list_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart';
 
 class ListControlPanel extends StatelessWidget {
   final ListController controller;

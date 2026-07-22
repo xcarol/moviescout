@@ -2,7 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
-import 'package:moviescout/services/video_player_service.dart';
+import 'package:moviescout/services/media/video_player_service.dart';
 import 'package:simple_pip_mode/simple_pip.dart';
 import 'package:simple_pip_mode/pip_widget.dart';
 

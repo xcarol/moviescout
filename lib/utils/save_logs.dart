@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/services/error_service.dart';
+import 'package:moviescout/services/core/error_service.dart';
 
 Future<void> saveLogs(List<String> logLines) async {
   if (kDebugMode == false && dotenv.env[AppConstants.enableLogs] != 'true') {

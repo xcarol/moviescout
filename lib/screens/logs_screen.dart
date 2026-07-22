@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moviescout/main.dart';
-import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:share_plus/share_plus.dart';
 

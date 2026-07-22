@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/screens/person_details.dart';
-import 'package:moviescout/services/tmdb_title_list_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';

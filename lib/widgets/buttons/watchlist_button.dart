@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/error_service.dart';
-import 'package:moviescout/services/tmdb_user_service.dart';
-import 'package:moviescout/services/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/core/error_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:provider/provider.dart';
 

@@ -3,12 +3,12 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/main.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/saved_notification.dart';
-import 'package:moviescout/services/deep_link_service.dart';
-import 'package:moviescout/services/preferences_service.dart';
+import 'package:moviescout/services/system/deep_link_service.dart';
+import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
-import 'package:moviescout/services/tmdb_provider_service.dart';
+import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:provider/provider.dart';
 

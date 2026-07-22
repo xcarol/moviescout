@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 
 import 'package:moviescout/widgets/inputs_and_filters/drop_down_selector.dart';
-import 'package:moviescout/services/video_player_service.dart';
+import 'package:moviescout/services/media/video_player_service.dart';
 
 class TrailerButtons extends StatelessWidget {
   final List<Map<String, dynamic>> videos;

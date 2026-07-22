@@ -7,15 +7,15 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_people_list.dart';
-import 'package:moviescout/services/tmdb_episode_service.dart';
-import 'package:moviescout/services/tmdb_title_list_service.dart';
+import 'package:moviescout/services/tmdb_content/tmdb_episode_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/media/media_carousel.dart';
 import 'package:moviescout/widgets/chips/person_chip.dart';
 import 'package:moviescout/utils/date_formatter.dart';
 import 'package:moviescout/widgets/text_and_info/expandable_description.dart';
 import 'package:moviescout/widgets/buttons/edit_button.dart';
 import 'package:moviescout/widgets/buttons/translations_button.dart';
-import 'package:moviescout/services/tmdb_translation_service.dart';
+import 'package:moviescout/services/api/tmdb_translation_service.dart';
 
 class EpisodeDetails extends StatefulWidget {
   final TmdbTitle title;

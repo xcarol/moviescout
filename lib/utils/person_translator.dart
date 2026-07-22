@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:moviescout/services/error_service.dart';
+import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class PersonTranslator {

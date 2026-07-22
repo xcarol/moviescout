@@ -5,8 +5,8 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/tmdb_title_list_service.dart';
-import 'package:moviescout/services/tmdb_season_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
+import 'package:moviescout/services/tmdb_content/tmdb_season_service.dart';
 import 'package:moviescout/widgets/cards/episode_card.dart';
 import 'package:moviescout/widgets/media/media_carousel.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,12 +14,12 @@ import 'package:share_plus/share_plus.dart';
 import 'package:moviescout/utils/date_formatter.dart';
 import 'package:moviescout/widgets/buttons/edit_button.dart';
 import 'package:moviescout/widgets/buttons/translations_button.dart';
-import 'package:moviescout/services/tmdb_translation_service.dart';
+import 'package:moviescout/services/api/tmdb_translation_service.dart';
 import 'package:moviescout/widgets/buttons/trailer_buttons.dart';
 import 'package:moviescout/widgets/layout/boxed_widget.dart';
 import 'package:moviescout/widgets/text_and_info/expandable_description.dart';
 import 'package:moviescout/widgets/text_and_info/clickable_names.dart';
-import 'package:moviescout/services/home_screen_shortcut_service.dart';
+import 'package:moviescout/services/system/home_screen_shortcut_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 
 class SeasonDetails extends StatefulWidget {
