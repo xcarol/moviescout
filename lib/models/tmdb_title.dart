@@ -110,6 +110,7 @@ class SortOption {
   static const runtime = 'runtime';
   static const dateRated = 'dateRated';
   static const addedOrder = 'addedOrder';
+  static const relevance = 'relevance';
 }
 
 class TmdbTitle implements TmdbItem {

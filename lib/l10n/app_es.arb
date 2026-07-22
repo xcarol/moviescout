@@ -152,6 +152,8 @@
   "@sortRuntime": {},
   "sortDateRated": "Fecha de valoración",
   "@sortDateRated": {},
+  "sortRelevance": "Relevancia",
+  "@sortRelevance": {},
   "sortAddedOrder": "Fecha de adición",
   "@sortAddedOrder": {},
   "genres": "Géneros",

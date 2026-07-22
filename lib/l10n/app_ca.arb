@@ -148,6 +148,8 @@
   "@sortRuntime": {},
   "sortDateRated": "Data de valoració",
   "@sortDateRated": {},
+  "sortRelevance": "Rellevància",
+  "@sortRelevance": {},
   "sortAddedOrder": "Data d'addició",
   "@sortAddedOrder": {},
   "genres": "Gèneres",
