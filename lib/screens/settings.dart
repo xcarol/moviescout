@@ -9,9 +9,9 @@ import 'package:moviescout/services/region_service.dart';
 import 'package:moviescout/services/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
 import 'package:moviescout/utils/deep_link_utils.dart';
-import 'package:moviescout/widgets/language_form.dart';
-import 'package:moviescout/widgets/notification_permission_dialog.dart';
-import 'package:moviescout/widgets/region_form.dart';
+import 'package:moviescout/widgets/dialogs_and_forms/language_form.dart';
+import 'package:moviescout/widgets/dialogs_and_forms/notification_permission_dialog.dart';
+import 'package:moviescout/widgets/dialogs_and_forms/region_form.dart';
 import 'package:moviescout/services/edit_settings_service.dart';
 import 'package:provider/provider.dart';
 

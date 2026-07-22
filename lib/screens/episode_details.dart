@@ -9,12 +9,12 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/services/tmdb_episode_service.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
-import 'package:moviescout/widgets/media_carousel.dart';
-import 'package:moviescout/widgets/person_chip.dart';
+import 'package:moviescout/widgets/media/media_carousel.dart';
+import 'package:moviescout/widgets/chips/person_chip.dart';
 import 'package:moviescout/utils/date_formatter.dart';
-import 'package:moviescout/widgets/expandable_description.dart';
-import 'package:moviescout/widgets/edit_button.dart';
-import 'package:moviescout/widgets/translations_button.dart';
+import 'package:moviescout/widgets/text_and_info/expandable_description.dart';
+import 'package:moviescout/widgets/buttons/edit_button.dart';
+import 'package:moviescout/widgets/buttons/translations_button.dart';
 import 'package:moviescout/services/tmdb_translation_service.dart';
 
 class EpisodeDetails extends StatefulWidget {

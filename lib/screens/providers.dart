@@ -5,7 +5,7 @@ import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/tmdb_provider_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/models/title_list_theme.dart';
-import 'package:moviescout/widgets/text_filter_widget.dart';
+import 'package:moviescout/widgets/inputs_and_filters/text_filter_widget.dart';
 
 class ProvidersScreen extends StatefulWidget {
   const ProvidersScreen({super.key});

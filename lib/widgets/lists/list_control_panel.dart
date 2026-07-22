@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/screens/genres.dart';
 import 'package:moviescout/models/title_list_theme.dart';
-import 'package:moviescout/widgets/text_filter_widget.dart';
-import 'package:moviescout/widgets/list_controller.dart';
-import 'package:moviescout/widgets/rating_filter_tabs.dart';
+import 'package:moviescout/widgets/inputs_and_filters/text_filter_widget.dart';
+import 'package:moviescout/widgets/lists/list_controller.dart';
+import 'package:moviescout/widgets/inputs_and_filters/rating_filter_tabs.dart';
 import 'package:moviescout/services/tmdb_base_list_service.dart';
 
 class ListControlPanel extends StatelessWidget {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:moviescout/widgets/list_controller.dart';
+import 'package:moviescout/widgets/lists/list_controller.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/preferences_service.dart';
 import 'package:moviescout/models/tmdb_title.dart';

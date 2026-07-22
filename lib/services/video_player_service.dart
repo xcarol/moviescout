@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/widgets/video_player.dart';
+import 'package:moviescout/widgets/media/video_player.dart';
 import 'package:moviescout/services/deep_link_service.dart';
 
 import 'dart:io' show Platform;

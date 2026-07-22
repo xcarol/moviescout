@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/widgets/boxed_widget.dart';
+import 'package:moviescout/widgets/layout/boxed_widget.dart';
 
 class OmdbRatingWidget extends StatelessWidget {
   final Map<String, dynamic> rating;

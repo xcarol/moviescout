@@ -5,7 +5,7 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
-import 'package:moviescout/widgets/title_card.dart';
+import 'package:moviescout/widgets/cards/title_card.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';

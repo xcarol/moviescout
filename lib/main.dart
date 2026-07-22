@@ -40,7 +40,7 @@ import 'package:moviescout/services/watchlist_update_worker.dart';
 import 'package:moviescout/services/notification_service.dart';
 import 'package:moviescout/services/edit_settings_service.dart';
 import 'package:app_links/app_links.dart';
-import 'package:moviescout/widgets/shortcut_router.dart';
+import 'package:moviescout/widgets/misc/shortcut_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:moviescout/services/uninitialized_titles_worker.dart';

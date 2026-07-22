@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/widgets/expandable_text.dart';
+import 'package:moviescout/widgets/text_and_info/expandable_text.dart';
 
 class ExpandableDescription extends StatelessWidget {
   final String text;

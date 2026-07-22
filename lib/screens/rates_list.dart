@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_user_service.dart';
-import 'package:moviescout/widgets/item_list.dart';
+import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:provider/provider.dart';
 
 class RatesList extends StatefulWidget {

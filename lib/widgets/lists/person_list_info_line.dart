@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/widgets/list_info_line.dart';
-import 'package:moviescout/widgets/drop_down_selector.dart';
-import 'package:moviescout/widgets/person_list_controller.dart';
+import 'package:moviescout/widgets/lists/list_info_line.dart';
+import 'package:moviescout/widgets/inputs_and_filters/drop_down_selector.dart';
+import 'package:moviescout/widgets/lists/person_list_controller.dart';
 
 class PersonListInfoLine extends StatelessWidget {
   final PersonListController controller;

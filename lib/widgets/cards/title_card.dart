@@ -13,9 +13,9 @@ import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/services/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_rateslist_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/widgets/watchlist_button.dart';
-import 'package:moviescout/widgets/pin_button.dart';
-import 'package:moviescout/widgets/notify_button.dart';
+import 'package:moviescout/widgets/buttons/watchlist_button.dart';
+import 'package:moviescout/widgets/buttons/pin_button.dart';
+import 'package:moviescout/widgets/buttons/notify_button.dart';
 import 'package:provider/provider.dart';
 
 class CustomCacheManager {
