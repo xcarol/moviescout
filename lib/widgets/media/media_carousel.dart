@@ -29,14 +29,14 @@ class MediaCarousel extends StatefulWidget {
 
 class _MediaCarouselState extends State<MediaCarousel> {
   late PageController _pageController;
-  int _currentPage = 0;
-  static const int _infiniteBase = 10000;
+  late int _currentPage;
+  static const int infiniteBase = 10000;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: _infiniteBase);
-    _currentPage = 0;
+    _pageController = PageController(initialPage: infiniteBase);
+    _currentPage = infiniteBase;
   }
 
   @override
@@ -58,78 +58,53 @@ class _MediaCarouselState extends State<MediaCarousel> {
     return _buildCarousel(context, totalItems, images);
   }
 
-  int _getRealIndex(int index, int total) {
-    if (total <= 0) return 0;
-    return ((((index - _infiniteBase) % total) + total) % total).toInt();
-  }
-
   Widget _buildCarousel(
       BuildContext context, int totalItems, List<String> images) {
     return RepaintBoundary(
         child: AspectRatio(
       aspectRatio: widget.aspectRatio,
-      child: Stack(
-        clipBehavior: Clip.hardEdge,
-        alignment: Alignment.bottomCenter,
-        children: [
-          if (widget.isLoading)
-            const Positioned(
-              top: 10,
-              right: 10,
-              child: SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => _FullScreenCarousel(
+                images: images,
+                initialPage: _pageController.hasClients 
+                    ? _pageController.page?.round() ?? infiniteBase
+                    : infiniteBase,
+                infiniteBase: infiniteBase,
               ),
             ),
-          PageView.builder(
-            controller: _pageController,
-            physics:
-                totalItems == 1 ? const NeverScrollableScrollPhysics() : null,
-            onPageChanged: (index) {
-              final realIndex = _getRealIndex(index, totalItems);
-              if (realIndex != _currentPage) {
+          );
+        },
+        child: Stack(
+          children: [
+            _CarouselBase(
+              pageController: _pageController,
+              totalItems: totalItems,
+              currentPage: _currentPage,
+              infiniteBase: infiniteBase,
+              onPageChanged: (index) {
                 setState(() {
-                  _currentPage = realIndex;
+                  _currentPage = index;
                 });
-              }
-            },
-            itemBuilder: (context, index) {
-              final realIndex = _getRealIndex(index, totalItems);
-              return _buildImage(images[realIndex]);
-            },
-          ),
-          if (totalItems > 1)
-            Positioned(
-              bottom: 30,
-              left: 10,
-              right: 10,
-              child: Align(
-                alignment: Alignment.center,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(totalItems, (index) {
-                      final colorScheme = Theme.of(context).colorScheme;
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        height: 8,
-                        width: _currentPage == index ? 16 : 8,
-                        decoration: BoxDecoration(
-                          color: _currentPage == index
-                              ? colorScheme.primary
-                              : colorScheme.onPrimary.withValues(alpha: 0.5),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      );
-                    }),
-                  ),
+              },
+              itemBuilder: (context, realIndex) {
+                return _buildImage(images[realIndex]);
+              },
+            ),
+            if (widget.isLoading)
+              const Positioned(
+                top: 10,
+                right: 10,
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     ));
   }
@@ -143,7 +118,20 @@ class _MediaCarouselState extends State<MediaCarousel> {
     return AspectRatio(
       aspectRatio: widget.aspectRatio,
       child: image.isNotEmpty
-          ? _buildImageFromUrl(image)
+          ? GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => _FullScreenCarousel(
+                      images: [image],
+                      initialPage: 0,
+                      infiniteBase: 0,
+                    ),
+                  ),
+                );
+              },
+              child: _buildImage(image),
+            )
           : _buildPlaceholder(mediaType),
     );
   }
@@ -191,6 +179,155 @@ class _MediaCarouselState extends State<MediaCarousel> {
           ),
           errorWidget: (context, url, error) => const Icon(Icons.error),
         ),
+      ],
+    );
+  }
+}
+
+class _FullScreenCarousel extends StatefulWidget {
+  final List<String> images;
+  final int initialPage;
+  final int infiniteBase;
+
+  const _FullScreenCarousel({
+    required this.images,
+    required this.initialPage,
+    required this.infiniteBase,
+  });
+
+  @override
+  State<_FullScreenCarousel> createState() => _FullScreenCarouselState();
+}
+
+class _FullScreenCarouselState extends State<_FullScreenCarousel> {
+  late PageController _pageController;
+  late int _currentPage;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentPage = widget.initialPage;
+    _pageController = PageController(initialPage: widget.initialPage);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final totalItems = widget.images.length;
+    final colorScheme = Theme.of(context).colorScheme;
+    return Scaffold(
+      backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: IconThemeData(color: colorScheme.onSurface),
+      ),
+      extendBodyBehindAppBar: true,
+      body: _CarouselBase(
+        pageController: _pageController,
+        totalItems: totalItems,
+        currentPage: _currentPage,
+        infiniteBase: widget.infiniteBase,
+        onPageChanged: (index) {
+          setState(() {
+            _currentPage = index;
+          });
+        },
+        itemBuilder: (context, realIndex) {
+          final path = widget.images[realIndex];
+          final url = UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', path);
+          return InteractiveViewer(
+            child: Center(
+              child: CachedNetworkImage(
+                imageUrl: url,
+                fit: BoxFit.contain,
+                placeholder: (context, url) => const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error, color: colorScheme.error),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _CarouselBase extends StatelessWidget {
+  final PageController pageController;
+  final int totalItems;
+  final int currentPage;
+  final int infiniteBase;
+  final Widget Function(BuildContext, int realIndex) itemBuilder;
+  final ValueChanged<int> onPageChanged;
+
+  const _CarouselBase({
+    required this.pageController,
+    required this.totalItems,
+    required this.currentPage,
+    this.infiniteBase = 0,
+    required this.itemBuilder,
+    required this.onPageChanged,
+  });
+
+  int _getRealIndex(int index, int total) {
+    if (total <= 0) return 0;
+    return ((((index - infiniteBase) % total) + total) % total).toInt();
+  }
+
+  Widget _buildDotIndicators(BuildContext context) {
+    return Positioned(
+      bottom: 30,
+      left: 10,
+      right: 10,
+      child: Align(
+        alignment: Alignment.center,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(totalItems, (index) {
+              final realCurrentPage = _getRealIndex(currentPage, totalItems);
+              final colorScheme = Theme.of(context).colorScheme;
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                height: 8,
+                width: realCurrentPage == index ? 16 : 8,
+                decoration: BoxDecoration(
+                  color: realCurrentPage == index
+                      ? colorScheme.primary
+                      : colorScheme.onPrimary.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              );
+            }),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.hardEdge,
+      alignment: Alignment.bottomCenter,
+      children: [
+        PageView.builder(
+          controller: pageController,
+          physics: totalItems == 1 ? const NeverScrollableScrollPhysics() : null,
+          onPageChanged: onPageChanged,
+          itemBuilder: (context, index) {
+            final realIndex = _getRealIndex(index, totalItems);
+            return itemBuilder(context, realIndex);
+          },
+        ),
+        if (totalItems > 1) _buildDotIndicators(context),
       ],
     );
   }
