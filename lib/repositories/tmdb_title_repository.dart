@@ -426,9 +426,9 @@ class TmdbTitleRepository {
     if (filterMediaType.isNotEmpty) {
       if (filterMediaType == AppConstants.miniseries) {
         queryBuffer.write(
-            ' AND ${TmdbTitleRealmFields.mediaType} == \$${args.length} AND ${TmdbTitleRealmFields.numberOfSeasons} == 1 AND ${TmdbTitleRealmFields.status} == \$${args.length + 1}');
+            ' AND ${TmdbTitleRealmFields.mediaType} == \$${args.length} AND ${TmdbTitleRealmFields.type} == \$${args.length + 1}');
         args.add(ApiConstants.tv);
-        args.add('Ended');
+        args.add(TvShowType.miniseries);
       } else {
         queryBuffer.write(
             ' AND ${TmdbTitleRealmFields.mediaType} == \$${args.length}');

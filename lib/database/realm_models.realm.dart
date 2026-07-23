@@ -132,6 +132,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
     String imdbId,
     String homepage,
     String certification,
+    String type,
     String releaseDate,
     String firstAirDate,
     String lastAirDate,
@@ -186,6 +187,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
     RealmObjectBase.set(this, 'imdbId', imdbId);
     RealmObjectBase.set(this, 'homepage', homepage);
     RealmObjectBase.set(this, 'certification', certification);
+    RealmObjectBase.set(this, 'type', type);
     RealmObjectBase.set(this, 'posterPathSuffix', posterPathSuffix);
     RealmObjectBase.set(this, 'backdropPathSuffix', backdropPathSuffix);
     RealmObjectBase.set(this, 'releaseDate', releaseDate);
@@ -306,6 +308,11 @@ class TmdbTitleRealm extends _TmdbTitleRealm
   @override
   set certification(String value) =>
       RealmObjectBase.set(this, 'certification', value);
+
+  @override
+  String get type => RealmObjectBase.get<String>(this, 'type') as String;
+  @override
+  set type(String value) => RealmObjectBase.set(this, 'type', value);
 
   @override
   String? get posterPathSuffix =>
@@ -583,6 +590,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       'imdbId': imdbId.toEJson(),
       'homepage': homepage.toEJson(),
       'certification': certification.toEJson(),
+      'type': type.toEJson(),
       'posterPathSuffix': posterPathSuffix.toEJson(),
       'backdropPathSuffix': backdropPathSuffix.toEJson(),
       'releaseDate': releaseDate.toEJson(),
@@ -641,6 +649,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
         'imdbId': EJsonValue imdbId,
         'homepage': EJsonValue homepage,
         'certification': EJsonValue certification,
+        'type': EJsonValue type,
         'releaseDate': EJsonValue releaseDate,
         'firstAirDate': EJsonValue firstAirDate,
         'lastAirDate': EJsonValue lastAirDate,
@@ -679,6 +688,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
           fromEJson(imdbId),
           fromEJson(homepage),
           fromEJson(certification),
+          fromEJson(type),
           fromEJson(releaseDate),
           fromEJson(firstAirDate),
           fromEJson(lastAirDate),
@@ -742,6 +752,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       SchemaProperty('imdbId', RealmPropertyType.string),
       SchemaProperty('homepage', RealmPropertyType.string),
       SchemaProperty('certification', RealmPropertyType.string),
+      SchemaProperty('type', RealmPropertyType.string),
       SchemaProperty('posterPathSuffix', RealmPropertyType.string,
           optional: true),
       SchemaProperty('backdropPathSuffix', RealmPropertyType.string,

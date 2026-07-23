@@ -1,0 +1,2891 @@
+{
+  "adult": false,
+  "backdrop_path": "/yJAOi2n0VYBEXdPI1NXv5FiOcBX.jpg",
+  "created_by": [],
+  "episode_run_time": [
+    23
+  ],
+  "first_air_date": "2015-07-05",
+  "genres": [
+    {
+      "id": 16,
+      "name": "Animation"
+    },
+    {
+      "id": 10759,
+      "name": "Action & Adventure"
+    },
+    {
+      "id": 10765,
+      "name": "Sci-Fi & Fantasy"
+    }
+  ],
+  "homepage": "http://www.toei-anim.co.jp/tv/dragon_s",
+  "id": 62715,
+  "in_production": false,
+  "languages": [
+    "ja"
+  ],
+  "last_air_date": "2018-03-25",
+  "last_episode_to_air": {
+    "id": 1439500,
+    "name": "Un final miraculós: adeu, Goku, fins que ens tornem a trobar!",
+    "overview": "És el moment culminant del Torneig del Poder on es resoldrà la gran batalla que decidirà el destí dels universos! Qui en serà, el guanyador?",
+    "vote_average": 8.6,
+    "vote_count": 11,
+    "air_date": "2018-03-25",
+    "episode_number": 131,
+    "episode_type": "finale",
+    "production_code": "0",
+    "runtime": 24,
+    "season_number": 1,
+    "show_id": 62715,
+    "still_path": "/mtyMLDoFwnCURfGLZ3WMDk9Seur.jpg"
+  },
+  "name": "Bola de Drac Súper",
+  "next_episode_to_air": null,
+  "networks": [
+    {
+      "id": 1,
+      "logo_path": "/4x4GsmRmSLLL0RVNKsoqAVH43tz.png",
+      "name": "Fuji TV",
+      "origin_country": "JP"
+    }
+  ],
+  "number_of_episodes": 131,
+  "number_of_seasons": 1,
+  "origin_country": [
+    "JP"
+  ],
+  "original_language": "ja",
+  "original_name": "ドラゴンボール超（スーパー）",
+  "overview": "La trama de la sèrie té lloc després de la batalla contra en Buu Petit enmig del període de 10 anys cap al Torneig Mundial de les Arts Marcials 28. Està enllaçada amb les pel·lícules 'Bola de Drac Z: La Batalla dels déus' i 'Bola de Drac Z: La Resurrecció d'en Freezer'. La història comença a la fi de l'Any 774, sis mesos després de la derrota d'en Buu. L'actual saga d'en Trunks del Futur Alternatiu passa l'Any 780.",
+  "popularity": 19.0274,
+  "poster_path": "/o7hq64ckYkm41PEa2JE84ggOCwX.jpg",
+  "production_companies": [
+    {
+      "id": 5822,
+      "logo_path": "/qyTbRgCyU9NLKvKaiQVbadtr7RY.png",
+      "name": "Toei Company",
+      "origin_country": "JP"
+    },
+    {
+      "id": 5542,
+      "logo_path": "/ayE4LIqoAWotavo7xdvYngwqGML.png",
+      "name": "Toei Animation",
+      "origin_country": "JP"
+    },
+    {
+      "id": 3341,
+      "logo_path": "/dTG5dXE1kU2mpmL9BNnraffckLU.png",
+      "name": "Fuji Television Network",
+      "origin_country": "JP"
+    },
+    {
+      "id": 27716,
+      "logo_path": "/9Pp6m0fRqe86E7MOFaj1ZZiuuL1.png",
+      "name": "YOMIKO Advertising",
+      "origin_country": "JP"
+    }
+  ],
+  "production_countries": [
+    {
+      "iso_3166_1": "JP",
+      "name": "Japan"
+    }
+  ],
+  "seasons": [
+    {
+      "air_date": "2015-07-05",
+      "episode_count": 131,
+      "id": 66877,
+      "name": "Temporada única",
+      "overview": "",
+      "poster_path": "/nPYVKd7gS9DaPo9M7lj9aVg8SK8.jpg",
+      "season_number": 1,
+      "vote_average": 9
+    }
+  ],
+  "softcore": false,
+  "spoken_languages": [
+    {
+      "english_name": "Japanese",
+      "iso_639_1": "ja",
+      "name": "日本語"
+    }
+  ],
+  "status": "Ended",
+  "tagline": "",
+  "type": "Scripted",
+  "vote_average": 8.197,
+  "vote_count": 5309,
+  "translations": {
+    "translations": [
+      {
+        "iso_3166_1": "US",
+        "iso_639_1": "en",
+        "name": "English",
+        "english_name": "English",
+        "data": {
+          "name": "Dragon Ball Super",
+          "overview": "With Majin Buu defeated half-a-year prior, peace returns to Earth, where Son Goku (now a radish farmer) and his friends now live peaceful lives. However, a new threat appears in the form of Beerus, the God of Destruction. Considered the most terrifying being in the entire universe, Beerus is eager to fight the legendary warrior seen in a prophecy foretold decades ago known as the Super Saiyan God. The series retells the events from the two Dragon Ball Z films, Battle of Gods and Resurrection 'F' before proceeding to an original story about the exploration of alternate universes.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "ES",
+        "iso_639_1": "es",
+        "name": "Español",
+        "english_name": "Spanish",
+        "data": {
+          "name": "Dragon Ball Super",
+          "overview": "Tras derrotar a Majin Buu, Goku y sus amigos tienen una vida de lo más pacífica: Goku ahora se dedica a la agricultura, aunque siempre encuentra un rato para seguir entrenando; Mister Satán se ha hecho famoso como gran salvador de la Humanidad; Trunks y Goten hacen cosas de niños; Gohan y Videl se han casado; y Vegeta pasa unas vacaciones en familia. Pero algo que cambiará su destino está a punto de ocurrir. Mientras se reúnen para celebrar el cumpleaños de Bulma, el dios de la Destrucción ha despertado y se está dedicando a lo que mejor se le da: aniquilar planetas… y acaba de descubrir la Tierra. Una vez más, Goku necesitará la ayuda de sus amigos para convertirse en el legendario Super Saiyan y poder así derrotar al Dios de la Destrucción.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "HU",
+        "iso_639_1": "hu",
+        "name": "Magyar",
+        "english_name": "Hungarian",
+        "data": {
+          "name": "Dragon Ball: Szuper",
+          "overview": "A Super sorozat a Dragon Ball manga és anime folytatása. A történet Buu legyőzése és a legújabb két Dragon Ball Z film után helyezkedik el, valamint a tízéves időugrás között és a 28. Harcművészeti Nagytorna előtt játszódik.\n\nSon Goku és barátai olyan új ellenségekkel találkoznak, akik sokkal erősebbek, mint az eddig látottak, ezért isteni erőt kell elérniük. Goku megvédi a Földet a különféle ellenséges istenségektől, majd más univerzumokba utazik, ahol szintén különleges lényekkel mérkőzik meg.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "FR",
+        "iso_639_1": "fr",
+        "name": "Français",
+        "english_name": "French",
+        "data": {
+          "name": "Dragon Ball Super",
+          "overview": "Après le combat contre Boo, la Terre connait une période de paix. Cependant, le dieu de la destruction, Beerus, vient de se réveiller d'un sommeil de 39 ans avec l'intention d'affronter le Super Saïyen Divin, le guerrier légendaire dont parle une ancienne prophétie exprimée par le Poisson Oracle.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "DE",
+        "iso_639_1": "de",
+        "name": "Deutsch",
+        "english_name": "German",
+        "data": {
+          "name": "Dragonball Super",
+          "overview": "Son Goku und seine Freunde genießen das ruhige Leben auf der Erde. Doch das friedliche Idyll wird urplötzlich gestört, als Beerus, der Gott der Zerstörung, aus einem langen Schlaf erwacht und zusammen mit seinem Begleiter Whis bei Bulmas Geburtstagsfeier auftaucht. Sie haben die letzten verbliebenen Saiyajins, Vegeta und Son Goku, aufgespürt, in der Hoffnung, unter ihnen den Super-Saiyajin-Gott zu finden. Zu Beerus’ Verdruss wissen die beiden nichts darüber, dabei hatte er sich auf einen Kampf gefreut. Als Boo ihn dann auch noch erzürnt, schwört er die Erde auszulöschen. Nun liegt es erneut an Son Goku, den Gott der Zerstörung aufzuhalten und die Vernichtung des Planeten zu verhindern …",
+          "homepage": "",
+          "tagline": "Die legendären Helden sind zurück!"
+        }
+      },
+      {
+        "iso_3166_1": "PT",
+        "iso_639_1": "pt",
+        "name": "Português",
+        "english_name": "Portuguese",
+        "data": {
+          "name": "Dragon Ball Super",
+          "overview": "Passou um ano desde a batalha contra o terrível Buu Buu e uma nova crise ameaça a Terra. O Deus das Destruição, Bills, que mantém o equilíbrio em todo o universo, despertou do seu sono de trinta e nove anos. Ao ouvir rumores sobre o Guerreiro do Espaço que derrotou o Freezer, Bills decide ir ao seu encontro. Emocionado por encontrar um inimigo tão poderoso depois de tanto tempo, Son Goku desafia o Deus da Destruição para um combate, mas vê-se impotente perante o seu poder. Serão capazes Son Goku, Vegeta, e os outros guerreiros da Terra, de deter os poderes sem precedentes de Bills?",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "RU",
+        "iso_639_1": "ru",
+        "name": "Pусский",
+        "english_name": "Russian",
+        "data": {
+          "name": "Драконий жемчуг супер",
+          "overview": "Спустя 6 месяцев после победы над Маджином Буу, с помощью Драгон-Боллов, Зет-Воины стирают людям память о Маджине Буу и связанных с ним событиях и начинают жить мирной жизнью. Чи-Чи заставляет Гоку искать работу, а тот, в свою очередь, хочет спокойно тренироваться, чтобы быть готовым к угрозам из вне. Остальные же герои наслаждаются миром и покоем.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "GR",
+        "iso_639_1": "el",
+        "name": "ελληνικά",
+        "english_name": "Greek",
+        "data": {
+          "name": "Dragon Ball Super",
+          "overview": "H πολυαναμενόμενη σειρά Dragon Ball Super είναι εδώ! Παρακολουθήστε τα γεγονότα μετά το \n\nτέλος της σειράς Dragon Ball Z και της ήττας του Majin Buu, με όλους τους αγαπημένους ήρωες να \n\nπαίρνουν μέρος σε μια νέα περιπέτεια!",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "RO",
+        "iso_639_1": "ro",
+        "name": "Română",
+        "english_name": "Romanian",
+        "data": {
+          "name": "Bilele dragonului Supper",
+          "overview": "",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "PL",
+        "iso_639_1": "pl",
+        "name": "Polski",
+        "english_name": "Polish",
+        "data": {
+          "name": "Dragon Ball Super",
+          "overview": "Po pokonaniu Majin Buu Goku powraca na Ziemię, aby wieść życie prostego farmera. Na horyzoncie pojawia się jednak nowe zagrożenie. Beerus, jeden z bogów zniszczenia i strażnik równowagi w Siódmym Wszechświecie, budzi się z długiego snu. Jego celem jest pojedynek z legendarnym Super Saiyaninem. Chcąc uratować swoją planetę, Goku musi połączyć w sobie moc pięciu wojowników. (Źródło: Teleman)",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "JP",
+        "iso_639_1": "ja",
+        "name": "日本語",
+        "english_name": "Japanese",
+        "data": {
+          "name": "",
+          "overview": "鳥山明オリジナル原案のテレビ新シリーズ！今回のシリーズは、悟空が史上最強の敵・魔人ブウとの壮絶な戦いを制し平和を取り戻した地球のその後からスタートする。長い眠りから目覚めた破壊の神ビルスとの出会い、かつて「宇宙の帝王」と恐れられたフリーザの復活など、悟空たちに次々と迫る脅威に加え、地球の周辺では星が消える不思議な現象が起こっていた。地球に何が起こっているのか・・・。",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "LB",
+        "iso_639_1": "lb",
+        "name": "",
+        "english_name": "Letzeburgesch",
+        "data": {
+          "name": "",
+          "overview": "",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "SA",
+        "iso_639_1": "ar",
+        "name": "العربية",
+        "english_name": "Arabic",
+        "data": {
+          "name": "دراغون بول سوبر",
+          "overview": "جزء جديد من سلسلة دراغون بول بعنوان دراغون بول سوبر وتكملة الاحداث بعد قتال ماجين بو ( ملاحظة لفهم الاحداث يجب مشاهدة فلم Dragon Ball Z Movie 14: Kami to Kami لمواكبة احداث هذا الجزء )",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "BR",
+        "iso_639_1": "pt",
+        "name": "Português",
+        "english_name": "Portuguese",
+        "data": {
+          "name": "Dragon Ball Super",
+          "overview": "Seis meses após a derrota de Majin Buu, Goku arranja um novo emprego como... fazendeiro de nabos? Agora que a Terra está em paz, nosso heróis levam vidas mundanas, mas não por muito tempo. Longe dali, Bills, o poderoso Deus da Destruição, recebe uma profecia de que encontrará seu fim nas mãos de um ser ainda mais poderoso, e sua busca pelo Deus dos Saiyajins o traz para a Terra. Será que Goku e seus amigos conseguirão derrotar seu mais poderoso inimigo até então?",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "IL",
+        "iso_639_1": "he",
+        "name": "עִבְרִית",
+        "english_name": "Hebrew",
+        "data": {
+          "name": "דרגון בול סופר",
+          "overview": "עם תבוסתו של מאג'ין בו, השקט חזר לכדור הארץ כאשר גוקו וחבריו חיים בשלווה. עם זאת, מופיע כעת איום חדש על הפלנטה בצורתו של בירוס, אל ההרס.  בהיותו הישות המחרידה ביותר ביקום כולו, נחוש בירוס להילחם בלוחם האגדי  הנודע בכינוי \"האל הסופר סאייני\", אליו התוודע בעקבות נבואה שהתגלתה לו.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "IT",
+        "iso_639_1": "it",
+        "name": "Italiano",
+        "english_name": "Italian",
+        "data": {
+          "name": "Dragon Ball Super",
+          "overview": "Dopo la sconfitta di Majin Bu la pace è tornata sulla Terra e anche Goku e i suoi amici hanno ripreso la vita di tutti i giorni. Dragon Ball Super è una serie televisiva anime prodotta dalla Toei Animation e trasmessa in Giappone a partire dal 5 luglio 2015 su Fuji Television. È la prima serie TV di Dragon Ball prodotta in 18 anni, costituisce il sequel ufficiale di Dragon Ball Z.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "MX",
+        "iso_639_1": "es",
+        "name": "Español",
+        "english_name": "Spanish",
+        "data": {
+          "name": "Dragon Ball Super",
+          "overview": "La trama de la serie tiene lugar después de la batalla contra Pequeño Buu en medio del período de 10 años hacia el Torneo Mundial de las Artes Marciales 28. Está enlazada con las películas Dragon Ball Z: La Batalla de los Dioses y Dragon Ball Z: La Resurrección de F. La historia comienza a finales del Año 774, seis meses después de la derrota de Buu. La actual saga de Trunks del Futuro Alternativo ocurre el Año 780.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "CN",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "name": "龙珠超",
+          "overview": "结束了与魔人布欧的惨烈之战后，多灾多难的地球重归和平，而作为救世主存在的孙悟空（野泽雅子 配音）还生人间，和家人们过着无忧无虑的快乐生活。这边厢Z战士们安享太平，遥远的宇宙最深处，一个可怕的神明悠然苏醒。他是破坏神比鲁斯（山寺宏一 配音），嗜好美食又无比任性，稍有不满意的地方便面不改色地摧毁一颗星球以及上面的生命，堪称是界王神都不敢轻易招惹的可怕神明。受一个神秘之梦的侵扰，比鲁斯决定寻找强大的对手比试一番。他和随从维斯（森田成一 配音）来到了地球。孙悟空和伙伴们面临前所未有的挑战，而他将朝着神的境界全力冲刺……本片是由鸟山明担任原案所开启的全新的龙珠故事。",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "TW",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "name": "七龍珠超",
+          "overview": "《七龍珠超》（日語：ドラゴンボールスーパー，Dragon Ball Super）是由原作鳥山明親自參與原案的製作，《七龍珠》推出的全新電視動畫，這也是繼《七龍珠GT》（原創動畫）後，相隔18年再度推出全新電視動畫，2015年7月5日於日本首播。漫畫版在《V-Jump》連載並由Toyble擔任作畫。\n\n在2015年4月28日，七龍珠超發表製作決定，並在《七龍珠改》（按原著重新剪輯的《七龍珠Z》）播放完畢後緊接而上，故事以《七龍珠Z 神與神》的破壞神比魯斯為核心人物接續，世界分成十二個宇宙，十二個宇宙的最高領導者為全王，全王底下的每個宇宙都有一個界王神與破壞神共同統治，界王神與破壞神下轄又有界王幫忙管理。劇情風格與以往的戰鬥大不相同，仿鳥山明早期的搞笑鬧劇，除了戰鬥以外多半是輕鬆的日常喜劇。",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "ES",
+        "iso_639_1": "ca",
+        "name": "Català",
+        "english_name": "Catalan",
+        "data": {
+          "name": "Bola de Drac Súper",
+          "overview": "La trama de la sèrie té lloc després de la batalla contra en Buu Petit enmig del període de 10 anys cap al Torneig Mundial de les Arts Marcials 28. Està enllaçada amb les pel·lícules 'Bola de Drac Z: La Batalla dels déus' i 'Bola de Drac Z: La Resurrecció d'en Freezer'. La història comença a la fi de l'Any 774, sis mesos després de la derrota d'en Buu. L'actual saga d'en Trunks del Futur Alternatiu passa l'Any 780.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "NL",
+        "iso_639_1": "nl",
+        "name": "Nederlands",
+        "english_name": "Dutch",
+        "data": {
+          "name": "Dragon Ball Super",
+          "overview": "Nu Majin Boo een half jaar eerder werd verslagen, keert de vrede terug op aarde, waar Son Goku (nu een radijsboer) en zijn vrienden nu een vredig leven leiden. Er verschijnt echter een nieuwe dreiging in de vorm van Beerus, de God van de Vernietiging. Beerus wordt beschouwd als het meest angstaanjagende wezen in het hele universum en wil graag vechten tegen de legendarische krijger die te zien is in een profetie die tientallen jaren geleden werd voorspeld en die bekend staat als de Super Saiyan God. De serie vertelt de gebeurtenissen uit de twee Dragon Ball Z-films, Battle of Gods en Resurrection 'F', voordat wordt overgegaan tot een origineel verhaal over de verkenning van alternatieve universums.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "FI",
+        "iso_639_1": "fi",
+        "name": "suomi",
+        "english_name": "Finnish",
+        "data": {
+          "name": "Dragon Ball Super",
+          "overview": "",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "KR",
+        "iso_639_1": "ko",
+        "name": "한국어/조선말",
+        "english_name": "Korean",
+        "data": {
+          "name": "드래곤볼 슈퍼",
+          "overview": "오공은 사상 최대의 강적인 마인 부우와의 처절한 사투 끝에 마인 부우를 제압하는데 성공하고, 지구에는 다시 평화가 찾아온다. 그렇게 평화로운 나날을 보내던 중, 오랜 잠에서 깨어난 파괴의 신 비루스가 등장하고, 과거 우주의 제왕으로 불리며 사람들을 공포에 떨게 했던 프리저마저 부활하는 등, 오공 일행을 위협하는 일들이 끊임없이 발생한다. 거기에 지구 주변에서 갑자기 별들이 사라지는 기묘한 현상까지 일어나기 시작하면서 지구에는 또 다시 불길한 위기감이 감돈다. 오공 일행은 이 위기를 타파하고 지구의 평화를 지키기 위해 다시 힘을 모아 일어서기로 하는데...",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "UA",
+        "iso_639_1": "uk",
+        "name": "Український",
+        "english_name": "Ukrainian",
+        "data": {
+          "name": "Драґон Болл Супер",
+          "overview": "Через сім років після поразки Маджін Буу на Землі запанував мир, і її мешканці живуть у безпеці від будь-яких небезпек, що чатують на них у всесвіті. Однак цей мир недовгий: у темних глибинах галактики прокидається спляча загроза - Берус, безжальний Бог Руйнування.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "TR",
+        "iso_639_1": "tr",
+        "name": "Türkçe",
+        "english_name": "Turkish",
+        "data": {
+          "name": "Dragon Ball Super",
+          "overview": "",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "DK",
+        "iso_639_1": "da",
+        "name": "Dansk",
+        "english_name": "Danish",
+        "data": {
+          "name": "Dragon Ball Super",
+          "overview": "",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "NO",
+        "iso_639_1": "no",
+        "name": "Norsk",
+        "english_name": "Norwegian",
+        "data": {
+          "name": "Dragon Ball Super",
+          "overview": "",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "VN",
+        "iso_639_1": "vi",
+        "name": "Tiếng Việt",
+        "english_name": "Vietnamese",
+        "data": {
+          "name": "Bảy Viên Ngọc Rồng Siêu Cấp",
+          "overview": "Sau khi Goku đánh bại Majin Buu nguy hiểm, hòa bình đã trở về trái đất một lần nữa. Vài năm sau, Chi Chi muốn Goku có được một công việc ổn định, vì vậy Goku đã làm việc như một nông dân. Trong khi đó, Goten cùng với Trunks đang tìm kiếm một món quà cho Videl mà sau này sẽ là chị dâu của mình, Gohan sẽ đính hôn với Videl.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "CZ",
+        "iso_639_1": "cs",
+        "name": "Český",
+        "english_name": "Czech",
+        "data": {
+          "name": "Dragon Ball Super",
+          "overview": "Po porážce Majin Booa před půl rokem se na Zemi vrací mír a Son Goku (nyní farmář pěstující ředkvičky) a jeho přátelé nyní žijí poklidným životem. Objevuje se však nová hrozba v podobě Beeruse, boha zkázy. Beerus, považovaný za nejstrašlivější bytost v celém vesmíru, touží bojovat s legendárním bojovníkem, kterého před desítkami let předpovědělo proroctví známé jako Super Saiyanský bůh. Seriál převypráví události ze dvou filmů Dragon Ball Z, Bitva bohů a Vzkříšení \"F\", a poté přejde k originálnímu příběhu o zkoumání alternativních vesmírů.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "LT",
+        "iso_639_1": "lt",
+        "name": "Lietuvių",
+        "english_name": "Lithuanian",
+        "data": {
+          "name": "Drakonų kova Super",
+          "overview": "Siaubūną Bū nugalėjus pusmečiui anksčiau, taika grįžta į Žemę, kur Son Gokas (dabar ridikų ūkininkas) ir jo draugai dabar gyvena taikiai. Tačiau atsiranda nauja grėsmė Beruso, Naikinimo Dievo, pavidalu. Laikomas siaubingiausia būtybe visatoje, Berusas trokšta kovoti su legendiniu kariu, matytu prieš kelis dešimtmečius išpranašautoje pranašystėje, vadinamoje „Super Sajanas Dievas“. Prieš tęsdami originalų pasakojimą apie alternatyvių visatų tyrimus, serialas atpasakoja įvykius iš dviejų „Drakonų kovos Z“ filmų „Dievų mūšis“ ir „Prisikėlimas F“.",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "TH",
+        "iso_639_1": "th",
+        "name": "ภาษาไทย",
+        "english_name": "Thai",
+        "data": {
+          "name": "ดราก้อนบอล ซูเปอร์",
+          "overview": "เมื่อจอมมารบูพ่ายแพ้ก่อนครึ่งปีสันติภาพกลับสู่โลกที่ Son Goku (ปัจจุบันเป็นชาวนาหัวไชเท้า) และเพื่อน ๆ ของเขาใช้ชีวิตอย่างสงบสุข อย่างไรก็ตามภัยคุกคามใหม่ปรากฏในรูปแบบของ Beerus เทพเจ้าแห่งการทำลายล้าง ถือว่าเป็นสิ่งที่น่ากลัวที่สุดในจักรวาลทั้งหมด Beerus กระตือรือร้นที่จะต่อสู้กับนักรบในตำนานที่เห็นในคำทำนายที่บอกไว้เมื่อหลายสิบปีก่อนที่รู้จักกันในนามพระเจ้าซูเปอร์ยาน ซีรีส์นี้จะเล่าถึงเหตุการณ์ต่าง ๆ จากภาพยนตร์ Dragon Ball Z สองเรื่อง Battle of Gods and Resurrection ‘F’ ก่อนที่จะดำเนินการสู่เรื่องราวดั้งเดิมเกี่ยวกับการสำรวจจักรวาลทางเลือก",
+          "homepage": "",
+          "tagline": "ดราก้อนบอล ซูเปอร์"
+        }
+      },
+      {
+        "iso_3166_1": "HK",
+        "iso_639_1": "zh",
+        "name": "普通话",
+        "english_name": "Mandarin",
+        "data": {
+          "name": "龍珠超",
+          "overview": "結束了與魔人布歐的慘烈之戰後，多災多難的地球重歸和平，而作為救世主存在的孫悟空（野澤雅子 配音）還生人間，和家人們過著無憂無慮的快樂生活。這邊廂 Z 戰士們安享太平，遙遠的宇宙最深處，一個可怕的天天神明悠然蘇醒。他是破壞天天神比魯斯（山寺宏一 配音），嗜好美食又無比任性，稍有不滿意的地方便面不改色地摧毀一顆星球以及上面的生命，堪稱是界王天天神都不敢輕易招惹的可怕天天神明。受一個天天神秘之夢的侵擾，比魯斯決定尋找強大的對手比試一番。他和隨從維斯（森田成一 配音）來到了地球。孫悟空和夥伴們面臨前所未有的挑戰，而他將朝著天天神的境界全力衝刺……本片是由鳥山明擔任原案所開啟的全新的龍珠故事。",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "BG",
+        "iso_639_1": "bg",
+        "name": "български език",
+        "english_name": "Bulgarian",
+        "data": {
+          "name": "Драгълбол: Супер",
+          "overview": "",
+          "homepage": "",
+          "tagline": ""
+        }
+      },
+      {
+        "iso_3166_1": "HR",
+        "iso_639_1": "hr",
+        "name": "Hrvatski",
+        "english_name": "Croatian",
+        "data": {
+          "name": "",
+          "overview": "Nakon što je Majin Buu poražen pola godine ranije, mir se vraća na Zemlju, gdje Son Goku (sada uzgajivač rotkvica) i njegovi prijatelji sada žive mirnim životima. Međutim, pojavljuje se nova prijetnja u obliku Beerusa, Boga uništenja. Smatran najstrašnijim bićem u cijelom svemiru, Beerus je željan borbe protiv legendarnog ratnika viđenog u proročanstvu prorečenom prije nekoliko decenija, poznatog kao Super Saiyan Bog. Serija prepričava događaje iz dva filma Dragon Ball Z, Bitka bogova i Uskrsnuće 'F', prije nego što pređe na originalnu priču o istraživanju alternativnih svemira.",
+          "homepage": "",
+          "tagline": ""
+        }
+      }
+    ]
+  },
+  "keywords": {
+    "results": [
+      {
+        "name": "martial arts",
+        "id": 779
+      },
+      {
+        "name": "time travel",
+        "id": 4379
+      },
+      {
+        "name": "god",
+        "id": 9649
+      },
+      {
+        "name": "space",
+        "id": 9882
+      },
+      {
+        "name": "alien",
+        "id": 9951
+      },
+      {
+        "name": "tournament",
+        "id": 12380
+      },
+      {
+        "name": "battle",
+        "id": 14643
+      },
+      {
+        "name": "fighting",
+        "id": 14955
+      },
+      {
+        "name": "shounen",
+        "id": 207826
+      },
+      {
+        "name": "anime",
+        "id": 210024
+      },
+      {
+        "name": "adventure",
+        "id": 322942
+      }
+    ]
+  },
+  "external_ids": {
+    "imdb_id": "tt4644488",
+    "freebase_mid": null,
+    "freebase_id": "tt323128",
+    "tvdb_id": 295068,
+    "tvrage_id": 48862,
+    "wikidata_id": "Q19839121",
+    "facebook_id": "DBSuperOfficialEnglish",
+    "instagram_id": "dragonballsuper",
+    "twitter_id": "dragonballsuper"
+  },
+  "watch/providers": {
+    "results": {
+      "AL": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=AL",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 26
+          }
+        ],
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 26
+          }
+        ]
+      },
+      "AR": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=AR",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 32
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 58
+          }
+        ]
+      },
+      "AT": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=AT",
+        "flatrate": [
+          {
+            "logo_path": "/97yvRBw1GzX7fXprcF80er19ot.jpg",
+            "provider_id": 337,
+            "provider_name": "Disney Plus",
+            "display_priority": 3
+          }
+        ]
+      },
+      "AU": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=AU",
+        "buy": [
+          {
+            "logo_path": "/SPnB1qiCkYfirS2it3hZORwGVn.jpg",
+            "provider_id": 2,
+            "provider_name": "Apple TV Store",
+            "display_priority": 13
+          }
+        ],
+        "free": [
+          {
+            "logo_path": "/zR1TJmEwssf0ZThB2iByNtZi2Oo.jpg",
+            "provider_id": 135,
+            "provider_name": "ABC iview",
+            "display_priority": 20
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 55
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 80
+          }
+        ]
+      },
+      "AZ": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=AZ",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 6
+          }
+        ],
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 6
+          }
+        ]
+      },
+      "BA": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=BA",
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 26
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 26
+          }
+        ]
+      },
+      "BE": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=BE",
+        "flatrate": [
+          {
+            "logo_path": "/97yvRBw1GzX7fXprcF80er19ot.jpg",
+            "provider_id": 337,
+            "provider_name": "Disney Plus",
+            "display_priority": 3
+          },
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 33
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 41
+          }
+        ]
+      },
+      "BG": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=BG",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 20
+          }
+        ]
+      },
+      "BM": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=BM",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 26
+          }
+        ]
+      },
+      "BR": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=BR",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 11
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 70
+          }
+        ]
+      },
+      "BS": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=BS",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 24
+          }
+        ]
+      },
+      "BY": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=BY",
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 6
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 6
+          }
+        ]
+      },
+      "BZ": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=BZ",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 9
+          }
+        ],
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 9
+          }
+        ]
+      },
+      "CA": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=CA",
+        "flatrate": [
+          {
+            "logo_path": "/97yvRBw1GzX7fXprcF80er19ot.jpg",
+            "provider_id": 337,
+            "provider_name": "Disney Plus",
+            "display_priority": 2
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 11
+          },
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 39
+          }
+        ]
+      },
+      "CH": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=CH",
+        "flatrate": [
+          {
+            "logo_path": "/97yvRBw1GzX7fXprcF80er19ot.jpg",
+            "provider_id": 337,
+            "provider_name": "Disney Plus",
+            "display_priority": 3
+          },
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 43
+          }
+        ]
+      },
+      "CL": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=CL",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 29
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 44
+          }
+        ]
+      },
+      "CO": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=CO",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 30
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 45
+          }
+        ]
+      },
+      "CR": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=CR",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 30
+          }
+        ],
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 30
+          }
+        ]
+      },
+      "CZ": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=CZ",
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 24
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 24
+          }
+        ]
+      },
+      "DE": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=DE",
+        "ads": [
+          {
+            "logo_path": "/w86FOwg0bbgUSHWWnjOTuEjsUvq.jpg",
+            "provider_id": 415,
+            "provider_name": "Animation Digital Network",
+            "display_priority": 114
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/97yvRBw1GzX7fXprcF80er19ot.jpg",
+            "provider_id": 337,
+            "provider_name": "Disney Plus",
+            "display_priority": 3
+          },
+          {
+            "logo_path": "/w86FOwg0bbgUSHWWnjOTuEjsUvq.jpg",
+            "provider_id": 415,
+            "provider_name": "Animation Digital Network",
+            "display_priority": 114
+          },
+          {
+            "logo_path": "/h5QpXIpSnvrPFnOLRXV83CtVHQH.jpg",
+            "provider_id": 2173,
+            "provider_name": "Anime Digital Network Amazon Channel",
+            "display_priority": 123
+          }
+        ]
+      },
+      "DK": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=DK",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 37
+          }
+        ],
+        "free": [
+          {
+            "logo_path": "/dnD5cUeAPruAcYwwKKxYbMcfccq.jpg",
+            "provider_id": 620,
+            "provider_name": "DRTV",
+            "display_priority": 28
+          }
+        ]
+      },
+      "DO": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=DO",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 28
+          }
+        ]
+      },
+      "EC": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=EC",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 29
+          }
+        ]
+      },
+      "EE": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=EE",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 25
+          }
+        ],
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 25
+          }
+        ]
+      },
+      "ES": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=ES",
+        "flatrate": [
+          {
+            "logo_path": "/97yvRBw1GzX7fXprcF80er19ot.jpg",
+            "provider_id": 337,
+            "provider_name": "Disney Plus",
+            "display_priority": 3
+          },
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 55
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 72
+          },
+          {
+            "logo_path": "/wDQGu6bqoYCisi3m0bluxblNz0Y.jpg",
+            "provider_id": 2735,
+            "provider_name": "Animebox Channel Amazon Channel",
+            "display_priority": 92
+          }
+        ],
+        "free": [
+          {
+            "logo_path": "/lDvzuBuNVgpcdzDpPmmufKvrZPb.jpg",
+            "provider_id": 2237,
+            "provider_name": "3Cat",
+            "display_priority": 70
+          }
+        ]
+      },
+      "FI": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=FI",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 37
+          }
+        ]
+      },
+      "FR": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=FR",
+        "ads": [
+          {
+            "logo_path": "/w86FOwg0bbgUSHWWnjOTuEjsUvq.jpg",
+            "provider_id": 415,
+            "provider_name": "Animation Digital Network",
+            "display_priority": 20
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/97yvRBw1GzX7fXprcF80er19ot.jpg",
+            "provider_id": 337,
+            "provider_name": "Disney Plus",
+            "display_priority": 4
+          },
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 7
+          },
+          {
+            "logo_path": "/w86FOwg0bbgUSHWWnjOTuEjsUvq.jpg",
+            "provider_id": 415,
+            "provider_name": "Animation Digital Network",
+            "display_priority": 20
+          },
+          {
+            "logo_path": "/vo4tm5HBLpctihoSX6bTIG0VB9d.jpg",
+            "provider_id": 193,
+            "provider_name": "SFR Play",
+            "display_priority": 57
+          },
+          {
+            "logo_path": "/h5QpXIpSnvrPFnOLRXV83CtVHQH.jpg",
+            "provider_id": 2173,
+            "provider_name": "Anime Digital Network Amazon Channel",
+            "display_priority": 76
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 78
+          }
+        ]
+      },
+      "GB": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=GB",
+        "flatrate": [
+          {
+            "logo_path": "/97yvRBw1GzX7fXprcF80er19ot.jpg",
+            "provider_id": 337,
+            "provider_name": "Disney Plus",
+            "display_priority": 3
+          },
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 7
+          },
+          {
+            "logo_path": "/vDdk3LyjWkYlfCtkrhkjFKFK1Hg.jpg",
+            "provider_id": 29,
+            "provider_name": "Sky Go",
+            "display_priority": 13
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 14
+          }
+        ],
+        "free": [
+          {
+            "logo_path": "/nc8Tpsr8SqCbsTUogPDD06gGzB3.jpg",
+            "provider_id": 38,
+            "provider_name": "BBC iPlayer",
+            "display_priority": 15
+          }
+        ]
+      },
+      "GF": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=GF",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 25
+          }
+        ]
+      },
+      "GG": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=GG",
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 10
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 10
+          }
+        ]
+      },
+      "GI": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=GI",
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 25
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 25
+          }
+        ]
+      },
+      "GR": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=GR",
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 22
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 22
+          }
+        ]
+      },
+      "GT": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=GT",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 30
+          }
+        ],
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 30
+          }
+        ]
+      },
+      "HK": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=HK",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 35
+          }
+        ],
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 35
+          }
+        ]
+      },
+      "HN": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=HN",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 29
+          }
+        ]
+      },
+      "HR": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=HR",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 32
+          }
+        ],
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 32
+          }
+        ]
+      },
+      "HU": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=HU",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 24
+          }
+        ],
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 24
+          }
+        ]
+      },
+      "ID": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=ID",
+        "flatrate": [
+          {
+            "logo_path": "/l2ZNwMC37iK0fquVuYWfcgIJJdF.jpg",
+            "provider_id": 489,
+            "provider_name": "Vidio",
+            "display_priority": 17
+          },
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 32
+          }
+        ]
+      },
+      "IE": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=IE",
+        "flatrate": [
+          {
+            "logo_path": "/97yvRBw1GzX7fXprcF80er19ot.jpg",
+            "provider_id": 337,
+            "provider_name": "Disney Plus",
+            "display_priority": 3
+          },
+          {
+            "logo_path": "/vDdk3LyjWkYlfCtkrhkjFKFK1Hg.jpg",
+            "provider_id": 29,
+            "provider_name": "Sky Go",
+            "display_priority": 9
+          },
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 38
+          }
+        ]
+      },
+      "IN": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=IN",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 6
+          },
+          {
+            "logo_path": "/3973zlBbBXdXxaWqRWzGG2GYxbT.jpg",
+            "provider_id": 237,
+            "provider_name": "Sony Liv",
+            "display_priority": 10
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 50
+          }
+        ]
+      },
+      "IS": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=IS",
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 30
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 30
+          }
+        ]
+      },
+      "IT": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=IT",
+        "flatrate": [
+          {
+            "logo_path": "/pvske1MyAoymrs5bguRfVqYiM9a.jpg",
+            "provider_id": 119,
+            "provider_name": "Amazon Prime Video",
+            "display_priority": 1
+          },
+          {
+            "logo_path": "/8aBqoNeGGr0oSA85iopgNZUOTOc.jpg",
+            "provider_id": 2100,
+            "provider_name": "Amazon Prime Video with Ads",
+            "display_priority": 87
+          }
+        ]
+      },
+      "JP": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=JP",
+        "rent": [
+          {
+            "logo_path": "/qR6FKvnPBx2O37FDg8PNM7efwF3.jpg",
+            "provider_id": 10,
+            "provider_name": "Amazon Video",
+            "display_priority": 7
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/pbpMk2JmcoNnQwx5JGpXngfoWtp.jpg",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          },
+          {
+            "logo_path": "/pvske1MyAoymrs5bguRfVqYiM9a.jpg",
+            "provider_id": 9,
+            "provider_name": "Amazon Prime Video",
+            "display_priority": 1
+          },
+          {
+            "logo_path": "/a5T7vNaGvoeckYO6rQkHolvyYf4.jpg",
+            "provider_id": 84,
+            "provider_name": "U-NEXT",
+            "display_priority": 6
+          },
+          {
+            "logo_path": "/dpR8r13zWDeUR0QkzWidrdMxa56.jpg",
+            "provider_id": 1796,
+            "provider_name": "Netflix Standard with Ads",
+            "display_priority": 25
+          },
+          {
+            "logo_path": "/kSUdi8lIinMhbkWtRsx0fGHSMHR.jpg",
+            "provider_id": 2519,
+            "provider_name": "Toei Animation Channel  Amazon Channel",
+            "display_priority": 68
+          },
+          {
+            "logo_path": "/8aBqoNeGGr0oSA85iopgNZUOTOc.jpg",
+            "provider_id": 2100,
+            "provider_name": "Amazon Prime Video with Ads",
+            "display_priority": 71
+          }
+        ]
+      },
+      "KR": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=KR",
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 28
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/5gmEivxOGPdq4Afpq1f8ktLtEW1.jpg",
+            "provider_id": 97,
+            "provider_name": "Watcha",
+            "display_priority": 6
+          },
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 28
+          },
+          {
+            "logo_path": "/qHThQdkJuROK0k5QTCrknaNukWe.jpg",
+            "provider_id": 1883,
+            "provider_name": "TVING",
+            "display_priority": 29
+          }
+        ]
+      },
+      "LI": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=LI",
+        "flatrate": [
+          {
+            "logo_path": "/97yvRBw1GzX7fXprcF80er19ot.jpg",
+            "provider_id": 337,
+            "provider_name": "Disney Plus",
+            "display_priority": 2
+          },
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 26
+          }
+        ],
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 26
+          }
+        ]
+      },
+      "LT": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=LT",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 26
+          }
+        ],
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 26
+          }
+        ]
+      },
+      "LU": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=LU",
+        "flatrate": [
+          {
+            "logo_path": "/97yvRBw1GzX7fXprcF80er19ot.jpg",
+            "provider_id": 337,
+            "provider_name": "Disney Plus",
+            "display_priority": 3
+          },
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 10
+          }
+        ]
+      },
+      "LV": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=LV",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 25
+          }
+        ]
+      },
+      "MD": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=MD",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 24
+          }
+        ]
+      },
+      "ME": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=ME",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 5
+          }
+        ]
+      },
+      "MK": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=MK",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 25
+          }
+        ],
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 25
+          }
+        ]
+      },
+      "MX": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=MX",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 6
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 61
+          }
+        ]
+      },
+      "MY": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=MY",
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 28
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 28
+          }
+        ]
+      },
+      "MZ": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=MZ",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 14
+          }
+        ]
+      },
+      "NL": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=NL",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 44
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 55
+          }
+        ]
+      },
+      "NO": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=NO",
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 38
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 38
+          }
+        ]
+      },
+      "NZ": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=NZ",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 34
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 51
+          }
+        ]
+      },
+      "PE": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=PE",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 30
+          }
+        ]
+      },
+      "PH": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=PH",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 29
+          }
+        ],
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 29
+          }
+        ]
+      },
+      "PL": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=PL",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 26
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 44
+          }
+        ]
+      },
+      "PT": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=PT",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 30
+          }
+        ]
+      },
+      "PY": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=PY",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 28
+          }
+        ]
+      },
+      "RO": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=RO",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 20
+          }
+        ]
+      },
+      "RS": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=RS",
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 27
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 27
+          }
+        ]
+      },
+      "SE": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=SE",
+        "flatrate": [
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 12
+          },
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 38
+          }
+        ]
+      },
+      "SG": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=SG",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 29
+          }
+        ]
+      },
+      "SI": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=SI",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 27
+          }
+        ],
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 27
+          }
+        ]
+      },
+      "SK": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=SK",
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 34
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 34
+          }
+        ]
+      },
+      "SM": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=SM",
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 26
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/pvske1MyAoymrs5bguRfVqYiM9a.jpg",
+            "provider_id": 119,
+            "provider_name": "Amazon Prime Video",
+            "display_priority": 1
+          },
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 26
+          }
+        ]
+      },
+      "SV": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=SV",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 29
+          }
+        ]
+      },
+      "TC": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=TC",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 10
+          }
+        ]
+      },
+      "TH": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=TH",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 27
+          }
+        ]
+      },
+      "TR": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=TR",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 25
+          }
+        ]
+      },
+      "TT": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=TT",
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 12
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 12
+          }
+        ]
+      },
+      "UA": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=UA",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 7
+          }
+        ]
+      },
+      "US": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=US",
+        "flatrate": [
+          {
+            "logo_path": "/bxBlRPEPpMVDc4jMhSrTf2339DW.jpg",
+            "provider_id": 15,
+            "provider_name": "Hulu",
+            "display_priority": 6
+          },
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 12
+          },
+          {
+            "logo_path": "/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg",
+            "provider_id": 1968,
+            "provider_name": "Crunchyroll Amazon Channel",
+            "display_priority": 22
+          }
+        ],
+        "buy": [
+          {
+            "logo_path": "/qR6FKvnPBx2O37FDg8PNM7efwF3.jpg",
+            "provider_id": 10,
+            "provider_name": "Amazon Video",
+            "display_priority": 8
+          },
+          {
+            "logo_path": "/8z7rC8uIDaTM91X0ZfkRf04ydj2.jpg",
+            "provider_id": 3,
+            "provider_name": "Google Play Movies",
+            "display_priority": 20
+          },
+          {
+            "logo_path": "/oIXE9vJdkilIxCLAtlbtiqewgvn.jpg",
+            "provider_id": 7,
+            "provider_name": "Fandango At Home",
+            "display_priority": 39
+          }
+        ]
+      },
+      "UY": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=UY",
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 30
+          }
+        ],
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 30
+          }
+        ]
+      },
+      "VA": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=VA",
+        "flatrate": [
+          {
+            "logo_path": "/pvske1MyAoymrs5bguRfVqYiM9a.jpg",
+            "provider_id": 119,
+            "provider_name": "Amazon Prime Video",
+            "display_priority": 0
+          }
+        ]
+      },
+      "VE": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=VE",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 26
+          }
+        ]
+      },
+      "XK": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=XK",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 5
+          }
+        ],
+        "ads": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 5
+          }
+        ]
+      },
+      "ZA": {
+        "link": "https://www.themoviedb.org/tv/62715/watch?locale=ZA",
+        "flatrate": [
+          {
+            "logo_path": "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+            "provider_id": 283,
+            "provider_name": "Crunchyroll",
+            "display_priority": 24
+          }
+        ]
+      }
+    }
+  },
+  "recommendations": {
+    "page": 1,
+    "results": [
+      {
+        "adult": false,
+        "backdrop_path": "/ydf1CeiBLfdxiyNTpskM0802TKl.jpg",
+        "id": 12971,
+        "name": "Bola de Drac Z",
+        "original_name": "ドラゴンボールゼット",
+        "overview": "Bola de Drac Z segueix les aventures d'en Goku, ara ja adult, juntament amb el seus companys, en la defensa del planeta Terra  contra una gran varietat de malvats, com ara lluitadors provinents de  l'espai exterior, androides amb poders antinaturals i monstres màgics  indestructibles. Mentre que Bola de Drac és el pas de la infantesa a l'edat adulta d'en Goku, Bola de Drac Z és la continuació de la seva vida com a adult, però de forma paral·lela hi ha el creixement i maduració del seu fill Son Gohan, al igual que molt altres personatges de Bola de Drac, entre altres coses. A més, a Bola de Drac Z,  la sèrie adquireix un to més dramàtic i escenes més serioses. L'anime  també compta amb personatges i escenes que no són presents en el manga original.",
+        "poster_path": "/8csqwcvnigLWCtCwKEJgvrG0sbi.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          16,
+          10765,
+          10759
+        ],
+        "popularity": 61.8905,
+        "first_air_date": "1989-04-26",
+        "softcore": false,
+        "vote_average": 8.375,
+        "vote_count": 4931,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/38KLQDWmnr2J2Lysc12JVoVEhwG.jpg",
+        "id": 34852,
+        "name": "La llei de Ueki",
+        "original_name": "うえきの法則",
+        "overview": "En Ueki és un heroi amb un gran sentit de la justícia. Un dels seus professors de l'institut, en Kobasen, li va concedir el do de transformar escombraries en arbres, un do que haurà d'aprofitar per vèncer els altres aspirants. Comença la lluita dels estudiants escollits pels candidats a Rei del Món Celestial. L'objectiu és arribar a aconseguir el Talent en Blanc, que et permet tenir tots els poders que vulguis.",
+        "poster_path": "/6pP40nUriKtngrjsXwlt8A8zlgM.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          16,
+          10759,
+          35,
+          10765
+        ],
+        "popularity": 10.5611,
+        "first_air_date": "2005-04-04",
+        "softcore": false,
+        "vote_average": 7.8,
+        "vote_count": 39,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/AjmUQ7aP58ovQ0kBfWfIRHowRch.jpg",
+        "id": 104699,
+        "name": "SHAMAN KING",
+        "original_name": "SHAMAN KING",
+        "overview": "Medium Yoh Asakura enters a battle tournament held every 500 years, competing with other shamans in a bid to become the all-powerful Shaman King.",
+        "poster_path": "/my6AEDKL6NfJYOLZg5g71D3PBe2.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          16,
+          35,
+          10765,
+          10759
+        ],
+        "popularity": 57.7037,
+        "first_air_date": "2021-04-01",
+        "softcore": false,
+        "vote_average": 8.187,
+        "vote_count": 308,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/mVE1ULmLaYhCkBQPt3JC5xZC6T6.jpg",
+        "id": 35610,
+        "name": "Inuyasha",
+        "original_name": "犬夜叉",
+        "overview": "Inuyasha és el nom d'un dimoni que al seu dia van segellar perquè no provoqués més problemes. Però Kagome, fruit de la destinació, aconsegueix travessar la barrera màgica que separa el món actual amb el de les guerres civils, i treu el segell a l'InuYasha a causa de l'amenaça d'un monstre. Kagome posseeix l'esfera dels cuatre esperits, que permet guanyar gran poder, que serà fruit de l'recel de molts monstres a la recerca d'ella. Però la joia s'ha trencat en mil i un bocins, i l'InuYasha i la Kagome partiran a la recerca de tots els fragments.",
+        "poster_path": "/rQHTNaynedeKurm0sNOsbAZg2oe.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          16,
+          10759,
+          10765
+        ],
+        "popularity": 40.3491,
+        "first_air_date": "2000-10-16",
+        "softcore": false,
+        "vote_average": 8.575,
+        "vote_count": 2095,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/bFKKyCI89Xq98Gul8cGox8K3sZa.jpg",
+        "id": 46298,
+        "name": "HUNTER×HUNTER",
+        "original_name": "HUNTER×HUNTER",
+        "overview": "En Gon Frecks, un nen de 12 anys, viu amb la seva tia Mito i la seva àvia a Illa Balena, orfe de mare i segons la seva tia també de pare. Un dia Gon és atacat per un os del bosc, però és salvat per un caçador qui li explica que està a la recerca del seu mestre per així convertir-se en un caçador, ell és qui li diu que el seu pare Gin és viu. Assabentat d'això en Gon decideix convertir-se en caçador per poder trobar el seu pare.",
+        "poster_path": "/i2EEr2uBvRlAwJ8d8zTG2Y19mIa.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          16,
+          10759,
+          10765
+        ],
+        "popularity": 64.6645,
+        "first_air_date": "2011-10-02",
+        "softcore": false,
+        "vote_average": 8.666,
+        "vote_count": 2151,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/asUFPHTGvdLvyyf3YxWZNvPWkoa.jpg",
+        "id": 61445,
+        "name": "Rage of Bahamut",
+        "original_name": "神撃のバハムート",
+        "overview": "Two thousand years ago, the black-and-silver-winged dragon, Bahamut, terrorized the magical land of Mistarcia. The humans, god, and demons that inhabited the land united forces against the fiend and sealed its power into a key which was split in two, one half protected by gods and the other protected by demons. Now, Mistarcia is a peaceful realm – until a human woman steals the god’s half of the key. Based on the immensely popular digital card game, Rage of Bahamut: Genesis is an exciting blend of action and fantasy.",
+        "poster_path": "/osUNCb2v2kIlyLg9DgM5zBlnyRB.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          16,
+          10759,
+          10765
+        ],
+        "popularity": 18.7518,
+        "first_air_date": "2014-10-06",
+        "softcore": false,
+        "vote_average": 7.653,
+        "vote_count": 144,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/xsEMAdrDprq3Ldre56Rm0zqbfCA.jpg",
+        "id": 98034,
+        "name": "Digimon Adventure:",
+        "original_name": "デジモンアドベンチャー：",
+        "overview": "It's the year 2020. The Network has become something humans can no longer do without in their daily lives. But what humans don't know is that on the other side of the Network is the Digital World, a realm of light and darkness. Nor are they aware of the Digimon who live there. Fifth grader Taichi Yagami's mother and little sister Hikari went to Shibuya, and now they're aboard a runaway train. Taichi hurries to Shibuya to save his mother and sister, but the instant he heads toward the station platform... a strange phenomenon befalls the DigiDestined, and Taichi goes to the Digital World!",
+        "poster_path": "/7Qspx2eFX0uBSQLLlAKnYrjZgse.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          16,
+          10759,
+          10765,
+          10762
+        ],
+        "popularity": 14.9918,
+        "first_air_date": "2020-04-05",
+        "softcore": false,
+        "vote_average": 7.557,
+        "vote_count": 634,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/uqOcBHNHsmYPePmrvYhjraRxLdJ.jpg",
+        "id": 61415,
+        "name": "Fate/stay night [Unlimited Blade Works]",
+        "original_name": "Fate/stay night [Unlimited Blade Works]",
+        "overview": "This story focuses primarily on the heroine Rin Tohsaka. After her father’s death, Rin enters the Holy Grail War as the sole heir to the prestigious Tohsaka Household, with her servant Archer. But, she soon finds out that Shirou Emiya, a boy from her high school has gotten himself involved in the battles and unexpectedly saves him when he is fatally injured. Before long, Rin sets out to strike down the conspiracies surrounding the Holy Grail War along with Shirou and his summoned servant Saber. And so, the story begins to explore the truth behind Shirou’s powers and the nature behind his unyielding will to become a “hero.”\n\n© TYPE-MOON, ufotable, FSNPC",
+        "poster_path": "/jyqi5BkDoKKIA2WAoz3HBtRHld3.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          10759,
+          16,
+          18,
+          10765
+        ],
+        "popularity": 14.2995,
+        "first_air_date": "2014-10-12",
+        "softcore": false,
+        "vote_average": 8.005,
+        "vote_count": 372,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/xOrBpYyCBNraCeMLlZwLMl9pyQ7.jpg",
+        "id": 4695,
+        "name": "Battle of the Planets",
+        "original_name": "Battle of the Planets",
+        "overview": "G-Force, a five-member superhero team, fights to defend Earth and its space colonies from the threat of the planet Spectra.",
+        "poster_path": "/gYvvllQQ7Hb8hgm0PcqVstzFKcb.jpg",
+        "media_type": "tv",
+        "original_language": "en",
+        "genre_ids": [
+          16,
+          10759,
+          10765
+        ],
+        "popularity": 9.1431,
+        "first_air_date": "1978-09-18",
+        "softcore": false,
+        "vote_average": 7.41,
+        "vote_count": 50,
+        "origin_country": [
+          "US"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/5F0HVEgkgP99fEWDjPyikGt9jQi.jpg",
+        "id": 46260,
+        "name": "Naruto",
+        "original_name": "ナルト",
+        "overview": "En companyia de l'intens Sasuke i de l'enginyosa Sakura, en Naruto comença el seu aprenentatge decidit a convertir-se en mestre Hokage, la més alta distinció entre els ninges. Des de l'examen d'accés a Chunin fins al pelegrinatge amb l'ermità pervertit Jiraiya, passant pels enfrontaments amb les forces del shinobi renegat Orochimaru, acompanya en Naruto a perseguir el seu somni en un camí ple d'aventures trepidants, aliats valerosos i enemics mortals amb habilitats extraordinàries, combats explosius, traïció i pèrdua...",
+        "poster_path": "/fJkpoqlgbiEYx68nuxcwNv1xzfb.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          16,
+          10759,
+          10765
+        ],
+        "popularity": 60.0521,
+        "first_air_date": "2002-10-03",
+        "softcore": false,
+        "vote_average": 8.363,
+        "vote_count": 6055,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/xlKKD1TXJvh0YYlVPqqQ3g3ZUjM.jpg",
+        "id": 80020,
+        "name": "Super Dragon Ball Heroes",
+        "original_name": "スーパードラゴンボールヒーローズ",
+        "overview": "Trunks returns from the future to train with Goku and Vegeta. However, it disappears without warning. Then the mysterious Fu bursts in, telling them that Trunks has been imprisoned in the Prison Planet, a mysterious complex in an unknown place in the universes. The group seeks the dragon balls to free Trunks, but an endless battle awaits them! Will Goku and the others rescue Trunks and escape the Prison Planet?",
+        "poster_path": "/8jq6xv5c1WK7KAPOXCsodm8eUxp.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          16,
+          10759,
+          10765
+        ],
+        "popularity": 21.6126,
+        "first_air_date": "2018-07-01",
+        "softcore": false,
+        "vote_average": 7.57,
+        "vote_count": 3145,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/8jgvqyz76ydAwLrntGn3jTaYr7S.jpg",
+        "id": 45854,
+        "name": "Yu-Gi-Oh! Zexal",
+        "original_name": "遊☆戯☆王ZEXAL",
+        "overview": "When aspiring duelist Yuma meets Astral, a mysterious visitor from another universe, it seems like destiny. Yuma needs Astral to teach him how to duel, and Astral needs Yuma to help him regain his memories!",
+        "poster_path": "/lHOkQJs8oPvU5idZIcjzor7T4m3.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          16,
+          35,
+          10759,
+          10765,
+          10762
+        ],
+        "popularity": 21.9498,
+        "first_air_date": "2011-04-11",
+        "softcore": false,
+        "vote_average": 7.3,
+        "vote_count": 57,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/skDqFjFqGtPIqcwLkqzqV4aSlCb.jpg",
+        "id": 20695,
+        "name": "Yu-Gi-Oh! 5D's",
+        "original_name": "遊☆戯☆王5D's",
+        "overview": "Welcome to New Domino City! Once the playground to legendary duelist Yugi Muto, this sprawling metropolis has since been transformed into a futuristic society where dueling has kicked into overdrive. With recent technological advancements made by KaibaCorp, dueling has undergone a metamorphosis that has revolutionized the makeup and pace of the game! It’s now a heart-pounding, adrenaline-filled and fuel injected competition where duelists ride supercharged hyper cycles called Duel Runners and battle it out in hi-octane contests called “Turbo Duels.”",
+        "poster_path": "/1fareX2gQVmpcxoPFHLAHu3ljld.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          16,
+          10765,
+          10759
+        ],
+        "popularity": 29.0241,
+        "first_air_date": "2008-04-02",
+        "softcore": false,
+        "vote_average": 8.074,
+        "vote_count": 195,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/ty3fCZumomMkHPHRxACDQJkTEyD.jpg",
+        "id": 62430,
+        "name": "L'heroica llegenda de Arslan",
+        "original_name": "アルスラーン戦記",
+        "overview": "Arslan is the heir apparent of Pars, a strong nation that sits at the hear of the trade route connecting the East and the West. When the pagan nation of Lusitania begins an invasion of Pars, the timid Arslan is confronted with battle for the first time. His worst anxieties are realized the Parsian army falls for a Lusitanian stratagem and are routed. He barely escapes with his life, thanks to the loyal and indomitable warrior Daryun. Together they will stand against the invasion and the cruelties of fate that are about to blow down on Pars.",
+        "poster_path": "/p6F6pGoNNtIViDxHkU4wDeseiyJ.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          16,
+          10759,
+          18,
+          10765,
+          10768
+        ],
+        "popularity": 13.9117,
+        "first_air_date": "2015-04-05",
+        "softcore": false,
+        "vote_average": 7,
+        "vote_count": 85,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/pRejrAALzDQsrCm2nh7xa5cK4HA.jpg",
+        "id": 67460,
+        "name": "Yu-Gi-Oh! Arc-V",
+        "original_name": "遊☆戯☆王ARC-V",
+        "overview": "Yuya Sakaki's dream is to follow in his father's footsteps and become the greatest \"duel-tainer\" in history - and he just might pull it off when he suddenly discovers Pendulum Summoning, a never-before-seen technique that lets him summon many monsters at once!",
+        "poster_path": "/nVST01k1PpOZGbGEmCZhevRWhEL.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          10759,
+          16,
+          10765
+        ],
+        "popularity": 32.1443,
+        "first_air_date": "2014-04-06",
+        "softcore": false,
+        "vote_average": 7.326,
+        "vote_count": 43,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/z0YhJvomqedHF85bplUJEotkN5l.jpg",
+        "id": 31910,
+        "name": "Naruto Shippuden",
+        "original_name": "ナルト 疾風伝",
+        "overview": "La història transcorre en un món dominat per llogarets ninja. En aquests poblets, el paper del ninja es tradueix com el poder de cada país. Cadascun d'ells compta amb el seu llogaret ocult que és on estudien, entrenen, es graduen i es formen. Els ninges utilitzen tota mena d'arts marcials des de la lluita cos a cos a il·lusions o tècniques secretes com ara la manipulació d'elements. El protagonista és un jove aspirant a ninja Uzumaki Naruto, un noi que somia convertir-se algun dia en el líder del seu llogaret (Hokage). No li serà fàcil, ja que quan era només un nadó li fou confiat a dins seu el poder d'un ésser malvat, que antany va causar grans mals al seu llogaret (Konoha) i el qual anirà a poc a poc descobrint i dominant. Per culpa d'aquest poder, en Naruto passa una dura infància amb menyspreu i negació per part dels veïns del seu poble.",
+        "poster_path": "/kV27j3Nz4d5z8u6mN3EJw9RiLg2.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          16,
+          10759,
+          10765
+        ],
+        "popularity": 53.7162,
+        "first_air_date": "2007-02-15",
+        "softcore": false,
+        "vote_average": 8.532,
+        "vote_count": 8714,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/dHQ6u5nRMCHGHLCl220iCah6jX0.jpg",
+        "id": 37807,
+        "name": "Beyblade: Metal Fight Beyblade",
+        "original_name": "メタルファイト ベイブレード",
+        "overview": "A new cast of characters take on the continued battle between good and evil. Gingka, our hero, and his group of loyal friends take on a dangerous group called the Dark Nebula. Dark Nebula’s mission is to take over the world and unleash their evil upon it; but before they can do so, they must destroy Gingka as he is the only person that’s strong enough to stand in their way. The plot thickens as friends become enemies and enemies become allies. Everything starts and ends with Gingka as he struggles to find the strength to defend his world and the honor of Beyblade.",
+        "poster_path": "/AvzR1LroQFPs8mtvW761BZX92qx.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          16,
+          9648,
+          10759,
+          10762,
+          10765
+        ],
+        "popularity": 35.6912,
+        "first_air_date": "2009-04-05",
+        "softcore": false,
+        "vote_average": 7.405,
+        "vote_count": 42,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/dIc8YQrs3fRbB7b9pGzgTqDMnpJ.jpg",
+        "id": 37471,
+        "name": "Nura: Rise of the Yokai Clan",
+        "original_name": "ぬらりひょんの孫",
+        "overview": "Rikuo Nura, is 3 parts human and a quarter Demon, lives in a house of spirits with his grandfather, The current clan head of the Nura youkai. Rikuo is set to be the next clan head, despite the fact he dislikes his demon side. He soon come to terms with his demon blood and decides to take his position as young master of the Nura house. However there are those who will certainly not allow it to be easy.",
+        "poster_path": "/aeQOCeForAiquZMFEbCA602xrs2.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          16,
+          10765,
+          10759
+        ],
+        "popularity": 14.22,
+        "first_air_date": "2010-07-05",
+        "softcore": false,
+        "vote_average": 7.543,
+        "vote_count": 92,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/ol0H2DGp4ifBHA4JDlCpwJWxnY2.jpg",
+        "id": 65930,
+        "name": "My Hero Academia",
+        "original_name": "僕のヒーローアカデミア",
+        "overview": "Un noi sense poders, aspirant a superheroi, es matricula a una prestigiosa acadèmia d'herois i aprèn el que realment significa ser un heroi.",
+        "poster_path": "/phuYuzqWW9ru8EA3HVjE9W2Rr3M.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          10759,
+          16,
+          10765
+        ],
+        "popularity": 17.4918,
+        "first_air_date": "2016-04-03",
+        "softcore": false,
+        "vote_average": 8.606,
+        "vote_count": 5333,
+        "origin_country": [
+          "JP"
+        ]
+      },
+      {
+        "adult": false,
+        "backdrop_path": "/emBhP4hN3oNNx2QapodTMAAMFyv.jpg",
+        "id": 31714,
+        "name": "El Capità Harlock",
+        "original_name": "宇宙海賊キャプテンハーロック",
+        "overview": "Sèrie de TV (1978-1979). 42 episodis. L'any 2977 la humanitat ha perdut l'interès per descobrir nous mons. Només el Capità Harlock i els seus companys a bord de l'Arcàdia es van atrevir a aventurar-se en l'espai més enllà del que és conegut. Per això van ser titllats de pirates pel govern terrestre. Ara, les Amazones han atacat la Terra i pretenen conquerir tot l'univers. Només en Harlock i els seus camarades podran aturar-les.",
+        "poster_path": "/3kehhKqYRsGB89jZ3YCfdvzcFU8.jpg",
+        "media_type": "tv",
+        "original_language": "ja",
+        "genre_ids": [
+          10759,
+          16,
+          10765
+        ],
+        "popularity": 11.5519,
+        "first_air_date": "1978-03-14",
+        "softcore": false,
+        "vote_average": 7.333,
+        "vote_count": 57,
+        "origin_country": [
+          "JP"
+        ]
+      }
+    ],
+    "total_pages": 18,
+    "total_results": 359
+  },
+  "images": {
+    "backdrops": [],
+    "logos": [
+      {
+        "aspect_ratio": 2.306,
+        "height": 294,
+        "iso_3166_1": "ES",
+        "iso_639_1": "ca",
+        "file_path": "/ggP4WamKmvtHG7XGJE75ds0UoTK.png",
+        "vote_average": 3.334,
+        "vote_count": 1,
+        "width": 678
+      },
+      {
+        "aspect_ratio": 2.475,
+        "height": 750,
+        "iso_3166_1": "ES",
+        "iso_639_1": "ca",
+        "file_path": "/cfDSIIpJ1NYeeTDEz9SI9S0aFhl.png",
+        "vote_average": 0.166,
+        "vote_count": 1,
+        "width": 1856
+      }
+    ],
+    "posters": [
+      {
+        "aspect_ratio": 0.667,
+        "height": 1500,
+        "iso_3166_1": "ES",
+        "iso_639_1": "ca",
+        "file_path": "/o7hq64ckYkm41PEa2JE84ggOCwX.jpg",
+        "vote_average": 0,
+        "vote_count": 0,
+        "width": 1000
+      }
+    ]
+  },
+  "videos": {
+    "results": []
+  },
+  "credits": {
+    "cast": [
+      {
+        "adult": false,
+        "gender": 1,
+        "id": 90496,
+        "known_for_department": "Acting",
+        "name": "野沢雅子",
+        "original_name": "野沢雅子",
+        "popularity": 2.4668,
+        "profile_path": "/jxbXdejmPoiKnNoQz7Dkb80qC26.jpg",
+        "character": "Son Goku / Goku Black / Son Gohan / Son Goten (voice)",
+        "credit_id": "55a3ee7a9251412974005add",
+        "order": 0
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 122501,
+        "known_for_department": "Acting",
+        "name": "堀川りょう",
+        "original_name": "堀川りょう",
+        "popularity": 1.4874,
+        "profile_path": "/vZ69WQJfR5D2xow5FkddduRjq6c.jpg",
+        "character": "Vegeta (voice)",
+        "credit_id": "55a3eee3925141297d005c1f",
+        "order": 1
+      },
+      {
+        "adult": false,
+        "gender": 1,
+        "id": 122193,
+        "known_for_department": "Acting",
+        "name": "鶴ひろみ",
+        "original_name": "鶴ひろみ",
+        "popularity": 1.1994,
+        "profile_path": "/oFU9CCNLUhklLhEuLutM0FyTUbt.jpg",
+        "character": "Bulma (voice)",
+        "credit_id": "55a3ee99925141298000583d",
+        "order": 2
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 20664,
+        "known_for_department": "Acting",
+        "name": "Koichi Yamadera",
+        "original_name": "山寺宏一",
+        "popularity": 2.1749,
+        "profile_path": "/biov5jENp2XYfehkcdnRvi796Wi.jpg",
+        "character": "Beerus (voice)",
+        "credit_id": "61e66ed5f3b49a00415b5094",
+        "order": 3
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1686,
+        "known_for_department": "Acting",
+        "name": "草尾毅",
+        "original_name": "草尾毅",
+        "popularity": 1.7727,
+        "profile_path": "/gDiYLUdl9zXXJmhE0bAuB1Jm3FJ.jpg",
+        "character": "Trunks (voice)",
+        "credit_id": "55a3eef8c3a3681ce3005d21",
+        "order": 4
+      },
+      {
+        "adult": false,
+        "gender": 1,
+        "id": 549566,
+        "known_for_department": "Acting",
+        "name": "山田栄子",
+        "original_name": "山田栄子",
+        "popularity": 1.2579,
+        "profile_path": "/uIESaPrL2AxOaYyfmh6krMVe813.jpg",
+        "character": "Mai (voice)",
+        "credit_id": "5802f936c3a3687348002561",
+        "order": 5
+      },
+      {
+        "adult": false,
+        "gender": 1,
+        "id": 90569,
+        "known_for_department": "Acting",
+        "name": "皆口裕子",
+        "original_name": "皆口裕子",
+        "popularity": 1.5638,
+        "profile_path": "/bEv0ho89VNgWkCCmT2GdNjMAuvZ.jpg",
+        "character": "Videl / Pan (voice)",
+        "credit_id": "55a3ef07925141297900538d",
+        "order": 6
+      },
+      {
+        "adult": false,
+        "gender": 1,
+        "id": 122192,
+        "known_for_department": "Acting",
+        "name": "渡辺菜生子",
+        "original_name": "渡辺菜生子",
+        "popularity": 1.6066,
+        "profile_path": "/wgX2xT2y21Tv0eKIMSyMXf6CC0U.jpg",
+        "character": "Chichi / Pu'er (voice)",
+        "credit_id": "55a3eec29251412971005922",
+        "order": 7
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 100126,
+        "known_for_department": "Acting",
+        "name": "塩屋浩三",
+        "original_name": "塩屋浩三",
+        "popularity": 1.1344,
+        "profile_path": "/2IVg74G3MVGIhd3ImlAlo7IvE1P.jpg",
+        "character": "Majin Buu (voice)",
+        "credit_id": "55a3eeafc3a3681ce3005d1c",
+        "order": 8
+      },
+      {
+        "adult": false,
+        "gender": 1,
+        "id": 144650,
+        "known_for_department": "Acting",
+        "name": "Aya Hirano",
+        "original_name": "平野綾",
+        "popularity": 1.7677,
+        "profile_path": "/zaSJKfuKhw7e4VTnTKnlHBRzjQU.jpg",
+        "character": "Dende (voice)",
+        "credit_id": "5802f925c3a36873e4002349",
+        "order": 9
+      },
+      {
+        "adult": false,
+        "gender": 1,
+        "id": 65510,
+        "known_for_department": "Acting",
+        "name": "田中真弓",
+        "original_name": "田中真弓",
+        "popularity": 2.2606,
+        "profile_path": "/by4t1tYtEXsfbFj9TvOjozBmQla.jpg",
+        "character": "Krilin (voice)",
+        "credit_id": "5802fa9d9251413e8b00276d",
+        "order": 10
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 85286,
+        "known_for_department": "Acting",
+        "name": "古川登志夫",
+        "original_name": "古川登志夫",
+        "popularity": 1.6376,
+        "profile_path": "/zZjO0NxIbEhYW3507gXVnvWeRkG.jpg",
+        "character": "Piccolo (voice)",
+        "credit_id": "5802fa4f9251413f0e0028a7",
+        "order": 11
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 115305,
+        "known_for_department": "Acting",
+        "name": "中尾隆聖",
+        "original_name": "中尾隆聖",
+        "popularity": 1.9683,
+        "profile_path": "/fsxlwNIWj7taqpXRYETmXFk0x1P.jpg",
+        "character": "Freeza / Frost (voice)",
+        "credit_id": "5802fa359251417a33007aa3",
+        "order": 12
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 1256603,
+        "known_for_department": "Acting",
+        "name": "花江夏樹",
+        "original_name": "花江夏樹",
+        "popularity": 3.1024,
+        "profile_path": "/alTb0DlcPIbcwM08WSmxFai58sd.jpg",
+        "character": "Jaco (voice)",
+        "credit_id": "61e66e01ca0e17001ee9d3e9",
+        "order": 13
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 78402,
+        "known_for_department": "Acting",
+        "name": "森田成一",
+        "original_name": "森田成一",
+        "popularity": 1.4217,
+        "profile_path": "/2INsHYbx9gEhhzXPHdqBDdvHjFt.jpg",
+        "character": "Whis (voice)",
+        "credit_id": "61e66f2e90ea4b009cad68f3",
+        "order": 14
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 62318,
+        "known_for_department": "Acting",
+        "name": "三木眞一郎",
+        "original_name": "三木眞一郎",
+        "popularity": 2.6789,
+        "profile_path": "/49Mg6xn69XlVDPPBDwxtNxes5zJ.jpg",
+        "character": "Zamasu (voice)",
+        "credit_id": "61e672857d2bc1009fd2f6fc",
+        "order": 15
+      }
+    ],
+    "crew": [
+      {
+        "adult": false,
+        "gender": 0,
+        "id": 4655313,
+        "known_for_department": "Production",
+        "name": "野崎理",
+        "original_name": "野崎理",
+        "popularity": 0.1263,
+        "profile_path": null,
+        "credit_id": "661deb207aecc6017c6b17d7",
+        "department": "Production",
+        "job": "Producer"
+      },
+      {
+        "adult": false,
+        "gender": 0,
+        "id": 2220801,
+        "known_for_department": "Production",
+        "name": "稲垣哲雄",
+        "original_name": "稲垣哲雄",
+        "popularity": 0.1889,
+        "profile_path": null,
+        "credit_id": "691e7e52feb77c24b7adbace",
+        "department": "Production",
+        "job": "Production Manager"
+      },
+      {
+        "adult": false,
+        "gender": 0,
+        "id": 5892161,
+        "known_for_department": "Visual Effects",
+        "name": "堀田哲平",
+        "original_name": "堀田哲平",
+        "popularity": 0.3437,
+        "profile_path": null,
+        "credit_id": "6948fe8c2cd08a2539073429",
+        "department": "Visual Effects",
+        "job": "Color Designer"
+      },
+      {
+        "adult": false,
+        "gender": 2,
+        "id": 78322,
+        "known_for_department": "Writing",
+        "name": "Akira Toriyama",
+        "original_name": "鳥山明",
+        "popularity": 1.8166,
+        "profile_path": "/9YorJMvF6DgfJcpATHbGyivZpS5.jpg",
+        "credit_id": "69a3b01bf5aca0d4acff629e",
+        "department": "Writing",
+        "job": "Story"
+      }
+    ]
+  }
+}

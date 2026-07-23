@@ -102,6 +102,16 @@ class TvShowStatus {
   static const String planned = 'Planned';
 }
 
+class TvShowType {
+  static const String scripted = 'Scripted';
+  static const String miniseries = 'Miniseries';
+  static const String documentary = 'Documentary';
+  static const String reality = 'Reality';
+  static const String talkShow = 'Talk Show';
+  static const String news = 'News';
+  static const String video = 'Video';
+}
+
 class SortOption {
   static const alphabetically = 'alphabetically';
   static const rating = 'rating';
@@ -129,6 +139,7 @@ class TmdbTitle implements TmdbItem {
   late String imdbId;
   late String homepage;
   late String certification;
+  late String type;
 
   late String? posterPathSuffix;
   late String? backdropPathSuffix;
@@ -208,6 +219,7 @@ class TmdbTitle implements TmdbItem {
     this.status = '',
     this.mediaType = '',
     this.imdbId = '',
+    this.type = '',
     this.posterPathSuffix,
     this.backdropPathSuffix,
     this.releaseDate = '',
@@ -309,6 +321,7 @@ class TmdbTitle implements TmdbItem {
     imdbId = title[TmdbTitleFields.imdbId] ?? imdbId;
     homepage = title[TmdbTitleFields.homepage] ?? homepage;
     certification = title[TmdbTitleFields.certification] ?? certification;
+    type = title[TmdbTitleFields.type] ?? type;
 
     if (title.containsKey(TmdbTitleFields.posterPath)) {
       posterPathSuffix = title[TmdbTitleFields.posterPath];
@@ -440,6 +453,7 @@ class TmdbTitle implements TmdbItem {
       TmdbTitleFields.imdbId: imdbId,
       TmdbTitleFields.homepage: homepage,
       TmdbTitleFields.certification: certification,
+      TmdbTitleFields.type: type,
       TmdbTitleFields.posterPath: posterPathSuffix,
       TmdbTitleFields.backdropPath: backdropPathSuffix,
       TmdbTitleFields.releaseDate: releaseDate,
@@ -510,10 +524,7 @@ class TmdbTitle implements TmdbItem {
       status == TvShowStatus.inProduction ||
       status == TvShowStatus.planned;
 
-  bool get isMiniSerie =>
-      firstAirDate.isNotEmpty &&
-      lastAirDate.isNotEmpty &&
-      firstAirDate.substring(0, 4) == lastAirDate.substring(0, 4);
+  bool get isMiniSerie => type == TvShowType.miniseries;
 
   String get posterPath =>
       posterPathSuffix != null && posterPathSuffix!.isNotEmpty
