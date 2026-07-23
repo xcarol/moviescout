@@ -84,6 +84,7 @@ class _MediaCarouselState extends State<MediaCarousel> {
               totalItems: totalItems,
               currentPage: _currentPage,
               infiniteBase: infiniteBase,
+              showNavButtons: true,
               onPageChanged: (index) {
                 setState(() {
                   _currentPage = index;
@@ -233,6 +234,7 @@ class _FullScreenCarouselState extends State<_FullScreenCarousel> {
         totalItems: totalItems,
         currentPage: _currentPage,
         infiniteBase: widget.infiniteBase,
+        showNavButtons: true,
         onPageChanged: (index) {
           setState(() {
             _currentPage = index;
@@ -262,6 +264,7 @@ class _CarouselBase extends StatelessWidget {
   final int totalItems;
   final int currentPage;
   final int infiniteBase;
+  final bool showNavButtons;
   final Widget Function(BuildContext, int realIndex) itemBuilder;
   final ValueChanged<int> onPageChanged;
 
@@ -270,6 +273,7 @@ class _CarouselBase extends StatelessWidget {
     required this.totalItems,
     required this.currentPage,
     this.infiniteBase = 0,
+    this.showNavButtons = false,
     required this.itemBuilder,
     required this.onPageChanged,
   });
@@ -312,6 +316,41 @@ class _CarouselBase extends StatelessWidget {
     );
   }
 
+  Widget _buildNavButton(BuildContext context, {required bool isLeft}) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Positioned(
+      left: isLeft ? 10 : null,
+      right: !isLeft ? 10 : null,
+      top: 0,
+      bottom: 0,
+      child: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surface.withValues(alpha: 0.3),
+            shape: BoxShape.circle,
+          ),
+          child: IconButton(
+            icon: Icon(isLeft ? Icons.chevron_left : Icons.chevron_right, size: 30),
+            color: colorScheme.onSurface,
+            onPressed: () {
+              if (isLeft) {
+                pageController.previousPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              } else {
+                pageController.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -327,6 +366,8 @@ class _CarouselBase extends StatelessWidget {
             return itemBuilder(context, realIndex);
           },
         ),
+        if (showNavButtons && totalItems > 1) _buildNavButton(context, isLeft: true),
+        if (showNavButtons && totalItems > 1) _buildNavButton(context, isLeft: false),
         if (totalItems > 1) _buildDotIndicators(context),
       ],
     );
