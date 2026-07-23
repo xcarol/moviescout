@@ -67,9 +67,9 @@ class _MediaCarouselState extends State<MediaCarousel> {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => _FullScreenCarousel(
+              builder: (context) => FullScreenCarousel(
                 images: images,
-                initialPage: _pageController.hasClients 
+                initialPage: _pageController.hasClients
                     ? _pageController.page?.round() ?? infiniteBase
                     : infiniteBase,
                 infiniteBase: infiniteBase,
@@ -123,7 +123,7 @@ class _MediaCarouselState extends State<MediaCarousel> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => _FullScreenCarousel(
+                    builder: (context) => FullScreenCarousel(
                       images: [image],
                       initialPage: 0,
                       infiniteBase: 0,
@@ -185,22 +185,23 @@ class _MediaCarouselState extends State<MediaCarousel> {
   }
 }
 
-class _FullScreenCarousel extends StatefulWidget {
+class FullScreenCarousel extends StatefulWidget {
   final List<String> images;
   final int initialPage;
   final int infiniteBase;
 
-  const _FullScreenCarousel({
+  const FullScreenCarousel({
+    super.key,
     required this.images,
     required this.initialPage,
     required this.infiniteBase,
   });
 
   @override
-  State<_FullScreenCarousel> createState() => _FullScreenCarouselState();
+  State<FullScreenCarousel> createState() => FullScreenCarouselState();
 }
 
-class _FullScreenCarouselState extends State<_FullScreenCarousel> {
+class FullScreenCarouselState extends State<FullScreenCarousel> {
   late PageController _pageController;
   late int _currentPage;
 
@@ -242,14 +243,17 @@ class _FullScreenCarouselState extends State<_FullScreenCarousel> {
         },
         itemBuilder: (context, realIndex) {
           final path = widget.images[realIndex];
-          final url = UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', path);
+          final url = UrlConstants.tmdbImageOriginalTemplate
+              .replaceFirst('{PATH}', path);
           return InteractiveViewer(
             child: Center(
               child: CachedNetworkImage(
                 imageUrl: url,
                 fit: BoxFit.contain,
-                placeholder: (context, url) => const CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error, color: colorScheme.error),
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+                errorWidget: (context, url, error) =>
+                    Icon(Icons.error, color: colorScheme.error),
               ),
             ),
           );
@@ -330,7 +334,8 @@ class _CarouselBase extends StatelessWidget {
             shape: BoxShape.circle,
           ),
           child: IconButton(
-            icon: Icon(isLeft ? Icons.chevron_left : Icons.chevron_right, size: 30),
+            icon: Icon(isLeft ? Icons.chevron_left : Icons.chevron_right,
+                size: 30),
             color: colorScheme.onSurface,
             onPressed: () {
               if (isLeft) {
@@ -359,15 +364,18 @@ class _CarouselBase extends StatelessWidget {
       children: [
         PageView.builder(
           controller: pageController,
-          physics: totalItems == 1 ? const NeverScrollableScrollPhysics() : null,
+          physics:
+              totalItems == 1 ? const NeverScrollableScrollPhysics() : null,
           onPageChanged: onPageChanged,
           itemBuilder: (context, index) {
             final realIndex = _getRealIndex(index, totalItems);
             return itemBuilder(context, realIndex);
           },
         ),
-        if (showNavButtons && totalItems > 1) _buildNavButton(context, isLeft: true),
-        if (showNavButtons && totalItems > 1) _buildNavButton(context, isLeft: false),
+        if (showNavButtons && totalItems > 1)
+          _buildNavButton(context, isLeft: true),
+        if (showNavButtons && totalItems > 1)
+          _buildNavButton(context, isLeft: false),
         if (totalItems > 1) _buildDotIndicators(context),
       ],
     );
