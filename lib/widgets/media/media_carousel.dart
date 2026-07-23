@@ -101,7 +101,7 @@ class _MediaCarouselState extends State<MediaCarousel> {
           ),
           if (totalItems > 1)
             Positioned(
-              bottom: 25,
+              bottom: 30,
               left: 10,
               right: 10,
               child: Align(
