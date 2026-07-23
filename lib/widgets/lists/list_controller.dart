@@ -26,7 +26,8 @@ class ListController with ChangeNotifier {
   List<String> _titleTypes = [];
   List<String> _titleSorts = [];
 
-  bool get isSearchList => listService.listName == AppConstants.searchList ||
+  bool get isSearchList =>
+      listService.listName == AppConstants.searchList ||
       listService is TmdbSearchService;
 
   late final String _showFiltersPreferencesName;
@@ -283,7 +284,8 @@ class ListController with ChangeNotifier {
   }
 
   void _resetSort() {
-    _selectedSort = isSearchList ? SortOption.relevance : SortOption.alphabetically;
+    _selectedSort =
+        isSearchList ? SortOption.relevance : SortOption.alphabetically;
     PreferencesService()
         .prefs
         .setString(_selectedSortPreferencesName, _selectedSort);
