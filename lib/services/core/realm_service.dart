@@ -22,10 +22,16 @@ class RealmService {
         TmdbSeasonRealm.schema,
         TmdbEpisodeRealm.schema,
       ],
-      schemaVersion: 5,
+      schemaVersion: 6,
       migrationCallback: (migration, oldSchemaVersion) {
         if (oldSchemaVersion < 2) {
           _migrateProvidersJson(migration.newRealm);
+        }
+        if (oldSchemaVersion < 6) {
+          final titles = migration.newRealm.all<TmdbTitleRealm>();
+          for (final t in titles) {
+            t.type = '';
+          }
         }
       },
       path: customPath,

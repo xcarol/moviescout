@@ -33,6 +33,7 @@ class _TmdbTitleRealm {
   late String imdbId;
   late String homepage;
   late String certification;
+  late String type;
 
   late String? posterPathSuffix;
   late String? backdropPathSuffix;
@@ -146,6 +147,7 @@ class TmdbTitleRealmFields {
   static const String tagline = 'tagline';
   static const String tmdbId = 'tmdbId';
   static const String voteAverage = 'voteAverage';
+  static const String type = 'type';
   static const String flatrateProviderIds = 'flatrateProviderIds';
   static const String lastUpdated = 'lastUpdated';
 }
