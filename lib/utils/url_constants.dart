@@ -100,6 +100,10 @@ class UrlConstants {
       'movie/{ID}/rating?session_id={SESSION_ID}';
   static const String tmdbRateTvEndpoint =
       'tv/{ID}/rating?session_id={SESSION_ID}';
+  static const String tmdbRateEpisodeEndpoint =
+      'tv/{ID}/season/{SEASON_NUMBER}/episode/{EPISODE_NUMBER}/rating?session_id={SESSION_ID}';
+  static const String tmdbRatedEpisodesEndpoint =
+      'account/{ACCOUNT_ID}/rated/tv/episodes?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.asc';
 
   static const String tmdbMovieGenresEndpoint =
       'genre/movie/list?language={LOCALE}';

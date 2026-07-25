@@ -31,6 +31,7 @@ import 'package:moviescout/services/api/tmdb_translation_service.dart';
 import 'package:moviescout/services/system/home_screen_shortcut_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/rate_form.dart';
+import 'package:moviescout/widgets/buttons/user_rate_button.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/notify_dialog.dart';
 import 'package:moviescout/widgets/chips/title_chip.dart';
 import 'package:moviescout/widgets/buttons/watchlist_button.dart';
@@ -741,7 +742,6 @@ class _TitleDetailsState extends State<TitleDetails> {
 
   Widget _rating(TmdbTitle title) {
     String titleVoteAverage = '-.-';
-    final titleTheme = Theme.of(context).extension<CustomColors>()!;
 
     if (title.firstAirDate.isNotEmpty &&
         DateTime.parse(title.firstAirDate).isAfter(DateTime.now())) {
@@ -866,66 +866,21 @@ class _TitleDetailsState extends State<TitleDetails> {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                color: !isUserLoggedIn
-                                    ? Theme.of(context).disabledColor
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                width: 2,
-                              ),
-                              shape: const StadiumBorder(),
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 6, horizontal: 10),
-                              minimumSize: const Size(0, 0),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            onPressed: !isUserLoggedIn
-                                ? null
-                                : () => showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return RateForm(
-                                          title: title.name,
-                                          initialRate: titleRating,
-                                          initialDate: titleRatingDate,
-                                          onSubmit: (double rating) async {
-                                            await _updateTitleRate(
-                                                title, rating);
-                                          },
-                                        );
-                                      },
-                                    ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.star,
-                                  size: 32,
-                                  color: !isUserLoggedIn
-                                      ? Theme.of(context).disabledColor
-                                      : titleTheme.userRatedTitle,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  titleRating > AppConstants.seenRating
-                                      ? (titleRating == 10.0
-                                          ? '10'
-                                          : titleRating.toStringAsFixed(1))
-                                      : '-.-',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 22,
-                                    color: !isUserLoggedIn
-                                        ? Theme.of(context).disabledColor
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSurfaceVariant,
-                                  ),
-                                ),
-                              ],
+                          UserRateButton(
+                            isUserLoggedIn: isUserLoggedIn,
+                            rating: titleRating,
+                            onPressed: () => showDialog(
+                              context: context,
+                              builder: (context) {
+                                return RateForm(
+                                  title: title.name,
+                                  initialRate: titleRating,
+                                  initialDate: titleRatingDate,
+                                  onSubmit: (double rating) async {
+                                    await _updateTitleRate(title, rating);
+                                  },
+                                );
+                              },
                             ),
                           ),
                           const SizedBox(width: 8),

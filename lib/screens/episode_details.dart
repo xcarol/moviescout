@@ -15,7 +15,11 @@ import 'package:moviescout/utils/date_formatter.dart';
 import 'package:moviescout/widgets/text_and_info/expandable_description.dart';
 import 'package:moviescout/widgets/buttons/edit_button.dart';
 import 'package:moviescout/widgets/buttons/translations_button.dart';
+import 'package:moviescout/widgets/dialogs_and_forms/rate_form.dart';
 import 'package:moviescout/services/api/tmdb_translation_service.dart';
+import 'package:moviescout/widgets/buttons/user_rate_button.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
+import 'package:provider/provider.dart';
 
 class EpisodeDetails extends StatefulWidget {
   final TmdbTitle title;
@@ -243,7 +247,25 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
     );
   }
 
+  Future<void> _updateEpisodeRate(TmdbEpisode episode, double rating) async {
+    final userService = Provider.of<TmdbUserService>(context, listen: false);
+
+    await TmdbEpisodeService().updateEpisodeRate(
+      userService.accountId,
+      userService.sessionId,
+      episode,
+      rating,
+    );
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   Widget _durationDateAndRating(TmdbEpisode episode) {
+    final isUserLoggedIn =
+        Provider.of<TmdbUserService>(context, listen: false).isUserLoggedIn;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -274,6 +296,29 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
             ],
           ),
         ),
+        UserRateButton(
+          isUserLoggedIn: isUserLoggedIn,
+          rating: episode.rating,
+          iconSize: 16,
+          fontSize: 14,
+          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+          onPressed: () => showDialog(
+            context: context,
+            builder: (context) {
+              return RateForm(
+                title: episode.name.isNotEmpty
+                    ? episode.name
+                    : AppLocalizations.of(context)!
+                        .episodeLabel(episode.episodeNumber),
+                initialRate: episode.rating,
+                onSubmit: (double rating) async {
+                  await _updateEpisodeRate(episode, rating);
+                },
+              );
+            },
+          ),
+        ),
+        const SizedBox(width: 10),
         Icon(
           Icons.star,
           size: 16,

@@ -115,6 +115,10 @@ class TmdbEpisodeService extends TmdbBaseService {
     final episode = TmdbEpisode.fromMap(details, tvId: tvId);
     episode.lastUpdated = DateTime.now().toIso8601String();
 
+    if (dbEpisode != null && dbEpisode.rating > 0.0) {
+      episode.rating = dbEpisode.rating;
+    }
+
     await _repository.putEpisode(episode);
 
     if (!isPrefetch) {
@@ -135,6 +139,46 @@ class TmdbEpisodeService extends TmdbBaseService {
     if (season != null && episodeNumber + 1 <= season.episodes.length) {
       getEpisodeDetails(tvId, seasonNumber, episodeNumber + 1,
           isPrefetch: true);
+    }
+  }
+
+  Future<void> updateEpisodeRate(
+    String accountId,
+    String sessionId,
+    TmdbEpisode episode,
+    double rating,
+  ) async {
+    try {
+      if (rating > 0) {
+        episode.rating = rating;
+        await post(
+          UrlConstants.tmdbRateEpisodeEndpoint
+              .replaceFirst('{ID}', episode.tvId.toString())
+              .replaceFirst('{SEASON_NUMBER}', episode.seasonNumber.toString())
+              .replaceFirst(
+                  '{EPISODE_NUMBER}', episode.episodeNumber.toString())
+              .replaceFirst('{SESSION_ID}', sessionId),
+          {'value': rating},
+        );
+      } else {
+        episode.rating = 0.0;
+        await delete(
+          UrlConstants.tmdbRateEpisodeEndpoint
+              .replaceFirst('{ID}', episode.tvId.toString())
+              .replaceFirst('{SEASON_NUMBER}', episode.seasonNumber.toString())
+              .replaceFirst(
+                  '{EPISODE_NUMBER}', episode.episodeNumber.toString())
+              .replaceFirst('{SESSION_ID}', sessionId),
+        );
+      }
+
+      await _repository.putEpisode(episode);
+    } catch (error, stackTrace) {
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        userMessage: 'Error updating rate for ${episode.name}',
+      );
     }
   }
 

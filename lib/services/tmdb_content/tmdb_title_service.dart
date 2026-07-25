@@ -107,7 +107,6 @@ class TmdbTitleService extends TmdbBaseService {
       await _addYoutubeTrailers(details);
     }
 
-    details[TmdbTitleFields.homepage] = details['homepage'];
     details[TmdbTitleFields.mediaType] = mediaType;
     details[TmdbTitleFields.lastUpdated] = DateTime.now().toIso8601String();
     details[TmdbTitleFields.lastProvidersUpdate] =
@@ -192,50 +191,13 @@ class TmdbTitleService extends TmdbBaseService {
     _extractKeywords(details, mediaType);
     _extractRecommendations(details);
     _extractCertification(details, mediaType);
+    _extractProviders(details);
 
-    if (details.containsKey(TmdbTitleFields.keywordIds)) {
-      title.keywordIds = details[TmdbTitleFields.keywordIds];
-    }
-    if (details.containsKey(TmdbTitleFields.recommendations)) {
-      title.recommendationsJson =
-          jsonEncode(details[TmdbTitleFields.recommendations]);
-    }
+    details[TmdbTitleFields.mediaType] = mediaType;
+    details[TmdbTitleFields.lastProvidersUpdate] = DateTime.now().toIso8601String();
+    details[TmdbTitleFields.lastUpdated] = DateTime.now().toIso8601String();
 
-    title.numberOfSeasons =
-        details[TmdbTitleFields.numberOfSeasons] ?? title.numberOfSeasons;
-    title.status = details[TmdbTitleFields.status] ?? title.status;
-    title.popularity =
-        (details[TmdbTitleFields.popularity] ?? title.popularity).toDouble();
-    title.voteAverage =
-        (details[TmdbTitleFields.voteAverage] ?? title.voteAverage).toDouble();
-    title.voteCount = details[TmdbTitleFields.voteCount] ?? title.voteCount;
-
-    title.runtime = details[TmdbTitleFields.runtime] ?? title.runtime;
-    title.numberOfEpisodes =
-        details[TmdbTitleFields.numberOfEpisodes] ?? title.numberOfEpisodes;
-    title.effectiveRuntime = title.mediaType == ApiConstants.movie
-        ? title.runtime
-        : title.numberOfEpisodes;
-
-    if (details.containsKey(TmdbTitleFields.nextEpisodeToAir)) {
-      title.nextEpisodeToAirJson =
-          details[TmdbTitleFields.nextEpisodeToAir] != null
-              ? jsonEncode(details[TmdbTitleFields.nextEpisodeToAir])
-              : null;
-    }
-    if (details.containsKey(TmdbTitleFields.lastEpisodeToAir)) {
-      title.lastEpisodeToAirJson =
-          details[TmdbTitleFields.lastEpisodeToAir] != null
-              ? jsonEncode(details[TmdbTitleFields.lastEpisodeToAir])
-              : null;
-    }
-
-    final providers =
-        details['watch/providers']?['results']?[getCountryCode()] ?? {};
-    title.providersJson = jsonEncode(providers);
-    TmdbTitle.updateProviderIds(title, providers);
-    title.lastProvidersUpdate = DateTime.now().toIso8601String();
-    title.lastUpdated = DateTime.now().toIso8601String();
+    title.fillFromMap(details);
 
     return title;
   }
