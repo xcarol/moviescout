@@ -210,10 +210,16 @@ class TmdbTitleRepository {
     _realm.write(() {
       final seasons = _realm.query<TmdbSeasonRealm>(
           '${TmdbSeasonRealmFields.tvId} == \$0', [tvId]);
-      _realm.deleteMany(seasons);
+      for (final season in seasons) {
+        season.lastUpdated =
+            DateTime.fromMillisecondsSinceEpoch(0).toIso8601String();
+      }
       final episodes = _realm.query<TmdbEpisodeRealm>(
           '${TmdbEpisodeRealmFields.tvId} == \$0', [tvId]);
-      _realm.deleteMany(episodes);
+      for (final episode in episodes) {
+        episode.lastUpdated =
+            DateTime.fromMillisecondsSinceEpoch(0).toIso8601String();
+      }
     });
   }
 

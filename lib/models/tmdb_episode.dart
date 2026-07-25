@@ -16,6 +16,7 @@ class TmdbEpisode implements TmdbItem {
   late int runtime;
   late String airDate;
   late double voteAverage;
+  late double rating;
   late String? stillPathSuffix;
 
   late String? guestStarsJson;
@@ -40,6 +41,7 @@ class TmdbEpisode implements TmdbItem {
     this.crewJson,
     this.imagesJson,
     this.videosJson,
+    this.rating = 0.0,
     required this.lastUpdated,
   }) {
     if (voteAverage.isNaN) voteAverage = 0.0;

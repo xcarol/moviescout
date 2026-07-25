@@ -743,7 +743,6 @@ class _TitleDetailsState extends State<TitleDetails> {
   Widget _rating(TmdbTitle title) {
     String titleVoteAverage = '-.-';
 
-
     if (title.firstAirDate.isNotEmpty &&
         DateTime.parse(title.firstAirDate).isAfter(DateTime.now())) {
       return Text(AppLocalizations.of(context)!.notReleasedYet);

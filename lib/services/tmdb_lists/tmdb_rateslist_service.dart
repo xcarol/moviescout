@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_following_service.dart';
@@ -71,9 +72,66 @@ class TmdbRateslistService extends TmdbTitleListService {
       });
     });
 
+    await _retrieveRatedEpisodes(accountId, sessionId, locale);
+
     if (followingService != null) {
       await followingService!.fetchAndApplyFollowingTitles();
     }
+  }
+
+  Future<void> _retrieveRatedEpisodes(
+      String accountId, String sessionId, Locale locale) async {
+    try {
+      int page = 1;
+      int totalPages = 1;
+      while (page <= totalPages) {
+        final response = await get(
+          UrlConstants.tmdbRatedEpisodesEndpoint
+              .replaceFirst('{ACCOUNT_ID}', accountId)
+              .replaceFirst('{SESSION_ID}', sessionId)
+              .replaceFirst('{PAGE}', page.toString())
+              .replaceFirst(
+                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+        );
+        if (response.statusCode == 200) {
+          totalPages = await _parseAndSaveRatedEpisodes(response);
+        }
+        page++;
+      }
+    } catch (e, stack) {
+      ErrorService.log(e,
+          stackTrace: stack, userMessage: 'Error sync rated episodes');
+    }
+  }
+
+  Future<int> _parseAndSaveRatedEpisodes(dynamic response) async {
+    final Map<String, dynamic> data = body(response);
+    final int totalPages = data['total_pages'] ?? 1;
+    final List<dynamic> results = data['results'] ?? [];
+
+    for (final item in results) {
+      final tvId = item['show_id'] ?? 0;
+      final episode = TmdbEpisode.fromMap(item, tvId: tvId);
+      episode.rating = (item['rating'] ?? 0.0).toDouble();
+      episode.lastUpdated = DateTime.now().toIso8601String();
+
+      final dbEpisode = await repository.getEpisode(
+          tvId, episode.seasonNumber, episode.episodeNumber);
+      if (dbEpisode != null) {
+        episode.stillPathSuffix = dbEpisode.stillPathSuffix;
+        episode.guestStarsJson = dbEpisode.guestStarsJson;
+        episode.crewJson = dbEpisode.crewJson;
+        episode.imagesJson = dbEpisode.imagesJson;
+        episode.videosJson = dbEpisode.videosJson;
+        if (episode.overview.isEmpty) {
+          episode.overview = dbEpisode.overview;
+        }
+      }
+
+      await repository.putEpisode(episode);
+    }
+
+    return totalPages;
   }
 
   Future<dynamic> _updateTitleRateToTmdb(
