@@ -19,10 +19,9 @@ import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:share_plus/share_plus.dart';
+
 import 'package:moviescout/widgets/media/media_carousel.dart';
-import 'package:moviescout/widgets/buttons/edit_button.dart';
-import 'package:moviescout/widgets/buttons/translations_button.dart';
+import 'package:moviescout/widgets/buttons/action_menu.dart';
 import 'package:moviescout/services/api/tmdb_translation_service.dart';
 import 'package:moviescout/widgets/text_and_info/social_link.dart';
 import 'package:moviescout/services/system/home_screen_shortcut_service.dart';
@@ -115,16 +114,15 @@ class _PersonDetailsState extends State<PersonDetails> {
           appBar: AppBar(
             title: Text(appTitle),
             actions: [
-              EditButton(url: editUrl),
-              TranslationsButton(
-                  editUrl: editUrl,
-                  fetchTranslations: () => TmdbTranslationService()
-                      .getTranslations('person', person.tmdbId),
-                  originalTitle: person.name,
-                  originalDescription: person.biography),
-              IconButton(
-                icon: const Icon(Icons.add_to_home_screen),
-                onPressed: () async {
+              ActionMenu(
+                editUrl: editUrl,
+                fetchTranslations: () => TmdbTranslationService()
+                    .getTranslations('person', person.tmdbId),
+                originalTitle: person.name,
+                originalDescription: person.biography,
+                shareUrl: UrlConstants.moviescoutPersonWebTemplate
+                    .replaceFirst('{ID}', widget._person.tmdbId.toString()),
+                onPin: () async {
                   final loc = AppLocalizations.of(context)!;
                   final success =
                       await HomeScreenShortcutService.pinPersonShortcut(person);
@@ -132,18 +130,6 @@ class _PersonDetailsState extends State<PersonDetails> {
                     SnackMessage.showSnackBar(loc.shortcutFailed);
                   }
                 },
-                tooltip: AppLocalizations.of(context)!.addToHomeScreen,
-              ),
-              IconButton(
-                icon: const Icon(Icons.share),
-                onPressed: () {
-                  final String link = UrlConstants.moviescoutPersonWebTemplate
-                      .replaceFirst('{ID}', widget._person.tmdbId.toString());
-                  SharePlus.instance.share(
-                    ShareParams(uri: Uri.parse(link)),
-                  );
-                },
-                tooltip: AppLocalizations.of(context)!.shareLink,
               ),
             ],
           ),

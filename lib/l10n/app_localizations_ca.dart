@@ -516,6 +516,9 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
+  String get edit => 'Editar';
+
+  @override
   String get showEditContent => 'Mostrar botó d\'edició';
 
   @override

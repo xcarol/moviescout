@@ -517,6 +517,9 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get edit => 'Editar';
+
+  @override
   String get showEditContent => 'Mostrar botón de edición';
 
   @override

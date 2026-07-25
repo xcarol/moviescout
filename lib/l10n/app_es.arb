@@ -364,6 +364,8 @@
       "count": {}
     }
   },
+  "edit": "Editar",
+  "@edit": {},
   "showEditContent": "Mostrar botón de edición",
   "@showEditContent": {},
   "translations": "Traducciones",

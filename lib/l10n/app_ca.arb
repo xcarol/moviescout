@@ -362,6 +362,8 @@
       "count": {}
     }
   },
+  "edit": "Editar",
+  "@edit": {},
   "showEditContent": "Mostrar botó d'edició",
   "@showEditContent": {},
   "translations": "Traduccions",
@@ -374,7 +376,7 @@
   "@autoTranslation": {},
   "originalText": "Text Original",
   "@originalText": {},
-  "addToHomeScreen": "Afegeix a la pantalla d'inici",
+  "addToHomeScreen": "Afegir a la pantalla d'inici",
   "@addToHomeScreen": {},
   "shortcutAdded": "Drecera afegida",
   "@shortcutAdded": {},

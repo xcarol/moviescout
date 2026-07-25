@@ -10,10 +10,9 @@ import 'package:moviescout/services/tmdb_content/tmdb_season_service.dart';
 import 'package:moviescout/widgets/cards/episode_card.dart';
 import 'package:moviescout/widgets/media/media_carousel.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:share_plus/share_plus.dart';
+
 import 'package:moviescout/utils/date_formatter.dart';
-import 'package:moviescout/widgets/buttons/edit_button.dart';
-import 'package:moviescout/widgets/buttons/translations_button.dart';
+import 'package:moviescout/widgets/buttons/action_menu.dart';
 import 'package:moviescout/services/api/tmdb_translation_service.dart';
 import 'package:moviescout/widgets/buttons/trailer_buttons.dart';
 import 'package:moviescout/widgets/layout/boxed_widget.dart';
@@ -95,17 +94,18 @@ class _SeasonDetailsState extends State<SeasonDetails> {
       appBar: AppBar(
         title: Text(appTitle),
         actions: [
-          EditButton(url: editUrl),
-          TranslationsButton(
-              editUrl: editUrl,
-              fetchTranslations: () => TmdbTranslationService()
-                  .getSeasonTranslations(
-                      widget.title.tmdbId, _currentSeasonNumber),
-              originalTitle: cachedSeason?.name ?? '',
-              originalDescription: cachedSeason?.overview ?? ''),
-          IconButton(
-            icon: const Icon(Icons.add_to_home_screen),
-            onPressed: () async {
+          ActionMenu(
+            editUrl: editUrl,
+            fetchTranslations: () => TmdbTranslationService()
+                .getSeasonTranslations(
+                    widget.title.tmdbId, _currentSeasonNumber),
+            originalTitle: cachedSeason?.name ?? '',
+            originalDescription: cachedSeason?.overview ?? '',
+            shareUrl: UrlConstants.moviescoutTvSeasonWebTemplate
+                .replaceFirst('{ID}', widget.title.tmdbId.toString())
+                .replaceFirst(
+                    '{SEASON_NUMBER}', _currentSeasonNumber.toString()),
+            onPin: () async {
               final loc = AppLocalizations.of(context)!;
               final success = await HomeScreenShortcutService.pinSeasonShortcut(
                   widget.title,
@@ -116,20 +116,6 @@ class _SeasonDetailsState extends State<SeasonDetails> {
                 SnackMessage.showSnackBar(loc.shortcutFailed);
               }
             },
-            tooltip: AppLocalizations.of(context)!.addToHomeScreen,
-          ),
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () {
-              final String link = UrlConstants.moviescoutTvSeasonWebTemplate
-                  .replaceFirst('{ID}', widget.title.tmdbId.toString())
-                  .replaceFirst(
-                      '{SEASON_NUMBER}', _currentSeasonNumber.toString());
-              SharePlus.instance.share(
-                ShareParams(uri: Uri.parse(link)),
-              );
-            },
-            tooltip: AppLocalizations.of(context)!.shareLink,
           ),
         ],
       ),
