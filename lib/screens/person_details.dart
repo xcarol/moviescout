@@ -312,7 +312,7 @@ class _PersonDetailsState extends State<PersonDetails> {
       SocialLink.image(
         url: UrlConstants.tmdbPersonWebTemplate
             .replaceFirst('{ID}', person.tmdbId.toString()),
-        assetPath: 'assets/tmdb-logo-square.png',
+        assetPath: 'assets/tmdb-logo.png',
         launchMode: LaunchMode.inAppWebView,
       ),
     );
@@ -322,7 +322,7 @@ class _PersonDetailsState extends State<PersonDetails> {
         SocialLink.image(
           url: UrlConstants.imdbNameTemplate
               .replaceFirst('{ID}', person.imdbId.toString()),
-          assetPath: 'assets/imdb-logo-square.png',
+          assetPath: 'assets/imdb-logo.png',
           launchMode: LaunchMode.inAppBrowserView,
         ),
       );

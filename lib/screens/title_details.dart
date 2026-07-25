@@ -458,7 +458,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         url: UrlConstants.tmdbTitleWebTemplate
             .replaceFirst('{MEDIA_TYPE}', title.mediaType)
             .replaceFirst('{ID}', title.tmdbId.toString()),
-        assetPath: 'assets/tmdb-logo-square.png',
+        assetPath: 'assets/tmdb-logo.png',
         launchMode: LaunchMode.inAppWebView,
       ),
     );
@@ -468,7 +468,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         SocialLink.image(
           url: UrlConstants.imdbTitleTemplate
               .replaceFirst('{ID}', title.imdbId.toString()),
-          assetPath: 'assets/imdb-logo-square.png',
+          assetPath: 'assets/imdb-logo.png',
           launchMode: LaunchMode.inAppBrowserView,
         ),
       );
@@ -747,7 +747,7 @@ class _TitleDetailsState extends State<TitleDetails> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/tmdb-logo-square.png', height: 16),
+                Image.asset('assets/tmdb-logo.png', height: 16),
                 const SizedBox(width: 5),
                 Text(
                   titleVoteAverage,

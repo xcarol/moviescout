@@ -91,7 +91,6 @@ flutter:
     - assets/l10n/
     - assets/account.svg
     - assets/facebook.png
-    - assets/imdb-logo-square.png
     - assets/imdb-logo.png
     - assets/instagram.png
     - assets/logo-icon.png
@@ -102,7 +101,6 @@ flutter:
     - assets/person.svg
     - assets/rotten-logo.png
     - assets/tiktok.png
-    - assets/tmdb-logo-square.png
     - assets/tmdb-logo.png
     - assets/tvshow_poster.png
     - assets/wikidata.png
