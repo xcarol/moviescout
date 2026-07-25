@@ -194,7 +194,8 @@ class TmdbTitleService extends TmdbBaseService {
     _extractProviders(details);
 
     details[TmdbTitleFields.mediaType] = mediaType;
-    details[TmdbTitleFields.lastProvidersUpdate] = DateTime.now().toIso8601String();
+    details[TmdbTitleFields.lastProvidersUpdate] =
+        DateTime.now().toIso8601String();
     details[TmdbTitleFields.lastUpdated] = DateTime.now().toIso8601String();
 
     title.fillFromMap(details);

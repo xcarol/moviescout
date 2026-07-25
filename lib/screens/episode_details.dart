@@ -13,8 +13,7 @@ import 'package:moviescout/widgets/media/media_carousel.dart';
 import 'package:moviescout/widgets/chips/person_chip.dart';
 import 'package:moviescout/utils/date_formatter.dart';
 import 'package:moviescout/widgets/text_and_info/expandable_description.dart';
-import 'package:moviescout/widgets/buttons/edit_button.dart';
-import 'package:moviescout/widgets/buttons/translations_button.dart';
+import 'package:moviescout/widgets/buttons/action_menu.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/rate_form.dart';
 import 'package:moviescout/services/api/tmdb_translation_service.dart';
 import 'package:moviescout/widgets/buttons/user_rate_button.dart';
@@ -112,14 +111,14 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
       appBar: AppBar(
         title: Text(appTitle),
         actions: [
-          EditButton(url: editUrl),
-          TranslationsButton(
-              editUrl: editUrl,
-              fetchTranslations: () => TmdbTranslationService()
-                  .getEpisodeTranslations(widget.title.tmdbId,
-                      widget.seasonNumber, _currentEpisodeNumber),
-              originalTitle: cachedEpisode?.name ?? '',
-              originalDescription: cachedEpisode?.overview ?? ''),
+          ActionMenu(
+            editUrl: editUrl,
+            fetchTranslations: () => TmdbTranslationService()
+                .getEpisodeTranslations(widget.title.tmdbId,
+                    widget.seasonNumber, _currentEpisodeNumber),
+            originalTitle: cachedEpisode?.name ?? '',
+            originalDescription: cachedEpisode?.overview ?? '',
+          ),
         ],
       ),
       body: PageView.builder(

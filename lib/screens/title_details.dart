@@ -25,8 +25,7 @@ import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/widgets/chips/person_chip.dart';
 import 'package:moviescout/widgets/text_and_info/social_link.dart';
 import 'package:moviescout/widgets/layout/boxed_widget.dart';
-import 'package:moviescout/widgets/buttons/edit_button.dart';
-import 'package:moviescout/widgets/buttons/translations_button.dart';
+import 'package:moviescout/widgets/buttons/action_menu.dart';
 import 'package:moviescout/services/api/tmdb_translation_service.dart';
 import 'package:moviescout/services/system/home_screen_shortcut_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
@@ -46,7 +45,7 @@ import 'package:moviescout/services/api/omdb_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:share_plus/share_plus.dart';
+
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:moviescout/widgets/layout/custom_refresh_builder.dart';
 import 'package:moviescout/widgets/misc/bottom_clamping_scroll_physics.dart';
@@ -138,8 +137,7 @@ class _TitleDetailsState extends State<TitleDetails> {
       appBar: AppBar(
         title: Text(appTitle),
         actions: [
-          EditButton(url: editUrl),
-          TranslationsButton(
+          ActionMenu(
             editUrl: editUrl,
             fetchTranslations: () => TmdbTranslationService()
                 .getTranslations(_currentTitle.mediaType, _currentTitle.tmdbId),
@@ -147,10 +145,10 @@ class _TitleDetailsState extends State<TitleDetails> {
                 ? _currentTitle.originalName
                 : _currentTitle.name,
             originalDescription: _currentTitle.overview,
-          ),
-          IconButton(
-            icon: const Icon(Icons.add_to_home_screen),
-            onPressed: () async {
+            shareUrl: UrlConstants.moviescoutTitleWebTemplate
+                .replaceFirst('{MEDIA_TYPE}', _currentTitle.mediaType)
+                .replaceFirst('{ID}', _currentTitle.tmdbId.toString()),
+            onPin: () async {
               final loc = AppLocalizations.of(context)!;
               final success = await HomeScreenShortcutService.pinTitleShortcut(
                   _currentTitle);
@@ -158,19 +156,6 @@ class _TitleDetailsState extends State<TitleDetails> {
                 SnackMessage.showSnackBar(loc.shortcutFailed);
               }
             },
-            tooltip: AppLocalizations.of(context)!.addToHomeScreen,
-          ),
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () {
-              final String link = UrlConstants.moviescoutTitleWebTemplate
-                  .replaceFirst('{MEDIA_TYPE}', _currentTitle.mediaType)
-                  .replaceFirst('{ID}', _currentTitle.tmdbId.toString());
-              SharePlus.instance.share(
-                ShareParams(uri: Uri.parse(link)),
-              );
-            },
-            tooltip: AppLocalizations.of(context)!.shareLink,
           ),
         ],
       ),
