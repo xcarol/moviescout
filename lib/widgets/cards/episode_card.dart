@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -73,8 +72,8 @@ class EpisodeCard extends StatelessWidget {
     if (stillPath == null || stillPath.isEmpty) {
       return AspectRatio(
         aspectRatio: 16 / 9,
-        child: SvgPicture.asset(
-          'assets/movie.svg',
+        child: Image.asset(
+          'assets/movie.png',
           fit: BoxFit.contain,
         ),
       );
@@ -93,8 +92,8 @@ class EpisodeCard extends StatelessWidget {
         placeholderFadeInDuration: Duration.zero,
         cacheKey: stillPath,
         errorWidget: (context, error, stackTrace) {
-          return SvgPicture.asset(
-            'assets/movie.svg',
+          return Image.asset(
+            'assets/movie.png',
             fit: BoxFit.contain,
           );
         },

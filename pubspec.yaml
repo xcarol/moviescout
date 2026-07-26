@@ -89,21 +89,20 @@ flutter:
   assets:
     - .env
     - assets/l10n/
-    - assets/account.svg
+    - assets/account.png
     - assets/facebook.png
-    - assets/imdb-logo-square.png
     - assets/imdb-logo.png
     - assets/instagram.png
     - assets/logo-icon.png
     - assets/metacritic-logo.png
     - assets/movie_poster.png
-    - assets/movie.svg
+    - assets/movie.png
     - assets/person_web.png
-    - assets/person.svg
+    - assets/person.png
     - assets/rotten-logo.png
     - assets/tiktok.png
-    - assets/tmdb-logo-square.png
     - assets/tmdb-logo.png
+    - assets/tvdb.png
     - assets/tvshow_poster.png
     - assets/wikidata.png
     - assets/X.png

@@ -6,7 +6,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
@@ -458,7 +457,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         url: UrlConstants.tmdbTitleWebTemplate
             .replaceFirst('{MEDIA_TYPE}', title.mediaType)
             .replaceFirst('{ID}', title.tmdbId.toString()),
-        assetPath: 'assets/tmdb-logo-square.png',
+        assetPath: 'assets/tmdb-logo.png',
         launchMode: LaunchMode.inAppWebView,
       ),
     );
@@ -468,7 +467,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         SocialLink.image(
           url: UrlConstants.imdbTitleTemplate
               .replaceFirst('{ID}', title.imdbId.toString()),
-          assetPath: 'assets/imdb-logo-square.png',
+          assetPath: 'assets/imdb-logo.png',
           launchMode: LaunchMode.inAppBrowserView,
         ),
       );
@@ -747,7 +746,7 @@ class _TitleDetailsState extends State<TitleDetails> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/tmdb-logo-square.png', height: 16),
+                Image.asset('assets/tmdb-logo.png', height: 16),
                 const SizedBox(width: 5),
                 Text(
                   titleVoteAverage,
@@ -1082,8 +1081,8 @@ class _TitleDetailsState extends State<TitleDetails> {
             imageUrl: provider.logoPath,
             fit: BoxFit.cover,
             errorWidget: (context, error, stackTrace) {
-              return SvgPicture.asset(
-                'assets/movie.svg',
+              return Image.asset(
+                'assets/movie.png',
                 fit: BoxFit.cover,
               );
             },

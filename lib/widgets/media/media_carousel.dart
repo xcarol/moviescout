@@ -1,8 +1,7 @@
-import 'package:moviescout/utils/url_constants.dart';
 import 'dart:ui';
+import 'package:moviescout/utils/url_constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/utils/api_constants.dart';
 
 class MediaCarousel extends StatefulWidget {
@@ -139,8 +138,8 @@ class _MediaCarouselState extends State<MediaCarousel> {
 
   Widget _buildPlaceholder(String mediaType) {
     if (mediaType == ApiConstants.person) {
-      return SvgPicture.asset(
-        'assets/person.svg',
+      return Image.asset(
+        'assets/person.png',
         fit: BoxFit.contain,
       );
     }

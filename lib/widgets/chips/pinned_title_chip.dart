@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
@@ -91,8 +90,8 @@ class PinnedTitleChip extends StatelessWidget {
   Widget _poster(String? posterPath) {
     if (posterPath == null || posterPath.isEmpty) {
       return Center(
-        child: SvgPicture.asset(
-          'assets/movie.svg',
+        child: Image.asset(
+          'assets/movie.png',
           width: 40,
           height: 40,
           fit: BoxFit.contain,
@@ -112,8 +111,8 @@ class PinnedTitleChip extends StatelessWidget {
       cacheKey: posterPath,
       errorWidget: (context, error, stackTrace) {
         return Center(
-          child: SvgPicture.asset(
-            'assets/movie.svg',
+          child: Image.asset(
+            'assets/movie.png',
             width: 40,
             height: 40,
             fit: BoxFit.contain,

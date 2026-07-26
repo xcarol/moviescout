@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/screens/person_details.dart';
@@ -94,8 +93,8 @@ class PersonChip extends StatelessWidget {
     if (posterPath == null || posterPath.isEmpty) {
       return AspectRatio(
         aspectRatio: 2 / 3,
-        child: SvgPicture.asset(
-          'assets/person.svg',
+        child: Image.asset(
+          'assets/person.png',
           fit: BoxFit.contain,
         ),
       );
@@ -114,8 +113,8 @@ class PersonChip extends StatelessWidget {
         placeholderFadeInDuration: Duration.zero,
         cacheKey: posterPath,
         errorWidget: (context, error, stackTrace) {
-          return SvgPicture.asset(
-            'assets/person.svg',
+          return Image.asset(
+            'assets/person.png',
             fit: BoxFit.contain,
           );
         },
