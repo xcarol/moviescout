@@ -310,7 +310,7 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
           await _mergeRawItemsWithExisting(rawItems, ApiConstants.movie);
       final updated = await Future.wait(mergedTitles.map((t) =>
           TmdbTitleService().updateTitleDetails(t,
-              force: t.lastProvidersUpdate == AppConstants.defaultDate)));
+              force: t.lastUpdated == AppConstants.defaultDate)));
       await titleRepository.saveTitles(updated.cast<TmdbTitle>(), listNameVal);
     }
   }
@@ -348,7 +348,7 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
           await _mergeRawItemsWithExisting(rawItems, ApiConstants.tv);
       final updated = await Future.wait(mergedTitles.map((t) =>
           TmdbTitleService().updateTitleDetails(t,
-              force: t.lastProvidersUpdate == AppConstants.defaultDate)));
+              force: t.lastUpdated == AppConstants.defaultDate)));
       await titleRepository.saveTitles(updated.cast<TmdbTitle>(), listNameVal);
     }
   }

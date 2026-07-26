@@ -90,7 +90,6 @@ class TmdbTitleFields {
   static const String isSearchResult = 'is_search_result';
   static const String iso6391 = 'iso_639_1';
   static const String lastNotifiedSeason = 'last_notified_season';
-  static const String lastProvidersUpdate = 'last_providers_update';
   static const String omdbRatings = 'omdb_ratings';
 }
 
@@ -203,7 +202,6 @@ class TmdbTitle implements TmdbItem {
   late String? externalIdsJson;
 
   late int lastNotifiedSeason;
-  late String lastProvidersUpdate;
 
   String character = '';
   String job = '';
@@ -257,7 +255,6 @@ class TmdbTitle implements TmdbItem {
     this.isPinned = false,
     this.notifyNewSeasons = false,
     this.lastNotifiedSeason = 0,
-    this.lastProvidersUpdate = '',
   }) {
     if (effectiveReleaseDate.isEmpty) {
       effectiveReleaseDate =
@@ -281,8 +278,6 @@ class TmdbTitle implements TmdbItem {
       isPinned: title[TmdbTitleFields.isPinned] ?? false,
       notifyNewSeasons: title[TmdbTitleFields.notifyNewSeasons] ?? false,
       lastNotifiedSeason: title[TmdbTitleFields.lastNotifiedSeason] ?? 0,
-      lastProvidersUpdate: title[TmdbTitleFields.lastProvidersUpdate] ??
-          AppConstants.defaultDate,
     )..fillFromMap(title);
   }
 
@@ -373,8 +368,6 @@ class TmdbTitle implements TmdbItem {
         title[TmdbTitleFields.notifyNewSeasons] ?? notifyNewSeasons;
     lastNotifiedSeason =
         title[TmdbTitleFields.lastNotifiedSeason] ?? lastNotifiedSeason;
-    lastProvidersUpdate =
-        title[TmdbTitleFields.lastProvidersUpdate] ?? lastProvidersUpdate;
 
     effectiveReleaseDate =
         mediaType == ApiConstants.movie ? releaseDate : firstAirDate;
@@ -477,7 +470,6 @@ class TmdbTitle implements TmdbItem {
       TmdbTitleFields.isPinned: isPinned,
       TmdbTitleFields.notifyNewSeasons: notifyNewSeasons,
       TmdbTitleFields.lastNotifiedSeason: lastNotifiedSeason,
-      TmdbTitleFields.lastProvidersUpdate: lastProvidersUpdate,
       TmdbTitleFields.genreIds: genreIds,
       TmdbTitleFields.keywordIds: keywordIds,
       TmdbTitleFields.flatrateProviderIds: flatrateProviderIds,

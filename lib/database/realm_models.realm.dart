@@ -153,7 +153,6 @@ class TmdbTitleRealm extends _TmdbTitleRealm
     bool isPinned,
     bool notifyNewSeasons,
     int lastNotifiedSeason,
-    String lastProvidersUpdate,
     String character,
     String job,
     String department, {
@@ -225,7 +224,6 @@ class TmdbTitleRealm extends _TmdbTitleRealm
     RealmObjectBase.set<RealmList<int>>(
         this, 'flatrateProviderIds', RealmList<int>(flatrateProviderIds));
     RealmObjectBase.set(this, 'lastNotifiedSeason', lastNotifiedSeason);
-    RealmObjectBase.set(this, 'lastProvidersUpdate', lastProvidersUpdate);
     RealmObjectBase.set(this, 'character', character);
     RealmObjectBase.set(this, 'job', job);
     RealmObjectBase.set(this, 'department', department);
@@ -539,13 +537,6 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       RealmObjectBase.set(this, 'lastNotifiedSeason', value);
 
   @override
-  String get lastProvidersUpdate =>
-      RealmObjectBase.get<String>(this, 'lastProvidersUpdate') as String;
-  @override
-  set lastProvidersUpdate(String value) =>
-      RealmObjectBase.set(this, 'lastProvidersUpdate', value);
-
-  @override
   String get character =>
       RealmObjectBase.get<String>(this, 'character') as String;
   @override
@@ -625,7 +616,6 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       'keywordIds': keywordIds.toEJson(),
       'flatrateProviderIds': flatrateProviderIds.toEJson(),
       'lastNotifiedSeason': lastNotifiedSeason.toEJson(),
-      'lastProvidersUpdate': lastProvidersUpdate.toEJson(),
       'character': character.toEJson(),
       'job': job.toEJson(),
       'department': department.toEJson(),
@@ -670,7 +660,6 @@ class TmdbTitleRealm extends _TmdbTitleRealm
         'isPinned': EJsonValue isPinned,
         'notifyNewSeasons': EJsonValue notifyNewSeasons,
         'lastNotifiedSeason': EJsonValue lastNotifiedSeason,
-        'lastProvidersUpdate': EJsonValue lastProvidersUpdate,
         'character': EJsonValue character,
         'job': EJsonValue job,
         'department': EJsonValue department,
@@ -709,7 +698,6 @@ class TmdbTitleRealm extends _TmdbTitleRealm
           fromEJson(isPinned),
           fromEJson(notifyNewSeasons),
           fromEJson(lastNotifiedSeason),
-          fromEJson(lastProvidersUpdate),
           fromEJson(character),
           fromEJson(job),
           fromEJson(department),
@@ -796,7 +784,6 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       SchemaProperty('flatrateProviderIds', RealmPropertyType.int,
           collectionType: RealmCollectionType.list),
       SchemaProperty('lastNotifiedSeason', RealmPropertyType.int),
-      SchemaProperty('lastProvidersUpdate', RealmPropertyType.string),
       SchemaProperty('character', RealmPropertyType.string),
       SchemaProperty('job', RealmPropertyType.string),
       SchemaProperty('department', RealmPropertyType.string),

@@ -12,25 +12,15 @@ class WatchlistNotificationEvaluator {
         title.lastNotifiedSeason == 0 &&
         title.lastUpdated == AppConstants.defaultDate;
 
-    // Check for full update (details and providers)
     final lastUpdated = DateTime.tryParse(title.lastUpdated) ??
         DateTime.parse(AppConstants.defaultDate);
-    final needsFull = now.difference(lastUpdated).inDays >=
+
+    final needsUpdate = now.difference(lastUpdated).inDays >=
             AppConstants.watchlistTitleUpdateFrequencyDays ||
         isUninitialized;
 
-    if (needsFull) {
-      return UpdateType.full;
-    }
-
-    // Check for light update (providers only)
-    final lastProvidersUpdate = DateTime.tryParse(title.lastProvidersUpdate) ??
-        DateTime.parse(AppConstants.defaultDate);
-    final needsLight = now.difference(lastProvidersUpdate).inDays >=
-        AppConstants.watchlistProvidersUpdateFrequencyDays;
-
-    if (needsLight) {
-      return UpdateType.light;
+    if (needsUpdate) {
+      return UpdateType.light; // We use light update for everything now!
     }
 
     return UpdateType.none;

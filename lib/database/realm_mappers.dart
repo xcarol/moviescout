@@ -55,7 +55,6 @@ class RealmMapper {
       ..keywordIds = realmObj.keywordIds.toList()
       ..flatrateProviderIds = realmObj.flatrateProviderIds.toList()
       ..lastNotifiedSeason = realmObj.lastNotifiedSeason
-      ..lastProvidersUpdate = realmObj.lastProvidersUpdate
       ..character = realmObj.character
       ..job = realmObj.job
       ..department = realmObj.department;
@@ -96,7 +95,6 @@ class RealmMapper {
       domainObj.isPinned,
       domainObj.notifyNewSeasons,
       domainObj.lastNotifiedSeason,
-      domainObj.lastProvidersUpdate,
       domainObj.character,
       domainObj.job,
       domainObj.department,
