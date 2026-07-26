@@ -26,9 +26,6 @@ import 'package:moviescout/services/api/tmdb_translation_service.dart';
 import 'package:moviescout/widgets/text_and_info/social_link.dart';
 import 'package:moviescout/services/system/home_screen_shortcut_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
-import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
-import 'package:moviescout/widgets/layout/custom_refresh_builder.dart';
-import 'package:moviescout/widgets/misc/bottom_clamping_scroll_physics.dart';
 
 class PersonDetails extends StatefulWidget {
   final TmdbPerson _person;
@@ -54,7 +51,6 @@ class PersonDetails extends StatefulWidget {
 class _PersonDetailsState extends State<PersonDetails> {
   late Future<TmdbPerson> _personFuture;
   List<TmdbTitle> _userRatedTitles = [];
-  final _refreshController = IndicatorController();
 
   @override
   void initState() {
@@ -64,7 +60,6 @@ class _PersonDetailsState extends State<PersonDetails> {
 
   @override
   void dispose() {
-    _refreshController.dispose();
     super.dispose();
   }
 
@@ -133,29 +128,9 @@ class _PersonDetailsState extends State<PersonDetails> {
               ),
             ],
           ),
-          body: CustomRefreshIndicator(
-            controller: _refreshController,
-            offsetToArmed: 100,
-            onRefresh: () async {
-              final newFuture = _loadPersonAndRates(force: true);
-              setState(() {
-                _personFuture = newFuture;
-              });
-              await newFuture;
-            },
-            builder: customRefreshBuilder,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              physics: AlwaysScrollableScrollPhysics(
-                parent: BottomClampingScrollPhysics(
-                  topRefreshController: _refreshController,
-                  parent: ClampingWithOverscrollPhysics(
-                    state: _refreshController,
-                  ),
-                ),
-              ),
-              child: _detailsBody(person),
-            ),
+          body: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: _detailsBody(person),
           ),
         );
       },

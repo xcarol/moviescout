@@ -45,10 +45,6 @@ import 'package:provider/provider.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
-import 'package:moviescout/widgets/layout/custom_refresh_builder.dart';
-import 'package:moviescout/widgets/misc/bottom_clamping_scroll_physics.dart';
-
 class TitleDetails extends StatefulWidget {
   final TmdbTitle _title;
   final TmdbTitleListService _tmdbListService;
@@ -70,7 +66,6 @@ class _TitleDetailsState extends State<TitleDetails> {
   bool _isUpdatingRatings = false;
   List<Map<String, dynamic>>? _omdbRatings;
   String _selectedSeason = '';
-  final _refreshController = IndicatorController();
 
   @override
   void initState() {
@@ -82,7 +77,6 @@ class _TitleDetailsState extends State<TitleDetails> {
 
   @override
   void dispose() {
-    _refreshController.dispose();
     super.dispose();
   }
 
@@ -158,27 +152,9 @@ class _TitleDetailsState extends State<TitleDetails> {
           ),
         ],
       ),
-      body: CustomRefreshIndicator(
-        controller: _refreshController,
-        offsetToArmed: 100,
-        onRefresh: () async {
-          if (!_isUpdating) {
-            await _updateDetails();
-          }
-        },
-        builder: customRefreshBuilder,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          physics: AlwaysScrollableScrollPhysics(
-            parent: BottomClampingScrollPhysics(
-              topRefreshController: _refreshController,
-              parent: ClampingWithOverscrollPhysics(
-                state: _refreshController,
-              ),
-            ),
-          ),
-          child: _detailsBody(_currentTitle),
-        ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: _detailsBody(_currentTitle),
       ),
     );
   }
