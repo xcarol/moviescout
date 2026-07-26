@@ -83,7 +83,7 @@ class _MediaCarouselState extends State<MediaCarousel> {
               totalItems: totalItems,
               currentPage: _currentPage,
               infiniteBase: infiniteBase,
-              showNavButtons: true,
+              showNavButtons: false,
               onPageChanged: (index) {
                 setState(() {
                   _currentPage = index;
@@ -234,7 +234,7 @@ class FullScreenCarouselState extends State<FullScreenCarousel> {
         totalItems: totalItems,
         currentPage: _currentPage,
         infiniteBase: widget.infiniteBase,
-        showNavButtons: true,
+        showNavButtons: false,
         onPageChanged: (index) {
           setState(() {
             _currentPage = index;
