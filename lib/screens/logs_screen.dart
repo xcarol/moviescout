@@ -15,7 +15,6 @@ class LogsScreen extends StatefulWidget {
 class _LogsScreenState extends State<LogsScreen>
     with WidgetsBindingObserver, RouteAware {
   List<String> _logs = [];
-  bool _debugShowLastUpdate = false;
   String _lastBackgroundRunHeader = 'none';
   final ScrollController _scrollController = ScrollController();
 
@@ -78,8 +77,6 @@ class _LogsScreenState extends State<LogsScreen>
     if (mounted) {
       setState(() {
         _logs = prefs.getStringList(AppConstants.updateLogs) ?? [];
-        _debugShowLastUpdate =
-            prefs.getBool(AppConstants.debugShowLastUpdate) ?? false;
         _lastBackgroundRunHeader = formattedDate;
       });
     }
@@ -94,15 +91,6 @@ class _LogsScreenState extends State<LogsScreen>
   Future<void> _clearLogs() async {
     await PreferencesService().prefs.remove(AppConstants.updateLogs);
     _loadState();
-  }
-
-  Future<void> _toggleDebugShowLastUpdate(bool value) async {
-    await PreferencesService()
-        .prefs
-        .setBool(AppConstants.debugShowLastUpdate, value);
-    setState(() {
-      _debugShowLastUpdate = value;
-    });
   }
 
   @override
@@ -166,15 +154,6 @@ class _LogsScreenState extends State<LogsScreen>
                     ),
                     Text(_lastBackgroundRunHeader),
                   ],
-                ),
-                const SizedBox(height: 8),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Mostrar LastUpdate (Debug)'),
-                  subtitle:
-                      const Text('Mostra data d\'actualització a les fitxes'),
-                  value: _debugShowLastUpdate,
-                  onChanged: _toggleDebugShowLastUpdate,
                 ),
               ],
             ),

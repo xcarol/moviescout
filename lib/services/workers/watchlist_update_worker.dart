@@ -22,7 +22,6 @@ import 'package:moviescout/utils/save_logs.dart';
 
 Future<bool> updateTitle(
     TmdbTitle title,
-    bool fullUpdate,
     List<String> logLines,
     List<dynamic> providersList,
     List<int> enabledProviderIds,
@@ -33,18 +32,12 @@ Future<bool> updateTitle(
     bool notifyCompleteSeason) async {
   final titleBeforeUpdate = TmdbTitle.fromMap(title: title.toMap());
 
-  if (fullUpdate) {
-    logLines
-        .add('FULL UPDATE: ${title.name}. lastUpdated: ${title.lastUpdated}');
-    await titleService.updateTitleDetails(title);
-  } else {
-    logLines.add(
-        'LIGHT UPDATE: ${title.name}. lastProvidersUpdate: ${title.lastProvidersUpdate}');
-    await titleService.updateTitleLight(title);
-  }
+  logLines.add('LIGHT UPDATE: ${title.name}. lastUpdated: ${title.lastUpdated}');
+  await titleService.updateTitleLight(title);
 
-  if (fullUpdate ||
-      titleBeforeUpdate.lastProvidersUpdate != title.lastProvidersUpdate) {
+  if (titleBeforeUpdate.lastUpdated != title.lastUpdated ||
+      titleBeforeUpdate.flatrateProviderIds.join(',') !=
+          title.flatrateProviderIds.join(',')) {
     await repository.updateTitleMetadata(title);
   }
 
@@ -240,7 +233,6 @@ void callbackDispatcher() {
         updatedCount++;
         final notified = await updateTitle(
             title,
-            updateType == UpdateType.full,
             logLines,
             providersList,
             enabledProviderIds,

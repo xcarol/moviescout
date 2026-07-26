@@ -79,7 +79,6 @@ class _TmdbTitleRealm {
   late List<int> keywordIds;
   late List<int> flatrateProviderIds;
   late int lastNotifiedSeason;
-  late String lastProvidersUpdate;
 
   late String character;
   late String job;
