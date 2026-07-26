@@ -342,18 +342,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       navigatorObservers: [routeObserver],
       builder: (context, child) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          final theme = Theme.of(context);
-          final iconBrightness = theme.brightness == Brightness.dark
-              ? Brightness.light
-              : Brightness.dark;
+          final statusBarBrightness = Brightness.light;
+          final navBarBrightness = Brightness.light;
 
           SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
           SystemChrome.setSystemUIOverlayStyle(
             SystemUiOverlayStyle(
               systemNavigationBarColor: Colors.transparent,
-              systemNavigationBarIconBrightness: iconBrightness,
+              systemNavigationBarContrastEnforced: false,
+              systemNavigationBarIconBrightness: navBarBrightness,
               statusBarColor: Colors.transparent,
-              statusBarIconBrightness: iconBrightness,
+              systemStatusBarContrastEnforced: false,
+              statusBarIconBrightness: statusBarBrightness,
             ),
           );
         });
