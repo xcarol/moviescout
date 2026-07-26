@@ -345,10 +345,10 @@ class _PersonDetailsState extends State<PersonDetails> {
 
     if (person.homepage.isNotEmpty) {
       links.add(
-        SocialLink.image(
+        SocialLink.icon(
           url: person.homepage,
-          assetPath: 'assets/person_web.png',
-          launchMode: LaunchMode.inAppBrowserView,
+          iconData: Icons.language,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       );
     }
