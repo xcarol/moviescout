@@ -3,7 +3,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:moviescout/screens/login.dart';
@@ -106,8 +105,8 @@ class AppDrawer extends StatelessWidget {
                     backgroundImage: userImage,
                   )
                 : CircleAvatar(
-                    child: SvgPicture.asset(
-                      'assets/account.svg',
+                    child: Image.asset(
+                      'assets/account.png',
                       width: 80,
                       height: 80,
                     ),

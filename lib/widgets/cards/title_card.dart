@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
@@ -160,8 +159,8 @@ class TitleCard extends StatelessWidget {
     if (posterPath == null || posterPath.isEmpty) {
       return AspectRatio(
         aspectRatio: 2 / 3,
-        child: SvgPicture.asset(
-          'assets/movie.svg',
+        child: Image.asset(
+          'assets/movie.png',
           fit: BoxFit.contain,
         ),
       );
@@ -180,8 +179,8 @@ class TitleCard extends StatelessWidget {
         placeholderFadeInDuration: Duration.zero,
         cacheKey: posterPath,
         errorWidget: (context, error, stackTrace) {
-          return SvgPicture.asset(
-            'assets/movie.svg',
+          return Image.asset(
+            'assets/movie.png',
             fit: BoxFit.contain,
           );
         },
@@ -290,8 +289,8 @@ class TitleCard extends StatelessWidget {
             placeholderFadeInDuration: Duration.zero,
             cacheKey: provider.logoPath,
             errorWidget: (context, error, stackTrace) {
-              return SvgPicture.asset(
-                'assets/movie.svg',
+              return Image.asset(
+                'assets/movie.png',
                 fit: BoxFit.cover,
               );
             },

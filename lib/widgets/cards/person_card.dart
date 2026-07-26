@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
@@ -81,8 +80,8 @@ class PersonCard extends StatelessWidget {
     if (posterPath == null || posterPath.isEmpty) {
       return AspectRatio(
         aspectRatio: 2 / 3,
-        child: SvgPicture.asset(
-          'assets/person.svg',
+        child: Image.asset(
+          'assets/person.png',
           fit: BoxFit.contain,
         ),
       );
@@ -101,8 +100,8 @@ class PersonCard extends StatelessWidget {
         placeholderFadeInDuration: Duration.zero,
         cacheKey: posterPath,
         errorWidget: (context, error, stackTrace) {
-          return SvgPicture.asset(
-            'assets/person.svg',
+          return Image.asset(
+            'assets/person.png',
             fit: BoxFit.contain,
           );
         },

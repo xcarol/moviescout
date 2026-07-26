@@ -6,7 +6,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
@@ -1082,8 +1081,8 @@ class _TitleDetailsState extends State<TitleDetails> {
             imageUrl: provider.logoPath,
             fit: BoxFit.cover,
             errorWidget: (context, error, stackTrace) {
-              return SvgPicture.asset(
-                'assets/movie.svg',
+              return Image.asset(
+                'assets/movie.png',
                 fit: BoxFit.cover,
               );
             },
