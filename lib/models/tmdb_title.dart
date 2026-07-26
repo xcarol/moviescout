@@ -392,6 +392,8 @@ class TmdbTitle implements TmdbItem {
     }
     if (title[TmdbTitleFields.providers] != null) {
       providersJson = jsonEncode(title[TmdbTitleFields.providers]);
+      TmdbTitle.updateProviderIds(
+          this, Map<String, dynamic>.from(title[TmdbTitleFields.providers]));
     }
     if (title[TmdbTitleFields.seasons] != null) {
       seasonsJson = jsonEncode(title[TmdbTitleFields.seasons]);
