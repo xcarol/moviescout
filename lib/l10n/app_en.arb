@@ -391,5 +391,7 @@
   "rate": "Rate",
   "@rate": {},
   "watchOn": "Watch on",
-  "@watchOn": {}
+  "@watchOn": {},
+  "status": "Status",
+  "@status": {}
 }

@@ -1143,6 +1143,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Watch on'**
   String get watchOn;
+
+  /// No description provided for @status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
+
+  /// No description provided for @statusRumored.
+  ///
+  /// In en, this message translates to:
+  /// **'Rumored'**
+  String get statusRumored;
+
+  /// No description provided for @statusPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned'**
+  String get statusPlanned;
+
+  /// No description provided for @statusInProduction.
+  ///
+  /// In en, this message translates to:
+  /// **'In Production'**
+  String get statusInProduction;
+
+  /// No description provided for @statusPostProduction.
+  ///
+  /// In en, this message translates to:
+  /// **'Post Production'**
+  String get statusPostProduction;
+
+  /// No description provided for @statusReleased.
+  ///
+  /// In en, this message translates to:
+  /// **'Released'**
+  String get statusReleased;
+
+  /// No description provided for @statusCanceled.
+  ///
+  /// In en, this message translates to:
+  /// **'Canceled'**
+  String get statusCanceled;
+
+  /// No description provided for @statusReturningSeries.
+  ///
+  /// In en, this message translates to:
+  /// **'Returning Series'**
+  String get statusReturningSeries;
+
+  /// No description provided for @statusEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'Ended'**
+  String get statusEnded;
+
+  /// No description provided for @statusPilot.
+  ///
+  /// In en, this message translates to:
+  /// **'Pilot'**
+  String get statusPilot;
 }
 
 class _AppLocalizationsDelegate

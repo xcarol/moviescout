@@ -20,7 +20,7 @@ Widget notifyButton(
             return const SizedBox.shrink();
           }
 
-          if (titleFromList.status != TvShowStatus.returning) {
+          if (titleFromList.status != TitleStatus.returning) {
             return const SizedBox.shrink();
           }
 

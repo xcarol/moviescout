@@ -93,12 +93,16 @@ class TmdbTitleFields {
   static const String omdbRatings = 'omdb_ratings';
 }
 
-class TvShowStatus {
-  static const String ended = 'Ended';
-  static const String returning = 'Returning Series';
-  static const String canceled = 'Canceled';
-  static const String inProduction = 'In Production';
+class TitleStatus {
+  static const String rumored = 'Rumored';
   static const String planned = 'Planned';
+  static const String inProduction = 'In Production';
+  static const String postProduction = 'Post Production';
+  static const String released = 'Released';
+  static const String canceled = 'Canceled';
+  static const String returning = 'Returning Series';
+  static const String ended = 'Ended';
+  static const String pilot = 'Pilot';
 }
 
 class TvShowType {
@@ -526,9 +530,9 @@ class TmdbTitle implements TmdbItem {
   bool get hasRating => rating > 0.0;
 
   bool get isOnAir =>
-      status == TvShowStatus.returning ||
-      status == TvShowStatus.inProduction ||
-      status == TvShowStatus.planned;
+      status == TitleStatus.returning ||
+      status == TitleStatus.inProduction ||
+      status == TitleStatus.planned;
 
   bool get isMiniSerie => type == TvShowType.miniseries;
 

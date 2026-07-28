@@ -557,4 +557,34 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get watchOn => 'Ver en';
+
+  @override
+  String get status => 'Estado';
+
+  @override
+  String get statusRumored => 'Rumoreado';
+
+  @override
+  String get statusPlanned => 'Planeado';
+
+  @override
+  String get statusInProduction => 'En producción';
+
+  @override
+  String get statusPostProduction => 'Post-producción';
+
+  @override
+  String get statusReleased => 'Estrenado';
+
+  @override
+  String get statusCanceled => 'Cancelado';
+
+  @override
+  String get statusReturningSeries => 'Renovada';
+
+  @override
+  String get statusEnded => 'Finalizada';
+
+  @override
+  String get statusPilot => 'Piloto';
 }

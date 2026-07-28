@@ -35,8 +35,8 @@ class _CollectionDetailsState extends State<CollectionDetails> {
   void _loadCollection() {
     final locale =
         '${_collectionService.getLanguageCode()}-${_collectionService.getCountryCode()}';
-    _collectionFuture = _collectionService
-        .getCollectionDetails(widget.collection.tmdbId, locale);
+    _collectionFuture = _collectionService.getCollectionDetails(
+        widget.collection.tmdbId, locale);
   }
 
   @override
@@ -80,7 +80,11 @@ class _CollectionDetailsState extends State<CollectionDetails> {
           final String backdropPath = data['backdrop_path'] ??
               widget.collection.backdropPathSuffix ??
               '';
-          final List<String> images = (data[TmdbTitleFields.images] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
+          final List<String> images =
+              (data[TmdbTitleFields.images] as List<dynamic>?)
+                      ?.map((e) => e.toString())
+                      .toList() ??
+                  [];
 
           return SingleChildScrollView(
             child: Column(
