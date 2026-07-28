@@ -29,6 +29,8 @@ class UrlConstants {
   static const String moviescoutTvWebTemplate = '$moviescoutWebUrl/tv/{ID}';
   static const String moviescoutPersonWebTemplate =
       '$moviescoutWebUrl/person/{ID}';
+  static const String moviescoutCollectionWebTemplate =
+      '$moviescoutWebUrl/collection/{ID}';
   static const String moviescoutTitleWebTemplate =
       '$moviescoutWebUrl/{MEDIA_TYPE}/{ID}';
   static const String moviescoutTvSeasonWebTemplate =
@@ -37,6 +39,8 @@ class UrlConstants {
       '$tmdbWebUrl/{MEDIA_TYPE}/{ID}/edit';
   static const String tmdbPersonEditWebTemplate =
       '$tmdbWebUrl/person/{ID}/edit';
+  static const String tmdbCollectionEditWebTemplate =
+      '$tmdbWebUrl/collection/{ID}/edit';
   static const String tmdbTvSeasonWebTemplate =
       '$tmdbWebUrl/tv/{ID}/season/{SEASON_NUMBER}';
   static const String tmdbTvSeasonEditWebTemplate =

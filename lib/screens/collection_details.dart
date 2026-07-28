@@ -7,6 +7,9 @@ import 'package:moviescout/widgets/chips/title_chip.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/media/media_carousel.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/widgets/buttons/action_menu.dart';
+import 'package:moviescout/services/api/tmdb_translation_service.dart';
+import 'package:moviescout/utils/url_constants.dart';
 
 class CollectionDetails extends StatefulWidget {
   final TmdbCollection collection;
@@ -41,6 +44,18 @@ class _CollectionDetailsState extends State<CollectionDetails> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.collection.name),
+        actions: [
+          ActionMenu(
+            editUrl: UrlConstants.tmdbCollectionEditWebTemplate
+                .replaceFirst('{ID}', widget.collection.tmdbId.toString()),
+            fetchTranslations: () => TmdbTranslationService()
+                .getTranslations('collection', widget.collection.tmdbId),
+            originalTitle: widget.collection.name,
+            originalDescription: widget.collection.overview,
+            shareUrl: UrlConstants.moviescoutCollectionWebTemplate
+                .replaceFirst('{ID}', widget.collection.tmdbId.toString()),
+          ),
+        ],
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _collectionFuture,
