@@ -3,9 +3,11 @@ import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/models/tmdb_collection.dart';
 import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/screens/season_details.dart';
+import 'package:moviescout/screens/collection_details.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
@@ -137,6 +139,17 @@ class DeepLinkService {
           builder: (context) => PersonDetails(
             person: TmdbPerson.fromMap(person: {
               PersonAttributes.id: tmdbId,
+            }),
+            tmdbListService: _tmdbListService,
+          ),
+        ),
+      );
+    } else if (type == ApiConstants.collection) {
+      navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (context) => CollectionDetails(
+            collection: TmdbCollection.fromMap(collection: {
+              'id': tmdbId,
             }),
             tmdbListService: _tmdbListService,
           ),
