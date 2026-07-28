@@ -200,6 +200,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get miniseries => 'Miniseries';
 
   @override
+  String get collection => 'Colección';
+
+  @override
+  String get seeCollection => 'Ver la colección';
+
+  @override
   String get sortAlphabetically => 'Alfabético';
 
   @override

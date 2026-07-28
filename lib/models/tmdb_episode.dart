@@ -10,6 +10,7 @@ class TmdbEpisode implements TmdbItem {
 
   late int tvId;
   late int seasonNumber;
+  @override
   late String name;
   late String overview;
   late int episodeNumber;

@@ -128,6 +128,7 @@ class TmdbTitle implements TmdbItem {
 
   List<String> inLists = [];
 
+  @override
   late String name;
   late String originalName;
   late String originalLanguage;
@@ -200,6 +201,7 @@ class TmdbTitle implements TmdbItem {
   late String? videosJson;
   late String? omdbRatingsJson;
   late String? externalIdsJson;
+  late String? belongsToCollectionJson;
 
   late int lastNotifiedSeason;
 
@@ -250,6 +252,7 @@ class TmdbTitle implements TmdbItem {
     this.videosJson,
     this.omdbRatingsJson,
     this.externalIdsJson,
+    this.belongsToCollectionJson,
     this.homepage = '',
     this.certification = '',
     this.isPinned = false,
@@ -418,6 +421,12 @@ class TmdbTitle implements TmdbItem {
           ? jsonEncode(title[TmdbTitleFields.externalIds])
           : null;
     }
+    if (title.containsKey(TmdbTitleFields.belongsToCollection)) {
+      belongsToCollectionJson =
+          title[TmdbTitleFields.belongsToCollection] != null
+              ? jsonEncode(title[TmdbTitleFields.belongsToCollection])
+              : null;
+    }
 
     character = title[TmdbTitleFields.character] ?? character;
     job = title[TmdbTitleFields.job] ?? job;
@@ -474,6 +483,9 @@ class TmdbTitle implements TmdbItem {
       TmdbTitleFields.keywordIds: keywordIds,
       TmdbTitleFields.flatrateProviderIds: flatrateProviderIds,
       TmdbTitleFields.originCountry: originCountry,
+      TmdbTitleFields.belongsToCollection: belongsToCollectionJson != null
+          ? jsonDecode(belongsToCollectionJson!)
+          : null,
       TmdbTitleFields.externalIds:
           externalIdsJson != null ? jsonDecode(externalIdsJson!) : null,
       TmdbTitleFields.credits:
@@ -704,6 +716,17 @@ class TmdbTitle implements TmdbItem {
     if (ids.isNotEmpty) {
       title.genreIds = ids;
     }
+  }
+
+  Map<String, dynamic>? _belongsToCollectionCache;
+
+  Map<String, dynamic>? get belongsToCollection {
+    if (_belongsToCollectionCache != null) return _belongsToCollectionCache;
+    if (belongsToCollectionJson == null) return null;
+    try {
+      _belongsToCollectionCache = jsonDecode(belongsToCollectionJson!);
+    } catch (_) {}
+    return _belongsToCollectionCache;
   }
 
   static void updateProviderIds(TmdbTitle title, dynamic providers) {

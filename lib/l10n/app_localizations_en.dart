@@ -199,6 +199,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get miniseries => 'Miniseries';
 
   @override
+  String get collection => 'Collection';
+
+  @override
+  String get seeCollection => 'See collection';
+
+  @override
   String get sortAlphabetically => 'Alphabetical';
 
   @override

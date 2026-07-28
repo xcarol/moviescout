@@ -10,6 +10,7 @@ import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
 import 'package:moviescout/widgets/misc/bottom_clamping_scroll_physics.dart';
 import 'package:moviescout/widgets/cards/title_card.dart';
 import 'package:moviescout/widgets/cards/person_title_card.dart';
+import 'package:moviescout/widgets/cards/collection_card.dart';
 import 'package:moviescout/widgets/lists/list_info_line.dart';
 import 'package:moviescout/widgets/inputs_and_filters/drop_down_selector.dart';
 import 'package:moviescout/models/title_list_theme.dart';
@@ -26,6 +27,7 @@ import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/widgets/lists/searchable_list_state.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_person.dart';
+import 'package:moviescout/models/tmdb_collection.dart';
 import 'package:moviescout/widgets/cards/person_card.dart';
 import 'package:moviescout/utils/ui_utils.dart';
 
@@ -172,6 +174,11 @@ class _ItemListState extends SearchableListState<ItemList> {
                   } else if (item is TmdbPerson) {
                     card = PersonCard(
                       person: item,
+                      tmdbListService: supportService,
+                    );
+                  } else if (item is TmdbCollection) {
+                    card = CollectionCard(
+                      collection: item,
                       tmdbListService: supportService,
                     );
                   } else {

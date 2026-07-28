@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
+import 'package:moviescout/models/tmdb_collection.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart'
     show TmdbTitleRepository;
+import 'package:moviescout/screens/collection_details.dart';
 import 'package:moviescout/screens/season_details.dart';
 import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/services/settings/language_service.dart';
@@ -522,6 +524,12 @@ class _TitleDetailsState extends State<TitleDetails> {
           _infoLine(title),
           const SizedBox(height: 10),
           _creditsInfo(title),
+          if (title.belongsToCollection != null) ...[
+            Divider(
+              color: Theme.of(context).extension<CustomColors>()!.dividerColor,
+            ),
+            _collectionLink(title),
+          ],
           Divider(
             color: Theme.of(context).extension<CustomColors>()!.dividerColor,
           ),
@@ -1245,6 +1253,33 @@ class _TitleDetailsState extends State<TitleDetails> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _collectionLink(TmdbTitle title) {
+    if (title.belongsToCollection == null) {
+      return const SizedBox.shrink();
+    }
+
+    final collection = title.belongsToCollection!;
+
+    return BoxedWidget(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      child: Text(
+        AppLocalizations.of(context)!.seeCollection,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CollectionDetails(
+              collection: TmdbCollection.fromMap(collection: collection),
+              tmdbListService: widget._tmdbListService,
+            ),
+          ),
+        );
+      },
     );
   }
 }
