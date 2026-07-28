@@ -7,6 +7,9 @@ import 'package:moviescout/widgets/chips/title_chip.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/media/media_carousel.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/widgets/buttons/action_menu.dart';
+import 'package:moviescout/services/api/tmdb_translation_service.dart';
+import 'package:moviescout/utils/url_constants.dart';
 
 class CollectionDetails extends StatefulWidget {
   final TmdbCollection collection;
@@ -33,9 +36,7 @@ class _CollectionDetailsState extends State<CollectionDetails> {
     final locale =
         '${_collectionService.getLanguageCode()}-${_collectionService.getCountryCode()}';
     _collectionFuture = _collectionService
-        .getCollectionDetails(widget.collection.tmdbId, locale)
-        .then((result) =>
-            result.statusCode == 200 ? _collectionService.body(result) : {});
+        .getCollectionDetails(widget.collection.tmdbId, locale);
   }
 
   @override
@@ -43,6 +44,18 @@ class _CollectionDetailsState extends State<CollectionDetails> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.collection.name),
+        actions: [
+          ActionMenu(
+            editUrl: UrlConstants.tmdbCollectionEditWebTemplate
+                .replaceFirst('{ID}', widget.collection.tmdbId.toString()),
+            fetchTranslations: () => TmdbTranslationService()
+                .getTranslations('collection', widget.collection.tmdbId),
+            originalTitle: widget.collection.name,
+            originalDescription: widget.collection.overview,
+            shareUrl: UrlConstants.moviescoutCollectionWebTemplate
+                .replaceFirst('{ID}', widget.collection.tmdbId.toString()),
+          ),
+        ],
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _collectionFuture,
@@ -67,13 +80,14 @@ class _CollectionDetailsState extends State<CollectionDetails> {
           final String backdropPath = data['backdrop_path'] ??
               widget.collection.backdropPathSuffix ??
               '';
+          final List<String> images = (data[TmdbTitleFields.images] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
 
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 MediaCarousel(
-                  images: [],
+                  images: images,
                   backdropPath: backdropPath.isNotEmpty
                       ? 'https://image.tmdb.org/t/p/original$backdropPath'
                       : '',

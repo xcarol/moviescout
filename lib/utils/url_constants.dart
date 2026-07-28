@@ -29,6 +29,8 @@ class UrlConstants {
   static const String moviescoutTvWebTemplate = '$moviescoutWebUrl/tv/{ID}';
   static const String moviescoutPersonWebTemplate =
       '$moviescoutWebUrl/person/{ID}';
+  static const String moviescoutCollectionWebTemplate =
+      '$moviescoutWebUrl/collection/{ID}';
   static const String moviescoutTitleWebTemplate =
       '$moviescoutWebUrl/{MEDIA_TYPE}/{ID}';
   static const String moviescoutTvSeasonWebTemplate =
@@ -37,6 +39,8 @@ class UrlConstants {
       '$tmdbWebUrl/{MEDIA_TYPE}/{ID}/edit';
   static const String tmdbPersonEditWebTemplate =
       '$tmdbWebUrl/person/{ID}/edit';
+  static const String tmdbCollectionEditWebTemplate =
+      '$tmdbWebUrl/collection/{ID}/edit';
   static const String tmdbTvSeasonWebTemplate =
       '$tmdbWebUrl/tv/{ID}/season/{SEASON_NUMBER}';
   static const String tmdbTvSeasonEditWebTemplate =
@@ -72,6 +76,13 @@ class UrlConstants {
       '/tv/{ID}/season/{SEASON_NUMBER}?append_to_response=translations,images,videos,credits&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
   static const String tmdbSeasonBriefEndpoint =
       '/tv/{ID}/season/{SEASON_NUMBER}?append_to_response=images,videos&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
+
+  static const String tmdbCollectionDetailsEndpoint =
+      '/collection/{ID}?language={LOCALE}';
+  static const String tmdbCollectionTranslationsEndpoint =
+      '/collection/{ID}/translations';
+  static const String tmdbCollectionImagesEndpoint =
+      '/collection/{ID}/images';
 
   static const String tmdbPersonDetailsEndpoint =
       '/person/{ID}?append_to_response=combined_credits,images,external_ids,tagged_images&language={LOCALE}';
