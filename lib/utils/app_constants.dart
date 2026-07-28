@@ -41,7 +41,6 @@ class AppConstants {
   static const String saveLogsMessage = 'saveLogs';
   static const String anonymousAccountId = 'anonymous';
   static const int titleUpToDateDays = 3;
-  static const int watchlistTitleUpdateFrequencyDays = 7;
   static const int watchlistProvidersUpdateFrequencyDays = 1;
   static const int watchlistMaxUpdatesPerRun = 50;
   static const int watchlistNewSeasonNotificationWindowDays = 14;

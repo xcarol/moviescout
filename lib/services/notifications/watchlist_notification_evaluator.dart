@@ -16,7 +16,7 @@ class WatchlistNotificationEvaluator {
         DateTime.parse(AppConstants.defaultDate);
 
     final needsUpdate = now.difference(lastUpdated).inDays >=
-            AppConstants.watchlistTitleUpdateFrequencyDays ||
+            AppConstants.watchlistProvidersUpdateFrequencyDays ||
         isUninitialized;
 
     if (needsUpdate) {
