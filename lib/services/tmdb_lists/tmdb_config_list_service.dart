@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -74,6 +75,17 @@ abstract class TmdbConfigListService extends TmdbBaseService
 
   Future<void> fetchAndListen() async {
     if (_docRef == null || Firebase.apps.isEmpty) return;
+
+    if (FirebaseAuth.instance.currentUser == null) {
+      try {
+        await FirebaseAuth.instance
+            .authStateChanges()
+            .firstWhere((user) => user != null)
+            .timeout(const Duration(seconds: 10));
+      } catch (e) {
+        return;
+      }
+    }
 
     try {
       final snapshot =
