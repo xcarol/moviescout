@@ -73,6 +73,13 @@ class UrlConstants {
   static const String tmdbSeasonBriefEndpoint =
       '/tv/{ID}/season/{SEASON_NUMBER}?append_to_response=images,videos&language={LOCALE}&include_image_language={LOCALE},null,en&include_video_language={LOCALE},null,en';
 
+  static const String tmdbCollectionDetailsEndpoint =
+      '/collection/{ID}?language={LOCALE}';
+  static const String tmdbCollectionTranslationsEndpoint =
+      '/collection/{ID}/translations';
+  static const String tmdbCollectionImagesEndpoint =
+      '/collection/{ID}/images';
+
   static const String tmdbPersonDetailsEndpoint =
       '/person/{ID}?append_to_response=combined_credits,images,external_ids,tagged_images&language={LOCALE}';
 

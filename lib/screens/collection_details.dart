@@ -33,9 +33,7 @@ class _CollectionDetailsState extends State<CollectionDetails> {
     final locale =
         '${_collectionService.getLanguageCode()}-${_collectionService.getCountryCode()}';
     _collectionFuture = _collectionService
-        .getCollectionDetails(widget.collection.tmdbId, locale)
-        .then((result) =>
-            result.statusCode == 200 ? _collectionService.body(result) : {});
+        .getCollectionDetails(widget.collection.tmdbId, locale);
   }
 
   @override
@@ -67,13 +65,14 @@ class _CollectionDetailsState extends State<CollectionDetails> {
           final String backdropPath = data['backdrop_path'] ??
               widget.collection.backdropPathSuffix ??
               '';
+          final List<String> images = (data[TmdbTitleFields.images] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
 
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 MediaCarousel(
-                  images: [],
+                  images: images,
                   backdropPath: backdropPath.isNotEmpty
                       ? 'https://image.tmdb.org/t/p/original$backdropPath'
                       : '',
