@@ -556,4 +556,34 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get watchOn => 'Veure a';
+
+  @override
+  String get status => 'Estat';
+
+  @override
+  String get statusRumored => 'Rumorejat';
+
+  @override
+  String get statusPlanned => 'Planejat';
+
+  @override
+  String get statusInProduction => 'En producció';
+
+  @override
+  String get statusPostProduction => 'Post-producció';
+
+  @override
+  String get statusReleased => 'Estrenat';
+
+  @override
+  String get statusCanceled => 'Cancel·lat';
+
+  @override
+  String get statusReturningSeries => 'Renovada';
+
+  @override
+  String get statusEnded => 'Finalitzada';
+
+  @override
+  String get statusPilot => 'Pilot';
 }

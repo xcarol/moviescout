@@ -32,6 +32,7 @@ import 'package:moviescout/services/system/home_screen_shortcut_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/rate_form.dart';
 import 'package:moviescout/widgets/buttons/user_rate_button.dart';
+import 'package:moviescout/utils/status_translator.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/notify_dialog.dart';
 import 'package:moviescout/widgets/chips/title_chip.dart';
 import 'package:moviescout/widgets/buttons/watchlist_button.dart';
@@ -110,7 +111,7 @@ class _TitleDetailsState extends State<TitleDetails> {
     );
 
     if (rating > AppConstants.seenRating &&
-        title.status == TvShowStatus.returning &&
+        title.status == TitleStatus.returning &&
         !title.notifyNewSeasons) {
       if (mounted) {
         await showDialog<void>(
@@ -350,6 +351,17 @@ class _TitleDetailsState extends State<TitleDetails> {
                       style: TextStyle(
                         color: colorScheme.onSurfaceVariant,
                       ))),
+              if (title.status.isNotEmpty)
+                _infoColumn(
+                    AppLocalizations.of(context)!.status,
+                    Text(
+                        StatusTranslator.translate(
+                            title.status,
+                            Provider.of<LanguageService>(context, listen: false)
+                                .currentLanguage),
+                        style: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                        ))),
             ],
           ),
         ),

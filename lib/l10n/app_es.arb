@@ -391,5 +391,7 @@
   "rate": "Valora",
   "@rate": {},
   "watchOn": "Ver en",
-  "@watchOn": {}
+  "@watchOn": {},
+  "status": "Estado",
+  "@status": {}
 }

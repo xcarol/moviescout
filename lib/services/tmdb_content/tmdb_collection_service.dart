@@ -3,13 +3,16 @@ import 'package:moviescout/utils/url_constants.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 
 class TmdbCollectionService extends TmdbBaseService {
-  Future<Map<String, dynamic>> getCollectionDetails(int id, String locale) async {
+  Future<Map<String, dynamic>> getCollectionDetails(
+      int id, String locale) async {
     final futures = await Future.wait([
       get(UrlConstants.tmdbCollectionDetailsEndpoint
           .replaceFirst('{ID}', id.toString())
           .replaceFirst('{LOCALE}', locale)),
-      get(UrlConstants.tmdbCollectionTranslationsEndpoint.replaceFirst('{ID}', id.toString())),
-      get(UrlConstants.tmdbCollectionImagesEndpoint.replaceFirst('{ID}', id.toString())),
+      get(UrlConstants.tmdbCollectionTranslationsEndpoint
+          .replaceFirst('{ID}', id.toString())),
+      get(UrlConstants.tmdbCollectionImagesEndpoint
+          .replaceFirst('{ID}', id.toString())),
     ]);
 
     final response = futures[0];
@@ -53,14 +56,14 @@ class TmdbCollectionService extends TmdbBaseService {
 
         if (translation != null && translation['data'] != null) {
           final data = translation['data'];
-          
+
           if (currentOverview.isEmpty) {
             final String fallbackOverview = data['overview'] ?? '';
             if (fallbackOverview.isNotEmpty) {
               target['overview'] = fallbackOverview;
             }
           }
-          
+
           if (currentName.isEmpty) {
             final String fallbackName = data['name'] ?? data['title'] ?? '';
             if (fallbackName.isNotEmpty) {
@@ -68,7 +71,8 @@ class TmdbCollectionService extends TmdbBaseService {
             }
           }
 
-          if ((target['overview'] ?? '').isNotEmpty && (target['name'] ?? '').isNotEmpty) {
+          if ((target['overview'] ?? '').isNotEmpty &&
+              (target['name'] ?? '').isNotEmpty) {
             break;
           }
         }

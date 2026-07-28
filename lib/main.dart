@@ -35,6 +35,7 @@ import 'package:moviescout/services/system/deep_link_service.dart';
 import 'package:moviescout/utils/language_translator.dart';
 import 'package:moviescout/utils/person_translator.dart';
 import 'package:moviescout/utils/genre_translator.dart';
+import 'package:moviescout/utils/status_translator.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/services/workers/watchlist_update_worker.dart';
 import 'package:moviescout/services/notifications/notification_service.dart';
@@ -120,6 +121,7 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       LanguageTranslator.init(),
       PersonTranslator.init(),
       GenreTranslator.init(),
+      StatusTranslator.init(),
       NotificationService().init(),
       EditSettingsService().init(),
     ]).timeout(const Duration(seconds: 5), onTimeout: () => []);

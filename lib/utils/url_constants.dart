@@ -81,8 +81,7 @@ class UrlConstants {
       '/collection/{ID}?language={LOCALE}';
   static const String tmdbCollectionTranslationsEndpoint =
       '/collection/{ID}/translations';
-  static const String tmdbCollectionImagesEndpoint =
-      '/collection/{ID}/images';
+  static const String tmdbCollectionImagesEndpoint = '/collection/{ID}/images';
 
   static const String tmdbPersonDetailsEndpoint =
       '/person/{ID}?append_to_response=combined_credits,images,external_ids,tagged_images&language={LOCALE}';
