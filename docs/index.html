@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Scout - Discover. Track. Watch.</title>
+    <title>MovieScout - Discover. Track. Watch.</title>
     <style>
         :root {
             --bg-color: #121212;
@@ -12,6 +13,7 @@
             --button-bg: #1e1e1e;
             --button-hover: #333;
         }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
@@ -23,6 +25,7 @@
             align-items: center;
             min-height: 100vh;
         }
+
         .container {
             max-width: 800px;
             width: 100%;
@@ -30,6 +33,7 @@
             box-sizing: border-box;
             text-align: center;
         }
+
         .header-image {
             width: 100%;
             max-width: 1024px;
@@ -38,6 +42,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             margin-bottom: 2rem;
         }
+
         .motto {
             font-size: 2.5rem;
             font-weight: 800;
@@ -46,38 +51,45 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
         .description {
             font-size: 1.2rem;
             line-height: 1.6;
             margin-bottom: 2rem;
             color: #b3b3b3;
         }
+
         .features {
             text-align: left;
             margin-bottom: 2rem;
             display: inline-block;
         }
+
         .features ul {
             list-style-type: none;
             padding: 0;
         }
+
         .features li {
             margin-bottom: 0.5rem;
             position: relative;
             padding-left: 1.5rem;
         }
+
         .features li::before {
             content: '✓';
             position: absolute;
             left: 0;
             color: var(--accent-color);
         }
+
         .links {
             display: flex;
             justify-content: center;
             gap: 1rem;
             flex-wrap: wrap;
         }
+
         .button {
             display: inline-flex;
             align-items: center;
@@ -90,37 +102,41 @@
             transition: all 0.3s ease;
             border: 1px solid #333;
         }
+
         .button:hover {
             background-color: var(--button-hover);
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
+
         .button-primary {
             background-color: var(--accent-color);
             border-color: var(--accent-color);
         }
+
         .button-primary:hover {
             background-color: #ff0f1a;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <div class="container">
-        <img src="imatge-destacada.png" alt="Movie Scout App" class="header-image">
+        <img src="imatge-destacada.png" alt="MovieScout App" class="header-image">
         
         <h1 class="motto">Discover. Track. Watch.</h1>
         
         <div class="description">
-            <p><strong>Movie Scout</strong> is a movie and TV tracker powered by TMDB. Built around <strong>your watchlist</strong>, not around <strong>streaming catalogs</strong>.</p>
+            <p><strong>MovieScout</strong> is a movie and TV series tracker powered by TMDB, OMDb, and JustWatch. Built around <strong>your watchlist</strong>, not around <strong>streaming catalogs</strong>.</p>
         </div>
 
         <div class="features">
             <ul>
-                <li><strong>Stream Availability:</strong> Easily find out which streaming platforms host your favorite movies and series.</li>
+                <li><strong>Stream Availability:</strong> Easily find out which streaming platforms host your favorite movies and series via JustWatch.</li>
+                <li><strong>Availability Notifications:</strong> Get notified when watchlist titles become available on your streaming services.</li>
                 <li><strong>Search and Organize:</strong> Quickly search, add, or remove titles from your list.</li>
-                <li><strong>Detailed Information:</strong> View essential details like posters, titles, brief descriptions, and more.</li>
-                <li><strong>Notifications:</strong> Get notified when watchlist titles become available.</li>
+                <li><strong>Detailed Information:</strong> View essential details like posters, titles, ratings, cast, and brief descriptions.</li>
             </ul>
         </div>
         

@@ -135,7 +135,7 @@ class AppDrawer extends StatelessWidget {
       ),
       aboutBoxChildren: [
         Text(AppLocalizations.of(context)!.aboutDescription),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         SelectableText.rich(
           TextSpan(
             children: [
@@ -152,9 +152,26 @@ class AppDrawer extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        SelectableText.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                  text: AppLocalizations.of(context)!.privacyDisclaimerPrefix),
+              TextSpan(
+                text: AppLocalizations.of(context)!.privacyDisclaimer,
+                style: const TextStyle(
+                  decoration: TextDecoration.underline,
+                ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () => launchUrl(Uri.parse(
+                      'https://xcarol.github.io/moviescout/privacy.html')),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 32),
         Text(
-          AppLocalizations.of(context)!.privacyDisclaimer,
+          AppLocalizations.of(context)!.apiDisclaimer,
           style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
         ),
         const SizedBox(height: 16),
