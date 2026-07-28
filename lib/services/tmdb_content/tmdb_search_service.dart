@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_item.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_person.dart';
+import 'package:moviescout/models/tmdb_collection.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
@@ -23,12 +24,17 @@ const String _tmdbSearchTvShows =
 const String _tmdbSearchPersons =
     '/search/person?query={SEARCH}&page={PAGE}&language={LOCALE}';
 
+const int maxSearchCollections = 20;
+const String _tmdbSearchCollections =
+    '/search/collection?query={SEARCH}&page={PAGE}&language={LOCALE}';
+
 const String _tmdbFindByID =
     '/find/{ID}?language={LOCALE}&external_source=imdb_id';
 
 class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
   final TmdbTitleRepository titleRepository;
   final List<TmdbPerson> _memoryPersons = [];
+  final List<TmdbCollection> _memoryCollections = [];
 
   TmdbSearchService(String listName, this.titleRepository) {
     listNameVal = listName;
@@ -129,13 +135,21 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
       }
     }
 
+    if (filterMediaType == '' || filterMediaType == ApiConstants.collection) {
+      if (filterText.isEmpty) {
+        allItems.addAll(_memoryCollections);
+      } else {
+        final query = filterText.toLowerCase().trim();
+        allItems.addAll(_memoryCollections.where((c) {
+          return c.name.toLowerCase().contains(query);
+        }));
+      }
+    }
+
     if (_localFilterText.isNotEmpty) {
       final localQuery = _localFilterText.toLowerCase().trim();
       allItems = allItems.where((item) {
-        String name =
-            (item is TmdbTitle ? item.name : (item as TmdbPerson).name)
-                .toLowerCase();
-        return name.contains(localQuery);
+        return item.name.toLowerCase().contains(localQuery);
       }).toList();
     }
 
@@ -172,10 +186,8 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
     final String query = filterText.toLowerCase().trim();
 
     allItems.sort((a, b) {
-      String nameA =
-          (a is TmdbTitle ? a.name : (a as TmdbPerson).name).toLowerCase();
-      String nameB =
-          (b is TmdbTitle ? b.name : (b as TmdbPerson).name).toLowerCase();
+      String nameA = a.name.toLowerCase();
+      String nameB = b.name.toLowerCase();
 
       int compareResult = 0;
       if (selectedSort.isNotEmpty &&
@@ -248,6 +260,7 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
   Future<void> clearList() async {
     await titleRepository.clearList(listNameVal);
     _memoryPersons.clear();
+    _memoryCollections.clear();
     clearLoadedItems(resetCount: true);
     notifyListeners();
   }
@@ -261,11 +274,13 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
     try {
       await titleRepository.clearList(listNameVal);
       _memoryPersons.clear();
+      _memoryCollections.clear();
 
       await Future.wait([
         _fetchAndSaveMovies(searchTerm, locale),
         _fetchAndSaveTvShows(searchTerm, locale),
         _fetchAndSavePersons(searchTerm, locale),
+        _fetchAndSaveCollections(searchTerm, locale),
       ]);
 
       await filterItems();
@@ -383,6 +398,40 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
 
     if (persons.isNotEmpty) {
       _memoryPersons.addAll(persons);
+    }
+  }
+
+  Future<void> _fetchAndSaveCollections(
+      String searchTerm, Locale locale) async {
+    int page = 1;
+    int totalPages = 1;
+    List<TmdbCollection> collections = [];
+
+    do {
+      dynamic response = await get(
+        _tmdbSearchCollections
+            .replaceFirst('{PAGE}', page.toString())
+            .replaceFirst('{SEARCH}', searchTerm)
+            .replaceFirst(
+                '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+      );
+
+      if (response.statusCode == 200) {
+        final Map responseBody = body(response);
+        if (responseBody['total_pages'] != null) {
+          totalPages = _totalPagesFromResponse(response, maxSearchCollections);
+        }
+        if (responseBody['results'] != null) {
+          for (var item in responseBody['results']) {
+            final collection = TmdbCollection.fromMap(collection: item);
+            collections.add(collection);
+          }
+        }
+      }
+    } while (page++ < totalPages);
+
+    if (collections.isNotEmpty) {
+      _memoryCollections.addAll(collections);
     }
   }
 

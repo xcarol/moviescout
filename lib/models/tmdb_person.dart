@@ -74,7 +74,7 @@ class CombinedCredits {
 class TmdbPerson implements TmdbItem {
   @override
   late int tmdbId;
-
+  @override
   late String name;
   @override
   late String lastUpdated;

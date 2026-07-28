@@ -9,6 +9,7 @@ class TmdbSeason implements TmdbItem {
   late int tvId;
   @override
   late int tmdbId;
+  @override
   late String name;
   late String overview;
   late int seasonNumber;

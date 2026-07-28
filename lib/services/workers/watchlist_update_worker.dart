@@ -32,7 +32,8 @@ Future<bool> updateTitle(
     bool notifyCompleteSeason) async {
   final titleBeforeUpdate = TmdbTitle.fromMap(title: title.toMap());
 
-  logLines.add('LIGHT UPDATE: ${title.name}. lastUpdated: ${title.lastUpdated}');
+  logLines
+      .add('LIGHT UPDATE: ${title.name}. lastUpdated: ${title.lastUpdated}');
   await titleService.updateTitleLight(title);
 
   if (titleBeforeUpdate.lastUpdated != title.lastUpdated ||

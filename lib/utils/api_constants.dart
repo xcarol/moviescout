@@ -3,6 +3,7 @@ class ApiConstants {
   static const String movie = 'movie';
   static const String tv = 'tv';
   static const String person = 'person';
+  static const String collection = 'collection';
 
   // Results Keys
   static const String movieResults = 'movie_results';

@@ -466,6 +466,18 @@ abstract class AppLocalizations {
   /// **'Miniseries'**
   String get miniseries;
 
+  /// No description provided for @collection.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection'**
+  String get collection;
+
+  /// No description provided for @seeCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'See collection'**
+  String get seeCollection;
+
   /// No description provided for @sortAlphabetically.
   ///
   /// In en, this message translates to:

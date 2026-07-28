@@ -199,6 +199,12 @@ class AppLocalizationsCa extends AppLocalizations {
   String get miniseries => 'Minisèries';
 
   @override
+  String get collection => 'Col·lecció';
+
+  @override
+  String get seeCollection => 'Veure la col·lecció';
+
+  @override
   String get sortAlphabetically => 'Alfabètic';
 
   @override
@@ -537,7 +543,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get originalText => 'Text Original';
 
   @override
-  String get addToHomeScreen => 'Afegeix a la pantalla d\'inici';
+  String get addToHomeScreen => 'Afegir a la pantalla d\'inici';
 
   @override
   String get shortcutAdded => 'Drecera afegida';
