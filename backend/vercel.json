@@ -16,6 +16,11 @@
       "permanent": false
     },
     {
+      "source": "/collection/:path*",
+      "destination": "https://www.themoviedb.org/collection/:path*",
+      "permanent": false
+    },
+    {
       "source": "/",
       "destination": "https://xcarol.github.io/moviescout/",
       "permanent": false

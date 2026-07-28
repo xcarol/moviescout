@@ -41,6 +41,7 @@
                 <data android:pathPrefix="/movie/" />
                 <data android:pathPrefix="/tv/" />
                 <data android:pathPrefix="/person/" />
+                <data android:pathPrefix="/collection/" />
             </intent-filter>
 
             <!-- Custom scheme for login redirect -->
