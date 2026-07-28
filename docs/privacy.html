@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Privacy Policy – Movie Scout</title>
+  <title>Privacy Policy – MovieScout</title>
   <style>
     body {
       font-family: system-ui, sans-serif;
@@ -14,30 +15,53 @@
       background-color: #f9f9f9;
       color: #333;
     }
-    h1, h2 {
+
+    h1,
+    h2 {
       color: #222;
     }
+
     a {
       color: #007acc;
     }
   </style>
 </head>
+
 <body>
-  <h1>Privacy Policy – Movie Scout</h1>
+  <h1>Privacy Policy – MovieScout</h1>
 
-  <p><strong>Movie Scout</strong> is an open-source application that allows users to discover, search for, and manage lists of movies and TV shows. This application uses the <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">The Movie Database (TMDb)</a> API to provide data and functionality.</p>
+  <p><strong>MovieScout</strong> is an open-source application that allows users to discover, search for, and manage
+    lists of movies and TV shows. This application leverages public APIs from <a href="https://www.themoviedb.org/"
+      target="_blank" rel="noopener noreferrer">TMDB</a>, OMDb, and <a href="https://www.justwatch.com/" target="_blank"
+      rel="noopener noreferrer">JustWatch</a> to provide catalog data, ratings, and streaming availability.</p>
 
-  <h2>Data Collection</h2>
-  <p>Movie Scout <strong>does not collect or store any personal data</strong>. Some features, such as managing your watchlist or submitting ratings, require signing in with a TMDb account. However, this authentication is handled entirely by TMDb, and <strong>Movie Scout does not access or store any login credentials or personal user data</strong>.</p>
+  <h2>Data Collection and Cloud Storage</h2>
+  <p>To synchronize your following titles, pinned titles, and selected platforms across devices,
+    <strong>MovieScout</strong> stores your app preferences and saved titles in a cloud-hosted Firebase instance.</p>
+  <p><strong>No personally identifiable information (PII) is collected, stored, or sold.</strong> We do not collect your
+    name, email address, location, or contact details.</p>
 
   <h2>Third-Party Services</h2>
-  <p>Movie Scout uses <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">The Movie Database (TMDb)</a> API to retrieve movie and TV show data, as well as to manage user-related actions such as favorites, ratings, or lists. All user-related operations are processed directly by TMDb.<br />
-  For more details, please review <a href="https://www.themoviedb.org/privacy-policy" target="_blank" rel="noopener noreferrer">TMDb’s Privacy Policy</a>.</p>
+  <p>MovieScout uses third-party services to fetch media content and handle cloud storage:</p>
+  <ul>
+    <li><strong>The Movie Database (TMDB):</strong> Used to retrieve movie/TV metadata, posters, and details.</li>
+    <li><strong>OMDb:</strong> Used to retrieve ratings.</li>
+    <li><strong>JustWatch:</strong> Used to provide streaming platform availability data.</li>
+    <li><strong>Google Firebase:</strong> Used solely to store and sync your watchlist items and app preferences
+      securely in the cloud.</li>
+  </ul>
+
+  <h2>Disclaimers</h2>
+  <p>This product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability data is provided by
+    JustWatch.</p>
 
   <h2>Open Source</h2>
-  <p>Movie Scout is fully open source. You can inspect, contribute to, or fork the source code at: <a href="https://github.com/xcarol/moviescout" target="_blank" rel="noopener noreferrer">GitHub Repository</a>.</p>
+  <p>MovieScout is fully open source. You can inspect, contribute to, or fork the source code at: <a
+      href="https://github.com/xcarol/moviescout" target="_blank" rel="noopener noreferrer">GitHub Repository</a>.</p>
 
   <h2>Contact</h2>
-  <p>If you have any questions or concerns regarding privacy, please open an issue on the GitHub repository or contact the maintainers directly.</p>
+  <p>If you have any questions or concerns regarding privacy, please open an issue on the GitHub repository or contact
+    the maintainers directly.</p>
 </body>
+
 </html>

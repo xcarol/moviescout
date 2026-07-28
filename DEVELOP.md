@@ -16,7 +16,7 @@
 
 Got configuration steps from _<https://firebase.google.com/docs/crashlytics/get-started?platform=flutter>_  
 
-Project configuration at Firebase [Movie Scout](https://console.firebase.google.com/project/movie-scout-a6608/overview)
+Project configuration at Firebase [MovieScout](https://console.firebase.google.com/project/movie-scout-a6608/overview)
 
 Install Flutter Fire
 

@@ -63,8 +63,7 @@ import 'app_localizations_es.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -72,8 +71,7 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -85,8 +83,7 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -127,7 +124,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'Movie Scout'**
+  /// **'MovieScout'**
   String get appTitle;
 
   /// No description provided for @catalan.
@@ -685,7 +682,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutDescription.
   ///
   /// In en, this message translates to:
-  /// **'Movie Scout your movie and series tracker powered by TMDb, OMDb & JustWatch.'**
+  /// **'MovieScout is your movie and TV series tracker powered by TMDB, OMDb & JustWatch.'**
   String get aboutDescription;
 
   /// No description provided for @aboutGithub.
@@ -694,10 +691,22 @@ abstract class AppLocalizations {
   /// **'Visit project on '**
   String get aboutGithub;
 
+  /// No description provided for @apiDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'This product uses the TMDB API but is not endorsed or certified by TMDB.'**
+  String get apiDisclaimer;
+
+  /// No description provided for @privacyDisclaimerPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the '**
+  String get privacyDisclaimerPrefix;
+
   /// No description provided for @privacyDisclaimer.
   ///
   /// In en, this message translates to:
-  /// **'Data privacy: We store your followed titles, pinned items and platforms in Firebase to keep them safe and synced in the cloud.'**
+  /// **'privacy policy'**
   String get privacyDisclaimer;
 
   /// No description provided for @recommended.
@@ -1149,64 +1158,9 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Status'**
   String get status;
-
-  /// No description provided for @statusRumored.
-  ///
-  /// In en, this message translates to:
-  /// **'Rumored'**
-  String get statusRumored;
-
-  /// No description provided for @statusPlanned.
-  ///
-  /// In en, this message translates to:
-  /// **'Planned'**
-  String get statusPlanned;
-
-  /// No description provided for @statusInProduction.
-  ///
-  /// In en, this message translates to:
-  /// **'In Production'**
-  String get statusInProduction;
-
-  /// No description provided for @statusPostProduction.
-  ///
-  /// In en, this message translates to:
-  /// **'Post Production'**
-  String get statusPostProduction;
-
-  /// No description provided for @statusReleased.
-  ///
-  /// In en, this message translates to:
-  /// **'Released'**
-  String get statusReleased;
-
-  /// No description provided for @statusCanceled.
-  ///
-  /// In en, this message translates to:
-  /// **'Canceled'**
-  String get statusCanceled;
-
-  /// No description provided for @statusReturningSeries.
-  ///
-  /// In en, this message translates to:
-  /// **'Returning Series'**
-  String get statusReturningSeries;
-
-  /// No description provided for @statusEnded.
-  ///
-  /// In en, this message translates to:
-  /// **'Ended'**
-  String get statusEnded;
-
-  /// No description provided for @statusPilot.
-  ///
-  /// In en, this message translates to:
-  /// **'Pilot'**
-  String get statusPilot;
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -1215,27 +1169,26 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['ca', 'en', 'es'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['ca', 'en', 'es'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'ca':
-      return AppLocalizationsCa();
-    case 'en':
-      return AppLocalizationsEn();
-    case 'es':
-      return AppLocalizationsEs();
+    case 'ca': return AppLocalizationsCa();
+    case 'en': return AppLocalizationsEn();
+    case 'es': return AppLocalizationsEs();
   }
 
   throw FlutterError(
-      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.'
+  );
 }

@@ -1,6 +1,6 @@
 # GitHub Pages Setup & Update Instructions
 
-This folder contains the site for the Movie Scout GitHub Pages.
+This folder contains the site for the MovieScout GitHub Pages.
 
 ## How to update the page
 

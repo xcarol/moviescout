@@ -155,7 +155,7 @@ void _runMain({bool isFromShortcutActivity = false}) async {
     );
   }
 
-  debugPrint('Running Movie Scout...');
+  debugPrint('Running MovieScout...');
   final repository = TmdbTitleRepository();
 
   if (!isShortcut) {
@@ -333,7 +333,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           themeProvider.darkTitleListTheme,
         ],
       ),
-      title: 'Movie Scout',
+      title: 'MovieScout',
       home: widget.isShortcut
           ? (widget.initialUri != null
               ? ShortcutRouter(uri: widget.initialUri!)
