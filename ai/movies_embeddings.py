@@ -3,6 +3,7 @@ import json
 import sqlite3
 import hashlib
 from datetime import datetime
+import ast
 import numpy as np
 import pandas as pd
 from datasets import load_dataset
@@ -27,10 +28,25 @@ def main():
     
     print(f"Total movies loaded: {len(df)}")
 
-    print("2️⃣ Cleaning the overviews...")
+    print("2️⃣ Cleaning the data and combining features...")
     # In this dataset the key columns are 'id' and 'overview'
-    df = df.dropna(subset=['id', 'overview'])
+    df = df.dropna(subset=['id', 'overview', 'title'])
     df = df[df['overview'].str.strip() != '']
+    
+    def extract_names(string_data):
+        try:
+            # Parse string representation of list of dicts: "[{'id': 28, 'name': 'Action'}, ...]"
+            items = ast.literal_eval(string_data)
+            return " ".join([item['name'] for item in items if 'name' in item])
+        except Exception:
+            return ""
+
+    df['genres_text'] = df['genres'].apply(extract_names) if 'genres' in df.columns else ""
+    df['keywords_text'] = df['keywords'].apply(extract_names) if 'keywords' in df.columns else ""
+    
+    # Combine everything to create a rich document
+    df['full_text'] = df['title'] + " " + df['genres_text'] + " " + df['keywords_text'] + " " + df['overview']
+    
     df = df.reset_index(drop=True)
 
     print(f"Valid movies to process: {len(df)}")
@@ -38,10 +54,10 @@ def main():
     print("3️⃣ Loading 'paraphrase-multilingual-MiniLM-L12-v2' model from Hugging Face...")
     model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 
-    print("4️⃣ Generating embeddings for the 5,000 overviews...")
-    overviews = df['overview'].tolist()
+    print("4️⃣ Generating embeddings for the 5,000 movies with rich features...")
+    documents = df['full_text'].tolist()
     embeddings = model.encode(
-        overviews, 
+        documents, 
         batch_size=64, 
         show_progress_bar=True, 
         convert_to_numpy=True
