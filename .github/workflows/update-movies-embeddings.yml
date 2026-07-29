@@ -1,0 +1,49 @@
+name: Monthly Embeddings Update
+
+on:
+  schedule:
+    # Runs on the 1st of every month at 00:00 UTC
+    - cron: '0 0 1 * *'
+  workflow_dispatch: # Allows running it manually from the GitHub "Actions" tab
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Permission to create GitHub Releases
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install datasets sentence-transformers pandas numpy tqdm
+
+      - name: Run generation script
+        run: python ai/movies_embeddings.py
+
+      - name: Get date for Tag
+        id: date
+        run: echo "TAG_NAME=v$(date +'%Y.%m.%d')" >> $GITHUB_ENV
+
+      - name: Create GitHub Release and upload files
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          name: Release ${{ env.TAG_NAME }}
+          body: |
+            Automatic monthly update of the embeddings matrix for MovieScout.
+            - Model: all-MiniLM-L6-v2
+            - Dataset: Sandeep1525/tmdb-5000-movies
+          files: |
+            movies_embeddings.db
+            movies_metadata.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
