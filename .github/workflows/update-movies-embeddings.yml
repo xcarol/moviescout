@@ -29,15 +29,11 @@ jobs:
       - name: Run generation script
         run: python ai/movies_embeddings.py
 
-      - name: Get date for Tag
-        id: date
-        run: echo "TAG_NAME=v$(date +'%Y.%m.%d')" >> $GITHUB_ENV
-
       - name: Create GitHub Release and upload files
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ env.TAG_NAME }}
-          name: Release ${{ env.TAG_NAME }}
+          tag_name: embeddings-data
+          name: embeddings-data
           body: |
             Automatic monthly update of the embeddings matrix for MovieScout.
             - Model: all-MiniLM-L6-v2
