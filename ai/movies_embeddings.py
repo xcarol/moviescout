@@ -33,20 +33,37 @@ def main():
     df = df.dropna(subset=['id', 'overview', 'title'])
     df = df[df['overview'].str.strip() != '']
     
-    def extract_names(string_data):
+    def extract_names(string_data, limit=None):
         try:
             # Parse string representation of list of dicts: "[{'id': 28, 'name': 'Action'}, ...]"
             items = ast.literal_eval(string_data)
-            return " ".join([item['name'] for item in items if 'name' in item])
+            names = [item['name'] for item in items if 'name' in item]
+            if limit:
+                names = names[:limit]
+            return ", ".join(names)
+        except Exception:
+            return ""
+
+    def extract_directors(string_data):
+        try:
+            items = ast.literal_eval(string_data)
+            names = [item['name'] for item in items if item.get('job') == 'Director' and 'name' in item]
+            return ", ".join(names)
         except Exception:
             return ""
 
     df['genres_text'] = df['genres'].apply(extract_names) if 'genres' in df.columns else ""
     df['keywords_text'] = df['keywords'].apply(extract_names) if 'keywords' in df.columns else ""
+    df['cast_text'] = df['cast'].apply(lambda x: extract_names(x, limit=5)) if 'cast' in df.columns else ""
+    df['director_text'] = df['crew'].apply(extract_directors) if 'crew' in df.columns else ""
+    df['tagline_text'] = df['tagline'].fillna('') if 'tagline' in df.columns else ""
     
     # Combine everything to create a rich document with explicit prefixes
     df['full_text'] = (
         "Title: " + df['title'] + ". " +
+        "Tagline: " + df['tagline_text'] + ". " +
+        "Director: " + df['director_text'] + ". " +
+        "Cast: " + df['cast_text'] + ". " +
         "Genres: " + df['genres_text'] + ". " +
         "Keywords: " + df['keywords_text'] + ". " +
         "Overview: " + df['overview']
@@ -78,20 +95,24 @@ def main():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS movie_embeddings (
             tmdb_id INTEGER PRIMARY KEY,
-            embedding BLOB
+            embedding BLOB,
+            vote_average REAL,
+            vote_count INTEGER
         )
     """)
 
     records = []
     for i, row in df.iterrows():
         tmdb_id = int(row['id'])
+        vote_average = float(row.get('vote_average', 0.0))
+        vote_count = int(row.get('vote_count', 0))
         # Convert the float vector (384 dimensions) to bytes (float32)
         embedding_bytes = embeddings[i].astype(np.float32).tobytes()
-        records.append((tmdb_id, embedding_bytes))
+        records.append((tmdb_id, embedding_bytes, vote_average, vote_count))
 
     cursor.executemany("""
-        INSERT OR REPLACE INTO movie_embeddings (tmdb_id, embedding)
-        VALUES (?, ?)
+        INSERT OR REPLACE INTO movie_embeddings (tmdb_id, embedding, vote_average, vote_count)
+        VALUES (?, ?, ?, ?)
     """, records)
 
     conn.commit()
