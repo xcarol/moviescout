@@ -44,8 +44,13 @@ def main():
     df['genres_text'] = df['genres'].apply(extract_names) if 'genres' in df.columns else ""
     df['keywords_text'] = df['keywords'].apply(extract_names) if 'keywords' in df.columns else ""
     
-    # Combine everything to create a rich document
-    df['full_text'] = df['title'] + " " + df['genres_text'] + " " + df['keywords_text'] + " " + df['overview']
+    # Combine everything to create a rich document with explicit prefixes
+    df['full_text'] = (
+        "Title: " + df['title'] + ". " +
+        "Genres: " + df['genres_text'] + ". " +
+        "Keywords: " + df['keywords_text'] + ". " +
+        "Overview: " + df['overview']
+    )
     
     df = df.reset_index(drop=True)
 
