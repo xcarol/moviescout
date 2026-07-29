@@ -13,6 +13,7 @@ import 'package:moviescout/widgets/dialogs_and_forms/language_form.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/notification_permission_dialog.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/region_form.dart';
 import 'package:moviescout/services/settings/edit_settings_service.dart';
+import 'package:moviescout/screens/nlu_settings.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -36,6 +37,7 @@ class SettingsScreen extends StatelessWidget {
           _showEditContentTile(context),
           _notificationsTile(context),
           _notifyCompleteSeasonTile(context),
+          _nluSettingsTile(context),
           if (defaultTargetPlatform == TargetPlatform.android)
             _verifyDeepLinksTile(context),
         ],
@@ -52,6 +54,19 @@ class SettingsScreen extends StatelessWidget {
       value: editService.showEditContent,
       onChanged: (bool value) async {
         await editService.setShowEditContent(value);
+      },
+    );
+  }
+
+  Widget _nluSettingsTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.auto_awesome),
+      title: const Text('Cerca Intel·ligent (IA)'),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const NluSettingsScreen()),
+        );
       },
     );
   }

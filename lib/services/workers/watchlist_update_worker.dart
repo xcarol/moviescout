@@ -11,6 +11,7 @@ import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
+import 'package:moviescout/services/settings/nlu_service.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/services/notifications/notification_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
@@ -162,6 +163,12 @@ void callbackDispatcher() {
     try {
       await dotenv.load(fileName: ".env");
       await PreferencesService().init();
+
+      if (task == 'updateNluAssets') {
+        await NluService().checkForUpdates();
+        return Future.value(true);
+      }
+
       await RealmService.init();
       await NotificationService().init();
 
