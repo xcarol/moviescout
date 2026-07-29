@@ -35,8 +35,8 @@ def main():
 
     print(f"Valid movies to process: {len(df)}")
 
-    print("3️⃣ Loading 'all-MiniLM-L6-v2' model from Hugging Face...")
-    model = SentenceTransformer('all-MiniLM-L6-v2')
+    print("3️⃣ Loading 'paraphrase-multilingual-MiniLM-L12-v2' model from Hugging Face...")
+    model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 
     print("4️⃣ Generating embeddings for the 5,000 overviews...")
     overviews = df['overview'].tolist()
