@@ -9,6 +9,8 @@ import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';
+import 'package:moviescout/screens/nlu_settings.dart';
+import 'package:moviescout/services/settings/nlu_service.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -34,6 +36,7 @@ class _SearchState extends State<Search> {
   final double _searchVerticalPadding = 16.0;
   final double _overlayHeightOffset = 65.0;
   List<String> _overlaySuggestions = [];
+  bool _isNluMode = false;
 
   @override
   void initState() {
@@ -113,11 +116,13 @@ class _SearchState extends State<Search> {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     if (text.length >= 3) {
-      _debounce = Timer(const Duration(seconds: 1), () {
-        if (mounted) {
-          searchTitle(context, text);
-        }
-      });
+      if (!_isNluMode) {
+        _debounce = Timer(const Duration(seconds: 1), () {
+          if (mounted) {
+            searchTitle(context, text);
+          }
+        });
+      }
     } else if (text.isEmpty) {
       _resetTitle();
     }
@@ -260,14 +265,63 @@ class _SearchState extends State<Search> {
                 focusNode: _searchFocusNode,
                 style: TextStyle(color: textColor),
                 cursorColor: borderColor,
+                minLines: _isNluMode ? 2 : 1,
+                maxLines: _isNluMode ? 2 : 1,
+                textInputAction: TextInputAction.search,
                 decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!.search,
+                  fillColor: _isNluMode ? colorScheme.tertiaryContainer : null,
+                  filled: _isNluMode,
+                  hintText: _isNluMode
+                      ? AppLocalizations.of(context)!.searchNluHint
+                      : AppLocalizations.of(context)!.search,
                   hintStyle: TextStyle(color: textColor),
                   suffixIconColor: textColor,
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () async => await _resetTitle(clearText: true),
-                    tooltip: AppLocalizations.of(context)!.search,
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () async =>
+                            await _resetTitle(clearText: true),
+                        tooltip: AppLocalizations.of(context)!.search,
+                      ),
+                      Consumer<NluService>(
+                        builder: (context, nluService, child) {
+                          return IconButton(
+                            icon: Icon(
+                              Icons.auto_awesome,
+                              color: _isNluMode
+                                  ? colorScheme.primary
+                                  : textColor.withValues(alpha: 0.5),
+                              size: 24,
+                            ),
+                            tooltip:
+                                AppLocalizations.of(context)!.searchNluTooltip,
+                            onPressed: () {
+                              if (!nluService.assetsDownloaded) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const NluSettingsScreen(),
+                                  ),
+                                ).then((_) {
+                                  if (nluService.assetsDownloaded) {
+                                    setState(() {
+                                      _isNluMode = true;
+                                    });
+                                  }
+                                });
+                              } else {
+                                setState(() {
+                                  _isNluMode = !_isNluMode;
+                                });
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    ],
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5),
@@ -308,7 +362,11 @@ class _SearchState extends State<Search> {
 
     Locale locale = Localizations.localeOf(context);
     await _resetTitle();
-    await _searchService.retrieveSearchlist(anonymousAccountId, term, locale);
+    if (_isNluMode) {
+      await _searchService.retrieveNluSearchlist(term);
+    } else {
+      await _searchService.retrieveSearchlist(anonymousAccountId, term, locale);
+    }
     await _titleListServiceSupport.updateListGenres();
     _searchService.listGenres.value = _titleListServiceSupport.listGenres.value;
   }

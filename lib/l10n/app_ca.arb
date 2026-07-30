@@ -46,6 +46,12 @@
   "@messageEmptyTmdb": {},
   "search": "Cerca un títol",
   "@search": {},
+  "searchNluHint": "Cerca de pel·lícules amb llenguatge natural...",
+  "@searchNluHint": {},
+  "searchNluTooltip": "Cerca Intel·ligent",
+  "@searchNluTooltip": {},
+  "searchNluSettingsTitle": "Cerca Intel·ligent (IA)",
+  "@searchNluSettingsTitle": {},
   "searchPerson": "Cerca algú",
   "@searchPerson": {},
   "searchPlaceholder": "Cerca Pel·lícules o Sèries...",
@@ -397,5 +403,52 @@
   "watchOn": "Veure a",
   "@watchOn": {},
   "status": "Estat",
-  "@status": {}
+  "@status": {},
+  "nluSettingsTitle": "Cerca Intel·ligent (IA)",
+  "@nluSettingsTitle": {},
+  "nluSettingsDescription": "La cerca intel·ligent permet cercar pel·lícules utilitzant llenguatge natural. Per poder fer-ho de forma privada i sense connexió, cal descarregar uns fitxers.",
+  "@nluSettingsDescription": {},
+  "nluSettingsStatus": "Estat: {status}",
+  "@nluSettingsStatus": {
+    "placeholders": {
+      "status": {}
+    }
+  },
+  "nluSettingsStatusDownloaded": "Descarregats",
+  "@nluSettingsStatusDownloaded": {},
+  "nluSettingsStatusNotDownloaded": "No descarregats",
+  "@nluSettingsStatusNotDownloaded": {},
+  "nluSettingsFilesCount": "Fitxers: {count} de {total}",
+  "@nluSettingsFilesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "nluSettingsCancelDownload": "Cancel·lar descàrrega",
+  "@nluSettingsCancelDownload": {},
+  "nluSettingsDownloading": "Descarregant...",
+  "@nluSettingsDownloading": {},
+  "nluSettingsDeleteFiles": "Eliminar fitxers",
+  "@nluSettingsDeleteFiles": {},
+  "nluSettingsDownloadNow": "Descarregar ara (120 MB)",
+  "@nluSettingsDownloadNow": {},
+  "nluSettingsUpdateConfig": "Configuració de les actualitzacions",
+  "@nluSettingsUpdateConfig": {},
+  "backgroundTasksWifiOnly": "Només amb Wi-Fi",
+  "@backgroundTasksWifiOnly": {},
+  "backgroundTasksWifiOnlySubtitle": "Evita utilitzar dades mòbils per a tasques en segon pla",
+  "@backgroundTasksWifiOnlySubtitle": {},
+  "nluSettingsAutoUpdate": "Actualitzacions automàtiques",
+  "@nluSettingsAutoUpdate": {},
+  "nluSettingsAutoUpdateSubtitle": "Comprova i descarrega nous títols automàticament en segon pla",
+  "@nluSettingsAutoUpdateSubtitle": {},
+  "nluSettingsDeleteConfirmation": "Estàs segur que vols eliminar els fitxers de la cerca intel·ligent? Això desactivarà la funcionalitat.",
+  "@nluSettingsDeleteConfirmation": {},
+  "delete": "Eliminar",
+  "@delete": {}
 }

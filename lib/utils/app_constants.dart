@@ -21,15 +21,35 @@ class AppConstants {
   static const String updateLogs = 'update_logs';
   static const String notificationsEnabled = 'notifications_enabled';
   static const String notifyCompleteSeason = 'notify_complete_season';
+  static const String backgroundTasksWifiOnly = 'background_tasks_wifi_only';
   static const String notificationsAsked = 'notifications_asked';
   static const String savedNotifications = 'saved_notifications';
   static const String debugShowLastUpdate = 'debug_show_last_update';
   static const String showEditContent = 'show_edit_content';
   static const String personListIsGridView = 'person_list_is_grid_view';
+  static const String nluAutoUpdate = 'nlu_auto_update';
 
   static const String catalan = 'ca-ES';
   static const String spanish = 'es-ES';
   static const String english = 'en-US';
+
+  // Background Tasks
+  static const String taskUpdateNluAssets = 'updateNluAssets';
+  static const String taskUpdateWatchlist = 'updateWatchlistProviders';
+  static const String workerNluUpdate = 'nluUpdateTask';
+  static const String workerWatchlistUpdate = 'watchlistUpdateTask';
+
+  // NLU Database
+  static const String movieEmbeddings = 'movie_embeddings';
+  static const String tmdbId = 'tmdb_id';
+  static const String embedding = 'embedding';
+  static const String similarity = 'similarity';
+
+  // NLU Filenames
+  static const String nluDbFilename = 'movies_embeddings.db';
+  static const String nluMetadataFilename = 'movies_metadata.json';
+  static const String nluTokenizerFilename = 'tokenizer.json';
+  static const String nluModelFilename = 'model_quantized.onnx';
 
   static const List<String> supportedLanguages = [
     catalan,

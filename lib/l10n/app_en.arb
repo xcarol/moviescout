@@ -46,6 +46,12 @@
   "@messageEmptyTmdb": {},
   "search": "Search for a title",
   "@search": {},
+  "searchNluHint": "Search for movies with natural language...",
+  "@searchNluHint": {},
+  "searchNluTooltip": "Smart Search",
+  "@searchNluTooltip": {},
+  "searchNluSettingsTitle": "Smart Search (AI)",
+  "@searchNluSettingsTitle": {},
   "searchTitle": "Search",
   "@searchTitle": {},
   "searchPerson": "Search for somebody",
@@ -397,5 +403,52 @@
   "watchOn": "Watch on",
   "@watchOn": {},
   "status": "Status",
-  "@status": {}
+  "@status": {},
+  "nluSettingsTitle": "Smart Search (AI)",
+  "@nluSettingsTitle": {},
+  "nluSettingsDescription": "Smart search allows you to search for movies using natural language. To do so privately and offline, you need to download some files.",
+  "@nluSettingsDescription": {},
+  "nluSettingsStatus": "Status: {status}",
+  "@nluSettingsStatus": {
+    "placeholders": {
+      "status": {}
+    }
+  },
+  "nluSettingsStatusDownloaded": "Downloaded",
+  "@nluSettingsStatusDownloaded": {},
+  "nluSettingsStatusNotDownloaded": "Not downloaded",
+  "@nluSettingsStatusNotDownloaded": {},
+  "nluSettingsFilesCount": "Files: {count} of {total}",
+  "@nluSettingsFilesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "nluSettingsCancelDownload": "Cancel download",
+  "@nluSettingsCancelDownload": {},
+  "nluSettingsDownloading": "Downloading...",
+  "@nluSettingsDownloading": {},
+  "nluSettingsDeleteFiles": "Delete files",
+  "@nluSettingsDeleteFiles": {},
+  "nluSettingsDownloadNow": "Download now (120 MB)",
+  "@nluSettingsDownloadNow": {},
+  "nluSettingsUpdateConfig": "Updates configuration",
+  "@nluSettingsUpdateConfig": {},
+  "backgroundTasksWifiOnly": "Wi-Fi only",
+  "@backgroundTasksWifiOnly": {},
+  "backgroundTasksWifiOnlySubtitle": "Avoid using mobile data for background tasks",
+  "@backgroundTasksWifiOnlySubtitle": {},
+  "nluSettingsAutoUpdate": "Automatic updates",
+  "@nluSettingsAutoUpdate": {},
+  "nluSettingsAutoUpdateSubtitle": "Check and download new titles automatically in the background",
+  "@nluSettingsAutoUpdateSubtitle": {},
+  "nluSettingsDeleteConfirmation": "Are you sure you want to delete the smart search files? This will disable the feature.",
+  "@nluSettingsDeleteConfirmation": {},
+  "delete": "Delete",
+  "@delete": {}
 }

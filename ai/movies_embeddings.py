@@ -3,6 +3,7 @@ import json
 import sqlite3
 import hashlib
 from datetime import datetime
+import ast
 import numpy as np
 import pandas as pd
 from datasets import load_dataset
@@ -27,21 +28,58 @@ def main():
     
     print(f"Total movies loaded: {len(df)}")
 
-    print("2️⃣ Cleaning the overviews...")
+    print("2️⃣ Cleaning the data and combining features...")
     # In this dataset the key columns are 'id' and 'overview'
-    df = df.dropna(subset=['id', 'overview'])
+    df = df.dropna(subset=['id', 'overview', 'title'])
     df = df[df['overview'].str.strip() != '']
+    
+    def extract_names(string_data, limit=None):
+        try:
+            # Parse string representation of list of dicts: "[{'id': 28, 'name': 'Action'}, ...]"
+            items = ast.literal_eval(string_data)
+            names = [item['name'] for item in items if 'name' in item]
+            if limit:
+                names = names[:limit]
+            return ", ".join(names)
+        except Exception:
+            return ""
+
+    def extract_directors(string_data):
+        try:
+            items = ast.literal_eval(string_data)
+            names = [item['name'] for item in items if item.get('job') == 'Director' and 'name' in item]
+            return ", ".join(names)
+        except Exception:
+            return ""
+
+    df['genres_text'] = df['genres'].apply(extract_names) if 'genres' in df.columns else ""
+    df['keywords_text'] = df['keywords'].apply(extract_names) if 'keywords' in df.columns else ""
+    df['cast_text'] = df['cast'].apply(lambda x: extract_names(x, limit=5)) if 'cast' in df.columns else ""
+    df['director_text'] = df['crew'].apply(extract_directors) if 'crew' in df.columns else ""
+    df['tagline_text'] = df['tagline'].fillna('') if 'tagline' in df.columns else ""
+    
+    # Combine everything to create a rich document with explicit prefixes
+    df['full_text'] = (
+        "Title: " + df['title'] + ". " +
+        "Tagline: " + df['tagline_text'] + ". " +
+        "Director: " + df['director_text'] + ". " +
+        "Cast: " + df['cast_text'] + ". " +
+        "Genres: " + df['genres_text'] + ". " +
+        "Keywords: " + df['keywords_text'] + ". " +
+        "Overview: " + df['overview']
+    )
+    
     df = df.reset_index(drop=True)
 
     print(f"Valid movies to process: {len(df)}")
 
-    print("3️⃣ Loading 'all-MiniLM-L6-v2' model from Hugging Face...")
-    model = SentenceTransformer('all-MiniLM-L6-v2')
+    print("3️⃣ Loading 'paraphrase-multilingual-MiniLM-L12-v2' model from Hugging Face...")
+    model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 
-    print("4️⃣ Generating embeddings for the 5,000 overviews...")
-    overviews = df['overview'].tolist()
+    print("4️⃣ Generating embeddings for the 5,000 movies with rich features...")
+    documents = df['full_text'].tolist()
     embeddings = model.encode(
-        overviews, 
+        documents, 
         batch_size=64, 
         show_progress_bar=True, 
         convert_to_numpy=True
@@ -57,20 +95,24 @@ def main():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS movie_embeddings (
             tmdb_id INTEGER PRIMARY KEY,
-            embedding BLOB
+            embedding BLOB,
+            vote_average REAL,
+            vote_count INTEGER
         )
     """)
 
     records = []
     for i, row in df.iterrows():
         tmdb_id = int(row['id'])
+        vote_average = float(row.get('vote_average', 0.0))
+        vote_count = int(row.get('vote_count', 0))
         # Convert the float vector (384 dimensions) to bytes (float32)
         embedding_bytes = embeddings[i].astype(np.float32).tobytes()
-        records.append((tmdb_id, embedding_bytes))
+        records.append((tmdb_id, embedding_bytes, vote_average, vote_count))
 
     cursor.executemany("""
-        INSERT OR REPLACE INTO movie_embeddings (tmdb_id, embedding)
-        VALUES (?, ?)
+        INSERT OR REPLACE INTO movie_embeddings (tmdb_id, embedding, vote_average, vote_count)
+        VALUES (?, ?, ?, ?)
     """, records)
 
     conn.commit()

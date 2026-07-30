@@ -43,7 +43,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageEmptyList => 'No films slected yet.';
 
   @override
-  String get messageEmptySearch => 'You can do a search by using the magnifying glass in the bottom bar.';
+  String get messageEmptySearch =>
+      'You can do a search by using the magnifying glass in the bottom bar.';
 
   @override
   String get messageEmptyOptions => 'You can also';
@@ -53,6 +54,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get search => 'Search for a title';
+
+  @override
+  String get searchNluHint => 'Search for movies with natural language...';
+
+  @override
+  String get searchNluTooltip => 'Smart Search';
+
+  @override
+  String get searchNluSettingsTitle => 'Smart Search (AI)';
 
   @override
   String get searchTitle => 'Search';
@@ -160,10 +170,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get imdbConfirmationTitle => 'WARNING';
 
   @override
-  String get imdbResetWatchlistConfirmation => 'Do you really want to reset Watchlist?';
+  String get imdbResetWatchlistConfirmation =>
+      'Do you really want to reset Watchlist?';
 
   @override
-  String get imdbResetRateslistConfirmation => 'Do you really want to reset Ratings?';
+  String get imdbResetRateslistConfirmation =>
+      'Do you really want to reset Ratings?';
 
   @override
   String get resetWatchlistCount => 'Watchlist titles: ';
@@ -304,13 +316,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get about => 'About...';
 
   @override
-  String get aboutDescription => 'MovieScout is your movie and TV series tracker powered by TMDB, OMDb & JustWatch.';
+  String get aboutDescription =>
+      'MovieScout is your movie and TV series tracker powered by TMDB, OMDb & JustWatch.';
 
   @override
   String get aboutGithub => 'Visit project on ';
 
   @override
-  String get apiDisclaimer => 'This product uses the TMDB API but is not endorsed or certified by TMDB.';
+  String get apiDisclaimer =>
+      'This product uses the TMDB API but is not endorsed or certified by TMDB.';
 
   @override
   String get privacyDisclaimerPrefix => 'Read the ';
@@ -376,13 +390,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageChangeTitle => 'Language Change';
 
   @override
-  String get languageChangeContent => 'You have changed the application language. In order for titles to be updated to the new language, you need to log out and log back in.';
+  String get languageChangeContent =>
+      'You have changed the application language. In order for titles to be updated to the new language, you need to log out and log back in.';
 
   @override
   String get watchingNow => 'Watching now';
 
   @override
-  String get pinLimitReached => 'You have reached the limit of 5 pinned titles.';
+  String get pinLimitReached =>
+      'You have reached the limit of 5 pinned titles.';
 
   @override
   String get pin => 'Pin';
@@ -454,10 +470,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifications => 'Notifications';
 
   @override
-  String get notificationsPermissionRequired => 'You need to allow notifications in the system settings.';
+  String get notificationsPermissionRequired =>
+      'You need to allow notifications in the system settings.';
 
   @override
-  String get notificationsPermissionDescription => 'To receive updates on movie availability and new seasons, you must enable notifications in your system settings.';
+  String get notificationsPermissionDescription =>
+      'To receive updates on movie availability and new seasons, you must enable notifications in your system settings.';
 
   @override
   String get openSettings => 'Open Settings';
@@ -466,7 +484,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
 
   @override
-  String get errorMessageGeneric => 'An error occurred. Please try again later.';
+  String get errorMessageGeneric =>
+      'An error occurred. Please try again later.';
 
   @override
   String get youtubeSearch => 'YouTube Search';
@@ -478,7 +497,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifyCompleteSeason => 'Notify complete season';
 
   @override
-  String get notifyCompleteSeasonSubtitle => 'Only notifies when the whole season is available.';
+  String get notifyCompleteSeasonSubtitle =>
+      'Only notifies when the whole season is available.';
 
   @override
   String get episodes => 'Episodes';
@@ -495,7 +515,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifyTitle => 'Notify new seasons';
 
   @override
-  String get notifyMessage => 'Do you want to be notified when a new season airs?';
+  String get notifyMessage =>
+      'Do you want to be notified when a new season airs?';
 
   @override
   String get no => 'No';
@@ -554,4 +575,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get status => 'Status';
+
+  @override
+  String get nluSettingsTitle => 'Smart Search (AI)';
+
+  @override
+  String get nluSettingsDescription =>
+      'Smart search allows you to search for movies using natural language. To do so privately and offline, you need to download some files.';
+
+  @override
+  String nluSettingsStatus(Object status) {
+    return 'Status: $status';
+  }
+
+  @override
+  String get nluSettingsStatusDownloaded => 'Downloaded';
+
+  @override
+  String get nluSettingsStatusNotDownloaded => 'Not downloaded';
+
+  @override
+  String nluSettingsFilesCount(int count, int total) {
+    return 'Files: $count of $total';
+  }
+
+  @override
+  String get nluSettingsCancelDownload => 'Cancel download';
+
+  @override
+  String get nluSettingsDownloading => 'Downloading...';
+
+  @override
+  String get nluSettingsDeleteFiles => 'Delete files';
+
+  @override
+  String get nluSettingsDownloadNow => 'Download now (120 MB)';
+
+  @override
+  String get nluSettingsUpdateConfig => 'Updates configuration';
+
+  @override
+  String get backgroundTasksWifiOnly => 'Wi-Fi only';
+
+  @override
+  String get backgroundTasksWifiOnlySubtitle =>
+      'Avoid using mobile data for background tasks';
+
+  @override
+  String get nluSettingsAutoUpdate => 'Automatic updates';
+
+  @override
+  String get nluSettingsAutoUpdateSubtitle =>
+      'Check and download new titles automatically in the background';
+
+  @override
+  String get nluSettingsDeleteConfirmation =>
+      'Are you sure you want to delete the smart search files? This will disable the feature.';
+
+  @override
+  String get delete => 'Delete';
 }

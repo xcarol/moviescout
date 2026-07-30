@@ -46,6 +46,12 @@
   "@messageEmptyTmdb": {},
   "search": "Busca un título",
   "@search": {},
+  "searchNluHint": "Busca películas con lenguaje natural...",
+  "@searchNluHint": {},
+  "searchNluTooltip": "Búsqueda Inteligente",
+  "@searchNluTooltip": {},
+  "searchNluSettingsTitle": "Búsqueda Inteligente (IA)",
+  "@searchNluSettingsTitle": {},
   "searchPerson": "Busca alguien",
   "@searchPerson": {},
   "searchPlaceholder": "Buscar Películas o Series...",
@@ -397,5 +403,52 @@
   "watchOn": "Ver en",
   "@watchOn": {},
   "status": "Estado",
-  "@status": {}
+  "@status": {},
+  "nluSettingsTitle": "Búsqueda Inteligente (IA)",
+  "@nluSettingsTitle": {},
+  "nluSettingsDescription": "La búsqueda inteligente permite buscar películas utilizando lenguaje natural. Para poder hacerlo de forma privada y sin conexión, es necesario descargar unos archivos.",
+  "@nluSettingsDescription": {},
+  "nluSettingsStatus": "Estado: {status}",
+  "@nluSettingsStatus": {
+    "placeholders": {
+      "status": {}
+    }
+  },
+  "nluSettingsStatusDownloaded": "Descargados",
+  "@nluSettingsStatusDownloaded": {},
+  "nluSettingsStatusNotDownloaded": "No descargados",
+  "@nluSettingsStatusNotDownloaded": {},
+  "nluSettingsFilesCount": "Archivos: {count} de {total}",
+  "@nluSettingsFilesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "nluSettingsCancelDownload": "Cancelar descarga",
+  "@nluSettingsCancelDownload": {},
+  "nluSettingsDownloading": "Descargando...",
+  "@nluSettingsDownloading": {},
+  "nluSettingsDeleteFiles": "Eliminar archivos",
+  "@nluSettingsDeleteFiles": {},
+  "nluSettingsDownloadNow": "Descargar ahora (120 MB)",
+  "@nluSettingsDownloadNow": {},
+  "nluSettingsUpdateConfig": "Configuración de las actualizaciones",
+  "@nluSettingsUpdateConfig": {},
+  "backgroundTasksWifiOnly": "Solo con Wi-Fi",
+  "@backgroundTasksWifiOnly": {},
+  "backgroundTasksWifiOnlySubtitle": "Evita utilizar datos móviles para tareas en segundo plano",
+  "@backgroundTasksWifiOnlySubtitle": {},
+  "nluSettingsAutoUpdate": "Actualizaciones automáticas",
+  "@nluSettingsAutoUpdate": {},
+  "nluSettingsAutoUpdateSubtitle": "Comprueba y descarga nuevos títulos automáticamente en segundo plano",
+  "@nluSettingsAutoUpdateSubtitle": {},
+  "nluSettingsDeleteConfirmation": "¿Estás seguro de que deseas eliminar los archivos de búsqueda inteligente? Esto desactivará la funcionalidad.",
+  "@nluSettingsDeleteConfirmation": {},
+  "delete": "Eliminar",
+  "@delete": {}
 }
