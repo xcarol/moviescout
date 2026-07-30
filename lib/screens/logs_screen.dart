@@ -23,9 +23,7 @@ class _LogsScreenState extends State<LogsScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _loadState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToBottom();
-    });
+
   }
 
   @override
@@ -76,15 +74,11 @@ class _LogsScreenState extends State<LogsScreen>
 
     if (mounted) {
       setState(() {
-        _logs = prefs.getStringList(AppConstants.updateLogs) ?? [];
+        _logs = (prefs.getStringList(AppConstants.updateLogs) ?? [])
+            .reversed
+            .toList();
         _lastBackgroundRunHeader = formattedDate;
       });
-    }
-  }
-
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     }
   }
 

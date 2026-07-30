@@ -8,6 +8,7 @@ import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/api/youtube_service.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/utils/save_logs.dart';
 
 class TmdbTitleService extends TmdbBaseService {
   Future<dynamic> _retrieveTitleDetails(
@@ -66,6 +67,14 @@ class TmdbTitleService extends TmdbBaseService {
     if (!force && isUpToDate(title)) {
       return title;
     }
+
+    saveLogs([
+      '== TRACE ==',
+      'updateTitleDetails called for ${title.name}',
+      'StackTrace:',
+      StackTrace.current.toString(),
+      '== TRACE ==',
+    ]);
 
     String mediaType = title.mediaType;
     if (mediaType == '') {
@@ -168,6 +177,13 @@ class TmdbTitleService extends TmdbBaseService {
   }
 
   Future<TmdbTitle> updateTitleLight(TmdbTitle title) async {
+    saveLogs([
+      '== TRACE ==',
+      'updateTitleLight called for ${title.name}',
+      'StackTrace:',
+      StackTrace.current.toString(),
+      '== TRACE ==',
+    ]);
     String mediaType = title.mediaType;
     if (mediaType == '') {
       mediaType = title.isMovie ? ApiConstants.movie : ApiConstants.tv;
