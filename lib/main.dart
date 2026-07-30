@@ -16,6 +16,7 @@ import 'package:moviescout/services/system/app_lifecycle_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/services/settings/theme_service.dart';
+import 'package:moviescout/services/settings/background_tasks_service.dart';
 import 'package:moviescout/services/core/tmdb_configuration_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
 import 'package:moviescout/services/api/web_translation_service.dart';
@@ -37,14 +38,15 @@ import 'package:moviescout/utils/person_translator.dart';
 import 'package:moviescout/utils/genre_translator.dart';
 import 'package:moviescout/utils/status_translator.dart';
 import 'package:workmanager/workmanager.dart';
-import 'package:moviescout/services/workers/watchlist_update_worker.dart';
 import 'package:moviescout/services/notifications/notification_service.dart';
+import 'package:moviescout/services/workers/watchlist_update_service.dart';
 import 'package:moviescout/services/settings/edit_settings_service.dart';
 import 'package:app_links/app_links.dart';
 import 'package:moviescout/widgets/misc/shortcut_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:moviescout/services/workers/uninitialized_titles_worker.dart';
+import 'package:moviescout/services/settings/nlu_service.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -124,6 +126,7 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       StatusTranslator.init(),
       NotificationService().init(),
       EditSettingsService().init(),
+      NluService().checkAssets(),
     ]).timeout(const Duration(seconds: 5), onTimeout: () => []);
 
     if (!isShortcut &&
@@ -134,15 +137,8 @@ void _runMain({bool isFromShortcutActivity = false}) async {
           callbackDispatcher,
           isInDebugMode: kDebugMode,
         );
-        await Workmanager().registerPeriodicTask(
-          "watchlistUpdateTask",
-          "updateWatchlistProviders",
-          frequency: const Duration(hours: 1),
-          existingWorkPolicy: ExistingWorkPolicy.replace,
-          constraints: Constraints(
-            networkType: NetworkType.connected,
-          ),
-        );
+        WatchlistUpdateService().setupWorker();
+        NluService().setupWorker();
       } catch (e) {
         // Ignore Workmanager initialization errors (especially in separate processes)
       }
@@ -217,7 +213,9 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       ),
       ChangeNotifierProvider(create: (_) => NotificationService()),
       ChangeNotifierProvider(create: (_) => EditSettingsService()),
+      ChangeNotifierProvider(create: (_) => BackgroundTasksService()),
       ChangeNotifierProvider(create: (_) => WebTranslationService()),
+      ChangeNotifierProvider(create: (_) => NluService()),
     ],
     child: MyApp(isShortcut: isShortcut, initialUri: initialUri),
   ));

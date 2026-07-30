@@ -1,3 +1,5 @@
+import 'package:moviescout/utils/app_constants.dart';
+
 class UrlConstants {
   // Base URLs
   static const String tmdbApiV4Url = 'https://api.themoviedb.org/4/';
@@ -16,6 +18,15 @@ class UrlConstants {
   static const String gravatarUrl = 'https://www.gravatar.com/avatar/';
   static const String imdbTitleUrl = 'https://www.imdb.com/title/';
   static const String imdbNameUrl = 'https://www.imdb.com/name/';
+  // NLU URLs
+  static const String nluDbUrl =
+      'https://github.com/xcarol/moviescout/releases/download/embeddings-data/${AppConstants.nluDbFilename}';
+  static const String nluMetadataUrl =
+      'https://github.com/xcarol/moviescout/releases/download/embeddings-data/${AppConstants.nluMetadataFilename}';
+  static const String nluTokenizerUrl =
+      'https://huggingface.co/Xenova/paraphrase-multilingual-MiniLM-L12-v2/resolve/main/${AppConstants.nluTokenizerFilename}';
+  static const String nluModelUrl =
+      'https://huggingface.co/Xenova/paraphrase-multilingual-MiniLM-L12-v2/resolve/main/onnx/${AppConstants.nluModelFilename}';
 
   // Web Templates
   static const String tmdbSignupWebTemplate = '$tmdbWebUrl/account/signup';

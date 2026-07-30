@@ -43,7 +43,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get messageEmptyList => 'Encara no s\'ha escollit cap pel·lícula.';
 
   @override
-  String get messageEmptySearch => 'Pots fer una cerca utilitzant la lupa de la barra inferior.';
+  String get messageEmptySearch =>
+      'Pots fer una cerca utilitzant la lupa de la barra inferior.';
 
   @override
   String get messageEmptyOptions => 'També pots';
@@ -53,6 +54,15 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get search => 'Cerca un títol';
+
+  @override
+  String get searchNluHint => 'Cerca de pel·lícules amb llenguatge natural...';
+
+  @override
+  String get searchNluTooltip => 'Cerca Intel·ligent';
+
+  @override
+  String get searchNluSettingsTitle => 'Cerca Intel·ligent (IA)';
 
   @override
   String get searchTitle => 'Cerca';
@@ -160,10 +170,12 @@ class AppLocalizationsCa extends AppLocalizations {
   String get imdbConfirmationTitle => 'ATENCIÓ';
 
   @override
-  String get imdbResetWatchlistConfirmation => 'Segur que vols eliminar els títols Per Veure?';
+  String get imdbResetWatchlistConfirmation =>
+      'Segur que vols eliminar els títols Per Veure?';
 
   @override
-  String get imdbResetRateslistConfirmation => 'Segur que vols eliminar les Valoracions?';
+  String get imdbResetRateslistConfirmation =>
+      'Segur que vols eliminar les Valoracions?';
 
   @override
   String get resetWatchlistCount => 'Títols Per Veure: ';
@@ -304,13 +316,15 @@ class AppLocalizationsCa extends AppLocalizations {
   String get about => 'Quant a...';
 
   @override
-  String get aboutDescription => 'MovieScout és el teu cercador de pel·lícules i sèries amb dades de TMDb, OMDb i JustWatch.';
+  String get aboutDescription =>
+      'MovieScout és el teu cercador de pel·lícules i sèries amb dades de TMDb, OMDb i JustWatch.';
 
   @override
   String get aboutGithub => 'Visita el projecte a ';
 
   @override
-  String get apiDisclaimer => 'Aquest producte utilitza l\'API de TMDB, però no està avalat ni certificat per TMDB.';
+  String get apiDisclaimer =>
+      'Aquest producte utilitza l\'API de TMDB, però no està avalat ni certificat per TMDB.';
 
   @override
   String get privacyDisclaimerPrefix => 'Consulta la ';
@@ -376,7 +390,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get languageChangeTitle => 'Canvi d\'idioma';
 
   @override
-  String get languageChangeContent => 'Has canviat l\'idioma de l\'aplicació. Perquè els títols s\'actualitzin al nou idioma, cal que tanquis la sessió i tornis a entrar.';
+  String get languageChangeContent =>
+      'Has canviat l\'idioma de l\'aplicació. Perquè els títols s\'actualitzin al nou idioma, cal que tanquis la sessió i tornis a entrar.';
 
   @override
   String get watchingNow => 'Mirant ara';
@@ -454,10 +469,12 @@ class AppLocalizationsCa extends AppLocalizations {
   String get notifications => 'Notificacions';
 
   @override
-  String get notificationsPermissionRequired => 'Cal que permetis les notificacions a la configuració del sistema.';
+  String get notificationsPermissionRequired =>
+      'Cal que permetis les notificacions a la configuració del sistema.';
 
   @override
-  String get notificationsPermissionDescription => 'Per rebre avisos de disponibilitat de pel·lícules i noves temporades, cal que activis les notificacions als ajustos del sistema.';
+  String get notificationsPermissionDescription =>
+      'Per rebre avisos de disponibilitat de pel·lícules i noves temporades, cal que activis les notificacions als ajustos del sistema.';
 
   @override
   String get openSettings => 'Obrir ajustos';
@@ -466,7 +483,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get settings => 'Configuració';
 
   @override
-  String get errorMessageGeneric => 'S\'ha produït un error. Torna-ho a provar més tard.';
+  String get errorMessageGeneric =>
+      'S\'ha produït un error. Torna-ho a provar més tard.';
 
   @override
   String get youtubeSearch => 'Cerca a YouTube';
@@ -478,7 +496,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get notifyCompleteSeason => 'Notificar temporada completa';
 
   @override
-  String get notifyCompleteSeasonSubtitle => 'Només notifica quan tota la temporada està disponible.';
+  String get notifyCompleteSeasonSubtitle =>
+      'Només notifica quan tota la temporada està disponible.';
 
   @override
   String get episodes => 'Episodis';
@@ -495,7 +514,8 @@ class AppLocalizationsCa extends AppLocalizations {
   String get notifyTitle => 'Notificar noves temporades';
 
   @override
-  String get notifyMessage => 'Vols que t\'avisem quan hi hagi una nova temporada?';
+  String get notifyMessage =>
+      'Vols que t\'avisem quan hi hagi una nova temporada?';
 
   @override
   String get no => 'No';
@@ -554,4 +574,63 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get status => 'Estat';
+
+  @override
+  String get nluSettingsTitle => 'Cerca Intel·ligent (IA)';
+
+  @override
+  String get nluSettingsDescription =>
+      'La cerca intel·ligent permet cercar pel·lícules utilitzant llenguatge natural. Per poder fer-ho de forma privada i sense connexió, cal descarregar uns fitxers.';
+
+  @override
+  String nluSettingsStatus(Object status) {
+    return 'Estat: $status';
+  }
+
+  @override
+  String get nluSettingsStatusDownloaded => 'Descarregats';
+
+  @override
+  String get nluSettingsStatusNotDownloaded => 'No descarregats';
+
+  @override
+  String nluSettingsFilesCount(int count, int total) {
+    return 'Fitxers: $count de $total';
+  }
+
+  @override
+  String get nluSettingsCancelDownload => 'Cancel·lar descàrrega';
+
+  @override
+  String get nluSettingsDownloading => 'Descarregant...';
+
+  @override
+  String get nluSettingsDeleteFiles => 'Eliminar fitxers';
+
+  @override
+  String get nluSettingsDownloadNow => 'Descarregar ara (120 MB)';
+
+  @override
+  String get nluSettingsUpdateConfig => 'Configuració de les actualitzacions';
+
+  @override
+  String get backgroundTasksWifiOnly => 'Només amb Wi-Fi';
+
+  @override
+  String get backgroundTasksWifiOnlySubtitle =>
+      'Evita utilitzar dades mòbils per a tasques en segon pla';
+
+  @override
+  String get nluSettingsAutoUpdate => 'Actualitzacions automàtiques';
+
+  @override
+  String get nluSettingsAutoUpdateSubtitle =>
+      'Comprova i descarrega nous títols automàticament en segon pla';
+
+  @override
+  String get nluSettingsDeleteConfirmation =>
+      'Estàs segur que vols eliminar els fitxers de la cerca intel·ligent? Això desactivarà la funcionalitat.';
+
+  @override
+  String get delete => 'Eliminar';
 }

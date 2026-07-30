@@ -43,7 +43,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get messageEmptyList => 'Aún no se ha seleccionado ninguna película.';
 
   @override
-  String get messageEmptySearch => 'Puedes hacer una búsqueda utilizando la lupa de la barra inferior.';
+  String get messageEmptySearch =>
+      'Puedes hacer una búsqueda utilizando la lupa de la barra inferior.';
 
   @override
   String get messageEmptyOptions => 'También puedes';
@@ -53,6 +54,15 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get search => 'Busca un título';
+
+  @override
+  String get searchNluHint => 'Busca películas con lenguaje natural...';
+
+  @override
+  String get searchNluTooltip => 'Búsqueda Inteligente';
+
+  @override
+  String get searchNluSettingsTitle => 'Búsqueda Inteligente (IA)';
 
   @override
   String get searchTitle => 'Búsqueda';
@@ -124,7 +134,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get signupToTmdb => 'Registrate en TMDb';
 
   @override
-  String get signInToWatchlist => 'Es necesario iniciar sesión para añadir títulos.';
+  String get signInToWatchlist =>
+      'Es necesario iniciar sesión para añadir títulos.';
 
   @override
   String get tvShow => 'Serie';
@@ -160,10 +171,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get imdbConfirmationTitle => 'ATENCIÓN';
 
   @override
-  String get imdbResetWatchlistConfirmation => '¿Seguro que quieres eliminar los títulos Para Ver?';
+  String get imdbResetWatchlistConfirmation =>
+      '¿Seguro que quieres eliminar los títulos Para Ver?';
 
   @override
-  String get imdbResetRateslistConfirmation => '¿Seguro que quieres eliminar las Valoraciones?';
+  String get imdbResetRateslistConfirmation =>
+      '¿Seguro que quieres eliminar las Valoraciones?';
 
   @override
   String get resetWatchlistCount => 'Títulos para ver: ';
@@ -304,13 +317,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get about => 'Sobre...';
 
   @override
-  String get aboutDescription => 'MovieScout es tu buscador de películas y series con datos de TMDb, OMDb y JustWatch.';
+  String get aboutDescription =>
+      'MovieScout es tu buscador de películas y series con datos de TMDb, OMDb y JustWatch.';
 
   @override
   String get aboutGithub => 'Visita el proyecto en ';
 
   @override
-  String get apiDisclaimer => 'Este producto utiliza la API de TMDB, pero no está avalado ni certificado por TMDB.';
+  String get apiDisclaimer =>
+      'Este producto utiliza la API de TMDB, pero no está avalado ni certificado por TMDB.';
 
   @override
   String get privacyDisclaimerPrefix => 'Consulta la ';
@@ -376,7 +391,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get languageChangeTitle => 'Cambio de idioma';
 
   @override
-  String get languageChangeContent => 'Has cambiado el idioma de la aplicación. Para que los títulos se actualicen al nuevo idioma, es necesario que cierres la sesión y vuelvas a entrar.';
+  String get languageChangeContent =>
+      'Has cambiado el idioma de la aplicación. Para que los títulos se actualicen al nuevo idioma, es necesario que cierres la sesión y vuelvas a entrar.';
 
   @override
   String get watchingNow => 'Mirando ahora';
@@ -454,10 +470,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notifications => 'Notificaciones';
 
   @override
-  String get notificationsPermissionRequired => 'Debes permitir las notificaciones en los ajustes del sistema.';
+  String get notificationsPermissionRequired =>
+      'Debes permitir las notificaciones en los ajustes del sistema.';
 
   @override
-  String get notificationsPermissionDescription => 'Para recibir avisos de disponibilidad de películas y nuevas temporadas, debes activar las notificaciones en los ajustes del sistema.';
+  String get notificationsPermissionDescription =>
+      'Para recibir avisos de disponibilidad de películas y nuevas temporadas, debes activar las notificaciones en los ajustes del sistema.';
 
   @override
   String get openSettings => 'Abrir ajustes';
@@ -466,7 +484,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settings => 'Configuración';
 
   @override
-  String get errorMessageGeneric => 'Ha ocurrido un error. Inténtalo de nuevo más tarde.';
+  String get errorMessageGeneric =>
+      'Ha ocurrido un error. Inténtalo de nuevo más tarde.';
 
   @override
   String get youtubeSearch => 'Búsqueda en YouTube';
@@ -478,7 +497,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notifyCompleteSeason => 'Notificar temporada completa';
 
   @override
-  String get notifyCompleteSeasonSubtitle => 'Solo notifica cuando toda la temporada está disponible.';
+  String get notifyCompleteSeasonSubtitle =>
+      'Solo notifica cuando toda la temporada está disponible.';
 
   @override
   String get episodes => 'Episodios';
@@ -495,7 +515,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notifyTitle => 'Notificar nuevas temporadas';
 
   @override
-  String get notifyMessage => '¿Quieres recibir una notificación cuando se emita una nueva temporada?';
+  String get notifyMessage =>
+      '¿Quieres recibir una notificación cuando se emita una nueva temporada?';
 
   @override
   String get no => 'No';
@@ -554,4 +575,63 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get status => 'Estado';
+
+  @override
+  String get nluSettingsTitle => 'Búsqueda Inteligente (IA)';
+
+  @override
+  String get nluSettingsDescription =>
+      'La búsqueda inteligente permite buscar películas utilizando lenguaje natural. Para poder hacerlo de forma privada y sin conexión, es necesario descargar unos archivos.';
+
+  @override
+  String nluSettingsStatus(Object status) {
+    return 'Estado: $status';
+  }
+
+  @override
+  String get nluSettingsStatusDownloaded => 'Descargados';
+
+  @override
+  String get nluSettingsStatusNotDownloaded => 'No descargados';
+
+  @override
+  String nluSettingsFilesCount(int count, int total) {
+    return 'Archivos: $count de $total';
+  }
+
+  @override
+  String get nluSettingsCancelDownload => 'Cancelar descarga';
+
+  @override
+  String get nluSettingsDownloading => 'Descargando...';
+
+  @override
+  String get nluSettingsDeleteFiles => 'Eliminar archivos';
+
+  @override
+  String get nluSettingsDownloadNow => 'Descargar ahora (120 MB)';
+
+  @override
+  String get nluSettingsUpdateConfig => 'Configuración de las actualizaciones';
+
+  @override
+  String get backgroundTasksWifiOnly => 'Solo con Wi-Fi';
+
+  @override
+  String get backgroundTasksWifiOnlySubtitle =>
+      'Evita utilizar datos móviles para tareas en segundo plano';
+
+  @override
+  String get nluSettingsAutoUpdate => 'Actualizaciones automáticas';
+
+  @override
+  String get nluSettingsAutoUpdateSubtitle =>
+      'Comprueba y descarga nuevos títulos automáticamente en segundo plano';
+
+  @override
+  String get nluSettingsDeleteConfirmation =>
+      '¿Estás seguro de que deseas eliminar los archivos de búsqueda inteligente? Esto desactivará la funcionalidad.';
+
+  @override
+  String get delete => 'Eliminar';
 }

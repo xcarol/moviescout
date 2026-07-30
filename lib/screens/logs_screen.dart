@@ -120,15 +120,20 @@ class _LogsScreenState extends State<LogsScreen>
                     content:
                         const Text('Are you sure you want to delete all logs?'),
                     actions: [
-                      TextButton(
+                      FilledButton.tonal(
                         onPressed: () => Navigator.pop(context),
                         child: const Text('Cancel'),
                       ),
-                      TextButton(
+                      FilledButton(
                         onPressed: () {
                           _clearLogs();
                           Navigator.pop(context);
                         },
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.error,
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onError,
+                        ),
                         child: const Text('Clear'),
                       ),
                     ],

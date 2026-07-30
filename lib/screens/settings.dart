@@ -13,6 +13,8 @@ import 'package:moviescout/widgets/dialogs_and_forms/language_form.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/notification_permission_dialog.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/region_form.dart';
 import 'package:moviescout/services/settings/edit_settings_service.dart';
+import 'package:moviescout/screens/nlu_settings.dart';
+import 'package:moviescout/services/settings/background_tasks_service.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -36,6 +38,8 @@ class SettingsScreen extends StatelessWidget {
           _showEditContentTile(context),
           _notificationsTile(context),
           _notifyCompleteSeasonTile(context),
+          _nluSettingsTile(context),
+          _globalWifiOnlyTile(context),
           if (defaultTargetPlatform == TargetPlatform.android)
             _verifyDeepLinksTile(context),
         ],
@@ -52,6 +56,19 @@ class SettingsScreen extends StatelessWidget {
       value: editService.showEditContent,
       onChanged: (bool value) async {
         await editService.setShowEditContent(value);
+      },
+    );
+  }
+
+  Widget _nluSettingsTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.auto_awesome),
+      title: Text(AppLocalizations.of(context)!.searchNluSettingsTitle),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const NluSettingsScreen()),
+        );
       },
     );
   }
@@ -190,6 +207,21 @@ class SettingsScreen extends StatelessWidget {
       title: Text(AppLocalizations.of(context)!.verifyDeepLinks),
       onTap: () async {
         await DeepLinkUtils.openDeepLinkSettings(context);
+      },
+    );
+  }
+
+  Widget _globalWifiOnlyTile(BuildContext context) {
+    final backgroundTasksService = Provider.of<BackgroundTasksService>(context);
+
+    return SwitchListTile(
+      secondary: const Icon(Icons.wifi),
+      title: Text(AppLocalizations.of(context)!.backgroundTasksWifiOnly),
+      subtitle:
+          Text(AppLocalizations.of(context)!.backgroundTasksWifiOnlySubtitle),
+      value: backgroundTasksService.wifiOnly,
+      onChanged: (bool value) {
+        backgroundTasksService.setWifiOnly(value);
       },
     );
   }

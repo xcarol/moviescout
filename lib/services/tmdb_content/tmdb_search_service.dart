@@ -8,6 +8,7 @@ import 'package:moviescout/models/tmdb_collection.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
+import 'package:moviescout/services/core/nlu_inference_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -114,6 +115,9 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
         listName: listNameVal,
         filterText: '',
         limit: 1000,
+        sortOption: selectedSort == SortOption.relevance
+            ? SortOption.addedOrder
+            : SortOption.alphabetically,
       );
       if (filterMediaType == '') {
         allItems.addAll(titles);
@@ -184,6 +188,10 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
     }
 
     final String query = filterText.toLowerCase().trim();
+
+    if (selectedSort == SortOption.relevance) {
+      return isSortAsc ? allItems : allItems.reversed.toList();
+    }
 
     allItems.sort((a, b) {
       String nameA = a.name.toLowerCase();
@@ -282,6 +290,55 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
         _fetchAndSavePersons(searchTerm, locale),
         _fetchAndSaveCollections(searchTerm, locale),
       ]);
+
+      await filterItems();
+    } catch (e) {
+      // Ignore or log error
+    } finally {
+      isLoading.value = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> retrieveNluSearchlist(String searchTerm) async {
+    isLoading.value = true;
+    filterText = searchTerm;
+    notifyListeners();
+
+    try {
+      await titleRepository.clearList(listNameVal);
+      _memoryPersons.clear();
+      _memoryCollections.clear();
+
+      final tmdbIds = await NluInferenceService.search(searchTerm);
+
+      if (tmdbIds.isNotEmpty) {
+        final existingTitles =
+            await titleRepository.getTitlesByTmdbIds(tmdbIds);
+        final existingMap = {for (var t in existingTitles) t.tmdbId: t};
+
+        final List<TmdbTitle> titlesToUpdate = [];
+        for (var id in tmdbIds) {
+          if (existingMap.containsKey(id)) {
+            titlesToUpdate.add(existingMap[id]!);
+          } else {
+            titlesToUpdate.add(TmdbTitle(
+              tmdbId: id,
+              name: '',
+              mediaType: ApiConstants.movie,
+              lastUpdated: AppConstants.defaultDate,
+              dateRated: DateTime.fromMillisecondsSinceEpoch(0),
+            ));
+          }
+        }
+
+        final updated = await Future.wait(titlesToUpdate.map((t) =>
+            TmdbTitleService().updateTitleDetails(t,
+                force: t.lastUpdated == AppConstants.defaultDate)));
+
+        await titleRepository.saveTitles(
+            updated.cast<TmdbTitle>(), listNameVal);
+      }
 
       await filterItems();
     } catch (e) {

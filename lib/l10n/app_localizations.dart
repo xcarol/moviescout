@@ -63,7 +63,8 @@ import 'app_localizations_es.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -71,7 +72,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -83,7 +85,8 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -180,6 +183,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search for a title'**
   String get search;
+
+  /// No description provided for @searchNluHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for movies with natural language...'**
+  String get searchNluHint;
+
+  /// No description provided for @searchNluTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Search'**
+  String get searchNluTooltip;
+
+  /// No description provided for @searchNluSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Search (AI)'**
+  String get searchNluSettingsTitle;
 
   /// No description provided for @searchTitle.
   ///
@@ -1158,9 +1179,112 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Status'**
   String get status;
+
+  /// No description provided for @nluSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Search (AI)'**
+  String get nluSettingsTitle;
+
+  /// No description provided for @nluSettingsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart search allows you to search for movies using natural language. To do so privately and offline, you need to download some files.'**
+  String get nluSettingsDescription;
+
+  /// No description provided for @nluSettingsStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status: {status}'**
+  String nluSettingsStatus(Object status);
+
+  /// No description provided for @nluSettingsStatusDownloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded'**
+  String get nluSettingsStatusDownloaded;
+
+  /// No description provided for @nluSettingsStatusNotDownloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Not downloaded'**
+  String get nluSettingsStatusNotDownloaded;
+
+  /// No description provided for @nluSettingsFilesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Files: {count} of {total}'**
+  String nluSettingsFilesCount(int count, int total);
+
+  /// No description provided for @nluSettingsCancelDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel download'**
+  String get nluSettingsCancelDownload;
+
+  /// No description provided for @nluSettingsDownloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading...'**
+  String get nluSettingsDownloading;
+
+  /// No description provided for @nluSettingsDeleteFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete files'**
+  String get nluSettingsDeleteFiles;
+
+  /// No description provided for @nluSettingsDownloadNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Download now (120 MB)'**
+  String get nluSettingsDownloadNow;
+
+  /// No description provided for @nluSettingsUpdateConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Updates configuration'**
+  String get nluSettingsUpdateConfig;
+
+  /// No description provided for @backgroundTasksWifiOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi only'**
+  String get backgroundTasksWifiOnly;
+
+  /// No description provided for @backgroundTasksWifiOnlySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid using mobile data for background tasks'**
+  String get backgroundTasksWifiOnlySubtitle;
+
+  /// No description provided for @nluSettingsAutoUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic updates'**
+  String get nluSettingsAutoUpdate;
+
+  /// No description provided for @nluSettingsAutoUpdateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check and download new titles automatically in the background'**
+  String get nluSettingsAutoUpdateSubtitle;
+
+  /// No description provided for @nluSettingsDeleteConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete the smart search files? This will disable the feature.'**
+  String get nluSettingsDeleteConfirmation;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -1169,26 +1293,27 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['ca', 'en', 'es'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['ca', 'en', 'es'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'ca': return AppLocalizationsCa();
-    case 'en': return AppLocalizationsEn();
-    case 'es': return AppLocalizationsEs();
+    case 'ca':
+      return AppLocalizationsCa();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }
