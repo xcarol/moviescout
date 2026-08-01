@@ -78,8 +78,8 @@ class ListControlPanel extends StatelessWidget {
         : titleTheme.controlPanelInactiveFilterBackground;
 
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => GenresScreen(
