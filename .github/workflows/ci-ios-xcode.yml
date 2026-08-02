@@ -1,0 +1,27 @@
+*** Begin Patch
+*** Add File: .github/workflows/ci-ios-xcode.yml
++name: iOS CI
++
++on:
++  push:
++    branches: [ master, bump/ios-deployment-15 ]
++  pull_request:
++    branches: [ master ]
++
++jobs:
++  build-ios:
++    runs-on: macos-latest
++    steps:
++      - uses: actions/checkout@v4
++      - name: Set up Ruby
++        uses: ruby/setup-ruby@v1
++      - name: Install CocoaPods
++        run: |
++          gem install cocoapods
++      - name: Install dependencies
++        run: |
++          cd ios && pod install --repo-update
++      - name: Build iOS
++        run: |
++          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release -sdk iphoneos -destination 'platform=iOS Simulator,name=iPhone 14' clean build
++
