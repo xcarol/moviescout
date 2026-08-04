@@ -53,7 +53,7 @@ class NluService with ChangeNotifier {
         AppConstants.workerNluUpdate,
         AppConstants.taskUpdateNluAssets,
         frequency: const Duration(days: 1),
-        existingWorkPolicy: ExistingWorkPolicy.replace,
+        existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
         constraints: Constraints(
           networkType: BackgroundTasksService().wifiOnly
               ? NetworkType.unmetered

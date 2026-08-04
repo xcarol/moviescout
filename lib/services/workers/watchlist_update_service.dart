@@ -36,7 +36,7 @@ class WatchlistUpdateService {
       AppConstants.workerWatchlistUpdate,
       AppConstants.taskUpdateWatchlist,
       frequency: const Duration(hours: 1),
-      existingWorkPolicy: ExistingWorkPolicy.replace,
+      existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
       constraints: Constraints(
         networkType: BackgroundTasksService().wifiOnly
             ? NetworkType.unmetered
