@@ -9,28 +9,26 @@ void main() {
   group('WatchlistNotificationEvaluator - checkNeedsUpdate', () {
     final now = DateTime(2026, 3, 29);
 
-    test('Should return full update if never updated', () {
+    test('Should return light update if never updated', () {
       final title = TmdbTitle.fromMap(title: {
         TmdbTitleFields.id: 1,
         TmdbTitleFields.title: 'Test',
         'last_updated': AppConstants.defaultDate,
-        'last_providers_update': AppConstants.defaultDate,
       });
       expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now),
-          UpdateType.full);
+          UpdateType.light);
     });
 
-    test('Should return full update if uninitialized serie', () {
+    test('Should return light update if uninitialized serie', () {
       final title = TmdbTitle.fromMap(title: {
         TmdbTitleFields.id: 1,
         TmdbTitleFields.name: 'Test',
         'last_notified_season': 0,
         'media_type': 'tv',
         'last_updated': AppConstants.defaultDate,
-        'last_providers_update': AppConstants.defaultDate,
       });
       expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now),
-          UpdateType.full);
+          UpdateType.light);
     });
 
     test('Serie: Does NOT full update every hour if already initialized to 0',
@@ -59,16 +57,11 @@ void main() {
           UpdateType.none);
     });
 
-    test(
-        'Should return light update if providers are stale but details are fresh',
-        () {
+    test('Should return light update if title is stale (>= 1 day)', () {
       final title = TmdbTitle.fromMap(title: {
         TmdbTitleFields.id: 1,
         TmdbTitleFields.title: 'Test',
-        'last_updated':
-            now.subtract(const Duration(hours: 1)).toIso8601String(),
-        'last_providers_update':
-            now.subtract(const Duration(days: 2)).toIso8601String(),
+        'last_updated': now.subtract(const Duration(days: 2)).toIso8601String(),
       });
       expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now),
           UpdateType.light);

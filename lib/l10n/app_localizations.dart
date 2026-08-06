@@ -184,23 +184,17 @@ abstract class AppLocalizations {
   /// **'Search for a title'**
   String get search;
 
-  /// No description provided for @searchNluHint.
+  /// No description provided for @searchAiHint.
   ///
   /// In en, this message translates to:
-  /// **'Search for movies with natural language...'**
-  String get searchNluHint;
+  /// **'Describe the movie or TV show you are looking for...'**
+  String get searchAiHint;
 
-  /// No description provided for @searchNluTooltip.
-  ///
-  /// In en, this message translates to:
-  /// **'Smart Search'**
-  String get searchNluTooltip;
-
-  /// No description provided for @searchNluSettingsTitle.
+  /// No description provided for @searchAiTooltip.
   ///
   /// In en, this message translates to:
   /// **'Smart Search (AI)'**
-  String get searchNluSettingsTitle;
+  String get searchAiTooltip;
 
   /// No description provided for @searchTitle.
   ///
@@ -1180,107 +1174,119 @@ abstract class AppLocalizations {
   /// **'Status'**
   String get status;
 
-  /// No description provided for @nluSettingsTitle.
+  /// No description provided for @aiSettingsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Smart Search (AI)'**
-  String get nluSettingsTitle;
+  /// **'Artificial Intelligence'**
+  String get aiSettingsTitle;
 
-  /// No description provided for @nluSettingsDescription.
+  /// No description provided for @aiSettingsSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Smart search allows you to search for movies using natural language. To do so privately and offline, you need to download some files.'**
-  String get nluSettingsDescription;
+  /// **'Smart search and AI features'**
+  String get aiSettingsSubtitle;
 
-  /// No description provided for @nluSettingsStatus.
+  /// No description provided for @aiSettingsDescription.
   ///
   /// In en, this message translates to:
-  /// **'Status: {status}'**
-  String nluSettingsStatus(Object status);
+  /// **'AI features allow you to find movies and TV shows based on natural language descriptions and more smart tools. To use them, you can get a free API key at OpenRouter (no credit card required).'**
+  String get aiSettingsDescription;
 
-  /// No description provided for @nluSettingsStatusDownloaded.
+  /// No description provided for @aiGetApiKeyButton.
   ///
   /// In en, this message translates to:
-  /// **'Downloaded'**
-  String get nluSettingsStatusDownloaded;
+  /// **'Get API key at OpenRouter'**
+  String get aiGetApiKeyButton;
 
-  /// No description provided for @nluSettingsStatusNotDownloaded.
+  /// No description provided for @aiApiKeyLabel.
   ///
   /// In en, this message translates to:
-  /// **'Not downloaded'**
-  String get nluSettingsStatusNotDownloaded;
+  /// **'OpenRouter API Key'**
+  String get aiApiKeyLabel;
 
-  /// No description provided for @nluSettingsFilesCount.
+  /// No description provided for @aiApiKeyHint.
   ///
   /// In en, this message translates to:
-  /// **'Files: {count} of {total}'**
-  String nluSettingsFilesCount(int count, int total);
+  /// **'sk-or-v1-...'**
+  String get aiApiKeyHint;
 
-  /// No description provided for @nluSettingsCancelDownload.
+  /// No description provided for @aiSaveKeyButton.
   ///
   /// In en, this message translates to:
-  /// **'Cancel download'**
-  String get nluSettingsCancelDownload;
+  /// **'Save key'**
+  String get aiSaveKeyButton;
 
-  /// No description provided for @nluSettingsDownloading.
+  /// No description provided for @aiDeleteKeyButton.
   ///
   /// In en, this message translates to:
-  /// **'Downloading...'**
-  String get nluSettingsDownloading;
+  /// **'Delete'**
+  String get aiDeleteKeyButton;
 
-  /// No description provided for @nluSettingsDeleteFiles.
+  /// No description provided for @aiKeySaved.
   ///
   /// In en, this message translates to:
-  /// **'Delete files'**
-  String get nluSettingsDeleteFiles;
+  /// **'API key saved successfully'**
+  String get aiKeySaved;
 
-  /// No description provided for @nluSettingsDownloadNow.
+  /// No description provided for @aiKeyCleared.
   ///
   /// In en, this message translates to:
-  /// **'Download now (120 MB)'**
-  String get nluSettingsDownloadNow;
+  /// **'API key deleted'**
+  String get aiKeyCleared;
 
-  /// No description provided for @nluSettingsUpdateConfig.
+  /// No description provided for @aiStatusConfigured.
   ///
   /// In en, this message translates to:
-  /// **'Updates configuration'**
-  String get nluSettingsUpdateConfig;
+  /// **'API key configured'**
+  String get aiStatusConfigured;
 
-  /// No description provided for @backgroundTasksWifiOnly.
+  /// No description provided for @aiStatusNotConfigured.
   ///
   /// In en, this message translates to:
-  /// **'Wi-Fi only'**
-  String get backgroundTasksWifiOnly;
-
-  /// No description provided for @backgroundTasksWifiOnlySubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Avoid using mobile data for background tasks'**
-  String get backgroundTasksWifiOnlySubtitle;
-
-  /// No description provided for @nluSettingsAutoUpdate.
-  ///
-  /// In en, this message translates to:
-  /// **'Automatic updates'**
-  String get nluSettingsAutoUpdate;
-
-  /// No description provided for @nluSettingsAutoUpdateSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Check and download new titles automatically in the background'**
-  String get nluSettingsAutoUpdateSubtitle;
-
-  /// No description provided for @nluSettingsDeleteConfirmation.
-  ///
-  /// In en, this message translates to:
-  /// **'Are you sure you want to delete the smart search files? This will disable the feature.'**
-  String get nluSettingsDeleteConfirmation;
+  /// **'API key not configured'**
+  String get aiStatusNotConfigured;
 
   /// No description provided for @delete.
   ///
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
+
+  /// No description provided for @aiDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete API Key'**
+  String get aiDeleteConfirmTitle;
+
+  /// No description provided for @aiDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete the API key? Note that OpenRouter does not allow viewing the key once created and you will need to generate a new one if you do not have it saved.'**
+  String get aiDeleteConfirmMessage;
+
+  /// No description provided for @searchTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The search took too long to respond. Please try again.'**
+  String get searchTimeout;
+
+  /// No description provided for @aiSearchError.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred during AI search. Please try again.'**
+  String get aiSearchError;
+
+  /// No description provided for @aiRateLimitWithSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'API rate limit exceeded. Please wait {seconds} seconds before trying again.'**
+  String aiRateLimitWithSeconds(int seconds);
+
+  /// No description provided for @aiRateLimitGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'API rate limit exceeded. Please wait a moment before trying again.'**
+  String get aiRateLimitGeneric;
 }
 
 class _AppLocalizationsDelegate

@@ -46,7 +46,6 @@ import 'package:moviescout/widgets/misc/shortcut_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:moviescout/services/workers/uninitialized_titles_worker.dart';
-import 'package:moviescout/services/settings/nlu_service.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -126,7 +125,6 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       StatusTranslator.init(),
       NotificationService().init(),
       EditSettingsService().init(),
-      NluService().checkAssets(),
     ]).timeout(const Duration(seconds: 5), onTimeout: () => []);
 
     if (!isShortcut &&
@@ -135,10 +133,8 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       try {
         await Workmanager().initialize(
           callbackDispatcher,
-          isInDebugMode: kDebugMode,
         );
         WatchlistUpdateService().setupWorker();
-        NluService().setupWorker();
       } catch (e) {
         // Ignore Workmanager initialization errors (especially in separate processes)
       }
@@ -213,9 +209,7 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       ),
       ChangeNotifierProvider(create: (_) => NotificationService()),
       ChangeNotifierProvider(create: (_) => EditSettingsService()),
-      ChangeNotifierProvider(create: (_) => BackgroundTasksService()),
       ChangeNotifierProvider(create: (_) => WebTranslationService()),
-      ChangeNotifierProvider(create: (_) => NluService()),
     ],
     child: MyApp(isShortcut: isShortcut, initialUri: initialUri),
   ));
