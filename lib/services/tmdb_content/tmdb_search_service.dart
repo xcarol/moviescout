@@ -542,8 +542,8 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
     }
   }
 
-  Future<void> _fetchAndSaveCollections(
-      String searchTerm, Locale locale, [int? searchId]) async {
+  Future<void> _fetchAndSaveCollections(String searchTerm, Locale locale,
+      [int? searchId]) async {
     int page = 1;
     int totalPages = 1;
     List<TmdbCollection> collections = [];

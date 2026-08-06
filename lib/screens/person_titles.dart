@@ -46,6 +46,12 @@ class _PersonTitlesState extends State<PersonTitles> {
   }
 
   @override
+  void dispose() {
+    _personTitlesService.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     String appTitle = widget._person.name;
 

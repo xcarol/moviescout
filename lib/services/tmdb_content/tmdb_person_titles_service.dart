@@ -1,6 +1,7 @@
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
+import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -10,6 +11,9 @@ class TmdbPersonTitlesService extends TmdbTitleListService
     with TmdbMemoryListMixin<TmdbTitle> {
   final TmdbPerson person;
   final PersonTitleRole role;
+
+  int _activeFetchId = 0;
+  bool _isDisposed = false;
 
   TmdbPersonTitlesService(
     super.listName,
@@ -57,9 +61,10 @@ class TmdbPersonTitlesService extends TmdbTitleListService
     // It's already initialized with the person's credits.
     isLoading.value = true;
     try {
-      await updateTitles();
+      await _updateTitles();
       await updateListGenres();
       await filterItems();
+      await _fetchTitlesData();
     } finally {
       isLoading.value = false;
     }
@@ -182,27 +187,76 @@ class TmdbPersonTitlesService extends TmdbTitleListService
   @override
   bool get userRatingAvailable => _localUserRatingAvailable;
 
-  Future<void> updateTitles() async {
+  Future<void> _updateTitles() async {
     if (allItems.isNotEmpty) {
       final tmdbIds = allItems.map((t) => t.tmdbId).toList();
-      _localUserRatingAvailable =
-          await repository.hasTitlesInList(tmdbIds, AppConstants.rateslist);
+      final dbTitles = await repository.getTitlesByTmdbIds(tmdbIds);
+      final dbTitlesMap = {
+        for (var t in dbTitles) '${t.tmdbId}_${t.mediaType}': t
+      };
 
-      if (_localUserRatingAvailable) {
-        final dbTitles = await repository.getTitlesByTmdbIds(tmdbIds);
-        final dbTitlesMap = {
-          for (var t in dbTitles) '${t.tmdbId}_${t.mediaType}': t
-        };
-        for (var title in allItems) {
-          final dbTitle = dbTitlesMap['${title.tmdbId}_${title.mediaType}'];
-          if (dbTitle != null) {
-            title.rating = dbTitle.rating;
-            title.dateRated = dbTitle.dateRated;
-          }
+      for (var title in allItems) {
+        final dbTitle = dbTitlesMap['${title.tmdbId}_${title.mediaType}'];
+        if (dbTitle != null) {
+          final character = title.character;
+          final job = title.job;
+          final department = title.department;
+          final addedOrder = title.addedOrder;
+
+          title.fillFromMap(dbTitle.toMap());
+
+          title.character = character;
+          title.job = job;
+          title.department = department;
+          title.addedOrder = addedOrder;
         }
       }
+      _localUserRatingAvailable = allItems.any((t) => t.rating > 0);
     }
     await Future.delayed(Duration.zero);
     notifyListeners();
+  }
+
+  Future<void> _fetchTitlesData() async {
+    final fetchId = ++_activeFetchId;
+    final titlesToFetch = allItems
+        .where((t) =>
+            t.lastUpdated == AppConstants.defaultDate ||
+            !TmdbTitleService.isUpToDate(t) ||
+            t.providersJson == null ||
+            (t.runtime == 0 && t.isMovie))
+        .toList();
+
+    if (titlesToFetch.isEmpty) return;
+
+    const batchSize = AppConstants.defaultBatchSize;
+    final titleService = TmdbTitleService();
+
+    for (var i = 0; i < titlesToFetch.length; i += batchSize) {
+      if (_isDisposed || fetchId != _activeFetchId) return;
+
+      final end = (i + batchSize < titlesToFetch.length)
+          ? i + batchSize
+          : titlesToFetch.length;
+      final chunk = titlesToFetch.sublist(i, end);
+
+      final futures = chunk.map((t) => titleService.updateTitleLight(t));
+      await Future.wait(futures);
+
+      if (_isDisposed || fetchId != _activeFetchId) return;
+
+      await updateListGenres();
+      await filterItems(retainPagination: true);
+      notifyListeners();
+
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _activeFetchId++;
+    super.dispose();
   }
 }
