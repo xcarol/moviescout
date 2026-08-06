@@ -29,6 +29,8 @@ class _SearchState extends State<Search> {
   final SearchHistoryService _historyService = SearchHistoryService();
   late Widget _searchWidget;
   String _previousText = '';
+  String _lastSearchedText = '';
+  bool? _lastSearchedAiMode;
   Timer? _debounce;
 
   final LayerLink _layerLink = LayerLink();
@@ -119,13 +121,14 @@ class _SearchState extends State<Search> {
 
     if (text.length >= 3) {
       if (!_isAiMode) {
-        _debounce = Timer(const Duration(seconds: 1), () {
+        _debounce = Timer(const Duration(milliseconds: 300), () {
           if (mounted) {
-            searchTitle(context, text);
+            searchTitle(context, _controller.text);
           }
         });
       }
     } else if (text.isEmpty) {
+      _resetLastSearch();
       _resetTitle();
     }
   }
@@ -231,10 +234,16 @@ class _SearchState extends State<Search> {
     );
   }
 
+  void _resetLastSearch() {
+    _lastSearchedText = '';
+    _lastSearchedAiMode = null;
+  }
+
   Future<void> _resetTitle({bool clearText = false}) async {
     if (clearText) {
       _controller.clear();
       _previousText = '';
+      _resetLastSearch();
       _removeOverlay();
     }
     await _searchService.clearList();
@@ -305,12 +314,14 @@ class _SearchState extends State<Search> {
                               if (AiService().hasApiKey) {
                                 setState(() {
                                   _isAiMode = true;
+                                  _resetLastSearch();
                                 });
                               }
                             });
                           } else {
                             setState(() {
                               _isAiMode = !_isAiMode;
+                              _resetLastSearch();
                             });
                           }
                         },
@@ -346,13 +357,16 @@ class _SearchState extends State<Search> {
   }
 
   void searchTitle(BuildContext context, String title) async {
-    final term = title;
+    final term = title.trim();
+    if (term.isEmpty) return;
+    if (term == _lastSearchedText && _lastSearchedAiMode == _isAiMode) return;
+
+    _lastSearchedText = term;
+    _lastSearchedAiMode = _isAiMode;
 
     _removeOverlay();
 
-    if (term.isNotEmpty) {
-      _historyService.add(term);
-    }
+    _historyService.add(term);
 
     Locale locale = Localizations.localeOf(context);
     await _resetTitle();
@@ -364,6 +378,7 @@ class _SearchState extends State<Search> {
             anonymousAccountId, term, locale);
       }
     } on TimeoutException catch (e, stackTrace) {
+      _resetLastSearch();
       ErrorService.log(
         e,
         stackTrace: stackTrace,
@@ -377,6 +392,7 @@ class _SearchState extends State<Search> {
         );
       }
     } on AiRateLimitException catch (e) {
+      _resetLastSearch();
       if (context.mounted) {
         final l10n = AppLocalizations.of(context)!;
         final msg = e.retrySeconds != null && e.retrySeconds! > 0
@@ -385,6 +401,7 @@ class _SearchState extends State<Search> {
         SnackMessage.showSnackBar(msg);
       }
     } catch (e, stackTrace) {
+      _resetLastSearch();
       ErrorService.log(
         e,
         stackTrace: stackTrace,

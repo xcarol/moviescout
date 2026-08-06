@@ -249,7 +249,13 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
     return allItems.sublist(offset, end);
   }
 
+  int _activeSearchId = 0;
+
+  bool _activeSearchChanged([int? searchId]) =>
+      searchId != null && searchId != _activeSearchId;
+
   Future<void> clearList() async {
+    _activeSearchId++;
     await titleRepository.clearList(listNameVal);
     _memoryPersons.clear();
     _memoryCollections.clear();
@@ -259,28 +265,35 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
 
   Future<void> retrieveSearchlist(
       String accountId, String searchTerm, Locale locale) async {
+    final searchId = ++_activeSearchId;
     isLoading.value = true;
     filterText = searchTerm;
     notifyListeners();
 
     try {
       await titleRepository.clearList(listNameVal);
+      if (_activeSearchChanged(searchId)) return;
+
       _memoryPersons.clear();
       _memoryCollections.clear();
 
       await Future.wait([
-        _fetchAndSaveMovies(searchTerm, locale),
-        _fetchAndSaveTvShows(searchTerm, locale),
-        _fetchAndSavePersons(searchTerm, locale),
-        _fetchAndSaveCollections(searchTerm, locale),
+        _fetchAndSaveMovies(searchTerm, locale, searchId),
+        _fetchAndSaveTvShows(searchTerm, locale, searchId),
+        _fetchAndSavePersons(searchTerm, locale, searchId),
+        _fetchAndSaveCollections(searchTerm, locale, searchId),
       ]);
+
+      if (_activeSearchChanged(searchId)) return;
 
       await filterItems();
     } catch (e) {
       // Ignore or log error
     } finally {
-      isLoading.value = false;
-      notifyListeners();
+      if (searchId == _activeSearchId) {
+        isLoading.value = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -403,12 +416,14 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
         .replaceFirst('{LOCALE}', localeStr);
   }
 
-  Future<void> _fetchAndSaveMovies(String searchTerm, Locale locale) async {
+  Future<void> _fetchAndSaveMovies(String searchTerm, Locale locale,
+      [int? searchId]) async {
     int page = 1;
     int totalPages = 1;
     List<dynamic> rawItems = [];
 
     do {
+      if (_activeSearchChanged(searchId)) return;
       dynamic response = await get(
         UrlConstants.tmdbSearchMoviesEndpoint
             .replaceFirst('{PAGE}', page.toString())
@@ -416,6 +431,8 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
             .replaceFirst(
                 '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
       );
+
+      if (_activeSearchChanged(searchId)) return;
 
       if (response.statusCode == 200) {
         final Map responseBody = body(response);
@@ -432,19 +449,24 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
       }
     } while (page++ < totalPages);
 
+    if (_activeSearchChanged(searchId)) return;
+
     if (rawItems.isNotEmpty) {
       final mergedTitles =
           await _mergeRawItemsWithExisting(rawItems, ApiConstants.movie);
-      await _saveTitlesWithDetails(mergedTitles);
+      if (_activeSearchChanged(searchId)) return;
+      await _saveTitlesWithDetails(mergedTitles, searchId);
     }
   }
 
-  Future<void> _fetchAndSaveTvShows(String searchTerm, Locale locale) async {
+  Future<void> _fetchAndSaveTvShows(String searchTerm, Locale locale,
+      [int? searchId]) async {
     int page = 1;
     int totalPages = 1;
     List<dynamic> rawItems = [];
 
     do {
+      if (_activeSearchChanged(searchId)) return;
       dynamic response = await get(
         UrlConstants.tmdbSearchTvShowsEndpoint
             .replaceFirst('{PAGE}', page.toString())
@@ -452,6 +474,8 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
             .replaceFirst(
                 '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
       );
+
+      if (_activeSearchChanged(searchId)) return;
 
       if (response.statusCode == 200) {
         final Map responseBody = body(response);
@@ -468,19 +492,24 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
       }
     } while (page++ < totalPages);
 
+    if (_activeSearchChanged(searchId)) return;
+
     if (rawItems.isNotEmpty) {
       final mergedTitles =
           await _mergeRawItemsWithExisting(rawItems, ApiConstants.tv);
-      await _saveTitlesWithDetails(mergedTitles);
+      if (_activeSearchChanged(searchId)) return;
+      await _saveTitlesWithDetails(mergedTitles, searchId);
     }
   }
 
-  Future<void> _fetchAndSavePersons(String searchTerm, Locale locale) async {
+  Future<void> _fetchAndSavePersons(String searchTerm, Locale locale,
+      [int? searchId]) async {
     int page = 1;
     int totalPages = 1;
     List<TmdbPerson> persons = [];
 
     do {
+      if (_activeSearchChanged(searchId)) return;
       dynamic response = await get(
         UrlConstants.tmdbSearchPersonsEndpoint
             .replaceFirst('{PAGE}', page.toString())
@@ -488,6 +517,8 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
             .replaceFirst(
                 '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
       );
+
+      if (_activeSearchChanged(searchId)) return;
 
       if (response.statusCode == 200) {
         final Map responseBody = body(response);
@@ -504,18 +535,21 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
       }
     } while (page++ < totalPages);
 
+    if (_activeSearchChanged(searchId)) return;
+
     if (persons.isNotEmpty) {
       _memoryPersons.addAll(persons);
     }
   }
 
   Future<void> _fetchAndSaveCollections(
-      String searchTerm, Locale locale) async {
+      String searchTerm, Locale locale, [int? searchId]) async {
     int page = 1;
     int totalPages = 1;
     List<TmdbCollection> collections = [];
 
     do {
+      if (_activeSearchChanged(searchId)) return;
       dynamic response = await get(
         UrlConstants.tmdbSearchCollectionsEndpoint
             .replaceFirst('{PAGE}', page.toString())
@@ -523,6 +557,8 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
             .replaceFirst(
                 '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
       );
+
+      if (_activeSearchChanged(searchId)) return;
 
       if (response.statusCode == 200) {
         final Map responseBody = body(response);
@@ -539,15 +575,19 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
       }
     } while (page++ < totalPages);
 
+    if (_activeSearchChanged(searchId)) return;
+
     if (collections.isNotEmpty) {
       _memoryCollections.addAll(collections);
     }
   }
 
-  Future<void> _saveTitlesWithDetails(List<TmdbTitle> titles) async {
+  Future<void> _saveTitlesWithDetails(List<TmdbTitle> titles,
+      [int? searchId]) async {
     final updated = await Future.wait(titles.map((t) => TmdbTitleService()
         .updateTitleDetails(t,
             force: t.lastUpdated == AppConstants.defaultDate)));
+    if (_activeSearchChanged(searchId)) return;
     await titleRepository.saveTitles(updated.cast<TmdbTitle>(), listNameVal);
   }
 
