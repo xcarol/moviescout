@@ -56,13 +56,10 @@ class AppLocalizationsCa extends AppLocalizations {
   String get search => 'Cerca un títol';
 
   @override
-  String get searchNluHint => 'Cerca de pel·lícules amb llenguatge natural...';
+  String get searchAiHint => 'Descriu la pel·lícula o sèrie que busques...';
 
   @override
-  String get searchNluTooltip => 'Cerca Intel·ligent';
-
-  @override
-  String get searchNluSettingsTitle => 'Cerca Intel·ligent (IA)';
+  String get searchAiTooltip => 'Cerca Intel·ligent (IA)';
 
   @override
   String get searchTitle => 'Cerca';
@@ -576,61 +573,70 @@ class AppLocalizationsCa extends AppLocalizations {
   String get status => 'Estat';
 
   @override
-  String get nluSettingsTitle => 'Cerca Intel·ligent (IA)';
+  String get aiSettingsTitle => 'Intel·ligència Artificial';
 
   @override
-  String get nluSettingsDescription =>
-      'La cerca intel·ligent permet cercar pel·lícules utilitzant llenguatge natural. Per poder fer-ho de forma privada i sense connexió, cal descarregar uns fitxers.';
+  String get aiSettingsSubtitle => 'Cerca intel·ligent i funcions d\'IA';
 
   @override
-  String nluSettingsStatus(Object status) {
-    return 'Estat: $status';
-  }
+  String get aiSettingsDescription =>
+      'Les funcions d\'IA et permeten trobar pel·lícules i sèries basant-se en descripcions en llenguatge natural i més eines intel·ligents. Per utilitzar-les, pots obtenir una clau gratuïta a OpenRouter (sense necessitat de targeta).';
 
   @override
-  String get nluSettingsStatusDownloaded => 'Descarregats';
+  String get aiGetApiKeyButton => 'Obtenir clau a OpenRouter';
 
   @override
-  String get nluSettingsStatusNotDownloaded => 'No descarregats';
+  String get aiApiKeyLabel => 'Clau API d\'OpenRouter';
 
   @override
-  String nluSettingsFilesCount(int count, int total) {
-    return 'Fitxers: $count de $total';
-  }
+  String get aiApiKeyHint => 'sk-or-v1-...';
 
   @override
-  String get nluSettingsCancelDownload => 'Cancel·lar descàrrega';
+  String get aiSaveKeyButton => 'Desar clau';
 
   @override
-  String get nluSettingsDownloading => 'Descarregant...';
+  String get aiDeleteKeyButton => 'Eliminar';
 
   @override
-  String get nluSettingsDeleteFiles => 'Eliminar fitxers';
+  String get aiKeySaved => 'Clau API desada correctament';
 
   @override
-  String get nluSettingsDownloadNow => 'Descarregar ara (120 MB)';
+  String get aiKeyCleared => 'Clau API eliminada';
 
   @override
-  String get nluSettingsUpdateConfig => 'Configuració de les actualitzacions';
+  String get aiStatusConfigured => 'Clau API configurada';
 
   @override
-  String get backgroundTasksWifiOnly => 'Només amb Wi-Fi';
-
-  @override
-  String get backgroundTasksWifiOnlySubtitle =>
-      'Evita utilitzar dades mòbils per a tasques en segon pla';
-
-  @override
-  String get nluSettingsAutoUpdate => 'Actualitzacions automàtiques';
-
-  @override
-  String get nluSettingsAutoUpdateSubtitle =>
-      'Comprova i descarrega nous títols automàticament en segon pla';
-
-  @override
-  String get nluSettingsDeleteConfirmation =>
-      'Estàs segur que vols eliminar els fitxers de la cerca intel·ligent? Això desactivarà la funcionalitat.';
+  String get aiStatusNotConfigured => 'Clau API no configurada';
 
   @override
   String get delete => 'Eliminar';
+
+  @override
+  String get aiDeleteConfirmTitle => 'Eliminar clau API';
+
+  @override
+  String get aiDeleteConfirmMessage =>
+      'Segur que vols eliminar la clau API? Tingues en compte que OpenRouter no permet consultar la clau un cop creada i n\'hauràs de generar una de nova si no la tens guardada.';
+
+  @override
+  String get searchTimeout =>
+      'La cerca ha trigat massa temps a respondre. Torna-ho a provar.';
+
+  @override
+  String get aiSearchTimeout =>
+      'La cerca amb IA ha trigat massa temps. Prova amb una descripció menys específica o més curta.';
+
+  @override
+  String get aiSearchError =>
+      'S\'ha produït un error en la cerca IA. Torna-ho a provar.';
+
+  @override
+  String aiRateLimitWithSeconds(int seconds) {
+    return 'S\'ha superat el límit temporal de l\'API. Espera $seconds segons abans de tornar-ho a provar.';
+  }
+
+  @override
+  String get aiRateLimitGeneric =>
+      'S\'ha superat el límit temporal de l\'API. Espera una estona abans de tornar-ho a provar.';
 }

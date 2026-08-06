@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/screens/ai_settings.dart';
 import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/screens/providers.dart';
 import 'package:moviescout/services/settings/language_service.dart';
@@ -13,8 +14,6 @@ import 'package:moviescout/widgets/dialogs_and_forms/language_form.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/notification_permission_dialog.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/region_form.dart';
 import 'package:moviescout/services/settings/edit_settings_service.dart';
-import 'package:moviescout/screens/nlu_settings.dart';
-import 'package:moviescout/services/settings/background_tasks_service.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -38,8 +37,7 @@ class SettingsScreen extends StatelessWidget {
           _showEditContentTile(context),
           _notificationsTile(context),
           _notifyCompleteSeasonTile(context),
-          _nluSettingsTile(context),
-          _globalWifiOnlyTile(context),
+          _aiSettingsTile(context),
           if (defaultTargetPlatform == TargetPlatform.android)
             _verifyDeepLinksTile(context),
         ],
@@ -60,14 +58,14 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _nluSettingsTile(BuildContext context) {
+  Widget _aiSettingsTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.auto_awesome),
-      title: Text(AppLocalizations.of(context)!.searchNluSettingsTitle),
+      title: Text(AppLocalizations.of(context)!.aiSettingsTitle),
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const NluSettingsScreen()),
+          MaterialPageRoute(builder: (context) => const AiSettingsScreen()),
         );
       },
     );
@@ -207,21 +205,6 @@ class SettingsScreen extends StatelessWidget {
       title: Text(AppLocalizations.of(context)!.verifyDeepLinks),
       onTap: () async {
         await DeepLinkUtils.openDeepLinkSettings(context);
-      },
-    );
-  }
-
-  Widget _globalWifiOnlyTile(BuildContext context) {
-    final backgroundTasksService = Provider.of<BackgroundTasksService>(context);
-
-    return SwitchListTile(
-      secondary: const Icon(Icons.wifi),
-      title: Text(AppLocalizations.of(context)!.backgroundTasksWifiOnly),
-      subtitle:
-          Text(AppLocalizations.of(context)!.backgroundTasksWifiOnlySubtitle),
-      value: backgroundTasksService.wifiOnly,
-      onChanged: (bool value) {
-        backgroundTasksService.setWifiOnly(value);
       },
     );
   }

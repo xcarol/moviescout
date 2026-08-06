@@ -7,10 +7,12 @@ import 'package:moviescout/services/tmdb_content/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/utils/snack_bar.dart';
 import 'package:provider/provider.dart';
-import 'package:moviescout/screens/nlu_settings.dart';
-import 'package:moviescout/services/settings/nlu_service.dart';
+import 'package:moviescout/screens/ai_settings.dart';
+import 'package:moviescout/services/api/ai_service.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -36,7 +38,7 @@ class _SearchState extends State<Search> {
   final double _searchVerticalPadding = 16.0;
   final double _overlayHeightOffset = 65.0;
   List<String> _overlaySuggestions = [];
-  bool _isNluMode = false;
+  bool _isAiMode = false;
 
   @override
   void initState() {
@@ -116,7 +118,7 @@ class _SearchState extends State<Search> {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     if (text.length >= 3) {
-      if (!_isNluMode) {
+      if (!_isAiMode) {
         _debounce = Timer(const Duration(seconds: 1), () {
           if (mounted) {
             searchTitle(context, text);
@@ -265,14 +267,12 @@ class _SearchState extends State<Search> {
                 focusNode: _searchFocusNode,
                 style: TextStyle(color: textColor),
                 cursorColor: borderColor,
-                minLines: _isNluMode ? 2 : 1,
-                maxLines: _isNluMode ? 2 : 1,
+                minLines: _isAiMode ? 2 : 1,
+                maxLines: _isAiMode ? 2 : 1,
                 textInputAction: TextInputAction.search,
                 decoration: InputDecoration(
-                  fillColor: _isNluMode ? colorScheme.tertiaryContainer : null,
-                  filled: _isNluMode,
-                  hintText: _isNluMode
-                      ? AppLocalizations.of(context)!.searchNluHint
+                  hintText: _isAiMode
+                      ? AppLocalizations.of(context)!.searchAiHint
                       : AppLocalizations.of(context)!.search,
                   hintStyle: TextStyle(color: textColor),
                   suffixIconColor: textColor,
@@ -285,40 +285,34 @@ class _SearchState extends State<Search> {
                             await _resetTitle(clearText: true),
                         tooltip: AppLocalizations.of(context)!.search,
                       ),
-                      Consumer<NluService>(
-                        builder: (context, nluService, child) {
-                          return IconButton(
-                            icon: Icon(
-                              Icons.auto_awesome,
-                              color: _isNluMode
-                                  ? colorScheme.primary
-                                  : textColor.withValues(alpha: 0.5),
-                              size: 24,
-                            ),
-                            tooltip:
-                                AppLocalizations.of(context)!.searchNluTooltip,
-                            onPressed: () {
-                              if (!nluService.assetsDownloaded) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const NluSettingsScreen(),
-                                  ),
-                                ).then((_) {
-                                  if (nluService.assetsDownloaded) {
-                                    setState(() {
-                                      _isNluMode = true;
-                                    });
-                                  }
-                                });
-                              } else {
+                      IconButton(
+                        icon: Icon(
+                          Icons.auto_awesome,
+                          color: _isAiMode
+                              ? colorScheme.tertiary
+                              : textColor.withValues(alpha: 0.5),
+                          size: 24,
+                        ),
+                        tooltip: AppLocalizations.of(context)!.searchAiTooltip,
+                        onPressed: () {
+                          if (!AiService().hasApiKey) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AiSettingsScreen(),
+                              ),
+                            ).then((_) {
+                              if (AiService().hasApiKey) {
                                 setState(() {
-                                  _isNluMode = !_isNluMode;
+                                  _isAiMode = true;
                                 });
                               }
-                            },
-                          );
+                            });
+                          } else {
+                            setState(() {
+                              _isAiMode = !_isAiMode;
+                            });
+                          }
                         },
                       ),
                     ],
@@ -362,10 +356,45 @@ class _SearchState extends State<Search> {
 
     Locale locale = Localizations.localeOf(context);
     await _resetTitle();
-    if (_isNluMode) {
-      await _searchService.retrieveNluSearchlist(term);
-    } else {
-      await _searchService.retrieveSearchlist(anonymousAccountId, term, locale);
+    try {
+      if (_isAiMode) {
+        await _searchService.retrieveAiSearchlist(term, locale);
+      } else {
+        await _searchService.retrieveSearchlist(
+            anonymousAccountId, term, locale);
+      }
+    } on TimeoutException catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: _isAiMode ? 'AI search timeout' : 'Search timeout',
+      );
+      if (context.mounted) {
+        SnackMessage.showSnackBar(
+          _isAiMode
+              ? AppLocalizations.of(context)!.aiSearchTimeout
+              : AppLocalizations.of(context)!.searchTimeout,
+        );
+      }
+    } on AiRateLimitException catch (e) {
+      if (context.mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        final msg = e.retrySeconds != null && e.retrySeconds! > 0
+            ? l10n.aiRateLimitWithSeconds(e.retrySeconds!)
+            : l10n.aiRateLimitGeneric;
+        SnackMessage.showSnackBar(msg);
+      }
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: _isAiMode ? 'AI search error' : 'Search error',
+      );
+      if (_isAiMode && context.mounted) {
+        SnackMessage.showSnackBar(
+          AppLocalizations.of(context)!.aiSearchError,
+        );
+      }
     }
     await _titleListServiceSupport.updateListGenres();
     _searchService.listGenres.value = _titleListServiceSupport.listGenres.value;

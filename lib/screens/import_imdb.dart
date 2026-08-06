@@ -229,8 +229,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
     try {
       final rawData = await rootBundle.loadString(path);
       final normalizedData = rawData.replaceAll('\r\n', '\n');
-      List<List<dynamic>> csvData =
-          const CsvToListConverter(eol: '\n').convert(normalizedData);
+      List<List<dynamic>> csvData = const CsvDecoder().convert(normalizedData);
 
       setState(() {
         _csvHeaders =
@@ -259,7 +258,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
   Future<void> _pickFile(BuildContext context) async {
     try {
-      final result = await FilePicker.platform.pickFiles();
+      final result = await FilePicker.pickFiles();
       if (result != null && result.files.isNotEmpty) {
         final file = result.files.first;
         _filenameController.text = file.name;

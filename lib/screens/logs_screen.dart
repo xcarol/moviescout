@@ -23,7 +23,6 @@ class _LogsScreenState extends State<LogsScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _loadState();
-
   }
 
   @override

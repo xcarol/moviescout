@@ -12,7 +12,6 @@ import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 import 'package:moviescout/services/notifications/notification_service.dart';
-import 'package:moviescout/services/settings/background_tasks_service.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/settings/language_service.dart';
@@ -36,11 +35,9 @@ class WatchlistUpdateService {
       AppConstants.workerWatchlistUpdate,
       AppConstants.taskUpdateWatchlist,
       frequency: const Duration(hours: 1),
-      existingWorkPolicy: ExistingWorkPolicy.replace,
+      existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
       constraints: Constraints(
-        networkType: BackgroundTasksService().wifiOnly
-            ? NetworkType.unmetered
-            : NetworkType.connected,
+        networkType: NetworkType.unmetered,
       ),
     );
   }

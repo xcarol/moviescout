@@ -56,13 +56,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get search => 'Search for a title';
 
   @override
-  String get searchNluHint => 'Search for movies with natural language...';
+  String get searchAiHint =>
+      'Describe the movie or TV show you are looking for...';
 
   @override
-  String get searchNluTooltip => 'Smart Search';
-
-  @override
-  String get searchNluSettingsTitle => 'Smart Search (AI)';
+  String get searchAiTooltip => 'Smart Search (AI)';
 
   @override
   String get searchTitle => 'Search';
@@ -577,61 +575,70 @@ class AppLocalizationsEn extends AppLocalizations {
   String get status => 'Status';
 
   @override
-  String get nluSettingsTitle => 'Smart Search (AI)';
+  String get aiSettingsTitle => 'Artificial Intelligence';
 
   @override
-  String get nluSettingsDescription =>
-      'Smart search allows you to search for movies using natural language. To do so privately and offline, you need to download some files.';
+  String get aiSettingsSubtitle => 'Smart search and AI features';
 
   @override
-  String nluSettingsStatus(Object status) {
-    return 'Status: $status';
-  }
+  String get aiSettingsDescription =>
+      'AI features allow you to find movies and TV shows based on natural language descriptions and more smart tools. To use them, you can get a free API key at OpenRouter (no credit card required).';
 
   @override
-  String get nluSettingsStatusDownloaded => 'Downloaded';
+  String get aiGetApiKeyButton => 'Get API key at OpenRouter';
 
   @override
-  String get nluSettingsStatusNotDownloaded => 'Not downloaded';
+  String get aiApiKeyLabel => 'OpenRouter API Key';
 
   @override
-  String nluSettingsFilesCount(int count, int total) {
-    return 'Files: $count of $total';
-  }
+  String get aiApiKeyHint => 'sk-or-v1-...';
 
   @override
-  String get nluSettingsCancelDownload => 'Cancel download';
+  String get aiSaveKeyButton => 'Save key';
 
   @override
-  String get nluSettingsDownloading => 'Downloading...';
+  String get aiDeleteKeyButton => 'Delete';
 
   @override
-  String get nluSettingsDeleteFiles => 'Delete files';
+  String get aiKeySaved => 'API key saved successfully';
 
   @override
-  String get nluSettingsDownloadNow => 'Download now (120 MB)';
+  String get aiKeyCleared => 'API key deleted';
 
   @override
-  String get nluSettingsUpdateConfig => 'Updates configuration';
+  String get aiStatusConfigured => 'API key configured';
 
   @override
-  String get backgroundTasksWifiOnly => 'Wi-Fi only';
-
-  @override
-  String get backgroundTasksWifiOnlySubtitle =>
-      'Avoid using mobile data for background tasks';
-
-  @override
-  String get nluSettingsAutoUpdate => 'Automatic updates';
-
-  @override
-  String get nluSettingsAutoUpdateSubtitle =>
-      'Check and download new titles automatically in the background';
-
-  @override
-  String get nluSettingsDeleteConfirmation =>
-      'Are you sure you want to delete the smart search files? This will disable the feature.';
+  String get aiStatusNotConfigured => 'API key not configured';
 
   @override
   String get delete => 'Delete';
+
+  @override
+  String get aiDeleteConfirmTitle => 'Delete API Key';
+
+  @override
+  String get aiDeleteConfirmMessage =>
+      'Are you sure you want to delete the API key? Note that OpenRouter does not allow viewing the key once created and you will need to generate a new one if you do not have it saved.';
+
+  @override
+  String get searchTimeout =>
+      'The search took too long to respond. Please try again.';
+
+  @override
+  String get aiSearchTimeout =>
+      'The AI search timed out. Try using a less specific or shorter description.';
+
+  @override
+  String get aiSearchError =>
+      'An error occurred during AI search. Please try again.';
+
+  @override
+  String aiRateLimitWithSeconds(int seconds) {
+    return 'API rate limit exceeded. Please wait $seconds seconds before trying again.';
+  }
+
+  @override
+  String get aiRateLimitGeneric =>
+      'API rate limit exceeded. Please wait a moment before trying again.';
 }

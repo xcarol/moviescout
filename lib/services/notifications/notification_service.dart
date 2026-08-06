@@ -36,7 +36,7 @@ class NotificationService extends ChangeNotifier {
     );
 
     await _notificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         if (response.payload != null) {
           _handlePayload(response.payload!);
@@ -259,8 +259,13 @@ class NotificationService extends ChangeNotifier {
       android: androidDetails,
     );
 
-    await _notificationsPlugin.show(id, title, body, notificationDetails,
-        payload: payload);
+    await _notificationsPlugin.show(
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: notificationDetails,
+      payload: payload,
+    );
   }
 
   Future<void> showProgressNotification({
@@ -301,10 +306,15 @@ class NotificationService extends ChangeNotifier {
       android: androidDetails,
     );
 
-    await _notificationsPlugin.show(id, title, body, notificationDetails);
+    await _notificationsPlugin.show(
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: notificationDetails,
+    );
   }
 
   Future<void> cancelNotification(int id) async {
-    await _notificationsPlugin.cancel(id);
+    await _notificationsPlugin.cancel(id: id);
   }
 }
