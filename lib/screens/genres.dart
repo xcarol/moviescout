@@ -34,20 +34,29 @@ class _GenresScreenState extends State<GenresScreen> {
   @override
   Widget build(BuildContext context) {
     final customColors = Theme.of(context).extension<CustomColors>();
+    final hasFilters = _tempSelectedGenres.isNotEmpty;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.genres),
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_alt_off),
+            icon: Icon(
+              hasFilters ? Icons.filter_alt_off : Icons.filter_alt,
+              color: hasFilters
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).disabledColor,
+            ),
             tooltip: AppLocalizations.of(context)!.none,
-            onPressed: () {
-              setState(() {
-                _tempSelectedGenres.clear();
-              });
-              widget.onGenresChanged(_tempSelectedGenres, _tempExcludeGenres);
-            },
+            onPressed: hasFilters
+                ? () {
+                    setState(() {
+                      _tempSelectedGenres.clear();
+                    });
+                    widget.onGenresChanged(
+                        _tempSelectedGenres, _tempExcludeGenres);
+                  }
+                : null,
           ),
         ],
       ),
