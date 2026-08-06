@@ -434,6 +434,8 @@
   "@aiDeleteConfirmMessage": {},
   "searchTimeout": "La cerca ha trigat massa temps a respondre. Torna-ho a provar.",
   "@searchTimeout": {},
+  "aiSearchTimeout": "La cerca amb IA ha trigat massa temps. Prova amb una descripció menys específica o més curta.",
+  "@aiSearchTimeout": {},
   "aiSearchError": "S'ha produït un error en la cerca IA. Torna-ho a provar.",
   "@aiSearchError": {},
   "aiRateLimitWithSeconds": "S'ha superat el límit temporal de l'API. Espera {seconds} segons abans de tornar-ho a provar.",

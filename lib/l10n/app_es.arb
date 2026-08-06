@@ -434,6 +434,8 @@
   "@aiDeleteConfirmMessage": {},
   "searchTimeout": "La búsqueda ha tardado demasiado tiempo en responder. Inténtalo de nuevo.",
   "@searchTimeout": {},
+  "aiSearchTimeout": "La búsqueda con IA ha tardado demasiado tiempo. Prueba con una descripción menos específica o más corta.",
+  "@aiSearchTimeout": {},
   "aiSearchError": "Se ha producido un error en la búsqueda IA. Inténtalo de nuevo.",
   "@aiSearchError": {},
   "aiRateLimitWithSeconds": "Se ha superado el límite temporal de la API. Espera {seconds} segundos antes de volver a intentarlo.",

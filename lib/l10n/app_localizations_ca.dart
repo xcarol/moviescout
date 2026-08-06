@@ -624,6 +624,10 @@ class AppLocalizationsCa extends AppLocalizations {
       'La cerca ha trigat massa temps a respondre. Torna-ho a provar.';
 
   @override
+  String get aiSearchTimeout =>
+      'La cerca amb IA ha trigat massa temps. Prova amb una descripció menys específica o més curta.';
+
+  @override
   String get aiSearchError =>
       'S\'ha produït un error en la cerca IA. Torna-ho a provar.';
 

@@ -434,6 +434,8 @@
   "@aiDeleteConfirmMessage": {},
   "searchTimeout": "The search took too long to respond. Please try again.",
   "@searchTimeout": {},
+  "aiSearchTimeout": "The AI search timed out. Try using a less specific or shorter description.",
+  "@aiSearchTimeout": {},
   "aiSearchError": "An error occurred during AI search. Please try again.",
   "@aiSearchError": {},
   "aiRateLimitWithSeconds": "API rate limit exceeded. Please wait {seconds} seconds before trying again.",

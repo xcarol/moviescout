@@ -367,11 +367,13 @@ class _SearchState extends State<Search> {
       ErrorService.log(
         e,
         stackTrace: stackTrace,
-        userMessage: 'Search timeout',
+        userMessage: _isAiMode ? 'AI search timeout' : 'Search timeout',
       );
       if (context.mounted) {
         SnackMessage.showSnackBar(
-          AppLocalizations.of(context)!.searchTimeout,
+          _isAiMode
+              ? AppLocalizations.of(context)!.aiSearchTimeout
+              : AppLocalizations.of(context)!.searchTimeout,
         );
       }
     } on AiRateLimitException catch (e) {

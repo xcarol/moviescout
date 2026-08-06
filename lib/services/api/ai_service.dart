@@ -108,7 +108,7 @@ class AiService {
     try {
       final response = await http
           .post(targetUrl, headers: headers, body: body)
-          .timeout(const Duration(seconds: 30));
+          .timeout(const Duration(seconds: 60));
 
       if (response.statusCode == 200) {
         return _parseSuggestions(response.body);

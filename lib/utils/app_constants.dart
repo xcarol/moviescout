@@ -28,10 +28,11 @@ class AppConstants {
   static const String aiApiKey = 'ai_api_key';
   static const String aiModel = 'openrouter/free';
   static const double aiTemperature = 0.2;
-  static const int aiMaxSuggestions = 8;
+  static const int aiMaxSuggestions = 10;
   static const String aiSearchSystemPrompt =
       'You are an expert movie and TV show search assistant for the MovieScout app.\n'
-      'Find up to $aiMaxSuggestions movies or TV shows that best match the user\'s description.\n'
+      'Suggest 1 to $aiMaxSuggestions movies or TV shows that best match the user\'s description.\n'
+      'Prioritize accuracy and relevance over quantity; only include titles that truly match.\n'
       'Return EXCLUSIVELY a JSON list of objects (no text before or after, only raw JSON). Each object must contain exactly:\n'
       '- "title": the official original or English title as it appears on TMDb.\n'
       '- "year": release year (4-digit integer) or null.\n'

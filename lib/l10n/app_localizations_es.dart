@@ -625,6 +625,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'La búsqueda ha tardado demasiado tiempo en responder. Inténtalo de nuevo.';
 
   @override
+  String get aiSearchTimeout =>
+      'La búsqueda con IA ha tardado demasiado tiempo. Prueba con una descripción menos específica o más corta.';
+
+  @override
   String get aiSearchError =>
       'Se ha producido un error en la búsqueda IA. Inténtalo de nuevo.';
 

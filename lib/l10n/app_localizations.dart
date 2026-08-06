@@ -1270,6 +1270,12 @@ abstract class AppLocalizations {
   /// **'The search took too long to respond. Please try again.'**
   String get searchTimeout;
 
+  /// No description provided for @aiSearchTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI search timed out. Try using a less specific or shorter description.'**
+  String get aiSearchTimeout;
+
   /// No description provided for @aiSearchError.
   ///
   /// In en, this message translates to:
