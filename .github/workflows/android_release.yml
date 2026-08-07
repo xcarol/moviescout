@@ -55,31 +55,18 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # 5. Descodificar el Keystore des del secret Base64
-      - name: Decode Android Keystore
-        run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
-
-      # 6. Generar el fitxer key.properties temporal per al procés de compilació
-      - name: Create key.properties
-        run: |
-          echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" > android/key.properties
-          echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/key.properties
-          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
-          echo "storeFile=upload-keystore.jks" >> android/key.properties
-
-      # 7. Compilar l'Android App Bundle (.aab) en Release
+      # 5. Compilar l'Android App Bundle (.aab) en Release
       - name: Build Android AppBundle
         run: flutter build appbundle --release
 
-      # 8. Pujar el .aab com a artefacte del Workflow (per poder-lo descarregar manualment si cal)
+      # 6. Pujar el .aab com a artefacte del Workflow (per poder-lo descarregar manualment si cal)
       - name: Upload AAB Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release-aab
           path: build/app/outputs/bundle/release/app-release.aab
           
-      # 9. Publicar automàticament a Google Play Console (Internal Testing)
+      # 7. Publicar automàticament a Google Play Console (Internal Testing)
       - name: Deploy to Google Play Internal Testing
         uses: KevinRohn/github-action-upload-play-store@v1.0.2
         with:
