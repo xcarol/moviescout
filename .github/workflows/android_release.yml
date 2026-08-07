@@ -32,6 +32,11 @@ jobs:
           channel: 'stable'
           cache: true
 
+      # 3.1. Crear el fitxer .env a partir del secret de GitHub
+      - name: Create .env file
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
+          
       # 4. Instal·lar dependències del projecte
       - name: Install dependencies
         run: flutter pub get
