@@ -62,7 +62,7 @@ jobs:
 
       # 9. Publicar automàticament a Google Play Console (Internal Testing)
       - name: Deploy to Google Play Internal Testing
-        uses: radyai/upload-google-play@v1.0.0
+        uses: r2studio/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
           packageName: com.xicra.moviescout
