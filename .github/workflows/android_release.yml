@@ -3,7 +3,7 @@ name: Android Release Build & Publish
 on:
   push:
     tags:
-      - 'v*' # S'executa en fer push de tags com v1.0.0, v1.0.1, etc.
+      - '*'
 
 jobs:
   deploy-android:
