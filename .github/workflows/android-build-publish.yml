@@ -14,36 +14,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the source code
+      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Set up Java (required for Gradle/Android) and Flutter environment
+      # 2. Setup Java JDK
       - name: Set up Java JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
+      # 3. Setup Flutter SDK
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
 
-      # 3. Create configuration files from GitHub secrets
+      # 4. Recreate .env file
       - name: Create .env file
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
 
+      # 5. Recreate google-services.json for Firebase
       - name: Create google-services.json
         run: |
           echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > android/app/google-services.json
 
+      # 6. Decode Keystore file
       - name: Decode Android Keystore
         run: |
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
 
+      # 7. Recreate key.properties file
       - name: Create key.properties
         run: |
           echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" > android/key.properties
@@ -51,22 +55,22 @@ jobs:
           echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
           echo "storeFile=upload-keystore.jks" >> android/key.properties
 
-      # 4. Install project dependencies
+      # 8. Fetch Flutter dependencies
       - name: Install dependencies
         run: flutter pub get
 
-      # 5. Build Android App Bundle (.aab) in release mode
+      # 9. Build Release AppBundle
       - name: Build Android AppBundle
         run: flutter build appbundle --release
 
-      # 6. Upload the .aab as a workflow artifact (to allow manual download if needed)
+      # 10. Upload AAB as workflow artifact
       - name: Upload AAB Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release-aab
           path: build/app/outputs/bundle/release/app-release.aab
-          
-      # 7. Automatically publish to Google Play Console (Internal Testing)
+
+      # 11. Deploy to Google Play Console (Internal Track)
       - name: Deploy to Google Play Internal Testing
         uses: KevinRohn/github-action-upload-play-store@v1.0.2
         with:

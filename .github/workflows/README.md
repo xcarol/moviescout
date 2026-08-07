@@ -231,19 +231,15 @@ name: Android Release Build & Publish
 
 on:
   workflow_run:
-    workflows: ["Create Release"] # Optional trigger on completion of another workflow
+    workflows: ["Create Release"]
     types:
       - completed
-  workflow_dispatch: # Allows manual trigger from GitHub Actions UI
-  push:
-    tags:
-      - 'v*' # Triggers on release tags like v1.0.0
+  workflow_dispatch:
 
 jobs:
   deploy-android:
     name: Build & Deploy Signed Android AppBundle
-    # Run if triggered manually, on tag push, or if upstream workflow succeeded
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
