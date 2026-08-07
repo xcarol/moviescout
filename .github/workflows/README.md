@@ -7,18 +7,19 @@ This pipeline builds a signed **Android App Bundle (`.aab`)** and automatically 
 ---
 
 ## Table of Contents
+
 1. [Prerequisites](#1-prerequisites)
 2. [Step 1: Android Signing Keystore (.jks) Setup](#step-1-android-signing-keystore-jks-setup)
 3. [Step 2: Firebase Configuration (google-services.json)](#step-2-firebase-configuration-google-servicesjson)
 4. [Step 3: Local Environment Variables (.env)](#step-3-local-environment-variables-env)
 5. [Step 4: Google Cloud Platform & Play Console Setup](#step-4-google-cloud-platform--play-console-setup)
-   - [A. Enable Google Play Android Developer API](#a-enable-google-play-android-developer-api)
-   - [B. Create Google Cloud Service Account & Download JSON Key](#b-create-google-cloud-service-account--download-json-key)
-   - [C. Invite Service Account to Google Play Console](#c-invite-service-account-to-google-play-console)
+   * [A. Enable Google Play Android Developer API](#a-enable-google-play-android-developer-api)
+   * [B. Create Google Cloud Service Account & Download JSON Key](#b-create-google-cloud-service-account--download-json-key)
+   * [C. Invite Service Account to Google Play Console](#c-invite-service-account-to-google-play-console)
 6. [Step 5: Flutter & Android Project Configuration](#step-5-flutter--android-project-configuration)
-   - [A. Update `android/app/build.gradle`](#a-update-androidappbuildgradle)
-   - [B. Update `.gitignore`](#b-update-gitignore)
-   - [C. Purge Unwanted Foreground Service Permissions (`AndroidManifest.xml`)](#c-purge-unwanted-foreground-service-permissions-androidmanifestxml)
+   * [A. Update `android/app/build.gradle`](#a-update-androidappbuildgradle)
+   * [B. Update `.gitignore`](#b-update-gitignore)
+   * [C. Purge Unwanted Foreground Service Permissions (`AndroidManifest.xml`)](#c-purge-unwanted-foreground-service-permissions-androidmanifestxml)
 7. [Step 6: Configure GitHub Repository Secrets](#step-6-configure-github-repository-secrets)
 8. [Step 7: Workflow File Setup (`android_release.yml`)](#step-7-workflow-file-setup-android_releaseyml)
 9. [Step 8: Executing the Pipeline](#step-8-executing-the-pipeline)
@@ -29,6 +30,7 @@ This pipeline builds a signed **Android App Bundle (`.aab`)** and automatically 
 ## 1. Prerequisites
 
 Before starting, ensure you have:
+
 * A Flutter project with Android support.
 * An active **Google Play Developer Account**.
 * An active **Google Cloud Platform (GCP)** project associated with or accessible by your developer account.
@@ -48,11 +50,13 @@ keytool -genkey -v -keystore upload-keystore.jks \
 ```
 
 Note down:
+
 1. **Keystore Password** (`storePassword`)
 2. **Key Alias** (`keyAlias`, e.g., `upload`)
 3. **Key Password** (`keyPassword`)
 
-### Convert Keystore to Base64:
+### Convert Keystore to Base64
+
 To store the binary `.jks` file inside GitHub Secrets:
 
 ```bash
@@ -77,9 +81,10 @@ base64 -w 0 android/app/google-services.json > gs_b64.txt
 
 ## Step 3: Local Environment Variables (.env)
 
-If your project uses a `.env` file for storing API keys (e.g., TMDB API keys, API endpoints), copy the full text contents of your local `.env` file. 
+If your project uses a `.env` file for storing API keys (e.g., TMDB API keys, API endpoints), copy the full text contents of your local `.env` file.
 
 Example `.env` content:
+
 ```env
 TMDB_API_KEY=your_tmdb_api_key_here
 BASE_URL=https://api.themoviedb.org/3
@@ -94,12 +99,14 @@ Because `.env` is listed in `.gitignore`, we will recreate it dynamically inside
 This step authorizes GitHub Actions to publish builds directly to Google Play Console.
 
 ### A. Enable Google Play Android Developer API
+
 1. Navigate to the [Google Cloud Console API Library](https://console.cloud.google.com/apis/library/androidpublisher.googleapis.com).
 2. Select your Google Cloud project.
 3. Click **Enable** to turn on the **Google Play Android Developer API**.
    * *Critical:* If this API is not enabled, deployment attempts will fail with HTTP 403 (`SERVICE_DISABLED`).
 
 ### B. Create Google Cloud Service Account & Download JSON Key
+
 1. Go to **Google Cloud Console > IAM & Admin > Service Accounts**.
 2. Click **+ Create Service Account**.
 3. Set Service Account Details:
@@ -116,6 +123,7 @@ base64 -w 0 your-service-account-key.json > play_sa_b64.txt
 ```
 
 ### C. Invite Service Account to Google Play Console
+
 1. Copy the Service Account email address (e.g., `moviescout-play-deployer@your-project.iam.gserviceaccount.com`).
 2. Go to the [Google Play Console](https://play.google.com/console).
 3. From the left root menu, navigate to **Users and permissions** > **Invite new users**.
@@ -130,6 +138,7 @@ base64 -w 0 your-service-account-key.json > play_sa_b64.txt
 ## Step 5: Flutter & Android Project Configuration
 
 ### A. Update `android/app/build.gradle`
+
 Configure Gradle to read signing properties dynamically from `key.properties` if present:
 
 ```groovy
@@ -162,6 +171,7 @@ android {
 ```
 
 ### B. Update `.gitignore`
+
 Ensure all sensitive files and generated secrets remain excluded from Git:
 
 ```gitignore
@@ -179,6 +189,7 @@ Ensure all sensitive files and generated secrets remain excluded from Git:
 ```
 
 ### C. Purge Unwanted Foreground Service Permissions (`AndroidManifest.xml`)
+
 Third-party Flutter plugins (e.g., notification or background fetch libraries) often inject `FOREGROUND_SERVICE` and Android 14 sub-permissions into the merged manifest. If your app does not strictly require an ongoing foreground service, Google Play will block API deployments unless you fill out policy declarations.
 
 To automatically strip these injected permissions during build time, edit `android/app/src/main/AndroidManifest.xml`:
@@ -317,11 +328,13 @@ jobs:
 You can trigger the pipeline in two ways:
 
 ### Option A: Manual Trigger (workflow_dispatch)
+
 1. Go to your GitHub Repository > **Actions**.
 2. Select **Android Release Build & Publish**.
 3. Click **Run workflow** > Select branch (`master`) > Click **Run workflow**.
 
 ### Option B: Tag Push
+
 ```bash
 git tag v1.0.0
 git push origin v1.0.0
@@ -332,27 +345,33 @@ git push origin v1.0.0
 ## Troubleshooting & Common Pitfalls
 
 ### 1. `Google Play Android Developer API has not been used in project... or it is disabled` (HTTP 403)
+
 * **Cause**: The Android Publisher API is turned off in Google Cloud.
 * **Fix**: Open the URL provided in the GitHub Actions failure log (or go to [Google Cloud Console API Library](https://console.cloud.google.com/apis/library/androidpublisher.googleapis.com)) and click **Enable**. Wait 3–5 minutes before retrying.
 
 ### 2. `You must let us know whether your app uses any Foreground Service permissions` (HTTP 403)
+
 * **Cause**: A third-party package injected `FOREGROUND_SERVICE` or Android 14 sub-permissions (`FOREGROUND_SERVICE_DATA_SYNC`, etc.) into your merged manifest, triggering Google Play policy requirements. Or, an old failed release draft remains stuck in Play Console.
 * **Fix**:
   1. Add `tools:node="remove"` for all `FOREGROUND_SERVICE*` permissions in `android/app/src/main/AndroidManifest.xml` (see Step 5.C).
   2. Go to **Google Play Console > Testing > Internal testing** and **Discard draft** if an uncommitted release is stuck.
 
 ### 3. `No file or variants found for asset: .env`
+
 * **Cause**: Flutter build failed because `.env` is listed under `assets:` in `pubspec.yaml` but missing from the repository.
 * **Fix**: Ensure the `Create .env file` step is executed before `flutter pub get` and that the `ENV_FILE` secret is set.
 
 ### 4. `File google-services.json is missing`
+
 * **Cause**: Firebase Gradle plugin cannot find `android/app/google-services.json`.
 * **Fix**: Ensure `GOOGLE_SERVICES_JSON` secret is configured with Base64 output of `google-services.json` and decoded to `android/app/google-services.json`.
 
 ### 5. Job Skipped (`This job was skipped`) when running manually
+
 * **Cause**: The workflow `if:` condition requires an upstream `workflow_run` event.
 * **Fix**: Ensure the `if:` statement includes `github.event_name == 'workflow_dispatch'`.
 
 ### 6. Base64 Decoding Errors
+
 * **Cause**: Trailing `%` prompt character copied from Zsh terminal output.
 * **Fix**: Output base64 commands to a text file (`> output.txt`) and copy text directly from the file.
