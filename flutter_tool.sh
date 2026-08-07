@@ -12,7 +12,6 @@ show_help() {
   echo "  -a, --build-assets       Generar els asssets (icones i splash) de l'app"
   echo "  -b, --build-android      Construir l'app Android (.aab)"
   echo "  -l, --gen-l10n           Generar fitxers de localització"
-  echo "  -s, --build-isar         Genera els fitxers d'esquema per Isar"
   echo "  -r, --build-release      Construir APK release"
   echo "  -w, --wipe-cache         Netejar la caché i les dades de l'usuari"
   echo "  -h, --help               Mostrar aquesta ajuda"
@@ -24,7 +23,6 @@ run_gen_l10n=false
 run_build_assets=false
 run_build_android=false
 run_build_release=false
-run_build_isar=false
 run_wipe_cache=false
 run_install_apk=false
 
@@ -52,9 +50,6 @@ for arg in "$@"; do
       ;;
     -l|--gen-l10n)
       run_gen_l10n=true
-      ;;
-    -s|--build-isar)
-      run_build_isar=true
       ;;
     -r|--build-release)
       run_build_release=true
@@ -157,11 +152,6 @@ if $run_build_release; then
   echo "▶️ flutter build apk --release"
   flutter clean
   flutter build apk --release
-fi
-
-if $run_build_isar; then
-  echo "▶️ dart run isar_generator"
-  dart run build_runner build
 fi
 
 if $run_wipe_cache; then
