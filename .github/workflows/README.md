@@ -21,7 +21,7 @@ This pipeline builds a signed **Android App Bundle (`.aab`)** and automatically 
    * [B. Update `.gitignore`](#b-update-gitignore)
    * [C. Purge Unwanted Foreground Service Permissions (`AndroidManifest.xml`)](#c-purge-unwanted-foreground-service-permissions-androidmanifestxml)
 7. [Step 6: Configure GitHub Repository Secrets](#step-6-configure-github-repository-secrets)
-8. [Step 7: Workflow File Setup (`android_release.yml`)](#step-7-workflow-file-setup-android_releaseyml)
+8. [Step 7: Workflow File Setup (`android-build-publish.yml`)](#step-7-workflow-file-setup-android-build-publishyml)
 9. [Step 8: Executing the Pipeline](#step-8-executing-the-pipeline)
 10. [Troubleshooting & Common Pitfalls](#troubleshooting--common-pitfalls)
 
@@ -233,9 +233,9 @@ Create the following **7 Secrets**:
 
 ---
 
-## Step 7: Workflow File Setup (`android_release.yml`)
+## Step 7: Workflow File Setup (`android-build-publish.yml`)
 
-Create `.github/workflows/android_release.yml` with the following content:
+Create `.github/workflows/android-build-publish.yml` with the following content:
 
 ```yaml
 name: Android Release Build & Publish
@@ -276,6 +276,14 @@ jobs:
       - name: Create .env file
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          if [ -z "$VERSION" ]; then
+            echo "Error: Could not extract version from pubspec.yaml"
+            exit 1
+          fi
+          sed -i.bak '/^VERSION=/d' .env
+          [ -n "$(tail -c 1 .env)" ] && echo "" >> .env
+          echo "VERSION=$VERSION" >> .env
 
       # 5. Recreate google-services.json for Firebase
       - name: Create google-services.json

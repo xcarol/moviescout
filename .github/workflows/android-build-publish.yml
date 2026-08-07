@@ -36,6 +36,14 @@ jobs:
       - name: Create .env file
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          if [ -z "$VERSION" ]; then
+            echo "Error: Could not extract version from pubspec.yaml"
+            exit 1
+          fi
+          sed -i.bak '/^VERSION=/d' .env
+          [ -n "$(tail -c 1 .env)" ] && echo "" >> .env
+          echo "VERSION=$VERSION" >> .env
 
       # 5. Recreate google-services.json for Firebase
       - name: Create google-services.json
