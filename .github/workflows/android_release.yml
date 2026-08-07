@@ -59,13 +59,13 @@ jobs:
         with:
           name: app-release-aab
           path: build/app/outputs/bundle/release/app-release.aab
-
+          
       # 9. Publicar automàticament a Google Play Console (Internal Testing)
       - name: Deploy to Google Play Internal Testing
-        uses: r2studio/upload-google-play@v1
+        uses: KevinRohn/github-action-upload-play-store@v1.0.2
         with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
-          packageName: com.xicra.moviescout
-          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          service_account_json: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
+          package_name: com.xicra.moviescout
+          aab_file_path: build/app/outputs/bundle/release/app-release.aab
           track: internal
-          status: completed
+          release_status: completed
