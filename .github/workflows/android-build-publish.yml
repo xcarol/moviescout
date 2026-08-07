@@ -14,11 +14,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Obtenir el codi font
+      # 1. Checkout the source code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Configurar l'entorn de Java (requerit per a Gradle/Android) i Flutter
+      # 2. Set up Java (required for Gradle/Android) and Flutter environment
       - name: Set up Java JDK
         uses: actions/setup-java@v4
         with:
@@ -31,7 +31,7 @@ jobs:
           channel: 'stable'
           cache: true
 
-      # 3. Crear ela fitxers de configuració a partir dels secrets de GitHub
+      # 3. Create configuration files from GitHub secrets
       - name: Create .env file
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
@@ -51,22 +51,22 @@ jobs:
           echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
           echo "storeFile=upload-keystore.jks" >> android/key.properties
 
-      # 4. Instal·lar dependències del projecte
+      # 4. Install project dependencies
       - name: Install dependencies
         run: flutter pub get
 
-      # 5. Compilar l'Android App Bundle (.aab) en Release
+      # 5. Build Android App Bundle (.aab) in release mode
       - name: Build Android AppBundle
         run: flutter build appbundle --release
 
-      # 6. Pujar el .aab com a artefacte del Workflow (per poder-lo descarregar manualment si cal)
+      # 6. Upload the .aab as a workflow artifact (to allow manual download if needed)
       - name: Upload AAB Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release-aab
           path: build/app/outputs/bundle/release/app-release.aab
           
-      # 7. Publicar automàticament a Google Play Console (Internal Testing)
+      # 7. Automatically publish to Google Play Console (Internal Testing)
       - name: Deploy to Google Play Internal Testing
         uses: KevinRohn/github-action-upload-play-store@v1.0.2
         with:
