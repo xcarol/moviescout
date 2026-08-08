@@ -1,0 +1,1448 @@
+{
+    "adult": false,
+    "backdrop_path": "/7wBgwDW0iLM3EKWFyPQpDhUvyvN.jpg",
+    "created_by": [
+        {
+            "id": 2573688,
+            "credit_id": "6a7013e985e0b28e3c3c6b31",
+            "name": "Eric Goode",
+            "original_name": "Eric Goode",
+            "gender": 2,
+            "profile_path": "/zBKh2kQeAAgbVzLkHUhSLblvbeh.jpg"
+        }
+    ],
+    "episode_run_time": [],
+    "first_air_date": "2026-08-06",
+    "genres": [
+        {
+            "id": 99,
+            "name": "Documentary"
+        }
+    ],
+    "homepage": "",
+    "id": 311731,
+    "in_production": true,
+    "languages": [
+        "en"
+    ],
+    "last_air_date": "2026-08-06",
+    "last_episode_to_air": {
+        "id": 6864001,
+        "name": "Episodi 1",
+        "overview": "",
+        "vote_average": 0,
+        "vote_count": 0,
+        "air_date": "2026-08-06",
+        "episode_number": 1,
+        "episode_type": "standard",
+        "production_code": "",
+        "runtime": 55,
+        "season_number": 1,
+        "show_id": 311731,
+        "still_path": "/rQ2hGomYF56ivoahfW1hurjj5kK.jpg"
+    },
+    "name": "Monsters of God",
+    "next_episode_to_air": {
+        "id": 7539784,
+        "name": "Episodi 2",
+        "overview": "",
+        "vote_average": 0,
+        "vote_count": 0,
+        "air_date": "2026-08-13",
+        "episode_number": 2,
+        "episode_type": "standard",
+        "production_code": "",
+        "runtime": null,
+        "season_number": 1,
+        "show_id": 311731,
+        "still_path": null
+    },
+    "networks": [
+        {
+            "id": 49,
+            "logo_path": "/tuomPhY2UtuPTqqFnKMVHvSb724.png",
+            "name": "HBO",
+            "origin_country": "US"
+        }
+    ],
+    "number_of_episodes": 5,
+    "number_of_seasons": 1,
+    "origin_country": [
+        "US"
+    ],
+    "original_language": "en",
+    "original_name": "Monsters of God",
+    "overview": "",
+    "popularity": 8.3775,
+    "poster_path": "/zQSXfv1GiLJW2kszQUNMyrZGoqF.jpg",
+    "production_companies": [
+        {
+            "id": 14914,
+            "logo_path": "/1RZBWz53SpHUTLpRcM8BGv2plIP.png",
+            "name": "HBO Documentary Films",
+            "origin_country": "US"
+        },
+        {
+            "id": 41077,
+            "logo_path": "/1ZXsGaFPgrgS6ZZGS37AqD5uU12.png",
+            "name": "A24",
+            "origin_country": "US"
+        },
+        {
+            "id": 130910,
+            "logo_path": null,
+            "name": "Goode Films",
+            "origin_country": "US"
+        }
+    ],
+    "production_countries": [
+        {
+            "iso_3166_1": "US",
+            "name": "United States of America"
+        }
+    ],
+    "seasons": [
+        {
+            "air_date": "2026-08-06",
+            "episode_count": 5,
+            "id": 495952,
+            "name": "Temporada 1",
+            "overview": "",
+            "poster_path": "/otu55FVt6l2X6271fp34EnXT4ld.jpg",
+            "season_number": 1,
+            "vote_average": 0
+        }
+    ],
+    "softcore": false,
+    "spoken_languages": [
+        {
+            "english_name": "English",
+            "iso_639_1": "en",
+            "name": "English"
+        }
+    ],
+    "status": "Returning Series",
+    "tagline": "",
+    "type": "Miniseries",
+    "vote_average": 0,
+    "vote_count": 0,
+    "translations": {
+        "translations": [
+            {
+                "iso_3166_1": "US",
+                "iso_639_1": "en",
+                "name": "English",
+                "english_name": "English",
+                "data": {
+                    "name": "",
+                    "overview": "Follows Eric Goode’s first love, reptiles, into the dark underworld of exotic animal smuggling. He begins with the industry’s legendary founders, Hank Molt and Tommy Crutchfield, who sold some of the world’s rarest reptiles to America’s biggest zoos. After an epic smuggling trip goes wrong, Hank lands in prison, clearing the way for Tommy to monopolize the industry. But when Hank gets out, his bitterness over Tommy’s success prompts a gruesome revenge that will change the reptile world forever.",
+                    "homepage": "",
+                    "tagline": "Obsession is a dangerous trade."
+                }
+            },
+            {
+                "iso_3166_1": "ES",
+                "iso_639_1": "es",
+                "name": "Español",
+                "english_name": "Spanish",
+                "data": {
+                    "name": "Bestias divinas",
+                    "overview": "El cineasta Eric Goode sigue a su primer amor (los reptiles) hasta el oscuro y alocado submundo del contrabando de animales exóticos. En esta red global, todo el mundo persigue el premio definitivo, ya sea poseer las especies más raras, hacerse con las mayores fortunas o acabar con los criminales más escurridizos.",
+                    "homepage": "",
+                    "tagline": ""
+                }
+            },
+            {
+                "iso_3166_1": "BE",
+                "iso_639_1": "nl",
+                "name": "Nederlands",
+                "english_name": "Dutch",
+                "data": {
+                    "name": "",
+                    "overview": "Het verhaal volgt Eric Goode – gedreven door zijn eerste liefde, reptielen – in de duistere onderwereld van de handel in exotische dieren. Het begint bij de legendarische pioniers van de sector, Hank Molt en Tommy Crutchfield, die enkele van 's werelds zeldzaamste reptielen aan de grootste Amerikaanse dierentuinen verkochten. Nadat een groots opgezette smokkeloperatie mislukt, belandt Hank in de gevangenis, waardoor Tommy vrij spel krijgt om de markt te monopoliseren. Maar wanneer Hank weer vrijkomt, leidt zijn wrok over Tommy's succes tot een gruwelijke wraakactie die de reptielenwereld voorgoed zal veranderen.",
+                    "homepage": "",
+                    "tagline": ""
+                }
+            },
+            {
+                "iso_3166_1": "NL",
+                "iso_639_1": "nl",
+                "name": "Nederlands",
+                "english_name": "Dutch",
+                "data": {
+                    "name": "",
+                    "overview": "Het verhaal volgt Eric Goode – gedreven door zijn eerste liefde, reptielen – in de duistere onderwereld van de handel in exotische dieren. Het begint bij de legendarische pioniers van de sector, Hank Molt en Tommy Crutchfield, die enkele van 's werelds zeldzaamste reptielen aan de grootste Amerikaanse dierentuinen verkochten. Nadat een groots opgezette smokkeloperatie mislukt, belandt Hank in de gevangenis, waardoor Tommy vrij spel krijgt om de markt te monopoliseren. Maar wanneer Hank weer vrijkomt, leidt zijn wrok over Tommy's succes tot een gruwelijke wraakactie die de reptielenwereld voorgoed zal veranderen.",
+                    "homepage": "",
+                    "tagline": ""
+                }
+            },
+            {
+                "iso_3166_1": "BR",
+                "iso_639_1": "pt",
+                "name": "Português",
+                "english_name": "Portuguese",
+                "data": {
+                    "name": "Monstros de Deus",
+                    "overview": "O documentário explora o mundo do contrabando de répteis exóticos ao acompanhar dois chefões rivais cuja lucrativa operação internacional abasteceu zoológicos dos Estados Unidos com espécies raras até que uma traição desencadeou uma devastadora busca por vingança",
+                    "homepage": "",
+                    "tagline": ""
+                }
+            },
+            {
+                "iso_3166_1": "FI",
+                "iso_639_1": "fi",
+                "name": "suomi",
+                "english_name": "Finnish",
+                "data": {
+                    "name": "",
+                    "overview": "Viisiosainen syväsukellus matelijoiden salakuljetuksen maailmaan.",
+                    "homepage": "",
+                    "tagline": ""
+                }
+            },
+            {
+                "iso_3166_1": "FR",
+                "iso_639_1": "fr",
+                "name": "Français",
+                "english_name": "French",
+                "data": {
+                    "name": "",
+                    "overview": "",
+                    "homepage": "",
+                    "tagline": ""
+                }
+            },
+            {
+                "iso_3166_1": "DE",
+                "iso_639_1": "de",
+                "name": "Deutsch",
+                "english_name": "German",
+                "data": {
+                    "name": "",
+                    "overview": "",
+                    "homepage": "",
+                    "tagline": ""
+                }
+            },
+            {
+                "iso_3166_1": "ES",
+                "iso_639_1": "ca",
+                "name": "Català",
+                "english_name": "Catalan",
+                "data": {
+                    "name": "Monstres de Déu",
+                    "overview": "Segueix el primer amor d'Eric Goode, els rèptils, al fosc submón del contraban d'animals exòtics. Comença amb els llegendaris fundadors de la indústria, Hank Molt i Tommy Crutchfield, que van vendre alguns dels rèptils més rars del món als zoològics més grans d'Amèrica. Després d'un viatge de contraban èpic que va malament, Hank aterra a la presó, obrint el camí perquè Tommy monopolitzi la indústria. Però quan en Hank surt, la seva amargura per l'èxit de Tommy provoca una venjança espantosa que canviarà el món dels rèptils per sempre.",
+                    "homepage": "",
+                    "tagline": ""
+                }
+            }
+        ]
+    },
+    "watch/providers": {
+        "results": {
+            "AD": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=AD",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 25
+                    }
+                ]
+            },
+            "AG": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=AG",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 12
+                    }
+                ]
+            },
+            "AR": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=AR",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 36
+                    }
+                ]
+            },
+            "AU": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=AU",
+                "flatrate": [
+                    {
+                        "logo_path": "/embS4GPK7c8pjbuY2O2irV5rYch.jpg",
+                        "provider_id": 1825,
+                        "provider_name": "HBO Max Amazon Channel",
+                        "display_priority": 103
+                    }
+                ]
+            },
+            "BA": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=BA",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 28
+                    }
+                ]
+            },
+            "BB": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=BB",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 24
+                    }
+                ]
+            },
+            "BE": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=BE",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 39
+                    },
+                    {
+                        "logo_path": "/embS4GPK7c8pjbuY2O2irV5rYch.jpg",
+                        "provider_id": 1825,
+                        "provider_name": "HBO Max Amazon Channel",
+                        "display_priority": 62
+                    }
+                ]
+            },
+            "BG": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=BG",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 22
+                    }
+                ]
+            },
+            "BO": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=BO",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 31
+                    }
+                ]
+            },
+            "BR": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=BR",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 8
+                    },
+                    {
+                        "logo_path": "/embS4GPK7c8pjbuY2O2irV5rYch.jpg",
+                        "provider_id": 1825,
+                        "provider_name": "HBO Max Amazon Channel",
+                        "display_priority": 49
+                    }
+                ]
+            },
+            "BS": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=BS",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 25
+                    }
+                ]
+            },
+            "BZ": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=BZ",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 10
+                    }
+                ]
+            },
+            "CA": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=CA",
+                "flatrate": [
+                    {
+                        "logo_path": "/qcKfSyX4xkXESjHrkO8cZLRJkn6.jpg",
+                        "provider_id": 2604,
+                        "provider_name": "Crave Amazon Channel",
+                        "display_priority": 140
+                    }
+                ]
+            },
+            "CL": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=CL",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 8
+                    }
+                ]
+            },
+            "CO": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=CO",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 7
+                    }
+                ]
+            },
+            "CR": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=CR",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 5
+                    }
+                ]
+            },
+            "CZ": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=CZ",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 31
+                    }
+                ]
+            },
+            "DK": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=DK",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 40
+                    }
+                ]
+            },
+            "DO": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=DO",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 31
+                    }
+                ]
+            },
+            "EC": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=EC",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 7
+                    }
+                ]
+            },
+            "ES": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=ES",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 17
+                    },
+                    {
+                        "logo_path": "/embS4GPK7c8pjbuY2O2irV5rYch.jpg",
+                        "provider_id": 1825,
+                        "provider_name": "HBO Max Amazon Channel",
+                        "display_priority": 87
+                    }
+                ]
+            },
+            "FI": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=FI",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 42
+                    }
+                ]
+            },
+            "FR": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=FR",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 75
+                    },
+                    {
+                        "logo_path": "/embS4GPK7c8pjbuY2O2irV5rYch.jpg",
+                        "provider_id": 1825,
+                        "provider_name": "HBO Max Amazon Channel",
+                        "display_priority": 106
+                    }
+                ]
+            },
+            "GB": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=GB",
+                "flatrate": [
+                    {
+                        "logo_path": "/embS4GPK7c8pjbuY2O2irV5rYch.jpg",
+                        "provider_id": 1825,
+                        "provider_name": "HBO Max Amazon Channel",
+                        "display_priority": 12
+                    }
+                ]
+            },
+            "GT": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=GT",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 5
+                    }
+                ]
+            },
+            "GY": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=GY",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 3
+                    }
+                ]
+            },
+            "HK": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=HK",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 37
+                    }
+                ]
+            },
+            "HN": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=HN",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 31
+                    }
+                ]
+            },
+            "HR": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=HR",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 34
+                    }
+                ]
+            },
+            "HU": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=HU",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 28
+                    }
+                ]
+            },
+            "ID": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=ID",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 38
+                    }
+                ]
+            },
+            "IT": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=IT",
+                "flatrate": [
+                    {
+                        "logo_path": "/embS4GPK7c8pjbuY2O2irV5rYch.jpg",
+                        "provider_id": 1825,
+                        "provider_name": "HBO Max Amazon Channel",
+                        "display_priority": 85
+                    }
+                ]
+            },
+            "JM": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=JM",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 24
+                    }
+                ]
+            },
+            "LC": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=LC",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 12
+                    }
+                ]
+            },
+            "MC": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=MC",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 26
+                    }
+                ]
+            },
+            "MD": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=MD",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 26
+                    }
+                ]
+            },
+            "ME": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=ME",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 7
+                    }
+                ]
+            },
+            "MK": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=MK",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 27
+                    }
+                ]
+            },
+            "MX": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=MX",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 7
+                    },
+                    {
+                        "logo_path": "/embS4GPK7c8pjbuY2O2irV5rYch.jpg",
+                        "provider_id": 1825,
+                        "provider_name": "HBO Max Amazon Channel",
+                        "display_priority": 16
+                    }
+                ]
+            },
+            "MY": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=MY",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 31
+                    }
+                ]
+            },
+            "NI": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=NI",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 14
+                    }
+                ]
+            },
+            "NL": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=NL",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 49
+                    },
+                    {
+                        "logo_path": "/embS4GPK7c8pjbuY2O2irV5rYch.jpg",
+                        "provider_id": 1825,
+                        "provider_name": "HBO Max Amazon Channel",
+                        "display_priority": 75
+                    }
+                ]
+            },
+            "NO": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=NO",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 41
+                    }
+                ]
+            },
+            "NZ": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=NZ",
+                "flatrate": [
+                    {
+                        "logo_path": "/embS4GPK7c8pjbuY2O2irV5rYch.jpg",
+                        "provider_id": 1825,
+                        "provider_name": "HBO Max Amazon Channel",
+                        "display_priority": 5
+                    }
+                ]
+            },
+            "PA": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=PA",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 31
+                    }
+                ]
+            },
+            "PE": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=PE",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 8
+                    }
+                ]
+            },
+            "PH": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=PH",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 32
+                    }
+                ]
+            },
+            "PL": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=PL",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 38
+                    }
+                ]
+            },
+            "PT": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=PT",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 34
+                    }
+                ]
+            },
+            "PY": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=PY",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 30
+                    }
+                ]
+            },
+            "RO": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=RO",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 24
+                    }
+                ]
+            },
+            "RS": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=RS",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 29
+                    }
+                ]
+            },
+            "SE": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=SE",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 44
+                    }
+                ]
+            },
+            "SG": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=SG",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 31
+                    }
+                ]
+            },
+            "SI": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=SI",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 29
+                    }
+                ]
+            },
+            "SK": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=SK",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 38
+                    }
+                ]
+            },
+            "SV": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=SV",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 31
+                    }
+                ]
+            },
+            "TC": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=TC",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 11
+                    }
+                ]
+            },
+            "TH": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=TH",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 30
+                    }
+                ]
+            },
+            "TT": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=TT",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 13
+                    }
+                ]
+            },
+            "TW": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=TW",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 37
+                    }
+                ]
+            },
+            "US": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=US",
+                "flatrate": [
+                    {
+                        "logo_path": "/embS4GPK7c8pjbuY2O2irV5rYch.jpg",
+                        "provider_id": 1825,
+                        "provider_name": "HBO Max Amazon Channel",
+                        "display_priority": 11
+                    },
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 152
+                    }
+                ]
+            },
+            "UY": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=UY",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 5
+                    }
+                ]
+            },
+            "VE": {
+                "link": "https://www.themoviedb.org/tv/311731-monsters-of-god/watch?locale=VE",
+                "flatrate": [
+                    {
+                        "logo_path": "/jbe4gVSfRlbPTdESXhEKpornsfu.jpg",
+                        "provider_id": 1899,
+                        "provider_name": "HBO Max",
+                        "display_priority": 28
+                    }
+                ]
+            }
+        }
+    },
+    "keywords": {
+        "results": []
+    },
+    "recommendations": {
+        "page": 1,
+        "results": [
+            {
+                "adult": false,
+                "backdrop_path": "/1dUQ99RH1uiKIUfLKtJ5uGnOxFu.jpg",
+                "id": 38122,
+                "name": "Mysteries at the Museum",
+                "original_name": "Mysteries at the Museum",
+                "overview": "Don Wildman unearths relics from the world's greatest institutions to reveal secrets from the past. He examines each artifact to illuminate history's most incredible triumphs, sensational crimes and bizarre encounters.",
+                "poster_path": "/iJsBQRZoEehX8biph7XkkFjtoM2.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 15.3364,
+                "first_air_date": "2010-11-02",
+                "softcore": false,
+                "vote_average": 8.9,
+                "vote_count": 20,
+                "origin_country": [
+                    "US"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/eOnQIuFYGbtZGilWPpG96eYuotZ.jpg",
+                "id": 4498,
+                "name": "Top Gear",
+                "original_name": "Top Gear",
+                "overview": "Motoring programme featuring reviews of and reports about cars of all types.",
+                "poster_path": "/7P7vi7RIn5qthQAZrOBIu8zA3pg.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 17.1643,
+                "first_air_date": "1978-07-13",
+                "softcore": false,
+                "vote_average": 7.992,
+                "vote_count": 120,
+                "origin_country": [
+                    "GB"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/2eeGstlBrS70qyEisrYXZMRqbJv.jpg",
+                "id": 4199,
+                "name": "MegaStructures",
+                "original_name": "MegaStructures",
+                "overview": "MegaStructures is a documentary television series appearing on the National Geographic Channel in the United States and the United Kingdom, Channel 5 in the United Kingdom, France 5 in France, and 7mate in Australia.\n\nEach episode is an educational look of varying depth into the construction, operation, and staffing of various structures or construction projects, but not ordinary construction products.\n\nGenerally containing interviews with designers and project managers, it presents the problems of construction and the methodology or techniques used to overcome obstacles. In some cases this involved the development of new materials or products that are now in general use within the construction industry.\n\nMegaStructures focuses on constructions that are extreme; in the sense that they are the biggest, tallest, longest, or deepest in the world. Alternatively, a project may appear if it had an element of novelty or are a world first. This type of project is known as a Megaproject.",
+                "poster_path": "/su1CZwwZ7lx2RQvBIsijOcoXV9s.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 6.0134,
+                "first_air_date": "2004-01-01",
+                "softcore": false,
+                "vote_average": 7.5,
+                "vote_count": 25,
+                "origin_country": [
+                    "US"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/8LLvfzvsvJl2cWchxERzoNXIMgE.jpg",
+                "id": 65339,
+                "name": "The Circus",
+                "original_name": "The Circus",
+                "overview": "Come one, come all to The Circus. This real-time documentary series pulls back the curtain on the current political stories, revealing the intense, inspiring and infuriating stories behind the headlines. Key characters and events are presented in real time, as they are happening.",
+                "poster_path": "/vnufA6IaOEgmnk28CSTIH9Umk4S.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 9.3653,
+                "first_air_date": "2016-01-17",
+                "softcore": false,
+                "vote_average": 6.375,
+                "vote_count": 20,
+                "origin_country": [
+                    "US"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/6xNZM4falw86qINarl7XsDn8Ojt.jpg",
+                "id": 248287,
+                "name": "STEVE! (martin) a documentary in 2 pieces",
+                "original_name": "STEVE! (martin) a documentary in 2 pieces",
+                "overview": "Steve Martin is one of the most beloved and enigmatic figures in entertainment. Dive into his extraordinary story from two distinct points of view—past and present—as Martin reflects on how his beginnings led to his unexpectedly fulfilling life today.",
+                "poster_path": "/f4Ygn7mAFlUYBWoDlTjvkejxQ4P.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 5.6229,
+                "first_air_date": "2024-03-28",
+                "softcore": false,
+                "vote_average": 7.8,
+                "vote_count": 27,
+                "origin_country": [
+                    "US"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/A2fQVeEshQXoEYO2t3aOzxTfNl3.jpg",
+                "id": 204554,
+                "name": "Legacy: The True Story of the LA Lakers",
+                "original_name": "Legacy: The True Story of the LA Lakers",
+                "overview": "This docuseries captures the remarkable rise and unprecedented success of one of the most dominant and iconic franchises in professional sports. Featuring exclusive access to the Buss Family and probing, revealing interviews with players, coaches, and front office execs, this series chronicles this extraordinary story from the inside – told only by the people who lived it.",
+                "poster_path": "/e9lVAFg0q2b7wi5npAUnl0YtfV7.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 5.1013,
+                "first_air_date": "2022-08-15",
+                "softcore": false,
+                "vote_average": 8,
+                "vote_count": 31,
+                "origin_country": [
+                    "US"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/8LBocqwTy3m8hDtPRQ88IW40AEh.jpg",
+                "id": 113085,
+                "name": "History's Greatest Mysteries",
+                "original_name": "History's Greatest Mysteries",
+                "overview": "Investigates a wide range of historically compelling topics and the mysteries surrounding each including the Titanic, D.B. Cooper, Roswell, John Wilkes Booth, and more. Fresh, new evidence and perspectives will be showcased, such as never-before-released documents, personal diaries and DNA evidence.",
+                "poster_path": "/lo2RNy38zs422CaOCUcuaqMmZdc.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99,
+                    9648
+                ],
+                "popularity": 16.6451,
+                "first_air_date": "2020-11-14",
+                "softcore": false,
+                "vote_average": 7.759,
+                "vote_count": 29,
+                "origin_country": [
+                    "US"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/prs7zCDXmcoN0iDxac91LGO1QKZ.jpg",
+                "id": 105288,
+                "name": "De peus a terra, amb Zac Efron",
+                "original_name": "Down to Earth with Zac Efron",
+                "overview": "És una sèrie documental de viatges en què Zac Efron i un expert en salut i benestar, Darin Olien, recorren el món a la recerca dels secrets de la bona salut, la longevitat i una millor consciència ecològica. Basant-se en valors de sostenibilitat i igualtat, l'actor i el seu company de viatge comparteixen la seva experiència i vivències, juntament amb moments d'humor, emoció, aventura i inspiració.",
+                "poster_path": "/oULYBQtnKylI5KiOo5pGz1EPp1W.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 4.3307,
+                "first_air_date": "2020-07-10",
+                "softcore": false,
+                "vote_average": 7.7,
+                "vote_count": 310,
+                "origin_country": [
+                    "US"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/7pnGtMK5JYlXUQ2gwKORnX6sap1.jpg",
+                "id": 66185,
+                "name": "The Story of God with Morgan Freeman",
+                "original_name": "The Story of God with Morgan Freeman",
+                "overview": "Morgan Freeman presents his quest in order to find how most religions perceive life after death, what different civilizations thought about the act of creation and other big questions that mankind has continuously asked.",
+                "poster_path": "/qPVGvTWLsPAPsN4e7U3Qd28HipY.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 8.4091,
+                "first_air_date": "2016-04-03",
+                "softcore": false,
+                "vote_average": 7.453,
+                "vote_count": 385,
+                "origin_country": [
+                    "US"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/4h1hvQ5ejTBtsceNP4KfZ4sBmoC.jpg",
+                "id": 262594,
+                "name": "Long Way Home",
+                "original_name": "Long Way Home",
+                "overview": "Best friends Ewan McGregor and Charley Boorman gear up for their fourth Long Way series—this time going from Ewan's home in Scotland to Charley's in England. They'll take the scenic route, of course, through 17 European countries on cranky old bikes.",
+                "poster_path": "/1RwUnfSIChKVfsrS69ZMN51RhRA.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 5.1919,
+                "first_air_date": "2025-05-09",
+                "softcore": false,
+                "vote_average": 7.978,
+                "vote_count": 23,
+                "origin_country": [
+                    "GB"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/e2jVbKUuMeXIVJYFfmvymBk0XA1.jpg",
+                "id": 74911,
+                "name": "Savage Kingdom",
+                "original_name": "Savage Kingdom",
+                "overview": "A rare look at warring animal clans battling for survival in a remote region of Africa, which is drying up after years of flood-soaked abundance.",
+                "poster_path": "/1CZhxbKA8NzPmCbWMzdLcvwu9CY.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 5.1952,
+                "first_air_date": "2016-11-25",
+                "softcore": false,
+                "vote_average": 7.8,
+                "vote_count": 49,
+                "origin_country": [
+                    "GB",
+                    "US"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/sYSdQUrfqb6BFBO7MR5YNg1Detp.jpg",
+                "id": 215344,
+                "name": "Depredadors",
+                "original_name": "Predators",
+                "overview": "Tom Hardy narrates this thrilling natural history series following five apex predators facing the ultimate test of survival in drastically changing environments across the globe.",
+                "poster_path": "/r8xCjuwOODzTK9bSAOsJT8YVlUg.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 3.0398,
+                "first_air_date": "2022-12-11",
+                "softcore": false,
+                "vote_average": 8.242,
+                "vote_count": 33,
+                "origin_country": [
+                    "GB"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/x5cDiHmjltsk0dE7KlnmVNZe5ED.jpg",
+                "id": 86951,
+                "name": "Leaving Neverland",
+                "original_name": "Leaving Neverland",
+                "overview": "Explores the experiences of James Safechuck and Wade Robson, who were both befriended and sexually abused by singer Michael Jackson, and the complicated feelings that led them both to confront their experiences.",
+                "poster_path": "/mIU9T1FUd9nVYuKgUb0MA0io6Gk.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 4.2406,
+                "first_air_date": "2019-03-03",
+                "softcore": false,
+                "vote_average": 6.366,
+                "vote_count": 250,
+                "origin_country": [
+                    "US"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/jZGxKCxDbepPaARnSu74Df9UE5Y.jpg",
+                "id": 15069,
+                "name": "American Masters",
+                "original_name": "American Masters",
+                "overview": "American Masters is a PBS television series which produces biographies on enduring writers, musicians, visual and performing artists, dramatists, filmmakers, and others who have left an indelible impression on the cultural landscape of the United States.",
+                "poster_path": "/dY7zYWlHoctqD5iKbEpv3f07ysO.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 21.0724,
+                "first_air_date": "1986-06-23",
+                "softcore": false,
+                "vote_average": 7,
+                "vote_count": 25,
+                "origin_country": [
+                    "US"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/lNWYjqOnIzxd9XvhQau0yYHUpJE.jpg",
+                "id": 61894,
+                "name": "Life Story",
+                "original_name": "Life Story",
+                "overview": "The remarkable and often perilous story of the journey through life. It is a story that unites each of us with every animal on the planet, because we all set out on this journey from the moment we are born. For animals there is just one goal in life – to continue their bloodline in the form of offspring. This series follows that journey through its six crucial stages: first steps, growing up, finding a home, gaining power, winning a mate and succeeding as a parent.",
+                "poster_path": "/pGRcVjmgc9AQ3jxG367p8xSQrHa.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 4.1782,
+                "first_air_date": "2014-10-23",
+                "softcore": false,
+                "vote_average": 8.4,
+                "vote_count": 38,
+                "origin_country": [
+                    "GB"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/biVRAHPK5xpenVatukmWbAErY1S.jpg",
+                "id": 40919,
+                "name": "Paranormal Witness",
+                "original_name": "Paranormal Witness",
+                "overview": "A tense, filmic and high-octane drama-documentary series that brings to life the stories of people who have lived through paranormal experiences that defy explanation. Using a mixture of intimate first-hand testimony and grittily realistic drama, the audience is transported into a world turned upside down by extraordinary and terrifying events.",
+                "poster_path": "/NKIoLkRkP8uygZrUJeglYEKyIV.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    10765,
+                    9648,
+                    99
+                ],
+                "popularity": 4.5775,
+                "first_air_date": "2011-09-07",
+                "softcore": false,
+                "vote_average": 7.463,
+                "vote_count": 107,
+                "origin_country": [
+                    "US"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/haT0eJc96HWhixqNyjdUmBwVzDm.jpg",
+                "id": 115996,
+                "name": "Limitless with Chris Hemsworth",
+                "original_name": "Limitless with Chris Hemsworth",
+                "overview": "Chris is on a mission to live better for longer. With the help of top scientists, he takes on six epic challenges to test mind and body to the max.",
+                "poster_path": "/rfxqHTHBOPl3Qus1OOKYMt06bx6.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99,
+                    10759
+                ],
+                "popularity": 6.4853,
+                "first_air_date": "2022-11-16",
+                "softcore": false,
+                "vote_average": 8.086,
+                "vote_count": 70,
+                "origin_country": [
+                    "US",
+                    "GB"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/6ppfLWu0b7bmiH8AZRqZStT14C7.jpg",
+                "id": 1181,
+                "name": "American Experience",
+                "original_name": "American Experience",
+                "overview": "Una sèrie documental estatunidenca que tracta sobre històries convincents del nostre passat que permeten entendre millor el món actual.",
+                "poster_path": "/YkcFBVYG6jvvHBRL1BxraAcOxh.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 31.8196,
+                "first_air_date": "1988-10-04",
+                "softcore": false,
+                "vote_average": 6.5,
+                "vote_count": 48,
+                "origin_country": [
+                    "US"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/csZAN2mTQgmNmRyTARfnqJa47QM.jpg",
+                "id": 3956,
+                "name": "Who Do You Think You Are?",
+                "original_name": "Who Do You Think You Are?",
+                "overview": "A British genealogy documentary series in which celebrities trace their ancestry, discovering secrets and surprises from their past.",
+                "poster_path": "/v7vzsmEDVDzUgEuiMAMRdyh0abW.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99,
+                    10751
+                ],
+                "popularity": 18.4261,
+                "first_air_date": "2004-10-12",
+                "softcore": false,
+                "vote_average": 6.981,
+                "vote_count": 27,
+                "origin_country": [
+                    "GB"
+                ]
+            },
+            {
+                "adult": false,
+                "backdrop_path": "/zwMnxIpQznQYi8gH2624hLJQeH.jpg",
+                "id": 220998,
+                "name": "Quarterback",
+                "original_name": "Quarterback",
+                "overview": "Follow the bruised bodies, soul-crushing fumbles, agonizing losses, and pure joy of three NFL quarterbacks during one season.",
+                "poster_path": "/bKdElEIyuwrbdochxCXwlaUBFaR.jpg",
+                "media_type": "tv",
+                "original_language": "en",
+                "genre_ids": [
+                    99
+                ],
+                "popularity": 4.8219,
+                "first_air_date": "2023-07-12",
+                "softcore": false,
+                "vote_average": 8.053,
+                "vote_count": 47,
+                "origin_country": [
+                    "US"
+                ]
+            }
+        ],
+        "total_pages": 5,
+        "total_results": 100
+    }
+}
