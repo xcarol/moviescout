@@ -66,7 +66,11 @@ class WatchlistUpdateService {
 
     if (title.lastNotifiedSeason == 0 && title.isSerie) {
       title.lastNotifiedSeason =
-          WatchlistNotificationEvaluator.getBaselineSeason(title, now);
+          WatchlistNotificationEvaluator.getBaselineSeason(
+        title,
+        now,
+        notifyCompleteSeason: notifyCompleteSeason,
+      );
       await repository.updateNotifyNewSeasons(title);
     }
 

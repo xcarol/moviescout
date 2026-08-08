@@ -26,20 +26,27 @@ class WatchlistNotificationEvaluator {
     return UpdateType.none;
   }
 
-  static int getBaselineSeason(TmdbTitle title, DateTime now) {
+  static int getBaselineSeason(
+    TmdbTitle title,
+    DateTime now, {
+    bool notifyCompleteSeason = false,
+  }) {
     final currentSeason = title.numberOfSeasons;
     final nextEpisode = title.nextEpisodeToAir;
 
-    if (nextEpisode != null &&
-        nextEpisode.episodeNumber == 1 &&
-        nextEpisode.seasonNumber > 0) {
+    if (nextEpisode != null && nextEpisode.seasonNumber > 0) {
       final nextSeason = nextEpisode.seasonNumber;
+      final nextEpisodeNum = nextEpisode.episodeNumber;
       final airDateStr = nextEpisode.airDate;
-      if (airDateStr.isNotEmpty) {
-        final airDate = DateTime.tryParse(airDateStr);
-        if (airDate != null && airDate.isAfter(now)) {
-          return nextSeason - 1;
-        }
+      final airDate =
+          airDateStr.isNotEmpty ? DateTime.tryParse(airDateStr) : null;
+
+      if (nextEpisodeNum == 1 && airDate != null && airDate.isAfter(now)) {
+        return nextSeason - 1;
+      }
+
+      if (notifyCompleteSeason) {
+        return nextSeason - 1;
       }
     }
 
@@ -67,6 +74,15 @@ class WatchlistNotificationEvaluator {
         newProviders.intersection(enabledProviderIds).isNotEmpty;
 
     if (isAvailable && !wasAvailable) {
+      if (titleAfterUpdate.isSerie && notifyCompleteSeason) {
+        final currentSeason = titleAfterUpdate.numberOfSeasons;
+        if (!_isSeasonComplete(titleAfterUpdate, currentSeason, now)) {
+          logLines?.add(
+              '- check (NotifyCompleteSeason): Title ${titleAfterUpdate.name} is now available on providers, but S$currentSeason is not complete yet.');
+          return NotificationTrigger.none;
+        }
+      }
+
       logLines?.add(
           '- Notification Trigger: Title ${titleAfterUpdate.name} is now available.');
       return NotificationTrigger.newAvailability;
@@ -95,6 +111,36 @@ class WatchlistNotificationEvaluator {
     }
 
     return NotificationTrigger.none;
+  }
+
+  static bool _isSeasonComplete(
+    TmdbTitle title,
+    int currentSeason,
+    DateTime now,
+  ) {
+    final lastEpisode = title.lastEpisodeToAir;
+    final nextEpisode = title.nextEpisodeToAir;
+
+    if (lastEpisode == null || lastEpisode.seasonNumber != currentSeason) {
+      return false;
+    }
+
+    if (nextEpisode != null && nextEpisode.seasonNumber == currentSeason) {
+      return false;
+    }
+
+    final airDateStr = lastEpisode.airDate;
+    if (airDateStr.isEmpty) {
+      return false;
+    }
+
+    final airDate = DateTime.tryParse(airDateStr);
+    if (airDate == null ||
+        !airDate.isBefore(now.add(const Duration(seconds: 1)))) {
+      return false;
+    }
+
+    return true;
   }
 
   static bool _hasNewSeasonStarted(

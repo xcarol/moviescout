@@ -437,6 +437,92 @@ void main() {
 
       expect(trigger, NotificationTrigger.newSeason);
     });
+
+    test(
+        'Serie [notifyCompleteSeason: true]: Does NOT notify newAvailability if title becomes available but season is incomplete',
+        () {
+      final serverJson = {
+        'id': 99999,
+        'name': 'Monsters of God',
+        'media_type': 'tv',
+        'number_of_seasons': 1,
+        'last_episode_to_air': {
+          'season_number': 1,
+          'episode_number': 1,
+          'air_date': '2026-03-25'
+        },
+        'next_episode_to_air': {
+          'season_number': 1,
+          'episode_number': 2,
+          'air_date': '2026-04-01'
+        },
+        'watch/providers': {
+          'results': {
+            'ES': {
+              'flatrate': [
+                {'provider_id': 8}
+              ]
+            }
+          }
+        }
+      };
+
+      final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      localTitle.flatrateProviderIds = [];
+      localTitle.lastNotifiedSeason = 0;
+
+      final trigger = WatchlistNotificationEvaluator.evaluateNotification(
+        titleBeforeUpdate: localTitle,
+        titleAfterUpdate: serverTitle,
+        enabledProviderIds: enabledProviders,
+        now: now,
+        notifyCompleteSeason: true,
+      );
+
+      expect(trigger, NotificationTrigger.none);
+    });
+
+    test(
+        'Serie [notifyCompleteSeason: true]: Notifies newAvailability if title becomes available and season is already complete',
+        () {
+      final serverJson = {
+        'id': 99999,
+        'name': 'Monsters of God Completed',
+        'media_type': 'tv',
+        'number_of_seasons': 1,
+        'last_episode_to_air': {
+          'season_number': 1,
+          'episode_number': 5,
+          'air_date': '2026-03-25'
+        },
+        'next_episode_to_air': null,
+        'watch/providers': {
+          'results': {
+            'ES': {
+              'flatrate': [
+                {'provider_id': 8}
+              ]
+            }
+          }
+        }
+      };
+
+      final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      localTitle.flatrateProviderIds = [];
+      localTitle.lastNotifiedSeason = 0;
+
+      final trigger = WatchlistNotificationEvaluator.evaluateNotification(
+        titleBeforeUpdate: localTitle,
+        titleAfterUpdate: serverTitle,
+        enabledProviderIds: enabledProviders,
+        now: now,
+        notifyCompleteSeason: true,
+      );
+
+      expect(trigger, NotificationTrigger.newAvailability);
+    });
   });
 
   group('WatchlistNotificationEvaluator - getBaselineSeason', () {
@@ -447,9 +533,6 @@ void main() {
         'number_of_seasons': 2,
         'last_episode_to_air': {'season_number': 1},
       });
-      // Without next_episode info, it just uses numberOfSeasons (which is 2)
-      // Wait, let's check my implementation.
-      // My implementation returns numberOfSeasons if Case 2 is not hit.
       expect(WatchlistNotificationEvaluator.getBaselineSeason(title, now), 2);
     });
 
@@ -477,6 +560,27 @@ void main() {
       });
       // Today is 2026-03-29. S2E1 has already premiered. Baseline should be 2.
       expect(WatchlistNotificationEvaluator.getBaselineSeason(title, now), 2);
+    });
+
+    test(
+        'Should return current-1 if notifyCompleteSeason is true and season is in progress',
+        () {
+      final title = TmdbTitle.fromMap(title: {
+        'number_of_seasons': 1,
+        'next_episode_to_air': {
+          'season_number': 1,
+          'episode_number': 2,
+          'air_date': '2026-04-01',
+        },
+      });
+      expect(
+        WatchlistNotificationEvaluator.getBaselineSeason(
+          title,
+          now,
+          notifyCompleteSeason: true,
+        ),
+        0,
+      );
     });
   });
 }
