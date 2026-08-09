@@ -90,9 +90,12 @@ class TmdbBaseService {
           'Authorization': 'Bearer $token',
         }).timeout(const Duration(seconds: 10));
 
-        if (response.statusCode == 429) {
+        if (response.statusCode == 429 ||
+            (response.statusCode >= 500 && response.statusCode < 600)) {
           delay = await _handleRetry(
-              'TmdbBaseService get Rate limit exceeded', delay, maxDelay);
+              'TmdbBaseService get status ${response.statusCode}',
+              delay,
+              maxDelay);
           retryCount++;
           continue;
         }
