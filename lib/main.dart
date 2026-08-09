@@ -79,9 +79,34 @@ void _runMain({bool isFromShortcutActivity = false}) async {
   final isShortcut = isFromShortcutActivity;
 
   try {
+    await Future.wait([
+      dotenv.load(fileName: ".env"),
+      PreferencesService().init(),
+      RealmService.init(),
+    ]);
+  } catch (error, stackTrace) {
+    ErrorService.log(
+      error,
+      userMessage: 'Error basic initializing services',
+      stackTrace: stackTrace,
+    );
+  }
+
+  try {
     if (defaultTargetPlatform == TargetPlatform.android) {
-      await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform);
+      if (Firebase.apps.isEmpty) {
+        try {
+          await Firebase.initializeApp(
+            options: DefaultFirebaseOptions.currentPlatform,
+          );
+        } catch (e) {
+          if (e.toString().contains('duplicate-app')) {
+            await Firebase.initializeApp();
+          } else {
+            rethrow;
+          }
+        }
+      }
 
       FlutterError.onError = (errorDetails) {
         FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
@@ -92,8 +117,9 @@ void _runMain({bool isFromShortcutActivity = false}) async {
         return true;
       };
 
-      await FirebaseCrashlytics.instance
-          .setCrashlyticsCollectionEnabled(kDebugMode);
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+        kDebugMode,
+      );
 
       if (isShortcut) {
         FirebaseFirestore.instance.settings =
@@ -105,16 +131,13 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       error,
       userMessage: 'Error initializing Firebase',
       stackTrace: stackTrace,
+      reportToCrashlytics: false,
     );
   }
 
-  try {
-    await Future.wait([
-      dotenv.load(fileName: ".env"),
-      PreferencesService().init(),
-      RealmService.init(),
-    ]);
+  debugPrint('Running MovieScout...');
 
+  try {
     await Future.wait([
       RegionService().init(),
       TmdbGenreService().init(),
@@ -142,12 +165,11 @@ void _runMain({bool isFromShortcutActivity = false}) async {
   } catch (error, stackTrace) {
     ErrorService.log(
       error,
-      userMessage: 'Error initializing services',
+      userMessage: 'Error app initializing services',
       stackTrace: stackTrace,
     );
   }
 
-  debugPrint('Running MovieScout...');
   final repository = TmdbTitleRepository();
 
   if (!isShortcut) {

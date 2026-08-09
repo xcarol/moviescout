@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -14,7 +15,7 @@ class ErrorService {
     StackTrace? stackTrace,
     String? userMessage,
     bool showSnackBar = false,
-    bool reportToCrashlytics = true,
+    bool? reportToCrashlytics,
   }) {
     debugPrint('--- ERROR ---');
     debugPrint('Error: $error');
@@ -29,10 +30,10 @@ class ErrorService {
       ]);
     }
 
-    bool shouldReport = _shouldReportAutomatically(error);
+    final shouldReport =
+        reportToCrashlytics ?? _shouldReportAutomatically(error);
 
-    if ((shouldReport || reportToCrashlytics) &&
-        (Platform.isAndroid || Platform.isIOS)) {
+    if (shouldReport && !kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
       try {
         FirebaseCrashlytics.instance.recordError(
           error,
@@ -72,7 +73,8 @@ class ErrorService {
   static bool _shouldReportAutomatically(dynamic error) {
     if (error is SocketException ||
         error is HandshakeException ||
-        error is HttpException) {
+        error is HttpException ||
+        error is TimeoutException) {
       return false;
     }
 
@@ -82,8 +84,9 @@ class ErrorService {
     }
 
     if (error is PlatformException &&
-        error.message!.contains('Unable to establish connection on channel') &&
-        error.message!.contains('FirebaseCoreHostApi.initializeCore')) {
+        error.message?.contains('Unable to establish connection on channel') ==
+            true &&
+        error.message?.contains('FirebaseCoreHostApi.initializeCore') == true) {
       return false;
     }
 

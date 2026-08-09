@@ -1,0 +1,39 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Formatar tot el projecte (Dart)",
+      "type": "shell",
+      "command": "dart format .",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Llença l'emulador",
+      "type": "shell",
+      "command": "emulator -avd Emulador_Lleuger",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      },
+      "problemMatcher": [
+        "$eslint-compact"
+      ]
+    },
+    {
+      "label": "Llença l'emulador (en fred)",
+      "type": "shell",
+      "command": "emulator -avd Emulador_Lleuger -no-snapshot-load",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      },
+      "problemMatcher": [
+        "$eslint-compact"
+      ]
+    }
+  ]
+}
