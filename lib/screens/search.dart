@@ -42,6 +42,8 @@ class _SearchState extends State<Search> {
   List<String> _overlaySuggestions = [];
   bool _isAiMode = false;
 
+  StateSetter? _overlaySetState;
+
   @override
   void initState() {
     super.initState();
@@ -80,21 +82,15 @@ class _SearchState extends State<Search> {
 
   void _onFocusChanged() {
     if (_searchFocusNode.hasFocus) {
-      if (_controller.text.isNotEmpty) {
-        _showOverlay();
-      }
+      _showOverlay();
     }
   }
 
   void _onSearchChanged() {
     final text = _controller.text;
 
-    if (text.isNotEmpty && _searchFocusNode.hasFocus) {
+    if (_searchFocusNode.hasFocus) {
       _showOverlay();
-    } else {
-      if (text.isEmpty) {
-        _removeOverlay();
-      }
     }
 
     if (text == _previousText) return;
@@ -123,7 +119,7 @@ class _SearchState extends State<Search> {
       if (!_isAiMode) {
         _debounce = Timer(const Duration(milliseconds: 300), () {
           if (mounted) {
-            searchTitle(context, _controller.text);
+            searchTitle(context, _controller.text, addToHistory: false);
           }
         });
       }
@@ -134,12 +130,14 @@ class _SearchState extends State<Search> {
   }
 
   void _showOverlay() {
-    final text = _controller.text;
+    final text = _controller.text.trim();
     final suggestions = _historyService.getSuggestions(text);
-    _overlaySuggestions = suggestions
-        .where((s) => s.toLowerCase() != text.toLowerCase())
-        .take(5)
-        .toList();
+    _overlaySuggestions = text.isEmpty
+        ? suggestions.take(5).toList()
+        : suggestions
+            .where((s) => s.toLowerCase() != text.toLowerCase())
+            .take(5)
+            .toList();
 
     if (_overlaySuggestions.isEmpty) {
       _removeOverlay();
@@ -147,7 +145,7 @@ class _SearchState extends State<Search> {
     }
 
     if (_overlayEntry != null) {
-      _overlayEntry!.markNeedsBuild();
+      _overlaySetState?.call(() {});
       return;
     }
 
@@ -162,26 +160,41 @@ class _SearchState extends State<Search> {
             offset: Offset(_searchHorizontalPadding, _overlayHeightOffset),
             child: TapRegion(
               groupId: _searchGroupId,
-              child: Material(
-                elevation: 4.0,
-                borderRadius: BorderRadius.circular(8),
-                child: ListView.builder(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  itemCount: _overlaySuggestions.length,
-                  itemBuilder: (context, index) {
-                    final suggestion = _overlaySuggestions[index];
-                    return ListTile(
-                      leading: const Icon(Icons.history),
-                      title: Text(suggestion),
-                      onTap: () {
-                        _controller.text = suggestion;
-                        _removeOverlay();
-                        searchTitle(context, suggestion);
+              child: StatefulBuilder(
+                builder: (context, setOverlayState) {
+                  _overlaySetState = setOverlayState;
+                  return Material(
+                    elevation: 4.0,
+                    borderRadius: BorderRadius.circular(8),
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      itemCount: _overlaySuggestions.length,
+                      itemBuilder: (context, index) {
+                        final suggestion = _overlaySuggestions[index];
+                        return ListTile(
+                          leading: const Icon(Icons.history),
+                          title: Text(suggestion),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.close, size: 18),
+                            onPressed: () async {
+                              await _historyService.delete(suggestion);
+                              if (mounted) {
+                                _showOverlay();
+                              }
+                            },
+                          ),
+                          onTap: () {
+                            _controller.text = suggestion;
+                            _removeOverlay();
+                            searchTitle(context, suggestion,
+                                addToHistory: true);
+                          },
+                        );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -195,6 +208,7 @@ class _SearchState extends State<Search> {
   void _removeOverlay() {
     _overlayEntry?.remove();
     _overlayEntry = null;
+    _overlaySetState = null;
   }
 
   @override
@@ -342,7 +356,7 @@ class _SearchState extends State<Search> {
                   ),
                 ),
                 onSubmitted: (title) {
-                  searchTitle(context, title);
+                  searchTitle(context, title, addToHistory: true);
                 },
               ),
             ),
@@ -356,9 +370,19 @@ class _SearchState extends State<Search> {
     return Expanded(child: _searchWidget);
   }
 
-  void searchTitle(BuildContext context, String title) async {
+  void searchTitle(BuildContext context, String title,
+      {bool addToHistory = false}) async {
     final term = title.trim();
     if (term.isEmpty) return;
+
+    final locale = Localizations.localeOf(context);
+
+    if (addToHistory) {
+      await _historyService.add(term);
+    }
+
+    if (!mounted) return;
+
     if (term == _lastSearchedText && _lastSearchedAiMode == _isAiMode) return;
 
     _lastSearchedText = term;
@@ -366,9 +390,6 @@ class _SearchState extends State<Search> {
 
     _removeOverlay();
 
-    _historyService.add(term);
-
-    Locale locale = Localizations.localeOf(context);
     await _resetTitle();
     try {
       if (_isAiMode) {

@@ -15,11 +15,14 @@ class SearchHistoryService {
   }
 
   Future<void> add(String term) async {
-    if (term.trim().isEmpty) return;
+    final cleanTerm = term.trim();
+    if (cleanTerm.isEmpty) return;
 
-    _history.remove(term);
+    _history.removeWhere(
+      (item) => item.toLowerCase() == cleanTerm.toLowerCase(),
+    );
 
-    _history.insert(0, term);
+    _history.insert(0, cleanTerm);
     if (_history.length > _maxHistory) {
       _history = _history.sublist(0, _maxHistory);
     }
@@ -28,7 +31,13 @@ class SearchHistoryService {
   }
 
   Future<void> delete(String term) async {
-    _history.remove(term);
+    final cleanTerm = term.trim().toLowerCase();
+    _history.removeWhere((item) => item.trim().toLowerCase() == cleanTerm);
+    await _save();
+  }
+
+  Future<void> clear() async {
+    _history.clear();
     await _save();
   }
 
@@ -38,11 +47,11 @@ class SearchHistoryService {
   }
 
   List<String> getSuggestions(String query) {
-    if (query.trim().isEmpty) return [];
+    final cleanQuery = query.trim().toLowerCase();
+    if (cleanQuery.isEmpty) return List.unmodifiable(_history);
 
-    final lowerQuery = query.toLowerCase();
     return _history
-        .where((term) => term.toLowerCase().startsWith(lowerQuery))
+        .where((term) => term.toLowerCase().startsWith(cleanQuery))
         .toList();
   }
 }
