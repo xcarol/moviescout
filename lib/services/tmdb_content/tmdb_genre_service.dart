@@ -123,7 +123,7 @@ class TmdbGenreService extends TmdbCacheableService<Map<int, String>> {
 
   List<int> getIdsFromNames(List<String> names) {
     return _genreMap.entries
-        .where((entry) => names.contains(entry.value))
+        .where((entry) => names.contains(getName(entry.key)))
         .map((entry) => entry.key)
         .toList();
   }
