@@ -228,7 +228,6 @@ Create the following **7 Secrets**:
 | `ANDROID_KEY_ALIAS` | Text | Key alias (e.g., `upload`) |
 | `ANDROID_KEY_PASSWORD` | Text | Password for the key alias |
 | `ENV_FILE` | Text | Full raw text content of your local `.env` file |
-| `GOOGLE_SERVICES_JSON` | Base64 | Content of `gs_b64.txt` |
 | `PLAY_STORE_SERVICE_ACCOUNT_JSON` | Base64 | Content of `play_sa_b64.txt` |
 
 ---
@@ -285,17 +284,12 @@ jobs:
           [ -n "$(tail -c 1 .env)" ] && echo "" >> .env
           echo "VERSION=$VERSION" >> .env
 
-      # 5. Recreate google-services.json for Firebase
-      - name: Create google-services.json
-        run: |
-          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > android/app/google-services.json
-
-      # 6. Decode Keystore file
+      # 5. Decode Keystore file
       - name: Decode Android Keystore
         run: |
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
 
-      # 7. Recreate key.properties file
+      # 6. Recreate key.properties file
       - name: Create key.properties
         run: |
           echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" > android/key.properties
@@ -303,22 +297,22 @@ jobs:
           echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
           echo "storeFile=upload-keystore.jks" >> android/key.properties
 
-      # 8. Fetch Flutter dependencies
+      # 7. Fetch Flutter dependencies
       - name: Install dependencies
         run: flutter pub get
 
-      # 9. Build Release AppBundle
+      # 8. Build Release AppBundle
       - name: Build Android AppBundle
         run: flutter build appbundle --release
 
-      # 10. Upload AAB as workflow artifact
+      # 9. Upload AAB as workflow artifact
       - name: Upload AAB Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release-aab
           path: build/app/outputs/bundle/release/app-release.aab
 
-      # 11. Deploy to Google Play Console (Internal Track)
+      # 10. Deploy to Google Play Console (Internal Track)
       - name: Deploy to Google Play Internal Testing
         uses: KevinRohn/github-action-upload-play-store@v1.0.2
         with:
@@ -372,7 +366,7 @@ git push origin v1.0.0
 ### 4. `File google-services.json is missing`
 
 * **Cause**: Firebase Gradle plugin cannot find `android/app/google-services.json`.
-* **Fix**: Ensure `GOOGLE_SERVICES_JSON` secret is configured with Base64 output of `google-services.json` and decoded to `android/app/google-services.json`.
+* **Fix**: Ensure `google-services.json` is not in `.gitignore` and is committed to your repository.
 
 ### 5. Job Skipped (`This job was skipped`) when running manually
 
