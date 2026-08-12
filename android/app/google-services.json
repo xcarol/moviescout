@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "522907829647",
+    "firebase_url": "https://movie-scout-a6608-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "movie-scout-a6608",
+    "storage_bucket": "movie-scout-a6608.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:522907829647:android:3136bcd61ae2c3b5c2f7fa",
+        "android_client_info": {
+          "package_name": "com.xicra.moviescout"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "522907829647-er8h75idoblm2af8o412ejgav6rvvc8l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.xicra.moviescout",
+            "certificate_hash": "1ef6b548435a6100fb1b2887968c9c0d69015fcc"
+          }
+        },
+        {
+          "client_id": "522907829647-g3amo1mcfp0smq336kqsaf8826g3d418.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrt2RdPnAGkFbrmDW2-mn5wnkeCTFJY04"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "522907829647-g3amo1mcfp0smq336kqsaf8826g3d418.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
