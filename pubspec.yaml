@@ -70,6 +70,8 @@ dependencies:
   translator: ^1.0.0
   youtube_player_iframe: ^6.0.2
   simple_pip_mode: ^1.1.0
+  flutter_widget_from_html: ^0.15.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
