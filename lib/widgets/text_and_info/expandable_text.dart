@@ -20,8 +20,12 @@ class ExpandableText extends StatefulWidget {
 
 class _ExpandableTextState extends State<ExpandableText> {
   bool _isExpanded = false;
-  bool _checkOverflow(double maxWidth, InlineSpan span, TextScaler textScaler,
-      TextDirection textDirection) {
+  bool _checkOverflow(
+    double maxWidth,
+    InlineSpan span,
+    TextScaler textScaler,
+    TextDirection textDirection,
+  ) {
     final tp = TextPainter(
       text: span,
       maxLines: widget.initialMaxLines,
@@ -49,7 +53,11 @@ class _ExpandableTextState extends State<ExpandableText> {
         final textDirection = Directionality.of(context);
 
         final bool isOverflowing = _checkOverflow(
-            constraints.maxWidth, span, textScaler, textDirection);
+          constraints.maxWidth,
+          span,
+          textScaler,
+          textDirection,
+        );
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,10 +79,8 @@ class _ExpandableTextState extends State<ExpandableText> {
                 },
                 child: Center(
                   child: Icon(
-                    Icons.more_horiz,
-                    color: _isExpanded
-                        ? Colors.transparent
-                        : Theme.of(context).colorScheme.onSurfaceVariant,
+                    _isExpanded ? Icons.keyboard_arrow_up : Icons.more_horiz,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),
