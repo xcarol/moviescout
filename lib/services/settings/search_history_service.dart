@@ -22,6 +22,10 @@ class SearchHistoryService {
       (item) => item.toLowerCase() == cleanTerm.toLowerCase(),
     );
 
+    _history.removeWhere(
+      (item) => cleanTerm.toLowerCase().startsWith(item.toLowerCase()),
+    );
+
     _history.insert(0, cleanTerm);
     if (_history.length > _maxHistory) {
       _history = _history.sublist(0, _maxHistory);
