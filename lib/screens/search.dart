@@ -119,7 +119,7 @@ class _SearchState extends State<Search> {
       if (!_isAiMode) {
         _debounce = Timer(const Duration(milliseconds: 300), () {
           if (mounted) {
-            searchTitle(context, _controller.text, addToHistory: false);
+            searchTitle(context, _controller.text);
           }
         });
       }
@@ -187,8 +187,7 @@ class _SearchState extends State<Search> {
                           onTap: () {
                             _controller.text = suggestion;
                             _removeOverlay();
-                            searchTitle(context, suggestion,
-                                addToHistory: true);
+                            searchTitle(context, suggestion);
                           },
                         );
                       },
@@ -356,7 +355,7 @@ class _SearchState extends State<Search> {
                   ),
                 ),
                 onSubmitted: (title) {
-                  searchTitle(context, title, addToHistory: true);
+                  searchTitle(context, title);
                 },
               ),
             ),
@@ -370,16 +369,13 @@ class _SearchState extends State<Search> {
     return Expanded(child: _searchWidget);
   }
 
-  void searchTitle(BuildContext context, String title,
-      {bool addToHistory = false}) async {
+  void searchTitle(BuildContext context, String title) async {
     final term = title.trim();
     if (term.isEmpty) return;
 
     final locale = Localizations.localeOf(context);
 
-    if (addToHistory) {
-      await _historyService.add(term);
-    }
+    await _historyService.add(term);
 
     if (!mounted) return;
 
