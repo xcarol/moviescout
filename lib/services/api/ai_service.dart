@@ -134,6 +134,106 @@ class AiService {
     }
   }
 
+  Future<String> translate(
+    String text, {
+    required String sourceLanguage,
+    required String targetLanguage,
+  }) async {
+    final key = apiKey.trim();
+    if (key.isEmpty) {
+      throw Exception('OpenRouter API key is not configured');
+    }
+
+    final targetUrl = Uri.parse(UrlConstants.openRouterApiUrl);
+    final headers = _buildHeaders(key);
+    final body = jsonEncode({
+      'model': AppConstants.aiModel,
+      'temperature': AppConstants.aiTemperature,
+      'messages': [
+        {
+          'role': 'system',
+          'content': AppConstants.aiTranslateSystemPrompt,
+        },
+        {
+          'role': 'user',
+          'content':
+              'Translate from $sourceLanguage to $targetLanguage:\n\n$text'
+        }
+      ]
+    });
+
+    try {
+      final response = await http
+          .post(targetUrl, headers: headers, body: body)
+          .timeout(const Duration(seconds: 30));
+
+      if (response.statusCode == 200) {
+        final content = _extractMessageContent(response.body);
+        if (content != null && content.isNotEmpty) {
+          final cleaned = _cleanTranslation(content);
+          return cleaned.isNotEmpty ? cleaned : text;
+        }
+        return text;
+      }
+
+      _handleErrorResponse(response);
+    } on TimeoutException catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'AI translation timeout',
+      );
+      rethrow;
+    } catch (e, stackTrace) {
+      if (e is! AiRateLimitException) {
+        ErrorService.log(
+          e,
+          stackTrace: stackTrace,
+          userMessage: 'Error in AI translation',
+        );
+      }
+      rethrow;
+    }
+  }
+
+  String _cleanTranslation(String text) {
+    String cleaned = text.trim();
+    final safetyPrefixes = [
+      'user safety: safe.',
+      'safety: safe.',
+      'user safety: safe',
+      'safety: safe',
+      'user safety:',
+      'safety:'
+    ];
+
+    bool cleanedPrefix = true;
+    while (cleanedPrefix) {
+      cleanedPrefix = false;
+      for (final prefix in safetyPrefixes) {
+        if (cleaned.toLowerCase().startsWith(prefix)) {
+          final nextNewline = cleaned.indexOf('\n');
+          if (nextNewline != -1) {
+            cleaned = cleaned.substring(nextNewline).trim();
+            cleanedPrefix = true;
+            break;
+          } else {
+            cleaned = cleaned.substring(prefix.length).trim();
+            cleanedPrefix = true;
+            break;
+          }
+        }
+      }
+    }
+
+    if (cleaned.startsWith('"') &&
+        cleaned.endsWith('"') &&
+        cleaned.length > 1) {
+      cleaned = cleaned.substring(1, cleaned.length - 1).trim();
+    }
+    return cleaned;
+  }
+
   Map<String, String> _buildHeaders(String key) => {
         'Authorization': 'Bearer $key',
         'Content-Type': 'application/json',

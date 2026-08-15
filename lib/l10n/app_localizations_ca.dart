@@ -573,6 +573,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get status => 'Estat';
 
   @override
+  String get enableAiTranslation => 'IA';
+
+  @override
   String get aiSettingsTitle => 'Intel·ligència Artificial';
 
   @override

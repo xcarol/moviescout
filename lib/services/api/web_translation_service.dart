@@ -4,6 +4,7 @@ import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/utils/translation_languages.dart';
+import 'package:moviescout/services/api/ai_service.dart';
 
 class WebTranslationService with ChangeNotifier {
   static final WebTranslationService _instance =
@@ -43,6 +44,17 @@ class WebTranslationService with ChangeNotifier {
     notifyListeners();
   }
 
+  bool get isAiTranslationEnabled =>
+      PreferencesService().prefs.getBool(AppConstants.aiTranslationEnabled) ??
+      false;
+
+  Future<void> setAiTranslationEnabled(bool enabled) async {
+    await PreferencesService()
+        .prefs
+        .setBool(AppConstants.aiTranslationEnabled, enabled);
+    notifyListeners();
+  }
+
   String _getLanguageName(String code) {
     try {
       return TranslationLanguages.supportedLanguages[code.toLowerCase()] ??
@@ -54,6 +66,20 @@ class WebTranslationService with ChangeNotifier {
 
   Future<String> translate(String text) async {
     if (text.isEmpty) return text;
+
+    if (AiService().hasApiKey && isAiTranslationEnabled) {
+      try {
+        return await AiService().translate(
+          text,
+          sourceLanguage: sourceLanguageName,
+          targetLanguage: targetLanguageName,
+        );
+      } catch (e) {
+        debugPrint('AI Translation error: $e');
+        // fallback to google on error
+      }
+    }
+
     try {
       final translation = await _translator.translate(
         text,

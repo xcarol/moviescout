@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/widgets/buttons/edit_button.dart';
 import 'package:moviescout/widgets/inputs_and_filters/drop_down_selector.dart';
 import 'package:moviescout/models/tmdb_translation.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/services/api/ai_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/api/web_translation_service.dart';
 import 'package:moviescout/utils/translation_languages.dart';
@@ -79,6 +81,7 @@ class TranslationsScreen extends StatefulWidget {
 class TranslationsScreenState extends State<TranslationsScreen> {
   String _translatedTitle = '';
   String _translatedDescription = '';
+
   bool _isTranslating = false;
   final ScrollController _scrollController = ScrollController();
 
@@ -217,6 +220,24 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
+                if (AiService().hasApiKey)
+                  Row(
+                    children: [
+                      const Icon(Symbols.wand_stars, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        AppLocalizations.of(context)!.enableAiTranslation,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Switch(
+                        value: service.isAiTranslationEnabled,
+                        onChanged: (val) {
+                          service.setAiTranslationEnabled(val);
+                          _performTranslation();
+                        },
+                      ),
+                    ],
+                  ),
               ],
             ),
             const SizedBox(height: 8),
@@ -224,6 +245,10 @@ class TranslationsScreenState extends State<TranslationsScreen> {
               builder: (context, constraints) {
                 final bool useRow = constraints.maxWidth > 350.0;
                 final sourceDropdown = DropdownSelector(
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  borderRadius: BorderRadius.circular(4),
                   selectedOption: selectedSourceOption,
                   options: sourceOptions,
                   maxMenuHeight: 300,
@@ -238,6 +263,10 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                 );
 
                 final targetDropdown = DropdownSelector(
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  borderRadius: BorderRadius.circular(4),
                   selectedOption: selectedTargetOption,
                   options: targetOptions,
                   maxMenuHeight: 300,

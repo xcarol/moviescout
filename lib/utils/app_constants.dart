@@ -26,6 +26,7 @@ class AppConstants {
   static const String showEditContent = 'show_edit_content';
   static const String personListIsGridView = 'person_list_is_grid_view';
   static const String aiApiKey = 'ai_api_key';
+  static const String aiTranslationEnabled = 'ai_translation_enabled';
   static const String aiModel = 'openrouter/free';
   static const double aiTemperature = 0.2;
   static const int aiMaxSuggestions = 10;
@@ -39,6 +40,9 @@ class AppConstants {
       '- "media_type": "movie" or "tv".\n'
       'Example:\n'
       '[{"title": "Inception", "year": 2010, "media_type": "movie"}]';
+  static const String aiTranslateSystemPrompt =
+      'You are a professional translator. Translate the given text to the target language. '
+      'Return ONLY the translated text without any quotes, formatting, or additional comments.';
 
   static const String catalan = 'ca-ES';
   static const String spanish = 'es-ES';

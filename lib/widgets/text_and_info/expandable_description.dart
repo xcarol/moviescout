@@ -93,8 +93,7 @@ class _ExpandableDescriptionState extends State<ExpandableDescription> {
           // Approximate height based on line height
           final fontSize = textStyle.fontSize ?? 14.0;
           final lineHeight = textStyle.height ?? 1.2;
-          final approxMaxHeight =
-              widget.initialMaxLines *
+          final approxMaxHeight = widget.initialMaxLines *
               fontSize *
               lineHeight *
               textScaler.scale(1.0);
