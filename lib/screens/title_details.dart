@@ -1273,13 +1273,42 @@ class _TitleDetailsState extends State<TitleDetails> {
         const SizedBox(height: 10),
         SizedBox(
           height: 336.0,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: title.recommendations.length,
-            itemBuilder: (context, index) {
-              return TitleChip(
-                title: title.recommendations[index],
-                tmdbListService: widget._tmdbListService,
+          child: Consumer<TmdbRateslistService>(
+            builder: (context, ratesService, child) {
+              return ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: title.recommendations.length,
+                itemBuilder: (context, index) {
+                  final recTitle = title.recommendations[index];
+                  final isRated = ratesService.getRating(
+                          recTitle.tmdbId, recTitle.mediaType) >
+                      0.0;
+
+                  return Stack(
+                    children: [
+                      TitleChip(
+                        title: recTitle,
+                        tmdbListService: widget._tmdbListService,
+                      ),
+                      if (isRated)
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).extension<CustomColors>()!.watchedOverlayColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const SizedBox.shrink(),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
               );
             },
           ),
