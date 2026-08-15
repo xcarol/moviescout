@@ -574,11 +574,11 @@ class _TitleDetailsState extends State<TitleDetails> {
           Divider(
             color: Theme.of(context).extension<CustomColors>()!.dividerColor,
           ),
-          _recommended(title),
-          const SizedBox(height: 30),
           _castAndCrew(title, PersonAttributes.cast),
           const SizedBox(height: 30),
           _castAndCrew(title, PersonAttributes.crew),
+          const SizedBox(height: 30),
+          _recommended(title),
         ],
       ),
     );
