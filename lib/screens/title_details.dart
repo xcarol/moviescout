@@ -228,57 +228,22 @@ class _TitleDetailsState extends State<TitleDetails> {
       );
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Stack(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final topOffset = (constraints.maxWidth * 9 / 16) - 28;
+        return Stack(
           clipBehavior: Clip.none,
           children: [
-            MediaCarousel(
-                images: title.images,
-                backdropPath: title.backdropPath,
-                posterPath: title.posterPath,
-                mediaType: title.isMovie ? ApiConstants.movie : ApiConstants.tv,
-                isLoading: _isUpdating),
-            Positioned(
-              left: 8,
-              bottom: -150,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    width: 4,
-                  ),
-                ),
-                child: title.posterPath.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: UrlConstants.tmdbImageW500Template
-                            .replaceFirst('{PATH}', title.posterPath),
-                        width: 120,
-                        height: 170,
-                        fit: BoxFit.cover,
-                        errorWidget: (context, url, error) => Image.asset(
-                          title.isMovie
-                              ? 'assets/movie_poster.png'
-                              : 'assets/tvshow_poster.png',
-                          width: 120,
-                          height: 170,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : Image.asset(
-                        title.isMovie
-                            ? 'assets/movie_poster.png'
-                            : 'assets/tvshow_poster.png',
-                        width: 120,
-                        height: 170,
-                        fit: BoxFit.cover,
-                      ),
-              ),
-            ),
-          ],
-        ),
-        Container(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                MediaCarousel(
+                    images: title.images,
+                    backdropPath: title.backdropPath,
+                    posterPath: title.posterPath,
+                    mediaType: title.isMovie ? ApiConstants.movie : ApiConstants.tv,
+                    isLoading: _isUpdating),
+                Container(
           constraints: const BoxConstraints(minHeight: 150),
           padding:
               const EdgeInsets.only(left: 144, right: 5, top: 10, bottom: 10),
@@ -300,7 +265,62 @@ class _TitleDetailsState extends State<TitleDetails> {
         ),
         const SizedBox(height: 10),
         _details(title),
-      ],
+              ],
+            ),
+            Positioned(
+              left: 8,
+              top: topOffset,
+              child: GestureDetector(
+                onTap: () {
+                  if (title.posterPath.isNotEmpty) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => FullScreenCarousel(
+                          images: [title.posterPath],
+                          initialPage: 0,
+                          infiniteBase: 0,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      width: 4,
+                    ),
+                  ),
+                  child: title.posterPath.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: UrlConstants.tmdbImageW500Template
+                              .replaceFirst('{PATH}', title.posterPath),
+                          width: 120,
+                          height: 170,
+                          fit: BoxFit.cover,
+                          errorWidget: (context, url, error) => Image.asset(
+                            title.isMovie
+                                ? 'assets/movie_poster.png'
+                                : 'assets/tvshow_poster.png',
+                            width: 120,
+                            height: 170,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : Image.asset(
+                          title.isMovie
+                              ? 'assets/movie_poster.png'
+                              : 'assets/tvshow_poster.png',
+                          width: 120,
+                          height: 170,
+                          fit: BoxFit.cover,
+                        ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
