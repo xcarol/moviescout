@@ -15,6 +15,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
   final Color bottomNavigationBarBackground;
   final Color appBarBackground;
   final Color appBarText;
+  final Color watchedOverlayColor;
 
   const CustomColors({
     required this.inWatchlist,
@@ -30,6 +31,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
     required this.bottomNavigationBarBackground,
     required this.appBarBackground,
     required this.appBarText,
+    required this.watchedOverlayColor,
   });
 
   @override
@@ -47,6 +49,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
     Color? bottomNavigationBarBackground,
     Color? appBarBackground,
     Color? appBarText,
+    Color? watchedOverlayColor,
   }) {
     return CustomColors(
       inWatchlist: inWatchlist ?? this.inWatchlist,
@@ -65,6 +68,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
           bottomNavigationBarBackground ?? this.bottomNavigationBarBackground,
       appBarBackground: appBarBackground ?? this.appBarBackground,
       appBarText: appBarText ?? this.appBarText,
+      watchedOverlayColor: watchedOverlayColor ?? this.watchedOverlayColor,
     );
   }
 
@@ -92,6 +96,8 @@ class CustomColors extends ThemeExtension<CustomColors> {
       appBarBackground:
           Color.lerp(appBarBackground, other.appBarBackground, t)!,
       appBarText: Color.lerp(appBarText, other.appBarText, t)!,
+      watchedOverlayColor:
+          Color.lerp(watchedOverlayColor, other.watchedOverlayColor, t)!,
     );
   }
 }

@@ -133,6 +133,7 @@ class ThemeService with ChangeNotifier {
     bottomNavigationBarBackground: lightColorSchemeDefault.secondary,
     appBarBackground: lightColorSchemeDefault.primaryContainer,
     appBarText: lightColorSchemeDefault.onSurface,
+    watchedOverlayColor: Colors.black54,
   );
 
   static ColorScheme darkColorSchemeDefault =
