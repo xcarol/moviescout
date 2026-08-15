@@ -402,6 +402,8 @@
   "@watchOn": {},
   "status": "Status",
   "@status": {},
+  "enableAiTranslation": "AI",
+  "@enableAiTranslation": {},
   "aiSettingsTitle": "Artificial Intelligence",
   "@aiSettingsTitle": {},
   "aiSettingsSubtitle": "Smart search and AI features",

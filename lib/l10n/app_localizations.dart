@@ -1174,6 +1174,12 @@ abstract class AppLocalizations {
   /// **'Status'**
   String get status;
 
+  /// No description provided for @enableAiTranslation.
+  ///
+  /// In en, this message translates to:
+  /// **'AI'**
+  String get enableAiTranslation;
+
   /// No description provided for @aiSettingsTitle.
   ///
   /// In en, this message translates to:
