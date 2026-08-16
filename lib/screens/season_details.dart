@@ -377,7 +377,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
                       .replaceFirst('{ID}', widget.title.tmdbId.toString())
                       .replaceFirst(
                           '{SEASON_NUMBER}', widget.seasonNumber.toString())),
-                  mode: LaunchMode.inAppWebView,
+                  mode: LaunchMode.externalApplication,
                 );
               },
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),

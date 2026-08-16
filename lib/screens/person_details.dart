@@ -288,7 +288,7 @@ class _PersonDetailsState extends State<PersonDetails> {
         url: UrlConstants.tmdbPersonWebTemplate
             .replaceFirst('{ID}', person.tmdbId.toString()),
         assetPath: 'assets/tmdb-logo.png',
-        launchMode: LaunchMode.inAppWebView,
+        launchMode: LaunchMode.inAppBrowserView,
       ),
     );
 

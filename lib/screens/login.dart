@@ -144,7 +144,7 @@ class _LoginState extends State<Login> {
         OutlinedButton(
           onPressed: () => launchUrlString(
             UrlConstants.tmdbSignupWebTemplate,
-            mode: LaunchMode.externalApplication,
+            mode: LaunchMode.inAppBrowserView,
           ),
           child: Text(AppLocalizations.of(context)!.signupToTmdb),
         ),
