@@ -52,8 +52,11 @@ class TmdbProviderService extends TmdbConfigListService {
       List<dynamic> providers = (jsonDecode(response.body)
           as Map<String, dynamic>)['results'] as List<dynamic>;
 
-      if (providers.isEmpty ||
-          providers[0][TmdbProvider.providerId] == null ||
+      if (providers.isEmpty) {
+        continue;
+      }
+
+      if (providers[0][TmdbProvider.providerId] == null ||
           providers[0][TmdbProvider.providerId].runtimeType != int) {
         const message = 'Failed to load providers (invalid payload)';
         ErrorService.log(

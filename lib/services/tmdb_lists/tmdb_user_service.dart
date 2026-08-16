@@ -140,7 +140,7 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
       try {
         await launchUrl(
           Uri.parse(authUrl),
-          mode: LaunchMode.externalApplication,
+          mode: LaunchMode.inAppBrowserView,
         );
       } catch (error, stackTrace) {
         ErrorService.log(

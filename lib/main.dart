@@ -356,6 +356,22 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       scaffoldMessengerKey: scaffoldMessengerKey,
       navigatorKey: DeepLinkService().navigatorKey,
       navigatorObservers: [routeObserver],
+      onGenerateRoute: (settings) {
+        if (settings.name == '/callback') {
+          return PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (context, _, __) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop();
+                }
+              });
+              return const SizedBox.shrink();
+            },
+          );
+        }
+        return null;
+      },
       builder: (context, child) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           final statusBarBrightness = Brightness.light;

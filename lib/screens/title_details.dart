@@ -468,7 +468,7 @@ class _TitleDetailsState extends State<TitleDetails> {
             .replaceFirst('{MEDIA_TYPE}', title.mediaType)
             .replaceFirst('{ID}', title.tmdbId.toString()),
         assetPath: 'assets/tmdb-logo.png',
-        launchMode: LaunchMode.inAppWebView,
+        launchMode: LaunchMode.inAppBrowserView,
       ),
     );
 
@@ -477,8 +477,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         SocialLink.image(
           url: UrlConstants.imdbTitleTemplate
               .replaceFirst('{ID}', title.imdbId.toString()),
-          assetPath: 'assets/imdb-logo.png',
-          launchMode: LaunchMode.inAppBrowserView,
+          assetPath: 'assets/imdb-logo.png'
         ),
       );
     }
