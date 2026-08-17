@@ -15,11 +15,13 @@ const double CARD_WIDTH = 160.0;
 class TitleChip extends StatefulWidget {
   final TmdbTitle title;
   final TmdbTitleListService tmdbListService;
+  final bool isDimmed;
 
   const TitleChip({
     super.key,
     required this.title,
     required this.tmdbListService,
+    this.isDimmed = false,
   });
 
   @override
@@ -80,6 +82,7 @@ class _TitleChipState extends State<TitleChip> {
             child: _TitleChipContent(
               title: titleToDisplay,
               tmdbListService: widget.tmdbListService,
+              isDimmed: widget.isDimmed,
               onReturnFromDetails: _loadLocalTitle,
             ),
           );
@@ -92,11 +95,13 @@ class _TitleChipState extends State<TitleChip> {
 class _TitleChipContent extends TitleCard {
   final TmdbTitle _title;
   final VoidCallback? onReturnFromDetails;
+  final bool isDimmed;
 
   const _TitleChipContent({
     required super.title,
     required super.tmdbListService,
     this.onReturnFromDetails,
+    this.isDimmed = false,
   }) : _title = title;
 
   @override
@@ -130,7 +135,18 @@ class _TitleChipContent extends TitleCard {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: titlePoster(_title.posterPath),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      titlePoster(_title.posterPath),
+                      if (isDimmed)
+                        Container(
+                          color: Theme.of(context)
+                              .extension<CustomColors>()!
+                              .watchedOverlayColor,
+                        ),
+                    ],
+                  ),
                 ),
                 Positioned(
                   top: 0,

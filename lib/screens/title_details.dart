@@ -1283,31 +1283,10 @@ class _TitleDetailsState extends State<TitleDetails> {
                           recTitle.tmdbId, recTitle.mediaType) >
                       0.0;
 
-                  return Stack(
-                    children: [
-                      TitleChip(
-                        title: recTitle,
-                        tmdbListService: widget._tmdbListService,
-                      ),
-                      if (isRated)
-                        Positioned.fill(
-                          child: IgnorePointer(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .extension<CustomColors>()!
-                                      .watchedOverlayColor,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const SizedBox.shrink(),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
+                  return TitleChip(
+                    title: recTitle,
+                    tmdbListService: widget._tmdbListService,
+                    isDimmed: isRated,
                   );
                 },
               );
