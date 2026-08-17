@@ -145,9 +145,11 @@ class RealmMapper {
       airDate: realmObj.airDate,
       posterPathSuffix: realmObj.posterPathSuffix,
       lastUpdated: realmObj.lastUpdated,
-      voteAverage: 0.0, // Add missing default if any
+      voteAverage: realmObj.voteAverage,
     )
       ..creditsJson = realmObj.creditsJson
+      ..imagesJson = realmObj.imagesJson
+      ..videosJson = realmObj.videosJson
       ..episodesJson = realmObj.episodesJson ?? '[]';
   }
 
@@ -161,8 +163,11 @@ class RealmMapper {
       domainObj.overview,
       domainObj.airDate,
       domainObj.lastUpdated,
+      domainObj.voteAverage,
       posterPathSuffix: domainObj.posterPathSuffix,
       creditsJson: domainObj.creditsJson,
+      imagesJson: domainObj.imagesJson,
+      videosJson: domainObj.videosJson,
       episodesJson: domainObj.episodesJson,
     );
   }

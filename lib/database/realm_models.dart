@@ -99,6 +99,10 @@ class _TmdbSeasonRealm {
   late String? posterPathSuffix;
   late String lastUpdated;
 
+  late double voteAverage;
+  late String? imagesJson;
+  late String? videosJson;
+
   late String? creditsJson;
   late String? episodesJson;
 }
@@ -162,6 +166,7 @@ class UserListEntryRealmFields {
 class TmdbSeasonRealmFields {
   static const String seasonNumber = 'seasonNumber';
   static const String tvId = 'tvId';
+  static const String voteAverage = 'voteAverage';
 }
 
 class TmdbEpisodeRealmFields {

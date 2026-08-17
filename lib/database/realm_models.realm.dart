@@ -804,8 +804,11 @@ class TmdbSeasonRealm extends _TmdbSeasonRealm
     String name,
     String overview,
     String airDate,
-    String lastUpdated, {
+    String lastUpdated,
+    double voteAverage, {
     String? posterPathSuffix,
+    String? imagesJson,
+    String? videosJson,
     String? creditsJson,
     String? episodesJson,
   }) {
@@ -818,6 +821,9 @@ class TmdbSeasonRealm extends _TmdbSeasonRealm
     RealmObjectBase.set(this, 'airDate', airDate);
     RealmObjectBase.set(this, 'posterPathSuffix', posterPathSuffix);
     RealmObjectBase.set(this, 'lastUpdated', lastUpdated);
+    RealmObjectBase.set(this, 'voteAverage', voteAverage);
+    RealmObjectBase.set(this, 'imagesJson', imagesJson);
+    RealmObjectBase.set(this, 'videosJson', videosJson);
     RealmObjectBase.set(this, 'creditsJson', creditsJson);
     RealmObjectBase.set(this, 'episodesJson', episodesJson);
   }
@@ -876,6 +882,27 @@ class TmdbSeasonRealm extends _TmdbSeasonRealm
       RealmObjectBase.set(this, 'lastUpdated', value);
 
   @override
+  double get voteAverage =>
+      RealmObjectBase.get<double>(this, 'voteAverage') as double;
+  @override
+  set voteAverage(double value) =>
+      RealmObjectBase.set(this, 'voteAverage', value);
+
+  @override
+  String? get imagesJson =>
+      RealmObjectBase.get<String>(this, 'imagesJson') as String?;
+  @override
+  set imagesJson(String? value) =>
+      RealmObjectBase.set(this, 'imagesJson', value);
+
+  @override
+  String? get videosJson =>
+      RealmObjectBase.get<String>(this, 'videosJson') as String?;
+  @override
+  set videosJson(String? value) =>
+      RealmObjectBase.set(this, 'videosJson', value);
+
+  @override
   String? get creditsJson =>
       RealmObjectBase.get<String>(this, 'creditsJson') as String?;
   @override
@@ -913,6 +940,9 @@ class TmdbSeasonRealm extends _TmdbSeasonRealm
       'airDate': airDate.toEJson(),
       'posterPathSuffix': posterPathSuffix.toEJson(),
       'lastUpdated': lastUpdated.toEJson(),
+      'voteAverage': voteAverage.toEJson(),
+      'imagesJson': imagesJson.toEJson(),
+      'videosJson': videosJson.toEJson(),
       'creditsJson': creditsJson.toEJson(),
       'episodesJson': episodesJson.toEJson(),
     };
@@ -931,6 +961,7 @@ class TmdbSeasonRealm extends _TmdbSeasonRealm
         'overview': EJsonValue overview,
         'airDate': EJsonValue airDate,
         'lastUpdated': EJsonValue lastUpdated,
+        'voteAverage': EJsonValue voteAverage,
       } =>
         TmdbSeasonRealm(
           fromEJson(id),
@@ -941,7 +972,10 @@ class TmdbSeasonRealm extends _TmdbSeasonRealm
           fromEJson(overview),
           fromEJson(airDate),
           fromEJson(lastUpdated),
+          fromEJson(voteAverage),
           posterPathSuffix: fromEJson(ejson['posterPathSuffix']),
+          imagesJson: fromEJson(ejson['imagesJson']),
+          videosJson: fromEJson(ejson['videosJson']),
           creditsJson: fromEJson(ejson['creditsJson']),
           episodesJson: fromEJson(ejson['episodesJson']),
         ),
@@ -964,6 +998,9 @@ class TmdbSeasonRealm extends _TmdbSeasonRealm
       SchemaProperty('posterPathSuffix', RealmPropertyType.string,
           optional: true),
       SchemaProperty('lastUpdated', RealmPropertyType.string),
+      SchemaProperty('voteAverage', RealmPropertyType.double),
+      SchemaProperty('imagesJson', RealmPropertyType.string, optional: true),
+      SchemaProperty('videosJson', RealmPropertyType.string, optional: true),
       SchemaProperty('creditsJson', RealmPropertyType.string, optional: true),
       SchemaProperty('episodesJson', RealmPropertyType.string, optional: true),
     ]);
