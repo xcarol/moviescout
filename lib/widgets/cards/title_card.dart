@@ -192,8 +192,8 @@ class TitleCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            titleHeader(tmdbTitle.name),
-            const SizedBox(height: 5),
+            titleHeader(tmdbTitle.name, maxLines: 2),
+            const SizedBox(height: 4),
             Row(
               children: [
                 Expanded(
