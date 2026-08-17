@@ -22,7 +22,7 @@ class RealmService {
         TmdbSeasonRealm.schema,
         TmdbEpisodeRealm.schema,
       ],
-      schemaVersion: 9,
+      schemaVersion: 10,
       migrationCallback: (migration, oldSchemaVersion) {
         if (oldSchemaVersion < 2) {
           _migrateProvidersJson(migration.newRealm);
@@ -37,6 +37,12 @@ class RealmService {
           final episodes = migration.newRealm.all<TmdbEpisodeRealm>();
           for (final episode in episodes) {
             episode.rating = 0.0;
+          }
+        }
+        if (oldSchemaVersion < 10) {
+          final seasons = migration.newRealm.all<TmdbSeasonRealm>();
+          for (final season in seasons) {
+            season.voteAverage = 0.0;
           }
         }
       },
