@@ -178,7 +178,7 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
     isDbLoading = true;
     try {
       if (!anyFilterApplied) {
-        return filterItems();
+        return await filterItems();
       }
       final currentRequestId = ++filterRequestId;
 

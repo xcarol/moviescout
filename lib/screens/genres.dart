@@ -71,8 +71,8 @@ class _GenresScreenState extends State<GenresScreen> {
                 ),
                 const SizedBox(width: 8),
                 SizedBox(
-                  width: 32,
-                  height: 32,
+                  width: 40,
+                  height: 40,
                   child: IconButton.outlined(
                     padding: EdgeInsets.zero,
                     style: IconButton.styleFrom(
