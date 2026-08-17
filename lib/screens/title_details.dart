@@ -241,30 +241,31 @@ class _TitleDetailsState extends State<TitleDetails> {
                     images: title.images,
                     backdropPath: title.backdropPath,
                     posterPath: title.posterPath,
-                    mediaType: title.isMovie ? ApiConstants.movie : ApiConstants.tv,
+                    mediaType:
+                        title.isMovie ? ApiConstants.movie : ApiConstants.tv,
                     isLoading: _isUpdating),
                 Container(
-          constraints: const BoxConstraints(minHeight: 150),
-          padding:
-              const EdgeInsets.only(left: 144, right: 5, top: 10, bottom: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _titleLine(title),
-                  _dateAndDuration(title),
-                  _primaryCreator(title),
-                ],
-              ),
-              _genres(title),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
-        _details(title),
+                  constraints: const BoxConstraints(minHeight: 150),
+                  padding: const EdgeInsets.only(
+                      left: 144, right: 5, top: 10, bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _titleLine(title),
+                          _dateAndDuration(title),
+                          _primaryCreator(title),
+                        ],
+                      ),
+                      _genres(title),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                _details(title),
               ],
             ),
             Positioned(
@@ -475,10 +476,9 @@ class _TitleDetailsState extends State<TitleDetails> {
     if (title.imdbId.isNotEmpty) {
       links.add(
         SocialLink.image(
-          url: UrlConstants.imdbTitleTemplate
-              .replaceFirst('{ID}', title.imdbId.toString()),
-          assetPath: 'assets/imdb-logo.png'
-        ),
+            url: UrlConstants.imdbTitleTemplate
+                .replaceFirst('{ID}', title.imdbId.toString()),
+            assetPath: 'assets/imdb-logo.png'),
       );
     }
 
@@ -1297,7 +1297,9 @@ class _TitleDetailsState extends State<TitleDetails> {
                                   const EdgeInsets.symmetric(horizontal: 4.0),
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).extension<CustomColors>()!.watchedOverlayColor,
+                                  color: Theme.of(context)
+                                      .extension<CustomColors>()!
+                                      .watchedOverlayColor,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: const SizedBox.shrink(),
