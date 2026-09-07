@@ -6,7 +6,7 @@ import 'package:moviescout/models/tmdb_item.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_collection.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/api/ai_service.dart';
@@ -15,7 +15,7 @@ import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/url_constants.dart';
 
 class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
-  final TmdbTitleRepository titleRepository;
+  final TitleRepository titleRepository;
   final List<TmdbPerson> _memoryPersons = [];
   final List<TmdbCollection> _memoryCollections = [];
 

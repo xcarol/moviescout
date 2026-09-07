@@ -4,14 +4,14 @@ import 'package:moviescout/database/realm_models.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 
 void main() {
   late Realm realm;
-  late TmdbTitleRepository repository;
+  late TitleRepository repository;
 
   setUp(() {
     final config = Configuration.inMemory(
@@ -23,7 +23,7 @@ void main() {
       ],
     );
     realm = Realm(config);
-    repository = TmdbTitleRepository(realm: realm);
+    repository = TitleRepository(realm: realm);
   });
 
   tearDown(() {

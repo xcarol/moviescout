@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_following_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/core/tmdb_base_service.dart';
@@ -13,7 +13,7 @@ import 'package:http/http.dart' as http;
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 
-class MockTmdbTitleRepository extends Mock implements TmdbTitleRepository {}
+class MockTmdbTitleRepository extends Mock implements TitleRepository {}
 
 class MockTmdbFollowingService extends Mock implements TmdbFollowingService {}
 

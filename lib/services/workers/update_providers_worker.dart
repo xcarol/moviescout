@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/notifications/notification_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -22,7 +22,7 @@ class UpdateProvidersWorker {
   static Future<void> _runAsync(String listName) async {
     _isRunning = true;
     try {
-      final repository = TmdbTitleRepository();
+      final repository = TitleRepository();
       final titleService = TmdbTitleService();
       final notificationService = NotificationService();
 

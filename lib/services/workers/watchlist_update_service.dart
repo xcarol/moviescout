@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/core/realm_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
@@ -48,7 +48,7 @@ class WatchlistUpdateService {
       List<dynamic> providersList,
       List<int> enabledProviderIds,
       TmdbTitleService titleService,
-      TmdbTitleRepository repository,
+      TitleRepository repository,
       AppLocalizations localizations,
       DateTime now,
       bool notifyCompleteSeason) async {
@@ -216,7 +216,7 @@ class WatchlistUpdateService {
               .getBool(AppConstants.notifyCompleteSeason) ??
           false;
 
-      final repository = TmdbTitleRepository();
+      final repository = TitleRepository();
       final titleService = TmdbTitleService();
 
       final watchlistTitles = await repository.getTitles(

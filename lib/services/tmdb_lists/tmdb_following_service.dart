@@ -1,5 +1,5 @@
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_config_list_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -7,7 +7,7 @@ import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 
 class TmdbFollowingService extends TmdbConfigListService {
-  final TmdbTitleRepository repository;
+  final TitleRepository repository;
 
   TmdbFollowingService(this.repository)
       : super(

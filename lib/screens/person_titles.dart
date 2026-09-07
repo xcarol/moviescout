@@ -6,7 +6,7 @@ import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 
 class PersonTitles extends StatefulWidget {
   final TmdbPerson _person;
@@ -30,7 +30,7 @@ class _PersonTitlesState extends State<PersonTitles> {
     super.initState();
     _personTitlesService = TmdbPersonTitlesService(
       'person_titles_${widget._person.tmdbId}',
-      Provider.of<TmdbTitleRepository>(context, listen: false),
+      Provider.of<TitleRepository>(context, listen: false),
       person: widget._person,
       role: widget.role,
     );

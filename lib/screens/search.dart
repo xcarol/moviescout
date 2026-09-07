@@ -6,7 +6,7 @@ import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/snack_bar.dart';
@@ -49,11 +49,11 @@ class _SearchState extends State<Search> {
     super.initState();
     _titleListServiceSupport = TmdbTitleListService(
       AppConstants.searchList,
-      context.read<TmdbTitleRepository>(),
+      context.read<TitleRepository>(),
     );
     _searchService = TmdbSearchService(
       AppConstants.searchList,
-      context.read<TmdbTitleRepository>(),
+      context.read<TitleRepository>(),
     );
     _searchWidget = ItemList(
       _searchService,

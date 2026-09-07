@@ -5,7 +5,7 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/screens/season_details.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
 import 'package:provider/provider.dart';
@@ -68,7 +68,7 @@ class _ShortcutRouterState extends State<ShortcutRouter> {
               segments[2] == 'season') {
             final seasonNumber = int.tryParse(segments[3]);
             if (seasonNumber != null) {
-              final repository = TmdbTitleRepository();
+              final repository = TitleRepository();
               final existingTitle =
                   await repository.getTitleGlobal(tmdbId, type);
               final title = existingTitle ??
@@ -88,7 +88,7 @@ class _ShortcutRouterState extends State<ShortcutRouter> {
             }
           }
 
-          final repository = TmdbTitleRepository();
+          final repository = TitleRepository();
           final existingTitle = await repository.getTitleGlobal(tmdbId, type);
           final title = existingTitle ??
               TmdbTitle.fromMap(title: {

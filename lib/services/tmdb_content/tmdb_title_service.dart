@@ -7,7 +7,7 @@ import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/api/youtube_service.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 
 class TmdbTitleService extends TmdbBaseService {
   Future<dynamic> _retrieveTitleDetails(
@@ -75,7 +75,7 @@ class TmdbTitleService extends TmdbBaseService {
     if (force &&
         (mediaType == ApiConstants.tv ||
             mediaType == AppConstants.miniseries)) {
-      await TmdbTitleRepository().invalidateSeasonsAndEpisodes(title.tmdbId);
+      await TitleRepository().invalidateSeasonsAndEpisodes(title.tmdbId);
     }
 
     final result = await _retrieveTitleDetails(

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
@@ -16,7 +16,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
   @protected
   final List<TmdbTitle> pinnedTitlesVal = List.empty(growable: true);
   @protected
-  final TmdbTitleRepository repository;
+  final TitleRepository repository;
 
   int get loadedTitleCount => loadedItemsVal.length;
   List<TmdbTitle> get pinnedTitles => pinnedTitlesVal;

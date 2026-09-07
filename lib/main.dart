@@ -31,7 +31,7 @@ import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/screens/main_screen.dart';
 import 'package:moviescout/services/system/deep_link_service.dart';
 import 'package:moviescout/utils/language_translator.dart';
@@ -176,7 +176,7 @@ void _runMain({bool isFromShortcutActivity = false}) async {
     );
   }
 
-  final repository = TmdbTitleRepository();
+  final repository = TitleRepository();
 
   if (!isShortcut) {
     UninitializedTitlesWorker.dispatch();

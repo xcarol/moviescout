@@ -6,13 +6,13 @@ import 'package:moviescout/services/tmdb_lists/tmdb_pinned_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/workers/uninitialized_titles_worker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 
 class WatchlistService extends TmdbTitleListService {
   final SupabaseClient _supabase = Supabase.instance.client;
   TmdbPinnedService? pinnedService;
 
-  WatchlistService(TmdbTitleRepository repository)
+  WatchlistService(TitleRepository repository)
       : super(AppConstants.watchlist, repository);
 
   @override
@@ -51,7 +51,7 @@ class WatchlistService extends TmdbTitleListService {
           final newTitle = TmdbTitle(
             tmdbId: tmdbId,
             mediaType: mediaType,
-            name: '', 
+            name: '',
             lastUpdated: DateTime.now().toIso8601String(),
             dateRated: DateTime.now(),
           )..isPinned = isPinned;
