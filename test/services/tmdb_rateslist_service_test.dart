@@ -128,18 +128,20 @@ void main() {
       when(() => mockRepository.getTitleByTmdbId(
               AppConstants.watchlist, title.tmdbId, title.mediaType))
           .thenAnswer((_) async => title); // Exists in watchlist
-      when(() => mockRepository.deleteTitle(
-              AppConstants.watchlist, title.tmdbId, title.mediaType))
+      when(() => mockRepository.deleteTitles(
+              AppConstants.watchlist, [title.tmdbId], [title.mediaType]))
           .thenAnswer((_) async {});
-      when(() => mockRepository.saveTitle(title, AppConstants.rateslist, any()))
-          .thenAnswer((_) async {});
+      when(() => mockRepository.saveTitles([title], AppConstants.rateslist,
+          addedOrders: any(named: 'addedOrders'))).thenAnswer((_) async {});
       when(() => mockRepository.getMaxAddedOrder(AppConstants.rateslist))
           .thenAnswer((_) async => 0);
       when(() => mockRepository.getTitleGlobal(title.tmdbId, title.mediaType))
           .thenAnswer((_) async => null);
-      when(() => mockRepository.updateRating(title)).thenAnswer((_) async {});
-      when(() => mockRepository.updateIsPinned(title)).thenAnswer((_) async {});
-      when(() => mockRepository.updateNotifyNewSeasons(title))
+      when(() => mockRepository.updateRatingList([title]))
+          .thenAnswer((_) async {});
+      when(() => mockRepository.updateIsPinnedList([title]))
+          .thenAnswer((_) async {});
+      when(() => mockRepository.updateNotifyNewSeasonsList([title]))
           .thenAnswer((_) async {});
 
       await service.updateTitleRate('accountId', 'sessionId', title, 8.0);
@@ -148,12 +150,11 @@ void main() {
       expect(title.isPinned, false);
       expect(title.inLists.contains(AppConstants.watchlist), false);
 
-      verify(() => mockRepository.deleteTitle(
-          AppConstants.watchlist, title.tmdbId, title.mediaType)).called(1);
-      verify(() =>
-              mockRepository.saveTitle(title, AppConstants.rateslist, any()))
-          .called(1);
-      verify(() => mockRepository.updateRating(title)).called(1);
+      verify(() => mockRepository.deleteTitles(
+          AppConstants.watchlist, [title.tmdbId], [title.mediaType])).called(1);
+      verify(() => mockRepository.saveTitles([title], AppConstants.rateslist,
+          addedOrders: any(named: 'addedOrders'))).called(1);
+      verify(() => mockRepository.updateRatingList([title])).called(1);
     });
 
     test(
@@ -171,8 +172,8 @@ void main() {
 
       when(() => mockFollowingService.removeFollowingFromServer(title))
           .thenAnswer((_) async => true);
-      when(() => mockRepository.deleteTitle(
-              AppConstants.rateslist, title.tmdbId, title.mediaType))
+      when(() => mockRepository.deleteTitles(
+              AppConstants.rateslist, [title.tmdbId], [title.mediaType]))
           .thenAnswer((_) async {});
       when(() => mockRepository.getTitleGlobal(title.tmdbId, title.mediaType))
           .thenAnswer((_) async => null);
@@ -184,8 +185,8 @@ void main() {
 
       verify(() => mockFollowingService.removeFollowingFromServer(title))
           .called(1);
-      verify(() => mockRepository.deleteTitle(
-          AppConstants.rateslist, title.tmdbId, title.mediaType)).called(1);
+      verify(() => mockRepository.deleteTitles(
+          AppConstants.rateslist, [title.tmdbId], [title.mediaType])).called(1);
     });
 
     test('toggleNotify adds following if not following', () async {
@@ -197,7 +198,7 @@ void main() {
           dateRated: DateTime.now());
       title.notifyNewSeasons = false;
 
-      when(() => mockRepository.updateNotifyNewSeasons(title))
+      when(() => mockRepository.updateNotifyNewSeasonsList([title]))
           .thenAnswer((_) async {});
       when(() => mockFollowingService.addFollowingToServer(title))
           .thenAnswer((_) async => true);
@@ -206,7 +207,8 @@ void main() {
 
       expect(title.notifyNewSeasons, true);
       verify(() => mockFollowingService.addFollowingToServer(title)).called(1);
-      verify(() => mockRepository.updateNotifyNewSeasons(title)).called(1);
+      verify(() => mockRepository.updateNotifyNewSeasonsList([title]))
+          .called(1);
     });
 
     test('toggleNotify removes following if already following', () async {
@@ -218,7 +220,7 @@ void main() {
           dateRated: DateTime.now());
       title.notifyNewSeasons = true;
 
-      when(() => mockRepository.updateNotifyNewSeasons(title))
+      when(() => mockRepository.updateNotifyNewSeasonsList([title]))
           .thenAnswer((_) async {});
       when(() => mockFollowingService.removeFollowingFromServer(title))
           .thenAnswer((_) async => true);
@@ -228,7 +230,8 @@ void main() {
       expect(title.notifyNewSeasons, false);
       verify(() => mockFollowingService.removeFollowingFromServer(title))
           .called(1);
-      verify(() => mockRepository.updateNotifyNewSeasons(title)).called(1);
+      verify(() => mockRepository.updateNotifyNewSeasonsList([title]))
+          .called(1);
     });
   });
 }

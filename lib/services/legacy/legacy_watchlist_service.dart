@@ -5,10 +5,10 @@ import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_pinned_service.dart';
 
-class TmdbWatchlistService extends TmdbTitleListService {
+class LegacyWatchlistService extends TmdbTitleListService {
   TmdbPinnedService? pinnedService;
 
-  TmdbWatchlistService(super.listName, super.repository);
+  LegacyWatchlistService(super.listName, super.repository);
 
   Future<void> retrieveWatchlist(
       String accountId, String sessionId, Locale locale,
@@ -79,7 +79,7 @@ class TmdbWatchlistService extends TmdbTitleListService {
       final globalTitle =
           await repository.getTitleGlobal(title.tmdbId, title.mediaType);
       if (add || globalTitle != null) {
-        await repository.updateIsPinned(title);
+        await repository.updateIsPinnedList([title]);
       }
     } catch (error, stackTrace) {
       ErrorService.log(
@@ -108,7 +108,7 @@ class TmdbWatchlistService extends TmdbTitleListService {
     }
 
     title.isPinned = !title.isPinned;
-    await repository.updateIsPinned(title);
+    await repository.updateIsPinnedList([title]);
 
     if (pinnedService != null) {
       if (title.isPinned) {

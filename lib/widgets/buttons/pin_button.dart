@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
 import 'package:provider/provider.dart';
 
 Widget pinButton(
   BuildContext context,
   TmdbTitle title,
 ) {
-  return Consumer<TmdbWatchlistService>(
+  return Consumer<LegacyWatchlistService>(
     builder: (context, watchlistService, _) {
       return FutureBuilder<TmdbTitle?>(
         future:

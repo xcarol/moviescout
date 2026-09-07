@@ -7,7 +7,7 @@ import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/screens/season_details.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:moviescout/utils/api_constants.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
 import 'package:provider/provider.dart';
 import 'package:app_links/app_links.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -54,7 +54,7 @@ class _ShortcutRouterState extends State<ShortcutRouter> {
     if (!mounted) return;
 
     final watchlistService =
-        Provider.of<TmdbWatchlistService>(context, listen: false);
+        Provider.of<LegacyWatchlistService>(context, listen: false);
     final segments = uri.pathSegments;
     if (segments.length >= 2) {
       final type = segments[0];

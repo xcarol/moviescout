@@ -12,7 +12,7 @@ import 'package:moviescout/screens/settings.dart';
 import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
@@ -225,7 +225,7 @@ class AppDrawer extends StatelessWidget {
     final tmdbUserService =
         Provider.of<TmdbUserService>(context, listen: false);
     final tmdbWatchlistService =
-        Provider.of<TmdbWatchlistService>(context, listen: false);
+        Provider.of<LegacyWatchlistService>(context, listen: false);
     final tmdbRateslistService =
         Provider.of<TmdbRateslistService>(context, listen: false);
     final tmdbDiscoverlistService =

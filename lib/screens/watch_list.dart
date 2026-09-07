@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +15,7 @@ class WatchList extends StatefulWidget {
 
 class _WatchListState extends State<WatchList> {
   late Future<void> _init;
-  late TmdbWatchlistService _watchlistService;
+  late LegacyWatchlistService _watchlistService;
   late Widget _watchlistWidget;
 
   @override
@@ -28,7 +28,7 @@ class _WatchListState extends State<WatchList> {
     final userService = Provider.of<TmdbUserService>(context, listen: false);
 
     _watchlistService =
-        Provider.of<TmdbWatchlistService>(context, listen: false);
+        Provider.of<LegacyWatchlistService>(context, listen: false);
     _watchlistWidget = ItemList(
       _watchlistService,
       key: ValueKey('watchlist'),
@@ -54,7 +54,7 @@ class _WatchListState extends State<WatchList> {
   }
 
   Widget body() {
-    return Selector<TmdbWatchlistService, bool>(
+    return Selector<LegacyWatchlistService, bool>(
       selector: (_, service) => service.listIsEmpty && !service.isLoading.value,
       shouldRebuild: (prev, next) => prev != next,
       builder: (context, isEmpty, child) {

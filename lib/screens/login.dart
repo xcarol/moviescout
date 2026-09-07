@@ -9,7 +9,7 @@ import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:app_links/app_links.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -57,8 +57,8 @@ class _LoginState extends State<Login> {
   void _completeLogin() async {
     TmdbUserService userService =
         Provider.of<TmdbUserService>(context, listen: false);
-    TmdbWatchlistService watchlistService =
-        Provider.of<TmdbWatchlistService>(context, listen: false);
+    LegacyWatchlistService watchlistService =
+        Provider.of<LegacyWatchlistService>(context, listen: false);
     TmdbRateslistService rateslistService =
         Provider.of<TmdbRateslistService>(context, listen: false);
     TmdbProviderService providerService =

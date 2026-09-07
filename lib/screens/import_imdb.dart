@@ -11,7 +11,7 @@ import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
 import 'package:provider/provider.dart';
 
@@ -114,8 +114,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
       setState(() {
         _operationInProgress = true;
       });
-      TmdbWatchlistService watchlistService =
-          Provider.of<TmdbWatchlistService>(context, listen: false);
+      LegacyWatchlistService watchlistService =
+          Provider.of<LegacyWatchlistService>(context, listen: false);
       TmdbUserService userService =
           Provider.of<TmdbUserService>(context, listen: false);
 
@@ -511,7 +511,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
             continue;
           }
 
-          if (await Provider.of<TmdbWatchlistService>(context, listen: false)
+          if (await Provider.of<LegacyWatchlistService>(context, listen: false)
               .contains(titlesFromId.first)) {
             setState(() {
               _csvTitlesStatus[index] = TitleStatus.success;
@@ -527,7 +527,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           }
 
           final watchlistService =
-              Provider.of<TmdbWatchlistService>(context, listen: false);
+              Provider.of<LegacyWatchlistService>(context, listen: false);
 
           await watchlistService.updateWatchlistTitle(
             tmdbUserService.accountId,
@@ -537,7 +537,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
           );
 
           setState(() async {
-            if (await Provider.of<TmdbWatchlistService>(context, listen: false)
+            if (await Provider.of<LegacyWatchlistService>(context,
+                    listen: false)
                 .contains(titlesFromId.first)) {
               _csvTitlesStatus[index] = TitleStatus.success;
             } else {

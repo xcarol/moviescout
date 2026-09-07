@@ -206,7 +206,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         }
 
         final repository = TmdbTitleRepository();
-        await repository.updateTitleMetadata(updated);
+        await repository.updateTitlesMetadata([updated]);
       }
     } catch (e) {
       if (mounted) {

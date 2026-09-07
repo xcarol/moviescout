@@ -186,8 +186,8 @@ class TmdbRateslistService extends TmdbTitleListService {
         final watchlistTitle = await repository.getTitleByTmdbId(
             AppConstants.watchlist, title.tmdbId, title.mediaType);
         if (watchlistTitle != null) {
-          await repository.deleteTitle(
-              AppConstants.watchlist, title.tmdbId, title.mediaType);
+          await repository.deleteTitles(
+              AppConstants.watchlist, [title.tmdbId], [title.mediaType]);
           title.inLists = title.inLists.toList()
             ..remove(AppConstants.watchlist);
         }
@@ -207,9 +207,9 @@ class TmdbRateslistService extends TmdbTitleListService {
       final globalTitle =
           await repository.getTitleGlobal(title.tmdbId, title.mediaType);
       if (rating > 0 || globalTitle != null) {
-        await repository.updateRating(title);
-        await repository.updateIsPinned(title);
-        await repository.updateNotifyNewSeasons(title);
+        await repository.updateRatingList([title]);
+        await repository.updateIsPinnedList([title]);
+        await repository.updateNotifyNewSeasonsList([title]);
       }
     } catch (error, stackTrace) {
       ErrorService.log(
@@ -222,7 +222,7 @@ class TmdbRateslistService extends TmdbTitleListService {
 
   Future<void> toggleNotify(TmdbTitle title) async {
     title.notifyNewSeasons = !title.notifyNewSeasons;
-    await repository.updateNotifyNewSeasons(title);
+    await repository.updateNotifyNewSeasonsList([title]);
 
     if (followingService != null) {
       if (title.notifyNewSeasons) {

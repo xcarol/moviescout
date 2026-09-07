@@ -27,7 +27,7 @@ import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_pinned_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_following_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
@@ -214,8 +214,9 @@ void _runMain({bool isFromShortcutActivity = false}) async {
         },
       ),
       ChangeNotifierProxyProvider2<TmdbRateslistService, TmdbPinnedService,
-          TmdbWatchlistService>(
-        create: (_) => TmdbWatchlistService(AppConstants.watchlist, repository),
+          LegacyWatchlistService>(
+        create: (_) =>
+            LegacyWatchlistService(AppConstants.watchlist, repository),
         update: (_, rateslistService, pinnedService, watchlistService) {
           rateslistService.removeListener(watchlistService!.refresh);
           rateslistService.addListener(watchlistService.refresh);
@@ -223,7 +224,7 @@ void _runMain({bool isFromShortcutActivity = false}) async {
           return watchlistService;
         },
       ),
-      ChangeNotifierProxyProvider2<TmdbRateslistService, TmdbWatchlistService,
+      ChangeNotifierProxyProvider2<TmdbRateslistService, LegacyWatchlistService,
           TmdbDiscoverlistService>(
         create: (_) =>
             TmdbDiscoverlistService(AppConstants.discoverlist, repository),
@@ -261,7 +262,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     AppLifecycleService.instance.init();
 
     final watchlistService =
-        Provider.of<TmdbWatchlistService>(context, listen: false);
+        Provider.of<LegacyWatchlistService>(context, listen: false);
     DeepLinkService().isShortcutMode = widget.isShortcut;
     DeepLinkService().init(watchlistService);
     NotificationService().handleColdStartNotification();
@@ -285,7 +286,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void _onRegionChanged() {
     if (!mounted) return;
     final watchlistService =
-        Provider.of<TmdbWatchlistService>(context, listen: false);
+        Provider.of<LegacyWatchlistService>(context, listen: false);
     final rateslistService =
         Provider.of<TmdbRateslistService>(context, listen: false);
     watchlistService.updateProviders();

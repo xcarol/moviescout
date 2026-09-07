@@ -8,7 +8,7 @@ import 'package:moviescout/services/core/realm_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 import 'package:moviescout/services/notifications/notification_service.dart';
@@ -61,7 +61,7 @@ class WatchlistUpdateService {
     if (titleBeforeUpdate.lastUpdated != title.lastUpdated ||
         titleBeforeUpdate.flatrateProviderIds.join(',') !=
             title.flatrateProviderIds.join(',')) {
-      await repository.updateTitleMetadata(title);
+      await repository.updateTitlesMetadata([title]);
     }
 
     if (title.lastNotifiedSeason == 0 && title.isSerie) {
@@ -71,7 +71,7 @@ class WatchlistUpdateService {
         now,
         notifyCompleteSeason: notifyCompleteSeason,
       );
-      await repository.updateNotifyNewSeasons(title);
+      await repository.updateNotifyNewSeasonsList([title]);
     }
 
     final trigger = WatchlistNotificationEvaluator.evaluateNotification(
@@ -128,7 +128,7 @@ class WatchlistUpdateService {
       } else {
         title.notifyNewSeasons = false;
       }
-      await repository.updateNotifyNewSeasons(title);
+      await repository.updateNotifyNewSeasonsList([title]);
 
       return true;
     }
@@ -165,13 +165,13 @@ class WatchlistUpdateService {
             PreferencesService().prefs.getString('sessionId') ?? '';
         if (accountId.isNotEmpty && sessionId.isNotEmpty) {
           final watchlistService =
-              TmdbWatchlistService(AppConstants.watchlist, repository);
+              LegacyWatchlistService(AppConstants.watchlist, repository);
           await watchlistService.updateWatchlistTitle(
               accountId, sessionId, title, true);
         }
       }
 
-      await repository.updateNotifyNewSeasons(title);
+      await repository.updateNotifyNewSeasonsList([title]);
       return true;
     }
 

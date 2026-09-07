@@ -39,10 +39,10 @@ void main() {
           lastUpdated: '2026-07-14',
           dateRated: DateTime.now());
 
-      await repository.saveTitle(title, 'watchlist', 0);
+      await repository.saveTitles([title], 'watchlist', addedOrders: [0]);
 
       title.overview = 'Updated overview';
-      await repository.updateTitleMetadata(title);
+      await repository.updateTitlesMetadata([title]);
 
       final saved = await repository.getTitleByTmdbId('watchlist', 1, 'movie');
       expect(saved!.overview, 'Updated overview');
@@ -103,7 +103,7 @@ void main() {
           mediaType: 'movie',
           lastUpdated: '2026-07-14',
           dateRated: DateTime.now());
-      await repository.saveTitle(t1, 'watchlist', 0);
+      await repository.saveTitles([t1], 'watchlist', addedOrders: [0]);
 
       t1.isPinned = true;
       await repository.updateIsPinnedList([t1]);
@@ -119,7 +119,7 @@ void main() {
           mediaType: 'movie',
           lastUpdated: '2026-07-14',
           dateRated: DateTime.now());
-      await repository.saveTitle(t1, 'watchlist', 0);
+      await repository.saveTitles([t1], 'watchlist', addedOrders: [0]);
 
       t1.rating = 9.0;
       await repository.updateRatingList([t1]);
@@ -135,10 +135,10 @@ void main() {
           mediaType: 'tv',
           lastUpdated: '2026-07-14',
           dateRated: DateTime.now());
-      await repository.saveTitle(t1, 'watchlist', 0);
+      await repository.saveTitles([t1], 'watchlist', addedOrders: [0]);
 
       t1.notifyNewSeasons = true;
-      await repository.updateNotifyNewSeasons(t1);
+      await repository.updateNotifyNewSeasonsList([t1]);
       var s1 = await repository.getTitleByTmdbId('watchlist', 1, 'tv');
       expect(s1!.notifyNewSeasons, true);
 
@@ -156,7 +156,7 @@ void main() {
           mediaType: 'movie',
           lastUpdated: '2026-07-14',
           dateRated: DateTime.now());
-      await repository.saveTitle(t1, 'watchlist', 0);
+      await repository.saveTitles([t1], 'watchlist', addedOrders: [0]);
 
       expect(await repository.hasTitlesInList([10], 'watchlist'), isTrue);
       expect(await repository.hasTitlesInList([99], 'watchlist'), isFalse);
@@ -178,7 +178,7 @@ void main() {
           mediaType: 'movie',
           lastUpdated: AppConstants.defaultDate,
           dateRated: DateTime.now());
-      await repository.saveTitle(t1, 'watchlist', 0);
+      await repository.saveTitles([t1], 'watchlist', addedOrders: [0]);
 
       final uninit = await repository.getUninitializedTitles();
       expect(uninit.length, 1);
@@ -192,7 +192,7 @@ void main() {
           mediaType: 'movie',
           lastUpdated: '2026-07-14',
           dateRated: DateTime.now());
-      await repository.saveTitle(t1, 'watchlist', 0);
+      await repository.saveTitles([t1], 'watchlist', addedOrders: [0]);
 
       final syncTitle =
           repository.getTitleByTmdbIdSync('watchlist', 1, 'movie');
@@ -242,7 +242,7 @@ void main() {
           lastUpdated: '2026-07-14',
           dateRated: DateTime.now());
       t1.genreIds = [28, 12];
-      await repository.saveTitle(t1, 'watchlist', 0);
+      await repository.saveTitles([t1], 'watchlist', addedOrders: [0]);
 
       final genresList = await repository.getAllGenreIds('watchlist');
       expect(genresList.length, 1);

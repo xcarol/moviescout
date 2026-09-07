@@ -51,24 +51,6 @@ class TmdbTitleRepository {
     }
   }
 
-  Future<void> saveTitle(
-      TmdbTitle title, String listName, int addedOrder) async {
-    _realm.write(() {
-      _mergeOrAddTitleMetadata(title, listName);
-      _realm.add(RealmMapper.toRealmTitle(title), update: true);
-
-      _realm.add(
-          UserListEntryRealm(
-            '${listName}_${title.tmdbId}_${title.mediaType}',
-            listName,
-            title.tmdbId,
-            title.mediaType,
-            addedOrder,
-          ),
-          update: true);
-    });
-  }
-
   void _runInBatches<T>(
       List<T> items, void Function(List<T> batch, int startIdx) action) {
     const batchSize = AppConstants.defaultBatchSize;
@@ -112,18 +94,6 @@ class TmdbTitleRepository {
     );
   }
 
-  Future<void> updateTitleMetadata(TmdbTitle title) async {
-    _realm.write(() {
-      final existing =
-          _realm.find<TmdbTitleRealm>('${title.tmdbId}_${title.mediaType}');
-
-      if (existing != null) {
-        _mergeTitleMetadata(title, RealmMapper.toDomainTitle(existing));
-      }
-      _realm.add(RealmMapper.toRealmTitle(title), update: true);
-    });
-  }
-
   Future<void> updateTitlesMetadata(List<TmdbTitle> titles) async {
     if (titles.isEmpty) return;
 
@@ -159,15 +129,11 @@ class TmdbTitleRepository {
     });
   }
 
-  Future<void> updateIsPinned(TmdbTitle title) => updateIsPinnedList([title]);
-
   Future<void> updateIsPinnedList(List<TmdbTitle> titles) {
     return _updateTitlesField(titles, (existing, title) {
       existing.isPinned = title.isPinned;
     });
   }
-
-  Future<void> updateRating(TmdbTitle title) => updateRatingList([title]);
 
   Future<void> updateRatingList(List<TmdbTitle> titles) {
     return _updateTitlesField(titles, (existing, title) {
@@ -176,18 +142,12 @@ class TmdbTitleRepository {
     });
   }
 
-  Future<void> updateNotifyNewSeasons(TmdbTitle title) =>
-      updateNotifyNewSeasonsList([title]);
-
   Future<void> updateNotifyNewSeasonsList(List<TmdbTitle> titles) {
     return _updateTitlesField(titles, (existing, title) {
       existing.notifyNewSeasons = title.notifyNewSeasons;
       existing.lastNotifiedSeason = title.lastNotifiedSeason;
     });
   }
-
-  Future<void> deleteTitle(String listName, int tmdbId, String mediaType) =>
-      deleteTitles(listName, [tmdbId], [mediaType]);
 
   void _deleteOrphanTitle(TmdbTitleRealm title) {
     if (title.inLists.isEmpty) {
