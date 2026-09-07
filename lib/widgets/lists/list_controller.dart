@@ -311,7 +311,7 @@ class ListController with ChangeNotifier {
     } else if (name == localizations.sortRuntime) {
       return SortOption.runtime;
     } else if (name == localizations.sortAddedOrder) {
-      return SortOption.addedOrder;
+      return SortOption.addedDate;
     } else {
       return isSearchList ? SortOption.relevance : SortOption.alphabetically;
     }
@@ -368,7 +368,7 @@ class ListController with ChangeNotifier {
       return localizations.sortReleaseDate;
     } else if (option == SortOption.runtime) {
       return localizations.sortRuntime;
-    } else if (option == SortOption.addedOrder) {
+    } else if (option == SortOption.addedDate) {
       return localizations.sortAddedOrder;
     }
     return isSearchList

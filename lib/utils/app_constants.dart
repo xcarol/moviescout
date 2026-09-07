@@ -3,6 +3,8 @@ class AppConstants {
   static const String watchlist = 'watchlist';
   static const String rateslist = 'rateslist';
   static const String discoverlist = 'discoverlist';
+  static const String pinnedlist = 'pinnedlist';
+  static const String followinglist = 'followinglist';
   static const String importImdb = 'importImdb';
   static const String searchList = 'searchlist';
   static const String miniseries = 'miniseries';

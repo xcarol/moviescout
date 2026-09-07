@@ -27,9 +27,7 @@ class TmdbProviderService extends TmdbConfigListService {
 
   TmdbProviderService()
       : super(
-          configListName: 'providers',
-          listIdPrefKey: 'providerListId',
-          firestoreFieldName: 'providers',
+          remoteConfigName: 'providers',
         );
 
   Future<void> _retrieveProviders() async {
@@ -122,12 +120,6 @@ class TmdbProviderService extends TmdbConfigListService {
   }
 
   @override
-  Future<dynamic> migrateDataFromTmdb() async {
-    // Legacy migration logic
-    return await fetchConfigFromServer();
-  }
-
-  @override
   Future<void> applyData(dynamic data) async {
     if (data is! String) return;
     _stringToProviders(data);
@@ -211,7 +203,7 @@ class TmdbProviderService extends TmdbConfigListService {
   void toggleProvider(int id, bool value) {
     if (_providerMap.containsKey(id)) {
       _providerMap[id]![TmdbProvider.providerEnabled] = value.toString();
-      updateToFirebase(_providersToString()); // Real-time push!
+      updateRemoteConfig(_providersToString()); // Real-time push!
       _setLocalProviders(_providerMap);
     }
   }

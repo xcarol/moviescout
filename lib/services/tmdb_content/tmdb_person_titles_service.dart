@@ -46,7 +46,8 @@ class TmdbPersonTitlesService extends TmdbTitleListService
     }
 
     for (int i = 0; i < allItems.length; i++) {
-      allItems[i].addedOrder = i;
+      allItems[i].addedDate =
+          DateTime.now().subtract(Duration(minutes: allItems.length - i));
     }
   }
 
@@ -128,8 +129,9 @@ class TmdbPersonTitlesService extends TmdbTitleListService
         case SortOption.runtime:
           cmp = a.effectiveRuntime.compareTo(b.effectiveRuntime);
           break;
-        case SortOption.addedOrder:
-          cmp = a.addedOrder.compareTo(b.addedOrder);
+        case SortOption.addedDate:
+          cmp = (a.addedDate ?? DateTime.fromMillisecondsSinceEpoch(0))
+              .compareTo(b.addedDate ?? DateTime.fromMillisecondsSinceEpoch(0));
           break;
         default:
           cmp = 0;
@@ -201,14 +203,14 @@ class TmdbPersonTitlesService extends TmdbTitleListService
           final character = title.character;
           final job = title.job;
           final department = title.department;
-          final addedOrder = title.addedOrder;
+          final addedDate = title.addedDate;
 
           title.fillFromMap(dbTitle.toMap());
 
           title.character = character;
           title.job = job;
           title.department = department;
-          title.addedOrder = addedOrder;
+          title.addedDate = addedDate;
         }
       }
       _localUserRatingAvailable = allItems.any((t) => t.rating > 0);

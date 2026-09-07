@@ -22,7 +22,7 @@ class RealmService {
         TmdbSeasonRealm.schema,
         TmdbEpisodeRealm.schema,
       ],
-      schemaVersion: 10,
+      schemaVersion: 11,
       migrationCallback: (migration, oldSchemaVersion) {
         if (oldSchemaVersion < 2) {
           _migrateProvidersJson(migration.newRealm);
@@ -39,10 +39,23 @@ class RealmService {
             episode.rating = 0.0;
           }
         }
-        if (oldSchemaVersion < 10) {
-          final seasons = migration.newRealm.all<TmdbSeasonRealm>();
-          for (final season in seasons) {
-            season.voteAverage = 0.0;
+        if (oldSchemaVersion < 11) {
+          // Since the schema changed from int addedOrder to DateTime addedDate,
+          // the old int column was dropped and a new DateTime column was created.
+          // By default, it will be the epoch. Let's do the time simulation based on the
+          // assumption we don't have access to the old int values via Dart's typed API.
+          // We will assign a chronological date to each entry based on its current position.
+          final entries = migration.newRealm.all<UserListEntryRealm>().toList();
+          final now = DateTime.now();
+          for (var i = 0; i < entries.length; i++) {
+            entries[i].addedDate =
+                now.subtract(Duration(minutes: entries.length - i));
+          }
+
+          final titles = migration.newRealm.all<TmdbTitleRealm>().toList();
+          for (var i = 0; i < titles.length; i++) {
+            titles[i].addedDate =
+                now.subtract(Duration(minutes: titles.length - i));
           }
         }
       },

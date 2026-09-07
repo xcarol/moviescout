@@ -24,6 +24,22 @@ class TestTmdbWatchlistService extends TmdbWatchlistService {
   http.Response? mockPostResponse;
 
   @override
+  Future<void> updateTitle(
+      String accountId,
+      String sessionId,
+      TmdbTitle title,
+      bool add,
+      Future<void> Function(String accountId, String sessionId)
+          updateTitleToServer) async {
+    if (add) {
+      await updateLocalTitle(title);
+    } else {
+      await deleteLocalTitle(title);
+      loadedItemsVal.removeWhere((element) => element.tmdbId == title.tmdbId);
+    }
+  }
+
+  @override
   Future<dynamic> get(String query,
       {ApiVersion version = ApiVersion.v3, String accessToken = ''}) async {
     if (mockGetResponse != null) {
@@ -114,11 +130,11 @@ void main() {
 
       when(() => mockRepository.saveTitle(title, AppConstants.watchlist, any()))
           .thenAnswer((_) async {});
-      when(() => mockRepository.getMaxAddedOrder(AppConstants.watchlist))
-          .thenAnswer((_) async => 0);
+
       when(() => mockRepository.getTitleGlobal(title.tmdbId, title.mediaType))
           .thenAnswer((_) async => null);
-      when(() => mockRepository.updateIsPinned(title)).thenAnswer((_) async {});
+      when(() => mockRepository.updateTitleMetadata(any()))
+          .thenAnswer((_) async {});
 
       await service.updateWatchlistTitle('accountId', 'sessionId', title, true);
 
@@ -138,9 +154,9 @@ void main() {
           lastUpdated: DateTime.now().toIso8601String(),
           dateRated: DateTime.now());
       title.isPinned = true;
-      title.inLists = [AppConstants.watchlist];
+      title.inLists = [...title.inLists, AppConstants.watchlist];
 
-      when(() => mockPinnedService.removePinnedFromServer(title))
+      when(() => mockPinnedService.removePinnedFromDatabase(title))
           .thenAnswer((_) async => true);
       when(() => mockRepository.deleteTitle(
               AppConstants.watchlist, title.tmdbId, title.mediaType))
@@ -152,7 +168,7 @@ void main() {
           'accountId', 'sessionId', title, false);
 
       expect(title.isPinned, false);
-      verify(() => mockPinnedService.removePinnedFromServer(title)).called(1);
+      verify(() => mockPinnedService.removePinnedFromDatabase(title)).called(1);
       verify(() => mockRepository.deleteTitle(
           AppConstants.watchlist, title.tmdbId, title.mediaType)).called(1);
     });
@@ -169,15 +185,15 @@ void main() {
       when(() => mockRepository.countTitlesFiltered(
           listName: AppConstants.watchlist,
           pinned: true)).thenAnswer((_) async => 0);
-      when(() => mockRepository.updateIsPinned(title)).thenAnswer((_) async {});
-      when(() => mockPinnedService.addPinnedToServer(title))
+      when(() => mockRepository.updateTitleMetadata(any()))
+          .thenAnswer((_) async {});
+      when(() => mockPinnedService.addPinnedToDatabase(title))
           .thenAnswer((_) async => true);
 
       await service.togglePin(title);
 
       expect(title.isPinned, true);
-      verify(() => mockPinnedService.addPinnedToServer(title)).called(1);
-      verify(() => mockRepository.updateIsPinned(title)).called(1);
+      verify(() => mockPinnedService.addPinnedToDatabase(title)).called(1);
     });
 
     test('togglePin aborts if pin limit is reached', () async {
@@ -196,8 +212,7 @@ void main() {
       await service.togglePin(title, limitReachedMessage: 'Limit');
 
       expect(title.isPinned, false); // did not change
-      verifyNever(() => mockPinnedService.addPinnedToServer(title));
-      verifyNever(() => mockRepository.updateIsPinned(title));
+      verifyNever(() => mockPinnedService.addPinnedToDatabase(title));
     });
 
     test('togglePin removes pin if already pinned', () async {
@@ -209,15 +224,15 @@ void main() {
           dateRated: DateTime.now());
       title.isPinned = true;
 
-      when(() => mockRepository.updateIsPinned(title)).thenAnswer((_) async {});
-      when(() => mockPinnedService.removePinnedFromServer(title))
+      when(() => mockRepository.updateTitleMetadata(any()))
+          .thenAnswer((_) async {});
+      when(() => mockPinnedService.removePinnedFromDatabase(title))
           .thenAnswer((_) async => true);
 
       await service.togglePin(title);
 
       expect(title.isPinned, false);
-      verify(() => mockPinnedService.removePinnedFromServer(title)).called(1);
-      verify(() => mockRepository.updateIsPinned(title)).called(1);
+      verify(() => mockPinnedService.removePinnedFromDatabase(title)).called(1);
     });
   });
 }

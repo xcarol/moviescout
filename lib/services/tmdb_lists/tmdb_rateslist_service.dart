@@ -1,17 +1,15 @@
-import 'package:moviescout/utils/url_constants.dart';
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/models/tmdb_episode.dart';
+import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_following_service.dart';
-import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
+import 'package:moviescout/services/core/supabase_service.dart';
 
 class TmdbRateslistService extends TmdbTitleListService {
   TmdbFollowingService? followingService;
@@ -47,30 +45,49 @@ class TmdbRateslistService extends TmdbTitleListService {
   Future<void> retrieveRateslist(
       String accountId, String sessionId, Locale locale,
       {bool forceUpdate = false}) async {
-    await retrieveList(accountId, forceUpdate: forceUpdate,
-        retrieveMovies: () async {
-      return getTitlesFromServer((int page) async {
-        return get(
-          UrlConstants.tmdbRateslistMoviesEndpoint
-              .replaceFirst('{ACCOUNT_ID}', accountId)
-              .replaceFirst('{SESSION_ID}', sessionId)
-              .replaceFirst('{PAGE}', page.toString())
-              .replaceFirst(
-                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-        );
-      });
-    }, retrieveTvshows: () async {
-      return getTitlesFromServer((int page) async {
-        return get(
-          UrlConstants.tmdbRateslistTvEndpoint
-              .replaceFirst('{ACCOUNT_ID}', accountId)
-              .replaceFirst('{SESSION_ID}', sessionId)
-              .replaceFirst('{PAGE}', page.toString())
-              .replaceFirst(
-                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-        );
-      });
-    });
+    final userId = SupabaseService().client.auth.currentUser?.id;
+    if (userId == null) return;
+
+    await retrieveList(
+      accountId,
+      forceUpdate: forceUpdate,
+      retrieveMovies: () async {
+        final response = await SupabaseService()
+            .client
+            .from('user_list_items')
+            .select('tmdb_id, media_type, rate, created_at, date_rated')
+            .eq('user_id', userId)
+            .eq('list_name', AppConstants.rateslist)
+            .eq('media_type', ApiConstants.movie);
+
+        return response
+            .map((row) => {
+                  TmdbTitleFields.id: row['tmdb_id'],
+                  'created_at': row['created_at'],
+                  'rate': row['rate'],
+                  'date_rated': row['date_rated'],
+                })
+            .toList();
+      },
+      retrieveTvshows: () async {
+        final response = await SupabaseService()
+            .client
+            .from('user_list_items')
+            .select('tmdb_id, media_type, rate, created_at, date_rated')
+            .eq('user_id', userId)
+            .eq('list_name', AppConstants.rateslist)
+            .eq('media_type', ApiConstants.tv);
+
+        return response
+            .map((row) => {
+                  TmdbTitleFields.id: row['tmdb_id'],
+                  'created_at': row['created_at'],
+                  'rate': row['rate'],
+                  'date_rated': row['date_rated'],
+                })
+            .toList();
+      },
+    );
 
     await _retrieveRatedEpisodes(accountId, sessionId, locale);
 
@@ -81,94 +98,42 @@ class TmdbRateslistService extends TmdbTitleListService {
 
   Future<void> _retrieveRatedEpisodes(
       String accountId, String sessionId, Locale locale) async {
-    try {
-      int page = 1;
-      int totalPages = 1;
-      while (page <= totalPages) {
-        final response = await get(
-          UrlConstants.tmdbRatedEpisodesEndpoint
-              .replaceFirst('{ACCOUNT_ID}', accountId)
-              .replaceFirst('{SESSION_ID}', sessionId)
-              .replaceFirst('{PAGE}', page.toString())
-              .replaceFirst(
-                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-        );
-        if (response.statusCode == 200) {
-          totalPages = await _parseAndSaveRatedEpisodes(response);
-        }
-        page++;
-      }
-    } catch (e, stack) {
-      ErrorService.log(e,
-          stackTrace: stack, userMessage: 'Error sync rated episodes');
-    }
+    // TODO: re-implement method
+    // Left empty for now, assuming episodes will also migrate to Supabase in the future
+    // or we fetch them from another table like 'user_episode_rates'
   }
 
-  Future<int> _parseAndSaveRatedEpisodes(dynamic response) async {
-    final Map<String, dynamic> data = body(response);
-    final int totalPages = data['total_pages'] ?? 1;
-    final List<dynamic> results = data['results'] ?? [];
-
-    for (final item in results) {
-      final tvId = item['show_id'] ?? 0;
-      final episode = TmdbEpisode.fromMap(item, tvId: tvId);
-      episode.rating = (item['rating'] ?? 0.0).toDouble();
-      episode.lastUpdated = DateTime.now().toIso8601String();
-
-      final dbEpisode = await repository.getEpisode(
-          tvId, episode.seasonNumber, episode.episodeNumber);
-      if (dbEpisode != null) {
-        episode.stillPathSuffix = dbEpisode.stillPathSuffix;
-        episode.guestStarsJson = dbEpisode.guestStarsJson;
-        episode.crewJson = dbEpisode.crewJson;
-        episode.imagesJson = dbEpisode.imagesJson;
-        episode.videosJson = dbEpisode.videosJson;
-        if (episode.overview.isEmpty) {
-          episode.overview = dbEpisode.overview;
-        }
-      }
-
-      await repository.putEpisode(episode);
-    }
-
-    return totalPages;
-  }
-
-  Future<dynamic> _updateTitleRateToTmdb(
-    String accountId,
-    String sessionId,
+  Future<void> _updateTitleToDatabase(
     int id,
     String mediaType,
     double rate,
+    TmdbTitle title,
   ) async {
+    final userId = SupabaseService().client.auth.currentUser?.id;
+    if (userId == null) {
+      throw StateError('User not logged in');
+    }
+
     if (rate > 0) {
-      if (mediaType == ApiConstants.movie) {
-        return post(
-            UrlConstants.tmdbRateMovieEndpoint
-                .replaceFirst('{ID}', id.toString())
-                .replaceFirst('{SESSION_ID}', sessionId),
-            {'value': rate});
-      } else if (mediaType == ApiConstants.tv) {
-        return post(
-            UrlConstants.tmdbRateTvEndpoint
-                .replaceFirst('{ID}', id.toString())
-                .replaceFirst('{SESSION_ID}', sessionId),
-            {'value': rate});
-      }
-      HttpException(
-          'Invalid media type: $mediaType. Expected "${ApiConstants.movie}" or "${ApiConstants.tv}".');
+      await SupabaseService().client.from('user_list_items').upsert({
+        'user_id': userId,
+        'list_name': AppConstants.rateslist,
+        'tmdb_id': id,
+        'media_type': mediaType,
+        'rate': title.rating,
+        'created_at': title.addedDate?.toUtc().toIso8601String(),
+        'date_rated': title.dateRated.year > 2000
+            ? title.dateRated.toUtc().toIso8601String()
+            : null,
+      }, onConflict: 'user_id, list_name, tmdb_id');
     } else {
-      if (mediaType == ApiConstants.movie) {
-        return delete(UrlConstants.tmdbRateMovieEndpoint
-            .replaceFirst('{ID}', id.toString())
-            .replaceFirst('{SESSION_ID}', sessionId));
-      } else if (mediaType == ApiConstants.tv) {
-        return delete(UrlConstants.tmdbRateTvEndpoint
-            .replaceFirst('{ID}', id.toString())
-            .replaceFirst('{SESSION_ID}', sessionId));
-      }
-      HttpException(
-          'Invalid media type: $mediaType. Expected "${ApiConstants.movie}" or "${ApiConstants.tv}".');
+      await SupabaseService()
+          .client
+          .from('user_list_items')
+          .delete()
+          .eq('user_id', userId)
+          .eq('list_name', AppConstants.rateslist)
+          .eq('tmdb_id', id);
     }
   }
 
@@ -193,23 +158,21 @@ class TmdbRateslistService extends TmdbTitleListService {
         }
       } else {
         if (title.notifyNewSeasons && followingService != null) {
-          await followingService!.removeFollowingFromServer(title);
+          await followingService!.removeFollowingFromDatabase(title);
           title.notifyNewSeasons = false;
         }
         title.rating = 0.0;
       }
       await updateTitle(accountId, sessionId, title, rating > 0,
           (String accountId, String sessionId) async {
-        return _updateTitleRateToTmdb(
-            accountId, sessionId, title.tmdbId, title.mediaType, rating);
+        return _updateTitleToDatabase(
+            title.tmdbId, title.mediaType, rating, title);
       });
 
       final globalTitle =
           await repository.getTitleGlobal(title.tmdbId, title.mediaType);
       if (rating > 0 || globalTitle != null) {
         await repository.updateRating(title);
-        await repository.updateIsPinned(title);
-        await repository.updateNotifyNewSeasons(title);
       }
     } catch (error, stackTrace) {
       ErrorService.log(
@@ -222,13 +185,12 @@ class TmdbRateslistService extends TmdbTitleListService {
 
   Future<void> toggleNotify(TmdbTitle title) async {
     title.notifyNewSeasons = !title.notifyNewSeasons;
-    await repository.updateNotifyNewSeasons(title);
 
     if (followingService != null) {
       if (title.notifyNewSeasons) {
-        await followingService!.addFollowingToServer(title);
+        await followingService!.addFollowingToDatabase(title);
       } else {
-        await followingService!.removeFollowingFromServer(title);
+        await followingService!.removeFollowingFromDatabase(title);
       }
     }
 

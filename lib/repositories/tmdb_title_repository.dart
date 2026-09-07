@@ -52,7 +52,7 @@ class TmdbTitleRepository {
   }
 
   Future<void> saveTitle(
-      TmdbTitle title, String listName, int addedOrder) async {
+      TmdbTitle title, String listName, DateTime addedDate) async {
     _realm.write(() {
       _mergeOrAddTitleMetadata(title, listName);
       _realm.add(RealmMapper.toRealmTitle(title), update: true);
@@ -63,7 +63,7 @@ class TmdbTitleRepository {
             listName,
             title.tmdbId,
             title.mediaType,
-            addedOrder,
+            addedDate,
           ),
           update: true);
     });
@@ -80,13 +80,15 @@ class TmdbTitleRepository {
   }
 
   Future<void> saveTitles(List<TmdbTitle> titles, String listName,
-      {List<int>? addedOrders}) async {
+      {List<DateTime>? addedDates}) async {
     if (titles.isEmpty) return;
+
+    final now = DateTime.now();
 
     _runInBatches(
       titles,
       (batchTitles, i) {
-        final batchOrders = addedOrders?.sublist(i, i + batchTitles.length);
+        final batchDates = addedDates?.sublist(i, i + batchTitles.length);
 
         _realm.write(() {
           for (var j = 0; j < batchTitles.length; j++) {
@@ -103,7 +105,9 @@ class TmdbTitleRepository {
               listName,
               batchTitles[j].tmdbId,
               batchTitles[j].mediaType,
-              batchOrders != null ? batchOrders[j] : (i + j),
+              batchDates != null
+                  ? batchDates[j]
+                  : now.subtract(Duration(minutes: titles.length - (i + j))),
             ));
           }
           _realm.addAll(entries, update: true);
@@ -159,30 +163,12 @@ class TmdbTitleRepository {
     });
   }
 
-  Future<void> updateIsPinned(TmdbTitle title) => updateIsPinnedList([title]);
-
-  Future<void> updateIsPinnedList(List<TmdbTitle> titles) {
-    return _updateTitlesField(titles, (existing, title) {
-      existing.isPinned = title.isPinned;
-    });
-  }
-
   Future<void> updateRating(TmdbTitle title) => updateRatingList([title]);
 
   Future<void> updateRatingList(List<TmdbTitle> titles) {
     return _updateTitlesField(titles, (existing, title) {
       existing.rating = title.rating;
       existing.dateRated = title.dateRated;
-    });
-  }
-
-  Future<void> updateNotifyNewSeasons(TmdbTitle title) =>
-      updateNotifyNewSeasonsList([title]);
-
-  Future<void> updateNotifyNewSeasonsList(List<TmdbTitle> titles) {
-    return _updateTitlesField(titles, (existing, title) {
-      existing.notifyNewSeasons = title.notifyNewSeasons;
-      existing.lastNotifiedSeason = title.lastNotifiedSeason;
     });
   }
 
@@ -291,13 +277,6 @@ class TmdbTitleRepository {
         '${UserListEntryRealmFields.listName} == \$0', [listName]).length;
   }
 
-  Future<int> getMaxAddedOrder(String listName) async {
-    final entries = _realm.query<UserListEntryRealm>(
-        '${UserListEntryRealmFields.listName} == \$0 SORT(${UserListEntryRealmFields.addedOrder} DESC)',
-        [listName]);
-    return entries.isNotEmpty ? entries.first.addedOrder : -1;
-  }
-
   Future<TmdbTitle?> getTitleByTmdbId(
       String listName, int tmdbId, String mediaType) async {
     final realmObj = _realm.query<TmdbTitleRealm>(
@@ -396,9 +375,14 @@ class TmdbTitleRepository {
     args.add(listName);
 
     if (pinned != null) {
-      queryBuffer
-          .write(' AND ${TmdbTitleRealmFields.isPinned} == \$${args.length}');
-      args.add(pinned);
+      if (pinned) {
+        queryBuffer
+            .write(' AND \$${args.length} IN ${TmdbTitleRealmFields.inLists}');
+      } else {
+        queryBuffer.write(
+            ' AND NOT (\$${args.length} IN ${TmdbTitleRealmFields.inLists})');
+      }
+      args.add(AppConstants.pinnedlist);
     }
 
     if (filterText.isNotEmpty) {
@@ -468,12 +452,12 @@ class TmdbTitleRepository {
           .write(' AND ${TmdbTitleRealmFields.rating} == \$${args.length}');
       args.add(AppConstants.seenRating);
     } else if (filterRating == RatingFilter.followingOnly) {
-      queryBuffer.write(
-          ' AND ${TmdbTitleRealmFields.notifyNewSeasons} == \$${args.length}');
-      args.add(true);
+      queryBuffer
+          .write(' AND \$${args.length} IN ${TmdbTitleRealmFields.inLists}');
+      args.add(AppConstants.followinglist);
     }
 
-    if (sortOption != SortOption.addedOrder) {
+    if (sortOption != SortOption.addedDate) {
       String sortField = TmdbTitleRealmFields.name;
       switch (sortOption) {
         case SortOption.rating:
@@ -537,18 +521,16 @@ class TmdbTitleRepository {
       sortAscending: sortAscending,
     );
 
-    if (sortOption == SortOption.addedOrder) {
+    if (sortOption == SortOption.addedDate) {
       final entries = await getAllEntries(listName);
-      final orderMap = {
-        for (var e in entries) '${e.tmdbId}_${e.mediaType}': e.addedOrder
+      final dateMap = {
+        for (var e in entries) '${e.tmdbId}_${e.mediaType}': e.addedDate
       };
       var filtered = results.toList();
       filtered.sort((a, b) {
-        final orderA = orderMap[a.id] ?? 0;
-        final orderB = orderMap[b.id] ?? 0;
-        return sortAscending
-            ? orderA.compareTo(orderB)
-            : orderB.compareTo(orderA);
+        final dateA = dateMap[a.id] ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final dateB = dateMap[b.id] ?? DateTime.fromMillisecondsSinceEpoch(0);
+        return sortAscending ? dateA.compareTo(dateB) : dateB.compareTo(dateA);
       });
 
       final start = offset;

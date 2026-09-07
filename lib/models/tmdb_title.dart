@@ -81,8 +81,6 @@ class TmdbTitleFields {
   static const String lastUpdated = 'last_updated';
   static const String mediaType = 'media_type';
   static const String providers = 'providers';
-  static const String isPinned = 'is_pinned';
-  static const String notifyNewSeasons = 'notify_new_seasons';
   static const String images = 'images';
   static const String videos = 'videos';
   static const String key = 'key';
@@ -122,7 +120,7 @@ class SortOption {
   static const releaseDate = 'releaseDate';
   static const runtime = 'runtime';
   static const dateRated = 'dateRated';
-  static const addedOrder = 'addedOrder';
+  static const addedDate = 'addedDate';
   static const relevance = 'relevance';
 }
 
@@ -184,10 +182,7 @@ class TmdbTitle implements TmdbItem {
   // Calculated/Logic fields
   late int effectiveRuntime;
   late String effectiveReleaseDate;
-  int addedOrder = 0;
-  late bool isPinned;
-  late bool notifyNewSeasons;
-
+  DateTime? addedDate;
   // Lists (Simple)
   late List<int> genreIds;
   late List<int> keywordIds;
@@ -259,8 +254,6 @@ class TmdbTitle implements TmdbItem {
     this.belongsToCollectionJson,
     this.homepage = '',
     this.certification = '',
-    this.isPinned = false,
-    this.notifyNewSeasons = false,
     this.lastNotifiedSeason = 0,
   }) {
     if (effectiveReleaseDate.isEmpty) {
@@ -282,8 +275,6 @@ class TmdbTitle implements TmdbItem {
       name: '',
       lastUpdated: AppConstants.defaultDate,
       dateRated: DateTime.fromMillisecondsSinceEpoch(0),
-      isPinned: title[TmdbTitleFields.isPinned] ?? false,
-      notifyNewSeasons: title[TmdbTitleFields.notifyNewSeasons] ?? false,
       lastNotifiedSeason: title[TmdbTitleFields.lastNotifiedSeason] ?? 0,
     )..fillFromMap(title);
   }
@@ -302,6 +293,14 @@ class TmdbTitle implements TmdbItem {
 
     final mediaTypeVal = title[TmdbTitleFields.mediaType] ?? mediaType;
     mediaType = mediaTypeVal;
+
+    if (title['created_at'] != null) {
+      addedDate = DateTime.tryParse(title['created_at']);
+    }
+
+    if (title['rate'] != null) {
+      rating = (title['rate'] as num).toDouble();
+    }
 
     if (title[TmdbTitleFields.name] != null ||
         title[TmdbTitleFields.title] != null) {
@@ -370,9 +369,6 @@ class TmdbTitle implements TmdbItem {
     if (popularity.isNaN) popularity = 0.0;
     budget = title[TmdbTitleFields.budget] ?? budget;
     revenue = title[TmdbTitleFields.revenue] ?? revenue;
-    isPinned = title[TmdbTitleFields.isPinned] ?? isPinned;
-    notifyNewSeasons =
-        title[TmdbTitleFields.notifyNewSeasons] ?? notifyNewSeasons;
     lastNotifiedSeason =
         title[TmdbTitleFields.lastNotifiedSeason] ?? lastNotifiedSeason;
 
@@ -446,6 +442,24 @@ class TmdbTitle implements TmdbItem {
     updateProviderIds(this, title[TmdbTitleFields.providers]);
   }
 
+  bool get isPinned => inLists.contains(AppConstants.pinnedlist);
+  set isPinned(bool value) {
+    if (value && !inLists.contains(AppConstants.pinnedlist)) {
+      inLists = [...inLists, AppConstants.pinnedlist];
+    } else if (!value && inLists.contains(AppConstants.pinnedlist)) {
+      inLists = inLists.where((l) => l != AppConstants.pinnedlist).toList();
+    }
+  }
+
+  bool get notifyNewSeasons => inLists.contains(AppConstants.followinglist);
+  set notifyNewSeasons(bool value) {
+    if (value && !inLists.contains(AppConstants.followinglist)) {
+      inLists = [...inLists, AppConstants.followinglist];
+    } else if (!value && inLists.contains(AppConstants.followinglist)) {
+      inLists = inLists.where((l) => l != AppConstants.followinglist).toList();
+    }
+  }
+
   Map<String, dynamic> toMap() {
     return {
       TmdbTitleFields.id: tmdbId,
@@ -480,8 +494,6 @@ class TmdbTitle implements TmdbItem {
       TmdbTitleFields.popularity: popularity,
       TmdbTitleFields.budget: budget,
       TmdbTitleFields.revenue: revenue,
-      TmdbTitleFields.isPinned: isPinned,
-      TmdbTitleFields.notifyNewSeasons: notifyNewSeasons,
       TmdbTitleFields.lastNotifiedSeason: lastNotifiedSeason,
       TmdbTitleFields.genreIds: genreIds,
       TmdbTitleFields.keywordIds: keywordIds,

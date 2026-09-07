@@ -12,7 +12,7 @@ class _UserListEntryRealm {
   late String mediaType;
 
   @Indexed()
-  late int addedOrder;
+  late DateTime addedDate;
 }
 
 @RealmModel()
@@ -61,9 +61,7 @@ class _TmdbTitleRealm {
   // Calculated/Logic fields
   late int effectiveRuntime;
   late String effectiveReleaseDate;
-  late int addedOrder;
-  late bool isPinned;
-  late bool notifyNewSeasons;
+  late DateTime addedDate;
 
   // JSON strings for complex objects
   late String? imagesJson;
@@ -138,10 +136,8 @@ class TmdbTitleRealmFields {
   static const String effectiveRuntime = 'effectiveRuntime';
   static const String genreIds = 'genreIds';
   static const String inLists = 'inLists';
-  static const String isPinned = 'isPinned';
   static const String mediaType = 'mediaType';
   static const String name = 'name';
-  static const String notifyNewSeasons = 'notifyNewSeasons';
   static const String numberOfSeasons = 'numberOfSeasons';
   static const String originalName = 'originalName';
   static const String overview = 'overview';
@@ -157,7 +153,7 @@ class TmdbTitleRealmFields {
 }
 
 class UserListEntryRealmFields {
-  static const String addedOrder = 'addedOrder';
+  static const String addedDate = 'addedDate';
   static const String listName = 'listName';
   static const String mediaType = 'mediaType';
   static const String tmdbId = 'tmdbId';

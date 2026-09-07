@@ -259,8 +259,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
   Future<void> _pickFile(BuildContext context) async {
     try {
       final result = await FilePicker.pickFiles();
-      if (result != null && result.files.isNotEmpty) {
-        final file = result.files.first;
+      if (result.isNotEmpty) {
+        final file = result.first;
         _filenameController.text = file.name;
         _readCsvFromFile(file.path!);
       }

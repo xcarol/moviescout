@@ -256,7 +256,7 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
       case SortOption.releaseDate:
       case SortOption.dateRated:
       case SortOption.runtime:
-      case SortOption.addedOrder:
+      case SortOption.addedDate:
         return !ascending;
       default:
         return ascending;

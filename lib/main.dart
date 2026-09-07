@@ -27,7 +27,9 @@ import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_pinned_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_following_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/migration/migration_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/services/settings/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
@@ -43,8 +45,8 @@ import 'package:moviescout/services/workers/watchlist_update_service.dart';
 import 'package:moviescout/services/settings/edit_settings_service.dart';
 import 'package:app_links/app_links.dart';
 import 'package:moviescout/widgets/misc/shortcut_router.dart';
+import 'package:moviescout/services/core/supabase_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:moviescout/services/workers/uninitialized_titles_worker.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -93,6 +95,16 @@ void _runMain({bool isFromShortcutActivity = false}) async {
   }
 
   try {
+    await SupabaseService.init();
+  } catch (error, stackTrace) {
+    ErrorService.log(
+      error,
+      userMessage: 'Error initializing Supabase',
+      stackTrace: stackTrace,
+    );
+  }
+
+  try {
     if (defaultTargetPlatform == TargetPlatform.android) {
       if (Firebase.apps.isEmpty) {
         try {
@@ -120,11 +132,6 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
         kDebugMode,
       );
-
-      if (isShortcut) {
-        FirebaseFirestore.instance.settings =
-            const Settings(persistenceEnabled: false);
-      }
     }
   } catch (error, stackTrace) {
     ErrorService.log(
@@ -179,26 +186,22 @@ void _runMain({bool isFromShortcutActivity = false}) async {
   runApp(MultiProvider(
     providers: [
       Provider.value(value: repository),
+      ChangeNotifierProvider(create: (_) => AuthService()),
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
+      ChangeNotifierProvider(create: (_) => MigrationService(repository)),
       ChangeNotifierProxyProvider<TmdbUserService, TmdbProviderService>(
         create: (_) => TmdbProviderService(),
         update: (_, userService, providerService) => providerService!
           ..setup(userService.accountId, userService.sessionId,
               userService.accessToken),
       ),
-      ChangeNotifierProxyProvider<TmdbUserService, TmdbPinnedService>(
+      ChangeNotifierProvider<TmdbPinnedService>(
         create: (_) => TmdbPinnedService(repository),
-        update: (_, userService, pinnedService) => pinnedService!
-          ..setup(userService.accountId, userService.sessionId,
-              userService.accessToken),
       ),
-      ChangeNotifierProxyProvider<TmdbUserService, TmdbFollowingService>(
+      ChangeNotifierProvider<TmdbFollowingService>(
         create: (_) => TmdbFollowingService(repository),
-        update: (_, userService, followingService) => followingService!
-          ..setup(userService.accountId, userService.sessionId,
-              userService.accessToken),
       ),
       ChangeNotifierProxyProvider<TmdbFollowingService, TmdbRateslistService>(
         create: (_) => TmdbRateslistService(AppConstants.rateslist, repository),

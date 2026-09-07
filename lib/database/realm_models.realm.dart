@@ -16,13 +16,13 @@ class UserListEntryRealm extends _UserListEntryRealm
     String listName,
     int tmdbId,
     String mediaType,
-    int addedOrder,
+    DateTime addedDate,
   ) {
     RealmObjectBase.set(this, 'id', id);
     RealmObjectBase.set(this, 'listName', listName);
     RealmObjectBase.set(this, 'tmdbId', tmdbId);
     RealmObjectBase.set(this, 'mediaType', mediaType);
-    RealmObjectBase.set(this, 'addedOrder', addedOrder);
+    RealmObjectBase.set(this, 'addedDate', addedDate);
   }
 
   UserListEntryRealm._();
@@ -50,9 +50,11 @@ class UserListEntryRealm extends _UserListEntryRealm
   set mediaType(String value) => RealmObjectBase.set(this, 'mediaType', value);
 
   @override
-  int get addedOrder => RealmObjectBase.get<int>(this, 'addedOrder') as int;
+  DateTime get addedDate =>
+      RealmObjectBase.get<DateTime>(this, 'addedDate') as DateTime;
   @override
-  set addedOrder(int value) => RealmObjectBase.set(this, 'addedOrder', value);
+  set addedDate(DateTime value) =>
+      RealmObjectBase.set(this, 'addedDate', value);
 
   @override
   Stream<RealmObjectChanges<UserListEntryRealm>> get changes =>
@@ -73,7 +75,7 @@ class UserListEntryRealm extends _UserListEntryRealm
       'listName': listName.toEJson(),
       'tmdbId': tmdbId.toEJson(),
       'mediaType': mediaType.toEJson(),
-      'addedOrder': addedOrder.toEJson(),
+      'addedDate': addedDate.toEJson(),
     };
   }
 
@@ -86,14 +88,14 @@ class UserListEntryRealm extends _UserListEntryRealm
         'listName': EJsonValue listName,
         'tmdbId': EJsonValue tmdbId,
         'mediaType': EJsonValue mediaType,
-        'addedOrder': EJsonValue addedOrder,
+        'addedDate': EJsonValue addedDate,
       } =>
         UserListEntryRealm(
           fromEJson(id),
           fromEJson(listName),
           fromEJson(tmdbId),
           fromEJson(mediaType),
-          fromEJson(addedOrder),
+          fromEJson(addedDate),
         ),
       _ => raiseInvalidEJson(ejson),
     };
@@ -108,7 +110,7 @@ class UserListEntryRealm extends _UserListEntryRealm
       SchemaProperty('listName', RealmPropertyType.string),
       SchemaProperty('tmdbId', RealmPropertyType.int),
       SchemaProperty('mediaType', RealmPropertyType.string),
-      SchemaProperty('addedOrder', RealmPropertyType.int,
+      SchemaProperty('addedDate', RealmPropertyType.timestamp,
           indexType: RealmIndexType.regular),
     ]);
   }();
@@ -149,9 +151,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
     int revenue,
     int effectiveRuntime,
     String effectiveReleaseDate,
-    int addedOrder,
-    bool isPinned,
-    bool notifyNewSeasons,
+    DateTime addedDate,
     int lastNotifiedSeason,
     String character,
     String job,
@@ -206,9 +206,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
     RealmObjectBase.set(this, 'revenue', revenue);
     RealmObjectBase.set(this, 'effectiveRuntime', effectiveRuntime);
     RealmObjectBase.set(this, 'effectiveReleaseDate', effectiveReleaseDate);
-    RealmObjectBase.set(this, 'addedOrder', addedOrder);
-    RealmObjectBase.set(this, 'isPinned', isPinned);
-    RealmObjectBase.set(this, 'notifyNewSeasons', notifyNewSeasons);
+    RealmObjectBase.set(this, 'addedDate', addedDate);
     RealmObjectBase.set(this, 'imagesJson', imagesJson);
     RealmObjectBase.set(this, 'videosJson', videosJson);
     RealmObjectBase.set(this, 'recommendationsJson', recommendationsJson);
@@ -436,21 +434,11 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       RealmObjectBase.set(this, 'effectiveReleaseDate', value);
 
   @override
-  int get addedOrder => RealmObjectBase.get<int>(this, 'addedOrder') as int;
+  DateTime get addedDate =>
+      RealmObjectBase.get<DateTime>(this, 'addedDate') as DateTime;
   @override
-  set addedOrder(int value) => RealmObjectBase.set(this, 'addedOrder', value);
-
-  @override
-  bool get isPinned => RealmObjectBase.get<bool>(this, 'isPinned') as bool;
-  @override
-  set isPinned(bool value) => RealmObjectBase.set(this, 'isPinned', value);
-
-  @override
-  bool get notifyNewSeasons =>
-      RealmObjectBase.get<bool>(this, 'notifyNewSeasons') as bool;
-  @override
-  set notifyNewSeasons(bool value) =>
-      RealmObjectBase.set(this, 'notifyNewSeasons', value);
+  set addedDate(DateTime value) =>
+      RealmObjectBase.set(this, 'addedDate', value);
 
   @override
   String? get imagesJson =>
@@ -601,9 +589,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       'revenue': revenue.toEJson(),
       'effectiveRuntime': effectiveRuntime.toEJson(),
       'effectiveReleaseDate': effectiveReleaseDate.toEJson(),
-      'addedOrder': addedOrder.toEJson(),
-      'isPinned': isPinned.toEJson(),
-      'notifyNewSeasons': notifyNewSeasons.toEJson(),
+      'addedDate': addedDate.toEJson(),
       'imagesJson': imagesJson.toEJson(),
       'videosJson': videosJson.toEJson(),
       'recommendationsJson': recommendationsJson.toEJson(),
@@ -656,9 +642,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
         'revenue': EJsonValue revenue,
         'effectiveRuntime': EJsonValue effectiveRuntime,
         'effectiveReleaseDate': EJsonValue effectiveReleaseDate,
-        'addedOrder': EJsonValue addedOrder,
-        'isPinned': EJsonValue isPinned,
-        'notifyNewSeasons': EJsonValue notifyNewSeasons,
+        'addedDate': EJsonValue addedDate,
         'lastNotifiedSeason': EJsonValue lastNotifiedSeason,
         'character': EJsonValue character,
         'job': EJsonValue job,
@@ -694,9 +678,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
           fromEJson(revenue),
           fromEJson(effectiveRuntime),
           fromEJson(effectiveReleaseDate),
-          fromEJson(addedOrder),
-          fromEJson(isPinned),
-          fromEJson(notifyNewSeasons),
+          fromEJson(addedDate),
           fromEJson(lastNotifiedSeason),
           fromEJson(character),
           fromEJson(job),
@@ -763,9 +745,7 @@ class TmdbTitleRealm extends _TmdbTitleRealm
       SchemaProperty('revenue', RealmPropertyType.int),
       SchemaProperty('effectiveRuntime', RealmPropertyType.int),
       SchemaProperty('effectiveReleaseDate', RealmPropertyType.string),
-      SchemaProperty('addedOrder', RealmPropertyType.int),
-      SchemaProperty('isPinned', RealmPropertyType.bool),
-      SchemaProperty('notifyNewSeasons', RealmPropertyType.bool),
+      SchemaProperty('addedDate', RealmPropertyType.timestamp),
       SchemaProperty('imagesJson', RealmPropertyType.string, optional: true),
       SchemaProperty('videosJson', RealmPropertyType.string, optional: true),
       SchemaProperty('recommendationsJson', RealmPropertyType.string,

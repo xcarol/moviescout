@@ -71,7 +71,7 @@ class WatchlistUpdateService {
         now,
         notifyCompleteSeason: notifyCompleteSeason,
       );
-      await repository.updateNotifyNewSeasons(title);
+      await repository.updateTitleMetadata(title);
     }
 
     final trigger = WatchlistNotificationEvaluator.evaluateNotification(
@@ -128,7 +128,7 @@ class WatchlistUpdateService {
       } else {
         title.notifyNewSeasons = false;
       }
-      await repository.updateNotifyNewSeasons(title);
+      await repository.updateTitleMetadata(title);
 
       return true;
     }
@@ -171,7 +171,7 @@ class WatchlistUpdateService {
         }
       }
 
-      await repository.updateNotifyNewSeasons(title);
+      await repository.updateTitleMetadata(title);
       return true;
     }
 

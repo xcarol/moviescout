@@ -100,7 +100,7 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
         filterText: '',
         limit: 1000,
         sortOption: selectedSort == SortOption.relevance
-            ? SortOption.addedOrder
+            ? SortOption.addedDate
             : SortOption.alphabetically,
       );
       if (filterMediaType == '') {

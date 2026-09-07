@@ -1,114 +1,120 @@
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/tmdb_title_repository.dart';
-import 'package:moviescout/services/core/tmdb_base_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_config_list_service.dart';
+import 'package:moviescout/services/core/error_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
+import 'package:moviescout/services/core/supabase_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
-    show RatingFilter;
 
-class TmdbFollowingService extends TmdbConfigListService {
-  final TmdbTitleRepository repository;
-
-  TmdbFollowingService(this.repository)
-      : super(
-          configListName: 'snoozed', // Keep legacy TMDB list name for migration
-          listIdPrefKey: 'followingListId',
-          firestoreFieldName: 'followingIds',
-        );
+class TmdbFollowingService extends TmdbTitleListService {
+  TmdbFollowingService(TmdbTitleRepository repository)
+      : super(AppConstants.followinglist, repository);
 
   void clearFollowingStatus() {
-    clearConfig();
-  }
-
-  Future<void> setup(
-      String accountId, String sessionId, String accessToken) async {
-    setupBase(accountId, sessionId, accessToken);
+    clearLoadedItems(resetCount: true);
   }
 
   Future<void> fetchAndApplyFollowingTitles() async {
-    await fetchAndListen();
-  }
-
-  @override
-  Future<dynamic> migrateDataFromTmdb() async {
-    final currentListId = await getOrFetchListId();
-    if (currentListId == null || currentListId.isEmpty) return <String>[];
+    final userId = SupabaseService().client.auth.currentUser?.id;
+    if (userId == null) return;
 
     try {
-      final response = await get('/list/$currentListId?page=1',
-          version: ApiVersion.v4, accessToken: accessToken);
+      final response = await SupabaseService()
+          .client
+          .from('user_list_items')
+          .select('tmdb_id, media_type, created_at')
+          .eq('user_id', userId)
+          .eq('list_name', AppConstants.followinglist);
 
-      if (response.statusCode == 200) {
-        final data = body(response);
-        final results = data['results'] as List<dynamic>? ?? [];
+      final List<TmdbTitle> titles = [];
+      final List<DateTime> dates = [];
 
-        final List<String> followingIds = [];
-        for (var item in results) {
-          final mediaType = item['media_type'];
-          final id = item['id'];
-          followingIds.add('$mediaType:$id');
-        }
-        return followingIds;
+      for (var row in response) {
+        final title = TmdbTitle(
+          tmdbId: row['tmdb_id'],
+          mediaType: row['media_type'],
+          name: '',
+          lastUpdated: AppConstants.defaultDate,
+          dateRated: DateTime.fromMillisecondsSinceEpoch(0),
+        );
+        final addedDate = row['created_at'] != null
+            ? DateTime.parse(row['created_at'])
+            : DateTime.now();
+        title.addedDate = addedDate;
+        title.inLists = [...title.inLists, AppConstants.followinglist];
+
+        titles.add(title);
+        dates.add(addedDate);
       }
-    } catch (e) {
-      // Catch silently for migration
+
+      if (titles.isNotEmpty) {
+        await repository.saveTitles(titles, AppConstants.followinglist,
+            addedDates: dates);
+      }
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Error retrieving following list from Supabase',
+      );
     }
-    return <String>[];
+
+    await filterItems();
   }
 
-  @override
-  Future<void> applyData(dynamic data) async {
-    if (data is! List) return;
-    final List<String> followingIds = List<String>.from(data);
+  Future<bool> addFollowingToDatabase(TmdbTitle title) async {
+    final userId = SupabaseService().client.auth.currentUser?.id;
+    if (userId == null) return false;
 
-    final currentFollowing = await repository.getTitles(
-      listName: AppConstants.rateslist,
-      filterRating: RatingFilter.followingOnly,
-    );
+    try {
+      final now = DateTime.now();
+      await SupabaseService().client.from('user_list_items').upsert({
+        'user_id': userId,
+        'list_name': AppConstants.followinglist,
+        'tmdb_id': title.tmdbId,
+        'media_type': title.mediaType,
+        'created_at': now.toUtc().toIso8601String(),
+      }, onConflict: 'user_id, list_name, tmdb_id');
 
-    final Map<String, TmdbTitle> toUpdate = {};
-
-    // Reset current following
-    for (var title in currentFollowing) {
-      title.notifyNewSeasons = false;
-      toUpdate['${title.tmdbId}_${title.mediaType}'] = title;
-    }
-
-    // Set new following
-    for (var item in followingIds) {
-      final parts = item.split(':');
-      if (parts.length == 2) {
-        final mediaType = parts[0];
-        final tmdbId = int.tryParse(parts[1]);
-        if (tmdbId != null) {
-          var title = await repository.getTitleByTmdbId(
-              AppConstants.rateslist, tmdbId, mediaType);
-          title ??= TmdbTitle(
-              tmdbId: tmdbId,
-              name: '',
-              mediaType: mediaType,
-              dateRated: DateTime.fromMillisecondsSinceEpoch(0),
-              lastUpdated: AppConstants.defaultDate)
-            ..inLists = [AppConstants.rateslist];
-          title.notifyNewSeasons = true;
-          toUpdate['${title.tmdbId}_${title.mediaType}'] = title;
-        }
+      if (!title.inLists.contains(AppConstants.followinglist)) {
+        title.inLists = [...title.inLists, AppConstants.followinglist];
       }
-    }
-
-    if (toUpdate.isNotEmpty) {
-      await repository.updateNotifyNewSeasonsList(toUpdate.values.toList());
+      await repository.saveTitle(title, AppConstants.followinglist, now);
       notifyListeners();
+      return true;
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Error adding to following to Supabase',
+      );
     }
+    return false;
   }
 
-  Future<bool> addFollowingToServer(TmdbTitle title) async {
-    return await updateArrayInFirebase(
-        '${title.mediaType}:${title.tmdbId}', true);
-  }
+  Future<bool> removeFollowingFromDatabase(TmdbTitle title) async {
+    final userId = SupabaseService().client.auth.currentUser?.id;
+    if (userId == null) return false;
 
-  Future<bool> removeFollowingFromServer(TmdbTitle title) async {
-    return await updateArrayInFirebase(
-        '${title.mediaType}:${title.tmdbId}', false);
+    try {
+      await SupabaseService().client.from('user_list_items').delete().match({
+        'user_id': userId,
+        'list_name': AppConstants.followinglist,
+        'tmdb_id': title.tmdbId,
+      });
+
+      title.inLists =
+          title.inLists.where((l) => l != AppConstants.followinglist).toList();
+      await repository.deleteTitle(
+          AppConstants.followinglist, title.tmdbId, title.mediaType);
+      notifyListeners();
+      return true;
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Error removing from following from Supabase',
+      );
+    }
+    return false;
   }
 }

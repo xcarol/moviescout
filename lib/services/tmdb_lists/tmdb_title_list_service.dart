@@ -271,9 +271,9 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       final keysToRemove = localKeys.difference(serverKeys);
 
       if (titlesToAdd.isNotEmpty) {
-        int currentMax = await repository.getMaxAddedOrder(listNameVal);
         await repository.saveTitles(titlesToAdd, listNameVal,
-            addedOrders: titlesToAdd.map((t) => ++currentMax).toList());
+            addedDates:
+                titlesToAdd.map((t) => t.addedDate ?? DateTime.now()).toList());
         await filterItems();
       }
 
@@ -302,8 +302,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     if (!title.inLists.contains(listNameVal)) {
       title.inLists = title.inLists.toList()..add(listNameVal);
     }
-    int currentMax = await repository.getMaxAddedOrder(listNameVal);
-    await repository.saveTitle(title, listNameVal, ++currentMax);
+    await repository.saveTitle(title, listNameVal, DateTime.now());
   }
 
   @protected
@@ -399,28 +398,24 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     String sessionId,
     TmdbTitle title,
     bool add,
-    Future<dynamic> Function(
+    Future<void> Function(
       String accountId,
       String sessionId,
     ) updateTitleToServer,
   ) async {
-    final result = await updateTitleToServer(accountId, sessionId);
-    if (result.statusCode == 200 || result.statusCode == 201) {
-      if (add) {
-        await updateLocalTitle(title);
-      } else {
-        await deleteLocalTitle(title);
-        loadedItemsVal.removeWhere((element) => element.tmdbId == title.tmdbId);
-      }
-      await filterItems(retainPagination: true);
-      setLastUpdate();
-      await updateListGenres();
-
-      notifyListeners();
+    await updateTitleToServer(accountId, sessionId);
+    
+    if (add) {
+      await updateLocalTitle(title);
     } else {
-      throw Exception(
-          'Failed to update titleId: ${title.tmdbId}. Status code: ${result.statusCode} - ${result.body}');
+      await deleteLocalTitle(title);
+      loadedItemsVal.removeWhere((element) => element.tmdbId == title.tmdbId);
     }
+    await filterItems(retainPagination: true);
+    setLastUpdate();
+    await updateListGenres();
+
+    notifyListeners();
   }
 
   Future<List> getTitlesFromServer(

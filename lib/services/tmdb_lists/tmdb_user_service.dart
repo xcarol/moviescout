@@ -1,10 +1,7 @@
 import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/utils/app_constants.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
@@ -43,10 +40,7 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
       _sessionId = PreferencesService().prefs.getString('sessionId') ?? '';
       if (_accountId.isNotEmpty) {
         await _setupUserDetails();
-        if (Firebase.apps.isNotEmpty &&
-            FirebaseAuth.instance.currentUser == null) {
-          await _firebaseSignIn();
-        }
+
         notifyListeners();
       }
     }
@@ -78,7 +72,6 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     }
 
     await _setupUserDetails();
-    await _firebaseSignIn();
     notifyListeners();
 
     return {AppConstants.success: true};
@@ -176,42 +169,6 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     }
   }
 
-  Future<void> _firebaseSignIn() async {
-    if (Firebase.apps.isEmpty) return;
-    try {
-      final authUrl = dotenv.env[AppConstants.firebaseAuthUrl];
-      if (authUrl == null || authUrl.isEmpty) return;
-
-      final response = await http.post(
-        Uri.parse(authUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          AppConstants.accountId: _accountId,
-          AppConstants.sessionId: _sessionId,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final customToken = data[AppConstants.token];
-        if (customToken != null) {
-          await FirebaseAuth.instance.signInWithCustomToken(customToken);
-        }
-      } else {
-        ErrorService.log(
-          'Firebase Custom Auth Failed: ${response.body}',
-          userMessage: 'Error connecting to sync server',
-        );
-      }
-    } catch (e, stackTrace) {
-      ErrorService.log(
-        e,
-        stackTrace: stackTrace,
-        userMessage: 'Error in Firebase Authentication',
-      );
-    }
-  }
-
   Future<Map> login() async {
     PreferencesService().prefs.clear();
     return _startLogin();
@@ -232,9 +189,6 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
         Provider.of<TmdbFollowingService>(context, listen: false);
     followingService.clearFollowingStatus();
     PreferencesService().prefs.clear();
-    if (Firebase.apps.isNotEmpty) {
-      await FirebaseAuth.instance.signOut();
-    }
     notifyListeners();
   }
 }

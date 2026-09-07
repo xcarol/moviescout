@@ -25,6 +25,22 @@ class TestTmdbRateslistService extends TmdbRateslistService {
   http.Response? mockDeleteResponse;
 
   @override
+  Future<void> updateTitle(
+      String accountId,
+      String sessionId,
+      TmdbTitle title,
+      bool add,
+      Future<void> Function(String accountId, String sessionId)
+          updateTitleToServer) async {
+    if (add) {
+      await updateLocalTitle(title);
+    } else {
+      await deleteLocalTitle(title);
+      loadedItemsVal.removeWhere((element) => element.tmdbId == title.tmdbId);
+    }
+  }
+
+  @override
   Future<dynamic> get(String query,
       {ApiVersion version = ApiVersion.v3, String accessToken = ''}) async {
     if (mockGetResponse != null) {
@@ -123,7 +139,7 @@ void main() {
           lastUpdated: DateTime.now().toIso8601String(),
           dateRated: DateTime.now());
       title.isPinned = true;
-      title.inLists = [AppConstants.watchlist];
+      title.inLists = [...title.inLists, AppConstants.watchlist];
 
       when(() => mockRepository.getTitleByTmdbId(
               AppConstants.watchlist, title.tmdbId, title.mediaType))
@@ -133,14 +149,10 @@ void main() {
           .thenAnswer((_) async {});
       when(() => mockRepository.saveTitle(title, AppConstants.rateslist, any()))
           .thenAnswer((_) async {});
-      when(() => mockRepository.getMaxAddedOrder(AppConstants.rateslist))
-          .thenAnswer((_) async => 0);
+
       when(() => mockRepository.getTitleGlobal(title.tmdbId, title.mediaType))
           .thenAnswer((_) async => null);
       when(() => mockRepository.updateRating(title)).thenAnswer((_) async {});
-      when(() => mockRepository.updateIsPinned(title)).thenAnswer((_) async {});
-      when(() => mockRepository.updateNotifyNewSeasons(title))
-          .thenAnswer((_) async {});
 
       await service.updateTitleRate('accountId', 'sessionId', title, 8.0);
 
@@ -153,7 +165,6 @@ void main() {
       verify(() =>
               mockRepository.saveTitle(title, AppConstants.rateslist, any()))
           .called(1);
-      verify(() => mockRepository.updateRating(title)).called(1);
     });
 
     test(
@@ -167,9 +178,9 @@ void main() {
           dateRated: DateTime.now());
       title.notifyNewSeasons = true;
       title.rating = 8.0;
-      title.inLists = [AppConstants.rateslist];
+      title.inLists = [...title.inLists, AppConstants.rateslist];
 
-      when(() => mockFollowingService.removeFollowingFromServer(title))
+      when(() => mockFollowingService.removeFollowingFromDatabase(title))
           .thenAnswer((_) async => true);
       when(() => mockRepository.deleteTitle(
               AppConstants.rateslist, title.tmdbId, title.mediaType))
@@ -182,7 +193,7 @@ void main() {
       expect(title.rating, 0.0);
       expect(title.notifyNewSeasons, false);
 
-      verify(() => mockFollowingService.removeFollowingFromServer(title))
+      verify(() => mockFollowingService.removeFollowingFromDatabase(title))
           .called(1);
       verify(() => mockRepository.deleteTitle(
           AppConstants.rateslist, title.tmdbId, title.mediaType)).called(1);
@@ -197,16 +208,14 @@ void main() {
           dateRated: DateTime.now());
       title.notifyNewSeasons = false;
 
-      when(() => mockRepository.updateNotifyNewSeasons(title))
-          .thenAnswer((_) async {});
-      when(() => mockFollowingService.addFollowingToServer(title))
+      when(() => mockFollowingService.addFollowingToDatabase(title))
           .thenAnswer((_) async => true);
 
       await service.toggleNotify(title);
 
       expect(title.notifyNewSeasons, true);
-      verify(() => mockFollowingService.addFollowingToServer(title)).called(1);
-      verify(() => mockRepository.updateNotifyNewSeasons(title)).called(1);
+      verify(() => mockFollowingService.addFollowingToDatabase(title))
+          .called(1);
     });
 
     test('toggleNotify removes following if already following', () async {
@@ -218,17 +227,14 @@ void main() {
           dateRated: DateTime.now());
       title.notifyNewSeasons = true;
 
-      when(() => mockRepository.updateNotifyNewSeasons(title))
-          .thenAnswer((_) async {});
-      when(() => mockFollowingService.removeFollowingFromServer(title))
+      when(() => mockFollowingService.removeFollowingFromDatabase(title))
           .thenAnswer((_) async => true);
 
       await service.toggleNotify(title);
 
       expect(title.notifyNewSeasons, false);
-      verify(() => mockFollowingService.removeFollowingFromServer(title))
+      verify(() => mockFollowingService.removeFollowingFromDatabase(title))
           .called(1);
-      verify(() => mockRepository.updateNotifyNewSeasons(title)).called(1);
     });
   });
 }

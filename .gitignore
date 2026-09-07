@@ -1,6 +1,7 @@
 # MovieScout related
 /bugreport*
 firebase.json
+/supabase
 .env*
 .cxx
 .kotlin

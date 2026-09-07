@@ -39,9 +39,7 @@ class RealmMapper {
       ..inLists = realmObj.inLists.toList()
       ..effectiveRuntime = realmObj.effectiveRuntime
       ..effectiveReleaseDate = realmObj.effectiveReleaseDate
-      ..addedOrder = realmObj.addedOrder
-      ..isPinned = realmObj.isPinned
-      ..notifyNewSeasons = realmObj.notifyNewSeasons
+      ..addedDate = realmObj.addedDate
       ..imagesJson = realmObj.imagesJson
       ..videosJson = realmObj.videosJson
       ..recommendationsJson = realmObj.recommendationsJson
@@ -91,9 +89,7 @@ class RealmMapper {
       domainObj.revenue,
       domainObj.effectiveRuntime,
       domainObj.effectiveReleaseDate,
-      domainObj.addedOrder,
-      domainObj.isPinned,
-      domainObj.notifyNewSeasons,
+      domainObj.addedDate ?? DateTime.now(),
       domainObj.lastNotifiedSeason,
       domainObj.character,
       domainObj.job,
@@ -121,7 +117,7 @@ class RealmMapper {
       listName: realmObj.listName,
       tmdbId: realmObj.tmdbId,
       mediaType: realmObj.mediaType,
-      addedOrder: realmObj.addedOrder,
+      addedDate: realmObj.addedDate,
     );
   }
 
@@ -131,7 +127,7 @@ class RealmMapper {
       domainObj.listName,
       domainObj.tmdbId,
       domainObj.mediaType,
-      domainObj.addedOrder,
+      domainObj.addedDate,
     );
   }
 

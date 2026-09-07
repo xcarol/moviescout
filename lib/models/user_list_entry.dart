@@ -4,12 +4,12 @@ class UserListEntry {
   late int tmdbId;
   late String mediaType;
 
-  late int addedOrder;
+  late DateTime addedDate;
 
   UserListEntry({
     required this.listName,
     required this.tmdbId,
     required this.mediaType,
-    required this.addedOrder,
+    required this.addedDate,
   });
 }

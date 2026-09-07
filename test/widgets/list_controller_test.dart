@@ -25,7 +25,7 @@ void main() {
     final mockService = MockTmdbTitleListService();
     when(() => mockService.listName).thenReturn('watchlist');
     when(() => mockService.defaultSortAsc).thenReturn(false);
-    when(() => mockService.defaultSort).thenReturn(SortOption.addedOrder);
+    when(() => mockService.defaultSort).thenReturn(SortOption.addedDate);
     when(() => mockService.userRatingAvailable).thenReturn(false);
     when(() => mockService.setSort(any(), any())).thenAnswer((_) {});
 
