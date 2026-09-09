@@ -49,12 +49,17 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
 
     retrieveList(
         accountId.isEmpty ? AppConstants.anonymousAccountId : accountId,
-        forceUpdate: forceUpdate, retrieveMovies: () async {
-      return _getDiscoveryTitles(accountId, sessionId, locale,
-          ApiConstants.movie, UrlConstants.tmdbPopularMoviesEndpoint);
-    }, retrieveTvshows: () async {
-      return _getDiscoveryTitles(accountId, sessionId, locale, ApiConstants.tv,
-          UrlConstants.tmdbPopularTvEndpoint);
+        forceUpdate: forceUpdate, fetchRemoteData: () async {
+      return fetchAndMergeTmdbLists(
+        retrieveMovies: () async {
+          return _getDiscoveryTitles(accountId, sessionId, locale,
+              ApiConstants.movie, UrlConstants.tmdbPopularMoviesEndpoint);
+        },
+        retrieveTvshows: () async {
+          return _getDiscoveryTitles(accountId, sessionId, locale, ApiConstants.tv,
+              UrlConstants.tmdbPopularTvEndpoint);
+        },
+      );
     }).whenComplete(() {
       isRefreshing.value = false;
     });

@@ -21,83 +21,30 @@ class WatchlistService extends TmdbTitleListService {
     required String sessionId,
     required Locale locale,
   }) async {
-    try {
-      final user = _supabase.auth.currentUser;
-      if (user == null) return;
+    final user = _supabase.auth.currentUser;
+    if (user == null) return;
 
+    await retrieveList(accountId, forceUpdate: true, fetchRemoteData: () async {
       final response = await _supabase
           .from('user_titles')
           .select('tmdb_id, media_type, is_pinned, created_at')
           .eq('list_name', AppConstants.watchlist)
           .order('created_at', ascending: true);
 
-      final localTmdbIds =
-          await repository.getAllTmdbIds(AppConstants.watchlist);
-
-      final remoteTmdbIds = <int>[];
-      final newTitles = <TmdbTitle>[];
-      final addedOrders = <int>[];
-      int currentMaxOrder =
-          await repository.getMaxAddedOrder(AppConstants.watchlist);
-
+      final List<TmdbTitle> parsed = [];
       for (var row in response) {
-        final tmdbId = row['tmdb_id'] as int;
-        final mediaType = row['media_type'] as String;
-        final isPinned = row['is_pinned'] as bool? ?? false;
-
-        remoteTmdbIds.add(tmdbId);
-
-        if (!localTmdbIds.contains(tmdbId)) {
-          final newTitle = TmdbTitle(
-            tmdbId: tmdbId,
-            mediaType: mediaType,
-            name: '',
-            lastUpdated: DateTime.now().toIso8601String(),
-            dateRated: DateTime.now(),
-          )..isPinned = isPinned;
-
-          newTitles.add(newTitle);
-          currentMaxOrder++;
-          addedOrders.add(currentMaxOrder);
-        } else {
-          final localTitle = repository.getTitleByTmdbIdSync(
-              AppConstants.watchlist, tmdbId, mediaType);
-          if (localTitle != null && localTitle.isPinned != isPinned) {
-            localTitle.isPinned = isPinned;
-            await repository.updateIsPinnedList([localTitle]);
-          }
-        }
+        final newTitle = TmdbTitle(
+          tmdbId: row['tmdb_id'] as int,
+          mediaType: row['media_type'] as String,
+          name: '',
+          lastUpdated: DateTime.now().toIso8601String(),
+          dateRated: DateTime.now(),
+        )..isPinned = row['is_pinned'] as bool? ?? false;
+        parsed.add(newTitle);
       }
-
-      if (newTitles.isNotEmpty) {
-        await repository.saveTitles(newTitles, AppConstants.watchlist,
-            addedOrders: addedOrders);
-        UninitializedTitlesWorker.dispatch();
-      }
-
-      final toRemove =
-          localTmdbIds.where((id) => !remoteTmdbIds.contains(id)).toList();
-      if (toRemove.isNotEmpty) {
-        // We fetch the full local title because repository.deleteTitles requires the mediaType array,
-        // which isn't provided by getAllTmdbIds.
-        final localTitles =
-            await repository.getAllTitlesInList(AppConstants.watchlist);
-        final titlesToRemove =
-            localTitles.where((t) => toRemove.contains(t.tmdbId));
-        for (var t in titlesToRemove) {
-          await repository
-              .deleteTitles(AppConstants.watchlist, [t.tmdbId], [t.mediaType]);
-        }
-      }
-
-      await filterItems();
-    } catch (e, stackTrace) {
-      ErrorService.log(
-        e,
-        userMessage: 'Error syncing watchlist from Supabase',
-        stackTrace: stackTrace,
-      );
-    }
+      return parsed;
+    });
+    UninitializedTitlesWorker.dispatch();
   }
 
   Future<void> updateWatchlistTitle(

@@ -1,3 +1,4 @@
+import "package:moviescout/utils/api_constants.dart";
 import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,6 @@ import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
 import 'package:moviescout/services/workers/uninitialized_titles_worker.dart';
 import 'package:moviescout/services/core/update_manager.dart';
 import 'package:moviescout/services/workers/update_providers_worker.dart';
-import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
@@ -125,8 +125,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
 
   Future<void> retrieveList(
     String accountId, {
-    required Future<List> Function() retrieveMovies,
-    required Future<List> Function() retrieveTvshows,
+    required Future<List<TmdbTitle>> Function() fetchRemoteData,
     bool forceUpdate = false,
   }) async {
     bool isUpToDate = UpdateManager().isUpToDate(listNameVal, cacheTimeout);
@@ -165,7 +164,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
         return;
       }
 
-      await _syncWithServer(accountId, retrieveMovies, retrieveTvshows);
+      await _syncWithServer(accountId, fetchRemoteData);
 
       await updateListGenres();
 
@@ -182,55 +181,29 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     }
   }
 
-  Future<dynamic> _retrieveServerList(
+  Future<List<TmdbTitle>> _retrieveServerList(
     String accountId,
-    Future<List> Function() retrieveMovies,
-    Future<List> Function() retrieveTvshows,
+    Future<List<TmdbTitle>> Function() fetchRemoteData,
   ) async {
     List<TmdbTitle> serverList = List.empty(growable: true);
 
-    final results = await Future.wait([
-      retrieveMovies(),
-      retrieveTvshows(),
-    ]);
+    final remoteTitles = await fetchRemoteData();
 
-    final movies = results[0];
-    final tv = results[1];
-
-    final allTmdbIds = [
-      ...movies.map((m) => m[TmdbTitleFields.id] as int),
-      ...tv.map((t) => t[TmdbTitleFields.id] as int),
-    ];
+    final allTmdbIds = remoteTitles.map((t) => t.tmdbId).toList();
     final existingTitles = await repository.getTitlesByTmdbIds(allTmdbIds);
     final existingMap = {
       for (var t in existingTitles) '${t.tmdbId}_${t.mediaType}': t
     };
 
-    int movieIdx = 0;
-    int tvIdx = 0;
-
-    while (movieIdx < movies.length || tvIdx < tv.length) {
-      if (movieIdx < movies.length) {
-        var element = movies[movieIdx++];
-        element[TmdbTitleFields.mediaType] = ApiConstants.movie;
-        final tmdbId = element[TmdbTitleFields.id] as int;
-        final existing = existingMap['${tmdbId}_${ApiConstants.movie}'];
-        if (existing != null) {
-          serverList.add(existing);
-        } else {
-          serverList.add(TmdbTitle.fromMap(title: element));
-        }
-      }
-      if (tvIdx < tv.length) {
-        var element = tv[tvIdx++];
-        element[TmdbTitleFields.mediaType] = ApiConstants.tv;
-        final tmdbId = element[TmdbTitleFields.id] as int;
-        final existing = existingMap['${tmdbId}_${ApiConstants.tv}'];
-        if (existing != null) {
-          serverList.add(existing);
-        } else {
-          serverList.add(TmdbTitle.fromMap(title: element));
-        }
+    for (var element in remoteTitles) {
+      final existing = existingMap['${element.tmdbId}_${element.mediaType}'];
+      if (existing != null) {
+        existing.isPinned = element.isPinned;
+        existing.rating = element.rating;
+        existing.notifyNewSeasons = element.notifyNewSeasons;
+        serverList.add(existing);
+      } else {
+        serverList.add(element);
       }
     }
 
@@ -240,8 +213,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
   @protected
   Future<void> _syncWithServer(
     String accountId,
-    Future<List> Function() retrieveMovies,
-    Future<List> Function() retrieveTvshows,
+    Future<List<TmdbTitle>> Function() fetchRemoteData,
   ) async {
     final dbCount = await repository.countTitlesFiltered(listName: listNameVal);
     final bool isInitialLoad = dbCount == 0;
@@ -251,7 +223,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     }
 
     List<TmdbTitle> serverList =
-        await _retrieveServerList(accountId, retrieveMovies, retrieveTvshows);
+        await _retrieveServerList(accountId, fetchRemoteData);
 
     if (isInitialLoad) {
       await repository.saveTitles(serverList, listNameVal);
@@ -264,17 +236,32 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
           localEntries.map((e) => '${e.tmdbId}_${e.mediaType}').toSet();
 
       final keysToAdd = serverKeys.difference(localKeys);
+      final keysToRemove = localKeys.difference(serverKeys);
+      final keysToUpdate = serverKeys.intersection(localKeys);
 
       final titlesToAdd = serverList
           .where((t) => keysToAdd.contains('${t.tmdbId}_${t.mediaType}'))
           .toList();
-      final keysToRemove = localKeys.difference(serverKeys);
 
       if (titlesToAdd.isNotEmpty) {
         int currentMax = await repository.getMaxAddedOrder(listNameVal);
+        final addedOrders =
+            List.generate(titlesToAdd.length, (i) => currentMax + 1 + i);
         await repository.saveTitles(titlesToAdd, listNameVal,
-            addedOrders: titlesToAdd.map((t) => ++currentMax).toList());
-        await filterItems();
+            addedOrders: addedOrders);
+      }
+
+      final titlesToUpdate = serverList
+          .where((t) => keysToUpdate.contains('${t.tmdbId}_${t.mediaType}'))
+          .toList();
+
+      if (titlesToUpdate.isNotEmpty) {
+        if (listNameVal == AppConstants.watchlist) {
+          await repository.updateIsPinnedList(titlesToUpdate);
+        } else if (listNameVal == AppConstants.rateslist) {
+          await repository.updateRatingList(titlesToUpdate);
+          await repository.updateNotifyNewSeasonsList(titlesToUpdate);
+        }
       }
 
       if (keysToRemove.isNotEmpty) {
@@ -284,8 +271,9 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
         final idsToRemove = entriesToRemove.map((e) => e.tmdbId).toList();
         final mediaTypes = entriesToRemove.map((e) => e.mediaType).toList();
         await repository.deleteTitles(listNameVal, idsToRemove, mediaTypes);
-        await filterItems();
       }
+
+      await filterItems();
     }
 
     UninitializedTitlesWorker.dispatch();
@@ -469,5 +457,23 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     if (memoryTitle != null) return memoryTitle;
 
     return repository.getTitleByTmdbIdSync(listNameVal, tmdbId, mediaType);
+  }
+
+  @protected
+  Future<List<TmdbTitle>> fetchAndMergeTmdbLists({
+    required Future<List> Function() retrieveMovies,
+    required Future<List> Function() retrieveTvshows,
+  }) async {
+    final results = await Future.wait([retrieveMovies(), retrieveTvshows()]);
+    final List<TmdbTitle> mapped = [];
+    for (var element in results[0]) {
+      element[TmdbTitleFields.mediaType] = ApiConstants.movie;
+      mapped.add(TmdbTitle.fromMap(title: element));
+    }
+    for (var element in results[1]) {
+      element[TmdbTitleFields.mediaType] = ApiConstants.tv;
+      mapped.add(TmdbTitle.fromMap(title: element));
+    }
+    return mapped;
   }
 }

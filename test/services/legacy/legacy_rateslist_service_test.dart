@@ -3,7 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_following_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
@@ -17,8 +17,8 @@ class MockTmdbTitleRepository extends Mock implements TitleRepository {}
 
 class MockTmdbFollowingService extends Mock implements TmdbFollowingService {}
 
-class TestTmdbRateslistService extends TmdbRateslistService {
-  TestTmdbRateslistService(super.listName, super.repository);
+class TestLegacyRateslistService extends LegacyRateslistService {
+  TestLegacyRateslistService(super.listName, super.repository);
 
   http.Response? mockGetResponse;
   http.Response? mockPostResponse;
@@ -59,7 +59,7 @@ class FakeTmdbTitle extends Fake implements TmdbTitle {}
 void main() {
   late MockTmdbTitleRepository mockRepository;
   late MockTmdbFollowingService mockFollowingService;
-  late TestTmdbRateslistService service;
+  late TestLegacyRateslistService service;
 
   setUpAll(() async {
     registerFallbackValue(FakeTmdbTitle());
@@ -108,11 +108,12 @@ void main() {
     when(() => mockRepository.getAllGenreIds(AppConstants.rateslist))
         .thenAnswer((_) async => []);
 
-    service = TestTmdbRateslistService(AppConstants.rateslist, mockRepository);
+    service =
+        TestLegacyRateslistService(AppConstants.rateslist, mockRepository);
     service.followingService = mockFollowingService;
   });
 
-  group('TmdbRateslistService', () {
+  group('LegacyRateslistService', () {
     test(
         'updateTitleRate rating > 0 updates server and removes from watchlist if present',
         () async {

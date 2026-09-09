@@ -13,10 +13,10 @@ import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 
-class TmdbRateslistService extends TmdbTitleListService {
+class LegacyRateslistService extends TmdbTitleListService {
   TmdbFollowingService? followingService;
 
-  TmdbRateslistService(super.listName, super.repository) {
+  LegacyRateslistService(super.listName, super.repository) {
     filterRating = RatingFilter.rated;
   }
 
@@ -47,36 +47,40 @@ class TmdbRateslistService extends TmdbTitleListService {
   Future<void> retrieveRateslist(
       String accountId, String sessionId, Locale locale,
       {bool forceUpdate = false}) async {
-    await retrieveList(accountId, forceUpdate: forceUpdate,
+    await retrieveList(accountId, forceUpdate: forceUpdate, fetchRemoteData: () async {
+      return fetchAndMergeTmdbLists(
         retrieveMovies: () async {
-      return getTitlesFromServer((int page) async {
-        return get(
-          UrlConstants.tmdbRateslistMoviesEndpoint
-              .replaceFirst('{ACCOUNT_ID}', accountId)
-              .replaceFirst('{SESSION_ID}', sessionId)
-              .replaceFirst('{PAGE}', page.toString())
-              .replaceFirst(
-                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-        );
-      });
-    }, retrieveTvshows: () async {
-      return getTitlesFromServer((int page) async {
-        return get(
-          UrlConstants.tmdbRateslistTvEndpoint
-              .replaceFirst('{ACCOUNT_ID}', accountId)
-              .replaceFirst('{SESSION_ID}', sessionId)
-              .replaceFirst('{PAGE}', page.toString())
-              .replaceFirst(
-                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-        );
-      });
+          return getTitlesFromServer((int page) async {
+            return get(
+              UrlConstants.tmdbRateslistMoviesEndpoint
+                  .replaceFirst('{ACCOUNT_ID}', accountId)
+                  .replaceFirst('{SESSION_ID}', sessionId)
+                  .replaceFirst('{PAGE}', page.toString())
+                  .replaceFirst(
+                      '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+            );
+          });
+        },
+        retrieveTvshows: () async {
+          return getTitlesFromServer((int page) async {
+            return get(
+              UrlConstants.tmdbRateslistTvEndpoint
+                  .replaceFirst('{ACCOUNT_ID}', accountId)
+                  .replaceFirst('{SESSION_ID}', sessionId)
+                  .replaceFirst('{PAGE}', page.toString())
+                  .replaceFirst(
+                      '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+            );
+          });
+        },
+      );
     });
-
-    await _retrieveRatedEpisodes(accountId, sessionId, locale);
 
     if (followingService != null) {
       await followingService!.fetchAndApplyFollowingTitles();
     }
+    await filterItems();
+    _retrieveRatedEpisodes(accountId, sessionId, locale);
   }
 
   Future<void> _retrieveRatedEpisodes(

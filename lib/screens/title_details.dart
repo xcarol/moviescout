@@ -20,7 +20,7 @@ import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/buttons/trailer_buttons.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/widgets/chips/person_chip.dart';
@@ -101,7 +101,7 @@ class _TitleDetailsState extends State<TitleDetails> {
   Future<void> _updateTitleRate(TmdbTitle title, double rating) async {
     final userService = Provider.of<TmdbUserService>(context, listen: false);
     final rateslistService =
-        Provider.of<TmdbRateslistService>(context, listen: false);
+        Provider.of<LegacyRateslistService>(context, listen: false);
 
     await rateslistService.updateTitleRate(
       userService.accountId,
@@ -836,7 +836,7 @@ class _TitleDetailsState extends State<TitleDetails> {
             )
           else
             const SizedBox.shrink(),
-          Consumer<TmdbRateslistService>(
+          Consumer<LegacyRateslistService>(
             builder: (context, ratingService, child) {
               return FutureBuilder<List<dynamic>>(
                 future: Future.wait([
@@ -1272,7 +1272,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         const SizedBox(height: 10),
         SizedBox(
           height: 336.0,
-          child: Consumer<TmdbRateslistService>(
+          child: Consumer<LegacyRateslistService>(
             builder: (context, ratesService, child) {
               return ListView.builder(
                 scrollDirection: Axis.horizontal,

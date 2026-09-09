@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
@@ -19,7 +19,7 @@ class _DiscoverListState extends State<DiscoverList> {
   late Future<void> _init;
   late TmdbDiscoverlistService _discoverlistService;
   late LegacyWatchlistService _watchlistService;
-  late TmdbRateslistService _rateslistService;
+  late LegacyRateslistService _rateslistService;
 
   late Widget _discoverlistWidget;
 
@@ -70,7 +70,7 @@ class _DiscoverListState extends State<DiscoverList> {
     _watchlistService =
         Provider.of<LegacyWatchlistService>(context, listen: false);
     _rateslistService =
-        Provider.of<TmdbRateslistService>(context, listen: false);
+        Provider.of<LegacyRateslistService>(context, listen: false);
 
     _removeListeners();
     _addListeners();

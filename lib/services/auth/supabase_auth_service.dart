@@ -10,7 +10,7 @@ class SupabaseAuthService extends ChangeNotifier {
   SupabaseAuthService._internal();
 
   final _supabase = Supabase.instance.client;
-  
+
   User? get currentUser => _supabase.auth.currentUser;
   bool get isLoggedIn => currentUser != null;
 
@@ -23,7 +23,7 @@ class SupabaseAuthService extends ChangeNotifier {
 
       final googleSignIn = GoogleSignIn.instance;
       await googleSignIn.initialize(serverClientId: webClientId);
-      
+
       final googleUser = await googleSignIn.authenticate();
       final googleAuth = googleUser.authentication;
       final idToken = googleAuth.idToken;

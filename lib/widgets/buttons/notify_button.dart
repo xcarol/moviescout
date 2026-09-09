@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:provider/provider.dart';
 
 Widget notifyButton(
   BuildContext context,
   TmdbTitle title,
 ) {
-  return Consumer<TmdbRateslistService>(
+  return Consumer<LegacyRateslistService>(
     builder: (context, rateslistService, _) {
       return FutureBuilder<TmdbTitle?>(
         future:

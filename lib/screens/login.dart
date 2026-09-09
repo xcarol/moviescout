@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart'
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:app_links/app_links.dart';
 import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
@@ -59,8 +59,8 @@ class _LoginState extends State<Login> {
         Provider.of<TmdbUserService>(context, listen: false);
     LegacyWatchlistService watchlistService =
         Provider.of<LegacyWatchlistService>(context, listen: false);
-    TmdbRateslistService rateslistService =
-        Provider.of<TmdbRateslistService>(context, listen: false);
+    LegacyRateslistService rateslistService =
+        Provider.of<LegacyRateslistService>(context, listen: false);
     TmdbProviderService providerService =
         Provider.of<TmdbProviderService>(context, listen: false);
 

@@ -20,7 +20,7 @@ import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/widgets/lists/list_controller.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:moviescout/widgets/chips/pinned_title_chip.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -358,7 +358,7 @@ class _ItemListState extends SearchableListState<ItemList> {
                         controller: _controller,
                         listService: widget.listService,
                         showRatingFilter:
-                            widget.listService is TmdbRateslistService,
+                            widget.listService is LegacyRateslistService,
                       ),
                     _pinnedTitlesRow(),
                     Expanded(child: _itemList()),

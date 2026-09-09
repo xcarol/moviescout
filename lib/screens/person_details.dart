@@ -10,7 +10,7 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_person_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/widgets/chips/person_title_chip.dart';
 import 'package:moviescout/widgets/text_and_info/expandable_description.dart';
@@ -69,7 +69,7 @@ class _PersonDetailsState extends State<PersonDetails> {
 
     if (!mounted) return person;
     final tmdbRateslistService =
-        Provider.of<TmdbRateslistService>(context, listen: false);
+        Provider.of<LegacyRateslistService>(context, listen: false);
 
     final ratedTitles = <TmdbTitle>[];
     for (var title in person.combinedCredits.cast) {

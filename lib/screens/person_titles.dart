@@ -39,8 +39,7 @@ class _PersonTitlesState extends State<PersonTitles> {
       final userService = Provider.of<TmdbUserService>(context, listen: false);
       _personTitlesService.retrieveList(
         userService.accountId,
-        retrieveMovies: () async => [],
-        retrieveTvshows: () async => [],
+        fetchRemoteData: () async => [],
       );
     });
   }

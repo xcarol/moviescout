@@ -13,29 +13,33 @@ class LegacyWatchlistService extends TmdbTitleListService {
   Future<void> retrieveWatchlist(
       String accountId, String sessionId, Locale locale,
       {bool forceUpdate = false}) async {
-    await retrieveList(accountId, forceUpdate: forceUpdate,
+    await retrieveList(accountId, forceUpdate: forceUpdate, fetchRemoteData: () async {
+      return fetchAndMergeTmdbLists(
         retrieveMovies: () async {
-      return getTitlesFromServer((int page) async {
-        return get(
-          UrlConstants.tmdbWatchlistMoviesEndpoint
-              .replaceFirst('{ACCOUNT_ID}', accountId)
-              .replaceFirst('{SESSION_ID}', sessionId)
-              .replaceFirst('{PAGE}', page.toString())
-              .replaceFirst(
-                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-        );
-      });
-    }, retrieveTvshows: () async {
-      return getTitlesFromServer((int page) async {
-        return get(
-          UrlConstants.tmdbWatchlistTvEndpoint
-              .replaceFirst('{ACCOUNT_ID}', accountId)
-              .replaceFirst('{SESSION_ID}', sessionId)
-              .replaceFirst('{PAGE}', page.toString())
-              .replaceFirst(
-                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-        );
-      });
+          return getTitlesFromServer((int page) async {
+            return get(
+              UrlConstants.tmdbWatchlistMoviesEndpoint
+                  .replaceFirst('{ACCOUNT_ID}', accountId)
+                  .replaceFirst('{SESSION_ID}', sessionId)
+                  .replaceFirst('{PAGE}', page.toString())
+                  .replaceFirst(
+                      '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+            );
+          });
+        },
+        retrieveTvshows: () async {
+          return getTitlesFromServer((int page) async {
+            return get(
+              UrlConstants.tmdbWatchlistTvEndpoint
+                  .replaceFirst('{ACCOUNT_ID}', accountId)
+                  .replaceFirst('{SESSION_ID}', sessionId)
+                  .replaceFirst('{PAGE}', page.toString())
+                  .replaceFirst(
+                      '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+            );
+          });
+        },
+      );
     });
 
     if (pinnedService != null) {

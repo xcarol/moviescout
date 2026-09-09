@@ -7,7 +7,7 @@ import 'package:csv/csv.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/core/tmdb_base_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
@@ -174,8 +174,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
       setState(() {
         _operationInProgress = true;
       });
-      TmdbRateslistService rateslistService =
-          Provider.of<TmdbRateslistService>(context, listen: false);
+      LegacyRateslistService rateslistService =
+          Provider.of<LegacyRateslistService>(context, listen: false);
       TmdbUserService userService =
           Provider.of<TmdbUserService>(context, listen: false);
 
@@ -613,7 +613,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           }
 
           // We don't want to re-import a rate (it would change the rating date)... or do we?
-          if (await Provider.of<TmdbRateslistService>(context, listen: false)
+          if (await Provider.of<LegacyRateslistService>(context, listen: false)
               .contains(titlesFromId.first)) {
             _csvTitlesStatus[index] = TitleStatus.success;
             continue;
@@ -627,7 +627,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           }
 
           final ratelistService =
-              Provider.of<TmdbRateslistService>(context, listen: false);
+              Provider.of<LegacyRateslistService>(context, listen: false);
 
           await ratelistService.updateTitleRate(
             tmdbUserService.accountId,
@@ -637,7 +637,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
           );
 
           setState(() async {
-            if (await Provider.of<TmdbRateslistService>(context, listen: false)
+            if (await Provider.of<LegacyRateslistService>(context,
+                    listen: false)
                 .contains(titlesFromId.first)) {
               _csvTitlesStatus[index] = TitleStatus.success;
             } else {

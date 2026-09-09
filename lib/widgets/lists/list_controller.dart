@@ -4,7 +4,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_search_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -61,7 +61,7 @@ class ListController with ChangeNotifier {
 
   RatingFilter get _defaultRatingFilter =>
       (listService.listName == AppConstants.rateslist ||
-              listService is TmdbRateslistService)
+              listService is LegacyRateslistService)
           ? RatingFilter.rated
           : RatingFilter.all;
 

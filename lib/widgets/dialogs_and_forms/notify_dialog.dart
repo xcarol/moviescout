@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:provider/provider.dart';
 
 class NotifyDialog extends StatelessWidget {
@@ -25,7 +25,7 @@ class NotifyDialog extends StatelessWidget {
         TextButton(
           onPressed: () async {
             final rateslistService =
-                Provider.of<TmdbRateslistService>(context, listen: false);
+                Provider.of<LegacyRateslistService>(context, listen: false);
             await rateslistService.toggleNotify(title);
             if (context.mounted) {
               Navigator.pop(context, true);

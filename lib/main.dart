@@ -22,7 +22,7 @@ import 'package:moviescout/services/core/tmdb_configuration_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
 import 'package:moviescout/services/api/web_translation_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_pinned_service.dart';
@@ -206,14 +206,15 @@ void _runMain({bool isFromShortcutActivity = false}) async {
           ..setup(userService.accountId, userService.sessionId,
               userService.accessToken),
       ),
-      ChangeNotifierProxyProvider<TmdbFollowingService, TmdbRateslistService>(
-        create: (_) => TmdbRateslistService(AppConstants.rateslist, repository),
+      ChangeNotifierProxyProvider<TmdbFollowingService, LegacyRateslistService>(
+        create: (_) =>
+            LegacyRateslistService(AppConstants.rateslist, repository),
         update: (_, followingService, rateslistService) {
           rateslistService!.followingService = followingService;
           return rateslistService;
         },
       ),
-      ChangeNotifierProxyProvider2<TmdbRateslistService, TmdbPinnedService,
+      ChangeNotifierProxyProvider2<LegacyRateslistService, TmdbPinnedService,
           LegacyWatchlistService>(
         create: (_) =>
             LegacyWatchlistService(AppConstants.watchlist, repository),
@@ -224,8 +225,8 @@ void _runMain({bool isFromShortcutActivity = false}) async {
           return watchlistService;
         },
       ),
-      ChangeNotifierProxyProvider2<TmdbRateslistService, LegacyWatchlistService,
-          TmdbDiscoverlistService>(
+      ChangeNotifierProxyProvider2<LegacyRateslistService,
+          LegacyWatchlistService, TmdbDiscoverlistService>(
         create: (_) =>
             TmdbDiscoverlistService(AppConstants.discoverlist, repository),
         update: (_, rateslistService, watchlistService, discoverlistService) {
@@ -288,7 +289,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     final watchlistService =
         Provider.of<LegacyWatchlistService>(context, listen: false);
     final rateslistService =
-        Provider.of<TmdbRateslistService>(context, listen: false);
+        Provider.of<LegacyRateslistService>(context, listen: false);
     watchlistService.updateProviders();
     rateslistService.updateProviders();
   }
