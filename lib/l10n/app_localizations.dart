@@ -1323,6 +1323,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Import your old data from TMDB.'**
   String get importTmdbData;
+
+  /// No description provided for @migrateToSupabase.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Cloud Sync'**
+  String get migrateToSupabase;
+
+  /// No description provided for @migratingData.
+  ///
+  /// In en, this message translates to:
+  /// **'Transferring data...'**
+  String get migratingData;
+
+  /// No description provided for @migrationSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Data transferred successfully!'**
+  String get migrationSuccess;
+
+  /// No description provided for @migrationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error transferring data'**
+  String get migrationError;
 }
 
 class _AppLocalizationsDelegate

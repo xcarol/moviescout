@@ -655,4 +655,16 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get importTmdbData => 'Importa tus datos antiguos desde TMDB.';
+
+  @override
+  String get migrateToSupabase => 'Activar sincronización en la nube';
+
+  @override
+  String get migratingData => 'Transfiriendo datos...';
+
+  @override
+  String get migrationSuccess => '¡Datos transferidos con éxito!';
+
+  @override
+  String get migrationError => 'Error al transferir los datos';
 }

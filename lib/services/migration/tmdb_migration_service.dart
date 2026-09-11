@@ -12,7 +12,7 @@ class TmdbMigrationService {
   Future<void> migrateLocalDataToSupabase() async {
     final user = _supabase.auth.currentUser;
     if (user == null) {
-      throw Exception('Sessió de Supabase no iniciada per a la migració.');
+      throw Exception('Supabase session not initialized for migration.');
     }
 
     try {
@@ -22,16 +22,20 @@ class TmdbMigrationService {
       ErrorService.log(
         e,
         stackTrace: stackTrace,
-        userMessage: 'Error durant la migració de dades de TMDB a Supabase.',
+        userMessage: 'Migration to Supabase failed.',
       );
       rethrow;
     }
   }
 
   Future<void> _migrateList(String listName, String userId) async {
-    final titles = await _repository.getTitles(listName: listName);
+    final count = await _repository.countTitlesFiltered(listName: listName);
+    if (count == 0) return;
 
-    if (titles.isEmpty) return;
+    final titles = await _repository.getTitles(
+      listName: listName,
+      limit: count,
+    );
 
     final List<Map<String, dynamic>> records = [];
 
@@ -48,6 +52,9 @@ class TmdbMigrationService {
       });
     }
 
-    await _supabase.from('user_titles').upsert(records);
+    await _supabase.from('user_titles').upsert(
+          records,
+          onConflict: 'user_id, tmdb_id, media_type, list_name',
+        );
   }
 }

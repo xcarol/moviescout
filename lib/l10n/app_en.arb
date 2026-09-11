@@ -458,5 +458,13 @@
   "alreadyUsingMovieScout": "Already using MovieScout?",
   "@alreadyUsingMovieScout": {},
   "importTmdbData": "Import your old data from TMDB.",
-  "@importTmdbData": {}
+  "@importTmdbData": {},
+  "migrateToSupabase": "Enable Cloud Sync",
+  "@migrateToSupabase": {},
+  "migratingData": "Transferring data...",
+  "@migratingData": {},
+  "migrationSuccess": "Data transferred successfully!",
+  "@migrationSuccess": {},
+  "migrationError": "Error transferring data",
+  "@migrationError": {}
 }

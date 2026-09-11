@@ -458,5 +458,13 @@
   "alreadyUsingMovieScout": "Ja feies servir MovieScout?",
   "@alreadyUsingMovieScout": {},
   "importTmdbData": "Importa les teves dades antigues des de TMDB.",
-  "@importTmdbData": {}
+  "@importTmdbData": {},
+  "migrateToSupabase": "Activar sincronització al núvol",
+  "@migrateToSupabase": {},
+  "migratingData": "Transferint dades...",
+  "@migratingData": {},
+  "migrationSuccess": "Dades transferides amb èxit!",
+  "@migrationSuccess": {},
+  "migrationError": "Error en transferir les dades",
+  "@migrationError": {}
 }

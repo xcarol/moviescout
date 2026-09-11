@@ -13,6 +13,9 @@ import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
 import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
+import 'package:moviescout/services/auth/supabase_auth_service.dart';
+import 'package:moviescout/services/migration/tmdb_migration_service.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
@@ -24,7 +27,9 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isUserLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
+    bool isTmdbLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
+    bool isGoogleLoggedIn =
+        Provider.of<SupabaseAuthService>(context).isLoggedIn;
 
     return Drawer(
       child: ListView(
@@ -32,12 +37,58 @@ class AppDrawer extends StatelessWidget {
         children: <Widget>[
           _userProfileTile(context),
           _settingsTile(context),
-          if (isUserLoggedIn) _notificationsHistoryTile(context),
+          if (isTmdbLoggedIn) _notificationsHistoryTile(context),
+          if (isTmdbLoggedIn && isGoogleLoggedIn) _migrationTile(context),
           _aboutTile(context),
           const Divider(),
-          _userSessionTile(context, isUserLoggedIn),
+          _userSessionTile(context, isTmdbLoggedIn),
         ],
       ),
+    );
+  }
+
+  Widget _migrationTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.cloud_upload, color: Colors.blue),
+      title: Text(AppLocalizations.of(context)!.migrateToSupabase),
+      onTap: () async {
+        Navigator.of(context).pop();
+
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Row(
+                children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(width: 20),
+                  Text(AppLocalizations.of(context)!.migratingData),
+                ],
+              ),
+            );
+          },
+        );
+
+        try {
+          final repository =
+              Provider.of<TitleRepository>(context, listen: false);
+          final migrationService = TmdbMigrationService(repository);
+          await migrationService.migrateLocalDataToSupabase();
+
+          if (context.mounted) {
+            Navigator.of(context).pop();
+            SnackMessage.showSnackBar(
+                AppLocalizations.of(context)!.migrationSuccess);
+          }
+        } catch (e) {
+          if (context.mounted) {
+            Navigator.of(context).pop();
+            SnackMessage.showSnackBar(
+                AppLocalizations.of(context)!.migrationError);
+          }
+        }
+      },
     );
   }
 
