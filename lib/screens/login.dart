@@ -11,7 +11,9 @@ import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:app_links/app_links.dart';
 import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
+import 'package:moviescout/screens/migration_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -83,8 +85,18 @@ class _LoginState extends State<Login> {
       }
 
       SnackMessage.showSnackBar(loginSuccessMessage);
+      
       if (mounted) {
-        Navigator.pop(context);
+        final hasSupabase = Provider.of<SupabaseAuthService>(context, listen: false).isLoggedIn;
+        
+        if (!hasSupabase) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MigrationScreen()),
+          );
+        } else {
+          Navigator.pop(context);
+        }
       }
     } else {
       throw Exception(result['message']);
@@ -116,7 +128,28 @@ class _LoginState extends State<Login> {
     if (success) {
       if (mounted) {
         SnackMessage.showSnackBar(AppLocalizations.of(context)!.loginSuccess);
-        Navigator.pop(context);
+        
+        try {
+          final countRes = await Supabase.instance.client
+              .from('user_titles')
+              .select('id')
+              .limit(1)
+              .count(CountOption.exact);
+              
+          final hasRecords = countRes.count > 0;
+          
+          if (!hasRecords && mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MigrationScreen()),
+            );
+            return;
+          }
+        } catch (_) {
+          // Ignore network errors here, just proceed
+        }
+
+        if (mounted) Navigator.pop(context);
       }
     } else {
       if (mounted) {
