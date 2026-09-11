@@ -643,4 +643,16 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get aiRateLimitGeneric =>
       'Se ha superado el límite temporal de la API. Espera un momento antes de volver a intentarlo.';
+
+  @override
+  String get signInWithGoogle => 'Inicia sesión con Google';
+
+  @override
+  String get googleSignInButton => 'Acceder con Google';
+
+  @override
+  String get alreadyUsingMovieScout => '¿Ya usabas MovieScout?';
+
+  @override
+  String get importTmdbData => 'Importa tus datos antiguos desde TMDB.';
 }

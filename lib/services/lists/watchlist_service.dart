@@ -1,3 +1,4 @@
+import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/core/error_service.dart';
@@ -11,9 +12,21 @@ import 'package:moviescout/repositories/title_repository.dart';
 class WatchlistService extends TmdbTitleListService {
   final SupabaseClient _supabase = Supabase.instance.client;
   TmdbPinnedService? pinnedService;
+  String? _lastUserId;
 
   WatchlistService(TitleRepository repository)
       : super(AppConstants.watchlist, repository);
+
+  void updateAuth(SupabaseAuthService authService) {
+    final user = authService.currentUser;
+    if (user != null && _lastUserId != user.id) {
+      _lastUserId = user.id;
+      syncFromServer(
+          accountId: user.id, sessionId: '', locale: const Locale('en'));
+    } else if (user == null) {
+      _lastUserId = null;
+    }
+  }
 
   @override
   Future<void> syncFromServer({
@@ -37,8 +50,8 @@ class WatchlistService extends TmdbTitleListService {
           tmdbId: row['tmdb_id'] as int,
           mediaType: row['media_type'] as String,
           name: '',
-          lastUpdated: DateTime.now().toIso8601String(),
-          dateRated: DateTime.now(),
+          lastUpdated: AppConstants.defaultDate,
+          dateRated: DateTime.parse(AppConstants.defaultDate),
         )..isPinned = row['is_pinned'] as bool? ?? false;
         parsed.add(newTitle);
       }

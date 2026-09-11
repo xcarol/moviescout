@@ -1299,6 +1299,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'API rate limit exceeded. Please wait a moment before trying again.'**
   String get aiRateLimitGeneric;
+
+  /// No description provided for @signInWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Google'**
+  String get signInWithGoogle;
+
+  /// No description provided for @googleSignInButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Sign-In'**
+  String get googleSignInButton;
+
+  /// No description provided for @alreadyUsingMovieScout.
+  ///
+  /// In en, this message translates to:
+  /// **'Already using MovieScout?'**
+  String get alreadyUsingMovieScout;
+
+  /// No description provided for @importTmdbData.
+  ///
+  /// In en, this message translates to:
+  /// **'Import your old data from TMDB.'**
+  String get importTmdbData;
 }
 
 class _AppLocalizationsDelegate

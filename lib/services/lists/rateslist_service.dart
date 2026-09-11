@@ -1,3 +1,4 @@
+import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
@@ -12,9 +13,21 @@ import 'package:moviescout/repositories/title_repository.dart';
 class RateslistService extends TmdbTitleListService {
   final SupabaseClient _supabase = Supabase.instance.client;
   TmdbFollowingService? followingService;
+  String? _lastUserId;
 
   RateslistService(TitleRepository repository)
       : super(AppConstants.rateslist, repository);
+
+  void updateAuth(SupabaseAuthService authService) {
+    final user = authService.currentUser;
+    if (user != null && _lastUserId != user.id) {
+      _lastUserId = user.id;
+      syncFromServer(
+          accountId: user.id, sessionId: '', locale: const Locale('en'));
+    } else if (user == null) {
+      _lastUserId = null;
+    }
+  }
 
   @override
   Future<void> syncFromServer({

@@ -450,4 +450,13 @@
   },
   "aiRateLimitGeneric": "Se ha superado el límite temporal de la API. Espera un momento antes de volver a intentarlo.",
   "@aiRateLimitGeneric": {}
+  ,
+  "signInWithGoogle": "Inicia sesión con Google",
+  "@signInWithGoogle": {},
+  "googleSignInButton": "Acceder con Google",
+  "@googleSignInButton": {},
+  "alreadyUsingMovieScout": "¿Ya usabas MovieScout?",
+  "@alreadyUsingMovieScout": {},
+  "importTmdbData": "Importa tus datos antiguos desde TMDB.",
+  "@importTmdbData": {}
 }

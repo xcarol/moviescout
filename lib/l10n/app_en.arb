@@ -450,4 +450,13 @@
   },
   "aiRateLimitGeneric": "API rate limit exceeded. Please wait a moment before trying again.",
   "@aiRateLimitGeneric": {}
+  ,
+  "signInWithGoogle": "Sign in with Google",
+  "@signInWithGoogle": {},
+  "googleSignInButton": "Google Sign-In",
+  "@googleSignInButton": {},
+  "alreadyUsingMovieScout": "Already using MovieScout?",
+  "@alreadyUsingMovieScout": {},
+  "importTmdbData": "Import your old data from TMDB.",
+  "@importTmdbData": {}
 }

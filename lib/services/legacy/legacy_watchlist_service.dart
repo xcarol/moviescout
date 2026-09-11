@@ -13,7 +13,8 @@ class LegacyWatchlistService extends TmdbTitleListService {
   Future<void> retrieveWatchlist(
       String accountId, String sessionId, Locale locale,
       {bool forceUpdate = false}) async {
-    await retrieveList(accountId, forceUpdate: forceUpdate, fetchRemoteData: () async {
+    await retrieveList(accountId, forceUpdate: forceUpdate,
+        fetchRemoteData: () async {
       return fetchAndMergeTmdbLists(
         retrieveMovies: () async {
           return getTitlesFromServer((int page) async {
@@ -22,8 +23,8 @@ class LegacyWatchlistService extends TmdbTitleListService {
                   .replaceFirst('{ACCOUNT_ID}', accountId)
                   .replaceFirst('{SESSION_ID}', sessionId)
                   .replaceFirst('{PAGE}', page.toString())
-                  .replaceFirst(
-                      '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+                  .replaceFirst('{LOCALE}',
+                      '${locale.languageCode}-${locale.countryCode}'),
             );
           });
         },
@@ -34,8 +35,8 @@ class LegacyWatchlistService extends TmdbTitleListService {
                   .replaceFirst('{ACCOUNT_ID}', accountId)
                   .replaceFirst('{SESSION_ID}', sessionId)
                   .replaceFirst('{PAGE}', page.toString())
-                  .replaceFirst(
-                      '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+                  .replaceFirst('{LOCALE}',
+                      '${locale.languageCode}-${locale.countryCode}'),
             );
           });
         },

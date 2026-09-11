@@ -47,7 +47,8 @@ class LegacyRateslistService extends TmdbTitleListService {
   Future<void> retrieveRateslist(
       String accountId, String sessionId, Locale locale,
       {bool forceUpdate = false}) async {
-    await retrieveList(accountId, forceUpdate: forceUpdate, fetchRemoteData: () async {
+    await retrieveList(accountId, forceUpdate: forceUpdate,
+        fetchRemoteData: () async {
       return fetchAndMergeTmdbLists(
         retrieveMovies: () async {
           return getTitlesFromServer((int page) async {
@@ -56,8 +57,8 @@ class LegacyRateslistService extends TmdbTitleListService {
                   .replaceFirst('{ACCOUNT_ID}', accountId)
                   .replaceFirst('{SESSION_ID}', sessionId)
                   .replaceFirst('{PAGE}', page.toString())
-                  .replaceFirst(
-                      '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+                  .replaceFirst('{LOCALE}',
+                      '${locale.languageCode}-${locale.countryCode}'),
             );
           });
         },
@@ -68,8 +69,8 @@ class LegacyRateslistService extends TmdbTitleListService {
                   .replaceFirst('{ACCOUNT_ID}', accountId)
                   .replaceFirst('{SESSION_ID}', sessionId)
                   .replaceFirst('{PAGE}', page.toString())
-                  .replaceFirst(
-                      '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
+                  .replaceFirst('{LOCALE}',
+                      '${locale.languageCode}-${locale.countryCode}'),
             );
           });
         },

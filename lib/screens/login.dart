@@ -1,4 +1,5 @@
-import 'package:moviescout/utils/url_constants.dart';
+import 'dart:io';
+import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart'
@@ -11,7 +12,6 @@ import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:app_links/app_links.dart';
 import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -103,6 +103,31 @@ class _LoginState extends State<Login> {
     }
   }
 
+  Future<void> _loginWithGoogle() async {
+    if (!Platform.isAndroid) {
+      SnackMessage.showSnackBar('Platform not supported');
+      return;
+    }
+
+    final authService =
+        Provider.of<SupabaseAuthService>(context, listen: false);
+    final success = await authService.signInWithGoogle();
+
+    if (success) {
+      if (mounted) {
+        SnackMessage.showSnackBar(AppLocalizations.of(context)!.loginSuccess);
+        Navigator.pop(context);
+      }
+    } else {
+      if (mounted) {
+        ErrorService.log(
+          'Failed to sign in with Google',
+          userMessage: AppLocalizations.of(context)!.loginFailed,
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     loginFailedMessage = AppLocalizations.of(context)!.loginFailed;
@@ -129,26 +154,47 @@ class _LoginState extends State<Login> {
   }
 
   Widget loginBody() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        OutlinedButton(
-          onPressed: login,
-          child: Text(AppLocalizations.of(context)!.loginToTmdb),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.signInWithGoogle,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: _loginWithGoogle,
+              icon: const Icon(Icons.login),
+              label: Text(AppLocalizations.of(context)!.googleSignInButton),
+            ),
+            const SizedBox(height: 40),
+            const Divider(),
+            const SizedBox(height: 40),
+            Text(
+              AppLocalizations.of(context)!.alreadyUsingMovieScout,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              AppLocalizations.of(context)!.importTmdbData,
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            OutlinedButton(
+              onPressed: login,
+              child: Text(AppLocalizations.of(context)!.loginToTmdb),
+            ),
+            const SizedBox(height: 20),
+            if (defaultTargetPlatform == TargetPlatform.linux ||
+                defaultTargetPlatform == TargetPlatform.windows)
+              _completeLoginButton(),
+          ],
         ),
-        const SizedBox(height: 20),
-        if (defaultTargetPlatform == TargetPlatform.linux ||
-            defaultTargetPlatform == TargetPlatform.windows)
-          _completeLoginButton(),
-        const SizedBox(height: 20),
-        OutlinedButton(
-          onPressed: () => launchUrlString(
-            UrlConstants.tmdbSignupWebTemplate,
-            mode: LaunchMode.inAppBrowserView,
-          ),
-          child: Text(AppLocalizations.of(context)!.signupToTmdb),
-        ),
-      ],
+      ),
     );
   }
 }

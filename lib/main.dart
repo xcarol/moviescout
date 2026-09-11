@@ -28,6 +28,7 @@ import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_pinned_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_following_service.dart';
 import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
+import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
@@ -237,6 +238,7 @@ void _runMain({bool isFromShortcutActivity = false}) async {
           return discoverlistService;
         },
       ),
+      ChangeNotifierProvider(create: (_) => SupabaseAuthService()),
       ChangeNotifierProvider(create: (_) => NotificationService()),
       ChangeNotifierProvider(create: (_) => EditSettingsService()),
       ChangeNotifierProvider(create: (_) => WebTranslationService()),
