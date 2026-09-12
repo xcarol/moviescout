@@ -16,7 +16,8 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Login extends StatefulWidget {
-  const Login({super.key});
+  final bool isMigrationFlow;
+  const Login({super.key, this.isMigrationFlow = false});
 
   @override
   State<Login> createState() => _LoginState();
@@ -85,11 +86,17 @@ class _LoginState extends State<Login> {
       }
 
       SnackMessage.showSnackBar(loginSuccessMessage);
-      
+
       if (mounted) {
-        final hasSupabase = Provider.of<SupabaseAuthService>(context, listen: false).isLoggedIn;
-        
-        if (!hasSupabase) {
+        final hasSupabase =
+            Provider.of<SupabaseAuthService>(context, listen: false).isLoggedIn;
+
+        if (widget.isMigrationFlow) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MigrationScreen()),
+          );
+        } else if (!hasSupabase) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const MigrationScreen()),
@@ -128,16 +135,24 @@ class _LoginState extends State<Login> {
     if (success) {
       if (mounted) {
         SnackMessage.showSnackBar(AppLocalizations.of(context)!.loginSuccess);
-        
+
+        if (widget.isMigrationFlow) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MigrationScreen()),
+          );
+          return;
+        }
+
         try {
           final countRes = await Supabase.instance.client
               .from('user_titles')
               .select('id')
               .limit(1)
               .count(CountOption.exact);
-              
+
           final hasRecords = countRes.count > 0;
-          
+
           if (!hasRecords && mounted) {
             Navigator.pushReplacement(
               context,
@@ -170,7 +185,7 @@ class _LoginState extends State<Login> {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.loginTitle),
       ),
-      body: Center(child: loginBody()),
+      body: Center(child: loginBody(context)),
     );
   }
 
@@ -186,20 +201,41 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget loginBody() {
+  Widget loginBody(BuildContext context) {
+    final isGoogleLoggedIn =
+        Provider.of<SupabaseAuthService>(context).isLoggedIn;
+    final isTmdbLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            if (widget.isMigrationFlow && (!isGoogleLoggedIn || !isTmdbLoggedIn)) ...[
+              Icon(Icons.cloud_sync,
+                  size: 48, color: Theme.of(context).colorScheme.onError),
+              const SizedBox(height: 16),
+              Text(
+                !isGoogleLoggedIn && !isTmdbLoggedIn
+                    ? AppLocalizations.of(context)!.migrationLoginRequiredBoth
+                    : !isGoogleLoggedIn
+                        ? AppLocalizations.of(context)!.migrationLoginRequiredGoogle
+                        : AppLocalizations.of(context)!.migrationLoginRequiredTmdb,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.tertiary,
+                    ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+            ],
             Text(
               AppLocalizations.of(context)!.signInWithGoogle,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
             FilledButton.icon(
-              onPressed: _loginWithGoogle,
+              onPressed: isGoogleLoggedIn ? null : _loginWithGoogle,
               icon: const Icon(Icons.login),
               label: Text(AppLocalizations.of(context)!.googleSignInButton),
             ),
@@ -218,7 +254,7 @@ class _LoginState extends State<Login> {
             ),
             const SizedBox(height: 16),
             OutlinedButton(
-              onPressed: login,
+              onPressed: isTmdbLoggedIn ? null : login,
               child: Text(AppLocalizations.of(context)!.loginToTmdb),
             ),
             const SizedBox(height: 20),

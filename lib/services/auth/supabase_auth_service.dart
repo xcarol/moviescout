@@ -7,7 +7,11 @@ import 'package:moviescout/services/core/error_service.dart';
 class SupabaseAuthService extends ChangeNotifier {
   static final SupabaseAuthService _instance = SupabaseAuthService._internal();
   factory SupabaseAuthService() => _instance;
-  SupabaseAuthService._internal();
+  SupabaseAuthService._internal() {
+    _supabase.auth.onAuthStateChange.listen((data) {
+      notifyListeners();
+    });
+  }
 
   final _supabase = Supabase.instance.client;
 

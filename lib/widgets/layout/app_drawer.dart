@@ -1,3 +1,4 @@
+import 'package:moviescout/screens/migration_screen.dart';
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
@@ -14,8 +15,6 @@ import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
 import 'package:moviescout/services/auth/supabase_auth_service.dart';
-import 'package:moviescout/services/migration/tmdb_migration_service.dart';
-import 'package:moviescout/repositories/title_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
@@ -38,10 +37,10 @@ class AppDrawer extends StatelessWidget {
           _userProfileTile(context),
           _settingsTile(context),
           if (isTmdbLoggedIn) _notificationsHistoryTile(context),
-          if (isTmdbLoggedIn && isGoogleLoggedIn) _migrationTile(context),
+          if (isGoogleLoggedIn || isTmdbLoggedIn) _migrationTile(context),
           _aboutTile(context),
           const Divider(),
-          _userSessionTile(context, isTmdbLoggedIn),
+          _userSessionTile(context, isTmdbLoggedIn || isGoogleLoggedIn),
         ],
       ),
     );
@@ -54,40 +53,31 @@ class AppDrawer extends StatelessWidget {
       onTap: () async {
         Navigator.of(context).pop();
 
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              content: Row(
-                children: [
-                  const CircularProgressIndicator(),
-                  const SizedBox(width: 20),
-                  Text(AppLocalizations.of(context)!.migratingData),
-                ],
-              ),
-            );
-          },
-        );
+        final isTmdbLoggedIn =
+            Provider.of<TmdbUserService>(context, listen: false).isUserLoggedIn;
+        final isGoogleLoggedIn =
+            Provider.of<SupabaseAuthService>(context, listen: false).isLoggedIn;
 
-        try {
-          final repository =
-              Provider.of<TitleRepository>(context, listen: false);
-          final migrationService = TmdbMigrationService(repository);
-          await migrationService.migrateLocalDataToSupabase();
-
-          if (context.mounted) {
-            Navigator.of(context).pop();
+        if (!isGoogleLoggedIn || !isTmdbLoggedIn) {
+          if (!isTmdbLoggedIn) {
             SnackMessage.showSnackBar(
-                AppLocalizations.of(context)!.migrationSuccess);
-          }
-        } catch (e) {
-          if (context.mounted) {
-            Navigator.of(context).pop();
+                AppLocalizations.of(context)!.loginToTmdbFirst);
+          } else {
             SnackMessage.showSnackBar(
-                AppLocalizations.of(context)!.migrationError);
+                AppLocalizations.of(context)!.signInWithGoogle);
           }
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const Login(isMigrationFlow: true)),
+          );
+          return;
         }
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const MigrationScreen()),
+        );
       },
     );
   }
@@ -257,17 +247,16 @@ class AppDrawer extends StatelessWidget {
       title: Text(isUserLoggedIn
           ? AppLocalizations.of(context)!.logout
           : AppLocalizations.of(context)!.login),
-      onTap: () => {
-        Navigator.of(context).pop(),
-        if (isUserLoggedIn)
-          {_logout(context)}
-        else
-          {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const Login()),
-            ),
-          }
+      onTap: () {
+        Navigator.of(context).pop();
+        if (isUserLoggedIn) {
+          _logout(context);
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const Login()),
+          );
+        }
       },
     );
   }
@@ -275,6 +264,8 @@ class AppDrawer extends StatelessWidget {
   void _logout(BuildContext context) async {
     final tmdbUserService =
         Provider.of<TmdbUserService>(context, listen: false);
+    final supabaseAuthService =
+        Provider.of<SupabaseAuthService>(context, listen: false);
     final tmdbWatchlistService =
         Provider.of<LegacyWatchlistService>(context, listen: false);
     final tmdbRateslistService =
@@ -290,6 +281,8 @@ class AppDrawer extends StatelessWidget {
         stackTrace: stackTrace,
       );
     });
+
+    await supabaseAuthService.signOut();
 
     await tmdbWatchlistService.clearList();
     await tmdbRateslistService.clearList();

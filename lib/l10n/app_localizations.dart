@@ -63,8 +63,7 @@ import 'app_localizations_es.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -72,8 +71,7 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -85,8 +83,7 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -1327,7 +1324,7 @@ abstract class AppLocalizations {
   /// No description provided for @migrateToSupabase.
   ///
   /// In en, this message translates to:
-  /// **'Enable Cloud Sync'**
+  /// **'Cloud Sync'**
   String get migrateToSupabase;
 
   /// No description provided for @migratingData.
@@ -1347,10 +1344,87 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error transferring data'**
   String get migrationError;
+
+  /// No description provided for @loginToTmdbFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please log in to TMDB first to sync your data'**
+  String get loginToTmdbFirst;
+
+  /// No description provided for @migrationScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud Sync'**
+  String get migrationScreenTitle;
+
+  /// No description provided for @migrationScreenHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Database Upgrade'**
+  String get migrationScreenHeader;
+
+  /// No description provided for @migrationScreenBody.
+  ///
+  /// In en, this message translates to:
+  /// **'To bring you more and better features, MovieScout is upgrading its database. Migrating your data is required to continue using the app, as the TMDB login will soon be disabled.'**
+  String get migrationScreenBody;
+
+  /// No description provided for @migrationScreenStartButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Transfer'**
+  String get migrationScreenStartButton;
+
+  /// No description provided for @migrationScreenLaterButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe Later'**
+  String get migrationScreenLaterButton;
+
+  /// No description provided for @migrationScreenSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is now in the cloud!'**
+  String get migrationScreenSuccess;
+
+  /// No description provided for @migrationScreenContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get migrationScreenContinue;
+
+  /// No description provided for @migrationScreenDownloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading TMDB Data...'**
+  String get migrationScreenDownloading;
+
+  /// No description provided for @migrationScreenUploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading to Cloud...'**
+  String get migrationScreenUploading;
+
+  /// No description provided for @migrationLoginRequiredGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to Google to start the migration.'**
+  String get migrationLoginRequiredGoogle;
+
+  /// No description provided for @migrationLoginRequiredTmdb.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to TMDB to start the migration.'**
+  String get migrationLoginRequiredTmdb;
+
+  /// No description provided for @migrationLoginRequiredBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to Google and TMDB to start the migration.'**
+  String get migrationLoginRequiredBoth;
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -1359,27 +1433,26 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['ca', 'en', 'es'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['ca', 'en', 'es'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'ca':
-      return AppLocalizationsCa();
-    case 'en':
-      return AppLocalizationsEn();
-    case 'es':
-      return AppLocalizationsEs();
+    case 'ca': return AppLocalizationsCa();
+    case 'en': return AppLocalizationsEn();
+    case 'es': return AppLocalizationsEs();
   }
 
   throw FlutterError(
-      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.'
+  );
 }

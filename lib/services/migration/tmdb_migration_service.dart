@@ -9,15 +9,52 @@ class TmdbMigrationService {
 
   TmdbMigrationService(this._repository);
 
-  Future<void> migrateLocalDataToSupabase() async {
+  Future<void> migrateLocalDataToSupabase({
+    required String providers,
+    Function(double progress, int current, int total)? onProgress,
+  }) async {
     final user = _supabase.auth.currentUser;
     if (user == null) {
       throw Exception('Supabase session not initialized for migration.');
     }
 
     try {
-      await _migrateList(AppConstants.watchlist, user.id);
-      await _migrateList(AppConstants.rateslist, user.id);
+      if (providers.isNotEmpty) {
+        await _supabase.from('profiles').update({'providers_string': providers}).eq('id', user.id);
+      }
+
+      final watchlistRecords =
+          await _prepareRecords(AppConstants.watchlist, user.id);
+      final rateslistRecords =
+          await _prepareRecords(AppConstants.rateslist, user.id);
+
+      final allRecords = [...watchlistRecords, ...rateslistRecords];
+
+      if (allRecords.isEmpty) {
+        if (onProgress != null) onProgress(1.0, 0, 0);
+        return;
+      }
+
+      final chunkSize = 50;
+      int processed = 0;
+      final total = allRecords.length;
+
+      for (var i = 0; i < total; i += chunkSize) {
+        final chunk = allRecords.sublist(
+          i,
+          i + chunkSize > total ? total : i + chunkSize,
+        );
+
+        await _supabase.from('user_titles').upsert(
+              chunk,
+              onConflict: 'user_id, tmdb_id, media_type, list_name',
+            );
+
+        processed += chunk.length;
+        if (onProgress != null) {
+          onProgress(processed / total, processed, total);
+        }
+      }
     } catch (e, stackTrace) {
       ErrorService.log(
         e,
@@ -28,33 +65,27 @@ class TmdbMigrationService {
     }
   }
 
-  Future<void> _migrateList(String listName, String userId) async {
+  Future<List<Map<String, dynamic>>> _prepareRecords(
+      String listName, String userId) async {
     final count = await _repository.countTitlesFiltered(listName: listName);
-    if (count == 0) return;
+    if (count == 0) return [];
 
     final titles = await _repository.getTitles(
       listName: listName,
       limit: count,
     );
 
-    final List<Map<String, dynamic>> records = [];
-
-    for (var title in titles) {
-      records.add({
-        'user_id': userId,
-        'tmdb_id': title.tmdbId,
-        'media_type': title.mediaType,
-        'list_name': listName,
-        'rating': title.rating,
-        'is_pinned': title.isPinned,
-        'notify_new_seasons': title.notifyNewSeasons,
-        'created_at': DateTime.now().toUtc().toIso8601String(),
-      });
-    }
-
-    await _supabase.from('user_titles').upsert(
-          records,
-          onConflict: 'user_id, tmdb_id, media_type, list_name',
-        );
+    return titles
+        .map((title) => {
+              'user_id': userId,
+              'tmdb_id': title.tmdbId,
+              'media_type': title.mediaType,
+              'list_name': listName,
+              'rating': title.rating,
+              'is_pinned': title.isPinned,
+              'notify_new_seasons': title.notifyNewSeasons,
+              'created_at': DateTime.now().toUtc().toIso8601String(),
+            })
+        .toList();
   }
 }
