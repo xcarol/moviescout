@@ -10,12 +10,16 @@ import 'package:moviescout/services/workers/uninitialized_titles_worker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/repositories/title_repository.dart';
 
+import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
+
 class RateslistService extends TmdbTitleListService {
   final SupabaseClient _supabase = Supabase.instance.client;
+  final LegacyRateslistService _legacyService;
+
   TmdbFollowingService? followingService;
   String? _lastUserId;
 
-  RateslistService(TitleRepository repository)
+  RateslistService(TitleRepository repository, this._legacyService)
       : super(AppConstants.rateslist, repository);
 
   void updateAuth(SupabaseAuthService authService) {
@@ -36,7 +40,14 @@ class RateslistService extends TmdbTitleListService {
     required Locale locale,
   }) async {
     final user = _supabase.auth.currentUser;
-    if (user == null) return;
+    if (user == null) {
+      if (accountId.isEmpty || sessionId.isEmpty) return;
+      return await _legacyService.syncFromServer(
+        accountId: accountId,
+        sessionId: sessionId,
+        locale: locale,
+      );
+    }
 
     await retrieveList(accountId, forceUpdate: true, fetchRemoteData: () async {
       final response = await _supabase
@@ -51,8 +62,8 @@ class RateslistService extends TmdbTitleListService {
           tmdbId: row['tmdb_id'] as int,
           mediaType: row['media_type'] as String,
           name: '',
-          lastUpdated: DateTime.now().toIso8601String(),
-          dateRated: DateTime.now(),
+          lastUpdated: AppConstants.defaultDate,
+          dateRated: DateTime.parse(AppConstants.defaultDate),
         )
           ..rating = (row['rating'] as num?)?.toDouble() ?? 0.0
           ..notifyNewSeasons = row['notify_new_seasons'] as bool? ?? false;
@@ -114,7 +125,15 @@ class RateslistService extends TmdbTitleListService {
   ) async {
     try {
       final user = _supabase.auth.currentUser;
-      if (user == null) throw Exception('User not logged in');
+      if (user == null) {
+        if (accountId.isEmpty || sessionId.isEmpty) return;
+        return await _legacyService.updateTitleRate(
+          accountId,
+          sessionId,
+          title,
+          rating,
+        );
+      }
 
       if (rating > 0) {
         title.updateRating(rating);
@@ -188,7 +207,9 @@ class RateslistService extends TmdbTitleListService {
   Future<void> toggleNotify(TmdbTitle title) async {
     try {
       final user = _supabase.auth.currentUser;
-      if (user == null) return;
+      if (user == null) {
+        return await _legacyService.toggleNotify(title);
+      }
 
       title.notifyNewSeasons = !title.notifyNewSeasons;
 
@@ -211,5 +232,29 @@ class RateslistService extends TmdbTitleListService {
       );
       title.notifyNewSeasons = !title.notifyNewSeasons;
     }
+  }
+
+  double getRating(int titleId, String mediaType) {
+    TmdbTitle? title = getTitleByTmdbIdSync(titleId, mediaType);
+    if (title == null) {
+      return 0.0;
+    }
+    return title.rating;
+  }
+
+  Future<double> getRatingAsync(int titleId, String mediaType) async {
+    TmdbTitle? title = await getTitleByTmdbId(titleId, mediaType);
+    if (title == null) {
+      return 0.0;
+    }
+    return title.rating;
+  }
+
+  Future<DateTime> getRatingDate(int titleId, String mediaType) async {
+    TmdbTitle? title = await getTitleByTmdbId(titleId, mediaType);
+    if (title == null) {
+      return DateTime.fromMillisecondsSinceEpoch(0);
+    }
+    return title.dateRated;
   }
 }

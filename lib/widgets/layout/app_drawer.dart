@@ -11,9 +11,9 @@ import 'package:moviescout/screens/logs_screen.dart';
 import 'package:moviescout/screens/notifications_screen.dart';
 import 'package:moviescout/screens/settings.dart';
 import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
-import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
+import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
-import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
+import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/core/error_service.dart';
@@ -267,9 +267,9 @@ class AppDrawer extends StatelessWidget {
     final supabaseAuthService =
         Provider.of<SupabaseAuthService>(context, listen: false);
     final tmdbWatchlistService =
-        Provider.of<LegacyWatchlistService>(context, listen: false);
+        Provider.of<WatchlistService>(context, listen: false);
     final tmdbRateslistService =
-        Provider.of<LegacyRateslistService>(context, listen: false);
+        Provider.of<RateslistService>(context, listen: false);
     final tmdbDiscoverlistService =
         Provider.of<TmdbDiscoverlistService>(context, listen: false);
     final logoutSuccessText = AppLocalizations.of(context)!.logoutSuccess;

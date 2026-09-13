@@ -4,7 +4,8 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
-import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
+import 'package:moviescout/services/lists/watchlist_service.dart';
+import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -12,12 +13,14 @@ Widget watchlistButton(
   BuildContext context,
   TmdbTitle title,
 ) {
-  return Consumer2<LegacyWatchlistService, TmdbUserService>(
-    builder: (_, watchlistService, userService, __) {
+  return Consumer3<WatchlistService, TmdbUserService, SupabaseAuthService>(
+    builder: (_, watchlistService, userService, authService, __) {
       return FutureBuilder(
         future: watchlistService.contains(title),
         builder: (context, snapshot) {
-          if (!userService.isUserLoggedIn) {
+          bool isLoggedIn =
+              userService.isUserLoggedIn || authService.isLoggedIn;
+          if (!isLoggedIn) {
             return IconButton(
               icon: const Icon(Icons.highlight_off),
               onPressed: () {

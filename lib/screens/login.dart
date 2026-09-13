@@ -7,10 +7,10 @@ import 'package:flutter/foundation.dart'
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
-import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
+import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:app_links/app_links.dart';
-import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
+import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/screens/migration_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -60,10 +60,10 @@ class _LoginState extends State<Login> {
   void _completeLogin() async {
     TmdbUserService userService =
         Provider.of<TmdbUserService>(context, listen: false);
-    LegacyWatchlistService watchlistService =
-        Provider.of<LegacyWatchlistService>(context, listen: false);
-    LegacyRateslistService rateslistService =
-        Provider.of<LegacyRateslistService>(context, listen: false);
+    WatchlistService watchlistService =
+        Provider.of<WatchlistService>(context, listen: false);
+    RateslistService rateslistService =
+        Provider.of<RateslistService>(context, listen: false);
     TmdbProviderService providerService =
         Provider.of<TmdbProviderService>(context, listen: false);
 
@@ -71,15 +71,15 @@ class _LoginState extends State<Login> {
 
     if (result['success']) {
       if (mounted) {
-        watchlistService.retrieveWatchlist(
-          userService.accountId,
-          userService.sessionId,
-          Localizations.localeOf(context),
+        watchlistService.syncFromServer(
+          accountId: userService.accountId,
+          sessionId: userService.sessionId,
+          locale: Localizations.localeOf(context),
         );
-        rateslistService.retrieveRateslist(
-          userService.accountId,
-          userService.sessionId,
-          Localizations.localeOf(context),
+        rateslistService.syncFromServer(
+          accountId: userService.accountId,
+          sessionId: userService.sessionId,
+          locale: Localizations.localeOf(context),
         );
         providerService.setup(userService.accountId, userService.sessionId,
             userService.accessToken);
@@ -212,7 +212,8 @@ class _LoginState extends State<Login> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (widget.isMigrationFlow && (!isGoogleLoggedIn || !isTmdbLoggedIn)) ...[
+            if (widget.isMigrationFlow &&
+                (!isGoogleLoggedIn || !isTmdbLoggedIn)) ...[
               Icon(Icons.cloud_sync,
                   size: 48, color: Theme.of(context).colorScheme.onError),
               const SizedBox(height: 16),
@@ -220,8 +221,10 @@ class _LoginState extends State<Login> {
                 !isGoogleLoggedIn && !isTmdbLoggedIn
                     ? AppLocalizations.of(context)!.migrationLoginRequiredBoth
                     : !isGoogleLoggedIn
-                        ? AppLocalizations.of(context)!.migrationLoginRequiredGoogle
-                        : AppLocalizations.of(context)!.migrationLoginRequiredTmdb,
+                        ? AppLocalizations.of(context)!
+                            .migrationLoginRequiredGoogle
+                        : AppLocalizations.of(context)!
+                            .migrationLoginRequiredTmdb,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Theme.of(context).colorScheme.tertiary,
                     ),

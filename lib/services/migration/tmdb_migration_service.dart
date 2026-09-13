@@ -20,7 +20,9 @@ class TmdbMigrationService {
 
     try {
       if (providers.isNotEmpty) {
-        await _supabase.from('profiles').update({'providers_string': providers}).eq('id', user.id);
+        await _supabase
+            .from('profiles')
+            .update({'providers_string': providers}).eq('id', user.id);
       }
 
       final watchlistRecords =

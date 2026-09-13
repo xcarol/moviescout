@@ -9,12 +9,16 @@ import 'package:moviescout/services/workers/uninitialized_titles_worker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/repositories/title_repository.dart';
 
+import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
+
 class WatchlistService extends TmdbTitleListService {
   final SupabaseClient _supabase = Supabase.instance.client;
+  final LegacyWatchlistService _legacyService;
+
   TmdbPinnedService? pinnedService;
   String? _lastUserId;
 
-  WatchlistService(TitleRepository repository)
+  WatchlistService(TitleRepository repository, this._legacyService)
       : super(AppConstants.watchlist, repository);
 
   void updateAuth(SupabaseAuthService authService) {
@@ -35,7 +39,14 @@ class WatchlistService extends TmdbTitleListService {
     required Locale locale,
   }) async {
     final user = _supabase.auth.currentUser;
-    if (user == null) return;
+    if (user == null) {
+      if (accountId.isEmpty || sessionId.isEmpty) return;
+      return await _legacyService.syncFromServer(
+        accountId: accountId,
+        sessionId: sessionId,
+        locale: locale,
+      );
+    }
 
     await retrieveList(accountId, forceUpdate: true, fetchRemoteData: () async {
       final response = await _supabase
@@ -64,7 +75,11 @@ class WatchlistService extends TmdbTitleListService {
       String accountId, String sessionId, TmdbTitle title, bool add) async {
     try {
       final user = _supabase.auth.currentUser;
-      if (user == null) throw Exception('User not logged in');
+      if (user == null) {
+        if (accountId.isEmpty || sessionId.isEmpty) return;
+        return await _legacyService.updateWatchlistTitle(
+            accountId, sessionId, title, add);
+      }
 
       if (add) {
         title.isPinned = false;
@@ -113,7 +128,10 @@ class WatchlistService extends TmdbTitleListService {
   Future<void> togglePin(TmdbTitle title, {String? limitReachedMessage}) async {
     try {
       final user = _supabase.auth.currentUser;
-      if (user == null) return;
+      if (user == null) {
+        return await _legacyService.togglePin(title,
+            limitReachedMessage: limitReachedMessage);
+      }
 
       if (!title.isPinned) {
         final pinnedCount = await repository.countTitlesFiltered(

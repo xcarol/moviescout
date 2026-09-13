@@ -28,6 +28,8 @@ import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_pinned_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_following_service.dart';
 import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
+import "package:moviescout/services/lists/watchlist_service.dart";
+import "package:moviescout/services/lists/rateslist_service.dart";
 import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';
@@ -188,6 +190,7 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       Provider.value(value: repository),
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
+      ChangeNotifierProvider(create: (_) => SupabaseAuthService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
       ChangeNotifierProxyProvider<TmdbUserService, TmdbProviderService>(
         create: (_) => TmdbProviderService(),
@@ -226,8 +229,39 @@ void _runMain({bool isFromShortcutActivity = false}) async {
           return watchlistService;
         },
       ),
-      ChangeNotifierProxyProvider2<LegacyRateslistService,
-          LegacyWatchlistService, TmdbDiscoverlistService>(
+      ChangeNotifierProxyProvider2<LegacyRateslistService, SupabaseAuthService,
+          RateslistService>(
+        create: (context) => RateslistService(repository,
+            Provider.of<LegacyRateslistService>(context, listen: false)),
+        update: (_, legacyRateslistService, authService, rateslistService) {
+          legacyRateslistService.removeListener(rateslistService!.refresh);
+          legacyRateslistService.addListener(rateslistService.refresh);
+
+          rateslistService.updateAuth(authService);
+          rateslistService.followingService =
+              legacyRateslistService.followingService;
+          return rateslistService;
+        },
+      ),
+      ChangeNotifierProxyProvider3<RateslistService, LegacyWatchlistService,
+          SupabaseAuthService, WatchlistService>(
+        create: (context) => WatchlistService(repository,
+            Provider.of<LegacyWatchlistService>(context, listen: false)),
+        update: (_, rateslistService, legacyWatchlistService, authService,
+            watchlistService) {
+          rateslistService.removeListener(watchlistService!.refresh);
+          rateslistService.addListener(watchlistService.refresh);
+
+          legacyWatchlistService.removeListener(watchlistService.refresh);
+          legacyWatchlistService.addListener(watchlistService.refresh);
+
+          watchlistService.pinnedService = legacyWatchlistService.pinnedService;
+          watchlistService.updateAuth(authService);
+          return watchlistService;
+        },
+      ),
+      ChangeNotifierProxyProvider2<RateslistService, WatchlistService,
+          TmdbDiscoverlistService>(
         create: (_) =>
             TmdbDiscoverlistService(AppConstants.discoverlist, repository),
         update: (_, rateslistService, watchlistService, discoverlistService) {
@@ -238,7 +272,6 @@ void _runMain({bool isFromShortcutActivity = false}) async {
           return discoverlistService;
         },
       ),
-      ChangeNotifierProvider(create: (_) => SupabaseAuthService()),
       ChangeNotifierProvider(create: (_) => NotificationService()),
       ChangeNotifierProvider(create: (_) => EditSettingsService()),
       ChangeNotifierProvider(create: (_) => WebTranslationService()),
@@ -265,7 +298,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     AppLifecycleService.instance.init();
 
     final watchlistService =
-        Provider.of<LegacyWatchlistService>(context, listen: false);
+        Provider.of<WatchlistService>(context, listen: false);
     DeepLinkService().isShortcutMode = widget.isShortcut;
     DeepLinkService().init(watchlistService);
     NotificationService().handleColdStartNotification();
@@ -289,9 +322,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void _onRegionChanged() {
     if (!mounted) return;
     final watchlistService =
-        Provider.of<LegacyWatchlistService>(context, listen: false);
+        Provider.of<WatchlistService>(context, listen: false);
     final rateslistService =
-        Provider.of<LegacyRateslistService>(context, listen: false);
+        Provider.of<RateslistService>(context, listen: false);
     watchlistService.updateProviders();
     rateslistService.updateProviders();
   }
