@@ -26,9 +26,15 @@ class TitleRepository {
       newTitle.inLists = currentTitle.inLists;
     }
 
-    newTitle.isPinned = currentTitle.isPinned;
-    newTitle.notifyNewSeasons = currentTitle.notifyNewSeasons;
-    newTitle.lastNotifiedSeason = currentTitle.lastNotifiedSeason;
+    if (listNameToAdd != AppConstants.watchlist) {
+      newTitle.isPinned = currentTitle.isPinned;
+    }
+
+    if (listNameToAdd != AppConstants.rateslist) {
+      newTitle.notifyNewSeasons = currentTitle.notifyNewSeasons;
+      newTitle.lastNotifiedSeason = currentTitle.lastNotifiedSeason;
+    }
+
     if (newTitle.rating == 0.0 && currentTitle.rating > 0.0) {
       newTitle.rating = currentTitle.rating;
       newTitle.dateRated = currentTitle.dateRated;
@@ -541,7 +547,7 @@ class TitleRepository {
     RatingFilter filterRating = RatingFilter.all,
     bool? pinned,
   }) async {
-    return _buildQuery(
+    final ccc = _buildQuery(
       listName: listName,
       filterText: filterText,
       filterMediaType: filterMediaType,
@@ -551,7 +557,9 @@ class TitleRepository {
       filterProvidersIds: filterProvidersIds,
       filterRating: filterRating,
       pinned: pinned,
-    ).length;
+    );
+
+    return ccc.length;
   }
 
   Future<bool> hasTitlesFiltered({
