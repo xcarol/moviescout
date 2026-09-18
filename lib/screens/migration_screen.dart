@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
-import 'package:moviescout/services/lists/watchlist_service.dart';
-import 'package:moviescout/services/lists/rateslist_service.dart';
+import "package:moviescout/services/legacy/legacy_watchlist_service.dart";
+import "package:moviescout/services/legacy/legacy_rateslist_service.dart";
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
 import 'package:moviescout/services/migration/tmdb_migration_service.dart';
 import 'package:moviescout/repositories/title_repository.dart';
@@ -44,9 +44,9 @@ class _MigrationScreenState extends State<MigrationScreen> {
 
     try {
       final watchlistService =
-          Provider.of<WatchlistService>(context, listen: false);
+          Provider.of<LegacyWatchlistService>(context, listen: false);
       final rateslistService =
-          Provider.of<RateslistService>(context, listen: false);
+          Provider.of<LegacyRateslistService>(context, listen: false);
       final locale = Localizations.localeOf(context);
 
       await watchlistService.syncFromServer(
