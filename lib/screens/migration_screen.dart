@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import "package:moviescout/services/legacy/legacy_watchlist_service.dart";
@@ -28,11 +29,14 @@ class _MigrationScreenState extends State<MigrationScreen> {
   Future<void> _startMigration() async {
     final userService = Provider.of<TmdbUserService>(context, listen: false);
 
-    if (!userService.isUserLoggedIn) {
+    final hasSupabase =
+        Provider.of<SupabaseAuthService>(context, listen: false).isLoggedIn;
+
+    if (!userService.isUserLoggedIn || !hasSupabase) {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => const Login(isMigrationFlow: true)),
+            builder: (context) => const Login(fromMigrationScreen: true)),
       );
       return;
     }

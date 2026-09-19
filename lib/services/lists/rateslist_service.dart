@@ -52,7 +52,8 @@ class RateslistService extends TmdbTitleListService {
     await retrieveList(accountId, forceUpdate: true, fetchRemoteData: () async {
       final response = await _supabase
           .from('user_titles')
-          .select('tmdb_id, media_type, rating, notify_new_seasons, created_at, name, poster_path, vote_average')
+          .select(
+              'tmdb_id, media_type, rating, notify_new_seasons, created_at, name, poster_path, vote_average')
           .eq('list_name', AppConstants.rateslist)
           .order('created_at', ascending: true);
 

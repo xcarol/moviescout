@@ -53,27 +53,6 @@ class AppDrawer extends StatelessWidget {
       onTap: () async {
         Navigator.of(context).pop();
 
-        final isTmdbLoggedIn =
-            Provider.of<TmdbUserService>(context, listen: false).isUserLoggedIn;
-        final isGoogleLoggedIn =
-            Provider.of<SupabaseAuthService>(context, listen: false).isLoggedIn;
-
-        if (!isGoogleLoggedIn || !isTmdbLoggedIn) {
-          if (!isTmdbLoggedIn) {
-            SnackMessage.showSnackBar(
-                AppLocalizations.of(context)!.loginToTmdbFirst);
-          } else {
-            SnackMessage.showSnackBar(
-                AppLocalizations.of(context)!.signInWithGoogle);
-          }
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const Login(isMigrationFlow: true)),
-          );
-          return;
-        }
-
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const MigrationScreen()),
