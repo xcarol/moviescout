@@ -79,7 +79,7 @@ class WatchlistService extends TmdbTitleListService {
         'name': title.name,
         'poster_path': title.posterPathSuffix,
         'vote_average': title.voteAverage,
-      });
+      }, onConflict: 'user_id, tmdb_id, media_type, list_name');
     } else {
       await _supabase
           .from('user_titles')

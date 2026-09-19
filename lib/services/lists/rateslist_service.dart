@@ -167,7 +167,7 @@ class RateslistService extends TmdbTitleListService {
         'poster_path': title.posterPathSuffix,
         'vote_average': title.voteAverage,
         'rated_date': title.dateRated.toUtc().toIso8601String(),
-      });
+      }, onConflict: 'user_id, tmdb_id, media_type, list_name');
 
       // Mimic TMDB's backend business logic: rating a title auto-removes it from the watchlist
       await _supabase
