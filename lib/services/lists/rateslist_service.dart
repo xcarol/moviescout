@@ -52,7 +52,7 @@ class RateslistService extends TmdbTitleListService {
     await retrieveList(accountId, forceUpdate: true, fetchRemoteData: () async {
       final response = await _supabase
           .from('user_titles')
-          .select('tmdb_id, media_type, rating, notify_new_seasons, created_at')
+          .select('tmdb_id, media_type, rating, notify_new_seasons, created_at, name, poster_path, vote_average')
           .eq('list_name', AppConstants.rateslist)
           .order('created_at', ascending: true);
 
@@ -61,7 +61,9 @@ class RateslistService extends TmdbTitleListService {
         final newTitle = TmdbTitle(
           tmdbId: row['tmdb_id'] as int,
           mediaType: row['media_type'] as String,
-          name: '',
+          name: row['name'] as String? ?? '',
+          posterPathSuffix: row['poster_path'] as String?,
+          voteAverage: (row['vote_average'] as num?)?.toDouble() ?? 0.0,
           lastUpdated: AppConstants.defaultDate,
           dateRated: DateTime.parse(AppConstants.defaultDate),
         )
@@ -163,6 +165,9 @@ class RateslistService extends TmdbTitleListService {
           'list_name': AppConstants.rateslist,
           'rating': rating,
           'notify_new_seasons': title.notifyNewSeasons,
+          'name': title.name,
+          'poster_path': title.posterPathSuffix,
+          'vote_average': title.voteAverage,
           'created_at': DateTime.now().toUtc().toIso8601String(),
         });
       } else {

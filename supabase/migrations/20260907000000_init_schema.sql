@@ -42,6 +42,11 @@ create table public.user_titles (
   media_type text not null check (media_type in ('movie', 'tv', 'person')),
   list_name text not null, -- e.g., 'watchlist', 'rateslist'
   
+  -- Cached metadata for UI performance
+  name text,
+  poster_path text,
+  vote_average numeric(4,2),
+  
   -- Specific fields depending on the list
   rating numeric(3,1), -- Used when list_name = 'rateslist'
   is_pinned boolean default false, -- Used when list_name = 'watchlist'

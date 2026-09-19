@@ -86,6 +86,9 @@ class TmdbMigrationService {
               'rating': title.rating,
               'is_pinned': title.isPinned,
               'notify_new_seasons': title.notifyNewSeasons,
+              'name': title.name,
+              'poster_path': title.posterPathSuffix,
+              'vote_average': title.voteAverage,
               'created_at': DateTime.now().toUtc().toIso8601String(),
             })
         .toList();
