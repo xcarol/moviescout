@@ -16,8 +16,8 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Login extends StatefulWidget {
-  final bool isMigrationFlow;
-  const Login({super.key, this.isMigrationFlow = false});
+  final bool fromMigrationScreen;
+  const Login({super.key, this.fromMigrationScreen = false});
 
   @override
   State<Login> createState() => _LoginState();
@@ -91,11 +91,8 @@ class _LoginState extends State<Login> {
         final hasSupabase =
             Provider.of<SupabaseAuthService>(context, listen: false).isLoggedIn;
 
-        if (widget.isMigrationFlow) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const MigrationScreen()),
-          );
+        if (widget.fromMigrationScreen) {
+          Navigator.pop(context);
         } else if (!hasSupabase) {
           Navigator.pushReplacement(
             context,
@@ -136,11 +133,8 @@ class _LoginState extends State<Login> {
       if (mounted) {
         SnackMessage.showSnackBar(AppLocalizations.of(context)!.loginSuccess);
 
-        if (widget.isMigrationFlow) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const MigrationScreen()),
-          );
+        if (widget.fromMigrationScreen) {
+          Navigator.pop(context);
           return;
         }
 
@@ -212,10 +206,10 @@ class _LoginState extends State<Login> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (widget.isMigrationFlow &&
+            if (widget.fromMigrationScreen &&
                 (!isGoogleLoggedIn || !isTmdbLoggedIn)) ...[
               Icon(Icons.cloud_sync,
-                  size: 48, color: Theme.of(context).colorScheme.onError),
+                  size: 48, color: Theme.of(context).colorScheme.primary),
               const SizedBox(height: 16),
               Text(
                 !isGoogleLoggedIn && !isTmdbLoggedIn
@@ -225,45 +219,51 @@ class _LoginState extends State<Login> {
                             .migrationLoginRequiredGoogle
                         : AppLocalizations.of(context)!
                             .migrationLoginRequiredTmdb,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.tertiary,
-                    ),
+                style: Theme.of(context).textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
             ],
-            Text(
-              AppLocalizations.of(context)!.signInWithGoogle,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: isGoogleLoggedIn ? null : _loginWithGoogle,
-              icon: const Icon(Icons.login),
-              label: Text(AppLocalizations.of(context)!.googleSignInButton),
-            ),
-            const SizedBox(height: 40),
-            const Divider(),
-            const SizedBox(height: 40),
-            Text(
-              AppLocalizations.of(context)!.alreadyUsingMovieScout,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              AppLocalizations.of(context)!.importTmdbData,
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: isTmdbLoggedIn ? null : login,
-              child: Text(AppLocalizations.of(context)!.loginToTmdb),
-            ),
-            const SizedBox(height: 20),
-            if (defaultTargetPlatform == TargetPlatform.linux ||
-                defaultTargetPlatform == TargetPlatform.windows)
-              _completeLoginButton(),
+            if (!isGoogleLoggedIn) ...[
+              Text(
+                AppLocalizations.of(context)!.signInWithGoogle,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: _loginWithGoogle,
+                icon: const Icon(Icons.login),
+                label: Text(AppLocalizations.of(context)!.googleSignInButton),
+              ),
+            ],
+            if (!isGoogleLoggedIn && !isTmdbLoggedIn) ...[
+              const SizedBox(height: 40),
+              const Divider(),
+              const SizedBox(height: 40),
+            ],
+            if (!isTmdbLoggedIn) ...[
+              if (!widget.fromMigrationScreen) ...[
+                Text(
+                  AppLocalizations.of(context)!.alreadyUsingMovieScout,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  AppLocalizations.of(context)!.importTmdbData,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+              ],
+              OutlinedButton(
+                onPressed: login,
+                child: Text(AppLocalizations.of(context)!.loginToTmdb),
+              ),
+              const SizedBox(height: 20),
+              if (defaultTargetPlatform == TargetPlatform.linux ||
+                  defaultTargetPlatform == TargetPlatform.windows)
+                _completeLoginButton(),
+            ],
           ],
         ),
       ),
