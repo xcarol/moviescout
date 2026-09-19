@@ -233,42 +233,40 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     final List<dynamic> recommendations = [];
     final Set<int> excludedTmdbIds = {};
 
-    if (accountId.isNotEmpty) {
-      final titleRepo = TitleRepository();
-      final preferences = await _calculatePreferences();
+    final titleRepo = TitleRepository();
+    final preferences = await _calculatePreferences();
 
-      final ratedTitles =
-          await titleRepo.getAllTitlesInList(AppConstants.rateslist);
-      final watchlistTitles =
-          await titleRepo.getAllTitlesInList(AppConstants.watchlist);
+    final ratedTitles =
+        await titleRepo.getAllTitlesInList(AppConstants.rateslist);
+    final watchlistTitles =
+        await titleRepo.getAllTitlesInList(AppConstants.watchlist);
 
-      final positiveSignalTitles = [
-        ...ratedTitles.where((t) => t.rating > 2.5 && t.mediaType == mediaType),
-        ...watchlistTitles.where((t) => t.mediaType == mediaType)
-      ];
+    final positiveSignalTitles = [
+      ...ratedTitles.where((t) => t.rating > 2.5 && t.mediaType == mediaType),
+      ...watchlistTitles.where((t) => t.mediaType == mediaType)
+    ];
 
-      excludedTmdbIds.addAll(ratedTitles
-          .where((t) => t.mediaType == mediaType)
-          .map((t) => t.tmdbId));
-      excludedTmdbIds.addAll(watchlistTitles
-          .where((t) => t.mediaType == mediaType)
-          .map((t) => t.tmdbId));
+    excludedTmdbIds.addAll(ratedTitles
+        .where((t) => t.mediaType == mediaType)
+        .map((t) => t.tmdbId));
+    excludedTmdbIds.addAll(watchlistTitles
+        .where((t) => t.mediaType == mediaType)
+        .map((t) => t.tmdbId));
 
-      final List<dynamic> allRecommendations = [];
-      allRecommendations.addAll(
-          await _fetchDiscoverTitles(discoverEndpoint, locale, preferences));
-      allRecommendations.addAll(_extractRecommendationsFromSeeds(
-          [...positiveSignalTitles]..shuffle()));
+    final List<dynamic> allRecommendations = [];
+    allRecommendations.addAll(
+        await _fetchDiscoverTitles(discoverEndpoint, locale, preferences));
+    allRecommendations.addAll(
+        _extractRecommendationsFromSeeds([...positiveSignalTitles]..shuffle()));
 
-      _scoreAndSortRecommendations(allRecommendations, preferences);
+    _scoreAndSortRecommendations(allRecommendations, preferences);
 
-      for (final rec in allRecommendations) {
-        if (recommendations.length >= 40) break;
-        final recId = rec[TmdbTitleFields.id];
-        if (!excludedTmdbIds.contains(recId)) {
-          recommendations.add(rec);
-          excludedTmdbIds.add(recId);
-        }
+    for (final rec in allRecommendations) {
+      if (recommendations.length >= 40) break;
+      final recId = rec[TmdbTitleFields.id];
+      if (!excludedTmdbIds.contains(recId)) {
+        recommendations.add(rec);
+        excludedTmdbIds.add(recId);
       }
     }
 

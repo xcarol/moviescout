@@ -1,11 +1,11 @@
 import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_pinned_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/services/workers/uninitialized_titles_worker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/repositories/title_repository.dart';
 
@@ -20,17 +20,6 @@ class WatchlistService extends TmdbTitleListService {
 
   WatchlistService(TitleRepository repository, this._legacyService)
       : super(AppConstants.watchlist, repository);
-
-  void updateAuth(SupabaseAuthService authService) {
-    final user = authService.currentUser;
-    if (user != null && _lastUserId != user.id) {
-      _lastUserId = user.id;
-      syncFromServer(
-          accountId: user.id, sessionId: '', locale: const Locale('en'));
-    } else if (user == null) {
-      _lastUserId = null;
-    }
-  }
 
   @override
   Future<void> syncFromServer({
@@ -71,7 +60,35 @@ class WatchlistService extends TmdbTitleListService {
       }
       return parsed;
     });
-    UninitializedTitlesWorker.dispatch();
+
+    if (pinnedService != null) {
+      await pinnedService!.fetchAndApplyPinnedTitles();
+      await filterItems();
+    }
+  }
+
+  Future<void> _updateTitleInWatchlistToSupabase(
+      String userId, TmdbTitle title, bool add) async {
+    if (add) {
+      await _supabase.from('user_titles').upsert({
+        'user_id': userId,
+        'tmdb_id': title.tmdbId,
+        'media_type': title.mediaType,
+        'list_name': AppConstants.watchlist,
+        'is_pinned': false,
+        'name': title.name,
+        'poster_path': title.posterPathSuffix,
+        'vote_average': title.voteAverage,
+      });
+    } else {
+      await _supabase
+          .from('user_titles')
+          .delete()
+          .eq('user_id', userId)
+          .eq('tmdb_id', title.tmdbId)
+          .eq('media_type', title.mediaType)
+          .eq('list_name', AppConstants.watchlist);
+    }
   }
 
   Future<void> updateWatchlistTitle(
@@ -86,42 +103,25 @@ class WatchlistService extends TmdbTitleListService {
 
       if (add) {
         title.isPinned = false;
+      } else {
+        if (title.isPinned && pinnedService != null) {
+          await pinnedService!.removePinnedFromServer(title);
+          title.isPinned = false;
+        }
+      }
 
-        await _supabase.from('user_titles').upsert({
-          'user_id': user.id,
-          'tmdb_id': title.tmdbId,
-          'media_type': title.mediaType,
-          'list_name': AppConstants.watchlist,
-          'is_pinned': false,
-          'name': title.name,
-          'poster_path': title.posterPathSuffix,
-          'vote_average': title.voteAverage,
-          'created_at': DateTime.now().toUtc().toIso8601String(),
-        });
-
-        await updateLocalTitle(title);
+      await updateTitle(accountId, sessionId, title, add,
+          (String accountId, String sessionId) async {
+        await _updateTitleInWatchlistToSupabase(user.id, title, add);
 
         final globalTitle =
             await repository.getTitleGlobal(title.tmdbId, title.mediaType);
-        if (globalTitle != null) {
+        if (add || globalTitle != null) {
           await repository.updateIsPinnedList([title]);
         }
-      } else {
-        if (title.isPinned && pinnedService != null) {
-          title.isPinned = false;
-        }
 
-        await _supabase
-            .from('user_titles')
-            .delete()
-            .eq('user_id', user.id)
-            .eq('tmdb_id', title.tmdbId)
-            .eq('media_type', title.mediaType)
-            .eq('list_name', AppConstants.watchlist);
-
-        await repository.deleteTitles(
-            AppConstants.watchlist, [title.tmdbId], [title.mediaType]);
-      }
+        return http.Response('', 200);
+      });
     } catch (error, stackTrace) {
       ErrorService.log(
         error,
@@ -156,18 +156,13 @@ class WatchlistService extends TmdbTitleListService {
       }
 
       title.isPinned = !title.isPinned;
-
-      await _supabase
-          .from('user_titles')
-          .update({
-            'is_pinned': title.isPinned,
-          })
-          .eq('user_id', user.id)
-          .eq('tmdb_id', title.tmdbId)
-          .eq('media_type', title.mediaType)
-          .eq('list_name', AppConstants.watchlist);
-
       await repository.updateIsPinnedList([title]);
+
+      if (title.isPinned) {
+        await pinnedService?.addPinnedToServer(title);
+      } else {
+        await pinnedService?.removePinnedFromServer(title);
+      }
 
       await filterItems(retainPagination: true);
     } catch (error, stackTrace) {
@@ -177,6 +172,17 @@ class WatchlistService extends TmdbTitleListService {
         userMessage: 'Error toggling pin for ${title.name}',
       );
       title.isPinned = !title.isPinned;
+    }
+  }
+
+  void updateAuth(SupabaseAuthService authService) {
+    final user = authService.currentUser;
+    if (user != null && _lastUserId != user.id) {
+      _lastUserId = user.id;
+      syncFromServer(
+          accountId: user.id, sessionId: '', locale: const Locale('en'));
+    } else if (user == null) {
+      _lastUserId = null;
     }
   }
 }
