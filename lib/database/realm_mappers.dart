@@ -185,6 +185,7 @@ class RealmMapper {
       lastUpdated: realmObj.lastUpdated,
       voteAverage: realmObj.voteAverage,
       rating: realmObj.rating,
+      dateRated: realmObj.dateRated,
     )
       ..stillPathSuffix = realmObj.stillPathSuffix
       ..guestStarsJson = realmObj.guestStarsJson
@@ -207,6 +208,7 @@ class RealmMapper {
       domainObj.lastUpdated,
       domainObj.voteAverage,
       domainObj.rating,
+      domainObj.dateRated,
       stillPathSuffix: domainObj.stillPathSuffix,
       guestStarsJson: domainObj.guestStarsJson,
       crewJson: domainObj.crewJson,

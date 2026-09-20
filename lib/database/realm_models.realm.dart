@@ -1024,7 +1024,8 @@ class TmdbEpisodeRealm extends _TmdbEpisodeRealm
     int episodeNumber,
     String lastUpdated,
     double voteAverage,
-    double rating, {
+    double rating,
+    DateTime dateRated, {
     String? stillPathSuffix,
     String? guestStarsJson,
     String? crewJson,
@@ -1043,6 +1044,7 @@ class TmdbEpisodeRealm extends _TmdbEpisodeRealm
     RealmObjectBase.set(this, 'lastUpdated', lastUpdated);
     RealmObjectBase.set(this, 'voteAverage', voteAverage);
     RealmObjectBase.set(this, 'rating', rating);
+    RealmObjectBase.set(this, 'dateRated', dateRated);
     RealmObjectBase.set(this, 'stillPathSuffix', stillPathSuffix);
     RealmObjectBase.set(this, 'guestStarsJson', guestStarsJson);
     RealmObjectBase.set(this, 'crewJson', crewJson);
@@ -1121,6 +1123,13 @@ class TmdbEpisodeRealm extends _TmdbEpisodeRealm
   set rating(double value) => RealmObjectBase.set(this, 'rating', value);
 
   @override
+  DateTime get dateRated =>
+      RealmObjectBase.get<DateTime>(this, 'dateRated') as DateTime;
+  @override
+  set dateRated(DateTime value) =>
+      RealmObjectBase.set(this, 'dateRated', value);
+
+  @override
   String? get stillPathSuffix =>
       RealmObjectBase.get<String>(this, 'stillPathSuffix') as String?;
   @override
@@ -1181,6 +1190,7 @@ class TmdbEpisodeRealm extends _TmdbEpisodeRealm
       'lastUpdated': lastUpdated.toEJson(),
       'voteAverage': voteAverage.toEJson(),
       'rating': rating.toEJson(),
+      'dateRated': dateRated.toEJson(),
       'stillPathSuffix': stillPathSuffix.toEJson(),
       'guestStarsJson': guestStarsJson.toEJson(),
       'crewJson': crewJson.toEJson(),
@@ -1206,6 +1216,7 @@ class TmdbEpisodeRealm extends _TmdbEpisodeRealm
         'lastUpdated': EJsonValue lastUpdated,
         'voteAverage': EJsonValue voteAverage,
         'rating': EJsonValue rating,
+        'dateRated': EJsonValue dateRated,
       } =>
         TmdbEpisodeRealm(
           fromEJson(id),
@@ -1220,6 +1231,7 @@ class TmdbEpisodeRealm extends _TmdbEpisodeRealm
           fromEJson(lastUpdated),
           fromEJson(voteAverage),
           fromEJson(rating),
+          fromEJson(dateRated),
           stillPathSuffix: fromEJson(ejson['stillPathSuffix']),
           guestStarsJson: fromEJson(ejson['guestStarsJson']),
           crewJson: fromEJson(ejson['crewJson']),
@@ -1247,6 +1259,7 @@ class TmdbEpisodeRealm extends _TmdbEpisodeRealm
       SchemaProperty('lastUpdated', RealmPropertyType.string),
       SchemaProperty('voteAverage', RealmPropertyType.double),
       SchemaProperty('rating', RealmPropertyType.double),
+      SchemaProperty('dateRated', RealmPropertyType.timestamp),
       SchemaProperty('stillPathSuffix', RealmPropertyType.string,
           optional: true),
       SchemaProperty('guestStarsJson', RealmPropertyType.string,

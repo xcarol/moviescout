@@ -304,6 +304,11 @@ class TitleRepository {
     });
   }
 
+  Future<List<TmdbEpisode>> getRatedEpisodes() async {
+    final realmObjs = _realm.query<TmdbEpisodeRealm>('rating > 0.0');
+    return realmObjs.map((e) => RealmMapper.toDomainEpisode(e)).toList();
+  }
+
   Future<TmdbTitle?> getTitleGlobal(int tmdbId, String mediaType) async {
     final realmObj = _realm.query<TmdbTitleRealm>(
         '${TmdbTitleRealmFields.tmdbId} == \$0 AND ${TmdbTitleRealmFields.mediaType} == \$1',

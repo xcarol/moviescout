@@ -30,26 +30,47 @@ class TmdbMigrationService {
       final rateslistRecords =
           await _prepareRecords(AppConstants.rateslist, user.id);
 
+      final episodeRecords = await _prepareEpisodeRecords(user.id);
+
       final allRecords = [...watchlistRecords, ...rateslistRecords];
 
-      if (allRecords.isEmpty) {
+      final total = allRecords.length + episodeRecords.length;
+      if (total == 0) {
         if (onProgress != null) onProgress(1.0, 0, 0);
         return;
       }
 
       final chunkSize = 50;
       int processed = 0;
-      final total = allRecords.length;
 
-      for (var i = 0; i < total; i += chunkSize) {
+      for (var i = 0; i < allRecords.length; i += chunkSize) {
         final chunk = allRecords.sublist(
           i,
-          i + chunkSize > total ? total : i + chunkSize,
+          i + chunkSize > allRecords.length ? allRecords.length : i + chunkSize,
         );
 
         await _supabase.from('user_titles').upsert(
               chunk,
               onConflict: 'user_id, tmdb_id, media_type, list_name',
+            );
+
+        processed += chunk.length;
+        if (onProgress != null) {
+          onProgress(processed / total, processed, total);
+        }
+      }
+
+      for (var i = 0; i < episodeRecords.length; i += chunkSize) {
+        final chunk = episodeRecords.sublist(
+          i,
+          i + chunkSize > episodeRecords.length
+              ? episodeRecords.length
+              : i + chunkSize,
+        );
+
+        await _supabase.from('user_episode_ratings').upsert(
+              chunk,
+              onConflict: 'user_id, episode_tmdb_id',
             );
 
         processed += chunk.length;
@@ -98,5 +119,24 @@ class TmdbMigrationService {
           return record;
         })
         .toList();
+  }
+
+  Future<List<Map<String, dynamic>>> _prepareEpisodeRecords(
+      String userId) async {
+    final episodes = await _repository.getRatedEpisodes();
+    if (episodes.isEmpty) return [];
+
+    return episodes.map((episode) {
+      return <String, dynamic>{
+        'user_id': userId,
+        'show_tmdb_id': episode.tvId,
+        'season_number': episode.seasonNumber,
+        'episode_number': episode.episodeNumber,
+        'episode_tmdb_id': episode.tmdbId,
+        'rating': episode.rating,
+        'rated_date': episode.lastUpdated,
+        'created_at': DateTime.now().toUtc().toIso8601String(),
+      };
+    }).toList();
   }
 }

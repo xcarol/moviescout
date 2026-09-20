@@ -314,6 +314,9 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
                     : AppLocalizations.of(context)!
                         .episodeLabel(episode.episodeNumber),
                 initialRate: episode.rating,
+                initialDate: episode.rating > 0 && episode.dateRated.millisecondsSinceEpoch > 0
+                    ? episode.dateRated
+                    : null,
                 onSubmit: (double rating) async {
                   await _updateEpisodeRate(episode, rating);
                 },
