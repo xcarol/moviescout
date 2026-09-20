@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -49,12 +49,17 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
 
     retrieveList(
         accountId.isEmpty ? AppConstants.anonymousAccountId : accountId,
-        forceUpdate: forceUpdate, retrieveMovies: () async {
-      return _getDiscoveryTitles(accountId, sessionId, locale,
-          ApiConstants.movie, UrlConstants.tmdbPopularMoviesEndpoint);
-    }, retrieveTvshows: () async {
-      return _getDiscoveryTitles(accountId, sessionId, locale, ApiConstants.tv,
-          UrlConstants.tmdbPopularTvEndpoint);
+        forceUpdate: forceUpdate, fetchRemoteData: () async {
+      return fetchAndMergeTmdbLists(
+        retrieveMovies: () async {
+          return _getDiscoveryTitles(accountId, sessionId, locale,
+              ApiConstants.movie, UrlConstants.tmdbPopularMoviesEndpoint);
+        },
+        retrieveTvshows: () async {
+          return _getDiscoveryTitles(accountId, sessionId, locale,
+              ApiConstants.tv, UrlConstants.tmdbPopularTvEndpoint);
+        },
+      );
     }).whenComplete(() {
       isRefreshing.value = false;
     });
@@ -109,7 +114,7 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
   }
 
   Future<UserPreferences> _calculatePreferences() async {
-    final titleRepo = TmdbTitleRepository();
+    final titleRepo = TitleRepository();
     final Map<int, double> genreWeights = {};
     final Map<int, int> genreCounts = {};
     final Map<int, double> keywordWeights = {};
@@ -228,42 +233,40 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     final List<dynamic> recommendations = [];
     final Set<int> excludedTmdbIds = {};
 
-    if (accountId.isNotEmpty) {
-      final titleRepo = TmdbTitleRepository();
-      final preferences = await _calculatePreferences();
+    final titleRepo = TitleRepository();
+    final preferences = await _calculatePreferences();
 
-      final ratedTitles =
-          await titleRepo.getAllTitlesInList(AppConstants.rateslist);
-      final watchlistTitles =
-          await titleRepo.getAllTitlesInList(AppConstants.watchlist);
+    final ratedTitles =
+        await titleRepo.getAllTitlesInList(AppConstants.rateslist);
+    final watchlistTitles =
+        await titleRepo.getAllTitlesInList(AppConstants.watchlist);
 
-      final positiveSignalTitles = [
-        ...ratedTitles.where((t) => t.rating > 2.5 && t.mediaType == mediaType),
-        ...watchlistTitles.where((t) => t.mediaType == mediaType)
-      ];
+    final positiveSignalTitles = [
+      ...ratedTitles.where((t) => t.rating > 2.5 && t.mediaType == mediaType),
+      ...watchlistTitles.where((t) => t.mediaType == mediaType)
+    ];
 
-      excludedTmdbIds.addAll(ratedTitles
-          .where((t) => t.mediaType == mediaType)
-          .map((t) => t.tmdbId));
-      excludedTmdbIds.addAll(watchlistTitles
-          .where((t) => t.mediaType == mediaType)
-          .map((t) => t.tmdbId));
+    excludedTmdbIds.addAll(ratedTitles
+        .where((t) => t.mediaType == mediaType)
+        .map((t) => t.tmdbId));
+    excludedTmdbIds.addAll(watchlistTitles
+        .where((t) => t.mediaType == mediaType)
+        .map((t) => t.tmdbId));
 
-      final List<dynamic> allRecommendations = [];
-      allRecommendations.addAll(
-          await _fetchDiscoverTitles(discoverEndpoint, locale, preferences));
-      allRecommendations.addAll(_extractRecommendationsFromSeeds(
-          [...positiveSignalTitles]..shuffle()));
+    final List<dynamic> allRecommendations = [];
+    allRecommendations.addAll(
+        await _fetchDiscoverTitles(discoverEndpoint, locale, preferences));
+    allRecommendations.addAll(
+        _extractRecommendationsFromSeeds([...positiveSignalTitles]..shuffle()));
 
-      _scoreAndSortRecommendations(allRecommendations, preferences);
+    _scoreAndSortRecommendations(allRecommendations, preferences);
 
-      for (final rec in allRecommendations) {
-        if (recommendations.length >= 40) break;
-        final recId = rec[TmdbTitleFields.id];
-        if (!excludedTmdbIds.contains(recId)) {
-          recommendations.add(rec);
-          excludedTmdbIds.add(recId);
-        }
+    for (final rec in allRecommendations) {
+      if (recommendations.length >= 40) break;
+      final recId = rec[TmdbTitleFields.id];
+      if (!excludedTmdbIds.contains(recId)) {
+        recommendations.add(rec);
+        excludedTmdbIds.add(recId);
       }
     }
 

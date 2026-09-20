@@ -7,12 +7,12 @@ import 'package:csv/csv.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/core/tmdb_base_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/services/lists/watchlist_service.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:provider/provider.dart';
 
 enum TitleStatus { pending, success, failed }
@@ -114,15 +114,15 @@ class _ImportIMDBState extends State<ImportIMDB> {
       setState(() {
         _operationInProgress = true;
       });
-      TmdbWatchlistService watchlistService =
-          Provider.of<TmdbWatchlistService>(context, listen: false);
+      WatchlistService watchlistService =
+          Provider.of<WatchlistService>(context, listen: false);
       TmdbUserService userService =
           Provider.of<TmdbUserService>(context, listen: false);
 
-      await watchlistService.retrieveWatchlist(
-        userService.accountId,
-        userService.sessionId,
-        Localizations.localeOf(context),
+      await watchlistService.syncFromServer(
+        accountId: userService.accountId,
+        sessionId: userService.sessionId,
+        locale: Localizations.localeOf(context),
       );
 
       while (watchlistService.listIsNotEmpty) {
@@ -174,15 +174,15 @@ class _ImportIMDBState extends State<ImportIMDB> {
       setState(() {
         _operationInProgress = true;
       });
-      TmdbRateslistService rateslistService =
-          Provider.of<TmdbRateslistService>(context, listen: false);
+      RateslistService rateslistService =
+          Provider.of<RateslistService>(context, listen: false);
       TmdbUserService userService =
           Provider.of<TmdbUserService>(context, listen: false);
 
-      await rateslistService.retrieveRateslist(
-        userService.accountId,
-        userService.sessionId,
-        Localizations.localeOf(context),
+      await rateslistService.syncFromServer(
+        accountId: userService.accountId,
+        sessionId: userService.sessionId,
+        locale: Localizations.localeOf(context),
       );
 
       while (rateslistService.listIsNotEmpty) {
@@ -480,7 +480,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
       final tmdbBaseService = TmdbBaseService();
       final tmdbSearchService = TmdbSearchService(
         searchServiceListName,
-        context.read<TmdbTitleRepository>(),
+        context.read<TitleRepository>(),
       );
       final TmdbUserService tmdbUserService =
           Provider.of<TmdbUserService>(context, listen: false);
@@ -511,7 +511,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
             continue;
           }
 
-          if (await Provider.of<TmdbWatchlistService>(context, listen: false)
+          if (await Provider.of<WatchlistService>(context, listen: false)
               .contains(titlesFromId.first)) {
             setState(() {
               _csvTitlesStatus[index] = TitleStatus.success;
@@ -527,7 +527,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           }
 
           final watchlistService =
-              Provider.of<TmdbWatchlistService>(context, listen: false);
+              Provider.of<WatchlistService>(context, listen: false);
 
           await watchlistService.updateWatchlistTitle(
             tmdbUserService.accountId,
@@ -537,7 +537,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           );
 
           setState(() async {
-            if (await Provider.of<TmdbWatchlistService>(context, listen: false)
+            if (await Provider.of<WatchlistService>(context, listen: false)
                 .contains(titlesFromId.first)) {
               _csvTitlesStatus[index] = TitleStatus.success;
             } else {
@@ -580,7 +580,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
       final tmdbBaseService = TmdbBaseService();
       final tmdbSearchService = TmdbSearchService(
         searchServiceListName,
-        context.read<TmdbTitleRepository>(),
+        context.read<TitleRepository>(),
       );
       final tmdbUserService =
           Provider.of<TmdbUserService>(context, listen: false);
@@ -612,7 +612,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           }
 
           // We don't want to re-import a rate (it would change the rating date)... or do we?
-          if (await Provider.of<TmdbRateslistService>(context, listen: false)
+          if (await Provider.of<RateslistService>(context, listen: false)
               .contains(titlesFromId.first)) {
             _csvTitlesStatus[index] = TitleStatus.success;
             continue;
@@ -626,7 +626,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           }
 
           final ratelistService =
-              Provider.of<TmdbRateslistService>(context, listen: false);
+              Provider.of<RateslistService>(context, listen: false);
 
           await ratelistService.updateTitleRate(
             tmdbUserService.accountId,
@@ -636,7 +636,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
           );
 
           setState(() async {
-            if (await Provider.of<TmdbRateslistService>(context, listen: false)
+            if (await Provider.of<RateslistService>(context, listen: false)
                 .contains(titlesFromId.first)) {
               _csvTitlesStatus[index] = TitleStatus.success;
             } else {

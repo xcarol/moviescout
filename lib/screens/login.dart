@@ -1,4 +1,7 @@
-import 'package:moviescout/utils/url_constants.dart';
+import 'dart:io';
+import "package:moviescout/services/auth/supabase_auth_service.dart";
+import 'package:flutter/gestures.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart'
@@ -6,15 +9,17 @@ import 'package:flutter/foundation.dart'
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:app_links/app_links.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/lists/watchlist_service.dart';
+import 'package:moviescout/screens/migration_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Login extends StatefulWidget {
-  const Login({super.key});
+  final bool fromMigrationScreen;
+  const Login({super.key, this.fromMigrationScreen = false});
 
   @override
   State<Login> createState() => _LoginState();
@@ -57,10 +62,10 @@ class _LoginState extends State<Login> {
   void _completeLogin() async {
     TmdbUserService userService =
         Provider.of<TmdbUserService>(context, listen: false);
-    TmdbWatchlistService watchlistService =
-        Provider.of<TmdbWatchlistService>(context, listen: false);
-    TmdbRateslistService rateslistService =
-        Provider.of<TmdbRateslistService>(context, listen: false);
+    WatchlistService watchlistService =
+        Provider.of<WatchlistService>(context, listen: false);
+    RateslistService rateslistService =
+        Provider.of<RateslistService>(context, listen: false);
     TmdbProviderService providerService =
         Provider.of<TmdbProviderService>(context, listen: false);
 
@@ -68,23 +73,36 @@ class _LoginState extends State<Login> {
 
     if (result['success']) {
       if (mounted) {
-        watchlistService.retrieveWatchlist(
-          userService.accountId,
-          userService.sessionId,
-          Localizations.localeOf(context),
+        watchlistService.syncFromServer(
+          accountId: userService.accountId,
+          sessionId: userService.sessionId,
+          locale: Localizations.localeOf(context),
         );
-        rateslistService.retrieveRateslist(
-          userService.accountId,
-          userService.sessionId,
-          Localizations.localeOf(context),
+        rateslistService.syncFromServer(
+          accountId: userService.accountId,
+          sessionId: userService.sessionId,
+          locale: Localizations.localeOf(context),
         );
         providerService.setup(userService.accountId, userService.sessionId,
             userService.accessToken);
       }
 
       SnackMessage.showSnackBar(loginSuccessMessage);
+
       if (mounted) {
-        Navigator.pop(context);
+        final hasSupabase =
+            Provider.of<SupabaseAuthService>(context, listen: false).isLoggedIn;
+
+        if (widget.fromMigrationScreen) {
+          Navigator.pop(context);
+        } else if (!hasSupabase) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MigrationScreen()),
+          );
+        } else {
+          Navigator.pop(context);
+        }
       }
     } else {
       throw Exception(result['message']);
@@ -103,6 +121,57 @@ class _LoginState extends State<Login> {
     }
   }
 
+  Future<void> _loginWithGoogle() async {
+    if (!Platform.isAndroid) {
+      SnackMessage.showSnackBar('Platform not supported');
+      return;
+    }
+
+    final authService =
+        Provider.of<SupabaseAuthService>(context, listen: false);
+    final success = await authService.signInWithGoogle();
+
+    if (success) {
+      if (mounted) {
+        SnackMessage.showSnackBar(AppLocalizations.of(context)!.loginSuccess);
+
+        if (widget.fromMigrationScreen) {
+          Navigator.pop(context);
+          return;
+        }
+
+        try {
+          final countRes = await Supabase.instance.client
+              .from('user_titles')
+              .select('id')
+              .limit(1)
+              .count(CountOption.exact);
+
+          final hasRecords = countRes.count > 0;
+
+          if (!hasRecords && mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MigrationScreen()),
+            );
+            return;
+          }
+        } catch (_) {
+          // Ignore network errors here, just proceed
+        }
+
+        if (mounted) Navigator.pop(context);
+      }
+    } else {
+      if (mounted) {
+        ErrorService.log(
+          'Failed to sign in with Google',
+          userMessage: AppLocalizations.of(context)!.loginFailed,
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     loginFailedMessage = AppLocalizations.of(context)!.loginFailed;
@@ -112,7 +181,7 @@ class _LoginState extends State<Login> {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.loginTitle),
       ),
-      body: Center(child: loginBody()),
+      body: Center(child: loginBody(context)),
     );
   }
 
@@ -128,27 +197,104 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget loginBody() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        OutlinedButton(
-          onPressed: login,
-          child: Text(AppLocalizations.of(context)!.loginToTmdb),
+  Widget loginBody(BuildContext context) {
+    final isGoogleLoggedIn =
+        Provider.of<SupabaseAuthService>(context).isLoggedIn;
+    final isTmdbLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
+
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (widget.fromMigrationScreen &&
+                (!isGoogleLoggedIn || !isTmdbLoggedIn)) ...[
+              Icon(Icons.cloud_sync,
+                  size: 48, color: Theme.of(context).colorScheme.primary),
+              const SizedBox(height: 16),
+              Text(
+                !isGoogleLoggedIn && !isTmdbLoggedIn
+                    ? AppLocalizations.of(context)!.migrationLoginRequiredBoth
+                    : !isGoogleLoggedIn
+                        ? AppLocalizations.of(context)!
+                            .migrationLoginRequiredGoogle
+                        : AppLocalizations.of(context)!
+                            .migrationLoginRequiredTmdb,
+                style: Theme.of(context).textTheme.titleLarge,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+            ],
+            if (!isGoogleLoggedIn) ...[
+              Text(
+                AppLocalizations.of(context)!.signInWithGoogle,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: _loginWithGoogle,
+                icon: const Icon(Icons.login),
+                label: Text(AppLocalizations.of(context)!.googleSignInButton),
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: SelectableText.rich(
+                  TextSpan(
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: Colors.grey),
+                    children: [
+                      TextSpan(
+                          text: AppLocalizations.of(context)!.loginConsentText),
+                      TextSpan(
+                        text: AppLocalizations.of(context)!.privacyDisclaimer,
+                        style: const TextStyle(
+                            decoration: TextDecoration.underline),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => launchUrl(Uri.parse(
+                              'https://xcarol.github.io/moviescout/privacy.html')),
+                      ),
+                      const TextSpan(text: '.'),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+            if (!isGoogleLoggedIn && !isTmdbLoggedIn) ...[
+              const SizedBox(height: 40),
+              const Divider(),
+              const SizedBox(height: 40),
+            ],
+            if (!isTmdbLoggedIn) ...[
+              if (!widget.fromMigrationScreen) ...[
+                Text(
+                  AppLocalizations.of(context)!.alreadyUsingMovieScout,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  AppLocalizations.of(context)!.importTmdbData,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+              ],
+              OutlinedButton(
+                onPressed: login,
+                child: Text(AppLocalizations.of(context)!.loginToTmdb),
+              ),
+              const SizedBox(height: 20),
+              if (defaultTargetPlatform == TargetPlatform.linux ||
+                  defaultTargetPlatform == TargetPlatform.windows)
+                _completeLoginButton(),
+            ],
+          ],
         ),
-        const SizedBox(height: 20),
-        if (defaultTargetPlatform == TargetPlatform.linux ||
-            defaultTargetPlatform == TargetPlatform.windows)
-          _completeLoginButton(),
-        const SizedBox(height: 20),
-        OutlinedButton(
-          onPressed: () => launchUrlString(
-            UrlConstants.tmdbSignupWebTemplate,
-            mode: LaunchMode.inAppBrowserView,
-          ),
-          child: Text(AppLocalizations.of(context)!.signupToTmdb),
-        ),
-      ],
+      ),
     );
   }
 }

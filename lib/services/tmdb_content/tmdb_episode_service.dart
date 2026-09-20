@@ -1,13 +1,14 @@
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/core/tmdb_base_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TmdbEpisodeService extends TmdbBaseService {
-  final _repository = TmdbTitleRepository();
+  final _repository = TitleRepository();
 
   Future<dynamic> _retrieveEpisodeDetails(
     int id,
@@ -117,6 +118,7 @@ class TmdbEpisodeService extends TmdbBaseService {
 
     if (dbEpisode != null && dbEpisode.rating > 0.0) {
       episode.rating = dbEpisode.rating;
+      episode.dateRated = dbEpisode.dateRated;
     }
 
     await _repository.putEpisode(episode);
@@ -149,27 +151,51 @@ class TmdbEpisodeService extends TmdbBaseService {
     double rating,
   ) async {
     try {
+      final user = Supabase.instance.client.auth.currentUser;
       if (rating > 0) {
         episode.rating = rating;
-        await post(
-          UrlConstants.tmdbRateEpisodeEndpoint
-              .replaceFirst('{ID}', episode.tvId.toString())
-              .replaceFirst('{SEASON_NUMBER}', episode.seasonNumber.toString())
-              .replaceFirst(
-                  '{EPISODE_NUMBER}', episode.episodeNumber.toString())
-              .replaceFirst('{SESSION_ID}', sessionId),
-          {'value': rating},
-        );
+        episode.dateRated = DateTime.now();
+        if (user != null) {
+          await Supabase.instance.client.from('user_episode_ratings').upsert({
+            'user_id': user.id,
+            'show_tmdb_id': episode.tvId,
+            'season_number': episode.seasonNumber,
+            'episode_number': episode.episodeNumber,
+            'episode_tmdb_id': episode.tmdbId,
+            'rating': rating,
+            'rated_date': DateTime.now().toUtc().toIso8601String(),
+          }, onConflict: 'user_id, episode_tmdb_id');
+        } else {
+          await post(
+            UrlConstants.tmdbRateEpisodeEndpoint
+                .replaceFirst('{ID}', episode.tvId.toString())
+                .replaceFirst(
+                    '{SEASON_NUMBER}', episode.seasonNumber.toString())
+                .replaceFirst(
+                    '{EPISODE_NUMBER}', episode.episodeNumber.toString())
+                .replaceFirst('{SESSION_ID}', sessionId),
+            {'value': rating},
+          );
+        }
       } else {
         episode.rating = 0.0;
-        await delete(
-          UrlConstants.tmdbRateEpisodeEndpoint
-              .replaceFirst('{ID}', episode.tvId.toString())
-              .replaceFirst('{SEASON_NUMBER}', episode.seasonNumber.toString())
-              .replaceFirst(
-                  '{EPISODE_NUMBER}', episode.episodeNumber.toString())
-              .replaceFirst('{SESSION_ID}', sessionId),
-        );
+        if (user != null) {
+          await Supabase.instance.client
+              .from('user_episode_ratings')
+              .delete()
+              .eq('user_id', user.id)
+              .eq('episode_tmdb_id', episode.tmdbId);
+        } else {
+          await delete(
+            UrlConstants.tmdbRateEpisodeEndpoint
+                .replaceFirst('{ID}', episode.tvId.toString())
+                .replaceFirst(
+                    '{SEASON_NUMBER}', episode.seasonNumber.toString())
+                .replaceFirst(
+                    '{EPISODE_NUMBER}', episode.episodeNumber.toString())
+                .replaceFirst('{SESSION_ID}', sessionId),
+          );
+        }
       }
 
       await _repository.putEpisode(episode);

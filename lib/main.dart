@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/core/realm_service.dart';
@@ -21,16 +22,19 @@ import 'package:moviescout/services/core/tmdb_configuration_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
 import 'package:moviescout/services/api/web_translation_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_pinned_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_following_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
+import "package:moviescout/services/lists/watchlist_service.dart";
+import "package:moviescout/services/lists/rateslist_service.dart";
+import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/screens/main_screen.dart';
 import 'package:moviescout/services/system/deep_link_service.dart';
 import 'package:moviescout/utils/language_translator.dart';
@@ -84,6 +88,11 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       PreferencesService().init(),
       RealmService.init(),
     ]);
+
+    await Supabase.initialize(
+      url: dotenv.env['SUPABASE_URL'] ?? '',
+      publishableKey: dotenv.env['SUPABASE_API_KEY'] ?? '',
+    );
   } catch (error, stackTrace) {
     ErrorService.log(
       error,
@@ -170,7 +179,7 @@ void _runMain({bool isFromShortcutActivity = false}) async {
     );
   }
 
-  final repository = TmdbTitleRepository();
+  final repository = TitleRepository();
 
   if (!isShortcut) {
     UninitializedTitlesWorker.dispatch();
@@ -181,6 +190,7 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       Provider.value(value: repository),
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
+      ChangeNotifierProvider(create: (_) => SupabaseAuthService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
       ChangeNotifierProxyProvider<TmdbUserService, TmdbProviderService>(
         create: (_) => TmdbProviderService(),
@@ -200,16 +210,18 @@ void _runMain({bool isFromShortcutActivity = false}) async {
           ..setup(userService.accountId, userService.sessionId,
               userService.accessToken),
       ),
-      ChangeNotifierProxyProvider<TmdbFollowingService, TmdbRateslistService>(
-        create: (_) => TmdbRateslistService(AppConstants.rateslist, repository),
+      ChangeNotifierProxyProvider<TmdbFollowingService, LegacyRateslistService>(
+        create: (_) =>
+            LegacyRateslistService(AppConstants.rateslist, repository),
         update: (_, followingService, rateslistService) {
           rateslistService!.followingService = followingService;
           return rateslistService;
         },
       ),
-      ChangeNotifierProxyProvider2<TmdbRateslistService, TmdbPinnedService,
-          TmdbWatchlistService>(
-        create: (_) => TmdbWatchlistService(AppConstants.watchlist, repository),
+      ChangeNotifierProxyProvider2<LegacyRateslistService, TmdbPinnedService,
+          LegacyWatchlistService>(
+        create: (_) =>
+            LegacyWatchlistService(AppConstants.watchlist, repository),
         update: (_, rateslistService, pinnedService, watchlistService) {
           rateslistService.removeListener(watchlistService!.refresh);
           rateslistService.addListener(watchlistService.refresh);
@@ -217,7 +229,38 @@ void _runMain({bool isFromShortcutActivity = false}) async {
           return watchlistService;
         },
       ),
-      ChangeNotifierProxyProvider2<TmdbRateslistService, TmdbWatchlistService,
+      ChangeNotifierProxyProvider2<LegacyRateslistService, SupabaseAuthService,
+          RateslistService>(
+        create: (context) => RateslistService(repository,
+            Provider.of<LegacyRateslistService>(context, listen: false)),
+        update: (_, legacyRateslistService, authService, rateslistService) {
+          legacyRateslistService.removeListener(rateslistService!.refresh);
+          legacyRateslistService.addListener(rateslistService.refresh);
+
+          rateslistService.updateAuth(authService);
+          rateslistService.followingService =
+              legacyRateslistService.followingService;
+          return rateslistService;
+        },
+      ),
+      ChangeNotifierProxyProvider3<RateslistService, LegacyWatchlistService,
+          SupabaseAuthService, WatchlistService>(
+        create: (context) => WatchlistService(repository,
+            Provider.of<LegacyWatchlistService>(context, listen: false)),
+        update: (_, rateslistService, legacyWatchlistService, authService,
+            watchlistService) {
+          rateslistService.removeListener(watchlistService!.refresh);
+          rateslistService.addListener(watchlistService.refresh);
+
+          legacyWatchlistService.removeListener(watchlistService.refresh);
+          legacyWatchlistService.addListener(watchlistService.refresh);
+
+          watchlistService.pinnedService = legacyWatchlistService.pinnedService;
+          watchlistService.updateAuth(authService);
+          return watchlistService;
+        },
+      ),
+      ChangeNotifierProxyProvider2<RateslistService, WatchlistService,
           TmdbDiscoverlistService>(
         create: (_) =>
             TmdbDiscoverlistService(AppConstants.discoverlist, repository),
@@ -255,7 +298,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     AppLifecycleService.instance.init();
 
     final watchlistService =
-        Provider.of<TmdbWatchlistService>(context, listen: false);
+        Provider.of<WatchlistService>(context, listen: false);
     DeepLinkService().isShortcutMode = widget.isShortcut;
     DeepLinkService().init(watchlistService);
     NotificationService().handleColdStartNotification();
@@ -279,9 +322,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void _onRegionChanged() {
     if (!mounted) return;
     final watchlistService =
-        Provider.of<TmdbWatchlistService>(context, listen: false);
+        Provider.of<WatchlistService>(context, listen: false);
     final rateslistService =
-        Provider.of<TmdbRateslistService>(context, listen: false);
+        Provider.of<RateslistService>(context, listen: false);
     watchlistService.updateProviders();
     rateslistService.updateProviders();
   }

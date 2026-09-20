@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:provider/provider.dart';
 
@@ -18,8 +18,8 @@ class DiscoverList extends StatefulWidget {
 class _DiscoverListState extends State<DiscoverList> {
   late Future<void> _init;
   late TmdbDiscoverlistService _discoverlistService;
-  late TmdbWatchlistService _watchlistService;
-  late TmdbRateslistService _rateslistService;
+  late WatchlistService _watchlistService;
+  late RateslistService _rateslistService;
 
   late Widget _discoverlistWidget;
 
@@ -67,10 +67,8 @@ class _DiscoverListState extends State<DiscoverList> {
   Future<void> _loadData() async {
     _discoverlistService =
         Provider.of<TmdbDiscoverlistService>(context, listen: false);
-    _watchlistService =
-        Provider.of<TmdbWatchlistService>(context, listen: false);
-    _rateslistService =
-        Provider.of<TmdbRateslistService>(context, listen: false);
+    _watchlistService = Provider.of<WatchlistService>(context, listen: false);
+    _rateslistService = Provider.of<RateslistService>(context, listen: false);
 
     _removeListeners();
     _addListeners();

@@ -1,5 +1,6 @@
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:moviescout/utils/api_constants.dart';
+import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -11,8 +12,8 @@ import 'package:moviescout/models/tmdb_collection.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart'
-    show TmdbTitleRepository;
+import 'package:moviescout/repositories/title_repository.dart'
+    show TitleRepository;
 import 'package:moviescout/screens/collection_details.dart';
 import 'package:moviescout/screens/season_details.dart';
 import 'package:moviescout/screens/title_people_list.dart';
@@ -20,7 +21,7 @@ import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/buttons/trailer_buttons.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/widgets/chips/person_chip.dart';
@@ -101,7 +102,7 @@ class _TitleDetailsState extends State<TitleDetails> {
   Future<void> _updateTitleRate(TmdbTitle title, double rating) async {
     final userService = Provider.of<TmdbUserService>(context, listen: false);
     final rateslistService =
-        Provider.of<TmdbRateslistService>(context, listen: false);
+        Provider.of<RateslistService>(context, listen: false);
 
     await rateslistService.updateTitleRate(
       userService.accountId,
@@ -205,8 +206,8 @@ class _TitleDetailsState extends State<TitleDetails> {
           }
         }
 
-        final repository = TmdbTitleRepository();
-        await repository.updateTitleMetadata(updated);
+        final repository = TitleRepository();
+        await repository.updateTitlesMetadata([updated]);
       }
     } catch (e) {
       if (mounted) {
@@ -836,7 +837,7 @@ class _TitleDetailsState extends State<TitleDetails> {
             )
           else
             const SizedBox.shrink(),
-          Consumer<TmdbRateslistService>(
+          Consumer<RateslistService>(
             builder: (context, ratingService, child) {
               return FutureBuilder<List<dynamic>>(
                 future: Future.wait([
@@ -845,8 +846,12 @@ class _TitleDetailsState extends State<TitleDetails> {
                   ratingService.getRatingAsync(title.tmdbId, title.mediaType),
                 ]),
                 builder: (context, snapshot) {
-                  final isUserLoggedIn =
+                  final isTmdbLoggedIn =
                       Provider.of<TmdbUserService>(context).isUserLoggedIn;
+                  final isGoogleLoggedIn =
+                      Provider.of<SupabaseAuthService>(context).isLoggedIn;
+                  final isUserLoggedIn = isTmdbLoggedIn || isGoogleLoggedIn;
+
                   final titleRatingDate = snapshot.data?[0] as DateTime? ??
                       DateTime.fromMillisecondsSinceEpoch(0);
                   final titleRating = snapshot.data?[2] as double? ?? 0.0;
@@ -1272,7 +1277,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         const SizedBox(height: 10),
         SizedBox(
           height: 336.0,
-          child: Consumer<TmdbRateslistService>(
+          child: Consumer<RateslistService>(
             builder: (context, ratesService, child) {
               return ListView.builder(
                 scrollDirection: Axis.horizontal,

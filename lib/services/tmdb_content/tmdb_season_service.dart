@@ -1,7 +1,7 @@
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/core/error_service.dart';
@@ -9,7 +9,7 @@ import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/services/api/youtube_service.dart';
 
 class TmdbSeasonService extends TmdbBaseService {
-  final _repository = TmdbTitleRepository();
+  final _repository = TitleRepository();
 
   Future<dynamic> _retrieveSeasonDetails(
     int id,

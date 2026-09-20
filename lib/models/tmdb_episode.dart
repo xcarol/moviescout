@@ -18,6 +18,7 @@ class TmdbEpisode implements TmdbItem {
   late String airDate;
   late double voteAverage;
   late double rating;
+  late DateTime dateRated;
   late String? stillPathSuffix;
 
   late String? guestStarsJson;
@@ -43,6 +44,7 @@ class TmdbEpisode implements TmdbItem {
     this.imagesJson,
     this.videosJson,
     this.rating = 0.0,
+    required this.dateRated,
     required this.lastUpdated,
   }) {
     if (voteAverage.isNaN) voteAverage = 0.0;
@@ -62,6 +64,7 @@ class TmdbEpisode implements TmdbItem {
           ? 0.0
           : (data['vote_average'] ?? 0.0).toDouble(),
       stillPathSuffix: data['still_path'],
+      dateRated: DateTime.fromMillisecondsSinceEpoch(0),
       lastUpdated: AppConstants.defaultDate,
     )..fillFromMap(data);
   }

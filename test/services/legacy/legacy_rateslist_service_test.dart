@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_following_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
@@ -13,12 +13,12 @@ import 'package:http/http.dart' as http;
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 
-class MockTmdbTitleRepository extends Mock implements TmdbTitleRepository {}
+class MockTmdbTitleRepository extends Mock implements TitleRepository {}
 
 class MockTmdbFollowingService extends Mock implements TmdbFollowingService {}
 
-class TestTmdbRateslistService extends TmdbRateslistService {
-  TestTmdbRateslistService(super.listName, super.repository);
+class TestLegacyRateslistService extends LegacyRateslistService {
+  TestLegacyRateslistService(super.listName, super.repository);
 
   http.Response? mockGetResponse;
   http.Response? mockPostResponse;
@@ -59,7 +59,7 @@ class FakeTmdbTitle extends Fake implements TmdbTitle {}
 void main() {
   late MockTmdbTitleRepository mockRepository;
   late MockTmdbFollowingService mockFollowingService;
-  late TestTmdbRateslistService service;
+  late TestLegacyRateslistService service;
 
   setUpAll(() async {
     registerFallbackValue(FakeTmdbTitle());
@@ -108,11 +108,12 @@ void main() {
     when(() => mockRepository.getAllGenreIds(AppConstants.rateslist))
         .thenAnswer((_) async => []);
 
-    service = TestTmdbRateslistService(AppConstants.rateslist, mockRepository);
+    service =
+        TestLegacyRateslistService(AppConstants.rateslist, mockRepository);
     service.followingService = mockFollowingService;
   });
 
-  group('TmdbRateslistService', () {
+  group('LegacyRateslistService', () {
     test(
         'updateTitleRate rating > 0 updates server and removes from watchlist if present',
         () async {
@@ -128,18 +129,20 @@ void main() {
       when(() => mockRepository.getTitleByTmdbId(
               AppConstants.watchlist, title.tmdbId, title.mediaType))
           .thenAnswer((_) async => title); // Exists in watchlist
-      when(() => mockRepository.deleteTitle(
-              AppConstants.watchlist, title.tmdbId, title.mediaType))
+      when(() => mockRepository.deleteTitles(
+              AppConstants.watchlist, [title.tmdbId], [title.mediaType]))
           .thenAnswer((_) async {});
-      when(() => mockRepository.saveTitle(title, AppConstants.rateslist, any()))
-          .thenAnswer((_) async {});
+      when(() => mockRepository.saveTitles([title], AppConstants.rateslist,
+          addedOrders: any(named: 'addedOrders'))).thenAnswer((_) async {});
       when(() => mockRepository.getMaxAddedOrder(AppConstants.rateslist))
           .thenAnswer((_) async => 0);
       when(() => mockRepository.getTitleGlobal(title.tmdbId, title.mediaType))
           .thenAnswer((_) async => null);
-      when(() => mockRepository.updateRating(title)).thenAnswer((_) async {});
-      when(() => mockRepository.updateIsPinned(title)).thenAnswer((_) async {});
-      when(() => mockRepository.updateNotifyNewSeasons(title))
+      when(() => mockRepository.updateRatingList([title]))
+          .thenAnswer((_) async {});
+      when(() => mockRepository.updateIsPinnedList([title]))
+          .thenAnswer((_) async {});
+      when(() => mockRepository.updateNotifyNewSeasonsList([title]))
           .thenAnswer((_) async {});
 
       await service.updateTitleRate('accountId', 'sessionId', title, 8.0);
@@ -148,12 +151,11 @@ void main() {
       expect(title.isPinned, false);
       expect(title.inLists.contains(AppConstants.watchlist), false);
 
-      verify(() => mockRepository.deleteTitle(
-          AppConstants.watchlist, title.tmdbId, title.mediaType)).called(1);
-      verify(() =>
-              mockRepository.saveTitle(title, AppConstants.rateslist, any()))
-          .called(1);
-      verify(() => mockRepository.updateRating(title)).called(1);
+      verify(() => mockRepository.deleteTitles(
+          AppConstants.watchlist, [title.tmdbId], [title.mediaType])).called(1);
+      verify(() => mockRepository.saveTitles([title], AppConstants.rateslist,
+          addedOrders: any(named: 'addedOrders'))).called(1);
+      verify(() => mockRepository.updateRatingList([title])).called(1);
     });
 
     test(
@@ -171,8 +173,8 @@ void main() {
 
       when(() => mockFollowingService.removeFollowingFromServer(title))
           .thenAnswer((_) async => true);
-      when(() => mockRepository.deleteTitle(
-              AppConstants.rateslist, title.tmdbId, title.mediaType))
+      when(() => mockRepository.deleteTitles(
+              AppConstants.rateslist, [title.tmdbId], [title.mediaType]))
           .thenAnswer((_) async {});
       when(() => mockRepository.getTitleGlobal(title.tmdbId, title.mediaType))
           .thenAnswer((_) async => null);
@@ -184,8 +186,8 @@ void main() {
 
       verify(() => mockFollowingService.removeFollowingFromServer(title))
           .called(1);
-      verify(() => mockRepository.deleteTitle(
-          AppConstants.rateslist, title.tmdbId, title.mediaType)).called(1);
+      verify(() => mockRepository.deleteTitles(
+          AppConstants.rateslist, [title.tmdbId], [title.mediaType])).called(1);
     });
 
     test('toggleNotify adds following if not following', () async {
@@ -197,7 +199,7 @@ void main() {
           dateRated: DateTime.now());
       title.notifyNewSeasons = false;
 
-      when(() => mockRepository.updateNotifyNewSeasons(title))
+      when(() => mockRepository.updateNotifyNewSeasonsList([title]))
           .thenAnswer((_) async {});
       when(() => mockFollowingService.addFollowingToServer(title))
           .thenAnswer((_) async => true);
@@ -206,7 +208,8 @@ void main() {
 
       expect(title.notifyNewSeasons, true);
       verify(() => mockFollowingService.addFollowingToServer(title)).called(1);
-      verify(() => mockRepository.updateNotifyNewSeasons(title)).called(1);
+      verify(() => mockRepository.updateNotifyNewSeasonsList([title]))
+          .called(1);
     });
 
     test('toggleNotify removes following if already following', () async {
@@ -218,7 +221,7 @@ void main() {
           dateRated: DateTime.now());
       title.notifyNewSeasons = true;
 
-      when(() => mockRepository.updateNotifyNewSeasons(title))
+      when(() => mockRepository.updateNotifyNewSeasonsList([title]))
           .thenAnswer((_) async {});
       when(() => mockFollowingService.removeFollowingFromServer(title))
           .thenAnswer((_) async => true);
@@ -228,7 +231,8 @@ void main() {
       expect(title.notifyNewSeasons, false);
       verify(() => mockFollowingService.removeFollowingFromServer(title))
           .called(1);
-      verify(() => mockRepository.updateNotifyNewSeasons(title)).called(1);
+      verify(() => mockRepository.updateNotifyNewSeasonsList([title]))
+          .called(1);
     });
   });
 }

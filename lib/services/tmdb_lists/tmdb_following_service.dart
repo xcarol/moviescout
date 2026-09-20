@@ -1,5 +1,6 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/tmdb_title_repository.dart';
+import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_config_list_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -7,7 +8,7 @@ import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 
 class TmdbFollowingService extends TmdbConfigListService {
-  final TmdbTitleRepository repository;
+  final TitleRepository repository;
 
   TmdbFollowingService(this.repository)
       : super(
@@ -103,11 +104,41 @@ class TmdbFollowingService extends TmdbConfigListService {
   }
 
   Future<bool> addFollowingToServer(TmdbTitle title) async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user != null) {
+      try {
+        await Supabase.instance.client
+            .from('user_titles')
+            .update({'notify_new_seasons': true})
+            .eq('user_id', user.id)
+            .eq('tmdb_id', title.tmdbId)
+            .eq('media_type', title.mediaType)
+            .eq('list_name', AppConstants.rateslist);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
     return await updateArrayInFirebase(
         '${title.mediaType}:${title.tmdbId}', true);
   }
 
   Future<bool> removeFollowingFromServer(TmdbTitle title) async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user != null) {
+      try {
+        await Supabase.instance.client
+            .from('user_titles')
+            .update({'notify_new_seasons': false})
+            .eq('user_id', user.id)
+            .eq('tmdb_id', title.tmdbId)
+            .eq('media_type', title.mediaType)
+            .eq('list_name', AppConstants.rateslist);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
     return await updateArrayInFirebase(
         '${title.mediaType}:${title.tmdbId}', false);
   }

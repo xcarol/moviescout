@@ -113,9 +113,9 @@ class UrlConstants {
       'account/{ACCOUNT_ID}/watchlist?session_id={SESSION_ID}';
 
   static const String tmdbRateslistMoviesEndpoint =
-      'account/{ACCOUNT_ID}/rated/movies?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.asc';
+      'account/{ACCOUNT_ID}/movie/rated?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.asc';
   static const String tmdbRateslistTvEndpoint =
-      'account/{ACCOUNT_ID}/rated/tv?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.asc';
+      'account/{ACCOUNT_ID}/tv/rated?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.asc';
   static const String tmdbRateMovieEndpoint =
       'movie/{ID}/rating?session_id={SESSION_ID}';
   static const String tmdbRateTvEndpoint =

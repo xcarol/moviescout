@@ -1,5 +1,6 @@
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:moviescout/utils/api_constants.dart';
+import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
@@ -262,8 +263,11 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
   }
 
   Widget _durationDateAndRating(TmdbEpisode episode) {
-    final isUserLoggedIn =
+    final isTmdbLoggedIn =
         Provider.of<TmdbUserService>(context, listen: false).isUserLoggedIn;
+    final isGoogleLoggedIn =
+        Provider.of<SupabaseAuthService>(context, listen: false).isLoggedIn;
+    final isUserLoggedIn = isTmdbLoggedIn || isGoogleLoggedIn;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -310,6 +314,10 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
                     : AppLocalizations.of(context)!
                         .episodeLabel(episode.episodeNumber),
                 initialRate: episode.rating,
+                initialDate: episode.rating > 0 &&
+                        episode.dateRated.millisecondsSinceEpoch > 0
+                    ? episode.dateRated
+                    : null,
                 onSubmit: (double rating) async {
                   await _updateEpisodeRate(episode, rating);
                 },

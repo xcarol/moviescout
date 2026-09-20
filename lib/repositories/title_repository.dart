@@ -11,10 +11,10 @@ import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
-class TmdbTitleRepository {
+class TitleRepository {
   final Realm _realm;
 
-  TmdbTitleRepository({Realm? realm}) : _realm = realm ?? RealmService.instance;
+  TitleRepository({Realm? realm}) : _realm = realm ?? RealmService.instance;
 
   void _mergeTitleMetadata(TmdbTitle newTitle, TmdbTitle currentTitle,
       {String? listNameToAdd}) {
@@ -26,9 +26,15 @@ class TmdbTitleRepository {
       newTitle.inLists = currentTitle.inLists;
     }
 
-    newTitle.isPinned = currentTitle.isPinned;
-    newTitle.notifyNewSeasons = currentTitle.notifyNewSeasons;
-    newTitle.lastNotifiedSeason = currentTitle.lastNotifiedSeason;
+    if (listNameToAdd != AppConstants.watchlist) {
+      newTitle.isPinned = currentTitle.isPinned;
+    }
+
+    if (listNameToAdd != AppConstants.rateslist) {
+      newTitle.notifyNewSeasons = currentTitle.notifyNewSeasons;
+      newTitle.lastNotifiedSeason = currentTitle.lastNotifiedSeason;
+    }
+
     if (newTitle.rating == 0.0 && currentTitle.rating > 0.0) {
       newTitle.rating = currentTitle.rating;
       newTitle.dateRated = currentTitle.dateRated;
@@ -49,24 +55,6 @@ class TmdbTitleRepository {
         title.inLists = [...title.inLists, listName];
       }
     }
-  }
-
-  Future<void> saveTitle(
-      TmdbTitle title, String listName, int addedOrder) async {
-    _realm.write(() {
-      _mergeOrAddTitleMetadata(title, listName);
-      _realm.add(RealmMapper.toRealmTitle(title), update: true);
-
-      _realm.add(
-          UserListEntryRealm(
-            '${listName}_${title.tmdbId}_${title.mediaType}',
-            listName,
-            title.tmdbId,
-            title.mediaType,
-            addedOrder,
-          ),
-          update: true);
-    });
   }
 
   void _runInBatches<T>(
@@ -112,18 +100,6 @@ class TmdbTitleRepository {
     );
   }
 
-  Future<void> updateTitleMetadata(TmdbTitle title) async {
-    _realm.write(() {
-      final existing =
-          _realm.find<TmdbTitleRealm>('${title.tmdbId}_${title.mediaType}');
-
-      if (existing != null) {
-        _mergeTitleMetadata(title, RealmMapper.toDomainTitle(existing));
-      }
-      _realm.add(RealmMapper.toRealmTitle(title), update: true);
-    });
-  }
-
   Future<void> updateTitlesMetadata(List<TmdbTitle> titles) async {
     if (titles.isEmpty) return;
 
@@ -159,15 +135,11 @@ class TmdbTitleRepository {
     });
   }
 
-  Future<void> updateIsPinned(TmdbTitle title) => updateIsPinnedList([title]);
-
   Future<void> updateIsPinnedList(List<TmdbTitle> titles) {
     return _updateTitlesField(titles, (existing, title) {
       existing.isPinned = title.isPinned;
     });
   }
-
-  Future<void> updateRating(TmdbTitle title) => updateRatingList([title]);
 
   Future<void> updateRatingList(List<TmdbTitle> titles) {
     return _updateTitlesField(titles, (existing, title) {
@@ -176,18 +148,12 @@ class TmdbTitleRepository {
     });
   }
 
-  Future<void> updateNotifyNewSeasons(TmdbTitle title) =>
-      updateNotifyNewSeasonsList([title]);
-
   Future<void> updateNotifyNewSeasonsList(List<TmdbTitle> titles) {
     return _updateTitlesField(titles, (existing, title) {
       existing.notifyNewSeasons = title.notifyNewSeasons;
       existing.lastNotifiedSeason = title.lastNotifiedSeason;
     });
   }
-
-  Future<void> deleteTitle(String listName, int tmdbId, String mediaType) =>
-      deleteTitles(listName, [tmdbId], [mediaType]);
 
   void _deleteOrphanTitle(TmdbTitleRealm title) {
     if (title.inLists.isEmpty) {
@@ -336,6 +302,11 @@ class TmdbTitleRepository {
     _realm.write(() {
       _realm.add(RealmMapper.toRealmEpisode(episode), update: true);
     });
+  }
+
+  Future<List<TmdbEpisode>> getRatedEpisodes() async {
+    final realmObjs = _realm.query<TmdbEpisodeRealm>('rating > 0.0');
+    return realmObjs.map((e) => RealmMapper.toDomainEpisode(e)).toList();
   }
 
   Future<TmdbTitle?> getTitleGlobal(int tmdbId, String mediaType) async {
@@ -581,7 +552,7 @@ class TmdbTitleRepository {
     RatingFilter filterRating = RatingFilter.all,
     bool? pinned,
   }) async {
-    return _buildQuery(
+    final ccc = _buildQuery(
       listName: listName,
       filterText: filterText,
       filterMediaType: filterMediaType,
@@ -591,7 +562,9 @@ class TmdbTitleRepository {
       filterProvidersIds: filterProvidersIds,
       filterRating: filterRating,
       pinned: pinned,
-    ).length;
+    );
+
+    return ccc.length;
   }
 
   Future<bool> hasTitlesFiltered({

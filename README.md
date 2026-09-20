@@ -18,7 +18,11 @@ Download MovieScout now: [https://xcarol.github.io/moviescout/](https://xcarol.g
 
 ## Data Privacy
 
-We store your followed titles, pinned items, and selected platforms in a Firebase cloud instance solely to keep your watchlist synced across devices. No personally identifiable information is collected or shared with third parties.
+MovieScout supports cross-device synchronization by storing your tracking lists (Watchlist, Rateslist) and app preferences in a secure cloud database (Supabase). If you sign in via Google, we collect basic profile information (such as your display name and avatar) solely to authenticate you and display your profile in the app. We do not sell your data or use it for advertising purposes.
+
+## License
+
+This software is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE). You may use, study, share, and modify the software for noncommercial purposes.
 
 ## Disclaimers
 

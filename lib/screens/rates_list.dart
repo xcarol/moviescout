@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +14,7 @@ class RatesList extends StatefulWidget {
 
 class _RatesListState extends State<RatesList> {
   late Future<void> _init;
-  late TmdbRateslistService _rateslistService;
+  late RateslistService _rateslistService;
   late Widget _rateslistWidget;
 
   @override
@@ -26,18 +26,17 @@ class _RatesListState extends State<RatesList> {
   Future<void> _loadData() async {
     final userService = Provider.of<TmdbUserService>(context, listen: false);
 
-    _rateslistService =
-        Provider.of<TmdbRateslistService>(context, listen: false);
+    _rateslistService = Provider.of<RateslistService>(context, listen: false);
     _rateslistWidget = ItemList(
       _rateslistService,
       key: ValueKey('rateslist'),
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _rateslistService.retrieveRateslist(
-        userService.accountId,
-        userService.sessionId,
-        Localizations.localeOf(context),
+      _rateslistService.syncFromServer(
+        accountId: userService.accountId,
+        sessionId: userService.sessionId,
+        locale: Localizations.localeOf(context),
       );
     });
   }
@@ -53,7 +52,7 @@ class _RatesListState extends State<RatesList> {
   }
 
   Widget body() {
-    return Selector<TmdbRateslistService, bool>(
+    return Selector<RateslistService, bool>(
       selector: (_, service) => service.listIsEmpty && !service.isLoading.value,
       shouldRebuild: (prev, next) => prev != next,
       builder: (context, isEmpty, child) {

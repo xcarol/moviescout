@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/screens/discover_list.dart';
 import 'package:moviescout/screens/rates_list.dart';
@@ -29,10 +30,14 @@ class _MainScreenState extends State<MainScreen> {
 
     TmdbUserService userService =
         Provider.of<TmdbUserService>(context, listen: true);
+    SupabaseAuthService authService =
+        Provider.of<SupabaseAuthService>(context, listen: true);
 
-    if (_wasLoggedIn != userService.isUserLoggedIn) {
-      _wasLoggedIn = userService.isUserLoggedIn;
-      if (userService.isUserLoggedIn) {
+    bool isLoggedIn = userService.isUserLoggedIn || authService.isLoggedIn;
+
+    if (_wasLoggedIn != isLoggedIn) {
+      _wasLoggedIn = isLoggedIn;
+      if (isLoggedIn) {
         _currentIndex = 0;
       } else {
         _currentIndex = 2;

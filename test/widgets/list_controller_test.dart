@@ -9,7 +9,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-class MockTmdbTitleListService extends Mock implements TmdbTitleListService {}
+class MockTitleListService extends Mock implements TmdbTitleListService {}
 
 void main() {
   setUpAll(() async {
@@ -22,7 +22,7 @@ void main() {
   testWidgets(
       'ListController resets sort option when userRating is no longer available',
       (WidgetTester tester) async {
-    final mockService = MockTmdbTitleListService();
+    final mockService = MockTitleListService();
     when(() => mockService.listName).thenReturn('watchlist');
     when(() => mockService.defaultSortAsc).thenReturn(false);
     when(() => mockService.defaultSort).thenReturn(SortOption.addedOrder);

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/screens/ai_settings.dart';
 import 'package:moviescout/screens/import_imdb.dart';
@@ -21,7 +22,10 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isUserLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
+    bool isTmdbLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
+    bool isGoogleLoggedIn =
+        Provider.of<SupabaseAuthService>(context).isLoggedIn;
+    bool isUserLoggedIn = isTmdbLoggedIn || isGoogleLoggedIn;
 
     return Scaffold(
       appBar: AppBar(

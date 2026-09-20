@@ -53,8 +53,7 @@ class TmdbPersonTitlesService extends TmdbTitleListService
   @override
   Future<void> retrieveList(
     String accountId, {
-    required Future<List> Function() retrieveMovies,
-    required Future<List> Function() retrieveTvshows,
+    required Future<List<TmdbTitle>> Function() fetchRemoteData,
     bool forceUpdate = false,
   }) async {
     // In-memory service doesn't need to fetch from server or sync with DB.

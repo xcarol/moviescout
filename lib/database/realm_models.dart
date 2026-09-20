@@ -124,6 +124,7 @@ class _TmdbEpisodeRealm {
 
   late double voteAverage;
   late double rating;
+  late DateTime dateRated;
 
   late String? stillPathSuffix;
   late String? guestStarsJson;

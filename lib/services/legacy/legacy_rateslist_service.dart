@@ -1,3 +1,4 @@
+import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/utils/url_constants.dart';
 import 'dart:async';
 import 'dart:io';
@@ -13,10 +14,10 @@ import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 
-class TmdbRateslistService extends TmdbTitleListService {
+class LegacyRateslistService extends TmdbTitleListService {
   TmdbFollowingService? followingService;
 
-  TmdbRateslistService(super.listName, super.repository) {
+  LegacyRateslistService(super.listName, super.repository) {
     filterRating = RatingFilter.rated;
   }
 
@@ -48,35 +49,40 @@ class TmdbRateslistService extends TmdbTitleListService {
       String accountId, String sessionId, Locale locale,
       {bool forceUpdate = false}) async {
     await retrieveList(accountId, forceUpdate: forceUpdate,
+        fetchRemoteData: () async {
+      return fetchAndMergeTmdbLists(
         retrieveMovies: () async {
-      return getTitlesFromServer((int page) async {
-        return get(
-          UrlConstants.tmdbRateslistMoviesEndpoint
-              .replaceFirst('{ACCOUNT_ID}', accountId)
-              .replaceFirst('{SESSION_ID}', sessionId)
-              .replaceFirst('{PAGE}', page.toString())
-              .replaceFirst(
-                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-        );
-      });
-    }, retrieveTvshows: () async {
-      return getTitlesFromServer((int page) async {
-        return get(
-          UrlConstants.tmdbRateslistTvEndpoint
-              .replaceFirst('{ACCOUNT_ID}', accountId)
-              .replaceFirst('{SESSION_ID}', sessionId)
-              .replaceFirst('{PAGE}', page.toString())
-              .replaceFirst(
-                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-        );
-      });
+          return getTitlesFromServer((int page) async {
+            return get(
+                UrlConstants.tmdbRateslistMoviesEndpoint
+                    .replaceFirst('{ACCOUNT_ID}', accountId)
+                    .replaceFirst('{SESSION_ID}', sessionId)
+                    .replaceFirst('{PAGE}', page.toString())
+                    .replaceFirst('{LOCALE}',
+                        '${locale.languageCode}-${locale.countryCode}'),
+                version: ApiVersion.v4);
+          });
+        },
+        retrieveTvshows: () async {
+          return getTitlesFromServer((int page) async {
+            return get(
+                UrlConstants.tmdbRateslistTvEndpoint
+                    .replaceFirst('{ACCOUNT_ID}', accountId)
+                    .replaceFirst('{SESSION_ID}', sessionId)
+                    .replaceFirst('{PAGE}', page.toString())
+                    .replaceFirst('{LOCALE}',
+                        '${locale.languageCode}-${locale.countryCode}'),
+                version: ApiVersion.v4);
+          });
+        },
+      );
     });
-
-    await _retrieveRatedEpisodes(accountId, sessionId, locale);
 
     if (followingService != null) {
       await followingService!.fetchAndApplyFollowingTitles();
     }
+    await filterItems();
+    _retrieveRatedEpisodes(accountId, sessionId, locale);
   }
 
   Future<void> _retrieveRatedEpisodes(
@@ -186,8 +192,8 @@ class TmdbRateslistService extends TmdbTitleListService {
         final watchlistTitle = await repository.getTitleByTmdbId(
             AppConstants.watchlist, title.tmdbId, title.mediaType);
         if (watchlistTitle != null) {
-          await repository.deleteTitle(
-              AppConstants.watchlist, title.tmdbId, title.mediaType);
+          await repository.deleteTitles(
+              AppConstants.watchlist, [title.tmdbId], [title.mediaType]);
           title.inLists = title.inLists.toList()
             ..remove(AppConstants.watchlist);
         }
@@ -207,9 +213,9 @@ class TmdbRateslistService extends TmdbTitleListService {
       final globalTitle =
           await repository.getTitleGlobal(title.tmdbId, title.mediaType);
       if (rating > 0 || globalTitle != null) {
-        await repository.updateRating(title);
-        await repository.updateIsPinned(title);
-        await repository.updateNotifyNewSeasons(title);
+        await repository.updateRatingList([title]);
+        await repository.updateIsPinnedList([title]);
+        await repository.updateNotifyNewSeasonsList([title]);
       }
     } catch (error, stackTrace) {
       ErrorService.log(
@@ -222,7 +228,7 @@ class TmdbRateslistService extends TmdbTitleListService {
 
   Future<void> toggleNotify(TmdbTitle title) async {
     title.notifyNewSeasons = !title.notifyNewSeasons;
-    await repository.updateNotifyNewSeasons(title);
+    await repository.updateNotifyNewSeasonsList([title]);
 
     if (followingService != null) {
       if (title.notifyNewSeasons) {

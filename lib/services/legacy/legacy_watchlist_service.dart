@@ -5,37 +5,42 @@ import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_pinned_service.dart';
 
-class TmdbWatchlistService extends TmdbTitleListService {
+class LegacyWatchlistService extends TmdbTitleListService {
   TmdbPinnedService? pinnedService;
 
-  TmdbWatchlistService(super.listName, super.repository);
+  LegacyWatchlistService(super.listName, super.repository);
 
   Future<void> retrieveWatchlist(
       String accountId, String sessionId, Locale locale,
       {bool forceUpdate = false}) async {
     await retrieveList(accountId, forceUpdate: forceUpdate,
+        fetchRemoteData: () async {
+      return fetchAndMergeTmdbLists(
         retrieveMovies: () async {
-      return getTitlesFromServer((int page) async {
-        return get(
-          UrlConstants.tmdbWatchlistMoviesEndpoint
-              .replaceFirst('{ACCOUNT_ID}', accountId)
-              .replaceFirst('{SESSION_ID}', sessionId)
-              .replaceFirst('{PAGE}', page.toString())
-              .replaceFirst(
-                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-        );
-      });
-    }, retrieveTvshows: () async {
-      return getTitlesFromServer((int page) async {
-        return get(
-          UrlConstants.tmdbWatchlistTvEndpoint
-              .replaceFirst('{ACCOUNT_ID}', accountId)
-              .replaceFirst('{SESSION_ID}', sessionId)
-              .replaceFirst('{PAGE}', page.toString())
-              .replaceFirst(
-                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-        );
-      });
+          return getTitlesFromServer((int page) async {
+            return get(
+              UrlConstants.tmdbWatchlistMoviesEndpoint
+                  .replaceFirst('{ACCOUNT_ID}', accountId)
+                  .replaceFirst('{SESSION_ID}', sessionId)
+                  .replaceFirst('{PAGE}', page.toString())
+                  .replaceFirst('{LOCALE}',
+                      '${locale.languageCode}-${locale.countryCode}'),
+            );
+          });
+        },
+        retrieveTvshows: () async {
+          return getTitlesFromServer((int page) async {
+            return get(
+              UrlConstants.tmdbWatchlistTvEndpoint
+                  .replaceFirst('{ACCOUNT_ID}', accountId)
+                  .replaceFirst('{SESSION_ID}', sessionId)
+                  .replaceFirst('{PAGE}', page.toString())
+                  .replaceFirst('{LOCALE}',
+                      '${locale.languageCode}-${locale.countryCode}'),
+            );
+          });
+        },
+      );
     });
 
     if (pinnedService != null) {
@@ -79,7 +84,7 @@ class TmdbWatchlistService extends TmdbTitleListService {
       final globalTitle =
           await repository.getTitleGlobal(title.tmdbId, title.mediaType);
       if (add || globalTitle != null) {
-        await repository.updateIsPinned(title);
+        await repository.updateIsPinnedList([title]);
       }
     } catch (error, stackTrace) {
       ErrorService.log(
@@ -108,7 +113,7 @@ class TmdbWatchlistService extends TmdbTitleListService {
     }
 
     title.isPinned = !title.isPinned;
-    await repository.updateIsPinned(title);
+    await repository.updateIsPinnedList([title]);
 
     if (pinnedService != null) {
       if (title.isPinned) {

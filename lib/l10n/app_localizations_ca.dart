@@ -642,4 +642,81 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get aiRateLimitGeneric =>
       'S\'ha superat el límit temporal de l\'API. Espera una estona abans de tornar-ho a provar.';
+
+  @override
+  String get signInWithGoogle => 'Inicia sessió amb Google';
+
+  @override
+  String get googleSignInButton => 'Entra amb Google';
+
+  @override
+  String get alreadyUsingMovieScout => 'Ja feies servir MovieScout?';
+
+  @override
+  String get importTmdbData => 'Importa les teves dades antigues des de TMDB.';
+
+  @override
+  String get migrateToSupabase => 'Sincronització al núvol';
+
+  @override
+  String get migratingData => 'Transferint dades...';
+
+  @override
+  String get migrationSuccess => 'Dades transferides amb èxit!';
+
+  @override
+  String get migrationError => 'Error en transferir les dades';
+
+  @override
+  String get loginToTmdbFirst =>
+      'Inicia sessió a TMDB primer per sincronitzar les dades';
+
+  @override
+  String get migrationScreenTitle => 'Sincronització al Núvol';
+
+  @override
+  String get migrationScreenHeader => 'Actualització de base de dades';
+
+  @override
+  String get migrationScreenBody =>
+      'Per oferir-te més i millors funcionalitats, MovieScout està actualitzant la seva base de dades. Migrar les teves dades és un pas obligatori per seguir utilitzant l\'aplicació, ja que l\'inici de sessió amb TMDB deixarà d\'estar disponible properament.';
+
+  @override
+  String get migrationScreenStartButton => 'Començar la sincronització';
+
+  @override
+  String get migrationScreenLaterButton => 'Més tard';
+
+  @override
+  String get migrationScreenSuccess =>
+      'Les teves dades ja estan sincronitzades!';
+
+  @override
+  String get migrationScreenContinue => 'Continuar';
+
+  @override
+  String get migrationScreenDownloading => 'Descarregant dades de TMDB...';
+
+  @override
+  String get migrationScreenUploading => 'Pujant al Núvol...';
+
+  @override
+  String get migrationLoginRequiredGoogle =>
+      'Inicia sessió a Google per començar la migració.';
+
+  @override
+  String get migrationLoginRequiredTmdb =>
+      'Inicia sessió a TMDB per començar la migració.';
+
+  @override
+  String get migrationLoginRequiredBoth =>
+      'Inicia sessió a Google i TMDB per començar la migració.';
+
+  @override
+  String get loginConsentText =>
+      'En iniciar sessió, acceptes emmagatzemar les teves dades als servidors de MovieScout per sincronitzar-les entre dispositius, d\'acord amb la nostra ';
+
+  @override
+  String get migrationConsentText =>
+      'La migració copiarà les teves dades de TMDB de manera segura als servidors de MovieScout.';
 }

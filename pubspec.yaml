@@ -57,6 +57,7 @@ dependencies:
 
   custom_refresh_indicator: ^4.0.1
   realm: any
+  supabase_flutter: ^2.17.2
   diacritic: ^0.1.6
   material_symbols_icons: ^4.2873.0
   flutter_native_splash: ^2.4.6

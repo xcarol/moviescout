@@ -1,3 +1,4 @@
+import 'package:moviescout/screens/migration_screen.dart';
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
@@ -10,9 +11,10 @@ import 'package:moviescout/screens/logs_screen.dart';
 import 'package:moviescout/screens/notifications_screen.dart';
 import 'package:moviescout/screens/settings.dart';
 import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_rateslist_service.dart';
+import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_watchlist_service.dart';
+import 'package:moviescout/services/lists/watchlist_service.dart';
+import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
@@ -24,7 +26,9 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isUserLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
+    bool isTmdbLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
+    bool isGoogleLoggedIn =
+        Provider.of<SupabaseAuthService>(context).isLoggedIn;
 
     return Drawer(
       child: ListView(
@@ -32,12 +36,28 @@ class AppDrawer extends StatelessWidget {
         children: <Widget>[
           _userProfileTile(context),
           _settingsTile(context),
-          if (isUserLoggedIn) _notificationsHistoryTile(context),
+          if (isTmdbLoggedIn) _notificationsHistoryTile(context),
+          if (isGoogleLoggedIn || isTmdbLoggedIn) _migrationTile(context),
           _aboutTile(context),
           const Divider(),
-          _userSessionTile(context, isUserLoggedIn),
+          _userSessionTile(context, isTmdbLoggedIn || isGoogleLoggedIn),
         ],
       ),
+    );
+  }
+
+  Widget _migrationTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.cloud_upload, color: Colors.blue),
+      title: Text(AppLocalizations.of(context)!.migrateToSupabase),
+      onTap: () async {
+        Navigator.of(context).pop();
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const MigrationScreen()),
+        );
+      },
     );
   }
 
@@ -70,26 +90,49 @@ class AppDrawer extends StatelessWidget {
   }
 
   Widget _userProfileTile(BuildContext context) {
-    var user = Provider.of<TmdbUserService>(context).user;
+    var tmdbUser = Provider.of<TmdbUserService>(context).user;
+    var supabaseAuth = Provider.of<SupabaseAuthService>(context);
 
     ImageProvider<Object>? userImage;
+    String? userName;
 
-    if (user != null) {
-      userImage =
-          user['avatar']['tmdb'] != null && user['avatar']['tmdb'].isNotEmpty
-              ? CachedNetworkImageProvider(UrlConstants.tmdbImageW185Template
-                  .replaceFirst(
-                      '{PATH}', '/${user['avatar']['tmdb']['avatar_path']}'))
-              : CachedNetworkImageProvider(UrlConstants.gravatarTemplate
-                  .replaceFirst('{HASH}', user['avatar']['gravatar']['hash'])
-                  .replaceFirst('{SIZE}', '200'));
+    if (supabaseAuth.isLoggedIn) {
+      final profile = supabaseAuth.userProfile;
+      final metadata = supabaseAuth.currentUser?.userMetadata;
+
+      final avatarUrl = profile?['avatar_url'] ??
+          metadata?['avatar_url'] ??
+          metadata?['picture'];
+      if (avatarUrl != null && avatarUrl.toString().isNotEmpty) {
+        userImage = CachedNetworkImageProvider(avatarUrl);
+      }
+
+      userName =
+          profile?['username'] ?? metadata?['full_name'] ?? metadata?['name'];
     }
 
-    var userName = user != null
-        ? user['name'].toString().isNotEmpty
-            ? user['name']
-            : user['username']
-        : AppLocalizations.of(context)!.anonymousUser;
+    if (userName == null || userName.isEmpty) {
+      if (tmdbUser != null) {
+        userName = tmdbUser['name'].toString().isNotEmpty
+            ? tmdbUser['name']
+            : tmdbUser['username'];
+      }
+    }
+
+    if (userImage == null && tmdbUser != null) {
+      if (tmdbUser['avatar']['tmdb'] != null &&
+          tmdbUser['avatar']['tmdb'].isNotEmpty) {
+        userImage = CachedNetworkImageProvider(
+            UrlConstants.tmdbImageW185Template.replaceFirst(
+                '{PATH}', '/${tmdbUser['avatar']['tmdb']['avatar_path']}'));
+      } else if (tmdbUser['avatar']['gravatar'] != null) {
+        userImage = CachedNetworkImageProvider(UrlConstants.gravatarTemplate
+            .replaceFirst('{HASH}', tmdbUser['avatar']['gravatar']['hash'])
+            .replaceFirst('{SIZE}', '200'));
+      }
+    }
+
+    userName ??= AppLocalizations.of(context)!.anonymousUser;
 
     return DrawerHeader(
       padding: const EdgeInsets.all(0),
@@ -100,7 +143,7 @@ class AppDrawer extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            user != null
+            userImage != null
                 ? CircleAvatar(
                     backgroundImage: userImage,
                   )
@@ -206,17 +249,16 @@ class AppDrawer extends StatelessWidget {
       title: Text(isUserLoggedIn
           ? AppLocalizations.of(context)!.logout
           : AppLocalizations.of(context)!.login),
-      onTap: () => {
-        Navigator.of(context).pop(),
-        if (isUserLoggedIn)
-          {_logout(context)}
-        else
-          {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const Login()),
-            ),
-          }
+      onTap: () {
+        Navigator.of(context).pop();
+        if (isUserLoggedIn) {
+          _logout(context);
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const Login()),
+          );
+        }
       },
     );
   }
@@ -224,10 +266,12 @@ class AppDrawer extends StatelessWidget {
   void _logout(BuildContext context) async {
     final tmdbUserService =
         Provider.of<TmdbUserService>(context, listen: false);
+    final supabaseAuthService =
+        Provider.of<SupabaseAuthService>(context, listen: false);
     final tmdbWatchlistService =
-        Provider.of<TmdbWatchlistService>(context, listen: false);
+        Provider.of<WatchlistService>(context, listen: false);
     final tmdbRateslistService =
-        Provider.of<TmdbRateslistService>(context, listen: false);
+        Provider.of<RateslistService>(context, listen: false);
     final tmdbDiscoverlistService =
         Provider.of<TmdbDiscoverlistService>(context, listen: false);
     final logoutSuccessText = AppLocalizations.of(context)!.logoutSuccess;
@@ -239,6 +283,8 @@ class AppDrawer extends StatelessWidget {
         stackTrace: stackTrace,
       );
     });
+
+    await supabaseAuthService.signOut();
 
     await tmdbWatchlistService.clearList();
     await tmdbRateslistService.clearList();
