@@ -43,8 +43,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageEmptyList => 'No films slected yet.';
 
   @override
-  String get messageEmptySearch =>
-      'You can do a search by using the magnifying glass in the bottom bar.';
+  String get messageEmptySearch => 'You can do a search by using the magnifying glass in the bottom bar.';
 
   @override
   String get messageEmptyOptions => 'You can also';
@@ -56,8 +55,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get search => 'Search for a title';
 
   @override
-  String get searchAiHint =>
-      'Describe the movie or TV show you are looking for...';
+  String get searchAiHint => 'Describe the movie or TV show you are looking for...';
 
   @override
   String get searchAiTooltip => 'Smart Search (AI)';
@@ -168,12 +166,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get imdbConfirmationTitle => 'WARNING';
 
   @override
-  String get imdbResetWatchlistConfirmation =>
-      'Do you really want to reset Watchlist?';
+  String get imdbResetWatchlistConfirmation => 'Do you really want to reset Watchlist?';
 
   @override
-  String get imdbResetRateslistConfirmation =>
-      'Do you really want to reset Ratings?';
+  String get imdbResetRateslistConfirmation => 'Do you really want to reset Ratings?';
 
   @override
   String get resetWatchlistCount => 'Watchlist titles: ';
@@ -314,15 +310,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get about => 'About...';
 
   @override
-  String get aboutDescription =>
-      'MovieScout is your movie and TV series tracker powered by TMDB, OMDb & JustWatch.';
+  String get aboutDescription => 'MovieScout is your movie and TV series tracker powered by TMDB, OMDb & JustWatch.';
 
   @override
   String get aboutGithub => 'Visit project on ';
 
   @override
-  String get apiDisclaimer =>
-      'This product uses the TMDB API but is not endorsed or certified by TMDB.';
+  String get apiDisclaimer => 'This product uses the TMDB API but is not endorsed or certified by TMDB.';
 
   @override
   String get privacyDisclaimerPrefix => 'Read the ';
@@ -388,15 +382,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageChangeTitle => 'Language Change';
 
   @override
-  String get languageChangeContent =>
-      'You have changed the application language. In order for titles to be updated to the new language, you need to log out and log back in.';
+  String get languageChangeContent => 'You have changed the application language. In order for titles to be updated to the new language, you need to log out and log back in.';
 
   @override
   String get watchingNow => 'Watching now';
 
   @override
-  String get pinLimitReached =>
-      'You have reached the limit of 5 pinned titles.';
+  String get pinLimitReached => 'You have reached the limit of 5 pinned titles.';
 
   @override
   String get pin => 'Pin';
@@ -468,12 +460,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifications => 'Notifications';
 
   @override
-  String get notificationsPermissionRequired =>
-      'You need to allow notifications in the system settings.';
+  String get notificationsPermissionRequired => 'You need to allow notifications in the system settings.';
 
   @override
-  String get notificationsPermissionDescription =>
-      'To receive updates on movie availability and new seasons, you must enable notifications in your system settings.';
+  String get notificationsPermissionDescription => 'To receive updates on movie availability and new seasons, you must enable notifications in your system settings.';
 
   @override
   String get openSettings => 'Open Settings';
@@ -482,8 +472,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
 
   @override
-  String get errorMessageGeneric =>
-      'An error occurred. Please try again later.';
+  String get errorMessageGeneric => 'An error occurred. Please try again later.';
 
   @override
   String get youtubeSearch => 'YouTube Search';
@@ -495,8 +484,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifyCompleteSeason => 'Notify complete season';
 
   @override
-  String get notifyCompleteSeasonSubtitle =>
-      'Only notifies when the whole season is available.';
+  String get notifyCompleteSeasonSubtitle => 'Only notifies when the whole season is available.';
 
   @override
   String get episodes => 'Episodes';
@@ -513,8 +501,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifyTitle => 'Notify new seasons';
 
   @override
-  String get notifyMessage =>
-      'Do you want to be notified when a new season airs?';
+  String get notifyMessage => 'Do you want to be notified when a new season airs?';
 
   @override
   String get no => 'No';
@@ -584,8 +571,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiSettingsSubtitle => 'Smart search and AI features';
 
   @override
-  String get aiSettingsDescription =>
-      'AI features allow you to find movies and TV shows based on natural language descriptions and more smart tools. To use them, you can get a free API key at OpenRouter (no credit card required).';
+  String get aiSettingsDescription => 'AI features allow you to find movies and TV shows based on natural language descriptions and more smart tools. To use them, you can get a free API key at OpenRouter (no credit card required).';
 
   @override
   String get aiGetApiKeyButton => 'Get API key at OpenRouter';
@@ -621,20 +607,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiDeleteConfirmTitle => 'Delete API Key';
 
   @override
-  String get aiDeleteConfirmMessage =>
-      'Are you sure you want to delete the API key? Note that OpenRouter does not allow viewing the key once created and you will need to generate a new one if you do not have it saved.';
+  String get aiDeleteConfirmMessage => 'Are you sure you want to delete the API key? Note that OpenRouter does not allow viewing the key once created and you will need to generate a new one if you do not have it saved.';
 
   @override
-  String get searchTimeout =>
-      'The search took too long to respond. Please try again.';
+  String get searchTimeout => 'The search took too long to respond. Please try again.';
 
   @override
-  String get aiSearchTimeout =>
-      'The AI search timed out. Try using a less specific or shorter description.';
+  String get aiSearchTimeout => 'The AI search timed out. Try using a less specific or shorter description.';
 
   @override
-  String get aiSearchError =>
-      'An error occurred during AI search. Please try again.';
+  String get aiSearchError => 'An error occurred during AI search. Please try again.';
 
   @override
   String aiRateLimitWithSeconds(int seconds) {
@@ -642,8 +624,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get aiRateLimitGeneric =>
-      'API rate limit exceeded. Please wait a moment before trying again.';
+  String get aiRateLimitGeneric => 'API rate limit exceeded. Please wait a moment before trying again.';
 
   @override
   String get signInWithGoogle => 'Sign in with Google';
@@ -670,8 +651,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get migrationError => 'Error transferring data';
 
   @override
-  String get loginToTmdbFirst =>
-      'Please log in to TMDB first to sync your data';
+  String get loginToTmdbFirst => 'Please log in to TMDB first to sync your data';
 
   @override
   String get migrationScreenTitle => 'Cloud Sync';
@@ -680,8 +660,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get migrationScreenHeader => 'Database Upgrade';
 
   @override
-  String get migrationScreenBody =>
-      'To bring you more and better features, MovieScout is upgrading its database. Migrating your data is required to continue using the app, as the TMDB login will soon be disabled.';
+  String get migrationScreenBody => 'To bring you more and better features, MovieScout is upgrading its database. Migrating your data is required to continue using the app, as the TMDB login will soon be disabled.';
 
   @override
   String get migrationScreenStartButton => 'Start Transfer';
@@ -702,14 +681,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get migrationScreenUploading => 'Uploading to Cloud...';
 
   @override
-  String get migrationLoginRequiredGoogle =>
-      'Log in to Google to start the migration.';
+  String get migrationLoginRequiredGoogle => 'Log in to Google to start the migration.';
 
   @override
-  String get migrationLoginRequiredTmdb =>
-      'Log in to TMDB to start the migration.';
+  String get migrationLoginRequiredTmdb => 'Log in to TMDB to start the migration.';
 
   @override
-  String get migrationLoginRequiredBoth =>
-      'Log in to Google and TMDB to start the migration.';
+  String get migrationLoginRequiredBoth => 'Log in to Google and TMDB to start the migration.';
+
+  @override
+  String get loginConsentText => 'By signing in, you agree to store your data on MovieScout\'s servers for cross-device synchronization, according to our ';
+
+  @override
+  String get migrationConsentText => 'Migration will copy your TMDB data securely to MovieScout\'s servers.';
 }

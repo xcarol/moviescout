@@ -492,5 +492,9 @@
   "migrationLoginRequiredTmdb": "Log in to TMDB to start the migration.",
   "@migrationLoginRequiredTmdb": {},
   "migrationLoginRequiredBoth": "Log in to Google and TMDB to start the migration.",
-  "@migrationLoginRequiredBoth": {}
+  "@migrationLoginRequiredBoth": {},
+  "loginConsentText": "By signing in, you agree to store your data on MovieScout's servers for cross-device synchronization, according to our ",
+  "@loginConsentText": {},
+  "migrationConsentText": "Migration will copy your TMDB data securely to MovieScout's servers.",
+  "@migrationConsentText": {}
 }

@@ -1,5 +1,7 @@
 import 'dart:io';
 import "package:moviescout/services/auth/supabase_auth_service.dart";
+import 'package:flutter/gestures.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart'
@@ -234,6 +236,26 @@ class _LoginState extends State<Login> {
                 onPressed: _loginWithGoogle,
                 icon: const Icon(Icons.login),
                 label: Text(AppLocalizations.of(context)!.googleSignInButton),
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: SelectableText.rich(
+                  TextSpan(
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                    children: [
+                      TextSpan(text: AppLocalizations.of(context)!.loginConsentText),
+                      TextSpan(
+                        text: AppLocalizations.of(context)!.privacyDisclaimer,
+                        style: const TextStyle(decoration: TextDecoration.underline),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => launchUrl(Uri.parse('https://xcarol.github.io/moviescout/privacy.html')),
+                      ),
+                      const TextSpan(text: '.'),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
             ],
             if (!isGoogleLoggedIn && !isTmdbLoggedIn) ...[

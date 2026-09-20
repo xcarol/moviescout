@@ -492,5 +492,9 @@
   "migrationLoginRequiredTmdb": "Inicia sesión en TMDB para comenzar la migración.",
   "@migrationLoginRequiredTmdb": {},
   "migrationLoginRequiredBoth": "Inicia sesión en Google y TMDB para comenzar la migración.",
-  "@migrationLoginRequiredBoth": {}
+  "@migrationLoginRequiredBoth": {},
+  "loginConsentText": "Al iniciar sesión, aceptas almacenar tus datos en los servidores de MovieScout para sincronizarlos entre dispositivos, de acuerdo con nuestra ",
+  "@loginConsentText": {},
+  "migrationConsentText": "La migración copiará tus datos de TMDB de forma segura a los servidores de MovieScout.",
+  "@migrationConsentText": {}
 }

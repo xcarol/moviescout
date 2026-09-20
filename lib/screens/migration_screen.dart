@@ -110,53 +110,60 @@ class _MigrationScreenState extends State<MigrationScreen> {
         title: Text(AppLocalizations.of(context)!.migrationScreenTitle),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Spacer(),
-              Icon(
-                _state == MigrationState.success
-                    ? Icons.cloud_done
-                    : Icons.cloud_sync,
-                size: 100,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(height: 32),
-              Text(
-                _state == MigrationState.success
-                    ? AppLocalizations.of(context)!.migrationScreenSuccess
-                    : AppLocalizations.of(context)!.migrationScreenHeader,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Spacer(),
+                    Icon(
+                      _state == MigrationState.success
+                          ? Icons.cloud_done
+                          : Icons.cloud_sync,
+                      size: 100,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
-                textAlign: TextAlign.center,
+                    const SizedBox(height: 32),
+                    Text(
+                      _state == MigrationState.success
+                          ? AppLocalizations.of(context)!.migrationScreenSuccess
+                          : AppLocalizations.of(context)!.migrationScreenHeader,
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    if (_state == MigrationState.idle)
+                      Text(
+                        AppLocalizations.of(context)!.migrationScreenBody,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                    if (_state != MigrationState.idle &&
+                        _state != MigrationState.success)
+                      _buildProgressIndicators(context),
+                    if (_state == MigrationState.error && _errorMessage != null) ...[
+                      const SizedBox(height: 24),
+                      Text(
+                        _errorMessage!,
+                        style:
+                            TextStyle(color: Theme.of(context).colorScheme.onError),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                    const Spacer(),
+                    _buildActionButtons(context),
+                    const SizedBox(height: 16),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              if (_state == MigrationState.idle)
-                Text(
-                  AppLocalizations.of(context)!.migrationScreenBody,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
-                ),
-              if (_state != MigrationState.idle &&
-                  _state != MigrationState.success)
-                _buildProgressIndicators(context),
-              if (_state == MigrationState.error && _errorMessage != null) ...[
-                const SizedBox(height: 24),
-                Text(
-                  _errorMessage!,
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.onError),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-              const Spacer(),
-              _buildActionButtons(context),
-              const SizedBox(height: 16),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -210,6 +217,14 @@ class _MigrationScreenState extends State<MigrationScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Text(
+                AppLocalizations.of(context)!.migrationConsentText,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+            ),
             FilledButton(
               onPressed: _startMigration,
               child: Text(

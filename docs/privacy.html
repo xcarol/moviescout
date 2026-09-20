@@ -36,20 +36,26 @@
       rel="noopener noreferrer">JustWatch</a> to provide catalog data, ratings, and streaming availability.</p>
 
   <h2>Data Collection and Cloud Storage</h2>
-  <p>To synchronize your following titles, pinned titles, and selected platforms across devices,
-    <strong>MovieScout</strong> stores your app preferences and saved titles in a cloud-hosted Firebase instance.</p>
-  <p><strong>No personally identifiable information (PII) is collected, stored, or sold.</strong> We do not collect your
-    name, email address, location, or contact details.</p>
+  <p>Because MovieScout provides cross-device synchronization, we collect and store the following data on our secure cloud servers:</p>
+  <ul>
+    <li><strong>Authentication Data:</strong> When you sign in using Google, we collect basic profile information (such as your display name, email address, and profile picture/avatar) provided by Google.</li>
+    <li><strong>App Data:</strong> We securely store your tracking lists (Watchlist, Rateslist), episode ratings, app preferences and more to synchronize them across multiple devices.</li>
+  </ul>
+  
+  <p>We use this information exclusively to authenticate you securely and synchronize your preferences. We do not sell your data or use it for advertising purposes.</p>
 
   <h2>Third-Party Services</h2>
-  <p>MovieScout uses third-party services to fetch media content and handle cloud storage:</p>
+  <p>MovieScout uses third-party services to fetch media content, handle cloud storage, and manage authentication:</p>
   <ul>
-    <li><strong>The Movie Database (TMDB):</strong> Used to retrieve movie/TV metadata, posters, and details.</li>
-    <li><strong>OMDb:</strong> Used to retrieve ratings.</li>
+    <li><strong>The Movie Database (TMDB):</strong> Used to retrieve movie/TV metadata, posters, and details. Any actions performed while logged into TMDB directly may be subject to TMDB's Privacy Policy.</li>
+    <li><strong>OMDb:</strong> Used to retrieve external ratings.</li>
     <li><strong>JustWatch:</strong> Used to provide streaming platform availability data.</li>
-    <li><strong>Google Firebase:</strong> Used solely to store and sync your watchlist items and app preferences
-      securely in the cloud.</li>
+    <li><strong>Supabase:</strong> Used as our primary database and authentication backend to securely store your user profile, ratings, and lists in the cloud.</li>
+    <li><strong>Google Firebase / Google Sign-In:</strong> Used for authentication. Your use of Google Sign-In is subject to Google's Privacy Policy.</li>
   </ul>
+  
+  <h2>User Rights and Data Deletion</h2>
+  <p>You have the right to request the deletion of your account and associated data at any time. If you wish to delete your data from our servers, you may disconnect your account within the app or contact the maintainers directly.</p>
 
   <h2>Disclaimers</h2>
   <p>This product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability data is provided by
@@ -61,7 +67,7 @@
 
   <h2>Contact</h2>
   <p>If you have any questions or concerns regarding privacy, please open an issue on the GitHub repository or contact
-    the maintainers directly.</p>
+    the maintainers directly at <a href="mailto:xcarolr@gmail.com">moviescout@xicra.com</a>.</p>
 </body>
 
 </html>
