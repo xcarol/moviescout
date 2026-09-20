@@ -92,20 +92,23 @@ class AppDrawer extends StatelessWidget {
   Widget _userProfileTile(BuildContext context) {
     var tmdbUser = Provider.of<TmdbUserService>(context).user;
     var supabaseAuth = Provider.of<SupabaseAuthService>(context);
-    
+
     ImageProvider<Object>? userImage;
     String? userName;
 
     if (supabaseAuth.isLoggedIn) {
       final profile = supabaseAuth.userProfile;
       final metadata = supabaseAuth.currentUser?.userMetadata;
-      
-      final avatarUrl = profile?['avatar_url'] ?? metadata?['avatar_url'] ?? metadata?['picture'];
+
+      final avatarUrl = profile?['avatar_url'] ??
+          metadata?['avatar_url'] ??
+          metadata?['picture'];
       if (avatarUrl != null && avatarUrl.toString().isNotEmpty) {
         userImage = CachedNetworkImageProvider(avatarUrl);
       }
-      
-      userName = profile?['username'] ?? metadata?['full_name'] ?? metadata?['name'];
+
+      userName =
+          profile?['username'] ?? metadata?['full_name'] ?? metadata?['name'];
     }
 
     if (userName == null || userName.isEmpty) {
@@ -117,14 +120,15 @@ class AppDrawer extends StatelessWidget {
     }
 
     if (userImage == null && tmdbUser != null) {
-      if (tmdbUser['avatar']['tmdb'] != null && tmdbUser['avatar']['tmdb'].isNotEmpty) {
-        userImage = CachedNetworkImageProvider(UrlConstants.tmdbImageW185Template
-                  .replaceFirst(
-                      '{PATH}', '/${tmdbUser['avatar']['tmdb']['avatar_path']}'));
+      if (tmdbUser['avatar']['tmdb'] != null &&
+          tmdbUser['avatar']['tmdb'].isNotEmpty) {
+        userImage = CachedNetworkImageProvider(
+            UrlConstants.tmdbImageW185Template.replaceFirst(
+                '{PATH}', '/${tmdbUser['avatar']['tmdb']['avatar_path']}'));
       } else if (tmdbUser['avatar']['gravatar'] != null) {
         userImage = CachedNetworkImageProvider(UrlConstants.gravatarTemplate
-                  .replaceFirst('{HASH}', tmdbUser['avatar']['gravatar']['hash'])
-                  .replaceFirst('{SIZE}', '200'));
+            .replaceFirst('{HASH}', tmdbUser['avatar']['gravatar']['hash'])
+            .replaceFirst('{SIZE}', '200'));
       }
     }
 

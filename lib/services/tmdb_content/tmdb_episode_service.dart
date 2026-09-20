@@ -169,7 +169,8 @@ class TmdbEpisodeService extends TmdbBaseService {
           await post(
             UrlConstants.tmdbRateEpisodeEndpoint
                 .replaceFirst('{ID}', episode.tvId.toString())
-                .replaceFirst('{SEASON_NUMBER}', episode.seasonNumber.toString())
+                .replaceFirst(
+                    '{SEASON_NUMBER}', episode.seasonNumber.toString())
                 .replaceFirst(
                     '{EPISODE_NUMBER}', episode.episodeNumber.toString())
                 .replaceFirst('{SESSION_ID}', sessionId),
@@ -188,7 +189,8 @@ class TmdbEpisodeService extends TmdbBaseService {
           await delete(
             UrlConstants.tmdbRateEpisodeEndpoint
                 .replaceFirst('{ID}', episode.tvId.toString())
-                .replaceFirst('{SEASON_NUMBER}', episode.seasonNumber.toString())
+                .replaceFirst(
+                    '{SEASON_NUMBER}', episode.seasonNumber.toString())
                 .replaceFirst(
                     '{EPISODE_NUMBER}', episode.episodeNumber.toString())
                 .replaceFirst('{SESSION_ID}', sessionId),

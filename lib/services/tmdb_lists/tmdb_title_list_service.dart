@@ -135,7 +135,8 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       hasLocalData = await repository.hasTitlesFiltered(listName: listNameVal);
     }
 
-    final isSupabaseLoggedIn = Supabase.instance.client.auth.currentUser != null;
+    final isSupabaseLoggedIn =
+        Supabase.instance.client.auth.currentUser != null;
 
     if ((accountId.isEmpty && !isSupabaseLoggedIn) ||
         (hasLocalData && isUpToDate && !forceUpdate) ||

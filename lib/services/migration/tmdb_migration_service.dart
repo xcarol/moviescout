@@ -98,27 +98,27 @@ class TmdbMigrationService {
       limit: count,
     );
 
-    return titles
-        .map((title) {
-          final record = <String, dynamic>{
-            'user_id': userId,
-            'tmdb_id': title.tmdbId,
-            'media_type': title.mediaType,
-            'list_name': listName,
-            'rating': title.rating,
-            'is_pinned': title.isPinned,
-            'notify_new_seasons': title.notifyNewSeasons,
-            'name': title.name,
-            'poster_path': title.posterPathSuffix,
-            'vote_average': title.voteAverage,
-            'created_at': DateTime.now().toUtc().toIso8601String(),
-          };
-          if (listName == AppConstants.rateslist && title.rating > 0 && title.dateRated.year >= 2000) {
-            record['rated_date'] = title.dateRated.toUtc().toIso8601String();
-          }
-          return record;
-        })
-        .toList();
+    return titles.map((title) {
+      final record = <String, dynamic>{
+        'user_id': userId,
+        'tmdb_id': title.tmdbId,
+        'media_type': title.mediaType,
+        'list_name': listName,
+        'rating': title.rating,
+        'is_pinned': title.isPinned,
+        'notify_new_seasons': title.notifyNewSeasons,
+        'name': title.name,
+        'poster_path': title.posterPathSuffix,
+        'vote_average': title.voteAverage,
+        'created_at': DateTime.now().toUtc().toIso8601String(),
+      };
+      if (listName == AppConstants.rateslist &&
+          title.rating > 0 &&
+          title.dateRated.year >= 2000) {
+        record['rated_date'] = title.dateRated.toUtc().toIso8601String();
+      }
+      return record;
+    }).toList();
   }
 
   Future<List<Map<String, dynamic>>> _prepareEpisodeRecords(

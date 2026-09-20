@@ -7,7 +7,7 @@ import 'package:moviescout/services/core/error_service.dart';
 class SupabaseAuthService extends ChangeNotifier {
   static final SupabaseAuthService _instance = SupabaseAuthService._internal();
   factory SupabaseAuthService() => _instance;
-  
+
   Map<String, dynamic>? userProfile;
 
   SupabaseAuthService._internal() {
@@ -30,7 +30,11 @@ class SupabaseAuthService extends ChangeNotifier {
     try {
       final user = _supabase.auth.currentUser;
       if (user != null) {
-        final response = await _supabase.from('profiles').select().eq('id', user.id).maybeSingle();
+        final response = await _supabase
+            .from('profiles')
+            .select()
+            .eq('id', user.id)
+            .maybeSingle();
         if (response != null) {
           userProfile = response;
           notifyListeners();
@@ -66,8 +70,14 @@ class SupabaseAuthService extends ChangeNotifier {
 
       if (authResponse.user != null) {
         final metadata = authResponse.user!.userMetadata;
-        final displayName = metadata?['full_name'] ?? metadata?['name'] ?? googleUser.displayName ?? '';
-        final avatar = metadata?['avatar_url'] ?? metadata?['picture'] ?? googleUser.photoUrl ?? '';
+        final displayName = metadata?['full_name'] ??
+            metadata?['name'] ??
+            googleUser.displayName ??
+            '';
+        final avatar = metadata?['avatar_url'] ??
+            metadata?['picture'] ??
+            googleUser.photoUrl ??
+            '';
 
         try {
           await _supabase.from('profiles').update({

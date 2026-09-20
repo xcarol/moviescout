@@ -132,9 +132,10 @@ class _MigrationScreenState extends State<MigrationScreen> {
                       _state == MigrationState.success
                           ? AppLocalizations.of(context)!.migrationScreenSuccess
                           : AppLocalizations.of(context)!.migrationScreenHeader,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
@@ -147,12 +148,13 @@ class _MigrationScreenState extends State<MigrationScreen> {
                     if (_state != MigrationState.idle &&
                         _state != MigrationState.success)
                       _buildProgressIndicators(context),
-                    if (_state == MigrationState.error && _errorMessage != null) ...[
+                    if (_state == MigrationState.error &&
+                        _errorMessage != null) ...[
                       const SizedBox(height: 24),
                       Text(
                         _errorMessage!,
-                        style:
-                            TextStyle(color: Theme.of(context).colorScheme.onError),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onError),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -221,7 +223,10 @@ class _MigrationScreenState extends State<MigrationScreen> {
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Text(
                 AppLocalizations.of(context)!.migrationConsentText,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
             ),

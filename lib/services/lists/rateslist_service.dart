@@ -112,26 +112,28 @@ class RateslistService extends TmdbTitleListService {
           final tvId = row['show_tmdb_id'] as int;
           final episodeNumber = row['episode_number'] as int;
           final seasonNumber = row['season_number'] as int;
-          
-          final dbEpisode = await repository.getEpisode(tvId, seasonNumber, episodeNumber);
-          
-          final parsedDate = row['rated_date'] != null 
-              ? DateTime.parse(row['rated_date']) 
+
+          final dbEpisode =
+              await repository.getEpisode(tvId, seasonNumber, episodeNumber);
+
+          final parsedDate = row['rated_date'] != null
+              ? DateTime.parse(row['rated_date'])
               : DateTime.parse(row['created_at']);
 
-          final episode = dbEpisode ?? TmdbEpisode(
-            tmdbId: row['episode_tmdb_id'] as int,
-            tvId: tvId,
-            seasonNumber: seasonNumber,
-            episodeNumber: episodeNumber,
-            name: '',
-            overview: '',
-            airDate: '',
-            runtime: 0,
-            voteAverage: 0.0,
-            lastUpdated: AppConstants.defaultDate,
-            dateRated: parsedDate,
-          );
+          final episode = dbEpisode ??
+              TmdbEpisode(
+                tmdbId: row['episode_tmdb_id'] as int,
+                tvId: tvId,
+                seasonNumber: seasonNumber,
+                episodeNumber: episodeNumber,
+                name: '',
+                overview: '',
+                airDate: '',
+                runtime: 0,
+                voteAverage: 0.0,
+                lastUpdated: AppConstants.defaultDate,
+                dateRated: parsedDate,
+              );
 
           episode.rating = (row['rating'] as num).toDouble();
           episode.dateRated = parsedDate;

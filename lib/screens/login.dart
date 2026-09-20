@@ -242,14 +242,20 @@ class _LoginState extends State<Login> {
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: SelectableText.rich(
                   TextSpan(
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: Colors.grey),
                     children: [
-                      TextSpan(text: AppLocalizations.of(context)!.loginConsentText),
+                      TextSpan(
+                          text: AppLocalizations.of(context)!.loginConsentText),
                       TextSpan(
                         text: AppLocalizations.of(context)!.privacyDisclaimer,
-                        style: const TextStyle(decoration: TextDecoration.underline),
+                        style: const TextStyle(
+                            decoration: TextDecoration.underline),
                         recognizer: TapGestureRecognizer()
-                          ..onTap = () => launchUrl(Uri.parse('https://xcarol.github.io/moviescout/privacy.html')),
+                          ..onTap = () => launchUrl(Uri.parse(
+                              'https://xcarol.github.io/moviescout/privacy.html')),
                       ),
                       const TextSpan(text: '.'),
                     ],
