@@ -228,6 +228,7 @@ void main() {
         runtime: 60,
         voteAverage: 8.0,
         lastUpdated: '2026-07-14',
+        dateRated: DateTime.fromMillisecondsSinceEpoch(0),
       );
       await repository.putEpisode(episode);
       final e = await repository.getEpisode(100, 1, 1);
