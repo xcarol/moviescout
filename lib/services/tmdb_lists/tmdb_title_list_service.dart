@@ -1,4 +1,5 @@
 import "package:moviescout/utils/api_constants.dart";
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -134,7 +135,9 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       hasLocalData = await repository.hasTitlesFiltered(listName: listNameVal);
     }
 
-    if (accountId.isEmpty ||
+    final isSupabaseLoggedIn = Supabase.instance.client.auth.currentUser != null;
+
+    if ((accountId.isEmpty && !isSupabaseLoggedIn) ||
         (hasLocalData && isUpToDate && !forceUpdate) ||
         isLoading.value) {
       if (hasLocalData && loadedItemsVal.isEmpty) {
