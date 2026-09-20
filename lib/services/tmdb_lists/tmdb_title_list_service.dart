@@ -200,6 +200,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       if (existing != null) {
         existing.isPinned = element.isPinned;
         existing.rating = element.rating;
+        existing.dateRated = element.dateRated;
         existing.notifyNewSeasons = element.notifyNewSeasons;
         serverList.add(existing);
       } else {
