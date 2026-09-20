@@ -90,26 +90,45 @@ class AppDrawer extends StatelessWidget {
   }
 
   Widget _userProfileTile(BuildContext context) {
-    var user = Provider.of<TmdbUserService>(context).user;
-
+    var tmdbUser = Provider.of<TmdbUserService>(context).user;
+    var supabaseAuth = Provider.of<SupabaseAuthService>(context);
+    
     ImageProvider<Object>? userImage;
+    String? userName;
 
-    if (user != null) {
-      userImage =
-          user['avatar']['tmdb'] != null && user['avatar']['tmdb'].isNotEmpty
-              ? CachedNetworkImageProvider(UrlConstants.tmdbImageW185Template
-                  .replaceFirst(
-                      '{PATH}', '/${user['avatar']['tmdb']['avatar_path']}'))
-              : CachedNetworkImageProvider(UrlConstants.gravatarTemplate
-                  .replaceFirst('{HASH}', user['avatar']['gravatar']['hash'])
-                  .replaceFirst('{SIZE}', '200'));
+    if (supabaseAuth.isLoggedIn) {
+      final profile = supabaseAuth.userProfile;
+      final metadata = supabaseAuth.currentUser?.userMetadata;
+      
+      final avatarUrl = profile?['avatar_url'] ?? metadata?['avatar_url'] ?? metadata?['picture'];
+      if (avatarUrl != null && avatarUrl.toString().isNotEmpty) {
+        userImage = CachedNetworkImageProvider(avatarUrl);
+      }
+      
+      userName = profile?['username'] ?? metadata?['full_name'] ?? metadata?['name'];
     }
 
-    var userName = user != null
-        ? user['name'].toString().isNotEmpty
-            ? user['name']
-            : user['username']
-        : AppLocalizations.of(context)!.anonymousUser;
+    if (userName == null || userName.isEmpty) {
+      if (tmdbUser != null) {
+        userName = tmdbUser['name'].toString().isNotEmpty
+            ? tmdbUser['name']
+            : tmdbUser['username'];
+      }
+    }
+
+    if (userImage == null && tmdbUser != null) {
+      if (tmdbUser['avatar']['tmdb'] != null && tmdbUser['avatar']['tmdb'].isNotEmpty) {
+        userImage = CachedNetworkImageProvider(UrlConstants.tmdbImageW185Template
+                  .replaceFirst(
+                      '{PATH}', '/${tmdbUser['avatar']['tmdb']['avatar_path']}'));
+      } else if (tmdbUser['avatar']['gravatar'] != null) {
+        userImage = CachedNetworkImageProvider(UrlConstants.gravatarTemplate
+                  .replaceFirst('{HASH}', tmdbUser['avatar']['gravatar']['hash'])
+                  .replaceFirst('{SIZE}', '200'));
+      }
+    }
+
+    userName ??= AppLocalizations.of(context)!.anonymousUser;
 
     return DrawerHeader(
       padding: const EdgeInsets.all(0),
@@ -120,7 +139,7 @@ class AppDrawer extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            user != null
+            userImage != null
                 ? CircleAvatar(
                     backgroundImage: userImage,
                   )

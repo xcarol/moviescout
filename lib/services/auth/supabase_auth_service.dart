@@ -7,8 +7,16 @@ import 'package:moviescout/services/core/error_service.dart';
 class SupabaseAuthService extends ChangeNotifier {
   static final SupabaseAuthService _instance = SupabaseAuthService._internal();
   factory SupabaseAuthService() => _instance;
+  
+  Map<String, dynamic>? userProfile;
+
   SupabaseAuthService._internal() {
-    _supabase.auth.onAuthStateChange.listen((data) {
+    _supabase.auth.onAuthStateChange.listen((data) async {
+      if (_supabase.auth.currentUser != null) {
+        await fetchProfile();
+      } else {
+        userProfile = null;
+      }
       notifyListeners();
     });
   }
@@ -17,6 +25,21 @@ class SupabaseAuthService extends ChangeNotifier {
 
   User? get currentUser => _supabase.auth.currentUser;
   bool get isLoggedIn => currentUser != null;
+
+  Future<void> fetchProfile() async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user != null) {
+        final response = await _supabase.from('profiles').select().eq('id', user.id).maybeSingle();
+        if (response != null) {
+          userProfile = response;
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      // Ignorar errors de càrrega
+    }
+  }
 
   Future<bool> signInWithGoogle() async {
     try {
@@ -42,7 +65,18 @@ class SupabaseAuthService extends ChangeNotifier {
       );
 
       if (authResponse.user != null) {
-        notifyListeners();
+        final metadata = authResponse.user!.userMetadata;
+        final displayName = metadata?['full_name'] ?? metadata?['name'] ?? googleUser.displayName ?? '';
+        final avatar = metadata?['avatar_url'] ?? metadata?['picture'] ?? googleUser.photoUrl ?? '';
+
+        try {
+          await _supabase.from('profiles').update({
+            'username': displayName,
+            'avatar_url': avatar,
+          }).eq('id', authResponse.user!.id);
+        } catch (_) {}
+
+        await fetchProfile();
         return true;
       }
       return false;
@@ -60,6 +94,7 @@ class SupabaseAuthService extends ChangeNotifier {
     try {
       await GoogleSignIn.instance.disconnect();
       await _supabase.auth.signOut();
+      userProfile = null;
       notifyListeners();
     } catch (e, stackTrace) {
       ErrorService.log(
