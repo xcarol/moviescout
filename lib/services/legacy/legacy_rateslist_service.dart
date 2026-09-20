@@ -1,3 +1,4 @@
+import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/utils/url_constants.dart';
 import 'dart:async';
 import 'dart:io';
@@ -53,25 +54,25 @@ class LegacyRateslistService extends TmdbTitleListService {
         retrieveMovies: () async {
           return getTitlesFromServer((int page) async {
             return get(
-              UrlConstants.tmdbRateslistMoviesEndpoint
-                  .replaceFirst('{ACCOUNT_ID}', accountId)
-                  .replaceFirst('{SESSION_ID}', sessionId)
-                  .replaceFirst('{PAGE}', page.toString())
-                  .replaceFirst('{LOCALE}',
-                      '${locale.languageCode}-${locale.countryCode}'),
-            );
+                UrlConstants.tmdbRateslistMoviesEndpoint
+                    .replaceFirst('{ACCOUNT_ID}', accountId)
+                    .replaceFirst('{SESSION_ID}', sessionId)
+                    .replaceFirst('{PAGE}', page.toString())
+                    .replaceFirst('{LOCALE}',
+                        '${locale.languageCode}-${locale.countryCode}'),
+                version: ApiVersion.v4);
           });
         },
         retrieveTvshows: () async {
           return getTitlesFromServer((int page) async {
             return get(
-              UrlConstants.tmdbRateslistTvEndpoint
-                  .replaceFirst('{ACCOUNT_ID}', accountId)
-                  .replaceFirst('{SESSION_ID}', sessionId)
-                  .replaceFirst('{PAGE}', page.toString())
-                  .replaceFirst('{LOCALE}',
-                      '${locale.languageCode}-${locale.countryCode}'),
-            );
+                UrlConstants.tmdbRateslistTvEndpoint
+                    .replaceFirst('{ACCOUNT_ID}', accountId)
+                    .replaceFirst('{SESSION_ID}', sessionId)
+                    .replaceFirst('{PAGE}', page.toString())
+                    .replaceFirst('{LOCALE}',
+                        '${locale.languageCode}-${locale.countryCode}'),
+                version: ApiVersion.v4);
           });
         },
       );
