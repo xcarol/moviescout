@@ -9,6 +9,7 @@ import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/widgets/layout/app_drawer.dart';
 import 'package:moviescout/widgets/misc/double_back_exit_wrapper.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/screens/migration_screen.dart';
 import 'package:provider/provider.dart';
 import 'search.dart';
 
@@ -23,6 +24,28 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
   bool? _wasLoggedIn;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkMigrationPrompt();
+    });
+  }
+
+  void _checkMigrationPrompt() {
+    if (!mounted) return;
+    
+    final userService = Provider.of<TmdbUserService>(context, listen: false);
+    final authService = Provider.of<SupabaseAuthService>(context, listen: false);
+
+    if (userService.isUserLoggedIn && !authService.isLoggedIn) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const MigrationScreen()),
+      );
+    }
+  }
 
   @override
   void didChangeDependencies() {
