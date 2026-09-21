@@ -35,9 +35,10 @@ class _MainScreenState extends State<MainScreen> {
 
   void _checkMigrationPrompt() {
     if (!mounted) return;
-    
+
     final userService = Provider.of<TmdbUserService>(context, listen: false);
-    final authService = Provider.of<SupabaseAuthService>(context, listen: false);
+    final authService =
+        Provider.of<SupabaseAuthService>(context, listen: false);
 
     if (userService.isUserLoggedIn && !authService.isLoggedIn) {
       Navigator.push(

@@ -445,9 +445,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get regionItaly => 'Italy';
 
   @override
-  String get verifyDeepLinks => 'Verify Deep Links';
-
-  @override
   String get shareLink => 'Share';
 
   @override
