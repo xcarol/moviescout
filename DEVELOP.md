@@ -96,13 +96,13 @@ Run `flutter gen-l10n` to update the i18n generated files.
 
 ~~The shared preferences are located at: _~/.local/share/com.xicra.moviescout_ folder.~~  
 
-## Isar
+## Realm
 
 Shared Preferences are not intended for huge data and a list of 1000 titles may reach 70MB which is even to much to hold in memory.  
 
-Isar was adopted beacuse its easy to use and has power enough for the kind of queries needed by the app.
+Realm was adopted because it is fast, easy to use, and has enough power for the kind of queries needed by the app.
 
-**NOTE:** Each time TmdbTitle class changes its "Schema" i.e. the public attributes, the command `dart run build_runner build` has to be executed. It is also available running the script _flutter_tool.sh_  with _-i_ parameter
+**NOTE:** Each time a Realm database model class changes its schema (e.g., adding or modifying properties in a `@RealmModel()` class), the command `dart run build_runner build` has to be executed to generate the `.realm.dart` files. This is also available by running the script `./flutter_tool.sh` with the `-s` or `--build-realm` parameter.
 
 ## Icons
 
@@ -112,45 +112,51 @@ The file used as the app logo is _./assets/logo-icon.png_  defined in the _pubsp
 
 After updating the logo run:  $ `dart run flutter_launcher_icons`
 
+## Environment Variables (.env)
+
+Create a `.env` file in the root directory of the project. This file is required for the application to function correctly. It must contain the following variables:
+
+```env
+# TMDB (The Movie Database)
+TMDB_API_RAT=your_tmdb_api_read_access_token
+
+# OMDb (Open Movie Database)
+OMDB_API_KEY=your_omdb_api_key
+
+# Supabase & Google Cloud
+SUPABASE_URL=https://<YOUR_PROJECT_REF>.supabase.co
+SUPABASE_API_KEY=<YOUR_SUPABASE_ANON_KEY>
+GOOGLE_WEB_CLIENT_ID=<YOUR_GOOGLE_WEB_CLIENT_ID>
+
+# App Configuration
+ENABLE_LOGS=false
+```
+
+Below you can find instructions on how to obtain each of these keys.
+
 ## Tmdb integration
 
-Get the **API Read Access Token** from [The Movie DB API Settings](https://www.themoviedb.org/settings/api)
-Create a file called _.env_ in the root directory and add the key:
-
-```
-TMDB_API_RAT=apiReadAccessTokenGotFromTmdb
-```
+Get the **API Read Access Token** (`TMDB_API_RAT`) from [The Movie DB API Settings](https://www.themoviedb.org/settings/api).
 
 NOTICE! As stated in the [TMDB API Documentation about Providers](https://developer.themoviedb.org/reference/movie-watch-providers), the data source is [**JustWatch**](https://www.justwatch.com/).  
 
 ## OMDB integration
 
-Get the **API Key** from [OMDb API](https://www.omdbapi.com/apikey.aspx)
-Add the key to your `.env` file:
+Get the **API Key** (`OMDB_API_KEY`) from [OMDb API](https://www.omdbapi.com/apikey.aspx).
 
-```
-OMDB_API_KEY=yourOmdbApiKey
-```
+## Deep Linking & Vercel Deployment
 
-## Backend API & Vercel Deployment
-
-MovieScout relies on a Vercel-hosted backend (located in the `backend/` directory) for two primary features:
+MovieScout relies on a Vercel-hosted environment (located in the `backend/` directory) for one primary feature:
 
 1. **Deep Linking (Android App Links):** Serving the `/.well-known/assetlinks.json` file for Android verification and handling redirects (`vercel.json`) to either the app or fallback URLs (TMDB, Github Pages).
-2. **Firebase Custom Auth:** Providing the `/api/auth` endpoint used to bridge TMDB login with Firebase Authentication.
 
 ### Setup from scratch
 
-If you need to deploy the backend environment from scratch:
+If you need to deploy the deep linking environment from scratch:
 
 1. **Deploy to Vercel:** Push the `backend/` folder to a GitHub repository and link it to a new project in Vercel.
 2. **Custom Domain:** In the Vercel project settings, add your custom domain (e.g., `moviescout.xicra.com`). Configure the DNS `CNAME` record in your domain provider as requested by Vercel to automatically provision the SSL (HTTPS) certificate.
 3. **App Links Fingerprints:** Ensure the `backend/public/.well-known/assetlinks.json` file contains the exact SHA-256 certificate fingerprints for both your local debug keystore and Google Play App Signing key.
-4. **Environment Variables:** Update the `.env` file in the Flutter app to point to your backend URL so Firebase Auth works:
-
-   ```env
-   FIREBASE_AUTH_URL=https://moviescout.xicra.com/api/auth
-   ```
 
 ## Supabase & Google Cloud Configuration
 
@@ -201,6 +207,12 @@ To ensure secure communication between Google and Supabase without being blocked
 2. Go back to the Google Cloud Console, to the page of your *Web application*.
 3. Scroll down to the **Authorized redirect URIs** section and click "Add URI".
 4. Paste the Supabase Callback URL and save the changes in Google Cloud.
+
+### 3. Obtaining the Environment Variables
+
+Once you have completed the Google Cloud and Supabase configuration, ensure your global `.env` file contains the remaining corresponding values:
+
+* **`SUPABASE_URL`** & **`SUPABASE_API_KEY`**: Found in your Supabase Dashboard under **Project Settings** > **API**. Use the `anon` / `public` key.
 
 ## Assets
 
