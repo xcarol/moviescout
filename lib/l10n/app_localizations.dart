@@ -940,12 +940,6 @@ abstract class AppLocalizations {
   /// **'Italy'**
   String get regionItaly;
 
-  /// No description provided for @verifyDeepLinks.
-  ///
-  /// In en, this message translates to:
-  /// **'Verify Deep Links'**
-  String get verifyDeepLinks;
-
   /// No description provided for @shareLink.
   ///
   /// In en, this message translates to:

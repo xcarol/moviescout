@@ -144,15 +144,13 @@ NOTICE! As stated in the [TMDB API Documentation about Providers](https://develo
 
 Get the **API Key** (`OMDB_API_KEY`) from [OMDb API](https://www.omdbapi.com/apikey.aspx).
 
-## Deep Linking & Vercel Deployment
+## Vercel Deployment
 
-MovieScout relies on a Vercel-hosted environment (located in the `backend/` directory) for one primary feature:
+MovieScout relies on a Vercel-hosted environment (located in the `backend/` directory) for:
 
-1. **Deep Linking (Android App Links):** Serving the `/.well-known/assetlinks.json` file for Android verification and handling redirects (`vercel.json`) to either the app or fallback URLs (TMDB, Github Pages).
+1. **Android App Links verification:** Serving the `/.well-known/assetlinks.json` file so Android can verify `moviescout.xicra.com` deep links belong to the app.
 
 ### Setup from scratch
-
-If you need to deploy the deep linking environment from scratch:
 
 1. **Deploy to Vercel:** Push the `backend/` folder to a GitHub repository and link it to a new project in Vercel.
 2. **Custom Domain:** In the Vercel project settings, add your custom domain (e.g., `moviescout.xicra.com`). Configure the DNS `CNAME` record in your domain provider as requested by Vercel to automatically provision the SSL (HTTPS) certificate.

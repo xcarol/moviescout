@@ -57,9 +57,7 @@ class DeepLinkService {
     String? id;
     int? seasonNumber;
 
-    if (uri.host == ApiConstants.tmdbHost ||
-        uri.host == ApiConstants.tmdbHostAlternative ||
-        uri.host == ApiConstants.moviescoutHost) {
+    if (uri.host == ApiConstants.moviescoutHost) {
       final segments = uri.pathSegments;
       if (segments.length >= 2) {
         type = segments[0];

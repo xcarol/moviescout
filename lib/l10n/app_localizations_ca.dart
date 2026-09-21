@@ -443,9 +443,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get regionItaly => 'Itàlia';
 
   @override
-  String get verifyDeepLinks => 'Verificar enllaços';
-
-  @override
   String get shareLink => 'Compartir';
 
   @override

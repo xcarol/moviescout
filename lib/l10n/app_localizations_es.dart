@@ -444,9 +444,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get regionItaly => 'Italia';
 
   @override
-  String get verifyDeepLinks => 'Verificar enlaces';
-
-  @override
   String get shareLink => 'Compartir';
 
   @override

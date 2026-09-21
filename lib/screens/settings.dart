@@ -10,7 +10,6 @@ import 'package:moviescout/services/notifications/notification_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
-import 'package:moviescout/utils/deep_link_utils.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/language_form.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/notification_permission_dialog.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/region_form.dart';
@@ -42,8 +41,6 @@ class SettingsScreen extends StatelessWidget {
           _notificationsTile(context),
           _notifyCompleteSeasonTile(context),
           _aiSettingsTile(context),
-          if (defaultTargetPlatform == TargetPlatform.android)
-            _verifyDeepLinksTile(context),
         ],
       ),
     );
@@ -199,16 +196,6 @@ class SettingsScreen extends StatelessWidget {
         if (selectedRegion != regionProvider.manualRegion) {
           regionProvider.setManualRegion(selectedRegion);
         }
-      },
-    );
-  }
-
-  Widget _verifyDeepLinksTile(BuildContext context) {
-    return ListTile(
-      leading: const Icon(Icons.link),
-      title: Text(AppLocalizations.of(context)!.verifyDeepLinks),
-      onTap: () async {
-        await DeepLinkUtils.openDeepLinkSettings(context);
       },
     );
   }
