@@ -1,3 +1,4 @@
+import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/title_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/services/core/error_service.dart';
@@ -96,7 +97,11 @@ class TmdbMigrationService {
     final titles = await _repository.getTitles(
       listName: listName,
       limit: count,
+      sortOption: SortOption.addedOrder,
     );
+
+    int index = 0;
+    final baseTime = DateTime.now().toUtc();
 
     return titles.map((title) {
       final record = <String, dynamic>{
@@ -110,7 +115,7 @@ class TmdbMigrationService {
         'name': title.name,
         'poster_path': title.posterPathSuffix,
         'vote_average': title.voteAverage,
-        'created_at': DateTime.now().toUtc().toIso8601String(),
+        'created_at': baseTime.add(Duration(milliseconds: index++)).toIso8601String(),
       };
       if (listName == AppConstants.rateslist &&
           title.rating > 0 &&
@@ -126,6 +131,9 @@ class TmdbMigrationService {
     final episodes = await _repository.getRatedEpisodes();
     if (episodes.isEmpty) return [];
 
+    int index = 0;
+    final baseTime = DateTime.now().toUtc();
+
     return episodes.map((episode) {
       return <String, dynamic>{
         'user_id': userId,
@@ -135,7 +143,7 @@ class TmdbMigrationService {
         'episode_tmdb_id': episode.tmdbId,
         'rating': episode.rating,
         'rated_date': episode.lastUpdated,
-        'created_at': DateTime.now().toUtc().toIso8601String(),
+        'created_at': baseTime.add(Duration(milliseconds: index++)).toIso8601String(),
       };
     }).toList();
   }

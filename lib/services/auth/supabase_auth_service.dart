@@ -80,10 +80,11 @@ class SupabaseAuthService extends ChangeNotifier {
             '';
 
         try {
-          await _supabase.from('profiles').update({
+          await _supabase.from('profiles').upsert({
+            'id': authResponse.user!.id,
             'username': displayName,
             'avatar_url': avatar,
-          }).eq('id', authResponse.user!.id);
+          });
         } catch (_) {}
 
         await fetchProfile();

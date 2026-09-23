@@ -3,6 +3,7 @@ import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_config_list_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 const String _tmdbMovieProviders =
     '/watch/providers/movie?language={LOCALE}&watch_region={COUNTRY}';
@@ -89,15 +90,24 @@ class TmdbProviderService extends TmdbConfigListService {
 
   Future<void> setup(
       String accountId, String sessionId, String accessToken) async {
-    if (_isInitialized || _isInitializing) return;
+    final isSupabaseLoggedIn = Supabase.instance.client.auth.currentUser != null;
 
-    if (accountId.isEmpty || sessionId.isEmpty || accessToken.isEmpty) {
+    if (!isSupabaseLoggedIn && (accountId.isEmpty || sessionId.isEmpty || accessToken.isEmpty)) {
+      return;
+    }
+    
+    if (_isInitialized || _isInitializing) {
+      if (isSupabaseLoggedIn) {
+        fetchAndListen();
+      }
       return;
     }
 
     try {
       _isInitializing = true;
-      setupBase(accountId, sessionId, accessToken);
+      if (accountId.isNotEmpty) {
+        setupBase(accountId, sessionId, accessToken);
+      }
 
       _providerMap.clear();
 
@@ -133,6 +143,51 @@ class TmdbProviderService extends TmdbConfigListService {
     _stringToProviders(data);
     _setLocalProviders(_providerMap);
     notifyListeners();
+  }
+
+  @override
+  Future<void> fetchAndListen() async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user != null) {
+      try {
+        final response = await Supabase.instance.client
+            .from('profiles')
+            .select('providers_string')
+            .eq('id', user.id)
+            .maybeSingle();
+
+        if (response != null && response['providers_string'] != null) {
+          await applyData(response['providers_string']);
+        }
+      } catch (e, stackTrace) {
+        ErrorService.log(e, stackTrace: stackTrace, userMessage: 'Error fetching platforms');
+      }
+    } else {
+      await super.fetchAndListen();
+    }
+  }
+
+  Future<void> fetchFromFirebase() async {
+    await super.fetchAndListen();
+  }
+
+  @override
+  Future<bool> updateToFirebase(dynamic data) async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user != null) {
+      try {
+        await Supabase.instance.client.from('profiles').upsert({
+          'id': user.id,
+          'providers_string': data
+        });
+        return true;
+      } catch (e, stackTrace) {
+        ErrorService.log(e, stackTrace: stackTrace, userMessage: 'Error saving platforms');
+        return false;
+      }
+    } else {
+      return await super.updateToFirebase(data);
+    }
   }
 
   String _providersToString() {

@@ -6,6 +6,8 @@ import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import "package:moviescout/services/legacy/legacy_watchlist_service.dart";
 import "package:moviescout/services/legacy/legacy_rateslist_service.dart";
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_pinned_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_following_service.dart';
 import 'package:moviescout/services/migration/tmdb_migration_service.dart';
 import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/screens/login.dart';
@@ -53,6 +55,11 @@ class _MigrationScreenState extends State<MigrationScreen> {
           Provider.of<LegacyRateslistService>(context, listen: false);
       final locale = Localizations.localeOf(context);
 
+      final pinnedService = Provider.of<TmdbPinnedService>(context, listen: false);
+      final followingService = Provider.of<TmdbFollowingService>(context, listen: false);
+      final providerService = Provider.of<TmdbProviderService>(context, listen: false);
+      final repository = Provider.of<TitleRepository>(context, listen: false);
+
       await watchlistService.syncFromServer(
         accountId: userService.accountId,
         sessionId: userService.sessionId,
@@ -64,15 +71,16 @@ class _MigrationScreenState extends State<MigrationScreen> {
         locale: locale,
       );
 
+      await pinnedService.fetchAndApplyPinnedTitles();
+      await followingService.fetchAndApplyFollowingTitles();
+      await providerService.fetchFromFirebase();
+
       if (!mounted) return;
 
       setState(() {
         _state = MigrationState.uploadingCloud;
       });
 
-      final repository = Provider.of<TitleRepository>(context, listen: false);
-      final providerService =
-          Provider.of<TmdbProviderService>(context, listen: false);
       final migrationService = TmdbMigrationService(repository);
 
       await migrationService.migrateLocalDataToSupabase(

@@ -64,29 +64,42 @@ class RateslistService extends TmdbTitleListService {
     }
 
     await retrieveList(accountId, forceUpdate: true, fetchRemoteData: () async {
-      final response = await _supabase
-          .from('user_titles')
-          .select(
-              'tmdb_id, media_type, rating, notify_new_seasons, created_at, rated_date, name, poster_path, vote_average')
-          .eq('list_name', AppConstants.rateslist)
-          .order('created_at', ascending: true);
-
       final List<TmdbTitle> parsed = [];
-      for (var row in response) {
-        final newTitle = TmdbTitle(
-          tmdbId: row['tmdb_id'] as int,
-          mediaType: row['media_type'] as String,
-          name: row['name'] as String? ?? '',
-          posterPathSuffix: row['poster_path'] as String?,
-          voteAverage: (row['vote_average'] as num?)?.toDouble() ?? 0.0,
-          lastUpdated: AppConstants.defaultDate,
-          dateRated: row['rated_date'] != null
-              ? DateTime.parse(row['rated_date'] as String)
-              : DateTime.parse(AppConstants.defaultDate),
-        )
-          ..rating = (row['rating'] as num?)?.toDouble() ?? 0.0
-          ..notifyNewSeasons = row['notify_new_seasons'] as bool? ?? false;
-        parsed.add(newTitle);
+      int start = 0;
+      const int limit = 1000;
+      bool hasMore = true;
+
+      while (hasMore) {
+        final response = await _supabase
+            .from('user_titles')
+            .select(
+                'tmdb_id, media_type, rating, notify_new_seasons, created_at, rated_date, name, poster_path, vote_average')
+            .eq('list_name', AppConstants.rateslist)
+            .order('created_at', ascending: true)
+            .range(start, start + limit - 1);
+
+        for (var row in response) {
+          final newTitle = TmdbTitle(
+            tmdbId: row['tmdb_id'] as int,
+            mediaType: row['media_type'] as String,
+            name: row['name'] as String? ?? '',
+            posterPathSuffix: row['poster_path'] as String?,
+            voteAverage: (row['vote_average'] as num?)?.toDouble() ?? 0.0,
+            lastUpdated: AppConstants.defaultDate,
+            dateRated: row['rated_date'] != null
+                ? DateTime.parse(row['rated_date'] as String)
+                : DateTime.parse(AppConstants.defaultDate),
+          )
+            ..rating = (row['rating'] as num?)?.toDouble() ?? 0.0
+            ..notifyNewSeasons = row['notify_new_seasons'] as bool? ?? false;
+          parsed.add(newTitle);
+        }
+
+        if (response.length < limit) {
+          hasMore = false;
+        } else {
+          start += limit;
+        }
       }
       return parsed;
     });

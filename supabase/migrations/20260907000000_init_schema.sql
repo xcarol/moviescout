@@ -98,7 +98,7 @@ create table public.user_episode_ratings (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
   
-  -- Un usuari només pot tenir una valoració per episodi
+  -- A user can only have one rating per episode
   unique (user_id, episode_tmdb_id)
 );
 
@@ -140,3 +140,10 @@ create trigger set_user_titles_updated_at
 create trigger set_user_episode_ratings_updated_at
   before update on public.user_episode_ratings
   for each row execute procedure public.set_updated_at();
+
+
+-- Add insert policy for profiles to allow upsert during login
+create policy "User can insert their own profile."
+  on public.profiles for insert
+  with check ( auth.uid() = id );
+
