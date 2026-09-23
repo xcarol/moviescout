@@ -90,15 +90,24 @@ class TmdbProviderService extends TmdbConfigListService {
 
   Future<void> setup(
       String accountId, String sessionId, String accessToken) async {
-    if (_isInitialized || _isInitializing) return;
+    final isSupabaseLoggedIn = Supabase.instance.client.auth.currentUser != null;
 
-    if (accountId.isEmpty || sessionId.isEmpty || accessToken.isEmpty) {
+    if (!isSupabaseLoggedIn && (accountId.isEmpty || sessionId.isEmpty || accessToken.isEmpty)) {
+      return;
+    }
+    
+    if (_isInitialized || _isInitializing) {
+      if (isSupabaseLoggedIn) {
+        fetchAndListen();
+      }
       return;
     }
 
     try {
       _isInitializing = true;
-      setupBase(accountId, sessionId, accessToken);
+      if (accountId.isNotEmpty) {
+        setupBase(accountId, sessionId, accessToken);
+      }
 
       _providerMap.clear();
 

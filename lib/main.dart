@@ -192,9 +192,9 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => SupabaseAuthService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
-      ChangeNotifierProxyProvider<TmdbUserService, TmdbProviderService>(
+      ChangeNotifierProxyProvider2<TmdbUserService, SupabaseAuthService, TmdbProviderService>(
         create: (_) => TmdbProviderService(),
-        update: (_, userService, providerService) => providerService!
+        update: (_, userService, authService, providerService) => providerService!
           ..setup(userService.accountId, userService.sessionId,
               userService.accessToken),
       ),
