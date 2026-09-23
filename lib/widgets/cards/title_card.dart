@@ -31,7 +31,7 @@ class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
   final TmdbTitleListService _tmdbListService;
 
-  static double cardHeight = 160.0;
+  static double cardHeight = 178.0;
 
   const TitleCard({
     super.key,
