@@ -62,7 +62,7 @@ class RateslistService extends TmdbTitleListService {
         final response = await _supabase
             .from('user_titles')
             .select(
-                'tmdb_id, media_type, rating, notify_new_seasons, created_at, rated_date, name, poster_path, vote_average')
+                'tmdb_id, media_type, rating, notify_new_seasons, last_notified_season, created_at, rated_date, name, poster_path, vote_average')
             .eq('list_name', AppConstants.rateslist)
             .order('created_at', ascending: true)
             .range(start, start + limit - 1);
@@ -80,7 +80,8 @@ class RateslistService extends TmdbTitleListService {
                 : DateTime.parse(AppConstants.defaultDate),
           )
             ..rating = (row['rating'] as num?)?.toDouble() ?? 0.0
-            ..notifyNewSeasons = row['notify_new_seasons'] as bool? ?? false;
+            ..notifyNewSeasons = row['notify_new_seasons'] as bool? ?? false
+            ..lastNotifiedSeason = row['last_notified_season'] as int? ?? 0;
           parsed.add(newTitle);
         }
 
