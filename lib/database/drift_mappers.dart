@@ -37,10 +37,8 @@ class DriftMapper {
       budget: data.budget,
       revenue: data.revenue,
     )
-      ..inLists = data.inLists.toList()
       ..effectiveRuntime = data.effectiveRuntime
       ..effectiveReleaseDate = data.effectiveReleaseDate
-      ..addedOrder = data.addedOrder
       ..isPinned = data.isPinned
       ..notifyNewSeasons = data.notifyNewSeasons
       ..imagesJson = data.imagesJson
@@ -95,7 +93,6 @@ class DriftMapper {
       revenue: Value(domainObj.revenue),
       effectiveRuntime: Value(domainObj.effectiveRuntime),
       effectiveReleaseDate: Value(domainObj.effectiveReleaseDate),
-      addedOrder: Value(domainObj.addedOrder),
       isPinned: Value(domainObj.isPinned),
       notifyNewSeasons: Value(domainObj.notifyNewSeasons),
       imagesJson: Value(domainObj.imagesJson),
@@ -106,7 +103,6 @@ class DriftMapper {
       providersJson: Value(domainObj.providersJson),
       creditsJson: Value(domainObj.creditsJson),
       seasonsJson: Value(domainObj.seasonsJson),
-      inLists: Value(domainObj.inLists),
       genreIds: Value(domainObj.genreIds),
       keywordIds: Value(domainObj.keywordIds),
       flatrateProviderIds: Value(domainObj.flatrateProviderIds),

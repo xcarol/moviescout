@@ -289,9 +289,6 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
 
   @protected
   Future<void> updateLocalTitle(TmdbTitle title) async {
-    if (!title.inLists.contains(listNameVal)) {
-      title.inLists = title.inLists.toList()..add(listNameVal);
-    }
     int currentMax = await repository.getMaxAddedOrder(listNameVal);
     await repository.saveTitles([title], listNameVal,
         addedOrders: [++currentMax]);
@@ -299,7 +296,6 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
 
   @protected
   Future<void> deleteLocalTitle(TmdbTitle title) async {
-    title.inLists = title.inLists.toList()..remove(listNameVal);
     await repository
         .deleteTitles(listNameVal, [title.tmdbId], [title.mediaType]);
   }

@@ -4,13 +4,15 @@ import 'package:path_provider/path_provider.dart';
 import 'package:moviescout/database/app_database.dart';
 
 class DatabaseService {
-  static late final AppDatabase _db;
+  static AppDatabase? _db;
 
   static Future<void> init({AppDatabase? db}) async {
     if (db != null) {
       _db = db;
       return;
     }
+
+    if (_db != null) return;
 
     if (!kIsWeb) {
       await _cleanupLegacyRealmFiles();
@@ -42,9 +44,10 @@ class DatabaseService {
     } catch (_) {}
   }
 
-  static AppDatabase get instance => _db;
+  static AppDatabase get instance => _db!;
 
   static Future<void> close() async {
-    await _db.close();
+    await _db?.close();
+    _db = null;
   }
 }

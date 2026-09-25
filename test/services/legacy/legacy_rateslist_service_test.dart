@@ -124,7 +124,6 @@ void main() {
           lastUpdated: DateTime.now().toIso8601String(),
           dateRated: DateTime.now());
       title.isPinned = true;
-      title.inLists = [AppConstants.watchlist];
 
       when(() => mockRepository.getTitleByTmdbId(
               AppConstants.watchlist, title.tmdbId, title.mediaType))
@@ -149,7 +148,6 @@ void main() {
 
       expect(title.rating, 8.0);
       expect(title.isPinned, false);
-      expect(title.inLists.contains(AppConstants.watchlist), false);
 
       verify(() => mockRepository.deleteTitles(
           AppConstants.watchlist, [title.tmdbId], [title.mediaType])).called(1);
@@ -169,7 +167,6 @@ void main() {
           dateRated: DateTime.now());
       title.notifyNewSeasons = true;
       title.rating = 8.0;
-      title.inLists = [AppConstants.rateslist];
 
       when(() => mockFollowingService.removeFollowingFromServer(title))
           .thenAnswer((_) async => true);

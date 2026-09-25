@@ -507,12 +507,6 @@ class $TmdbTitlesTable extends TmdbTitles
   late final GeneratedColumn<String> effectiveReleaseDate =
       GeneratedColumn<String>('effective_release_date', aliasedName, false,
           type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _addedOrderMeta =
-      const VerificationMeta('addedOrder');
-  @override
-  late final GeneratedColumn<int> addedOrder = GeneratedColumn<int>(
-      'added_order', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _isPinnedMeta =
       const VerificationMeta('isPinned');
   @override
@@ -581,13 +575,6 @@ class $TmdbTitlesTable extends TmdbTitles
   late final GeneratedColumn<String> seasonsJson = GeneratedColumn<String>(
       'seasons_json', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  @override
-  late final GeneratedColumnWithTypeConverter<List<String>, String> inLists =
-      GeneratedColumn<String>('in_lists', aliasedName, false,
-              type: DriftSqlType.string,
-              requiredDuringInsert: false,
-              defaultValue: const Constant('[]'))
-          .withConverter<List<String>>($TmdbTitlesTable.$converterinLists);
   @override
   late final GeneratedColumnWithTypeConverter<List<int>, String> genreIds =
       GeneratedColumn<String>('genre_ids', aliasedName, false,
@@ -670,7 +657,6 @@ class $TmdbTitlesTable extends TmdbTitles
         revenue,
         effectiveRuntime,
         effectiveReleaseDate,
-        addedOrder,
         isPinned,
         notifyNewSeasons,
         imagesJson,
@@ -681,7 +667,6 @@ class $TmdbTitlesTable extends TmdbTitles
         providersJson,
         creditsJson,
         seasonsJson,
-        inLists,
         genreIds,
         keywordIds,
         flatrateProviderIds,
@@ -915,14 +900,6 @@ class $TmdbTitlesTable extends TmdbTitles
     } else if (isInserting) {
       context.missing(_effectiveReleaseDateMeta);
     }
-    if (data.containsKey('added_order')) {
-      context.handle(
-          _addedOrderMeta,
-          addedOrder.isAcceptableOrUnknown(
-              data['added_order']!, _addedOrderMeta));
-    } else if (isInserting) {
-      context.missing(_addedOrderMeta);
-    }
     if (data.containsKey('is_pinned')) {
       context.handle(_isPinnedMeta,
           isPinned.isAcceptableOrUnknown(data['is_pinned']!, _isPinnedMeta));
@@ -1081,8 +1058,6 @@ class $TmdbTitlesTable extends TmdbTitles
       effectiveReleaseDate: attachedDatabase.typeMapping.read(
           DriftSqlType.string,
           data['${effectivePrefix}effective_release_date'])!,
-      addedOrder: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}added_order'])!,
       isPinned: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}is_pinned'])!,
       notifyNewSeasons: attachedDatabase.typeMapping.read(
@@ -1105,9 +1080,6 @@ class $TmdbTitlesTable extends TmdbTitles
           .read(DriftSqlType.string, data['${effectivePrefix}credits_json']),
       seasonsJson: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}seasons_json']),
-      inLists: $TmdbTitlesTable.$converterinLists.fromSql(attachedDatabase
-          .typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}in_lists'])!),
       genreIds: $TmdbTitlesTable.$convertergenreIds.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}genre_ids'])!),
@@ -1133,8 +1105,6 @@ class $TmdbTitlesTable extends TmdbTitles
     return $TmdbTitlesTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<List<String>, String> $converterinLists =
-      const StringListConverter();
   static TypeConverter<List<int>, String> $convertergenreIds =
       const IntListConverter();
   static TypeConverter<List<int>, String> $converterkeywordIds =
@@ -1176,7 +1146,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
   final int revenue;
   final int effectiveRuntime;
   final String effectiveReleaseDate;
-  final int addedOrder;
   final bool isPinned;
   final bool notifyNewSeasons;
   final String? imagesJson;
@@ -1187,7 +1156,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
   final String? providersJson;
   final String? creditsJson;
   final String? seasonsJson;
-  final List<String> inLists;
   final List<int> genreIds;
   final List<int> keywordIds;
   final List<int> flatrateProviderIds;
@@ -1228,7 +1196,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
       required this.revenue,
       required this.effectiveRuntime,
       required this.effectiveReleaseDate,
-      required this.addedOrder,
       required this.isPinned,
       required this.notifyNewSeasons,
       this.imagesJson,
@@ -1239,7 +1206,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
       this.providersJson,
       this.creditsJson,
       this.seasonsJson,
-      required this.inLists,
       required this.genreIds,
       required this.keywordIds,
       required this.flatrateProviderIds,
@@ -1288,7 +1254,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
     map['revenue'] = Variable<int>(revenue);
     map['effective_runtime'] = Variable<int>(effectiveRuntime);
     map['effective_release_date'] = Variable<String>(effectiveReleaseDate);
-    map['added_order'] = Variable<int>(addedOrder);
     map['is_pinned'] = Variable<bool>(isPinned);
     map['notify_new_seasons'] = Variable<bool>(notifyNewSeasons);
     if (!nullToAbsent || imagesJson != null) {
@@ -1314,10 +1279,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
     }
     if (!nullToAbsent || seasonsJson != null) {
       map['seasons_json'] = Variable<String>(seasonsJson);
-    }
-    {
-      map['in_lists'] =
-          Variable<String>($TmdbTitlesTable.$converterinLists.toSql(inLists));
     }
     {
       map['genre_ids'] =
@@ -1379,7 +1340,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
       revenue: Value(revenue),
       effectiveRuntime: Value(effectiveRuntime),
       effectiveReleaseDate: Value(effectiveReleaseDate),
-      addedOrder: Value(addedOrder),
       isPinned: Value(isPinned),
       notifyNewSeasons: Value(notifyNewSeasons),
       imagesJson: imagesJson == null && nullToAbsent
@@ -1406,7 +1366,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
       seasonsJson: seasonsJson == null && nullToAbsent
           ? const Value.absent()
           : Value(seasonsJson),
-      inLists: Value(inLists),
       genreIds: Value(genreIds),
       keywordIds: Value(keywordIds),
       flatrateProviderIds: Value(flatrateProviderIds),
@@ -1455,7 +1414,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
       effectiveRuntime: serializer.fromJson<int>(json['effectiveRuntime']),
       effectiveReleaseDate:
           serializer.fromJson<String>(json['effectiveReleaseDate']),
-      addedOrder: serializer.fromJson<int>(json['addedOrder']),
       isPinned: serializer.fromJson<bool>(json['isPinned']),
       notifyNewSeasons: serializer.fromJson<bool>(json['notifyNewSeasons']),
       imagesJson: serializer.fromJson<String?>(json['imagesJson']),
@@ -1469,7 +1427,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
       providersJson: serializer.fromJson<String?>(json['providersJson']),
       creditsJson: serializer.fromJson<String?>(json['creditsJson']),
       seasonsJson: serializer.fromJson<String?>(json['seasonsJson']),
-      inLists: serializer.fromJson<List<String>>(json['inLists']),
       genreIds: serializer.fromJson<List<int>>(json['genreIds']),
       keywordIds: serializer.fromJson<List<int>>(json['keywordIds']),
       flatrateProviderIds:
@@ -1516,7 +1473,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
       'revenue': serializer.toJson<int>(revenue),
       'effectiveRuntime': serializer.toJson<int>(effectiveRuntime),
       'effectiveReleaseDate': serializer.toJson<String>(effectiveReleaseDate),
-      'addedOrder': serializer.toJson<int>(addedOrder),
       'isPinned': serializer.toJson<bool>(isPinned),
       'notifyNewSeasons': serializer.toJson<bool>(notifyNewSeasons),
       'imagesJson': serializer.toJson<String?>(imagesJson),
@@ -1527,7 +1483,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
       'providersJson': serializer.toJson<String?>(providersJson),
       'creditsJson': serializer.toJson<String?>(creditsJson),
       'seasonsJson': serializer.toJson<String?>(seasonsJson),
-      'inLists': serializer.toJson<List<String>>(inLists),
       'genreIds': serializer.toJson<List<int>>(genreIds),
       'keywordIds': serializer.toJson<List<int>>(keywordIds),
       'flatrateProviderIds': serializer.toJson<List<int>>(flatrateProviderIds),
@@ -1571,7 +1526,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
           int? revenue,
           int? effectiveRuntime,
           String? effectiveReleaseDate,
-          int? addedOrder,
           bool? isPinned,
           bool? notifyNewSeasons,
           Value<String?> imagesJson = const Value.absent(),
@@ -1582,7 +1536,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
           Value<String?> providersJson = const Value.absent(),
           Value<String?> creditsJson = const Value.absent(),
           Value<String?> seasonsJson = const Value.absent(),
-          List<String>? inLists,
           List<int>? genreIds,
           List<int>? keywordIds,
           List<int>? flatrateProviderIds,
@@ -1629,7 +1582,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
         revenue: revenue ?? this.revenue,
         effectiveRuntime: effectiveRuntime ?? this.effectiveRuntime,
         effectiveReleaseDate: effectiveReleaseDate ?? this.effectiveReleaseDate,
-        addedOrder: addedOrder ?? this.addedOrder,
         isPinned: isPinned ?? this.isPinned,
         notifyNewSeasons: notifyNewSeasons ?? this.notifyNewSeasons,
         imagesJson: imagesJson.present ? imagesJson.value : this.imagesJson,
@@ -1647,7 +1599,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
             providersJson.present ? providersJson.value : this.providersJson,
         creditsJson: creditsJson.present ? creditsJson.value : this.creditsJson,
         seasonsJson: seasonsJson.present ? seasonsJson.value : this.seasonsJson,
-        inLists: inLists ?? this.inLists,
         genreIds: genreIds ?? this.genreIds,
         keywordIds: keywordIds ?? this.keywordIds,
         flatrateProviderIds: flatrateProviderIds ?? this.flatrateProviderIds,
@@ -1717,8 +1668,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
       effectiveReleaseDate: data.effectiveReleaseDate.present
           ? data.effectiveReleaseDate.value
           : this.effectiveReleaseDate,
-      addedOrder:
-          data.addedOrder.present ? data.addedOrder.value : this.addedOrder,
       isPinned: data.isPinned.present ? data.isPinned.value : this.isPinned,
       notifyNewSeasons: data.notifyNewSeasons.present
           ? data.notifyNewSeasons.value
@@ -1743,7 +1692,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
           data.creditsJson.present ? data.creditsJson.value : this.creditsJson,
       seasonsJson:
           data.seasonsJson.present ? data.seasonsJson.value : this.seasonsJson,
-      inLists: data.inLists.present ? data.inLists.value : this.inLists,
       genreIds: data.genreIds.present ? data.genreIds.value : this.genreIds,
       keywordIds:
           data.keywordIds.present ? data.keywordIds.value : this.keywordIds,
@@ -1795,7 +1743,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
           ..write('revenue: $revenue, ')
           ..write('effectiveRuntime: $effectiveRuntime, ')
           ..write('effectiveReleaseDate: $effectiveReleaseDate, ')
-          ..write('addedOrder: $addedOrder, ')
           ..write('isPinned: $isPinned, ')
           ..write('notifyNewSeasons: $notifyNewSeasons, ')
           ..write('imagesJson: $imagesJson, ')
@@ -1806,7 +1753,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
           ..write('providersJson: $providersJson, ')
           ..write('creditsJson: $creditsJson, ')
           ..write('seasonsJson: $seasonsJson, ')
-          ..write('inLists: $inLists, ')
           ..write('genreIds: $genreIds, ')
           ..write('keywordIds: $keywordIds, ')
           ..write('flatrateProviderIds: $flatrateProviderIds, ')
@@ -1852,7 +1798,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
         revenue,
         effectiveRuntime,
         effectiveReleaseDate,
-        addedOrder,
         isPinned,
         notifyNewSeasons,
         imagesJson,
@@ -1863,7 +1808,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
         providersJson,
         creditsJson,
         seasonsJson,
-        inLists,
         genreIds,
         keywordIds,
         flatrateProviderIds,
@@ -1908,7 +1852,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
           other.revenue == this.revenue &&
           other.effectiveRuntime == this.effectiveRuntime &&
           other.effectiveReleaseDate == this.effectiveReleaseDate &&
-          other.addedOrder == this.addedOrder &&
           other.isPinned == this.isPinned &&
           other.notifyNewSeasons == this.notifyNewSeasons &&
           other.imagesJson == this.imagesJson &&
@@ -1919,7 +1862,6 @@ class TmdbTitleData extends DataClass implements Insertable<TmdbTitleData> {
           other.providersJson == this.providersJson &&
           other.creditsJson == this.creditsJson &&
           other.seasonsJson == this.seasonsJson &&
-          other.inLists == this.inLists &&
           other.genreIds == this.genreIds &&
           other.keywordIds == this.keywordIds &&
           other.flatrateProviderIds == this.flatrateProviderIds &&
@@ -1962,7 +1904,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
   final Value<int> revenue;
   final Value<int> effectiveRuntime;
   final Value<String> effectiveReleaseDate;
-  final Value<int> addedOrder;
   final Value<bool> isPinned;
   final Value<bool> notifyNewSeasons;
   final Value<String?> imagesJson;
@@ -1973,7 +1914,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
   final Value<String?> providersJson;
   final Value<String?> creditsJson;
   final Value<String?> seasonsJson;
-  final Value<List<String>> inLists;
   final Value<List<int>> genreIds;
   final Value<List<int>> keywordIds;
   final Value<List<int>> flatrateProviderIds;
@@ -2015,7 +1955,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
     this.revenue = const Value.absent(),
     this.effectiveRuntime = const Value.absent(),
     this.effectiveReleaseDate = const Value.absent(),
-    this.addedOrder = const Value.absent(),
     this.isPinned = const Value.absent(),
     this.notifyNewSeasons = const Value.absent(),
     this.imagesJson = const Value.absent(),
@@ -2026,7 +1965,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
     this.providersJson = const Value.absent(),
     this.creditsJson = const Value.absent(),
     this.seasonsJson = const Value.absent(),
-    this.inLists = const Value.absent(),
     this.genreIds = const Value.absent(),
     this.keywordIds = const Value.absent(),
     this.flatrateProviderIds = const Value.absent(),
@@ -2069,7 +2007,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
     required int revenue,
     required int effectiveRuntime,
     required String effectiveReleaseDate,
-    required int addedOrder,
     this.isPinned = const Value.absent(),
     this.notifyNewSeasons = const Value.absent(),
     this.imagesJson = const Value.absent(),
@@ -2080,7 +2017,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
     this.providersJson = const Value.absent(),
     this.creditsJson = const Value.absent(),
     this.seasonsJson = const Value.absent(),
-    this.inLists = const Value.absent(),
     this.genreIds = const Value.absent(),
     this.keywordIds = const Value.absent(),
     this.flatrateProviderIds = const Value.absent(),
@@ -2117,7 +2053,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
         revenue = Value(revenue),
         effectiveRuntime = Value(effectiveRuntime),
         effectiveReleaseDate = Value(effectiveReleaseDate),
-        addedOrder = Value(addedOrder),
         character = Value(character),
         job = Value(job),
         department = Value(department);
@@ -2154,7 +2089,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
     Expression<int>? revenue,
     Expression<int>? effectiveRuntime,
     Expression<String>? effectiveReleaseDate,
-    Expression<int>? addedOrder,
     Expression<bool>? isPinned,
     Expression<bool>? notifyNewSeasons,
     Expression<String>? imagesJson,
@@ -2165,7 +2099,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
     Expression<String>? providersJson,
     Expression<String>? creditsJson,
     Expression<String>? seasonsJson,
-    Expression<String>? inLists,
     Expression<String>? genreIds,
     Expression<String>? keywordIds,
     Expression<String>? flatrateProviderIds,
@@ -2210,7 +2143,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
       if (effectiveRuntime != null) 'effective_runtime': effectiveRuntime,
       if (effectiveReleaseDate != null)
         'effective_release_date': effectiveReleaseDate,
-      if (addedOrder != null) 'added_order': addedOrder,
       if (isPinned != null) 'is_pinned': isPinned,
       if (notifyNewSeasons != null) 'notify_new_seasons': notifyNewSeasons,
       if (imagesJson != null) 'images_json': imagesJson,
@@ -2224,7 +2156,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
       if (providersJson != null) 'providers_json': providersJson,
       if (creditsJson != null) 'credits_json': creditsJson,
       if (seasonsJson != null) 'seasons_json': seasonsJson,
-      if (inLists != null) 'in_lists': inLists,
       if (genreIds != null) 'genre_ids': genreIds,
       if (keywordIds != null) 'keyword_ids': keywordIds,
       if (flatrateProviderIds != null)
@@ -2271,7 +2202,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
       Value<int>? revenue,
       Value<int>? effectiveRuntime,
       Value<String>? effectiveReleaseDate,
-      Value<int>? addedOrder,
       Value<bool>? isPinned,
       Value<bool>? notifyNewSeasons,
       Value<String?>? imagesJson,
@@ -2282,7 +2212,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
       Value<String?>? providersJson,
       Value<String?>? creditsJson,
       Value<String?>? seasonsJson,
-      Value<List<String>>? inLists,
       Value<List<int>>? genreIds,
       Value<List<int>>? keywordIds,
       Value<List<int>>? flatrateProviderIds,
@@ -2324,7 +2253,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
       revenue: revenue ?? this.revenue,
       effectiveRuntime: effectiveRuntime ?? this.effectiveRuntime,
       effectiveReleaseDate: effectiveReleaseDate ?? this.effectiveReleaseDate,
-      addedOrder: addedOrder ?? this.addedOrder,
       isPinned: isPinned ?? this.isPinned,
       notifyNewSeasons: notifyNewSeasons ?? this.notifyNewSeasons,
       imagesJson: imagesJson ?? this.imagesJson,
@@ -2335,7 +2263,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
       providersJson: providersJson ?? this.providersJson,
       creditsJson: creditsJson ?? this.creditsJson,
       seasonsJson: seasonsJson ?? this.seasonsJson,
-      inLists: inLists ?? this.inLists,
       genreIds: genreIds ?? this.genreIds,
       keywordIds: keywordIds ?? this.keywordIds,
       flatrateProviderIds: flatrateProviderIds ?? this.flatrateProviderIds,
@@ -2447,9 +2374,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
       map['effective_release_date'] =
           Variable<String>(effectiveReleaseDate.value);
     }
-    if (addedOrder.present) {
-      map['added_order'] = Variable<int>(addedOrder.value);
-    }
     if (isPinned.present) {
       map['is_pinned'] = Variable<bool>(isPinned.value);
     }
@@ -2481,10 +2405,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
     }
     if (seasonsJson.present) {
       map['seasons_json'] = Variable<String>(seasonsJson.value);
-    }
-    if (inLists.present) {
-      map['in_lists'] = Variable<String>(
-          $TmdbTitlesTable.$converterinLists.toSql(inLists.value));
     }
     if (genreIds.present) {
       map['genre_ids'] = Variable<String>(
@@ -2552,7 +2472,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
           ..write('revenue: $revenue, ')
           ..write('effectiveRuntime: $effectiveRuntime, ')
           ..write('effectiveReleaseDate: $effectiveReleaseDate, ')
-          ..write('addedOrder: $addedOrder, ')
           ..write('isPinned: $isPinned, ')
           ..write('notifyNewSeasons: $notifyNewSeasons, ')
           ..write('imagesJson: $imagesJson, ')
@@ -2563,7 +2482,6 @@ class TmdbTitlesCompanion extends UpdateCompanion<TmdbTitleData> {
           ..write('providersJson: $providersJson, ')
           ..write('creditsJson: $creditsJson, ')
           ..write('seasonsJson: $seasonsJson, ')
-          ..write('inLists: $inLists, ')
           ..write('genreIds: $genreIds, ')
           ..write('keywordIds: $keywordIds, ')
           ..write('flatrateProviderIds: $flatrateProviderIds, ')
@@ -4380,7 +4298,6 @@ typedef $$TmdbTitlesTableCreateCompanionBuilder = TmdbTitlesCompanion Function({
   required int revenue,
   required int effectiveRuntime,
   required String effectiveReleaseDate,
-  required int addedOrder,
   Value<bool> isPinned,
   Value<bool> notifyNewSeasons,
   Value<String?> imagesJson,
@@ -4391,7 +4308,6 @@ typedef $$TmdbTitlesTableCreateCompanionBuilder = TmdbTitlesCompanion Function({
   Value<String?> providersJson,
   Value<String?> creditsJson,
   Value<String?> seasonsJson,
-  Value<List<String>> inLists,
   Value<List<int>> genreIds,
   Value<List<int>> keywordIds,
   Value<List<int>> flatrateProviderIds,
@@ -4434,7 +4350,6 @@ typedef $$TmdbTitlesTableUpdateCompanionBuilder = TmdbTitlesCompanion Function({
   Value<int> revenue,
   Value<int> effectiveRuntime,
   Value<String> effectiveReleaseDate,
-  Value<int> addedOrder,
   Value<bool> isPinned,
   Value<bool> notifyNewSeasons,
   Value<String?> imagesJson,
@@ -4445,7 +4360,6 @@ typedef $$TmdbTitlesTableUpdateCompanionBuilder = TmdbTitlesCompanion Function({
   Value<String?> providersJson,
   Value<String?> creditsJson,
   Value<String?> seasonsJson,
-  Value<List<String>> inLists,
   Value<List<int>> genreIds,
   Value<List<int>> keywordIds,
   Value<List<int>> flatrateProviderIds,
@@ -4569,9 +4483,6 @@ class $$TmdbTitlesTableFilterComposer
       column: $table.effectiveReleaseDate,
       builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get addedOrder => $composableBuilder(
-      column: $table.addedOrder, builder: (column) => ColumnFilters(column));
-
   ColumnFilters<bool> get isPinned => $composableBuilder(
       column: $table.isPinned, builder: (column) => ColumnFilters(column));
 
@@ -4605,11 +4516,6 @@ class $$TmdbTitlesTableFilterComposer
 
   ColumnFilters<String> get seasonsJson => $composableBuilder(
       column: $table.seasonsJson, builder: (column) => ColumnFilters(column));
-
-  ColumnWithTypeConverterFilters<List<String>, List<String>, String>
-      get inLists => $composableBuilder(
-          column: $table.inLists,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
 
   ColumnWithTypeConverterFilters<List<int>, List<int>, String> get genreIds =>
       $composableBuilder(
@@ -4756,9 +4662,6 @@ class $$TmdbTitlesTableOrderingComposer
       column: $table.effectiveReleaseDate,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get addedOrder => $composableBuilder(
-      column: $table.addedOrder, builder: (column) => ColumnOrderings(column));
-
   ColumnOrderings<bool> get isPinned => $composableBuilder(
       column: $table.isPinned, builder: (column) => ColumnOrderings(column));
 
@@ -4793,9 +4696,6 @@ class $$TmdbTitlesTableOrderingComposer
 
   ColumnOrderings<String> get seasonsJson => $composableBuilder(
       column: $table.seasonsJson, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get inLists => $composableBuilder(
-      column: $table.inLists, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get genreIds => $composableBuilder(
       column: $table.genreIds, builder: (column) => ColumnOrderings(column));
@@ -4926,9 +4826,6 @@ class $$TmdbTitlesTableAnnotationComposer
   GeneratedColumn<String> get effectiveReleaseDate => $composableBuilder(
       column: $table.effectiveReleaseDate, builder: (column) => column);
 
-  GeneratedColumn<int> get addedOrder => $composableBuilder(
-      column: $table.addedOrder, builder: (column) => column);
-
   GeneratedColumn<bool> get isPinned =>
       $composableBuilder(column: $table.isPinned, builder: (column) => column);
 
@@ -4958,9 +4855,6 @@ class $$TmdbTitlesTableAnnotationComposer
 
   GeneratedColumn<String> get seasonsJson => $composableBuilder(
       column: $table.seasonsJson, builder: (column) => column);
-
-  GeneratedColumnWithTypeConverter<List<String>, String> get inLists =>
-      $composableBuilder(column: $table.inLists, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<List<int>, String> get genreIds =>
       $composableBuilder(column: $table.genreIds, builder: (column) => column);
@@ -5044,7 +4938,6 @@ class $$TmdbTitlesTableTableManager extends RootTableManager<
             Value<int> revenue = const Value.absent(),
             Value<int> effectiveRuntime = const Value.absent(),
             Value<String> effectiveReleaseDate = const Value.absent(),
-            Value<int> addedOrder = const Value.absent(),
             Value<bool> isPinned = const Value.absent(),
             Value<bool> notifyNewSeasons = const Value.absent(),
             Value<String?> imagesJson = const Value.absent(),
@@ -5055,7 +4948,6 @@ class $$TmdbTitlesTableTableManager extends RootTableManager<
             Value<String?> providersJson = const Value.absent(),
             Value<String?> creditsJson = const Value.absent(),
             Value<String?> seasonsJson = const Value.absent(),
-            Value<List<String>> inLists = const Value.absent(),
             Value<List<int>> genreIds = const Value.absent(),
             Value<List<int>> keywordIds = const Value.absent(),
             Value<List<int>> flatrateProviderIds = const Value.absent(),
@@ -5098,7 +4990,6 @@ class $$TmdbTitlesTableTableManager extends RootTableManager<
             revenue: revenue,
             effectiveRuntime: effectiveRuntime,
             effectiveReleaseDate: effectiveReleaseDate,
-            addedOrder: addedOrder,
             isPinned: isPinned,
             notifyNewSeasons: notifyNewSeasons,
             imagesJson: imagesJson,
@@ -5109,7 +5000,6 @@ class $$TmdbTitlesTableTableManager extends RootTableManager<
             providersJson: providersJson,
             creditsJson: creditsJson,
             seasonsJson: seasonsJson,
-            inLists: inLists,
             genreIds: genreIds,
             keywordIds: keywordIds,
             flatrateProviderIds: flatrateProviderIds,
@@ -5152,7 +5042,6 @@ class $$TmdbTitlesTableTableManager extends RootTableManager<
             required int revenue,
             required int effectiveRuntime,
             required String effectiveReleaseDate,
-            required int addedOrder,
             Value<bool> isPinned = const Value.absent(),
             Value<bool> notifyNewSeasons = const Value.absent(),
             Value<String?> imagesJson = const Value.absent(),
@@ -5163,7 +5052,6 @@ class $$TmdbTitlesTableTableManager extends RootTableManager<
             Value<String?> providersJson = const Value.absent(),
             Value<String?> creditsJson = const Value.absent(),
             Value<String?> seasonsJson = const Value.absent(),
-            Value<List<String>> inLists = const Value.absent(),
             Value<List<int>> genreIds = const Value.absent(),
             Value<List<int>> keywordIds = const Value.absent(),
             Value<List<int>> flatrateProviderIds = const Value.absent(),
@@ -5206,7 +5094,6 @@ class $$TmdbTitlesTableTableManager extends RootTableManager<
             revenue: revenue,
             effectiveRuntime: effectiveRuntime,
             effectiveReleaseDate: effectiveReleaseDate,
-            addedOrder: addedOrder,
             isPinned: isPinned,
             notifyNewSeasons: notifyNewSeasons,
             imagesJson: imagesJson,
@@ -5217,7 +5104,6 @@ class $$TmdbTitlesTableTableManager extends RootTableManager<
             providersJson: providersJson,
             creditsJson: creditsJson,
             seasonsJson: seasonsJson,
-            inLists: inLists,
             genreIds: genreIds,
             keywordIds: keywordIds,
             flatrateProviderIds: flatrateProviderIds,

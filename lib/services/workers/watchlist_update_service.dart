@@ -130,7 +130,13 @@ class WatchlistUpdateService {
         title.notifyNewSeasons = false;
       }
       await repository.updateNotifyNewSeasonsList([title]);
-      await _syncNotificationToSupabase(title, false);
+      final isInRateslist = await repository.hasTitlesInList(
+          [title.tmdbId], AppConstants.rateslist);
+      await _syncNotificationToSupabase(
+        title,
+        addedToWatchlist: false,
+        isInRateslist: isInRateslist,
+      );
 
       return true;
     }
@@ -160,8 +166,9 @@ class WatchlistUpdateService {
       title.lastNotifiedSeason = title.numberOfSeasons;
 
       bool addedToWatchlist = false;
-      if (!title.inLists.contains(AppConstants.watchlist)) {
-        title.inLists = [...title.inLists, AppConstants.watchlist];
+      final isInWatchlist =
+          await repository.hasTitlesInList([title.tmdbId], AppConstants.watchlist);
+      if (!isInWatchlist) {
         addedToWatchlist = true;
         final accountId =
             PreferencesService().prefs.getString('accountId') ?? '';
@@ -176,20 +183,30 @@ class WatchlistUpdateService {
       }
 
       await repository.updateNotifyNewSeasonsList([title]);
-      await _syncNotificationToSupabase(title, addedToWatchlist);
+      final isInRateslist = await repository.hasTitlesInList(
+          [title.tmdbId], AppConstants.rateslist);
+      await _syncNotificationToSupabase(
+        title,
+        addedToWatchlist: addedToWatchlist,
+        isInRateslist: isInRateslist,
+      );
       return true;
     }
 
     return false;
   }
 
-  Future<void> _syncNotificationToSupabase(TmdbTitle title, bool addedToWatchlist) async {
+  Future<void> _syncNotificationToSupabase(
+    TmdbTitle title, {
+    required bool addedToWatchlist,
+    required bool isInRateslist,
+  }) async {
     try {
       if (Supabase.instance.client.auth.currentSession == null) return;
       final user = Supabase.instance.client.auth.currentUser;
       if (user == null) return;
 
-      if (title.inLists.contains(AppConstants.rateslist)) {
+      if (isInRateslist) {
         await Supabase.instance.client.from('user_titles').update({
           'last_notified_season': title.lastNotifiedSeason,
           'notify_new_seasons': title.notifyNewSeasons,

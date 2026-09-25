@@ -22,26 +22,6 @@ class IntListConverter extends TypeConverter<List<int>, String> {
   String toSql(List<int> value) => jsonEncode(value);
 }
 
-class StringListConverter extends TypeConverter<List<String>, String> {
-  const StringListConverter();
-
-  @override
-  List<String> fromSql(String fromDb) {
-    if (fromDb.isEmpty) return const [];
-    try {
-      final decoded = jsonDecode(fromDb);
-      if (decoded is List) {
-        return decoded.map((e) => e.toString()).toList();
-      }
-      return const [];
-    } catch (_) {
-      return const [];
-    }
-  }
-
-  @override
-  String toSql(List<String> value) => jsonEncode(value);
-}
 
 @DataClassName('UserListEntryData')
 @TableIndex(
@@ -100,7 +80,6 @@ class TmdbTitles extends Table {
 
   IntColumn get effectiveRuntime => integer()();
   TextColumn get effectiveReleaseDate => text()();
-  IntColumn get addedOrder => integer()();
   BoolColumn get isPinned => boolean().withDefault(const Constant(false))();
   BoolColumn get notifyNewSeasons =>
       boolean().withDefault(const Constant(false))();
@@ -114,9 +93,6 @@ class TmdbTitles extends Table {
   TextColumn get creditsJson => text().nullable()();
   TextColumn get seasonsJson => text().nullable()();
 
-  TextColumn get inLists => text()
-      .map(const StringListConverter())
-      .withDefault(const Constant('[]'))();
   TextColumn get genreIds =>
       text().map(const IntListConverter()).withDefault(const Constant('[]'))();
   TextColumn get keywordIds =>

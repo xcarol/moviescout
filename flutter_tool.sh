@@ -161,7 +161,7 @@ fi
 
 if $run_build_drift; then
   echo "▶️ dart run build_runner build (drift)"
-  dart run build_runner build --delete-conflicting-outputs
+  dart run build_runner build
 fi
 
 if $run_wipe_cache; then

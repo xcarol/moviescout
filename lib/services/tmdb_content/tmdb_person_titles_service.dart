@@ -14,6 +14,7 @@ class TmdbPersonTitlesService extends TmdbTitleListService
 
   int _activeFetchId = 0;
   bool _isDisposed = false;
+  final Map<String, int> _originalOrder = {};
 
   TmdbPersonTitlesService(
     super.listName,
@@ -35,6 +36,7 @@ class TmdbPersonTitlesService extends TmdbTitleListService
 
   void _initializeTitles() {
     allItems.clear();
+    _originalOrder.clear();
     final seenIds = <int>{};
 
     if (role == PersonTitleRole.crew) {
@@ -46,7 +48,7 @@ class TmdbPersonTitlesService extends TmdbTitleListService
     }
 
     for (int i = 0; i < allItems.length; i++) {
-      allItems[i].addedOrder = i;
+      _originalOrder['${allItems[i].tmdbId}_${allItems[i].mediaType}'] = i;
     }
   }
 
@@ -128,7 +130,9 @@ class TmdbPersonTitlesService extends TmdbTitleListService
           cmp = a.effectiveRuntime.compareTo(b.effectiveRuntime);
           break;
         case SortOption.addedOrder:
-          cmp = a.addedOrder.compareTo(b.addedOrder);
+          final orderA = _originalOrder['${a.tmdbId}_${a.mediaType}'] ?? 0;
+          final orderB = _originalOrder['${b.tmdbId}_${b.mediaType}'] ?? 0;
+          cmp = orderA.compareTo(orderB);
           break;
         default:
           cmp = 0;
@@ -197,14 +201,12 @@ class TmdbPersonTitlesService extends TmdbTitleListService
           final character = title.character;
           final job = title.job;
           final department = title.department;
-          final addedOrder = title.addedOrder;
 
           title.fillFromMap(dbTitle.toMap());
 
           title.character = character;
           title.job = job;
           title.department = department;
-          title.addedOrder = addedOrder;
         }
       }
       _localUserRatingAvailable = allItems.any((t) => t.rating > 0);
