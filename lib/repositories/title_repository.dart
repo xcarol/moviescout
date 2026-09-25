@@ -17,20 +17,12 @@ class TitleRepository {
   TitleRepository({AppDatabase? db}) : _db = db ?? DatabaseService.instance;
 
   void _mergeTitleMetadata(TmdbTitle newTitle, TmdbTitle currentTitle,
-      {String? listNameToAdd}) {
-    if (listNameToAdd != null) {
-      final mergedLists = Set<String>.from(currentTitle.inLists);
-      mergedLists.add(listNameToAdd);
-      newTitle.inLists = mergedLists.toList();
-    } else {
-      newTitle.inLists = currentTitle.inLists;
-    }
-
-    if (listNameToAdd != AppConstants.watchlist) {
+      {String? listName}) {
+    if (listName != AppConstants.watchlist) {
       newTitle.isPinned = currentTitle.isPinned;
     }
 
-    if (listNameToAdd != AppConstants.rateslist) {
+    if (listName != AppConstants.rateslist) {
       newTitle.notifyNewSeasons = currentTitle.notifyNewSeasons;
       newTitle.lastNotifiedSeason = currentTitle.lastNotifiedSeason;
     }
@@ -57,11 +49,7 @@ class TitleRepository {
 
         if (existing != null) {
           _mergeTitleMetadata(title, DriftMapper.toDomainTitle(existing),
-              listNameToAdd: listName);
-        } else {
-          if (!title.inLists.contains(listName)) {
-            title.inLists = [...title.inLists, listName];
-          }
+              listName: listName);
         }
 
         await _db
@@ -190,10 +178,6 @@ class TitleRepository {
                   ..where((e) => e.tvId.equals(id)))
                 .go();
           }
-        } else {
-          final updatedLists = remainingEntries.map((e) => e.listName).toList();
-          await (_db.update(_db.tmdbTitles)..where((t) => t.id.equals(titleId)))
-              .write(TmdbTitlesCompanion(inLists: Value(updatedLists)));
         }
       }
     });
@@ -229,10 +213,6 @@ class TitleRepository {
                   ..where((e) => e.tvId.equals(entry.tmdbId)))
                 .go();
           }
-        } else {
-          final updatedLists = remaining.map((e) => e.listName).toList();
-          await (_db.update(_db.tmdbTitles)..where((t) => t.id.equals(titleId)))
-              .write(TmdbTitlesCompanion(inLists: Value(updatedLists)));
         }
       }
     });
@@ -303,8 +283,9 @@ class TitleRepository {
       ..limit(1);
 
     final row = await query.getSingleOrNull();
-    if (row == null) return null;
-    return DriftMapper.toDomainTitle(row.readTable(_db.tmdbTitles));
+    return row != null
+        ? DriftMapper.toDomainTitle(row.readTable(_db.tmdbTitles))
+        : null;
   }
 
   Future<TmdbSeason?> getSeason(int tvId, int seasonNumber) async {

@@ -21,6 +21,34 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1;
 
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onCreate: (Migrator m) async {
+        for (final entity in allSchemaEntities) {
+          try {
+            await m.create(entity);
+          } catch (e) {
+            if (e.toString().contains('already exists')) {
+              try {
+                await m.drop(entity);
+                await m.create(entity);
+              } catch (_) {}
+            } else {
+              rethrow;
+            }
+          }
+        }
+      },
+      beforeOpen: (details) async {
+        if (!kIsWeb) {
+          await customStatement('PRAGMA journal_mode = WAL;');
+        }
+        await customStatement('PRAGMA foreign_keys = ON;');
+      },
+    );
+  }
+
   static QueryExecutor _openConnection() {
     if (!kIsWeb && Platform.isLinux) {
       open.overrideFor(OperatingSystem.linux, () {
@@ -35,6 +63,7 @@ class AppDatabase extends _$AppDatabase {
       name: 'moviescout',
       native: const DriftNativeOptions(
         databaseDirectory: getApplicationSupportDirectory,
+        shareAcrossIsolates: true,
       ),
     );
   }

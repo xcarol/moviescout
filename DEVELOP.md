@@ -101,7 +101,7 @@ The shared preferences are located at: _~/.local/share/com.xicra.moviescout_ fol
 
 Drift (SQLite) is used as the local persistence layer. It provides type-safe, asynchronous queries, relational tables (`user_list_entries` for list ordering and memberships), and fast JSON querying for genres and providers.
 
-**NOTE:** Each time a Drift table schema changes (in `lib/database/drift_tables.dart` or `lib/database/app_database.dart`), run `dart run build_runner build --delete-conflicting-outputs` to regenerate `lib/database/app_database.g.dart`. This is also available by running the script `./flutter_tool.sh` with the `-s` or `--build-drift` parameter.
+**NOTE:** Each time a Drift table schema changes (in `lib/database/drift_tables.dart` or `lib/database/app_database.dart`), run `dart run build_runner build` to regenerate `lib/database/app_database.g.dart`. This is also available by running the script `./flutter_tool.sh` with the `-s` or `--build-drift` parameter.
 
 ## Icons
 

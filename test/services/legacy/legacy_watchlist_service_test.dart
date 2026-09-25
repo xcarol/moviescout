@@ -139,7 +139,6 @@ void main() {
           lastUpdated: DateTime.now().toIso8601String(),
           dateRated: DateTime.now());
       title.isPinned = true;
-      title.inLists = [AppConstants.watchlist];
 
       when(() => mockPinnedService.removePinnedFromServer(title))
           .thenAnswer((_) async => true);

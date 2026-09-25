@@ -260,8 +260,6 @@ class RateslistService extends TmdbTitleListService {
         if (watchlistTitle != null) {
           await repository.deleteTitles(
               AppConstants.watchlist, [title.tmdbId], [title.mediaType]);
-          title.inLists = title.inLists.toList()
-            ..remove(AppConstants.watchlist);
         }
       } else {
         if (title.notifyNewSeasons && followingService != null) {

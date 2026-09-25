@@ -130,8 +130,6 @@ class TmdbTitle implements TmdbItem {
   @override
   late int tmdbId;
 
-  List<String> inLists = [];
-
   @override
   late String name;
   late String originalName;
@@ -184,7 +182,6 @@ class TmdbTitle implements TmdbItem {
   // Calculated/Logic fields
   late int effectiveRuntime;
   late String effectiveReleaseDate;
-  int addedOrder = 0;
   late bool isPinned;
   late bool notifyNewSeasons;
 
