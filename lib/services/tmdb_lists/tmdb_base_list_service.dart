@@ -60,6 +60,13 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
   @protected
   RatingFilter filterRating = RatingFilter.all;
 
+  bool get hasActiveFilter =>
+      filterText.isNotEmpty ||
+      filterMediaType.isNotEmpty ||
+      filterGenres.isNotEmpty ||
+      filterProvidersIds.isNotEmpty ||
+      filterRating != RatingFilter.all;
+
   String get defaultSort => selectedSort;
   bool get defaultSortAsc => isSortAsc;
 

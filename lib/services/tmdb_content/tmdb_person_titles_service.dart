@@ -159,9 +159,6 @@ class TmdbPersonTitlesService extends TmdbTitleListService
   }
 
   @override
-  int get listTitleCount => allItems.length;
-
-  @override
   bool get listIsEmpty => allItems.isEmpty;
 
   @override

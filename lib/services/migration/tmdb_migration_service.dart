@@ -115,7 +115,8 @@ class TmdbMigrationService {
         'name': title.name,
         'poster_path': title.posterPathSuffix,
         'vote_average': title.voteAverage,
-        'created_at': baseTime.add(Duration(milliseconds: index++)).toIso8601String(),
+        'created_at':
+            baseTime.add(Duration(milliseconds: index++)).toIso8601String(),
       };
       if (listName == AppConstants.rateslist &&
           title.rating > 0 &&
@@ -143,7 +144,8 @@ class TmdbMigrationService {
         'episode_tmdb_id': episode.tmdbId,
         'rating': episode.rating,
         'rated_date': episode.lastUpdated,
-        'created_at': baseTime.add(Duration(milliseconds: index++)).toIso8601String(),
+        'created_at':
+            baseTime.add(Duration(milliseconds: index++)).toIso8601String(),
       };
     }).toList();
   }

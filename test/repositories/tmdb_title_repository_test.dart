@@ -1,6 +1,8 @@
+import 'dart:ffi';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:realm/realm.dart';
-import 'package:moviescout/database/realm_models.dart';
+import 'package:drift/native.dart';
+import 'package:sqlite3/open.dart';
+import 'package:moviescout/database/app_database.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
@@ -10,24 +12,26 @@ import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 
 void main() {
-  late Realm realm;
+  late AppDatabase db;
   late TitleRepository repository;
 
-  setUp(() {
-    final config = Configuration.inMemory(
-      [
-        UserListEntryRealm.schema,
-        TmdbTitleRealm.schema,
-        TmdbSeasonRealm.schema,
-        TmdbEpisodeRealm.schema,
-      ],
-    );
-    realm = Realm(config);
-    repository = TitleRepository(realm: realm);
+  setUpAll(() {
+    open.overrideFor(OperatingSystem.linux, () {
+      try {
+        return DynamicLibrary.open('libsqlite3.so');
+      } catch (_) {
+        return DynamicLibrary.open('libsqlite3.so.0');
+      }
+    });
   });
 
-  tearDown(() {
-    realm.close();
+  setUp(() {
+    db = AppDatabase(NativeDatabase.memory());
+    repository = TitleRepository(db: db);
+  });
+
+  tearDown(() async {
+    await db.close();
   });
 
   group('TmdbTitleRepository', () {
@@ -148,7 +152,7 @@ void main() {
       expect(s1!.notifyNewSeasons, false);
     });
 
-    test('hasTitlesInList, countTitlesSync, getAllTmdbIds, getAllTitlesInList',
+    test('hasTitlesInList, countTitles, getAllTmdbIds, getAllTitlesInList',
         () async {
       final t1 = TmdbTitle(
           tmdbId: 10,
@@ -161,7 +165,7 @@ void main() {
       expect(await repository.hasTitlesInList([10], 'watchlist'), isTrue);
       expect(await repository.hasTitlesInList([99], 'watchlist'), isFalse);
 
-      expect(repository.countTitlesSync('watchlist'), 1);
+      expect(await repository.countTitles('watchlist'), 1);
 
       final ids = await repository.getAllTmdbIds('watchlist');
       expect(ids, [10]);
@@ -185,7 +189,7 @@ void main() {
       expect(uninit.first.tmdbId, 1);
     });
 
-    test('getTitleByTmdbIdSync and getTitlesByTmdbIds', () async {
+    test('getTitleByTmdbId and getTitlesByTmdbIds', () async {
       final t1 = TmdbTitle(
           tmdbId: 1,
           name: 'T1',
@@ -194,9 +198,9 @@ void main() {
           dateRated: DateTime.now());
       await repository.saveTitles([t1], 'watchlist', addedOrders: [0]);
 
-      final syncTitle =
-          repository.getTitleByTmdbIdSync('watchlist', 1, 'movie');
-      expect(syncTitle, isNotNull);
+      final foundTitle =
+          await repository.getTitleByTmdbId('watchlist', 1, 'movie');
+      expect(foundTitle, isNotNull);
 
       final multiTitles = await repository.getTitlesByTmdbIds([1]);
       expect(multiTitles.length, 1);

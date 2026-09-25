@@ -5,7 +5,6 @@ firebase.json
 .cxx
 .kotlin
 coverage/
-default.realm.lock
 
 
 # Miscellaneous

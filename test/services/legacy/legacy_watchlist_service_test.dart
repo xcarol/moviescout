@@ -72,8 +72,8 @@ void main() {
           filterRating: any(named: 'filterRating'),
           pinned: any(named: 'pinned'),
         )).thenAnswer((_) async => 0);
-    when(() => mockRepository.countTitlesSync(AppConstants.watchlist))
-        .thenReturn(0);
+    when(() => mockRepository.countTitles(AppConstants.watchlist))
+        .thenAnswer((_) async => 0);
     when(() => mockRepository.getTitles(
           listName: any(named: 'listName'),
           filterText: any(named: 'filterText'),

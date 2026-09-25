@@ -4,6 +4,7 @@ targets:
       exclude:
         - test/**
     builders:
-      realm:realm_generator:
+      drift_dev:
         generate_for:
-          - lib/database/realm_models.dart
+          include:
+            - lib/database/**.dart

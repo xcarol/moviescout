@@ -55,9 +55,12 @@ class _MigrationScreenState extends State<MigrationScreen> {
           Provider.of<LegacyRateslistService>(context, listen: false);
       final locale = Localizations.localeOf(context);
 
-      final pinnedService = Provider.of<TmdbPinnedService>(context, listen: false);
-      final followingService = Provider.of<TmdbFollowingService>(context, listen: false);
-      final providerService = Provider.of<TmdbProviderService>(context, listen: false);
+      final pinnedService =
+          Provider.of<TmdbPinnedService>(context, listen: false);
+      final followingService =
+          Provider.of<TmdbFollowingService>(context, listen: false);
+      final providerService =
+          Provider.of<TmdbProviderService>(context, listen: false);
       final repository = Provider.of<TitleRepository>(context, listen: false);
 
       await watchlistService.syncFromServer(

@@ -85,15 +85,15 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
   }
 
   bool get listIsEmpty {
-    return listTitleCount == 0;
+    return !hasActiveFilter && selectedItemCount.value == 0;
   }
 
   bool get listIsNotEmpty {
     return !listIsEmpty;
   }
 
-  int get listTitleCount {
-    return repository.countTitlesSync(listNameVal);
+  Future<int> countTitles() async {
+    return await repository.countTitles(listNameVal);
   }
 
   Future<bool> contains(TmdbTitle title) async {
@@ -232,7 +232,6 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
 
     if (isInitialLoad) {
       await repository.saveTitles(serverList, listNameVal);
-      await filterItems();
     } else {
       final serverKeys =
           serverList.map((t) => '${t.tmdbId}_${t.mediaType}').toSet();
@@ -277,8 +276,6 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
         final mediaTypes = entriesToRemove.map((e) => e.mediaType).toList();
         await repository.deleteTitles(listNameVal, idsToRemove, mediaTypes);
       }
-
-      await filterItems();
     }
 
     UninitializedTitlesWorker.dispatch();
@@ -454,14 +451,6 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     if (memoryTitle != null) return memoryTitle;
 
     return repository.getTitleByTmdbId(listNameVal, tmdbId, mediaType);
-  }
-
-  TmdbTitle? getTitleByTmdbIdSync(int tmdbId, String mediaType) {
-    final memoryTitle = loadedItemsVal.firstWhereOrNull(
-        (t) => t.tmdbId == tmdbId && t.mediaType == mediaType);
-    if (memoryTitle != null) return memoryTitle;
-
-    return repository.getTitleByTmdbIdSync(listNameVal, tmdbId, mediaType);
   }
 
   @protected

@@ -46,7 +46,8 @@ class WatchlistService extends TmdbTitleListService {
       while (hasMore) {
         final response = await _supabase
             .from('user_titles')
-            .select('tmdb_id, media_type, is_pinned, created_at, name, poster_path, vote_average')
+            .select(
+                'tmdb_id, media_type, is_pinned, created_at, name, poster_path, vote_average')
             .eq('list_name', AppConstants.watchlist)
             .order('created_at', ascending: true)
             .range(start, start + limit - 1);

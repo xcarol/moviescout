@@ -1279,19 +1279,31 @@ class _TitleDetailsState extends State<TitleDetails> {
           height: 336.0,
           child: Consumer<RateslistService>(
             builder: (context, ratesService, child) {
-              return ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: title.recommendations.length,
-                itemBuilder: (context, index) {
-                  final recTitle = title.recommendations[index];
-                  final isRated = ratesService.getRating(
-                          recTitle.tmdbId, recTitle.mediaType) >
-                      0.0;
+              return FutureBuilder<List<double>>(
+                future: Future.wait(
+                  title.recommendations.map(
+                    (recTitle) => ratesService.getRatingAsync(
+                        recTitle.tmdbId, recTitle.mediaType),
+                  ),
+                ),
+                builder: (context, snapshot) {
+                  final ratings = snapshot.data;
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: title.recommendations.length,
+                    itemBuilder: (context, index) {
+                      final recTitle = title.recommendations[index];
+                      final isRated =
+                          (ratings != null && ratings.length > index)
+                              ? ratings[index] > 0.0
+                              : false;
 
-                  return TitleChip(
-                    title: recTitle,
-                    tmdbListService: widget._tmdbListService,
-                    isDimmed: isRated,
+                      return TitleChip(
+                        title: recTitle,
+                        tmdbListService: widget._tmdbListService,
+                        isDimmed: isRated,
+                      );
+                    },
                   );
                 },
               );

@@ -12,7 +12,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
 import 'package:moviescout/services/core/error_service.dart';
-import 'package:moviescout/services/core/realm_service.dart';
+import 'package:moviescout/services/core/database_service.dart';
 import 'package:moviescout/services/system/app_lifecycle_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/settings/language_service.dart';
@@ -86,7 +86,7 @@ void _runMain({bool isFromShortcutActivity = false}) async {
     await Future.wait([
       dotenv.load(fileName: ".env"),
       PreferencesService().init(),
-      RealmService.init(),
+      DatabaseService.init(),
     ]);
 
     await Supabase.initialize(
@@ -192,11 +192,13 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => SupabaseAuthService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
-      ChangeNotifierProxyProvider2<TmdbUserService, SupabaseAuthService, TmdbProviderService>(
+      ChangeNotifierProxyProvider2<TmdbUserService, SupabaseAuthService,
+          TmdbProviderService>(
         create: (_) => TmdbProviderService(),
-        update: (_, userService, authService, providerService) => providerService!
-          ..setup(userService.accountId, userService.sessionId,
-              userService.accessToken),
+        update: (_, userService, authService, providerService) =>
+            providerService!
+              ..setup(userService.accountId, userService.sessionId,
+                  userService.accessToken),
       ),
       ChangeNotifierProxyProvider<TmdbUserService, TmdbPinnedService>(
         create: (_) => TmdbPinnedService(repository),

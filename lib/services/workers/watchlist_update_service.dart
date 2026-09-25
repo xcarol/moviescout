@@ -4,7 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/services/core/error_service.dart';
-import 'package:moviescout/services/core/realm_service.dart';
+import 'package:moviescout/services/core/database_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -188,7 +188,7 @@ class WatchlistUpdateService {
       await dotenv.load(fileName: ".env");
       await PreferencesService().init();
 
-      await RealmService.init();
+      await DatabaseService.init();
       await NotificationService().init();
 
       logLines.add('---------------------------');
@@ -221,7 +221,7 @@ class WatchlistUpdateService {
 
       final watchlistTitles = await repository.getTitles(
         listName: AppConstants.watchlist,
-        limit: repository.countTitlesSync(AppConstants.watchlist),
+        limit: await repository.countTitles(AppConstants.watchlist),
       );
 
       final followingTitles = await repository.getTitles(

@@ -90,12 +90,14 @@ class TmdbProviderService extends TmdbConfigListService {
 
   Future<void> setup(
       String accountId, String sessionId, String accessToken) async {
-    final isSupabaseLoggedIn = Supabase.instance.client.auth.currentUser != null;
+    final isSupabaseLoggedIn =
+        Supabase.instance.client.auth.currentUser != null;
 
-    if (!isSupabaseLoggedIn && (accountId.isEmpty || sessionId.isEmpty || accessToken.isEmpty)) {
+    if (!isSupabaseLoggedIn &&
+        (accountId.isEmpty || sessionId.isEmpty || accessToken.isEmpty)) {
       return;
     }
-    
+
     if (_isInitialized || _isInitializing) {
       if (isSupabaseLoggedIn) {
         fetchAndListen();
@@ -160,7 +162,8 @@ class TmdbProviderService extends TmdbConfigListService {
           await applyData(response['providers_string']);
         }
       } catch (e, stackTrace) {
-        ErrorService.log(e, stackTrace: stackTrace, userMessage: 'Error fetching platforms');
+        ErrorService.log(e,
+            stackTrace: stackTrace, userMessage: 'Error fetching platforms');
       }
     } else {
       await super.fetchAndListen();
@@ -176,13 +179,13 @@ class TmdbProviderService extends TmdbConfigListService {
     final user = Supabase.instance.client.auth.currentUser;
     if (user != null) {
       try {
-        await Supabase.instance.client.from('profiles').upsert({
-          'id': user.id,
-          'providers_string': data
-        });
+        await Supabase.instance.client
+            .from('profiles')
+            .upsert({'id': user.id, 'providers_string': data});
         return true;
       } catch (e, stackTrace) {
-        ErrorService.log(e, stackTrace: stackTrace, userMessage: 'Error saving platforms');
+        ErrorService.log(e,
+            stackTrace: stackTrace, userMessage: 'Error saving platforms');
         return false;
       }
     } else {

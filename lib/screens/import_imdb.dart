@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
@@ -35,8 +34,9 @@ class _ImportIMDBState extends State<ImportIMDB> {
   late int _importId = -1;
   late bool _isRateList = false;
   late bool _operationInProgress = false;
-  late String _resetTitlesMessage = '';
-  late int _resetTitlesCount = 0;
+  // TODO: This code is broken and should be deleted in the future.
+  // late String _resetTitlesMessage = '';
+  // late int _resetTitlesCount = 0;
 
   final String searchServiceListName = 'importImdb';
 
@@ -83,6 +83,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
     });
   }
 
+  // TODO: This code is broken and should be deleted in the future.
+  /*
   Future<bool> _confirmationDialog(BuildContext context, String message) async {
     return await showDialog<bool>(
       context: context,
@@ -224,6 +226,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
       });
     }
   }
+  */
 
   Future<void> _readCsvFromFile(String path) async {
     try {
@@ -332,6 +335,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
               ),
             ],
           ),
+          // TODO: This code is broken and should be deleted in the future.
+          /*
           if (kDebugMode) const SizedBox(height: 10),
           if (kDebugMode)
             Row(
@@ -354,6 +359,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
                   Text('$_resetTitlesMessage: $_resetTitlesCount'),
               ],
             ),
+          */
         ],
       ),
     );

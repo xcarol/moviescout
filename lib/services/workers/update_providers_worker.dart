@@ -26,7 +26,7 @@ class UpdateProvidersWorker {
       final titleService = TmdbTitleService();
       final notificationService = NotificationService();
 
-      final totalCount = repository.countTitlesSync(listName);
+      final totalCount = await repository.countTitles(listName);
       if (totalCount == 0) return;
 
       final localeStr =
