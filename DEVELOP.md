@@ -92,17 +92,16 @@ Followed this guide: [i18n|Flutter](https://docs.flutter.dev/ui/accessibility-an
 
 Run `flutter gen-l10n` to update the i18n generated files.  
 
-## Shared Preferences (deprecated)
+## Shared Preferences
 
-~~The shared preferences are located at: _~/.local/share/com.xicra.moviescout_ folder.~~  
+Used for local settings like list filters, sort order, region, language and more.  
+The shared preferences are located at: _~/.local/share/com.xicra.moviescout_ folder.  
 
-## Realm
+## Drift (SQLite)
 
-Shared Preferences are not intended for huge data and a list of 1000 titles may reach 70MB which is even to much to hold in memory.  
+Drift (SQLite) is used as the local persistence layer. It provides type-safe, asynchronous queries, relational tables (`user_list_entries` for list ordering and memberships), and fast JSON querying for genres and providers.
 
-Realm was adopted because it is fast, easy to use, and has enough power for the kind of queries needed by the app.
-
-**NOTE:** Each time a Realm database model class changes its schema (e.g., adding or modifying properties in a `@RealmModel()` class), the command `dart run build_runner build` has to be executed to generate the `.realm.dart` files. This is also available by running the script `./flutter_tool.sh` with the `-s` or `--build-realm` parameter.
+**NOTE:** Each time a Drift table schema changes (in `lib/database/drift_tables.dart` or `lib/database/app_database.dart`), run `dart run build_runner build --delete-conflicting-outputs` to regenerate `lib/database/app_database.g.dart`. This is also available by running the script `./flutter_tool.sh` with the `-s` or `--build-drift` parameter.
 
 ## Icons
 

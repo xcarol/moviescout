@@ -96,11 +96,16 @@ class _DiscoverListState extends State<DiscoverList> {
     }
   }
 
-  void _updateDiscoverList({bool forceUpdate = false}) {
-    if (!mounted ||
-        _discoverlistService.isLoading.value ||
-        (_discoverlistService.listTitleCount > 0 && !forceUpdate)) {
+  void _updateDiscoverList({bool forceUpdate = false}) async {
+    if (!mounted || _discoverlistService.isLoading.value) {
       return;
+    }
+
+    if (!forceUpdate) {
+      final titleCount = await _discoverlistService.countTitles();
+      if (!mounted || titleCount > 0) {
+        return;
+      }
     }
 
     final userService = Provider.of<TmdbUserService>(context, listen: false);

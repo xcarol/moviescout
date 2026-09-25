@@ -21,20 +21,9 @@ class LegacyRateslistService extends TmdbTitleListService {
     filterRating = RatingFilter.rated;
   }
 
-  double getRating(int titleId, String mediaType) {
-    TmdbTitle? title = getTitleByTmdbIdSync(titleId, mediaType);
-    if (title == null) {
-      return 0.0;
-    }
-    return title.rating;
-  }
-
   Future<double> getRatingAsync(int titleId, String mediaType) async {
-    TmdbTitle? title = await getTitleByTmdbId(titleId, mediaType);
-    if (title == null) {
-      return 0.0;
-    }
-    return title.rating;
+    final title = await getTitleByTmdbId(titleId, mediaType);
+    return title?.rating ?? 0.0;
   }
 
   Future<DateTime> getRatingDate(int titleId, String mediaType) async {

@@ -56,7 +56,9 @@ dependencies:
   csv: ^8.0.0
 
   custom_refresh_indicator: ^4.0.1
-  realm: any
+  drift: ^2.26.0
+  drift_flutter: ^0.2.5
+  sqlite3: ^2.4.0
   supabase_flutter: ^2.17.2
   diacritic: ^0.1.6
   material_symbols_icons: ^4.2873.0
@@ -79,6 +81,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.3
   build_runner: any
+  drift_dev: ^2.26.0
   mocktail: ^1.0.5
 flutter:
 
