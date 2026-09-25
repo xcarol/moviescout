@@ -36,7 +36,8 @@ class AppDrawer extends StatelessWidget {
         children: <Widget>[
           _userProfileTile(context),
           _settingsTile(context),
-          if (isTmdbLoggedIn) _notificationsHistoryTile(context),
+          if (isGoogleLoggedIn || isTmdbLoggedIn)
+            _notificationsHistoryTile(context),
           if (isGoogleLoggedIn || isTmdbLoggedIn) _migrationTile(context),
           _aboutTile(context),
           const Divider(),
