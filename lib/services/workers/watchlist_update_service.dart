@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/services/core/error_service.dart';
@@ -129,6 +130,7 @@ class WatchlistUpdateService {
         title.notifyNewSeasons = false;
       }
       await repository.updateNotifyNewSeasonsList([title]);
+      await _syncNotificationToSupabase(title, false);
 
       return true;
     }
@@ -157,8 +159,10 @@ class WatchlistUpdateService {
 
       title.lastNotifiedSeason = title.numberOfSeasons;
 
+      bool addedToWatchlist = false;
       if (!title.inLists.contains(AppConstants.watchlist)) {
         title.inLists = [...title.inLists, AppConstants.watchlist];
+        addedToWatchlist = true;
         final accountId =
             PreferencesService().prefs.getString('accountId') ?? '';
         final sessionId =
@@ -172,10 +176,45 @@ class WatchlistUpdateService {
       }
 
       await repository.updateNotifyNewSeasonsList([title]);
+      await _syncNotificationToSupabase(title, addedToWatchlist);
       return true;
     }
 
     return false;
+  }
+
+  Future<void> _syncNotificationToSupabase(TmdbTitle title, bool addedToWatchlist) async {
+    try {
+      if (Supabase.instance.client.auth.currentSession == null) return;
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) return;
+
+      if (title.inLists.contains(AppConstants.rateslist)) {
+        await Supabase.instance.client.from('user_titles').update({
+          'last_notified_season': title.lastNotifiedSeason,
+          'notify_new_seasons': title.notifyNewSeasons,
+        }).eq('user_id', user.id).eq('tmdb_id', title.tmdbId).eq('media_type', title.mediaType).eq('list_name', AppConstants.rateslist);
+      }
+
+      if (addedToWatchlist) {
+        await Supabase.instance.client.from('user_titles').upsert({
+          'user_id': user.id,
+          'tmdb_id': title.tmdbId,
+          'media_type': title.mediaType,
+          'list_name': AppConstants.watchlist,
+          'is_pinned': false,
+          'name': title.name,
+          'poster_path': title.posterPathSuffix,
+          'vote_average': title.voteAverage,
+        }, onConflict: 'user_id, tmdb_id, media_type, list_name');
+      }
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Error syncing notification to Supabase',
+      );
+    }
   }
 
   Future<void> checkForUpdates() async {
