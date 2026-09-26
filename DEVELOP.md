@@ -103,6 +103,23 @@ Drift (SQLite) is used as the local persistence layer. It provides type-safe, as
 
 **NOTE:** Each time a Drift table schema changes (in `lib/database/drift_tables.dart` or `lib/database/app_database.dart`), run `dart run build_runner build` to regenerate `lib/database/app_database.g.dart`. This is also available by running the script `./flutter_tool.sh` with the `-s` or `--build-drift` parameter.
 
+### Web Support (sqlite3.wasm & drift_worker.js)
+
+To run or debug Drift on Flutter Web (`flutter run -d chrome`), two WebAssembly and worker assets must be placed inside the `web/` folder:
+
+- `web/drift_worker.js`
+- `web/sqlite3.wasm`
+
+These files are committed to Git as part of the web application assets.
+
+To automatically download or update them to the exact versions matching your `pubspec.lock` (e.g. after running `flutter pub upgrade`), use the provided helper option:
+
+```bash
+./flutter_tool.sh --drift-web
+```
+
+This command parses `pubspec.lock` to find the currently resolved versions of `drift` and `sqlite3`, and downloads the matching `drift_worker.js` and `sqlite3.wasm` from official GitHub releases directly into `web/`.
+
 ## Icons
 
 The [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) tool is used to generate the icons for different platforms  
@@ -204,6 +221,15 @@ To ensure secure communication between Google and Supabase without being blocked
 2. Go back to the Google Cloud Console, to the page of your *Web application*.
 3. Scroll down to the **Authorized redirect URIs** section and click "Add URI".
 4. Paste the Supabase Callback URL and save the changes in Google Cloud.
+
+#### B. URL Configuration (Redirect URLs)
+By default, Supabase projects redirect to `http://localhost:3000`. Since MovieScout Web runs on port `8080` (or your custom domain):
+1. In the Supabase Dashboard, navigate to **Authentication** > **URL Configuration**.
+2. Set **Site URL** to `http://localhost:8080` (or `https://moviescout.xicra.com`).
+3. Under **Redirect URLs**, click "Add URL" and add:
+   * `http://localhost:8080/**`
+   * `https://moviescout.xicra.com/**`
+4. Save the changes.
 
 ### 3. Obtaining the Environment Variables
 
