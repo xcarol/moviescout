@@ -32,7 +32,8 @@ void main() {
       expect(sampleColors.navigationBarNotSelected, const Color(0xFF888888));
       expect(sampleColors.chipCardBackground, const Color(0xFF999999));
       expect(sampleColors.dividerColor, const Color(0xFFAAAAAA));
-      expect(sampleColors.bottomNavigationBarBackground, const Color(0xFFBBBBBB));
+      expect(
+          sampleColors.bottomNavigationBarBackground, const Color(0xFFBBBBBB));
       expect(sampleColors.appBarBackground, const Color(0xFFCCCCCC));
       expect(sampleColors.appBarText, const Color(0xFFDDDDDD));
       expect(sampleColors.watchedOverlayColor, const Color(0xFFEEEEEE));
@@ -47,10 +48,12 @@ void main() {
       expect(copy.followingTitle, sampleColors.followingTitle);
       expect(copy.pinnedTitle, sampleColors.pinnedTitle);
       expect(copy.navigationBarSelected, sampleColors.navigationBarSelected);
-      expect(copy.navigationBarNotSelected, sampleColors.navigationBarNotSelected);
+      expect(
+          copy.navigationBarNotSelected, sampleColors.navigationBarNotSelected);
       expect(copy.chipCardBackground, sampleColors.chipCardBackground);
       expect(copy.dividerColor, sampleColors.dividerColor);
-      expect(copy.bottomNavigationBarBackground, sampleColors.bottomNavigationBarBackground);
+      expect(copy.bottomNavigationBarBackground,
+          sampleColors.bottomNavigationBarBackground);
       expect(copy.appBarBackground, sampleColors.appBarBackground);
       expect(copy.appBarText, sampleColors.appBarText);
       expect(copy.watchedOverlayColor, sampleColors.watchedOverlayColor);
@@ -128,7 +131,8 @@ void main() {
       );
       expect(
         lerpedMid.watchedOverlayColor,
-        Color.lerp(sampleColors.watchedOverlayColor, otherColors.watchedOverlayColor, 0.5),
+        Color.lerp(sampleColors.watchedOverlayColor,
+            otherColors.watchedOverlayColor, 0.5),
       );
     });
   });

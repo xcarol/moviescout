@@ -32,7 +32,8 @@ void main() {
       expect(season.episodesJson, '[]');
       expect(
         season.posterPath,
-        UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', '/season1.jpg'),
+        UrlConstants.tmdbImageOriginalTemplate
+            .replaceFirst('{PATH}', '/season1.jpg'),
       );
     });
 
@@ -154,7 +155,8 @@ void main() {
       expect(season.crew, isEmpty);
     });
 
-    test('posterPath returns empty string if posterPathSuffix is empty string', () {
+    test('posterPath returns empty string if posterPathSuffix is empty string',
+        () {
       final season = TmdbSeason(
         tmdbId: 1,
         tvId: 1,

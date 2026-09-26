@@ -65,7 +65,13 @@ void main() {
       expect(items.map((i) => i.tmdbId).toList(), [1, 2, 3, 4, 5]);
       expect(
         items.map((i) => i.name).toList(),
-        ['Title Name', 'Season Name', 'Episode Name', 'Person Name', 'Collection Name'],
+        [
+          'Title Name',
+          'Season Name',
+          'Episode Name',
+          'Person Name',
+          'Collection Name'
+        ],
       );
       expect(
         items.map((i) => i.lastUpdated).toList(),

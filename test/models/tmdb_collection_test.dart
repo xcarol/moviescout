@@ -55,14 +55,17 @@ void main() {
       expect(collection.lastUpdated, isNotEmpty);
     });
 
-    test('posterPath returns formatted url when suffix present, empty string otherwise', () {
+    test(
+        'posterPath returns formatted url when suffix present, empty string otherwise',
+        () {
       final withPoster = TmdbCollection(
         tmdbId: 1,
         name: 'Test',
         posterPathSuffix: '/sample.jpg',
         lastUpdated: '2026-01-01',
       );
-      final expectedUrl = UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', '/sample.jpg');
+      final expectedUrl = UrlConstants.tmdbImageOriginalTemplate
+          .replaceFirst('{PATH}', '/sample.jpg');
       expect(withPoster.posterPath, expectedUrl);
 
       final withNullPoster = TmdbCollection(
@@ -82,14 +85,17 @@ void main() {
       expect(withEmptyPoster.posterPath, '');
     });
 
-    test('backdropPath returns formatted url when suffix present, empty string otherwise', () {
+    test(
+        'backdropPath returns formatted url when suffix present, empty string otherwise',
+        () {
       final withBackdrop = TmdbCollection(
         tmdbId: 1,
         name: 'Test',
         backdropPathSuffix: '/sample_bg.jpg',
         lastUpdated: '2026-01-01',
       );
-      final expectedUrl = UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', '/sample_bg.jpg');
+      final expectedUrl = UrlConstants.tmdbImageOriginalTemplate
+          .replaceFirst('{PATH}', '/sample_bg.jpg');
       expect(withBackdrop.backdropPath, expectedUrl);
 
       final withNullBackdrop = TmdbCollection(

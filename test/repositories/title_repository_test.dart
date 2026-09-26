@@ -82,13 +82,15 @@ void main() {
       expect(s2!.overview, 'OV2');
     });
 
-    test('saveTitles and updateTitlesMetadata handle empty lists gracefully', () async {
+    test('saveTitles and updateTitlesMetadata handle empty lists gracefully',
+        () async {
       await repository.saveTitles([], 'watchlist');
       await repository.updateTitlesMetadata([]);
       expect(await repository.countTitles('watchlist'), 0);
     });
 
-    test('saveTitles assigns sequential order when addedOrders is omitted', () async {
+    test('saveTitles assigns sequential order when addedOrders is omitted',
+        () async {
       final t1 = TmdbTitle(
         tmdbId: 1,
         name: 'T1',
@@ -111,7 +113,8 @@ void main() {
       expect(entries[1].addedOrder, 1);
     });
 
-    test('saveTitles merges metadata when title already exists in database', () async {
+    test('saveTitles merges metadata when title already exists in database',
+        () async {
       final initial = TmdbTitle(
         tmdbId: 10,
         name: 'Initial Name',
@@ -144,7 +147,8 @@ void main() {
       expect(saved.dateRated, DateTime(2026, 1, 1));
     });
 
-    test('deleteTitles removes multiple titles and handles empty list', () async {
+    test('deleteTitles removes multiple titles and handles empty list',
+        () async {
       await repository.deleteTitles('watchlist', [], []);
 
       final t1 = TmdbTitle(
@@ -165,11 +169,14 @@ void main() {
 
       await repository.deleteTitles('watchlist', [1, 2], ['movie', 'tv']);
 
-      expect(await repository.getTitleByTmdbId('watchlist', 1, 'movie'), isNull);
+      expect(
+          await repository.getTitleByTmdbId('watchlist', 1, 'movie'), isNull);
       expect(await repository.getTitleByTmdbId('watchlist', 2, 'tv'), isNull);
     });
 
-    test('deleteTitles retains title in global table if referenced by another list', () async {
+    test(
+        'deleteTitles retains title in global table if referenced by another list',
+        () async {
       final title = TmdbTitle(
         tmdbId: 10,
         name: 'Shared Title',
@@ -181,15 +188,18 @@ void main() {
       await repository.saveTitles([title], 'favorites', addedOrders: [0]);
 
       await repository.deleteTitles('watchlist', [10], ['movie']);
-      expect(await repository.getTitleByTmdbId('watchlist', 10, 'movie'), isNull);
-      expect(await repository.getTitleByTmdbId('favorites', 10, 'movie'), isNotNull);
+      expect(
+          await repository.getTitleByTmdbId('watchlist', 10, 'movie'), isNull);
+      expect(await repository.getTitleByTmdbId('favorites', 10, 'movie'),
+          isNotNull);
       expect(await repository.getTitleGlobal(10, 'movie'), isNotNull);
 
       await repository.deleteTitles('favorites', [10], ['movie']);
       expect(await repository.getTitleGlobal(10, 'movie'), isNull);
     });
 
-    test('deleteTitles cascades removal of seasons and episodes for TV series', () async {
+    test('deleteTitles cascades removal of seasons and episodes for TV series',
+        () async {
       final tv = TmdbTitle(
         tmdbId: 50,
         name: 'TV Series',
@@ -229,7 +239,8 @@ void main() {
       expect(await repository.getEpisode(50, 1, 1), isNull);
     });
 
-    test('clearList deletes list entries and cascades orphan TV data', () async {
+    test('clearList deletes list entries and cascades orphan TV data',
+        () async {
       final sharedMovie = TmdbTitle(
         tmdbId: 1,
         name: 'Shared Movie',
@@ -245,7 +256,8 @@ void main() {
         dateRated: DateTime.now(),
       );
 
-      await repository.saveTitles([sharedMovie, exclusiveTv], 'listA', addedOrders: [0, 1]);
+      await repository.saveTitles([sharedMovie, exclusiveTv], 'listA',
+          addedOrders: [0, 1]);
       await repository.saveTitles([sharedMovie], 'listB', addedOrders: [0]);
 
       await repository.putSeason(TmdbSeason(
@@ -285,7 +297,8 @@ void main() {
       expect(await repository.getEpisode(2, 1, 1), isNull);
     });
 
-    test('hasRatedTitles returns true only when ratings exceed seen threshold', () async {
+    test('hasRatedTitles returns true only when ratings exceed seen threshold',
+        () async {
       final unrated = TmdbTitle(
         tmdbId: 1,
         name: 'Unrated',
@@ -302,7 +315,8 @@ void main() {
         rating: AppConstants.seenRating,
       );
 
-      await repository.saveTitles([unrated, seenOnly], 'watchlist', addedOrders: [0, 1]);
+      await repository.saveTitles([unrated, seenOnly], 'watchlist',
+          addedOrders: [0, 1]);
       expect(await repository.hasRatedTitles('watchlist'), isFalse);
 
       final rated = TmdbTitle(
@@ -351,7 +365,9 @@ void main() {
       expect(s1!.rating, 9.0);
     });
 
-    test('updateNotifyNewSeasonsList updates notifyNewSeasons and lastNotifiedSeason', () async {
+    test(
+        'updateNotifyNewSeasonsList updates notifyNewSeasons and lastNotifiedSeason',
+        () async {
       final t1 = TmdbTitle(
         tmdbId: 1,
         name: 'T1',
@@ -376,7 +392,8 @@ void main() {
       expect(s1.lastNotifiedSeason, 0);
     });
 
-    test('invalidateSeasonsAndEpisodes resets lastUpdated to epoch timestamp', () async {
+    test('invalidateSeasonsAndEpisodes resets lastUpdated to epoch timestamp',
+        () async {
       final s1 = TmdbSeason(
         tmdbId: 1,
         tvId: 100,
@@ -427,7 +444,9 @@ void main() {
       expect(untouchedS2!.lastUpdated, '2026-05-01T00:00:00.000');
     });
 
-    test('hasTitlesInList, countTitles, getAllTmdbIds, getAllTitlesInList, getAllEntries', () async {
+    test(
+        'hasTitlesInList, countTitles, getAllTmdbIds, getAllTitlesInList, getAllEntries',
+        () async {
       final t1 = TmdbTitle(
         tmdbId: 10,
         name: 'T1',
@@ -504,10 +523,12 @@ void main() {
       );
       await repository.saveTitles([t1], 'watchlist', addedOrders: [0]);
 
-      final foundTitle = await repository.getTitleByTmdbId('watchlist', 1, 'movie');
+      final foundTitle =
+          await repository.getTitleByTmdbId('watchlist', 1, 'movie');
       expect(foundTitle, isNotNull);
 
-      final notFound = await repository.getTitleByTmdbId('watchlist', 999, 'movie');
+      final notFound =
+          await repository.getTitleByTmdbId('watchlist', 999, 'movie');
       expect(notFound, isNull);
 
       final globalTitle = await repository.getTitleGlobal(1, 'movie');
@@ -524,7 +545,8 @@ void main() {
       expect(emptyTitles, isEmpty);
     });
 
-    test('Season and Episode methods with ratings and null fallbacks', () async {
+    test('Season and Episode methods with ratings and null fallbacks',
+        () async {
       expect(await repository.getSeason(999, 1), isNull);
       expect(await repository.getEpisode(999, 1, 1), isNull);
 
@@ -649,43 +671,54 @@ void main() {
         t3.effectiveRuntime = 5;
         t3.voteAverage = 9.4;
 
-        await repository.saveTitles([t1, t2, t3], 'watchlist', addedOrders: [0, 1, 2]);
+        await repository.saveTitles([t1, t2, t3], 'watchlist',
+            addedOrders: [0, 1, 2]);
       });
 
-      test('Filter by text matching name, originalName, overview, or tagline', () async {
-        final resName = await repository.getTitles(listName: 'watchlist', filterText: 'apple');
+      test('Filter by text matching name, originalName, overview, or tagline',
+          () async {
+        final resName = await repository.getTitles(
+            listName: 'watchlist', filterText: 'apple');
         expect(resName.length, 1);
         expect(resName.first.name, 'Apple');
 
-        final resTagline = await repository.getTitles(listName: 'watchlist', filterText: 'Yellow');
+        final resTagline = await repository.getTitles(
+            listName: 'watchlist', filterText: 'Yellow');
         expect(resTagline.length, 1);
         expect(resTagline.first.name, 'Banana');
 
-        final resOverview = await repository.getTitles(listName: 'watchlist', filterText: 'drama');
+        final resOverview = await repository.getTitles(
+            listName: 'watchlist', filterText: 'drama');
         expect(resOverview.length, 1);
         expect(resOverview.first.name, 'Chernobyl');
 
-        final resOriginal = await repository.getTitles(listName: 'watchlist', filterText: 'Banana Org');
+        final resOriginal = await repository.getTitles(
+            listName: 'watchlist', filterText: 'Banana Org');
         expect(resOriginal.length, 1);
         expect(resOriginal.first.name, 'Banana');
       });
 
-      test('Filter by mediaType including movies, tv shows, and miniseries', () async {
-        final resMovie = await repository.getTitles(listName: 'watchlist', filterMediaType: ApiConstants.movie);
+      test('Filter by mediaType including movies, tv shows, and miniseries',
+          () async {
+        final resMovie = await repository.getTitles(
+            listName: 'watchlist', filterMediaType: ApiConstants.movie);
         expect(resMovie.length, 1);
         expect(resMovie.first.name, 'Apple');
 
-        final resTv = await repository.getTitles(listName: 'watchlist', filterMediaType: ApiConstants.tv);
+        final resTv = await repository.getTitles(
+            listName: 'watchlist', filterMediaType: ApiConstants.tv);
         expect(resTv.length, 2);
         expect(resTv.map((t) => t.name), containsAll(['Banana', 'Chernobyl']));
 
-        final resMini = await repository.getTitles(listName: 'watchlist', filterMediaType: AppConstants.miniseries);
+        final resMini = await repository.getTitles(
+            listName: 'watchlist', filterMediaType: AppConstants.miniseries);
         expect(resMini.length, 1);
         expect(resMini.first.name, 'Chernobyl');
       });
 
       test('Filter by genres including exclusion', () async {
-        final res = await repository.getTitles(listName: 'watchlist', filterGenres: [12]);
+        final res = await repository
+            .getTitles(listName: 'watchlist', filterGenres: [12]);
         expect(res.length, 1);
         expect(res.first.name, 'Banana');
 
@@ -719,7 +752,8 @@ void main() {
           listName: 'watchlist',
           filterRating: RatingFilter.rated,
         );
-        expect(resRated.map((t) => t.name), containsAll(['Apple', 'Chernobyl']));
+        expect(
+            resRated.map((t) => t.name), containsAll(['Apple', 'Chernobyl']));
 
         final resSeen = await repository.getTitles(
           listName: 'watchlist',
@@ -737,55 +771,100 @@ void main() {
       });
 
       test('Filter by pinned true and false', () async {
-        final resPinned = await repository.getTitles(listName: 'watchlist', pinned: true);
+        final resPinned =
+            await repository.getTitles(listName: 'watchlist', pinned: true);
         expect(resPinned.length, 1);
         expect(resPinned.first.name, 'Apple');
 
-        final resUnpinned = await repository.getTitles(listName: 'watchlist', pinned: false);
-        expect(resUnpinned.map((t) => t.name), containsAll(['Banana', 'Chernobyl']));
+        final resUnpinned =
+            await repository.getTitles(listName: 'watchlist', pinned: false);
+        expect(resUnpinned.map((t) => t.name),
+            containsAll(['Banana', 'Chernobyl']));
       });
 
       test('Sorting variations ascending and descending', () async {
         // userRating
-        var res = await repository.getTitles(listName: 'watchlist', sortOption: SortOption.userRating, sortAscending: false);
+        var res = await repository.getTitles(
+            listName: 'watchlist',
+            sortOption: SortOption.userRating,
+            sortAscending: false);
         expect(res.first.name, 'Chernobyl'); // 9.5 > 8.0 > seenRating
-        res = await repository.getTitles(listName: 'watchlist', sortOption: SortOption.userRating, sortAscending: true);
+        res = await repository.getTitles(
+            listName: 'watchlist',
+            sortOption: SortOption.userRating,
+            sortAscending: true);
         expect(res.first.name, 'Banana'); // seenRating < 8.0 < 9.5
 
         // releaseDate
-        res = await repository.getTitles(listName: 'watchlist', sortOption: SortOption.releaseDate, sortAscending: false);
+        res = await repository.getTitles(
+            listName: 'watchlist',
+            sortOption: SortOption.releaseDate,
+            sortAscending: false);
         expect(res.first.name, 'Banana'); // 2026 > 2025 > 2019
-        res = await repository.getTitles(listName: 'watchlist', sortOption: SortOption.releaseDate, sortAscending: true);
+        res = await repository.getTitles(
+            listName: 'watchlist',
+            sortOption: SortOption.releaseDate,
+            sortAscending: true);
         expect(res.first.name, 'Chernobyl'); // 2019 < 2025 < 2026
 
         // runtime
-        res = await repository.getTitles(listName: 'watchlist', sortOption: SortOption.runtime, sortAscending: false);
+        res = await repository.getTitles(
+            listName: 'watchlist',
+            sortOption: SortOption.runtime,
+            sortAscending: false);
         expect(res.first.name, 'Apple');
-        res = await repository.getTitles(listName: 'watchlist', sortOption: SortOption.runtime, sortAscending: true);
+        res = await repository.getTitles(
+            listName: 'watchlist',
+            sortOption: SortOption.runtime,
+            sortAscending: true);
         expect(res.last.name, 'Banana');
 
         // addedOrder
-        res = await repository.getTitles(listName: 'watchlist', sortOption: SortOption.addedOrder, sortAscending: false);
+        res = await repository.getTitles(
+            listName: 'watchlist',
+            sortOption: SortOption.addedOrder,
+            sortAscending: false);
         expect(res.first.name, 'Chernobyl'); // order 2
-        res = await repository.getTitles(listName: 'watchlist', sortOption: SortOption.addedOrder, sortAscending: true);
+        res = await repository.getTitles(
+            listName: 'watchlist',
+            sortOption: SortOption.addedOrder,
+            sortAscending: true);
         expect(res.first.name, 'Apple'); // order 0
 
         // dateRated
-        res = await repository.getTitles(listName: 'watchlist', sortOption: SortOption.dateRated, sortAscending: false);
+        res = await repository.getTitles(
+            listName: 'watchlist',
+            sortOption: SortOption.dateRated,
+            sortAscending: false);
         expect(res.first.name, 'Apple'); // 2026 > 2025 > 2024
-        res = await repository.getTitles(listName: 'watchlist', sortOption: SortOption.dateRated, sortAscending: true);
+        res = await repository.getTitles(
+            listName: 'watchlist',
+            sortOption: SortOption.dateRated,
+            sortAscending: true);
         expect(res.first.name, 'Chernobyl'); // 2024 < 2025 < 2026
 
         // rating (voteAverage)
-        res = await repository.getTitles(listName: 'watchlist', sortOption: SortOption.rating, sortAscending: false);
+        res = await repository.getTitles(
+            listName: 'watchlist',
+            sortOption: SortOption.rating,
+            sortAscending: false);
         expect(res.first.name, 'Chernobyl'); // 9.4 > 9.0 > 7.0
-        res = await repository.getTitles(listName: 'watchlist', sortOption: SortOption.rating, sortAscending: true);
+        res = await repository.getTitles(
+            listName: 'watchlist',
+            sortOption: SortOption.rating,
+            sortAscending: true);
         expect(res.first.name, 'Apple'); // 7.0 < 9.0 < 9.4
 
         // alphabetically
-        res = await repository.getTitles(listName: 'watchlist', sortOption: SortOption.alphabetically, sortAscending: false);
+        res = await repository.getTitles(
+            listName: 'watchlist',
+            sortOption: SortOption.alphabetically,
+            sortAscending: false);
         expect(res.first.name, 'Chernobyl');
-        res = await repository.getTitles(listName: 'watchlist', sortOption: SortOption.alphabetically, sortAscending: true);
+        res = await repository.getTitles(
+            listName: 'watchlist',
+            sortOption: SortOption.alphabetically,
+            sortAscending: true);
         expect(res.first.name, 'Apple');
       });
 
@@ -801,11 +880,19 @@ void main() {
         expect(res.first.name, 'Banana');
       });
 
-      test('hasTitlesFiltered and countTitlesFiltered with various filters', () async {
-        final countText = await repository.countTitlesFiltered(listName: 'watchlist', filterText: 'Apple');
+      test('hasTitlesFiltered and countTitlesFiltered with various filters',
+          () async {
+        final countText = await repository.countTitlesFiltered(
+            listName: 'watchlist', filterText: 'Apple');
         expect(countText, 1);
-        expect(await repository.hasTitlesFiltered(listName: 'watchlist', filterText: 'Apple'), isTrue);
-        expect(await repository.hasTitlesFiltered(listName: 'watchlist', filterText: 'Strawberry'), isFalse);
+        expect(
+            await repository.hasTitlesFiltered(
+                listName: 'watchlist', filterText: 'Apple'),
+            isTrue);
+        expect(
+            await repository.hasTitlesFiltered(
+                listName: 'watchlist', filterText: 'Strawberry'),
+            isFalse);
 
         final countMini = await repository.countTitlesFiltered(
           listName: 'watchlist',
@@ -813,7 +900,8 @@ void main() {
         );
         expect(countMini, 1);
         expect(
-          await repository.hasTitlesFiltered(listName: 'watchlist', filterMediaType: AppConstants.miniseries),
+          await repository.hasTitlesFiltered(
+              listName: 'watchlist', filterMediaType: AppConstants.miniseries),
           isTrue,
         );
 

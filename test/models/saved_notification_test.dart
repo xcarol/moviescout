@@ -83,7 +83,8 @@ void main() {
       expect(notification.providerIds, [8, 9]);
     });
 
-    test('fromMap falls back to defaults when optional/missing fields are null', () {
+    test('fromMap falls back to defaults when optional/missing fields are null',
+        () {
       final notification = SavedNotification.fromMap({});
       expect(notification.id, 0);
       expect(notification.title, '');

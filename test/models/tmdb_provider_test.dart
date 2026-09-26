@@ -22,7 +22,8 @@ void main() {
       expect(provider.name, 'Netflix');
       expect(
         provider.logoPath,
-        UrlConstants.tmdbImageW45Template.replaceFirst('{PATH}', '/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg'),
+        UrlConstants.tmdbImageW45Template
+            .replaceFirst('{PATH}', '/t2yyOv40HZeVlLjYsCsPHnWLk4W.jpg'),
       );
     });
 

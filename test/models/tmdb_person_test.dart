@@ -80,11 +80,13 @@ void main() {
       expect(person.homepage, 'https://actor.com');
       expect(
         person.posterPath,
-        UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', '/profile.jpg'),
+        UrlConstants.tmdbImageOriginalTemplate
+            .replaceFirst('{PATH}', '/profile.jpg'),
       );
     });
 
-    test('constructor sets combinedCreditsJson when combinedCredits provided', () {
+    test('constructor sets combinedCreditsJson when combinedCredits provided',
+        () {
       final title = TmdbTitle(
         tmdbId: 10,
         name: 'Movie 1',
@@ -248,7 +250,8 @@ void main() {
 
     group('parsePersonList', () {
       test('returns empty list for null input', () {
-        expect(TmdbPerson.parsePersonList(null, PersonAttributes.cast), isEmpty);
+        expect(
+            TmdbPerson.parsePersonList(null, PersonAttributes.cast), isEmpty);
       });
 
       test('parses cast with roles list and merges duplicate appearances', () {
@@ -269,14 +272,16 @@ void main() {
           },
         ];
 
-        final parsed = TmdbPerson.parsePersonList(rawCast, PersonAttributes.cast);
+        final parsed =
+            TmdbPerson.parsePersonList(rawCast, PersonAttributes.cast);
         expect(parsed.length, 1);
         expect(parsed.first.tmdbId, 101);
         expect(parsed.first.name, 'Dual Actor');
         expect(parsed.first.character, 'Role A, Role B, Role C');
       });
 
-      test('parses cast fallback character and handles initial empty character', () {
+      test('parses cast fallback character and handles initial empty character',
+          () {
         final rawCast = [
           {
             PersonAttributes.id: 102,
@@ -290,7 +295,8 @@ void main() {
           },
         ];
 
-        final parsed = TmdbPerson.parsePersonList(rawCast, PersonAttributes.cast);
+        final parsed =
+            TmdbPerson.parsePersonList(rawCast, PersonAttributes.cast);
         expect(parsed.length, 1);
         expect(parsed.first.character, 'New Character');
       });
@@ -312,7 +318,8 @@ void main() {
           },
         ];
 
-        final parsed = TmdbPerson.parsePersonList(rawCrew, PersonAttributes.crew);
+        final parsed =
+            TmdbPerson.parsePersonList(rawCrew, PersonAttributes.crew);
         expect(parsed.length, 1);
         expect(parsed.first.tmdbId, 201);
         expect(parsed.first.job, 'Director, Producer, Writer');
@@ -332,13 +339,16 @@ void main() {
           },
         ];
 
-        final parsed = TmdbPerson.parsePersonList(rawCrew, PersonAttributes.crew);
+        final parsed =
+            TmdbPerson.parsePersonList(rawCrew, PersonAttributes.crew);
         expect(parsed.length, 1);
         expect(parsed.first.job, 'Cinematographer');
       });
     });
 
-    testWidgets('localizedJob and localizedDepartment extensions fallback to original without translation init', (tester) async {
+    testWidgets(
+        'localizedJob and localizedDepartment extensions fallback to original without translation init',
+        (tester) async {
       late BuildContext capturedContext;
       await tester.pumpWidget(
         MaterialApp(

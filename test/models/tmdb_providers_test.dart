@@ -32,7 +32,8 @@ void main() {
       expect(providers.buy.first.name, 'Google Play');
     });
 
-    test('returns empty lists and isEmpty = true when providers map is empty', () {
+    test('returns empty lists and isEmpty = true when providers map is empty',
+        () {
       const providers = TmdbProviders(providers: {});
 
       expect(providers.isEmpty, isTrue);

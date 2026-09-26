@@ -38,7 +38,9 @@ void main() {
       expect(title.lastNotifiedSeason, 0);
     });
 
-    test('constructor computes effective release date and runtime for TV series', () {
+    test(
+        'constructor computes effective release date and runtime for TV series',
+        () {
       final tvTitle = TmdbTitle(
         tmdbId: 200,
         name: 'Dark',
@@ -53,7 +55,9 @@ void main() {
       expect(tvTitle.effectiveRuntime, 26);
     });
 
-    test('constructor handles NaN values in voteAverage, rating, and popularity', () {
+    test(
+        'constructor handles NaN values in voteAverage, rating, and popularity',
+        () {
       final title = TmdbTitle(
         tmdbId: 300,
         name: 'NaN Test',
@@ -154,7 +158,10 @@ void main() {
         ],
         TmdbTitleFields.omdbRatings: {'imdb': '8.8'},
         TmdbTitleFields.externalIds: {'imdb_id': 'tt0137523'},
-        TmdbTitleFields.belongsToCollection: {'id': 999, 'name': 'Collection A'},
+        TmdbTitleFields.belongsToCollection: {
+          'id': 999,
+          'name': 'Collection A'
+        },
         TmdbTitleFields.character: 'Narrator',
         TmdbTitleFields.job: 'Producer',
         TmdbTitleFields.department: 'Production',
@@ -207,12 +214,16 @@ void main() {
       final serialized = title.toMap();
       expect(serialized[TmdbTitleFields.id], 550);
       expect(serialized[TmdbTitleFields.name], 'Fight Club');
-      expect(serialized[TmdbTitleFields.accountRating][TmdbTitleFields.accountRatingValue], 9.5);
+      expect(
+          serialized[TmdbTitleFields.accountRating]
+              [TmdbTitleFields.accountRatingValue],
+          9.5);
       expect(serialized[TmdbTitleFields.belongsToCollection]['id'], 999);
       expect(serialized[TmdbTitleFields.character], 'Narrator');
     });
 
-    test('accountRating parsing handles numeric rating and direct rating field', () {
+    test('accountRating parsing handles numeric rating and direct rating field',
+        () {
       final titleWithNum = TmdbTitle.fromMap(title: {
         TmdbTitleFields.id: 1,
         TmdbTitleFields.accountRating: 7.5,
@@ -292,7 +303,9 @@ void main() {
       expect(title.isRated, isTrue);
     });
 
-    test('isOnAir returns true for returning series, in production, and planned', () {
+    test(
+        'isOnAir returns true for returning series, in production, and planned',
+        () {
       final returningTitle = TmdbTitle(
         tmdbId: 1,
         name: 'Show',
@@ -350,7 +363,8 @@ void main() {
       expect(regularShow.isMiniSerie, isFalse);
     });
 
-    test('posterPath and backdropPath return formatted URLs or empty strings', () {
+    test('posterPath and backdropPath return formatted URLs or empty strings',
+        () {
       final withPaths = TmdbTitle(
         tmdbId: 1,
         name: 'Paths',
@@ -361,11 +375,13 @@ void main() {
       );
       expect(
         withPaths.posterPath,
-        UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', '/poster.jpg'),
+        UrlConstants.tmdbImageOriginalTemplate
+            .replaceFirst('{PATH}', '/poster.jpg'),
       );
       expect(
         withPaths.backdropPath,
-        UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', '/backdrop.jpg'),
+        UrlConstants.tmdbImageOriginalTemplate
+            .replaceFirst('{PATH}', '/backdrop.jpg'),
       );
 
       final withoutPaths = TmdbTitle(
@@ -466,7 +482,9 @@ void main() {
       expect(title.recommendations, same(title.recommendations));
     });
 
-    test('nextEpisodeToAir and lastEpisodeToAir parse episodes and expose air dates', () {
+    test(
+        'nextEpisodeToAir and lastEpisodeToAir parse episodes and expose air dates',
+        () {
       final title = TmdbTitle(
         tmdbId: 50,
         name: 'Show with Air Dates',
@@ -495,7 +513,9 @@ void main() {
       expect(title.lastEpisodeAirDate, '2026-05-25');
     });
 
-    test('nextEpisodeAirDate and lastEpisodeAirDate return empty when json is null', () {
+    test(
+        'nextEpisodeAirDate and lastEpisodeAirDate return empty when json is null',
+        () {
       final title = TmdbTitle(
         tmdbId: 1,
         name: 'No Air Dates',
@@ -524,7 +544,9 @@ void main() {
       expect(title.videos.first['key'], 'test10');
     });
 
-    test('updateGenreIds static method supports both genreIdsList and genres maps', () {
+    test(
+        'updateGenreIds static method supports both genreIdsList and genres maps',
+        () {
       final title1 = TmdbTitle(
         tmdbId: 1,
         name: 'T1',
@@ -540,10 +562,13 @@ void main() {
         lastUpdated: '',
         dateRated: DateTime.now(),
       );
-      TmdbTitle.updateGenreIds(title2, [
-        {'id': 35, 'name': 'Comedy'},
-        {'id': 80, 'name': 'Crime'},
-      ], null);
+      TmdbTitle.updateGenreIds(
+          title2,
+          [
+            {'id': 35, 'name': 'Comedy'},
+            {'id': 80, 'name': 'Crime'},
+          ],
+          null);
       expect(title2.genreIds, [35, 80]);
     });
 

@@ -25,14 +25,22 @@ void main() {
       expect(sampleTheme.controlPanelBackground, const Color(0xFF100000));
       expect(sampleTheme.controlPanelForeground, const Color(0xFF200000));
       expect(sampleTheme.infoLineBackground, const Color(0xFF300000));
-      expect(sampleTheme.infoLineActiveFilterBackground, const Color(0xFF400000));
-      expect(sampleTheme.infoLineActiveFilterForeground, const Color(0xFF500000));
-      expect(sampleTheme.infoLineInactiveFilterBackground, const Color(0xFF600000));
-      expect(sampleTheme.infoLineInactiveFilterForeground, const Color(0xFF700000));
-      expect(sampleTheme.controlPanelActiveFilterBackground, const Color(0xFF800000));
-      expect(sampleTheme.controlPanelActiveFilterForeground, const Color(0xFF900000));
-      expect(sampleTheme.controlPanelInactiveFilterBackground, const Color(0xFFA00000));
-      expect(sampleTheme.controlPanelInactiveFilterForeground, const Color(0xFFB00000));
+      expect(
+          sampleTheme.infoLineActiveFilterBackground, const Color(0xFF400000));
+      expect(
+          sampleTheme.infoLineActiveFilterForeground, const Color(0xFF500000));
+      expect(sampleTheme.infoLineInactiveFilterBackground,
+          const Color(0xFF600000));
+      expect(sampleTheme.infoLineInactiveFilterForeground,
+          const Color(0xFF700000));
+      expect(sampleTheme.controlPanelActiveFilterBackground,
+          const Color(0xFF800000));
+      expect(sampleTheme.controlPanelActiveFilterForeground,
+          const Color(0xFF900000));
+      expect(sampleTheme.controlPanelInactiveFilterBackground,
+          const Color(0xFFA00000));
+      expect(sampleTheme.controlPanelInactiveFilterForeground,
+          const Color(0xFFB00000));
       expect(sampleTheme.searchCursorColor, const Color(0xFFC00000));
       expect(sampleTheme.searchHintColor, const Color(0xFFD00000));
       expect(sampleTheme.searchSelectionColor, const Color(0xFFE00000));
@@ -43,14 +51,22 @@ void main() {
       expect(copy.controlPanelBackground, sampleTheme.controlPanelBackground);
       expect(copy.controlPanelForeground, sampleTheme.controlPanelForeground);
       expect(copy.infoLineBackground, sampleTheme.infoLineBackground);
-      expect(copy.infoLineActiveFilterBackground, sampleTheme.infoLineActiveFilterBackground);
-      expect(copy.infoLineActiveFilterForeground, sampleTheme.infoLineActiveFilterForeground);
-      expect(copy.infoLineInactiveFilterBackground, sampleTheme.infoLineInactiveFilterBackground);
-      expect(copy.infoLineInactiveFilterForeground, sampleTheme.infoLineInactiveFilterForeground);
-      expect(copy.controlPanelActiveFilterBackground, sampleTheme.controlPanelActiveFilterBackground);
-      expect(copy.controlPanelActiveFilterForeground, sampleTheme.controlPanelActiveFilterForeground);
-      expect(copy.controlPanelInactiveFilterBackground, sampleTheme.controlPanelInactiveFilterBackground);
-      expect(copy.controlPanelInactiveFilterForeground, sampleTheme.controlPanelInactiveFilterForeground);
+      expect(copy.infoLineActiveFilterBackground,
+          sampleTheme.infoLineActiveFilterBackground);
+      expect(copy.infoLineActiveFilterForeground,
+          sampleTheme.infoLineActiveFilterForeground);
+      expect(copy.infoLineInactiveFilterBackground,
+          sampleTheme.infoLineInactiveFilterBackground);
+      expect(copy.infoLineInactiveFilterForeground,
+          sampleTheme.infoLineInactiveFilterForeground);
+      expect(copy.controlPanelActiveFilterBackground,
+          sampleTheme.controlPanelActiveFilterBackground);
+      expect(copy.controlPanelActiveFilterForeground,
+          sampleTheme.controlPanelActiveFilterForeground);
+      expect(copy.controlPanelInactiveFilterBackground,
+          sampleTheme.controlPanelInactiveFilterBackground);
+      expect(copy.controlPanelInactiveFilterForeground,
+          sampleTheme.controlPanelInactiveFilterForeground);
       expect(copy.searchCursorColor, sampleTheme.searchCursorColor);
       expect(copy.searchHintColor, sampleTheme.searchHintColor);
       expect(copy.searchSelectionColor, sampleTheme.searchSelectionColor);
@@ -81,10 +97,14 @@ void main() {
       expect(updated.infoLineActiveFilterForeground, const Color(0xFF005000));
       expect(updated.infoLineInactiveFilterBackground, const Color(0xFF006000));
       expect(updated.infoLineInactiveFilterForeground, const Color(0xFF007000));
-      expect(updated.controlPanelActiveFilterBackground, const Color(0xFF008000));
-      expect(updated.controlPanelActiveFilterForeground, const Color(0xFF009000));
-      expect(updated.controlPanelInactiveFilterBackground, const Color(0xFF00A000));
-      expect(updated.controlPanelInactiveFilterForeground, const Color(0xFF00B000));
+      expect(
+          updated.controlPanelActiveFilterBackground, const Color(0xFF008000));
+      expect(
+          updated.controlPanelActiveFilterForeground, const Color(0xFF009000));
+      expect(updated.controlPanelInactiveFilterBackground,
+          const Color(0xFF00A000));
+      expect(updated.controlPanelInactiveFilterForeground,
+          const Color(0xFF00B000));
       expect(updated.searchCursorColor, const Color(0xFF00C000));
       expect(updated.searchHintColor, const Color(0xFF00D000));
       expect(updated.searchSelectionColor, const Color(0xFF00E000));
@@ -114,21 +134,25 @@ void main() {
       );
 
       final lerpedZero = sampleTheme.lerp(otherTheme, 0.0);
-      expect(lerpedZero.controlPanelBackground, sampleTheme.controlPanelBackground);
+      expect(lerpedZero.controlPanelBackground,
+          sampleTheme.controlPanelBackground);
       expect(lerpedZero.searchSelectionColor, sampleTheme.searchSelectionColor);
 
       final lerpedOne = sampleTheme.lerp(otherTheme, 1.0);
-      expect(lerpedOne.controlPanelBackground, otherTheme.controlPanelBackground);
+      expect(
+          lerpedOne.controlPanelBackground, otherTheme.controlPanelBackground);
       expect(lerpedOne.searchSelectionColor, otherTheme.searchSelectionColor);
 
       final lerpedMid = sampleTheme.lerp(otherTheme, 0.5);
       expect(
         lerpedMid.controlPanelBackground,
-        Color.lerp(sampleTheme.controlPanelBackground, otherTheme.controlPanelBackground, 0.5),
+        Color.lerp(sampleTheme.controlPanelBackground,
+            otherTheme.controlPanelBackground, 0.5),
       );
       expect(
         lerpedMid.searchSelectionColor,
-        Color.lerp(sampleTheme.searchSelectionColor, otherTheme.searchSelectionColor, 0.5),
+        Color.lerp(sampleTheme.searchSelectionColor,
+            otherTheme.searchSelectionColor, 0.5),
       );
     });
   });

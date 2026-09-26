@@ -74,7 +74,10 @@ void main() {
       expect(episode.lastUpdated, AppConstants.defaultDate);
       expect(episode.dateRated, DateTime.fromMillisecondsSinceEpoch(0));
 
-      expect(episode.stillPath, UrlConstants.tmdbImageOriginalTemplate.replaceFirst('{PATH}', '/still_202.jpg'));
+      expect(
+          episode.stillPath,
+          UrlConstants.tmdbImageOriginalTemplate
+              .replaceFirst('{PATH}', '/still_202.jpg'));
       expect(episode.images, ['/img1.jpg', '/img2.jpg']);
       expect(episode.images, same(episode.images));
       expect(episode.videos, [
@@ -113,7 +116,8 @@ void main() {
       expect(episode.crew, isEmpty);
     });
 
-    test('images and videos handle invalid json or non-list decoded objects', () {
+    test('images and videos handle invalid json or non-list decoded objects',
+        () {
       final episode = TmdbEpisode(
         tmdbId: 303,
         tvId: 1,
