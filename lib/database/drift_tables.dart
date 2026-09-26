@@ -22,7 +22,6 @@ class IntListConverter extends TypeConverter<List<int>, String> {
   String toSql(List<int> value) => jsonEncode(value);
 }
 
-
 @DataClassName('UserListEntryData')
 @TableIndex(
     name: 'idx_user_list_entries_list_order', columns: {#listName, #addedOrder})

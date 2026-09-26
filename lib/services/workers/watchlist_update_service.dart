@@ -130,8 +130,8 @@ class WatchlistUpdateService {
         title.notifyNewSeasons = false;
       }
       await repository.updateNotifyNewSeasonsList([title]);
-      final isInRateslist = await repository.hasTitlesInList(
-          [title.tmdbId], AppConstants.rateslist);
+      final isInRateslist = await repository
+          .hasTitlesInList([title.tmdbId], AppConstants.rateslist);
       await _syncNotificationToSupabase(
         title,
         addedToWatchlist: false,
@@ -166,8 +166,8 @@ class WatchlistUpdateService {
       title.lastNotifiedSeason = title.numberOfSeasons;
 
       bool addedToWatchlist = false;
-      final isInWatchlist =
-          await repository.hasTitlesInList([title.tmdbId], AppConstants.watchlist);
+      final isInWatchlist = await repository
+          .hasTitlesInList([title.tmdbId], AppConstants.watchlist);
       if (!isInWatchlist) {
         addedToWatchlist = true;
         final accountId =
@@ -183,8 +183,8 @@ class WatchlistUpdateService {
       }
 
       await repository.updateNotifyNewSeasonsList([title]);
-      final isInRateslist = await repository.hasTitlesInList(
-          [title.tmdbId], AppConstants.rateslist);
+      final isInRateslist = await repository
+          .hasTitlesInList([title.tmdbId], AppConstants.rateslist);
       await _syncNotificationToSupabase(
         title,
         addedToWatchlist: addedToWatchlist,
@@ -207,10 +207,16 @@ class WatchlistUpdateService {
       if (user == null) return;
 
       if (isInRateslist) {
-        await Supabase.instance.client.from('user_titles').update({
-          'last_notified_season': title.lastNotifiedSeason,
-          'notify_new_seasons': title.notifyNewSeasons,
-        }).eq('user_id', user.id).eq('tmdb_id', title.tmdbId).eq('media_type', title.mediaType).eq('list_name', AppConstants.rateslist);
+        await Supabase.instance.client
+            .from('user_titles')
+            .update({
+              'last_notified_season': title.lastNotifiedSeason,
+              'notify_new_seasons': title.notifyNewSeasons,
+            })
+            .eq('user_id', user.id)
+            .eq('tmdb_id', title.tmdbId)
+            .eq('media_type', title.mediaType)
+            .eq('list_name', AppConstants.rateslist);
       }
 
       if (addedToWatchlist) {
