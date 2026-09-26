@@ -1,4 +1,5 @@
-import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -28,9 +29,17 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
     super.initState();
     VideoPlayerService().addListener(_onPlayerStateChanged);
     _onPlayerStateChanged(); // Initial check
+    _enableAutoPip();
+  }
 
-    if (Platform.isAndroid) {
-      SimplePip().setAutoPipMode(aspectRatio: const (16, 9));
+  Future<void> _enableAutoPip() async {
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      try {
+        final isAvailable = await SimplePip.isAutoPipAvailable;
+        if (isAvailable) {
+          await SimplePip().setAutoPipMode(aspectRatio: const (16, 9));
+        }
+      } catch (_) {}
     }
   }
 
@@ -40,11 +49,19 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
     _controller?.close();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
-    if (Platform.isAndroid) {
-      SimplePip().setAutoPipMode(autoEnter: false);
-    }
+    _disableAutoPip();
     super.dispose();
+  }
+
+  Future<void> _disableAutoPip() async {
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      try {
+        final isAvailable = await SimplePip.isAutoPipAvailable;
+        if (isAvailable) {
+          await SimplePip().setAutoPipMode(autoEnter: false);
+        }
+      } catch (_) {}
+    }
   }
 
   Future<void> _onPlayerStateChanged() async {
@@ -98,90 +115,94 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
       return const SizedBox.shrink();
     }
 
-    return PipWidget(
-      pipBuilder: (context) {
-        // When in PiP mode, the video fills the whole PiP window
-        return Positioned.fill(
-          child: Container(
-            color: Colors.black,
-            child: YoutubePlayer(controller: _controller!),
-          ),
-        );
-      },
-      builder: (context) {
-        // Normal floating window when not in PiP mode
-        return Positioned(
-          left: _x,
-          top: _y,
-          child: Material(
-            elevation: 12,
-            borderRadius: BorderRadius.circular(12),
-            clipBehavior: Clip.antiAlias,
-            color: Colors.black,
-            child: SizedBox(
-              width: _playerWidth,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  GestureDetector(
-                    onPanUpdate: (details) {
-                      setState(() {
-                        _x += details.delta.dx;
-                        _y += details.delta.dy;
+    Widget floatingWindow(BuildContext context) {
+      return Positioned(
+        left: _x,
+        top: _y,
+        child: Material(
+          elevation: 12,
+          borderRadius: BorderRadius.circular(12),
+          clipBehavior: Clip.antiAlias,
+          color: Colors.black,
+          child: SizedBox(
+            width: _playerWidth,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onPanUpdate: (details) {
+                    setState(() {
+                      _x += details.delta.dx;
+                      _y += details.delta.dy;
 
-                        final size = MediaQuery.of(context).size;
-                        if (_x < 0) _x = 0;
-                        if (_y < MediaQuery.of(context).padding.top) {
-                          _y = MediaQuery.of(context).padding.top;
-                        }
-                        if (_x > size.width - _playerWidth) {
-                          _x = size.width - _playerWidth;
-                        }
-                        if (_y >
-                            size.height -
-                                _playerHeight -
-                                30 -
-                                MediaQuery.of(context).padding.bottom) {
-                          _y = size.height -
+                      final size = MediaQuery.of(context).size;
+                      if (_x < 0) _x = 0;
+                      if (_y < MediaQuery.of(context).padding.top) {
+                        _y = MediaQuery.of(context).padding.top;
+                      }
+                      if (_x > size.width - _playerWidth) {
+                        _x = size.width - _playerWidth;
+                      }
+                      if (_y >
+                          size.height -
                               _playerHeight -
                               30 -
-                              MediaQuery.of(context).padding.bottom;
-                        }
-                      });
-                    },
-                    child: Container(
-                      height: 30,
-                      color: Colors.grey.shade900,
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 8),
-                          const Icon(Icons.drag_handle,
-                              color: Colors.white54, size: 20),
-                          const Spacer(),
-                          IconButton(
-                            padding: EdgeInsets.zero,
-                            iconSize: 20,
-                            icon: const Icon(Icons.close, color: Colors.white),
-                            onPressed: () {
-                              VideoPlayerService().closeVideo();
-                            },
-                          ),
-                        ],
-                      ),
+                              MediaQuery.of(context).padding.bottom) {
+                        _y = size.height -
+                            _playerHeight -
+                            30 -
+                            MediaQuery.of(context).padding.bottom;
+                      }
+                    });
+                  },
+                  child: Container(
+                    height: 30,
+                    color: Colors.grey.shade900,
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 8),
+                        const Icon(Icons.drag_handle,
+                            color: Colors.white54, size: 20),
+                        const Spacer(),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          iconSize: 20,
+                          icon: const Icon(Icons.close, color: Colors.white),
+                          onPressed: () {
+                            VideoPlayerService().closeVideo();
+                          },
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(
-                    height: _playerHeight,
-                    child: YoutubePlayer(
-                      controller: _controller!,
-                    ),
+                ),
+                SizedBox(
+                  height: _playerHeight,
+                  child: YoutubePlayer(
+                    controller: _controller!,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        );
-      },
-    );
+        ),
+      );
+    }
+
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      return PipWidget(
+        pipBuilder: (context) {
+          return Positioned.fill(
+            child: Container(
+              color: Colors.black,
+              child: YoutubePlayer(controller: _controller!),
+            ),
+          );
+        },
+        builder: floatingWindow,
+      );
+    }
+
+    return floatingWindow(context);
   }
 }
