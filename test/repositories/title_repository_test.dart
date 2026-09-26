@@ -239,6 +239,49 @@ void main() {
       expect(await repository.getEpisode(50, 1, 1), isNull);
     });
 
+    test('deleteTitles cascades removal of seasons and episodes for miniseries',
+        () async {
+      final mini = TmdbTitle(
+        tmdbId: 60,
+        name: 'Miniseries Show',
+        mediaType: AppConstants.miniseries,
+        lastUpdated: '2026-01-01',
+        dateRated: DateTime.now(),
+      );
+      await repository.saveTitles([mini], 'watchlist', addedOrders: [0]);
+
+      await repository.putSeason(TmdbSeason(
+        tmdbId: 601,
+        tvId: 60,
+        seasonNumber: 1,
+        name: 'S1',
+        overview: '',
+        airDate: '',
+        voteAverage: 8.0,
+        lastUpdated: '2026-01-01',
+      ));
+      await repository.putEpisode(TmdbEpisode(
+        tmdbId: 6001,
+        tvId: 60,
+        seasonNumber: 1,
+        episodeNumber: 1,
+        name: 'E1',
+        overview: '',
+        airDate: '',
+        runtime: 45,
+        voteAverage: 8.0,
+        dateRated: DateTime.fromMillisecondsSinceEpoch(0),
+        lastUpdated: '2026-01-01',
+      ));
+
+      await repository
+          .deleteTitles('watchlist', [60], [AppConstants.miniseries]);
+      expect(
+          await repository.getTitleGlobal(60, AppConstants.miniseries), isNull);
+      expect(await repository.getSeason(60, 1), isNull);
+      expect(await repository.getEpisode(60, 1, 1), isNull);
+    });
+
     test('clearList deletes list entries and cascades orphan TV data',
         () async {
       final sharedMovie = TmdbTitle(
@@ -295,6 +338,52 @@ void main() {
       expect(await repository.getTitleGlobal(2, 'tv'), isNull);
       expect(await repository.getSeason(2, 1), isNull);
       expect(await repository.getEpisode(2, 1, 1), isNull);
+    });
+
+    test(
+        'clearList cascades deletion of seasons and episodes when mediaType is miniseries',
+        () async {
+      final mini = TmdbTitle(
+        tmdbId: 30,
+        name: 'Miniseries Title',
+        mediaType: AppConstants.miniseries,
+        lastUpdated: '2026-01-01',
+        dateRated: DateTime.now(),
+      );
+
+      await repository.saveTitles([mini], 'watchlist', addedOrders: [0]);
+
+      await repository.putSeason(TmdbSeason(
+        tmdbId: 301,
+        tvId: 30,
+        seasonNumber: 1,
+        name: 'S1',
+        overview: '',
+        airDate: '',
+        voteAverage: 8.5,
+        lastUpdated: '2026-01-01',
+      ));
+      await repository.putEpisode(TmdbEpisode(
+        tmdbId: 3001,
+        tvId: 30,
+        seasonNumber: 1,
+        episodeNumber: 1,
+        name: 'E1',
+        overview: '',
+        airDate: '',
+        runtime: 60,
+        voteAverage: 8.5,
+        dateRated: DateTime.fromMillisecondsSinceEpoch(0),
+        lastUpdated: '2026-01-01',
+      ));
+
+      await repository.clearList('watchlist');
+
+      expect(await repository.countTitles('watchlist'), 0);
+      expect(
+          await repository.getTitleGlobal(30, AppConstants.miniseries), isNull);
+      expect(await repository.getSeason(30, 1), isNull);
+      expect(await repository.getEpisode(30, 1, 1), isNull);
     });
 
     test('hasRatedTitles returns true only when ratings exceed seen threshold',
