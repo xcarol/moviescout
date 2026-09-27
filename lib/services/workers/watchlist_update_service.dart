@@ -36,7 +36,7 @@ class WatchlistUpdateService {
       AppConstants.workerWatchlistUpdate,
       AppConstants.taskUpdateWatchlist,
       frequency: const Duration(hours: 1),
-      existingWorkPolicy: ExistingPeriodicWorkPolicy.replace,
+      existingWorkPolicy: ExistingPeriodicWorkPolicy.update,
       constraints: Constraints(
         networkType: NetworkType.unmetered,
       ),
@@ -365,6 +365,8 @@ class WatchlistUpdateService {
         userMessage: 'Error in background task',
       );
       return;
+    } finally {
+      await DatabaseService.close();
     }
   }
 

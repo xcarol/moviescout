@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -34,20 +35,22 @@ class ErrorService {
         reportToCrashlytics ?? _shouldReportAutomatically(error);
 
     if (shouldReport && !kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-      try {
-        FirebaseCrashlytics.instance.recordError(
-          error,
-          stackTrace,
-          reason: userMessage ?? 'General Error',
-        );
-      } catch (e) {
-        final errorMessage = 'Failed to report to Firebase Crashlytics: $e';
-        debugPrint(errorMessage);
+      if (Firebase.apps.isNotEmpty) {
+        try {
+          FirebaseCrashlytics.instance.recordError(
+            error,
+            stackTrace,
+            reason: userMessage ?? 'General Error',
+          );
+        } catch (e) {
+          final errorMessage = 'Failed to report to Firebase Crashlytics: $e';
+          debugPrint(errorMessage);
 
-        // Don't save logs for errors that are already being saved
-        if (userMessage != null &&
-            userMessage != AppConstants.saveLogsMessage) {
-          saveLogs([errorMessage]);
+          // Don't save logs for errors that are already being saved
+          if (userMessage != null &&
+              userMessage != AppConstants.saveLogsMessage) {
+            saveLogs([errorMessage]);
+          }
         }
       }
     }

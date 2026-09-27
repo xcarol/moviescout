@@ -83,25 +83,6 @@ void _runMain({bool isFromShortcutActivity = false}) async {
   final isShortcut = isFromShortcutActivity;
 
   try {
-    await Future.wait([
-      dotenv.load(fileName: ".env"),
-      PreferencesService().init(),
-      DatabaseService.init(),
-    ]);
-
-    await Supabase.initialize(
-      url: dotenv.env['SUPABASE_URL'] ?? '',
-      publishableKey: dotenv.env['SUPABASE_API_KEY'] ?? '',
-    );
-  } catch (error, stackTrace) {
-    ErrorService.log(
-      error,
-      userMessage: 'Error basic initializing services',
-      stackTrace: stackTrace,
-    );
-  }
-
-  try {
     if (defaultTargetPlatform == TargetPlatform.android) {
       if (Firebase.apps.isEmpty) {
         try {
@@ -141,6 +122,25 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       userMessage: 'Error initializing Firebase',
       stackTrace: stackTrace,
       reportToCrashlytics: false,
+    );
+  }
+
+  try {
+    await Future.wait([
+      dotenv.load(fileName: ".env"),
+      PreferencesService().init(),
+      DatabaseService.init(),
+    ]);
+
+    await Supabase.initialize(
+      url: dotenv.env['SUPABASE_URL'] ?? '',
+      publishableKey: dotenv.env['SUPABASE_API_KEY'] ?? '',
+    );
+  } catch (error, stackTrace) {
+    ErrorService.log(
+      error,
+      userMessage: 'Error basic initializing services',
+      stackTrace: stackTrace,
     );
   }
 
