@@ -53,7 +53,6 @@ class AppDatabase extends _$AppDatabase {
       name: 'moviescout',
       native: const DriftNativeOptions(
         databaseDirectory: getApplicationSupportDirectory,
-        shareAcrossIsolates: true,
       ),
       web: DriftWebOptions(
         sqlite3Wasm: Uri.parse('sqlite3.wasm'),
