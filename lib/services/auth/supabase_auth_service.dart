@@ -38,6 +38,23 @@ class SupabaseAuthService extends ChangeNotifier {
         if (response != null) {
           userProfile = response;
           notifyListeners();
+        } else {
+          final metadata = user.userMetadata;
+          final displayName = metadata?['full_name'] ?? metadata?['name'] ?? '';
+          final avatar = metadata?['avatar_url'] ?? metadata?['picture'] ?? '';
+          try {
+            await _supabase.from('profiles').upsert({
+              'id': user.id,
+              'username': displayName,
+              'avatar_url': avatar,
+            });
+            userProfile = {
+              'id': user.id,
+              'username': displayName,
+              'avatar_url': avatar,
+            };
+            notifyListeners();
+          } catch (_) {}
         }
       }
     } catch (e) {
@@ -47,13 +64,23 @@ class SupabaseAuthService extends ChangeNotifier {
 
   Future<bool> signInWithGoogle() async {
     try {
+      if (kIsWeb) {
+        return await _supabase.auth.signInWithOAuth(
+          OAuthProvider.google,
+          redirectTo: '${Uri.base.origin}/',
+        );
+      }
+
       final webClientId = dotenv.env['GOOGLE_WEB_CLIENT_ID'];
       if (webClientId == null || webClientId.isEmpty) {
         throw Exception('GOOGLE_WEB_CLIENT_ID not found in .env');
       }
 
       final googleSignIn = GoogleSignIn.instance;
-      await googleSignIn.initialize(serverClientId: webClientId);
+      await googleSignIn.initialize(
+        clientId: kIsWeb ? webClientId : null,
+        serverClientId: kIsWeb ? null : webClientId,
+      );
 
       final googleUser = await googleSignIn.authenticate();
       final googleAuth = googleUser.authentication;
@@ -103,7 +130,9 @@ class SupabaseAuthService extends ChangeNotifier {
 
   Future<void> signOut() async {
     try {
-      await GoogleSignIn.instance.disconnect();
+      if (!kIsWeb) {
+        await GoogleSignIn.instance.disconnect();
+      }
       await _supabase.auth.signOut();
       userProfile = null;
       notifyListeners();

@@ -13,6 +13,7 @@ show_help() {
   echo "  -b, --build-android      Construir l'app Android (.aab)"
   echo "  -l, --gen-l10n           Generar fitxers de localització"
   echo "  -s, --build-drift        Genera el codi de la base de dades Drift"
+  echo "  --drift-web              Descarregar binaris Web de Drift (sqlite3.wasm i drift_worker.js)"
   echo "  -r, --build-release      Construir APK release"
   echo "  -w, --wipe-cache         Netejar la caché i les dades de l'usuari"
   echo "  -h, --help               Mostrar aquesta ajuda"
@@ -25,6 +26,7 @@ run_build_assets=false
 run_build_android=false
 run_build_release=false
 run_build_drift=false
+run_drift_web=false
 run_wipe_cache=false
 run_install_apk=false
 
@@ -55,6 +57,9 @@ for arg in "$@"; do
       ;;
     -s|--build-drift)
       run_build_drift=true
+      ;;
+    --drift-web)
+      run_drift_web=true
       ;;
     -r|--build-release)
       run_build_release=true
@@ -162,6 +167,29 @@ fi
 if $run_build_drift; then
   echo "▶️ dart run build_runner build (drift)"
   dart run build_runner build
+fi
+
+if $run_drift_web; then
+  echo "▶️ Descarregant binaris Web de Drift (sqlite3.wasm i drift_worker.js)"
+  mkdir -p web
+  drift_ver=$(grep -A 8 "^  drift:" pubspec.lock | grep "version:" | head -n1 | tr -d ' "version:')
+  sqlite_ver=$(grep -A 8 "^  sqlite3:" pubspec.lock | grep "version:" | head -n1 | tr -d ' "version:')
+
+  if [ -z "$drift_ver" ] || [ -z "$sqlite_ver" ]; then
+    echo "⚠️ No s'han pogut obtenir les versions de drift o sqlite3 del pubspec.lock"
+    exit 1
+  fi
+
+  echo "  Versió Drift: $drift_ver"
+  echo "  Versió SQLite3: $sqlite_ver"
+
+  echo "▶️ Descarregant drift_worker.js..."
+  curl -L -o web/drift_worker.js "https://github.com/simolus3/drift/releases/download/drift-${drift_ver}/drift_worker.js"
+
+  echo "▶️ Descarregant sqlite3.wasm..."
+  curl -L -o web/sqlite3.wasm "https://github.com/simolus3/sqlite3.dart/releases/download/sqlite3-${sqlite_ver}/sqlite3.wasm"
+
+  echo "✅ Binaris Web de Drift descarregats correctament a web/"
 fi
 
 if $run_wipe_cache; then

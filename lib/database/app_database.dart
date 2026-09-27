@@ -1,10 +1,8 @@
-import 'dart:ffi';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sqlite3/open.dart';
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:moviescout/database/connection/setup_sqlite.dart';
 import 'package:moviescout/database/drift_tables.dart';
 
 part 'app_database.g.dart';
@@ -50,20 +48,16 @@ class AppDatabase extends _$AppDatabase {
   }
 
   static QueryExecutor _openConnection() {
-    if (!kIsWeb && Platform.isLinux) {
-      open.overrideFor(OperatingSystem.linux, () {
-        try {
-          return DynamicLibrary.open('libsqlite3.so');
-        } catch (_) {
-          return DynamicLibrary.open('libsqlite3.so.0');
-        }
-      });
-    }
+    setupSqlite();
     return driftDatabase(
       name: 'moviescout',
       native: const DriftNativeOptions(
         databaseDirectory: getApplicationSupportDirectory,
         shareAcrossIsolates: true,
+      ),
+      web: DriftWebOptions(
+        sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+        driftWorker: Uri.parse('drift_worker.js'),
       ),
     );
   }

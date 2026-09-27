@@ -1,11 +1,10 @@
-import 'dart:io';
 import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'package:flutter/gestures.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform;
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
@@ -122,7 +121,7 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> _loginWithGoogle() async {
-    if (!Platform.isAndroid) {
+    if (!kIsWeb && defaultTargetPlatform != TargetPlatform.android) {
       SnackMessage.showSnackBar('Platform not supported');
       return;
     }
