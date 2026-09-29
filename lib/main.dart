@@ -22,12 +22,10 @@ import 'package:moviescout/services/core/tmdb_configuration_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
 import 'package:moviescout/services/api/web_translation_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
-import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_pinned_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_following_service.dart';
-import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
+import 'package:moviescout/services/lists/pinned_service.dart';
+import 'package:moviescout/services/lists/following_service.dart';
 import "package:moviescout/services/lists/watchlist_service.dart";
 import "package:moviescout/services/lists/rateslist_service.dart";
 import 'package:moviescout/services/auth/supabase_auth_service.dart';
@@ -200,64 +198,29 @@ void _runMain({bool isFromShortcutActivity = false}) async {
               ..setup(userService.accountId, userService.sessionId,
                   userService.accessToken),
       ),
-      ChangeNotifierProxyProvider<TmdbUserService, TmdbPinnedService>(
-        create: (_) => TmdbPinnedService(repository),
-        update: (_, userService, pinnedService) => pinnedService!
-          ..setup(userService.accountId, userService.sessionId,
-              userService.accessToken),
+      ChangeNotifierProvider<PinnedService>(
+        create: (_) => PinnedService(repository),
       ),
-      ChangeNotifierProxyProvider<TmdbUserService, TmdbFollowingService>(
-        create: (_) => TmdbFollowingService(repository),
-        update: (_, userService, followingService) => followingService!
-          ..setup(userService.accountId, userService.sessionId,
-              userService.accessToken),
+      ChangeNotifierProvider<FollowingService>(
+        create: (_) => FollowingService(repository),
       ),
-      ChangeNotifierProxyProvider<TmdbFollowingService, LegacyRateslistService>(
-        create: (_) =>
-            LegacyRateslistService(AppConstants.rateslist, repository),
-        update: (_, followingService, rateslistService) {
-          rateslistService!.followingService = followingService;
-          return rateslistService;
-        },
-      ),
-      ChangeNotifierProxyProvider2<LegacyRateslistService, TmdbPinnedService,
-          LegacyWatchlistService>(
-        create: (_) =>
-            LegacyWatchlistService(AppConstants.watchlist, repository),
-        update: (_, rateslistService, pinnedService, watchlistService) {
-          rateslistService.removeListener(watchlistService!.refresh);
-          rateslistService.addListener(watchlistService.refresh);
-          watchlistService.pinnedService = pinnedService;
-          return watchlistService;
-        },
-      ),
-      ChangeNotifierProxyProvider2<LegacyRateslistService, SupabaseAuthService,
+      ChangeNotifierProxyProvider2<FollowingService, SupabaseAuthService,
           RateslistService>(
-        create: (context) => RateslistService(repository,
-            Provider.of<LegacyRateslistService>(context, listen: false)),
-        update: (_, legacyRateslistService, authService, rateslistService) {
-          legacyRateslistService.removeListener(rateslistService!.refresh);
-          legacyRateslistService.addListener(rateslistService.refresh);
-
+        create: (_) => RateslistService(repository),
+        update: (_, followingService, authService, rateslistService) {
+          rateslistService!.followingService = followingService;
           rateslistService.updateAuth(authService);
-          rateslistService.followingService =
-              legacyRateslistService.followingService;
           return rateslistService;
         },
       ),
-      ChangeNotifierProxyProvider3<RateslistService, LegacyWatchlistService,
+      ChangeNotifierProxyProvider3<RateslistService, PinnedService,
           SupabaseAuthService, WatchlistService>(
-        create: (context) => WatchlistService(repository,
-            Provider.of<LegacyWatchlistService>(context, listen: false)),
-        update: (_, rateslistService, legacyWatchlistService, authService,
+        create: (_) => WatchlistService(repository),
+        update: (_, rateslistService, pinnedService, authService,
             watchlistService) {
           rateslistService.removeListener(watchlistService!.refresh);
           rateslistService.addListener(watchlistService.refresh);
-
-          legacyWatchlistService.removeListener(watchlistService.refresh);
-          legacyWatchlistService.addListener(watchlistService.refresh);
-
-          watchlistService.pinnedService = legacyWatchlistService.pinnedService;
+          watchlistService.pinnedService = pinnedService;
           watchlistService.updateAuth(authService);
           return watchlistService;
         },

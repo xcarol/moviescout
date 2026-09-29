@@ -50,7 +50,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageEmptyOptions => 'You can also';
 
   @override
-  String get messageEmptyTmdb => 'Connect to TMDb';
+  String get messageEmptyLogin => 'Sign in to MovieScout';
 
   @override
   String get search => 'Search for a title';
@@ -144,7 +144,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get select => 'Select';
 
   @override
-  String get imdbImport => 'Import from IMDB';
+  String get imdbImport => 'IMDB Import';
 
   @override
   String get imdbImportHint => 'Select an IMDB export CSV file';
@@ -655,66 +655,76 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importTmdbData => 'Import your old data from TMDB.';
 
   @override
-  String get migrateToSupabase => 'Cloud Sync';
+  String get tmdbAccount => 'TMDb Account';
 
   @override
-  String get migratingData => 'Transferring data...';
+  String get tmdbImport => 'TMDb Import';
 
   @override
-  String get migrationSuccess => 'Data transferred successfully!';
+  String get tmdbImportScreenTitle => 'TMDb Import';
 
   @override
-  String get migrationError => 'Error transferring data';
+  String get tmdbImportScreenHeader => 'Import your TMDb data';
 
   @override
-  String get loginToTmdbFirst =>
-      'Please log in to TMDB first to sync your data';
+  String get tmdbImportScreenBody =>
+      'You can import your watchlist and ratings from your TMDb account into your MovieScout account. You will need to log in to TMDb. Once the import is complete, your TMDb session will be automatically closed.';
 
   @override
-  String get migrationScreenTitle => 'Cloud Sync';
+  String get tmdbImportStartButton => 'Start Import';
 
   @override
-  String get migrationScreenHeader => 'Database Upgrade';
+  String get tmdbImportSuccess => 'Data imported successfully!';
 
   @override
-  String get migrationScreenBody =>
-      'To bring you more and better features, MovieScout is upgrading its database. Migrating your data is required to continue using the app, as the TMDB login will soon be disabled.';
+  String get tmdbImportDownloading => 'Downloading TMDb data...';
 
   @override
-  String get migrationScreenStartButton => 'Start Transfer';
+  String get tmdbImportDownloadingWatchlist => 'Downloading watchlist...';
 
   @override
-  String get migrationScreenLaterButton => 'Maybe Later';
+  String get tmdbImportDownloadingRateslist => 'Downloading ratings...';
 
   @override
-  String get migrationScreenSuccess => 'Your data is now in the cloud!';
+  String get tmdbImportDownloadingEpisodes => 'Downloading rated episodes...';
 
   @override
-  String get migrationScreenContinue => 'Continue';
+  String tmdbImportWatchlistCount(Object count) {
+    return '$count titles in watchlist';
+  }
 
   @override
-  String get migrationScreenDownloading => 'Downloading TMDB Data...';
+  String tmdbImportRateslistCount(Object count) {
+    return '$count rated titles';
+  }
 
   @override
-  String get migrationScreenUploading => 'Uploading to Cloud...';
+  String tmdbImportEpisodesCount(Object count) {
+    return '$count rated episodes';
+  }
 
   @override
-  String get migrationLoginRequiredGoogle =>
-      'Log in to Google to start the migration.';
+  String get tmdbImportUploadTitle => 'Sync with account';
 
   @override
-  String get migrationLoginRequiredTmdb =>
-      'Log in to TMDB to start the migration.';
+  String get tmdbImportUploading => 'Uploading to your account...';
 
   @override
-  String get migrationLoginRequiredBoth =>
-      'Log in to Google and TMDB to start the migration.';
+  String tmdbImportUploadedCount(Object count) {
+    return '$count items uploaded to your account';
+  }
+
+  @override
+  String get tmdbImportError => 'Error importing data';
+
+  @override
+  String get tmdbImportLoginRequired => 'Log in to TMDb to start the import.';
+
+  @override
+  String get tmdbImportConsentText =>
+      'The import will securely add your TMDb lists and ratings to your MovieScout account.';
 
   @override
   String get loginConsentText =>
       'By signing in, you agree to store your data on MovieScout\'s servers for cross-device synchronization, according to our ';
-
-  @override
-  String get migrationConsentText =>
-      'Migration will copy your TMDB data securely to MovieScout\'s servers.';
 }

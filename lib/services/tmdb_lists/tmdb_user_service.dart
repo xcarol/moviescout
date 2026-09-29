@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/core/tmdb_base_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_pinned_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_following_service.dart';
+import 'package:moviescout/services/lists/pinned_service.dart';
+import 'package:moviescout/services/lists/following_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -212,8 +212,17 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     }
   }
 
+  void _clearTmdbPrefs() {
+    final prefs = PreferencesService().prefs;
+    prefs.remove('accessToken');
+    prefs.remove('accountId');
+    prefs.remove('sessionId');
+    prefs.remove('pinnedListId');
+    prefs.remove('followingListId');
+  }
+
   Future<Map> login() async {
-    PreferencesService().prefs.clear();
+    _clearTmdbPrefs();
     return _startLogin();
   }
 
@@ -225,13 +234,12 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     final providerService =
         Provider.of<TmdbProviderService>(context, listen: false);
     providerService.clearProvidersStatus();
-    final pinnedService =
-        Provider.of<TmdbPinnedService>(context, listen: false);
+    final pinnedService = Provider.of<PinnedService>(context, listen: false);
     pinnedService.clearPinnedStatus();
     final followingService =
-        Provider.of<TmdbFollowingService>(context, listen: false);
+        Provider.of<FollowingService>(context, listen: false);
     followingService.clearFollowingStatus();
-    PreferencesService().prefs.clear();
+    _clearTmdbPrefs();
     if (Firebase.apps.isNotEmpty) {
       await FirebaseAuth.instance.signOut();
     }

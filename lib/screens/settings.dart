@@ -4,12 +4,12 @@ import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/screens/ai_settings.dart';
 import 'package:moviescout/screens/import_imdb.dart';
+import 'package:moviescout/screens/import_tmdb.dart';
 import 'package:moviescout/screens/providers.dart';
 import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/services/notifications/notification_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/language_form.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/notification_permission_dialog.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/region_form.dart';
@@ -21,10 +21,9 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isTmdbLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
     bool isGoogleLoggedIn =
         Provider.of<SupabaseAuthService>(context).isLoggedIn;
-    bool isUserLoggedIn = isTmdbLoggedIn || isGoogleLoggedIn;
+    bool isUserLoggedIn = isGoogleLoggedIn;
 
     return Scaffold(
       appBar: AppBar(
@@ -34,6 +33,7 @@ class SettingsScreen extends StatelessWidget {
         children: [
           if (isUserLoggedIn && defaultTargetPlatform == TargetPlatform.linux)
             _importImdbTile(context),
+          if (isUserLoggedIn) _importTmdbTile(context),
           if (isUserLoggedIn) _providersTile(context),
           _languageTile(context),
           _regionTile(context),
@@ -113,6 +113,19 @@ class SettingsScreen extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const ImportIMDB()),
+        );
+      },
+    );
+  }
+
+  Widget _importTmdbTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.cloud_download),
+      title: Text(AppLocalizations.of(context)!.tmdbImport),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ImportTmdbScreen()),
         );
       },
     );

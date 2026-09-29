@@ -7,119 +7,17 @@ import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
-import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
-import 'package:moviescout/services/lists/rateslist_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
-import 'package:app_links/app_links.dart';
-import 'package:moviescout/services/lists/watchlist_service.dart';
-import 'package:moviescout/screens/migration_screen.dart';
+import 'package:moviescout/utils/url_constants.dart';
 import 'package:provider/provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Login extends StatefulWidget {
-  final bool fromMigrationScreen;
-  const Login({super.key, this.fromMigrationScreen = false});
+  const Login({super.key});
 
   @override
   State<Login> createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
-  late final AppLinks _appLinks;
-  late String loginFailedMessage;
-  late String loginSuccessMessage;
-
-  @override
-  void initState() {
-    super.initState();
-    _appLinks = AppLinks();
-    _listenForRedirect();
-  }
-
-  void _listenForRedirect() {
-    _appLinks.uriLinkStream.listen((uri) async {
-      try {
-        if (!mounted) return;
-
-        // Only handle our custom scheme for login completion
-        if (uri.scheme == 'moviescout' && uri.host == 'auth') {
-          if (uri.queryParameters['error'] != null) {
-            throw Exception(uri.queryParameters['error']);
-          }
-
-          _completeLogin();
-        }
-      } catch (error, stackTrace) {
-        ErrorService.log(
-          error,
-          stackTrace: stackTrace,
-        );
-      }
-    });
-  }
-
-  void _completeLogin() async {
-    TmdbUserService userService =
-        Provider.of<TmdbUserService>(context, listen: false);
-    WatchlistService watchlistService =
-        Provider.of<WatchlistService>(context, listen: false);
-    RateslistService rateslistService =
-        Provider.of<RateslistService>(context, listen: false);
-    TmdbProviderService providerService =
-        Provider.of<TmdbProviderService>(context, listen: false);
-
-    Map result = await userService.completeLogin();
-
-    if (result['success']) {
-      if (mounted) {
-        watchlistService.syncFromServer(
-          accountId: userService.accountId,
-          sessionId: userService.sessionId,
-          locale: Localizations.localeOf(context),
-        );
-        rateslistService.syncFromServer(
-          accountId: userService.accountId,
-          sessionId: userService.sessionId,
-          locale: Localizations.localeOf(context),
-        );
-        providerService.setup(userService.accountId, userService.sessionId,
-            userService.accessToken);
-      }
-
-      SnackMessage.showSnackBar(loginSuccessMessage);
-
-      if (mounted) {
-        final hasSupabase =
-            Provider.of<SupabaseAuthService>(context, listen: false).isLoggedIn;
-
-        if (widget.fromMigrationScreen) {
-          Navigator.pop(context);
-        } else if (!hasSupabase) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const MigrationScreen()),
-          );
-        } else {
-          Navigator.pop(context);
-        }
-      }
-    } else {
-      throw Exception(result['message']);
-    }
-  }
-
-  Future<void> login() async {
-    final userService = Provider.of<TmdbUserService>(context, listen: false);
-    final result = await userService.login();
-
-    if (result['success'] == false) {
-      ErrorService.log(
-        result['message'],
-        userMessage: loginFailedMessage,
-      );
-    }
-  }
-
   Future<void> _loginWithGoogle() async {
     if (!kIsWeb && defaultTargetPlatform != TargetPlatform.android) {
       SnackMessage.showSnackBar('Platform not supported');
@@ -133,33 +31,7 @@ class _LoginState extends State<Login> {
     if (success) {
       if (mounted) {
         SnackMessage.showSnackBar(AppLocalizations.of(context)!.loginSuccess);
-
-        if (widget.fromMigrationScreen) {
-          Navigator.pop(context);
-          return;
-        }
-
-        try {
-          final countRes = await Supabase.instance.client
-              .from('user_titles')
-              .select('id')
-              .limit(1)
-              .count(CountOption.exact);
-
-          final hasRecords = countRes.count > 0;
-
-          if (!hasRecords && mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const MigrationScreen()),
-            );
-            return;
-          }
-        } catch (_) {
-          // Ignore network errors here, just proceed
-        }
-
-        if (mounted) Navigator.pop(context);
+        Navigator.pop(context);
       }
     } else {
       if (mounted) {
@@ -173,9 +45,6 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    loginFailedMessage = AppLocalizations.of(context)!.loginFailed;
-    loginSuccessMessage = AppLocalizations.of(context)!.loginSuccess;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.loginTitle),
@@ -184,22 +53,9 @@ class _LoginState extends State<Login> {
     );
   }
 
-  // This is a workaround for the Linux & Windows platforms
-  //
-  // When login in Linux, the TMDB Auth web page will try to open
-  // the Android app (in Windows does nothing), but it will not work on Linux/Windows,
-  // so close the browser (or tab) and complete the login by clicking this button.
-  Widget _completeLoginButton() {
-    return OutlinedButton(
-      onPressed: _completeLogin,
-      child: Text(AppLocalizations.of(context)!.completeLoginToTmdb),
-    );
-  }
-
   Widget loginBody(BuildContext context) {
     final isGoogleLoggedIn =
         Provider.of<SupabaseAuthService>(context).isLoggedIn;
-    final isTmdbLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
 
     return SingleChildScrollView(
       child: Padding(
@@ -207,24 +63,6 @@ class _LoginState extends State<Login> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (widget.fromMigrationScreen &&
-                (!isGoogleLoggedIn || !isTmdbLoggedIn)) ...[
-              Icon(Icons.cloud_sync,
-                  size: 48, color: Theme.of(context).colorScheme.primary),
-              const SizedBox(height: 16),
-              Text(
-                !isGoogleLoggedIn && !isTmdbLoggedIn
-                    ? AppLocalizations.of(context)!.migrationLoginRequiredBoth
-                    : !isGoogleLoggedIn
-                        ? AppLocalizations.of(context)!
-                            .migrationLoginRequiredGoogle
-                        : AppLocalizations.of(context)!
-                            .migrationLoginRequiredTmdb,
-                style: Theme.of(context).textTheme.titleLarge,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-            ],
             if (!isGoogleLoggedIn) ...[
               Text(
                 AppLocalizations.of(context)!.signInWithGoogle,
@@ -241,10 +79,7 @@ class _LoginState extends State<Login> {
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: SelectableText.rich(
                   TextSpan(
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: Colors.grey),
+                    style: Theme.of(context).textTheme.bodySmall,
                     children: [
                       TextSpan(
                           text: AppLocalizations.of(context)!.loginConsentText),
@@ -253,8 +88,8 @@ class _LoginState extends State<Login> {
                         style: const TextStyle(
                             decoration: TextDecoration.underline),
                         recognizer: TapGestureRecognizer()
-                          ..onTap = () => launchUrl(Uri.parse(
-                              'https://xcarol.github.io/moviescout/privacy.html')),
+                          ..onTap = () => launchUrl(
+                              Uri.parse(UrlConstants.privacyPolicyUrl)),
                       ),
                       const TextSpan(text: '.'),
                     ],
@@ -262,34 +97,6 @@ class _LoginState extends State<Login> {
                   textAlign: TextAlign.center,
                 ),
               ),
-            ],
-            if (!isGoogleLoggedIn && !isTmdbLoggedIn) ...[
-              const SizedBox(height: 40),
-              const Divider(),
-              const SizedBox(height: 40),
-            ],
-            if (!isTmdbLoggedIn) ...[
-              if (!widget.fromMigrationScreen) ...[
-                Text(
-                  AppLocalizations.of(context)!.alreadyUsingMovieScout,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  AppLocalizations.of(context)!.importTmdbData,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-              ],
-              OutlinedButton(
-                onPressed: login,
-                child: Text(AppLocalizations.of(context)!.loginToTmdb),
-              ),
-              const SizedBox(height: 20),
-              if (defaultTargetPlatform == TargetPlatform.linux ||
-                  defaultTargetPlatform == TargetPlatform.windows)
-                _completeLoginButton(),
             ],
           ],
         ),

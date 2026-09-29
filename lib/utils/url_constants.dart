@@ -13,6 +13,8 @@ class UrlConstants {
   static const String ipApiUrl = 'https://ipapi.co/json/';
   static const String omdbApiUrl = 'https://www.omdbapi.com/';
   static const String githubRepoUrl = 'https://github.com/xcarol/moviescout';
+  static const String privacyPolicyUrl =
+      'https://xcarol.github.io/moviescout/privacy.html';
   static const String gravatarUrl = 'https://www.gravatar.com/avatar/';
   static const String imdbTitleUrl = 'https://www.imdb.com/title/';
   static const String imdbNameUrl = 'https://www.imdb.com/name/';
@@ -109,19 +111,10 @@ class UrlConstants {
       'account/{ACCOUNT_ID}/watchlist/movies?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.asc';
   static const String tmdbWatchlistTvEndpoint =
       'account/{ACCOUNT_ID}/watchlist/tv?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.asc';
-  static const String tmdbUpdateWatchlistEndpoint =
-      'account/{ACCOUNT_ID}/watchlist?session_id={SESSION_ID}';
-
   static const String tmdbRateslistMoviesEndpoint =
       'account/{ACCOUNT_ID}/movie/rated?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.asc';
   static const String tmdbRateslistTvEndpoint =
       'account/{ACCOUNT_ID}/tv/rated?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.asc';
-  static const String tmdbRateMovieEndpoint =
-      'movie/{ID}/rating?session_id={SESSION_ID}';
-  static const String tmdbRateTvEndpoint =
-      'tv/{ID}/rating?session_id={SESSION_ID}';
-  static const String tmdbRateEpisodeEndpoint =
-      'tv/{ID}/season/{SEASON_NUMBER}/episode/{EPISODE_NUMBER}/rating?session_id={SESSION_ID}';
   static const String tmdbRatedEpisodesEndpoint =
       'account/{ACCOUNT_ID}/rated/tv/episodes?session_id={SESSION_ID}&page={PAGE}&language={LOCALE}&sort_by=created_at.asc';
 

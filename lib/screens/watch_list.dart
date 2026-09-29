@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'package:moviescout/screens/login.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:provider/provider.dart';
@@ -26,8 +25,6 @@ class _WatchListState extends State<WatchList> {
   }
 
   Future<void> _loadData() async {
-    final userService = Provider.of<TmdbUserService>(context, listen: false);
-
     _watchlistService = Provider.of<WatchlistService>(context, listen: false);
     _watchlistWidget = ItemList(
       _watchlistService,
@@ -36,8 +33,8 @@ class _WatchListState extends State<WatchList> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _watchlistService.syncFromServer(
-        accountId: userService.accountId,
-        sessionId: userService.sessionId,
+        accountId: '',
+        sessionId: '',
         locale: Localizations.localeOf(context),
       );
     });
@@ -70,11 +67,9 @@ class _WatchListState extends State<WatchList> {
   Widget emptyBody() {
     List<Widget> children = [];
 
-    final isTmdbLoggedIn =
-        Provider.of<TmdbUserService>(context, listen: false).isUserLoggedIn;
     final isGoogleLoggedIn =
         Provider.of<SupabaseAuthService>(context, listen: false).isLoggedIn;
-    if (isTmdbLoggedIn || isGoogleLoggedIn) {
+    if (isGoogleLoggedIn) {
       children.add(
         Text(
           AppLocalizations.of(context)!.messageEmptyList,
@@ -108,7 +103,7 @@ class _WatchListState extends State<WatchList> {
               MaterialPageRoute(builder: (context) => const Login()),
             );
           },
-          child: Text(AppLocalizations.of(context)!.messageEmptyTmdb),
+          child: Text(AppLocalizations.of(context)!.messageEmptyLogin),
         ),
       );
     }
