@@ -1,4 +1,3 @@
-import 'package:moviescout/screens/migration_screen.dart';
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
@@ -26,7 +25,6 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isTmdbLoggedIn = Provider.of<TmdbUserService>(context).isUserLoggedIn;
     bool isGoogleLoggedIn =
         Provider.of<SupabaseAuthService>(context).isLoggedIn;
 
@@ -36,29 +34,12 @@ class AppDrawer extends StatelessWidget {
         children: <Widget>[
           _userProfileTile(context),
           _settingsTile(context),
-          if (isGoogleLoggedIn || isTmdbLoggedIn)
-            _notificationsHistoryTile(context),
-          if (isGoogleLoggedIn || isTmdbLoggedIn) _migrationTile(context),
+          if (isGoogleLoggedIn) _notificationsHistoryTile(context),
           _aboutTile(context),
           const Divider(),
-          _userSessionTile(context, isTmdbLoggedIn || isGoogleLoggedIn),
+          _userSessionTile(context, isGoogleLoggedIn),
         ],
       ),
-    );
-  }
-
-  Widget _migrationTile(BuildContext context) {
-    return ListTile(
-      leading: const Icon(Icons.cloud_upload, color: Colors.blue),
-      title: Text(AppLocalizations.of(context)!.migrateToSupabase),
-      onTap: () async {
-        Navigator.of(context).pop();
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const MigrationScreen()),
-        );
-      },
     );
   }
 
@@ -207,8 +188,8 @@ class AppDrawer extends StatelessWidget {
                   decoration: TextDecoration.underline,
                 ),
                 recognizer: TapGestureRecognizer()
-                  ..onTap = () => launchUrl(Uri.parse(
-                      'https://xcarol.github.io/moviescout/privacy.html')),
+                  ..onTap =
+                      () => launchUrl(Uri.parse(UrlConstants.privacyPolicyUrl)),
               ),
             ],
           ),

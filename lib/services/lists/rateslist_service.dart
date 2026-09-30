@@ -1,4 +1,3 @@
-import 'package:moviescout/utils/url_constants.dart';
 import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
@@ -6,21 +5,18 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_following_service.dart';
+import 'package:moviescout/services/lists/following_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/repositories/title_repository.dart';
 
-import 'package:moviescout/services/legacy/legacy_rateslist_service.dart';
-
 class RateslistService extends TmdbTitleListService {
   final SupabaseClient _supabase = Supabase.instance.client;
-  final LegacyRateslistService _legacyService;
 
-  TmdbFollowingService? followingService;
+  FollowingService? followingService;
   String? _lastUserId;
 
-  RateslistService(TitleRepository repository, this._legacyService)
+  RateslistService(TitleRepository repository)
       : super(AppConstants.rateslist, repository);
 
   Future<double> getRatingAsync(int titleId, String mediaType) async {
@@ -43,14 +39,7 @@ class RateslistService extends TmdbTitleListService {
     required Locale locale,
   }) async {
     final user = _supabase.auth.currentUser;
-    if (user == null) {
-      if (accountId.isEmpty || sessionId.isEmpty) return;
-      return await _legacyService.syncFromServer(
-        accountId: accountId,
-        sessionId: sessionId,
-        locale: locale,
-      );
-    }
+    if (user == null) return;
 
     await retrieveList(accountId, forceUpdate: true, fetchRemoteData: () async {
       final List<TmdbTitle> parsed = [];
@@ -94,9 +83,6 @@ class RateslistService extends TmdbTitleListService {
       return parsed;
     });
 
-    if (followingService != null) {
-      await followingService!.fetchAndApplyFollowingTitles();
-    }
     await filterItems();
     _retrieveRatedEpisodes(accountId, sessionId, locale);
   }
@@ -105,96 +91,48 @@ class RateslistService extends TmdbTitleListService {
       String accountId, String sessionId, Locale locale) async {
     try {
       final user = _supabase.auth.currentUser;
-      if (user != null) {
-        final response = await _supabase
-            .from('user_episode_ratings')
-            .select()
-            .order('rated_date', ascending: false);
+      if (user == null) return;
 
-        for (final row in response) {
-          final tvId = row['show_tmdb_id'] as int;
-          final episodeNumber = row['episode_number'] as int;
-          final seasonNumber = row['season_number'] as int;
+      final response = await _supabase
+          .from('user_episode_ratings')
+          .select()
+          .order('rated_date', ascending: false);
 
-          final dbEpisode =
-              await repository.getEpisode(tvId, seasonNumber, episodeNumber);
+      for (final row in response) {
+        final tvId = row['show_tmdb_id'] as int;
+        final episodeNumber = row['episode_number'] as int;
+        final seasonNumber = row['season_number'] as int;
 
-          final parsedDate = row['rated_date'] != null
-              ? DateTime.parse(row['rated_date'])
-              : DateTime.parse(row['created_at']);
+        final dbEpisode =
+            await repository.getEpisode(tvId, seasonNumber, episodeNumber);
 
-          final episode = dbEpisode ??
-              TmdbEpisode(
-                tmdbId: row['episode_tmdb_id'] as int,
-                tvId: tvId,
-                seasonNumber: seasonNumber,
-                episodeNumber: episodeNumber,
-                name: '',
-                overview: '',
-                airDate: '',
-                runtime: 0,
-                voteAverage: 0.0,
-                lastUpdated: AppConstants.defaultDate,
-                dateRated: parsedDate,
-              );
+        final parsedDate = row['rated_date'] != null
+            ? DateTime.parse(row['rated_date'])
+            : DateTime.parse(row['created_at']);
 
-          episode.rating = (row['rating'] as num).toDouble();
-          episode.dateRated = parsedDate;
-          await repository.putEpisode(episode);
-        }
-        return;
-      }
+        final episode = dbEpisode ??
+            TmdbEpisode(
+              tmdbId: row['episode_tmdb_id'] as int,
+              tvId: tvId,
+              seasonNumber: seasonNumber,
+              episodeNumber: episodeNumber,
+              name: '',
+              overview: '',
+              airDate: '',
+              runtime: 0,
+              voteAverage: 0.0,
+              lastUpdated: AppConstants.defaultDate,
+              dateRated: parsedDate,
+            );
 
-      int page = 1;
-      int totalPages = 1;
-      while (page <= totalPages) {
-        final response = await get(
-          UrlConstants.tmdbRatedEpisodesEndpoint
-              .replaceFirst('{ACCOUNT_ID}', accountId)
-              .replaceFirst('{SESSION_ID}', sessionId)
-              .replaceFirst('{PAGE}', page.toString())
-              .replaceFirst(
-                  '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'),
-        );
-        if (response.statusCode == 200) {
-          totalPages = await _parseAndSaveRatedEpisodes(response);
-        }
-        page++;
+        episode.rating = (row['rating'] as num).toDouble();
+        episode.dateRated = parsedDate;
+        await repository.putEpisode(episode);
       }
     } catch (e, stack) {
       ErrorService.log(e,
           stackTrace: stack, userMessage: 'Error sync rated episodes');
     }
-  }
-
-  Future<int> _parseAndSaveRatedEpisodes(dynamic response) async {
-    final Map<String, dynamic> data = body(response);
-    final int totalPages = data['total_pages'] ?? 1;
-    final List<dynamic> results = data['results'] ?? [];
-
-    for (final item in results) {
-      final tvId = item['show_id'] ?? 0;
-      final episode = TmdbEpisode.fromMap(item, tvId: tvId);
-      episode.rating = (item['rating'] ?? 0.0).toDouble();
-      episode.lastUpdated = DateTime.now().toIso8601String();
-
-      final dbEpisode = await repository.getEpisode(
-          tvId, episode.seasonNumber, episode.episodeNumber);
-      if (dbEpisode != null) {
-        episode.stillPathSuffix = dbEpisode.stillPathSuffix;
-        episode.guestStarsJson = dbEpisode.guestStarsJson;
-        episode.crewJson = dbEpisode.crewJson;
-        episode.imagesJson = dbEpisode.imagesJson;
-        episode.videosJson = dbEpisode.videosJson;
-        if (episode.overview.isEmpty) {
-          episode.overview = dbEpisode.overview;
-        }
-      }
-
-      await repository.putEpisode(episode);
-    }
-
-    return totalPages;
   }
 
   Future<dynamic> _updateTitleRateToSupabase(
@@ -241,15 +179,7 @@ class RateslistService extends TmdbTitleListService {
   ) async {
     try {
       final user = _supabase.auth.currentUser;
-      if (user == null) {
-        if (accountId.isEmpty || sessionId.isEmpty) return;
-        return await _legacyService.updateTitleRate(
-          accountId,
-          sessionId,
-          title,
-          rating,
-        );
-      }
+      if (user == null) return;
 
       if (rating > 0) {
         title.updateRating(rating);
@@ -292,9 +222,7 @@ class RateslistService extends TmdbTitleListService {
   Future<void> toggleNotify(TmdbTitle title) async {
     try {
       final user = _supabase.auth.currentUser;
-      if (user == null) {
-        return await _legacyService.toggleNotify(title);
-      }
+      if (user == null) return;
 
       title.notifyNewSeasons = !title.notifyNewSeasons;
       await repository.updateNotifyNewSeasonsList([title]);

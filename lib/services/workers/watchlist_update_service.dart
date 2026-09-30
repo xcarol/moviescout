@@ -9,7 +9,6 @@ import 'package:moviescout/services/core/database_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 import 'package:moviescout/services/notifications/notification_service.dart';
@@ -170,16 +169,7 @@ class WatchlistUpdateService {
           .hasTitlesInList([title.tmdbId], AppConstants.watchlist);
       if (!isInWatchlist) {
         addedToWatchlist = true;
-        final accountId =
-            PreferencesService().prefs.getString('accountId') ?? '';
-        final sessionId =
-            PreferencesService().prefs.getString('sessionId') ?? '';
-        if (accountId.isNotEmpty && sessionId.isNotEmpty) {
-          final watchlistService =
-              LegacyWatchlistService(AppConstants.watchlist, repository);
-          await watchlistService.updateWatchlistTitle(
-              accountId, sessionId, title, true);
-        }
+        await repository.saveTitles([title], AppConstants.watchlist);
       }
 
       await repository.updateNotifyNewSeasonsList([title]);

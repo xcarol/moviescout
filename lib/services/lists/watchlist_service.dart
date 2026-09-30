@@ -4,21 +4,18 @@ import 'package:http/http.dart' as http;
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_pinned_service.dart';
+import 'package:moviescout/services/lists/pinned_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/repositories/title_repository.dart';
 
-import 'package:moviescout/services/legacy/legacy_watchlist_service.dart';
-
 class WatchlistService extends TmdbTitleListService {
   final SupabaseClient _supabase = Supabase.instance.client;
-  final LegacyWatchlistService _legacyService;
 
-  TmdbPinnedService? pinnedService;
+  PinnedService? pinnedService;
   String? _lastUserId;
 
-  WatchlistService(TitleRepository repository, this._legacyService)
+  WatchlistService(TitleRepository repository)
       : super(AppConstants.watchlist, repository);
 
   @override
@@ -28,14 +25,7 @@ class WatchlistService extends TmdbTitleListService {
     required Locale locale,
   }) async {
     final user = _supabase.auth.currentUser;
-    if (user == null) {
-      if (accountId.isEmpty || sessionId.isEmpty) return;
-      return await _legacyService.syncFromServer(
-        accountId: accountId,
-        sessionId: sessionId,
-        locale: locale,
-      );
-    }
+    if (user == null) return;
 
     await retrieveList(accountId, forceUpdate: true, fetchRemoteData: () async {
       final List<TmdbTitle> parsed = [];
@@ -73,11 +63,6 @@ class WatchlistService extends TmdbTitleListService {
       }
       return parsed;
     });
-
-    if (pinnedService != null) {
-      await pinnedService!.fetchAndApplyPinnedTitles();
-      await filterItems();
-    }
   }
 
   Future<void> _updateTitleInWatchlistToSupabase(
@@ -108,11 +93,7 @@ class WatchlistService extends TmdbTitleListService {
       String accountId, String sessionId, TmdbTitle title, bool add) async {
     try {
       final user = _supabase.auth.currentUser;
-      if (user == null) {
-        if (accountId.isEmpty || sessionId.isEmpty) return;
-        return await _legacyService.updateWatchlistTitle(
-            accountId, sessionId, title, add);
-      }
+      if (user == null) return;
 
       if (add) {
         title.isPinned = false;
@@ -147,10 +128,7 @@ class WatchlistService extends TmdbTitleListService {
   Future<void> togglePin(TmdbTitle title, {String? limitReachedMessage}) async {
     try {
       final user = _supabase.auth.currentUser;
-      if (user == null) {
-        return await _legacyService.togglePin(title,
-            limitReachedMessage: limitReachedMessage);
-      }
+      if (user == null) return;
 
       if (!title.isPinned) {
         final pinnedCount = await repository.countTitlesFiltered(

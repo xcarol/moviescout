@@ -172,11 +172,11 @@ abstract class AppLocalizations {
   /// **'You can also'**
   String get messageEmptyOptions;
 
-  /// No description provided for @messageEmptyTmdb.
+  /// No description provided for @messageEmptyLogin.
   ///
   /// In en, this message translates to:
-  /// **'Connect to TMDb'**
-  String get messageEmptyTmdb;
+  /// **'Sign in to MovieScout'**
+  String get messageEmptyLogin;
 
   /// No description provided for @search.
   ///
@@ -361,7 +361,7 @@ abstract class AppLocalizations {
   /// No description provided for @imdbImport.
   ///
   /// In en, this message translates to:
-  /// **'Import from IMDB'**
+  /// **'IMDB Import'**
   String get imdbImport;
 
   /// No description provided for @imdbImportHint.
@@ -1318,119 +1318,131 @@ abstract class AppLocalizations {
   /// **'Import your old data from TMDB.'**
   String get importTmdbData;
 
-  /// No description provided for @migrateToSupabase.
+  /// No description provided for @tmdbAccount.
   ///
   /// In en, this message translates to:
-  /// **'Cloud Sync'**
-  String get migrateToSupabase;
+  /// **'TMDb Account'**
+  String get tmdbAccount;
 
-  /// No description provided for @migratingData.
+  /// No description provided for @tmdbImport.
   ///
   /// In en, this message translates to:
-  /// **'Transferring data...'**
-  String get migratingData;
+  /// **'TMDb Import'**
+  String get tmdbImport;
 
-  /// No description provided for @migrationSuccess.
+  /// No description provided for @tmdbImportScreenTitle.
   ///
   /// In en, this message translates to:
-  /// **'Data transferred successfully!'**
-  String get migrationSuccess;
+  /// **'TMDb Import'**
+  String get tmdbImportScreenTitle;
 
-  /// No description provided for @migrationError.
+  /// No description provided for @tmdbImportScreenHeader.
   ///
   /// In en, this message translates to:
-  /// **'Error transferring data'**
-  String get migrationError;
+  /// **'Import your TMDb data'**
+  String get tmdbImportScreenHeader;
 
-  /// No description provided for @loginToTmdbFirst.
+  /// No description provided for @tmdbImportScreenBody.
   ///
   /// In en, this message translates to:
-  /// **'Please log in to TMDB first to sync your data'**
-  String get loginToTmdbFirst;
+  /// **'You can import your watchlist and ratings from your TMDb account into your MovieScout account. You will need to log in to TMDb. Once the import is complete, your TMDb session will be automatically closed.'**
+  String get tmdbImportScreenBody;
 
-  /// No description provided for @migrationScreenTitle.
+  /// No description provided for @tmdbImportStartButton.
   ///
   /// In en, this message translates to:
-  /// **'Cloud Sync'**
-  String get migrationScreenTitle;
+  /// **'Start Import'**
+  String get tmdbImportStartButton;
 
-  /// No description provided for @migrationScreenHeader.
+  /// No description provided for @tmdbImportSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Database Upgrade'**
-  String get migrationScreenHeader;
+  /// **'Data imported successfully!'**
+  String get tmdbImportSuccess;
 
-  /// No description provided for @migrationScreenBody.
+  /// No description provided for @tmdbImportDownloading.
   ///
   /// In en, this message translates to:
-  /// **'To bring you more and better features, MovieScout is upgrading its database. Migrating your data is required to continue using the app, as the TMDB login will soon be disabled.'**
-  String get migrationScreenBody;
+  /// **'Downloading TMDb data...'**
+  String get tmdbImportDownloading;
 
-  /// No description provided for @migrationScreenStartButton.
+  /// No description provided for @tmdbImportDownloadingWatchlist.
   ///
   /// In en, this message translates to:
-  /// **'Start Transfer'**
-  String get migrationScreenStartButton;
+  /// **'Downloading watchlist...'**
+  String get tmdbImportDownloadingWatchlist;
 
-  /// No description provided for @migrationScreenLaterButton.
+  /// No description provided for @tmdbImportDownloadingRateslist.
   ///
   /// In en, this message translates to:
-  /// **'Maybe Later'**
-  String get migrationScreenLaterButton;
+  /// **'Downloading ratings...'**
+  String get tmdbImportDownloadingRateslist;
 
-  /// No description provided for @migrationScreenSuccess.
+  /// No description provided for @tmdbImportDownloadingEpisodes.
   ///
   /// In en, this message translates to:
-  /// **'Your data is now in the cloud!'**
-  String get migrationScreenSuccess;
+  /// **'Downloading rated episodes...'**
+  String get tmdbImportDownloadingEpisodes;
 
-  /// No description provided for @migrationScreenContinue.
+  /// No description provided for @tmdbImportWatchlistCount.
   ///
   /// In en, this message translates to:
-  /// **'Continue'**
-  String get migrationScreenContinue;
+  /// **'{count} titles in watchlist'**
+  String tmdbImportWatchlistCount(Object count);
 
-  /// No description provided for @migrationScreenDownloading.
+  /// No description provided for @tmdbImportRateslistCount.
   ///
   /// In en, this message translates to:
-  /// **'Downloading TMDB Data...'**
-  String get migrationScreenDownloading;
+  /// **'{count} rated titles'**
+  String tmdbImportRateslistCount(Object count);
 
-  /// No description provided for @migrationScreenUploading.
+  /// No description provided for @tmdbImportEpisodesCount.
   ///
   /// In en, this message translates to:
-  /// **'Uploading to Cloud...'**
-  String get migrationScreenUploading;
+  /// **'{count} rated episodes'**
+  String tmdbImportEpisodesCount(Object count);
 
-  /// No description provided for @migrationLoginRequiredGoogle.
+  /// No description provided for @tmdbImportUploadTitle.
   ///
   /// In en, this message translates to:
-  /// **'Log in to Google to start the migration.'**
-  String get migrationLoginRequiredGoogle;
+  /// **'Sync with account'**
+  String get tmdbImportUploadTitle;
 
-  /// No description provided for @migrationLoginRequiredTmdb.
+  /// No description provided for @tmdbImportUploading.
   ///
   /// In en, this message translates to:
-  /// **'Log in to TMDB to start the migration.'**
-  String get migrationLoginRequiredTmdb;
+  /// **'Uploading to your account...'**
+  String get tmdbImportUploading;
 
-  /// No description provided for @migrationLoginRequiredBoth.
+  /// No description provided for @tmdbImportUploadedCount.
   ///
   /// In en, this message translates to:
-  /// **'Log in to Google and TMDB to start the migration.'**
-  String get migrationLoginRequiredBoth;
+  /// **'{count} items uploaded to your account'**
+  String tmdbImportUploadedCount(Object count);
+
+  /// No description provided for @tmdbImportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error importing data'**
+  String get tmdbImportError;
+
+  /// No description provided for @tmdbImportLoginRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in to TMDb to start the import.'**
+  String get tmdbImportLoginRequired;
+
+  /// No description provided for @tmdbImportConsentText.
+  ///
+  /// In en, this message translates to:
+  /// **'The import will securely add your TMDb lists and ratings to your MovieScout account.'**
+  String get tmdbImportConsentText;
 
   /// No description provided for @loginConsentText.
   ///
   /// In en, this message translates to:
   /// **'By signing in, you agree to store your data on MovieScout\'s servers for cross-device synchronization, according to our '**
   String get loginConsentText;
-
-  /// No description provided for @migrationConsentText.
-  ///
-  /// In en, this message translates to:
-  /// **'Migration will copy your TMDB data securely to MovieScout\'s servers.'**
-  String get migrationConsentText;
 }
 
 class _AppLocalizationsDelegate

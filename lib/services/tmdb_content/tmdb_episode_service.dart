@@ -165,17 +165,6 @@ class TmdbEpisodeService extends TmdbBaseService {
             'rating': rating,
             'rated_date': DateTime.now().toUtc().toIso8601String(),
           }, onConflict: 'user_id, episode_tmdb_id');
-        } else {
-          await post(
-            UrlConstants.tmdbRateEpisodeEndpoint
-                .replaceFirst('{ID}', episode.tvId.toString())
-                .replaceFirst(
-                    '{SEASON_NUMBER}', episode.seasonNumber.toString())
-                .replaceFirst(
-                    '{EPISODE_NUMBER}', episode.episodeNumber.toString())
-                .replaceFirst('{SESSION_ID}', sessionId),
-            {'value': rating},
-          );
         }
       } else {
         episode.rating = 0.0;
@@ -185,16 +174,6 @@ class TmdbEpisodeService extends TmdbBaseService {
               .delete()
               .eq('user_id', user.id)
               .eq('episode_tmdb_id', episode.tmdbId);
-        } else {
-          await delete(
-            UrlConstants.tmdbRateEpisodeEndpoint
-                .replaceFirst('{ID}', episode.tvId.toString())
-                .replaceFirst(
-                    '{SEASON_NUMBER}', episode.seasonNumber.toString())
-                .replaceFirst(
-                    '{EPISODE_NUMBER}', episode.episodeNumber.toString())
-                .replaceFirst('{SESSION_ID}', sessionId),
-          );
         }
       }
 

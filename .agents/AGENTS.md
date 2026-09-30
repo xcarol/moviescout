@@ -4,4 +4,7 @@
 
 # Code Style & Comments Rules
 - DO NOT add obvious, redundant, or trivial comments/docstrings (e.g. `/// Formatted author names`, `/// Creates an instance...`, `// Optional metadata`).
-- Only write comments when strictly necessary to explain complex, non-obvious business logic, workarounds, or subtle edge cases.
+- Only write comments when strictly necessary to explain complex, non-obvious business logic, workarounds, or subtle edge cases. Always in english.
+
+# Implementation Plan & Task Rules
+- NEVER overwrite an existing Implementation Plan or Task document/artifact. If a new version or plan is needed, simply rename the previous file by adding a version number instead of overwriting it.

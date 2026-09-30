@@ -5,11 +5,9 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/screens/discover_list.dart';
 import 'package:moviescout/screens/rates_list.dart';
 import 'package:moviescout/screens/watch_list.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/widgets/layout/app_drawer.dart';
 import 'package:moviescout/widgets/misc/double_back_exit_wrapper.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/screens/migration_screen.dart';
 import 'package:provider/provider.dart';
 import 'search.dart';
 
@@ -26,38 +24,13 @@ class _MainScreenState extends State<MainScreen> {
   bool? _wasLoggedIn;
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkMigrationPrompt();
-    });
-  }
-
-  void _checkMigrationPrompt() {
-    if (!mounted) return;
-
-    final userService = Provider.of<TmdbUserService>(context, listen: false);
-    final authService =
-        Provider.of<SupabaseAuthService>(context, listen: false);
-
-    if (userService.isUserLoggedIn && !authService.isLoggedIn) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const MigrationScreen()),
-      );
-    }
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    TmdbUserService userService =
-        Provider.of<TmdbUserService>(context, listen: true);
     SupabaseAuthService authService =
         Provider.of<SupabaseAuthService>(context, listen: true);
 
-    bool isLoggedIn = userService.isUserLoggedIn || authService.isLoggedIn;
+    bool isLoggedIn = authService.isLoggedIn;
 
     if (_wasLoggedIn != isLoggedIn) {
       _wasLoggedIn = isLoggedIn;
