@@ -10,13 +10,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/repositories/title_repository.dart';
 
 class RateslistService extends TmdbTitleListService {
-  final SupabaseClient _supabase = Supabase.instance.client;
+  final SupabaseClient _supabase;
 
   FollowingService? followingService;
   String? _lastUserId;
 
-  RateslistService(TitleRepository repository)
-      : super(AppConstants.rateslist, repository);
+  RateslistService(TitleRepository repository, {SupabaseClient? supabaseClient})
+      : _supabase = supabaseClient ?? Supabase.instance.client,
+        super(AppConstants.rateslist, repository);
 
   Future<double> getRatingAsync(int titleId, String mediaType) async {
     final title = await getTitleByTmdbId(titleId, mediaType);

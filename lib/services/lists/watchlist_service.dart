@@ -9,13 +9,15 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/repositories/title_repository.dart';
 
 class WatchlistService extends TmdbTitleListService {
-  final SupabaseClient _supabase = Supabase.instance.client;
+  final SupabaseClient? _supabaseClient;
+  SupabaseClient get _supabase => _supabaseClient ?? Supabase.instance.client;
 
   PinnedService? pinnedService;
   String? _lastUserId;
 
-  WatchlistService(TitleRepository repository)
-      : super(AppConstants.watchlist, repository);
+  WatchlistService(TitleRepository repository, {SupabaseClient? supabaseClient})
+      : _supabaseClient = supabaseClient,
+        super(AppConstants.watchlist, repository);
 
   @override
   Future<void> syncFromServer({
@@ -137,6 +139,7 @@ class WatchlistService extends TmdbTitleListService {
             ErrorService.log(
               'Pin limit reached',
               userMessage: limitReachedMessage,
+              showSnackBar: true,
             );
           }
           return;
