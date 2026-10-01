@@ -23,7 +23,6 @@ import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/buttons/trailer_buttons.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/widgets/chips/person_chip.dart';
 import 'package:moviescout/widgets/text_and_info/social_link.dart';
 import 'package:moviescout/widgets/layout/boxed_widget.dart';
@@ -100,13 +99,10 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   Future<void> _updateTitleRate(TmdbTitle title, double rating) async {
-    final userService = Provider.of<TmdbUserService>(context, listen: false);
     final rateslistService =
         Provider.of<RateslistService>(context, listen: false);
 
     await rateslistService.updateTitleRate(
-      userService.accountId,
-      userService.sessionId,
       title,
       rating,
     );
@@ -846,11 +842,8 @@ class _TitleDetailsState extends State<TitleDetails> {
                   ratingService.getRatingAsync(title.tmdbId, title.mediaType),
                 ]),
                 builder: (context, snapshot) {
-                  final isTmdbLoggedIn =
-                      Provider.of<TmdbUserService>(context).isUserLoggedIn;
-                  final isGoogleLoggedIn =
+                  final isUserLoggedIn =
                       Provider.of<SupabaseAuthService>(context).isLoggedIn;
-                  final isUserLoggedIn = isTmdbLoggedIn || isGoogleLoggedIn;
 
                   final titleRatingDate = snapshot.data?[0] as DateTime? ??
                       DateTime.fromMillisecondsSinceEpoch(0);

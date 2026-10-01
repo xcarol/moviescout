@@ -18,7 +18,6 @@ import 'package:moviescout/widgets/buttons/action_menu.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/rate_form.dart';
 import 'package:moviescout/services/api/tmdb_translation_service.dart';
 import 'package:moviescout/widgets/buttons/user_rate_button.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
 
 class EpisodeDetails extends StatefulWidget {
@@ -248,11 +247,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
   }
 
   Future<void> _updateEpisodeRate(TmdbEpisode episode, double rating) async {
-    final userService = Provider.of<TmdbUserService>(context, listen: false);
-
     await TmdbEpisodeService().updateEpisodeRate(
-      userService.accountId,
-      userService.sessionId,
       episode,
       rating,
     );
@@ -263,11 +258,8 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
   }
 
   Widget _durationDateAndRating(TmdbEpisode episode) {
-    final isTmdbLoggedIn =
-        Provider.of<TmdbUserService>(context, listen: false).isUserLoggedIn;
-    final isGoogleLoggedIn =
+    final isUserLoggedIn =
         Provider.of<SupabaseAuthService>(context, listen: false).isLoggedIn;
-    final isUserLoggedIn = isTmdbLoggedIn || isGoogleLoggedIn;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

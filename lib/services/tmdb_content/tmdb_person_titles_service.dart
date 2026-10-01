@@ -53,8 +53,7 @@ class TmdbPersonTitlesService extends TmdbTitleListService
   }
 
   @override
-  Future<void> retrieveList(
-    String accountId, {
+  Future<void> retrieveList({
     required Future<List<TmdbTitle>> Function() fetchRemoteData,
     bool forceUpdate = false,
   }) async {
@@ -172,11 +171,9 @@ class TmdbPersonTitlesService extends TmdbTitleListService
 
   @override
   Future<void> updateTitle(
-    String accountId,
-    String sessionId,
     TmdbTitle title,
     bool add,
-    Future<dynamic> Function(String, String) updateTitleToServer,
+    Future<dynamic> Function() updateTitleToServer,
   ) async {
     throw Exception(
         'Update operations are not supported in TmdbPersonTitlesService');

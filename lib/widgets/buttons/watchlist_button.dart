@@ -3,7 +3,6 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/core/error_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
@@ -13,13 +12,12 @@ Widget watchlistButton(
   BuildContext context,
   TmdbTitle title,
 ) {
-  return Consumer3<WatchlistService, TmdbUserService, SupabaseAuthService>(
-    builder: (_, watchlistService, userService, authService, __) {
+  return Consumer2<WatchlistService, SupabaseAuthService>(
+    builder: (_, watchlistService, authService, __) {
       return FutureBuilder(
         future: watchlistService.contains(title),
         builder: (context, snapshot) {
-          bool isLoggedIn =
-              userService.isUserLoggedIn || authService.isLoggedIn;
+          bool isLoggedIn = authService.isLoggedIn;
           if (!isLoggedIn) {
             return IconButton(
               icon: const Icon(Icons.highlight_off),
@@ -40,8 +38,6 @@ Widget watchlistButton(
             onPressed: () {
               try {
                 watchlistService.updateWatchlistTitle(
-                  userService.accountId,
-                  userService.sessionId,
                   title,
                   !isInWatchlist,
                 );

@@ -273,8 +273,6 @@ class AppDrawer extends StatelessWidget {
     await tmdbDiscoverlistService.clearList();
 
     await tmdbDiscoverlistService.retrieveDiscoverlist(
-      '',
-      '',
       userLocale,
       forceUpdate: true,
     );
