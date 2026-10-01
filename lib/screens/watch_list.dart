@@ -33,8 +33,6 @@ class _WatchListState extends State<WatchList> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _watchlistService.syncFromServer(
-        accountId: '',
-        sessionId: '',
         locale: Localizations.localeOf(context),
       );
     });

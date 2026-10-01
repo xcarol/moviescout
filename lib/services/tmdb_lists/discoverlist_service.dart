@@ -33,8 +33,6 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
   }
 
   Future<void> retrieveDiscoverlist(
-    String accountId,
-    String sessionId,
     Locale locale, {
     bool forceUpdate = false,
   }) async {
@@ -48,19 +46,19 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     await clearList();
 
     retrieveList(
-        accountId.isEmpty ? AppConstants.anonymousAccountId : accountId,
-        forceUpdate: forceUpdate, fetchRemoteData: () async {
-      return fetchAndMergeTmdbLists(
-        retrieveMovies: () async {
-          return _getDiscoveryTitles(accountId, sessionId, locale,
-              ApiConstants.movie, UrlConstants.tmdbPopularMoviesEndpoint);
-        },
-        retrieveTvshows: () async {
-          return _getDiscoveryTitles(accountId, sessionId, locale,
-              ApiConstants.tv, UrlConstants.tmdbPopularTvEndpoint);
-        },
-      );
-    }).whenComplete(() {
+        forceUpdate: forceUpdate,
+        fetchRemoteData: () async {
+          return fetchAndMergeTmdbLists(
+            retrieveMovies: () async {
+              return _getDiscoveryTitles(locale, ApiConstants.movie,
+                  UrlConstants.tmdbPopularMoviesEndpoint);
+            },
+            retrieveTvshows: () async {
+              return _getDiscoveryTitles(
+                  locale, ApiConstants.tv, UrlConstants.tmdbPopularTvEndpoint);
+            },
+          );
+        }).whenComplete(() {
       isRefreshing.value = false;
     });
   }
@@ -225,7 +223,7 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     });
   }
 
-  Future<List> _getDiscoveryTitles(String accountId, String sessionId,
+  Future<List> _getDiscoveryTitles(
       Locale locale, String mediaType, String popularEndpoint) async {
     final String discoverEndpoint = mediaType == ApiConstants.movie
         ? UrlConstants.tmdbDiscoverMoviesEndpoint
@@ -271,27 +269,20 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     }
 
     if (recommendations.length < 40) {
-      await _addPopularFallbackTitles(recommendations, excludedTmdbIds,
-          popularEndpoint, accountId, sessionId, locale);
+      await _addPopularFallbackTitles(
+          recommendations, excludedTmdbIds, popularEndpoint, locale);
     }
 
     return recommendations;
   }
 
-  Future<void> _addPopularFallbackTitles(
-      List<dynamic> recommendations,
-      Set<int> excludedTmdbIds,
-      String popularEndpoint,
-      String accountId,
-      String sessionId,
-      Locale locale) async {
+  Future<void> _addPopularFallbackTitles(List<dynamic> recommendations,
+      Set<int> excludedTmdbIds, String popularEndpoint, Locale locale) async {
     final popularTitles = await getTitlesFromServer((int page) async {
       if (page > 2) {
         return http.Response('{"page":$page,"total_pages":$page}', 200);
       }
       return get(popularEndpoint
-          .replaceFirst('{ACCOUNT_ID}', accountId)
-          .replaceFirst('{SESSION_ID}', sessionId)
           .replaceFirst('{PAGE}', page.toString())
           .replaceFirst(
               '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'));
@@ -322,10 +313,9 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
 
   @override
   Future<void> syncFromServer({
-    required String accountId,
-    required String sessionId,
-    required Locale locale,
+    Locale? locale,
   }) async {
-    await retrieveDiscoverlist(accountId, sessionId, locale, forceUpdate: true);
+    await retrieveDiscoverlist(locale ?? const Locale('en', 'US'),
+        forceUpdate: true);
   }
 }

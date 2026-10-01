@@ -9,7 +9,6 @@ import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/repositories/title_repository.dart';
 import 'package:provider/provider.dart';
@@ -118,12 +117,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
       });
       WatchlistService watchlistService =
           Provider.of<WatchlistService>(context, listen: false);
-      TmdbUserService userService =
-          Provider.of<TmdbUserService>(context, listen: false);
 
       await watchlistService.syncFromServer(
-        accountId: userService.accountId,
-        sessionId: userService.sessionId,
         locale: Localizations.localeOf(context),
       );
 
@@ -146,8 +141,6 @@ class _ImportIMDBState extends State<ImportIMDB> {
           }
 
           await watchlistService.updateWatchlistTitle(
-            userService.accountId,
-            userService.sessionId,
             title,
             false,
           );
@@ -178,12 +171,8 @@ class _ImportIMDBState extends State<ImportIMDB> {
       });
       RateslistService rateslistService =
           Provider.of<RateslistService>(context, listen: false);
-      TmdbUserService userService =
-          Provider.of<TmdbUserService>(context, listen: false);
 
       await rateslistService.syncFromServer(
-        accountId: userService.accountId,
-        sessionId: userService.sessionId,
         locale: Localizations.localeOf(context),
       );
 
@@ -206,8 +195,6 @@ class _ImportIMDBState extends State<ImportIMDB> {
           }
 
           await rateslistService.updateTitleRate(
-            userService.accountId,
-            userService.sessionId,
             title,
             0,
           );
@@ -488,8 +475,6 @@ class _ImportIMDBState extends State<ImportIMDB> {
         searchServiceListName,
         context.read<TitleRepository>(),
       );
-      final TmdbUserService tmdbUserService =
-          Provider.of<TmdbUserService>(context, listen: false);
 
       for (int index = 0; index < imdbIds.length; index++) {
         setState(() {
@@ -536,8 +521,6 @@ class _ImportIMDBState extends State<ImportIMDB> {
               Provider.of<WatchlistService>(context, listen: false);
 
           await watchlistService.updateWatchlistTitle(
-            tmdbUserService.accountId,
-            tmdbUserService.sessionId,
             updatedTitle,
             true,
           );
@@ -588,8 +571,6 @@ class _ImportIMDBState extends State<ImportIMDB> {
         searchServiceListName,
         context.read<TitleRepository>(),
       );
-      final tmdbUserService =
-          Provider.of<TmdbUserService>(context, listen: false);
 
       for (int index = 0; index < imdbIds.length; index++) {
         setState(() {
@@ -635,8 +616,6 @@ class _ImportIMDBState extends State<ImportIMDB> {
               Provider.of<RateslistService>(context, listen: false);
 
           await ratelistService.updateTitleRate(
-            tmdbUserService.accountId,
-            tmdbUserService.sessionId,
             updatedTitle,
             imdbIds[index][rateIndex],
           );

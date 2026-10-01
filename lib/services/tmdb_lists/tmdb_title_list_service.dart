@@ -1,5 +1,4 @@
 import "package:moviescout/utils/api_constants.dart";
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -124,8 +123,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     pageVal = 0;
   }
 
-  Future<void> retrieveList(
-    String accountId, {
+  Future<void> retrieveList({
     required Future<List<TmdbTitle>> Function() fetchRemoteData,
     bool forceUpdate = false,
   }) async {
@@ -135,12 +133,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       hasLocalData = await repository.hasTitlesFiltered(listName: listNameVal);
     }
 
-    final isSupabaseLoggedIn =
-        Supabase.instance.client.auth.currentUser != null;
-
-    if ((accountId.isEmpty && !isSupabaseLoggedIn) ||
-        (hasLocalData && isUpToDate && !forceUpdate) ||
-        isLoading.value) {
+    if ((hasLocalData && isUpToDate && !forceUpdate) || isLoading.value) {
       if (hasLocalData && loadedItemsVal.isEmpty) {
         await filterItems();
       }
@@ -168,7 +161,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
         return;
       }
 
-      await _syncWithServer(accountId, fetchRemoteData);
+      await _syncWithServer(fetchRemoteData);
 
       await updateListGenres();
 
@@ -186,7 +179,6 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
   }
 
   Future<List<TmdbTitle>> _retrieveServerList(
-    String accountId,
     Future<List<TmdbTitle>> Function() fetchRemoteData,
   ) async {
     List<TmdbTitle> serverList = List.empty(growable: true);
@@ -217,7 +209,6 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
 
   @protected
   Future<void> _syncWithServer(
-    String accountId,
     Future<List<TmdbTitle>> Function() fetchRemoteData,
   ) async {
     final dbCount = await repository.countTitlesFiltered(listName: listNameVal);
@@ -227,8 +218,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       await _clearLocalList();
     }
 
-    List<TmdbTitle> serverList =
-        await _retrieveServerList(accountId, fetchRemoteData);
+    List<TmdbTitle> serverList = await _retrieveServerList(fetchRemoteData);
 
     if (isInitialLoad) {
       await repository.saveTitles(serverList, listNameVal);
@@ -377,38 +367,30 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
   }
 
   Future<void> syncFromServer({
-    required String accountId,
-    required String sessionId,
-    required Locale locale,
+    Locale? locale,
   }) async {}
 
   Future<void> updateTitle(
-    String accountId,
-    String sessionId,
     TmdbTitle title,
     bool add,
-    Future<dynamic> Function(
-      String accountId,
-      String sessionId,
-    ) updateTitleToServer,
+    Future<dynamic> Function() updateTitleToServer,
   ) async {
-    final result = await updateTitleToServer(accountId, sessionId);
-    if (result.statusCode == 200 || result.statusCode == 201) {
-      if (add) {
-        await updateLocalTitle(title);
-      } else {
-        await deleteLocalTitle(title);
-        loadedItemsVal.removeWhere((element) => element.tmdbId == title.tmdbId);
-      }
-      await filterItems(retainPagination: true);
-      setLastUpdate();
-      await updateListGenres();
-
-      notifyListeners();
-    } else {
-      throw Exception(
-          'Failed to update titleId: ${title.tmdbId}. Status code: ${result.statusCode} - ${result.body}');
+    final result = await updateTitleToServer();
+    if (result == false) {
+      throw Exception('Failed to update titleId: ${title.tmdbId}');
     }
+
+    if (add) {
+      await updateLocalTitle(title);
+    } else {
+      await deleteLocalTitle(title);
+      loadedItemsVal.removeWhere((element) => element.tmdbId == title.tmdbId);
+    }
+    await filterItems(retainPagination: true);
+    setLastUpdate();
+    await updateListGenres();
+
+    notifyListeners();
   }
 
   Future<List> getTitlesFromServer(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:provider/provider.dart';
 
@@ -24,8 +23,6 @@ class _RatesListState extends State<RatesList> {
   }
 
   Future<void> _loadData() async {
-    final userService = Provider.of<TmdbUserService>(context, listen: false);
-
     _rateslistService = Provider.of<RateslistService>(context, listen: false);
     _rateslistWidget = ItemList(
       _rateslistService,
@@ -34,8 +31,6 @@ class _RatesListState extends State<RatesList> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _rateslistService.syncFromServer(
-        accountId: userService.accountId,
-        sessionId: userService.sessionId,
         locale: Localizations.localeOf(context),
       );
     });

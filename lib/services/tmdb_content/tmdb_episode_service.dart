@@ -145,8 +145,6 @@ class TmdbEpisodeService extends TmdbBaseService {
   }
 
   Future<void> updateEpisodeRate(
-    String accountId,
-    String sessionId,
     TmdbEpisode episode,
     double rating,
   ) async {

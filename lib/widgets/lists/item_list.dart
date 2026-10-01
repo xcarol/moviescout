@@ -16,7 +16,6 @@ import 'package:moviescout/widgets/inputs_and_filters/drop_down_selector.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/widgets/lists/list_control_panel.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_person_titles_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/widgets/lists/list_controller.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart';
@@ -222,13 +221,9 @@ class _ItemListState extends SearchableListState<ItemList> {
               if (widget.listService.isLoading.value) {
                 return;
               }
-              final userService =
-                  Provider.of<TmdbUserService>(context, listen: false);
               final service = widget.listService;
               if (service is TmdbTitleListService) {
                 await service.syncFromServer(
-                  accountId: userService.accountId,
-                  sessionId: userService.sessionId,
                   locale: Localizations.localeOf(context),
                 );
               }

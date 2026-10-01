@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:provider/provider.dart';
@@ -108,11 +107,7 @@ class _DiscoverListState extends State<DiscoverList> {
       }
     }
 
-    final userService = Provider.of<TmdbUserService>(context, listen: false);
-
     _discoverlistService.retrieveDiscoverlist(
-      userService.accountId,
-      userService.sessionId,
       Localizations.localeOf(context),
       forceUpdate: forceUpdate,
     );

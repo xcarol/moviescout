@@ -4,7 +4,6 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_person_titles_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/repositories/title_repository.dart';
 
@@ -36,9 +35,7 @@ class _PersonTitlesState extends State<PersonTitles> {
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final userService = Provider.of<TmdbUserService>(context, listen: false);
       _personTitlesService.retrieveList(
-        userService.accountId,
         fetchRemoteData: () async => [],
       );
     });
