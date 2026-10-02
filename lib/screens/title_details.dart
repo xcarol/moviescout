@@ -12,8 +12,8 @@ import 'package:moviescout/models/tmdb_collection.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/title_repository.dart'
-    show TitleRepository;
+import 'package:moviescout/repositories/local_title_repository.dart'
+    show LocalTitleRepository;
 import 'package:moviescout/screens/collection_details.dart';
 import 'package:moviescout/screens/season_details.dart';
 import 'package:moviescout/screens/title_people_list.dart';
@@ -202,7 +202,7 @@ class _TitleDetailsState extends State<TitleDetails> {
           }
         }
 
-        final repository = TitleRepository();
+        final repository = LocalTitleRepository();
         await repository.updateTitlesMetadata([updated]);
       }
     } catch (e) {

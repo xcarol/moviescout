@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_provider.dart';
+import 'package:moviescout/repositories/cloud_title_repository.dart';
+import 'package:moviescout/services/core/cloud_database_service.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_config_list_service.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 const String _tmdbMovieProviders =
     '/watch/providers/movie?language={LOCALE}&watch_region={COUNTRY}';
@@ -11,6 +12,8 @@ const String _tmdbTvProviders =
     '/watch/providers/tv?language={LOCALE}&watch_region={COUNTRY}';
 
 class TmdbProviderService extends TmdbConfigListService {
+  final CloudTitleRepository _cloudRepository;
+
   final Map<int, Map<String, String>> _providerMap = {};
   Map<int, Map<String, String>> get providers => _providerMap;
   bool _isInitialized = false;
@@ -26,8 +29,9 @@ class TmdbProviderService extends TmdbConfigListService {
         .toList();
   }
 
-  TmdbProviderService()
-      : super(
+  TmdbProviderService({CloudTitleRepository? cloudRepository})
+      : _cloudRepository = cloudRepository ?? CloudTitleRepository(),
+        super(
           configListName: 'providers',
           listIdPrefKey: 'providerListId',
           firestoreFieldName: 'providers',
@@ -90,8 +94,7 @@ class TmdbProviderService extends TmdbConfigListService {
 
   Future<void> setup(
       String accountId, String sessionId, String accessToken) async {
-    final isSupabaseLoggedIn =
-        Supabase.instance.client.auth.currentUser != null;
+    final isSupabaseLoggedIn = CloudDatabaseService.isLoggedIn;
 
     if (!isSupabaseLoggedIn &&
         (accountId.isEmpty || sessionId.isEmpty || accessToken.isEmpty)) {
@@ -149,17 +152,13 @@ class TmdbProviderService extends TmdbConfigListService {
 
   @override
   Future<void> fetchAndListen() async {
-    final user = Supabase.instance.client.auth.currentUser;
+    final user = CloudDatabaseService.currentUser;
     if (user != null) {
       try {
-        final response = await Supabase.instance.client
-            .from('profiles')
-            .select('providers_string')
-            .eq('id', user.id)
-            .maybeSingle();
-
-        if (response != null && response['providers_string'] != null) {
-          await applyData(response['providers_string']);
+        final providersString =
+            await _cloudRepository.fetchUserProviders(user.id);
+        if (providersString != null) {
+          await applyData(providersString);
         }
       } catch (e, stackTrace) {
         ErrorService.log(e,
@@ -176,12 +175,10 @@ class TmdbProviderService extends TmdbConfigListService {
 
   @override
   Future<bool> updateToFirebase(dynamic data) async {
-    final user = Supabase.instance.client.auth.currentUser;
+    final user = CloudDatabaseService.currentUser;
     if (user != null) {
       try {
-        await Supabase.instance.client
-            .from('profiles')
-            .upsert({'id': user.id, 'providers_string': data});
+        await _cloudRepository.updateUserProviders(user.id, data);
         return true;
       } catch (e, stackTrace) {
         ErrorService.log(e,

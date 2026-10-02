@@ -5,16 +5,17 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/user_list_entry.dart';
-import 'package:moviescout/services/core/database_service.dart';
+import 'package:moviescout/services/core/local_database_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
-class TitleRepository {
+class LocalTitleRepository {
   final AppDatabase _db;
 
-  TitleRepository({AppDatabase? db}) : _db = db ?? DatabaseService.instance;
+  LocalTitleRepository({AppDatabase? db})
+      : _db = db ?? LocalDatabaseService.instance;
 
   void _mergeTitleMetadata(TmdbTitle newTitle, TmdbTitle currentTitle,
       {String? listName}) {

@@ -6,7 +6,7 @@ import 'package:moviescout/database/app_database.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
-import 'package:moviescout/repositories/title_repository.dart';
+import 'package:moviescout/repositories/local_title_repository.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
@@ -14,7 +14,7 @@ import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
 
 void main() {
   late AppDatabase db;
-  late TitleRepository repository;
+  late LocalTitleRepository repository;
 
   setUpAll(() {
     open.overrideFor(OperatingSystem.linux, () {
@@ -28,14 +28,14 @@ void main() {
 
   setUp(() {
     db = AppDatabase(NativeDatabase.memory());
-    repository = TitleRepository(db: db);
+    repository = LocalTitleRepository(db: db);
   });
 
   tearDown(() async {
     await db.close();
   });
 
-  group('TmdbTitleRepository', () {
+  group('LocalTitleRepository', () {
     test('saveTitle and updateTitleMetadata', () async {
       final title = TmdbTitle(
         tmdbId: 1,

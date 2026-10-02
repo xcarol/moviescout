@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/title_repository.dart';
+import 'package:moviescout/repositories/cloud_title_repository.dart';
+import 'package:moviescout/repositories/local_title_repository.dart';
+import 'package:moviescout/services/core/cloud_database_service.dart';
 import 'package:moviescout/services/lists/pinned_service.dart';
 import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
@@ -13,7 +15,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 
-class MockTitleRepository extends Mock implements TitleRepository {}
+class MockTitleRepository extends Mock implements LocalTitleRepository {}
 
 class MockPinnedService extends Mock implements PinnedService {}
 
@@ -126,11 +128,18 @@ void main() {
     when(() => mockRepository.getAllGenreIds(AppConstants.watchlist))
         .thenAnswer((_) async => []);
 
+    CloudDatabaseService.init(client: mockSupabaseClient);
+    final cloudRepository = CloudTitleRepository(client: mockSupabaseClient);
+
     service = WatchlistService(
       mockRepository,
-      supabaseClient: mockSupabaseClient,
+      cloudRepository: cloudRepository,
     );
     service.pinnedService = mockPinnedService;
+  });
+
+  tearDown(() {
+    CloudDatabaseService.reset();
   });
 
   group('WatchlistService - updateWatchlistTitle', () {
@@ -209,8 +218,8 @@ void main() {
 
       verifyNever(() => mockRepository.saveTitles(any(), any(),
           addedOrders: any(named: 'addedOrders')));
-      verifyNever(() => mockQueryBuilder.upsert(any(),
-          onConflict: any(named: 'onConflict')));
+      verifyNever(() =>
+          mockQueryBuilder.upsert(any(), onConflict: any(named: 'onConflict')));
     });
   });
 

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -112,7 +111,7 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
   }
 
   Future<UserPreferences> _calculatePreferences() async {
-    final titleRepo = TitleRepository();
+    final titleRepo = repository;
     final Map<int, double> genreWeights = {};
     final Map<int, int> genreCounts = {};
     final Map<int, double> keywordWeights = {};
@@ -231,7 +230,7 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     final List<dynamic> recommendations = [];
     final Set<int> excludedTmdbIds = {};
 
-    final titleRepo = TitleRepository();
+    final titleRepo = repository;
     final preferences = await _calculatePreferences();
 
     final ratedTitles =

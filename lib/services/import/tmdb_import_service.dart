@@ -1,13 +1,14 @@
 import 'dart:ui';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/title_repository.dart';
+import 'package:moviescout/repositories/cloud_title_repository.dart';
+import 'package:moviescout/repositories/local_title_repository.dart';
+import 'package:moviescout/services/core/cloud_database_service.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/url_constants.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 enum ImportProgressStage {
   fetchingWatchlist,
@@ -25,11 +26,13 @@ typedef ImportProgressCallback = void Function({
 });
 
 class TmdbImportService extends TmdbBaseService {
-  final TitleRepository _repository;
-  final SupabaseClient _supabase;
+  final LocalTitleRepository _repository;
+  final CloudTitleRepository _cloudRepository;
 
-  TmdbImportService(this._repository, {SupabaseClient? supabase})
-      : _supabase = supabase ?? Supabase.instance.client;
+  TmdbImportService(
+    this._repository, {
+    CloudTitleRepository? cloudRepository,
+  }) : _cloudRepository = cloudRepository ?? CloudTitleRepository();
 
   Future<void> importFromTmdb({
     required String accountId,
@@ -37,7 +40,7 @@ class TmdbImportService extends TmdbBaseService {
     required Locale locale,
     ImportProgressCallback? onProgress,
   }) async {
-    final user = _supabase.auth.currentUser;
+    final user = CloudDatabaseService.currentUser;
     if (user == null) {
       throw Exception('Supabase session not initialized for import.');
     }
@@ -167,10 +170,7 @@ class TmdbImportService extends TmdbBaseService {
           i + chunkSize > allRecords.length ? allRecords.length : i + chunkSize,
         );
 
-        await _supabase.from('user_titles').upsert(
-              chunk,
-              onConflict: 'user_id, tmdb_id, media_type, list_name',
-            );
+        await _cloudRepository.bulkUpsertUserTitles(chunk);
 
         processed += chunk.length;
         onProgress?.call(
@@ -189,10 +189,7 @@ class TmdbImportService extends TmdbBaseService {
               : i + chunkSize,
         );
 
-        await _supabase.from('user_episode_ratings').upsert(
-              chunk,
-              onConflict: 'user_id, episode_tmdb_id',
-            );
+        await _cloudRepository.bulkUpsertEpisodeRatings(chunk);
 
         processed += chunk.length;
         onProgress?.call(

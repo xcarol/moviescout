@@ -1,14 +1,22 @@
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/title_repository.dart';
+import 'package:moviescout/repositories/cloud_title_repository.dart';
+import 'package:moviescout/repositories/local_title_repository.dart';
+import 'package:moviescout/services/core/cloud_database_service.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/core/tmdb_base_service.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TmdbEpisodeService extends TmdbBaseService {
-  final _repository = TitleRepository();
+  final LocalTitleRepository _repository;
+  final CloudTitleRepository _cloudRepository;
+
+  TmdbEpisodeService({
+    LocalTitleRepository? repository,
+    CloudTitleRepository? cloudRepository,
+  })  : _repository = repository ?? LocalTitleRepository(),
+        _cloudRepository = cloudRepository ?? CloudTitleRepository();
 
   Future<dynamic> _retrieveEpisodeDetails(
     int id,
@@ -149,29 +157,24 @@ class TmdbEpisodeService extends TmdbBaseService {
     double rating,
   ) async {
     try {
-      final user = Supabase.instance.client.auth.currentUser;
+      final user = CloudDatabaseService.currentUser;
       if (rating > 0) {
         episode.rating = rating;
         episode.dateRated = DateTime.now();
         if (user != null) {
-          await Supabase.instance.client.from('user_episode_ratings').upsert({
-            'user_id': user.id,
-            'show_tmdb_id': episode.tvId,
-            'season_number': episode.seasonNumber,
-            'episode_number': episode.episodeNumber,
-            'episode_tmdb_id': episode.tmdbId,
-            'rating': rating,
-            'rated_date': DateTime.now().toUtc().toIso8601String(),
-          }, onConflict: 'user_id, episode_tmdb_id');
+          await _cloudRepository.upsertEpisodeRating(
+            userId: user.id,
+            episode: episode,
+            rating: rating,
+          );
         }
       } else {
         episode.rating = 0.0;
         if (user != null) {
-          await Supabase.instance.client
-              .from('user_episode_ratings')
-              .delete()
-              .eq('user_id', user.id)
-              .eq('episode_tmdb_id', episode.tmdbId);
+          await _cloudRepository.deleteEpisodeRating(
+            userId: user.id,
+            episodeTmdbId: episode.tmdbId,
+          );
         }
       }
 
