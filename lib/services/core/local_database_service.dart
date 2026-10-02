@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:moviescout/database/app_database.dart';
 
-class DatabaseService {
+class LocalDatabaseService {
   static AppDatabase? _db;
 
   static Future<void> init({AppDatabase? db}) async {

@@ -8,7 +8,7 @@ import 'package:moviescout/screens/person_details.dart';
 import 'package:moviescout/screens/title_details.dart';
 import 'package:moviescout/screens/season_details.dart';
 import 'package:moviescout/screens/collection_details.dart';
-import 'package:moviescout/repositories/title_repository.dart';
+import 'package:moviescout/repositories/local_title_repository.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 
@@ -102,7 +102,7 @@ class DeepLinkService {
     _lastNavigatedTime = DateTime.now();
 
     if (type == ApiConstants.movie || type == ApiConstants.tv) {
-      final repository = TitleRepository();
+      final repository = LocalTitleRepository();
       final existingTitle = await repository.getTitleGlobal(tmdbId, type);
 
       final title = existingTitle ??

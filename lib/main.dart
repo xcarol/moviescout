@@ -12,7 +12,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
 import 'package:moviescout/services/core/error_service.dart';
-import 'package:moviescout/services/core/database_service.dart';
+import 'package:moviescout/repositories/cloud_title_repository.dart';
+import 'package:moviescout/repositories/local_title_repository.dart';
+import 'package:moviescout/services/core/cloud_database_service.dart';
+import 'package:moviescout/services/core/local_database_service.dart';
 import 'package:moviescout/services/system/app_lifecycle_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/settings/language_service.dart';
@@ -32,7 +35,6 @@ import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
-import 'package:moviescout/repositories/title_repository.dart';
 import 'package:moviescout/screens/main_screen.dart';
 import 'package:moviescout/services/system/deep_link_service.dart';
 import 'package:moviescout/utils/language_translator.dart';
@@ -127,13 +129,14 @@ void _runMain({bool isFromShortcutActivity = false}) async {
     await Future.wait([
       dotenv.load(fileName: ".env"),
       PreferencesService().init(),
-      DatabaseService.init(),
+      LocalDatabaseService.init(),
     ]);
 
     await Supabase.initialize(
       url: dotenv.env['SUPABASE_URL'] ?? '',
       publishableKey: dotenv.env['SUPABASE_API_KEY'] ?? '',
     );
+    CloudDatabaseService.init();
   } catch (error, stackTrace) {
     ErrorService.log(
       error,
@@ -177,7 +180,8 @@ void _runMain({bool isFromShortcutActivity = false}) async {
     );
   }
 
-  final repository = TitleRepository();
+  final repository = LocalTitleRepository();
+  final cloudRepository = CloudTitleRepository();
 
   if (!isShortcut) {
     UninitializedTitlesWorker.dispatch();
@@ -186,27 +190,31 @@ void _runMain({bool isFromShortcutActivity = false}) async {
   runApp(MultiProvider(
     providers: [
       Provider.value(value: repository),
+      Provider.value(value: cloudRepository),
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => SupabaseAuthService()),
       ChangeNotifierProvider(create: (_) => TmdbUserService()),
       ChangeNotifierProxyProvider2<TmdbUserService, SupabaseAuthService,
           TmdbProviderService>(
-        create: (_) => TmdbProviderService(),
+        create: (_) => TmdbProviderService(cloudRepository: cloudRepository),
         update: (_, userService, authService, providerService) =>
             providerService!
               ..setup(userService.accountId, userService.sessionId,
                   userService.accessToken),
       ),
       ChangeNotifierProvider<PinnedService>(
-        create: (_) => PinnedService(repository),
+        create: (_) =>
+            PinnedService(repository, cloudRepository: cloudRepository),
       ),
       ChangeNotifierProvider<FollowingService>(
-        create: (_) => FollowingService(repository),
+        create: (_) =>
+            FollowingService(repository, cloudRepository: cloudRepository),
       ),
       ChangeNotifierProxyProvider2<FollowingService, SupabaseAuthService,
           RateslistService>(
-        create: (_) => RateslistService(repository),
+        create: (_) =>
+            RateslistService(repository, cloudRepository: cloudRepository),
         update: (_, followingService, authService, rateslistService) {
           rateslistService!.followingService = followingService;
           rateslistService.updateAuth(authService);
@@ -215,7 +223,8 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       ),
       ChangeNotifierProxyProvider3<RateslistService, PinnedService,
           SupabaseAuthService, WatchlistService>(
-        create: (_) => WatchlistService(repository),
+        create: (_) =>
+            WatchlistService(repository, cloudRepository: cloudRepository),
         update: (_, rateslistService, pinnedService, authService,
             watchlistService) {
           rateslistService.removeListener(watchlistService!.refresh);

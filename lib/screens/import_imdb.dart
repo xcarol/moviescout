@@ -10,7 +10,7 @@ import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/lists/watchlist_service.dart';
-import 'package:moviescout/repositories/title_repository.dart';
+import 'package:moviescout/repositories/local_title_repository.dart';
 import 'package:provider/provider.dart';
 
 enum TitleStatus { pending, success, failed }
@@ -473,7 +473,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
       final tmdbBaseService = TmdbBaseService();
       final tmdbSearchService = TmdbSearchService(
         searchServiceListName,
-        context.read<TitleRepository>(),
+        context.read<LocalTitleRepository>(),
       );
 
       for (int index = 0; index < imdbIds.length; index++) {
@@ -569,7 +569,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
       final tmdbBaseService = TmdbBaseService();
       final tmdbSearchService = TmdbSearchService(
         searchServiceListName,
-        context.read<TitleRepository>(),
+        context.read<LocalTitleRepository>(),
       );
 
       for (int index = 0; index < imdbIds.length; index++) {

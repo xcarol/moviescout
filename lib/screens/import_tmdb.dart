@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/repositories/title_repository.dart';
+import 'package:moviescout/repositories/local_title_repository.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/import/tmdb_import_service.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
@@ -95,7 +95,8 @@ class _ImportTmdbScreenState extends State<ImportTmdbScreen> {
 
   Future<void> _startImport() async {
     final userService = Provider.of<TmdbUserService>(context, listen: false);
-    final repository = Provider.of<TitleRepository>(context, listen: false);
+    final repository =
+        Provider.of<LocalTitleRepository>(context, listen: false);
     final watchlistService =
         Provider.of<WatchlistService>(context, listen: false);
     final rateslistService =

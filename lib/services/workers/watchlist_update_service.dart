@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/title_repository.dart';
+import 'package:moviescout/repositories/cloud_title_repository.dart';
+import 'package:moviescout/repositories/local_title_repository.dart';
+import 'package:moviescout/services/core/cloud_database_service.dart';
 import 'package:moviescout/services/core/error_service.dart';
-import 'package:moviescout/services/core/database_service.dart';
+import 'package:moviescout/services/core/local_database_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -48,7 +49,7 @@ class WatchlistUpdateService {
       List<dynamic> providersList,
       List<int> enabledProviderIds,
       TmdbTitleService titleService,
-      TitleRepository repository,
+      LocalTitleRepository repository,
       AppLocalizations localizations,
       DateTime now,
       bool notifyCompleteSeason) async {
@@ -190,37 +191,20 @@ class WatchlistUpdateService {
     TmdbTitle title, {
     required bool addedToWatchlist,
     required bool isInRateslist,
+    CloudTitleRepository? cloudRepository,
   }) async {
     try {
-      if (Supabase.instance.client.auth.currentSession == null) return;
-      final user = Supabase.instance.client.auth.currentUser;
+      if (CloudDatabaseService.currentSession == null) return;
+      final user = CloudDatabaseService.currentUser;
       if (user == null) return;
 
-      if (isInRateslist) {
-        await Supabase.instance.client
-            .from('user_titles')
-            .update({
-              'last_notified_season': title.lastNotifiedSeason,
-              'notify_new_seasons': title.notifyNewSeasons,
-            })
-            .eq('user_id', user.id)
-            .eq('tmdb_id', title.tmdbId)
-            .eq('media_type', title.mediaType)
-            .eq('list_name', AppConstants.rateslist);
-      }
-
-      if (addedToWatchlist) {
-        await Supabase.instance.client.from('user_titles').upsert({
-          'user_id': user.id,
-          'tmdb_id': title.tmdbId,
-          'media_type': title.mediaType,
-          'list_name': AppConstants.watchlist,
-          'is_pinned': false,
-          'name': title.name,
-          'poster_path': title.posterPathSuffix,
-          'vote_average': title.voteAverage,
-        }, onConflict: 'user_id, tmdb_id, media_type, list_name');
-      }
+      final repo = cloudRepository ?? CloudTitleRepository();
+      await repo.syncNotification(
+        userId: user.id,
+        title: title,
+        addedToWatchlist: addedToWatchlist,
+        isInRateslist: isInRateslist,
+      );
     } catch (e, stackTrace) {
       ErrorService.log(
         e,
@@ -240,7 +224,7 @@ class WatchlistUpdateService {
       await dotenv.load(fileName: ".env");
       await PreferencesService().init();
 
-      await DatabaseService.init();
+      await LocalDatabaseService.init();
       await NotificationService().init();
 
       logLines.add('---------------------------');
@@ -268,7 +252,7 @@ class WatchlistUpdateService {
               .getBool(AppConstants.notifyCompleteSeason) ??
           false;
 
-      final repository = TitleRepository();
+      final repository = LocalTitleRepository();
       final titleService = TmdbTitleService();
 
       final watchlistTitles = await repository.getTitles(
@@ -356,7 +340,7 @@ class WatchlistUpdateService {
       );
       return;
     } finally {
-      await DatabaseService.close();
+      await LocalDatabaseService.close();
     }
   }
 
