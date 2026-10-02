@@ -49,15 +49,22 @@ class _WatchListState extends State<WatchList> {
   }
 
   Widget body() {
-    return Selector<WatchlistService, bool>(
-      selector: (_, service) => service.listIsEmpty && !service.isLoading.value,
-      shouldRebuild: (prev, next) => prev != next,
-      builder: (context, isEmpty, child) {
-        if (isEmpty) {
-          return emptyBody();
-        } else {
-          return watchlistBody();
-        }
+    final watchlistService =
+        Provider.of<WatchlistService>(context, listen: false);
+    return ValueListenableBuilder<bool>(
+      valueListenable: watchlistService.isLoading,
+      builder: (context, isLoading, child) {
+        return Selector<WatchlistService, bool>(
+          selector: (_, service) => service.listIsEmpty && !isLoading,
+          shouldRebuild: (prev, next) => prev != next,
+          builder: (context, isEmpty, child) {
+            if (isEmpty) {
+              return emptyBody();
+            } else {
+              return watchlistBody();
+            }
+          },
+        );
       },
     );
   }

@@ -124,18 +124,28 @@ class _DiscoverListState extends State<DiscoverList> {
   }
 
   Widget body() {
-    return Selector<TmdbDiscoverlistService, bool>(
-      selector: (_, service) =>
-          service.listIsEmpty &&
-          !service.isLoading.value &&
-          !service.isRefreshing.value,
-      shouldRebuild: (prev, next) => prev != next,
-      builder: (context, isEmpty, child) {
-        if (isEmpty) {
-          return emptyBody();
-        } else {
-          return discoverylistBody();
-        }
+    final discoverlistService =
+        Provider.of<TmdbDiscoverlistService>(context, listen: false);
+    return ListenableBuilder(
+      listenable: Listenable.merge([
+        discoverlistService.isLoading,
+        discoverlistService.isRefreshing,
+      ]),
+      builder: (context, _) {
+        return Selector<TmdbDiscoverlistService, bool>(
+          selector: (_, service) =>
+              service.listIsEmpty &&
+              !service.isLoading.value &&
+              !service.isRefreshing.value,
+          shouldRebuild: (prev, next) => prev != next,
+          builder: (context, isEmpty, child) {
+            if (isEmpty) {
+              return emptyBody();
+            } else {
+              return discoverylistBody();
+            }
+          },
+        );
       },
     );
   }

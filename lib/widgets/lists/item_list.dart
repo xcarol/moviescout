@@ -225,6 +225,7 @@ class _ItemListState extends SearchableListState<ItemList> {
               if (service is TmdbTitleListService) {
                 await service.syncFromServer(
                   locale: Localizations.localeOf(context),
+                  forceUpdate: true,
                 );
               }
             },

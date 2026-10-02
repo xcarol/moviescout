@@ -37,12 +37,16 @@ class RateslistService extends TmdbTitleListService {
   @override
   Future<void> syncFromServer({
     Locale? locale,
+    bool forceUpdate = false,
   }) async {
     final user = CloudDatabaseService.currentUser;
-    if (user == null) return;
+    if (user == null) {
+      if (loadedItemsVal.isEmpty) await filterItems();
+      return;
+    }
 
     await retrieveList(
-        forceUpdate: true,
+        forceUpdate: forceUpdate,
         fetchRemoteData: () async {
           final List<TmdbTitle> parsed = [];
           int start = 0;
@@ -207,7 +211,7 @@ class RateslistService extends TmdbTitleListService {
     final user = authService.currentUser;
     if (user != null && _lastUserId != user.id) {
       _lastUserId = user.id;
-      syncFromServer();
+      syncFromServer(forceUpdate: true);
     } else if (user == null) {
       _lastUserId = null;
     }

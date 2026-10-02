@@ -270,6 +270,11 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
     }
   }
 
+  void applySortProperties(String sort, bool ascending) {
+    selectedSort = sort;
+    isSortAsc = computeSortDirection(sort, ascending);
+  }
+
   void setSort(String sort, bool ascending) {
     selectedSort = sort;
     isSortAsc = computeSortDirection(sort, ascending);

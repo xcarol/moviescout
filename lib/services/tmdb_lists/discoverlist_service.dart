@@ -313,8 +313,9 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
   @override
   Future<void> syncFromServer({
     Locale? locale,
+    bool forceUpdate = false,
   }) async {
     await retrieveDiscoverlist(locale ?? const Locale('en', 'US'),
-        forceUpdate: true);
+        forceUpdate: forceUpdate);
   }
 }

@@ -47,15 +47,22 @@ class _RatesListState extends State<RatesList> {
   }
 
   Widget body() {
-    return Selector<RateslistService, bool>(
-      selector: (_, service) => service.listIsEmpty && !service.isLoading.value,
-      shouldRebuild: (prev, next) => prev != next,
-      builder: (context, isEmpty, child) {
-        if (isEmpty) {
-          return emptyBody();
-        } else {
-          return rateslistBody();
-        }
+    final rateslistService =
+        Provider.of<RateslistService>(context, listen: false);
+    return ValueListenableBuilder<bool>(
+      valueListenable: rateslistService.isLoading,
+      builder: (context, isLoading, child) {
+        return Selector<RateslistService, bool>(
+          selector: (_, service) => service.listIsEmpty && !isLoading,
+          shouldRebuild: (prev, next) => prev != next,
+          builder: (context, isEmpty, child) {
+            if (isEmpty) {
+              return emptyBody();
+            } else {
+              return rateslistBody();
+            }
+          },
+        );
       },
     );
   }

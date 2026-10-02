@@ -120,6 +120,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
       await watchlistService.syncFromServer(
         locale: Localizations.localeOf(context),
+        forceUpdate: true,
       );
 
       while (watchlistService.listIsNotEmpty) {
@@ -174,6 +175,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
       await rateslistService.syncFromServer(
         locale: Localizations.localeOf(context),
+        forceUpdate: true,
       );
 
       while (rateslistService.listIsNotEmpty) {
