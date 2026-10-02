@@ -81,16 +81,9 @@ base64 -w 0 android/app/google-services.json > gs_b64.txt
 
 ## Step 3: Local Environment Variables (.env)
 
-If your project uses a `.env` file for storing API keys (e.g., TMDB API keys, API endpoints), copy the full text contents of your local `.env` file.
+The application requires a `.env` file containing API keys and backend credentials. Refer to the [Environment Variables section in DEVELOP.md](../../DEVELOP.md#environment-variables-env) for the complete list of required keys and instructions on how to obtain them.
 
-Example `.env` content:
-
-```env
-TMDB_API_KEY=your_tmdb_api_key_here
-BASE_URL=https://api.themoviedb.org/3
-```
-
-Because `.env` is listed in `.gitignore`, we will recreate it dynamically inside GitHub Actions using a raw text secret named `ENV_FILE`.
+Because `.env` is listed in `.gitignore`, we will recreate it dynamically inside GitHub Actions using a raw text secret named `ENV_FILE` (containing the full text content of your local `.env` file).
 
 ---
 

@@ -83,7 +83,6 @@ class AppConstants {
   static const String tmdbApiRat = 'TMDB_API_RAT';
   static const String omdbApiKey = 'OMDB_API_KEY';
   static const String enableLogs = 'ENABLE_LOGS';
-  static const String firebaseAuthUrl = 'FIREBASE_AUTH_URL';
 
   static const String iso3166_1 = 'iso_3166_1';
   static const String iso639_1 = 'iso_639_1';

@@ -1,17 +1,18 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/repositories/cloud_title_repository.dart';
 import 'package:moviescout/services/core/cloud_database_service.dart';
 import 'package:moviescout/services/core/error_service.dart';
+import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_config_list_service.dart';
 
 const String _tmdbMovieProviders =
     '/watch/providers/movie?language={LOCALE}&watch_region={COUNTRY}';
 const String _tmdbTvProviders =
     '/watch/providers/tv?language={LOCALE}&watch_region={COUNTRY}';
 
-class TmdbProviderService extends TmdbConfigListService {
+class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
   final CloudTitleRepository _cloudRepository;
 
   final Map<int, Map<String, String>> _providerMap = {};
@@ -20,6 +21,9 @@ class TmdbProviderService extends TmdbConfigListService {
   bool _isInitializing = false;
 
   bool get isInitialized => _isInitialized;
+
+  @visibleForTesting
+  set isInitialized(bool value) => _isInitialized = value;
 
   List<int> get enabledProviderIds {
     if (!_isInitialized) return [];
@@ -30,12 +34,7 @@ class TmdbProviderService extends TmdbConfigListService {
   }
 
   TmdbProviderService({CloudTitleRepository? cloudRepository})
-      : _cloudRepository = cloudRepository ?? CloudTitleRepository(),
-        super(
-          configListName: 'providers',
-          listIdPrefKey: 'providerListId',
-          firestoreFieldName: 'providers',
-        );
+      : _cloudRepository = cloudRepository ?? CloudTitleRepository();
 
   Future<void> _retrieveProviders() async {
     List<String> providerUrls = [_tmdbMovieProviders, _tmdbTvProviders];
@@ -85,43 +84,43 @@ class TmdbProviderService extends TmdbConfigListService {
   }
 
   void clearProvidersStatus() {
-    clearConfig();
     _isInitialized = false;
     for (var entry in _providerMap.entries) {
       entry.value[TmdbProvider.providerEnabled] = 'false';
     }
   }
 
-  Future<void> setup(
-      String accountId, String sessionId, String accessToken) async {
+  Future<void> setup([
+    String? accountId,
+    String? sessionId,
+    String? accessToken,
+  ]) async {
     final isSupabaseLoggedIn = CloudDatabaseService.isLoggedIn;
 
     if (!isSupabaseLoggedIn &&
-        (accountId.isEmpty || sessionId.isEmpty || accessToken.isEmpty)) {
+        ((accountId ?? '').isEmpty ||
+            (sessionId ?? '').isEmpty ||
+            (accessToken ?? '').isEmpty)) {
       return;
     }
 
     if (_isInitialized || _isInitializing) {
       if (isSupabaseLoggedIn) {
-        fetchAndListen();
+        await fetchProviders();
       }
       return;
     }
 
     try {
       _isInitializing = true;
-      if (accountId.isNotEmpty) {
-        setupBase(accountId, sessionId, accessToken);
-      }
-
       _providerMap.clear();
 
       if (_getLocalProviders() == false) {
         await _retrieveProviders();
-        await fetchAndListen(); // This fetches from Firebase or migrates from TMDB
+        await fetchProviders();
         _setLocalProviders(_providerMap);
       } else {
-        await fetchAndListen(); // Keep listening for remote changes
+        await fetchProviders();
       }
     } catch (error, stackTrace) {
       ErrorService.log(
@@ -136,45 +135,30 @@ class TmdbProviderService extends TmdbConfigListService {
     }
   }
 
-  @override
-  Future<dynamic> migrateDataFromTmdb() async {
-    // Legacy migration logic
-    return await fetchConfigFromServer();
-  }
-
-  @override
-  Future<void> applyData(dynamic data) async {
+  void applyData(dynamic data) {
     if (data is! String) return;
     _stringToProviders(data);
     _setLocalProviders(_providerMap);
     notifyListeners();
   }
 
-  @override
-  Future<void> fetchAndListen() async {
+  Future<void> fetchProviders() async {
     final user = CloudDatabaseService.currentUser;
     if (user != null) {
       try {
         final providersString =
             await _cloudRepository.fetchUserProviders(user.id);
         if (providersString != null) {
-          await applyData(providersString);
+          applyData(providersString);
         }
       } catch (e, stackTrace) {
         ErrorService.log(e,
             stackTrace: stackTrace, userMessage: 'Error fetching platforms');
       }
-    } else {
-      await super.fetchAndListen();
     }
   }
 
-  Future<void> fetchFromFirebase() async {
-    await super.fetchAndListen();
-  }
-
-  @override
-  Future<bool> updateToFirebase(dynamic data) async {
+  Future<bool> updateCloudProviders(String data) async {
     final user = CloudDatabaseService.currentUser;
     if (user != null) {
       try {
@@ -185,9 +169,8 @@ class TmdbProviderService extends TmdbConfigListService {
             stackTrace: stackTrace, userMessage: 'Error saving platforms');
         return false;
       }
-    } else {
-      return await super.updateToFirebase(data);
     }
+    return false;
   }
 
   String _providersToString() {
@@ -266,7 +249,7 @@ class TmdbProviderService extends TmdbConfigListService {
   void toggleProvider(int id, bool value) {
     if (_providerMap.containsKey(id)) {
       _providerMap[id]![TmdbProvider.providerEnabled] = value.toString();
-      updateToFirebase(_providersToString()); // Real-time push!
+      updateCloudProviders(_providersToString());
       _setLocalProviders(_providerMap);
     }
   }
