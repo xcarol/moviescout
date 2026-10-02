@@ -84,7 +84,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
   }
 
   bool get listIsEmpty {
-    return !hasActiveFilter && selectedItemCount.value == 0;
+    return anyFilterApplied && !hasActiveFilter && selectedItemCount.value == 0;
   }
 
   bool get listIsNotEmpty {
@@ -127,20 +127,29 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     required Future<List<TmdbTitle>> Function() fetchRemoteData,
     bool forceUpdate = false,
   }) async {
-    bool isUpToDate = UpdateManager().isUpToDate(listNameVal, cacheTimeout);
-    bool hasLocalData = listIsNotEmpty;
-    if (!hasLocalData) {
-      hasLocalData = await repository.hasTitlesFiltered(listName: listNameVal);
-    }
-
-    if ((hasLocalData && isUpToDate && !forceUpdate) || isLoading.value) {
-      if (hasLocalData && loadedItemsVal.isEmpty) {
-        await filterItems();
-      }
+    if (isLoading.value) {
       return;
     }
 
-    isLoading.value = true;
+    if (forceUpdate) {
+      isLoading.value = true;
+    } else {
+      bool isUpToDate = UpdateManager().isUpToDate(listNameVal, cacheTimeout);
+      bool hasLocalData = loadedItemsVal.isNotEmpty;
+      if (!hasLocalData) {
+        hasLocalData =
+            await repository.hasTitlesFiltered(listName: listNameVal);
+      }
+
+      if (hasLocalData && isUpToDate) {
+        if (loadedItemsVal.isEmpty) {
+          await filterItems();
+        }
+        return;
+      }
+
+      isLoading.value = true;
+    }
 
     final predecessor = _syncQueue;
     final completer = Completer<void>();
@@ -368,6 +377,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
 
   Future<void> syncFromServer({
     Locale? locale,
+    bool forceUpdate = false,
   }) async {}
 
   Future<void> updateTitle(

@@ -278,6 +278,7 @@ class ListController with ChangeNotifier {
     _ratingFilter = RatingFilter.values[
         prefs.getInt(_ratingFilterPreferencesName) ??
             _defaultRatingFilter.index];
+    listService.applySortProperties(_selectedSort, _isSortAsc);
   }
 
   void _onListServiceChanged() {

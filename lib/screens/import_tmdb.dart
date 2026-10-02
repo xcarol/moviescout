@@ -157,9 +157,11 @@ class _ImportTmdbScreenState extends State<ImportTmdbScreen> {
         // Refresh local lists from cloud
         await watchlistService.syncFromServer(
           locale: locale,
+          forceUpdate: true,
         );
         await rateslistService.syncFromServer(
           locale: locale,
+          forceUpdate: true,
         );
 
         if (mounted) {
