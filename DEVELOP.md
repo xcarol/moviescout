@@ -165,6 +165,9 @@ Get the **API Key** (`OMDB_API_KEY`) from [OMDb API](https://www.omdbapi.com/api
 MovieScout relies on a Vercel-hosted environment (located in the `backend/` directory) for:
 
 1. **Android App Links verification:** Serving the `/.well-known/assetlinks.json` file so Android can verify `moviescout.xicra.com` deep links belong to the app.
+2. **URL Redirects (`vercel.json`):** Redirecting TMDB links (`/movie/*`, `/tv/*`, `/person/*`, `/collection/*`) to `themoviedb.org` and root (`/`) to the web landing page.
+
+*(Note: The legacy Firebase Custom Auth serverless function previously hosted on Vercel has been deprecated and removed, as all authentication and user data are now handled by Supabase).*
 
 ### Setup from scratch
 

@@ -48,7 +48,6 @@ import 'package:moviescout/services/settings/edit_settings_service.dart';
 import 'package:app_links/app_links.dart';
 import 'package:moviescout/widgets/misc/shortcut_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:moviescout/services/workers/uninitialized_titles_worker.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -110,11 +109,6 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
         kDebugMode,
       );
-
-      if (isShortcut) {
-        FirebaseFirestore.instance.settings =
-            const Settings(persistenceEnabled: false);
-      }
     }
   } catch (error, stackTrace) {
     ErrorService.log(
