@@ -59,6 +59,13 @@ class ListController with ChangeNotifier {
   List<String> get titleTypes => _titleTypes;
   List<String> get titleSorts => _titleSorts;
 
+  bool get anyFilterActive =>
+      _selectedGenres.isNotEmpty ||
+      _filterByProviders ||
+      textFilterController.text.isNotEmpty ||
+      _ratingFilter == RatingFilter.seenOnly ||
+      _ratingFilter == RatingFilter.followingOnly;
+
   RatingFilter get _defaultRatingFilter =>
       (listService.listName == AppConstants.rateslist ||
               listService is RateslistService)

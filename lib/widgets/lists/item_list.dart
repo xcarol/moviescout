@@ -331,9 +331,7 @@ class _ItemListState extends SearchableListState<ItemList> {
                 });
               }
 
-              final anyFilterActive = _controller.selectedGenres.isNotEmpty ||
-                  _controller.filterByProviders ||
-                  _controller.textFilterController.text.isNotEmpty;
+              final anyFilterActive = _controller.anyFilterActive;
 
               return ChangeNotifierProvider<TmdbBaseListService>.value(
                 value: widget.listService,
