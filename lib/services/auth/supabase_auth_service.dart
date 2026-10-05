@@ -154,4 +154,31 @@ class SupabaseAuthService extends ChangeNotifier {
       );
     }
   }
+
+  Future<bool> deleteAccount() async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) return false;
+
+      await _supabase.rpc('delete_user_account');
+
+      if (!kIsWeb) {
+        try {
+          await GoogleSignIn.instance.disconnect();
+        } catch (_) {}
+      }
+
+      await _supabase.auth.signOut();
+      userProfile = null;
+      notifyListeners();
+      return true;
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        userMessage: 'Error deleting account',
+        stackTrace: stackTrace,
+      );
+      return false;
+    }
+  }
 }

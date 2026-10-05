@@ -91,6 +91,15 @@ class _LoginState extends State<Login> {
                           ..onTap = () => launchUrl(
                               Uri.parse(UrlConstants.privacyPolicyUrl)),
                       ),
+                      TextSpan(text: AppLocalizations.of(context)!.andThe),
+                      TextSpan(
+                        text: AppLocalizations.of(context)!.termsOfService,
+                        style: const TextStyle(
+                            decoration: TextDecoration.underline),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => launchUrl(
+                              Uri.parse(UrlConstants.termsOfServiceUrl)),
+                      ),
                       const TextSpan(text: '.'),
                     ],
                   ),

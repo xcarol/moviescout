@@ -1,3 +1,4 @@
+import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
@@ -25,8 +26,7 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isGoogleLoggedIn =
-        Provider.of<SupabaseAuthService>(context).isLoggedIn;
+    bool isLoggedIn = Provider.of<SupabaseAuthService>(context).isLoggedIn;
 
     return Drawer(
       child: ListView(
@@ -34,10 +34,11 @@ class AppDrawer extends StatelessWidget {
         children: <Widget>[
           _userProfileTile(context),
           _settingsTile(context),
-          if (isGoogleLoggedIn) _notificationsHistoryTile(context),
+          if (isLoggedIn) _notificationsHistoryTile(context),
           _aboutTile(context),
           const Divider(),
-          _userSessionTile(context, isGoogleLoggedIn),
+          _userSessionTile(context, isLoggedIn),
+          if (isLoggedIn) _deleteAccountTile(context),
         ],
       ),
     );
@@ -191,6 +192,16 @@ class AppDrawer extends StatelessWidget {
                   ..onTap =
                       () => launchUrl(Uri.parse(UrlConstants.privacyPolicyUrl)),
               ),
+              const TextSpan(text: ' • '),
+              TextSpan(
+                text: AppLocalizations.of(context)!.termsOfService,
+                style: const TextStyle(
+                  decoration: TextDecoration.underline,
+                ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () =>
+                      launchUrl(Uri.parse(UrlConstants.termsOfServiceUrl)),
+              ),
             ],
           ),
         ),
@@ -282,5 +293,88 @@ class AppDrawer extends StatelessWidget {
     if (context.mounted) {
       Navigator.of(context).popUntil((route) => route.isFirst);
     }
+  }
+
+  Widget _deleteAccountTile(BuildContext context) {
+    final customColors = Theme.of(context).extension<CustomColors>();
+    final deleteColor = customColors?.destructiveAction ?? Colors.redAccent;
+
+    return ListTile(
+      leading: Icon(Icons.delete_forever, color: deleteColor),
+      title: Text(
+        AppLocalizations.of(context)!.deleteAccount,
+        style: TextStyle(color: deleteColor),
+      ),
+      onTap: () => _confirmDeleteAccount(context),
+    );
+  }
+
+  void _confirmDeleteAccount(BuildContext context) {
+    final customColors = Theme.of(context).extension<CustomColors>();
+    final deleteColor = customColors?.destructiveAction ?? Colors.redAccent;
+    final supabaseAuthService =
+        Provider.of<SupabaseAuthService>(context, listen: false);
+    final tmdbUserService =
+        Provider.of<TmdbUserService>(context, listen: false);
+    final tmdbWatchlistService =
+        Provider.of<WatchlistService>(context, listen: false);
+    final tmdbRateslistService =
+        Provider.of<RateslistService>(context, listen: false);
+    final tmdbDiscoverlistService =
+        Provider.of<TmdbDiscoverlistService>(context, listen: false);
+    final userLocale = Localizations.localeOf(context);
+    final successMessage = AppLocalizations.of(context)!.deleteAccountSuccess;
+    final errorMessage = AppLocalizations.of(context)!.deleteAccountError;
+    final navigator = Navigator.of(context);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.deleteAccountConfirmTitle),
+          content:
+              Text(AppLocalizations.of(context)!.deleteAccountConfirmMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: deleteColor,
+              ),
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+
+                final success = await supabaseAuthService.deleteAccount();
+
+                if (success) {
+                  if (context.mounted) {
+                    await tmdbUserService.logout(context).catchError(
+                      (error, stackTrace) {
+                        ErrorService.log(error, stackTrace: stackTrace);
+                      },
+                    );
+                  }
+                  await tmdbWatchlistService.clearList();
+                  await tmdbRateslistService.clearList();
+                  await tmdbDiscoverlistService.clearList();
+                  await tmdbDiscoverlistService.retrieveDiscoverlist(
+                    userLocale,
+                    forceUpdate: true,
+                  );
+
+                  SnackMessage.showSnackBar(successMessage);
+                  navigator.popUntil((route) => route.isFirst);
+                } else {
+                  SnackMessage.showSnackBar(errorMessage);
+                }
+              },
+              child: Text(AppLocalizations.of(context)!.deleteAccount),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

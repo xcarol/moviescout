@@ -56,12 +56,10 @@ class AppDatabase extends _$AppDatabase {
   Future<void> _migrateUserListEntriesOrder() async {
     await customStatement(
         'DROP TABLE IF EXISTS tmp_for_copy_user_list_entries;');
-    await customStatement(
-        'DROP TABLE IF EXISTS tmp_new_user_list_entries;');
+    await customStatement('DROP TABLE IF EXISTS tmp_new_user_list_entries;');
     final columns =
         await customSelect('PRAGMA table_info("user_list_entries");').get();
-    final columnNames =
-        columns.map((row) => row.read<String>('name')).toSet();
+    final columnNames = columns.map((row) => row.read<String>('name')).toSet();
     if (columnNames.isEmpty) return;
 
     if (columnNames.contains('added_order')) {

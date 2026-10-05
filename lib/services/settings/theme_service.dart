@@ -134,6 +134,7 @@ class ThemeService with ChangeNotifier {
     appBarBackground: lightColorSchemeDefault.primaryContainer,
     appBarText: lightColorSchemeDefault.onSurface,
     watchedOverlayColor: Colors.black54,
+    destructiveAction: Color.fromARGB(0xFF, 0xFF, 0x52, 0x52),
   );
 
   static ColorScheme darkColorSchemeDefault =
