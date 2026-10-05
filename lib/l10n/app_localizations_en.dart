@@ -727,4 +727,27 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get loginConsentText =>
       'By signing in, you agree to store your data on MovieScout\'s servers for cross-device synchronization, according to our ';
+
+  @override
+  String get termsOfService => 'terms of service';
+
+  @override
+  String get andThe => ' and the ';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Delete account';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      'Are you sure you want to delete your account? This action is irreversible and will permanently delete all your lists and data.';
+
+  @override
+  String get deleteAccountSuccess =>
+      'Your account has been deleted successfully';
+
+  @override
+  String get deleteAccountError => 'Error deleting account';
 }

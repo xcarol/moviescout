@@ -514,5 +514,19 @@
   "tmdbImportConsentText": "La importación añadirá tus listas y valoraciones de TMDb a tu cuenta de MovieScout de forma segura.",
   "@tmdbImportConsentText": {},
   "loginConsentText": "Al iniciar sesión, aceptas almacenar tus datos en los servidores de MovieScout para sincronizarlos entre dispositivos, de acuerdo con nuestra ",
-  "@loginConsentText": {}
+  "@loginConsentText": {},
+  "termsOfService": "términos de servicio",
+  "@termsOfService": {},
+  "andThe": " y los ",
+  "@andThe": {},
+  "deleteAccount": "Eliminar cuenta",
+  "@deleteAccount": {},
+  "deleteAccountConfirmTitle": "Eliminar cuenta",
+  "@deleteAccountConfirmTitle": {},
+  "deleteAccountConfirmMessage": "¿Seguro que quieres eliminar tu cuenta? Esta acción es irreversible y eliminará todas tus listas y datos de forma permanente.",
+  "@deleteAccountConfirmMessage": {},
+  "deleteAccountSuccess": "Tu cuenta se ha eliminado correctamente",
+  "@deleteAccountSuccess": {},
+  "deleteAccountError": "Error al eliminar la cuenta",
+  "@deleteAccountError": {}
 }

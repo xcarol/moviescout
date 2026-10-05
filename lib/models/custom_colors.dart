@@ -16,6 +16,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
   final Color appBarBackground;
   final Color appBarText;
   final Color watchedOverlayColor;
+  final Color destructiveAction;
 
   const CustomColors({
     required this.inWatchlist,
@@ -32,6 +33,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
     required this.appBarBackground,
     required this.appBarText,
     required this.watchedOverlayColor,
+    required this.destructiveAction,
   });
 
   @override
@@ -50,6 +52,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
     Color? appBarBackground,
     Color? appBarText,
     Color? watchedOverlayColor,
+    Color? destructiveAction,
   }) {
     return CustomColors(
       inWatchlist: inWatchlist ?? this.inWatchlist,
@@ -69,6 +72,7 @@ class CustomColors extends ThemeExtension<CustomColors> {
       appBarBackground: appBarBackground ?? this.appBarBackground,
       appBarText: appBarText ?? this.appBarText,
       watchedOverlayColor: watchedOverlayColor ?? this.watchedOverlayColor,
+      destructiveAction: destructiveAction ?? this.destructiveAction,
     );
   }
 
@@ -98,6 +102,8 @@ class CustomColors extends ThemeExtension<CustomColors> {
       appBarText: Color.lerp(appBarText, other.appBarText, t)!,
       watchedOverlayColor:
           Color.lerp(watchedOverlayColor, other.watchedOverlayColor, t)!,
+      destructiveAction:
+          Color.lerp(destructiveAction, other.destructiveAction, t)!,
     );
   }
 }

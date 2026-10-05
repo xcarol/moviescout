@@ -1443,6 +1443,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'By signing in, you agree to store your data on MovieScout\'s servers for cross-device synchronization, according to our '**
   String get loginConsentText;
+
+  /// No description provided for @termsOfService.
+  ///
+  /// In en, this message translates to:
+  /// **'terms of service'**
+  String get termsOfService;
+
+  /// No description provided for @andThe.
+  ///
+  /// In en, this message translates to:
+  /// **' and the '**
+  String get andThe;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccountConfirmTitle;
+
+  /// No description provided for @deleteAccountConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your account? This action is irreversible and will permanently delete all your lists and data.'**
+  String get deleteAccountConfirmMessage;
+
+  /// No description provided for @deleteAccountSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been deleted successfully'**
+  String get deleteAccountSuccess;
+
+  /// No description provided for @deleteAccountError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error deleting account'**
+  String get deleteAccountError;
 }
 
 class _AppLocalizationsDelegate

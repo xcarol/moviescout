@@ -7,7 +7,7 @@
   <title>Privacy Policy – MovieScout</title>
   <style>
     body {
-      font-family: system-ui, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       max-width: 800px;
       margin: 0 auto;
       padding: 2rem;
@@ -17,57 +17,135 @@
     }
 
     h1,
-    h2 {
+    h2,
+    h3 {
       color: #222;
     }
 
     a {
       color: #007acc;
     }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1.2rem;
+      margin: 1.5rem 0;
+    }
+
+    .notice-box {
+      background-color: #e8f4fd;
+      border: 1px solid #b8daff;
+      color: #004085;
+      padding: 1rem;
+      border-radius: 6px;
+      margin: 1.5rem 0;
+    }
+
+    footer {
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e0e0e0;
+      font-size: 0.9rem;
+      color: #777;
+    }
   </style>
 </head>
 
 <body>
   <h1>Privacy Policy – MovieScout</h1>
+  <p><em>Last updated: October 2026</em></p>
 
-  <p><strong>MovieScout</strong> is an open-source application that allows users to discover, search for, and manage
-    lists of movies and TV shows. This application leverages public APIs from <a href="https://www.themoviedb.org/"
-      target="_blank" rel="noopener noreferrer">TMDB</a>, OMDb, and <a href="https://www.justwatch.com/" target="_blank"
-      rel="noopener noreferrer">JustWatch</a> to provide catalog data, ratings, and streaming availability.</p>
+  <p><strong>MovieScout</strong> ("we", "our", or "the Service") is an application licensed under the PolyForm Noncommercial License 1.0.0 designed to help users discover, search for, and manage personal lists of movies and TV shows. We are committed to protecting your privacy and complying with applicable data protection laws, including the European General Data Protection Regulation (<strong>GDPR / RGPD</strong>, Regulation (EU) 2016/679).</p>
 
-  <h2>Data Collection and Cloud Storage</h2>
-  <p>Because MovieScout provides cross-device synchronization, we collect and store the following data on our secure cloud servers:</p>
+  <h2>1. Data Controller</h2>
+  <p>For the purposes of the GDPR and other data protection regulations, the <strong>Data Controller</strong> responsible for your personal data is the maintainer of the MovieScout project:</p>
   <ul>
-    <li><strong>Authentication Data:</strong> When you sign in using Google, we collect basic profile information (such as your display name, email address, and profile picture/avatar) provided by Google.</li>
-    <li><strong>App Data:</strong> We securely store your tracking lists (Watchlist, Rateslist), episode ratings, app preferences and more to synchronize them across multiple devices.</li>
+    <li><strong>Project Maintainer:</strong> xcarol (MovieScout Project)</li>
+    <li><strong>Contact Email:</strong> <a href="mailto:xcarolr@gmail.com">xcarolr@gmail.com</a></li>
+    <li><strong>Repository:</strong> <a href="https://github.com/xcarol/moviescout" target="_blank" rel="noopener noreferrer">github.com/xcarol/moviescout</a></li>
   </ul>
-  
-  <p>We use this information exclusively to authenticate you securely and synchronize your preferences. We do not sell your data or use it for advertising purposes.</p>
 
-  <h2>Third-Party Services</h2>
-  <p>MovieScout uses third-party services to fetch media content, handle cloud storage, and manage authentication:</p>
+  <h2>2. Information We Collect</h2>
+  <p>MovieScout collects only the minimum necessary data to provide cross-device synchronization and application features:</p>
   <ul>
-    <li><strong>The Movie Database (TMDB):</strong> Used to retrieve movie/TV metadata, posters, and details. Any actions performed while logged into TMDB directly may be subject to TMDB's Privacy Policy.</li>
-    <li><strong>OMDb:</strong> Used to retrieve external ratings.</li>
-    <li><strong>JustWatch:</strong> Used to provide streaming platform availability data.</li>
-    <li><strong>Supabase:</strong> Used as our primary database and authentication backend to securely store your user profile, ratings, and lists in the cloud.</li>
-    <li><strong>Google Firebase / Google Sign-In:</strong> Used for authentication. Your use of Google Sign-In is subject to Google's Privacy Policy.</li>
+    <li><strong>Authentication Data:</strong> When signing in using supported identity providers (such as Google, and where available, Email or Facebook), we receive basic profile identifiers provided by the authentication provider, such as your user ID, display name, email address, and avatar URL.</li>
+    <li><strong>User Content and Preferences:</strong> Your personal tracking lists (Watchlist, Rateslist), custom ratings, season/episode progress, notifications, and application settings.</li>
+    <li><strong>Technical Logs (Local only):</strong> Debug logs are kept locally on your device or in development mode, unless explicitly submitted for diagnostics.</li>
   </ul>
-  
-  <h2>User Rights and Data Deletion</h2>
-  <p>You have the right to request the deletion of your account and associated data at any time. If you wish to delete your data from our servers, you may disconnect your account within the app or contact the maintainers directly.</p>
+  <p>We <strong>do not</strong> sell, rent, or trade your personal data with third parties for commercial or advertising purposes.</p>
 
-  <h2>Disclaimers</h2>
-  <p>This product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability data is provided by
-    JustWatch.</p>
+  <h2>3. Legal Basis for Processing (GDPR / RGPD)</h2>
+  <p>Under Article 6 of the GDPR, we process your personal data under the following legal bases:</p>
+  <ul>
+    <li><strong>Performance of a Contract (Art. 6(1)(b) GDPR):</strong> Processing authentication identifiers and personal lists is necessary to deliver the requested service (storing and synchronizing your watchlist and ratings across devices).</li>
+    <li><strong>Consent (Art. 6(1)(a) GDPR):</strong> When you choose to authenticate via supported identity providers (such as Google, Email, or Facebook), you provide consent for MovieScout to access your basic authentication profile.</li>
+  </ul>
 
-  <h2>Open Source</h2>
-  <p>MovieScout is fully open source. You can inspect, contribute to, or fork the source code at: <a
-      href="https://github.com/xcarol/moviescout" target="_blank" rel="noopener noreferrer">GitHub Repository</a>.</p>
+  <h2>4. Third-Party Services and Data Processors</h2>
+  <p>To operate the Service, MovieScout uses trusted third-party providers acting as <strong>Data Processors</strong> or external metadata providers:</p>
+  <ul>
+    <li><strong>Supabase:</strong> Acts as our cloud database and backend authentication infrastructure (*Data Processor*). Your user profile, lists, and ratings are stored in secure Supabase databases encrypted in transit (TLS) and at rest.</li>
+    <li><strong>Identity Providers (Google, Meta/Facebook):</strong> Used exclusively to authenticate your identity. Their collection and handling of authentication data is governed by their respective privacy policies.</li>
+    <li><strong>The Movie Database (TMDB):</strong> Used to retrieve public media metadata and artwork. This product uses the TMDB API but is not endorsed or certified by TMDB.</li>
+    <li><strong>OMDb:</strong> Used to fetch external review scores.</li>
+    <li><strong>JustWatch:</strong> Used to display streaming platform availability.</li>
+  </ul>
 
-  <h2>Contact</h2>
-  <p>If you have any questions or concerns regarding privacy, please open an issue on the GitHub repository or contact
-    the maintainers directly at <a href="mailto:xcarolr@gmail.com">xcarolr@gmail.com</a>.</p>
+  <h2>5. Your Rights Under GDPR (RGPD)</h2>
+  <p>Under the European Union General Data Protection Regulation, you have the following rights regarding your personal information:</p>
+  <ul>
+    <li><strong>Right of Access (Art. 15):</strong> You have the right to request a confirmation of whether your data is being processed and obtain a copy of your personal data.</li>
+    <li><strong>Right to Rectification (Art. 16):</strong> You may request correction of inaccurate or incomplete personal information.</li>
+    <li><strong>Right to Erasure / Right to be Forgotten (Art. 17):</strong> You can request complete deletion of your account and associated cloud data.</li>
+    <li><strong>Right to Restriction of Processing (Art. 18):</strong> You can request the limitation of the processing of your data under certain circumstances.</li>
+    <li><strong>Right to Data Portability (Art. 20):</strong> You may request to receive your data in a structured, commonly used, and machine-readable format.</li>
+    <li><strong>Right to Object (Art. 21):</strong> You have the right to object to processing where applicable.</li>
+    <li><strong>Right to lodge a complaint:</strong> You have the right to file a complaint with a competent supervisory authority (such as the Spanish Data Protection Agency - AEPD).</li>
+  </ul>
+
+  <div class="card" id="delete-account">
+    <h2>6. Account and Data Deletion (Google Play & Meta Compliance)</h2>
+    <p>We respect your right to completely delete your account and personal data at any time. You can delete your account using either of the following methods:</p>
+
+    <h3>Method A: Inside the App (Immediate)</h3>
+    <ol>
+      <li>Open the <strong>MovieScout</strong> application on your mobile device.</li>
+      <li>Open the side menu (Drawer) or Profile screen.</li>
+      <li>Select <strong>Delete Account</strong> (or tap your profile options).</li>
+      <li>Confirm the deletion prompt. Your account, profile, watchlists, ratings, and cloud records will be permanently removed immediately.</li>
+    </ol>
+
+    <h3>Method B: Web-Based Request (Without App Installed)</h3>
+    <p>In accordance with Google Play Account Deletion and Meta Data Deletion requirements, you may request deletion without installing the app:</p>
+    <ul>
+      <li>Send an email to <a href="mailto:xcarolr@gmail.com?subject=MovieScout%20Account%20Deletion%20Request">xcarolr@gmail.com</a> with the subject line <code>MovieScout Account Deletion Request</code>.</li>
+      <li>Specify the email address associated with your MovieScout account (e.g., your Google or Facebook login email).</li>
+      <li>Upon verification, your account and all associated cloud data will be permanently wiped from our Supabase database within 30 days, and you will receive a confirmation email.</li>
+    </ul>
+    <p><em>Data Retention Note: When an account is deleted, all stored lists, ratings, and profile references are permanently deleted. We do not retain backup archives of deleted accounts.</em></p>
+  </div>
+
+  <h2>7. Children's Privacy</h2>
+  <p>MovieScout is not targeted at children under the age of 13 (or under 16 within the European Economic Area). We do not knowingly collect personal identifiable information from children. If you believe that a minor has provided us with personal information, please contact us immediately, and we will promptly delete such data.</p>
+
+  <h2>8. Security of Your Data</h2>
+  <p>We implement standard security measures to protect your data. All data transfers between your client device, Supabase, and third-party APIs are transmitted using secure HTTPS/TLS encryption.</p>
+
+  <h2>9. Changes to This Privacy Policy</h2>
+  <p>We may update our Privacy Policy periodically to reflect changes in legal requirements or app features. The revised policy will be posted on this page with an updated revision date.</p>
+
+  <h2>10. Contact Us</h2>
+  <p>If you have any questions, requests, or concerns regarding your privacy or data protection, please contact us at:</p>
+  <ul>
+    <li>Email: <a href="mailto:xcarolr@gmail.com">xcarolr@gmail.com</a></li>
+    <li>GitHub: <a href="https://github.com/xcarol/moviescout" target="_blank" rel="noopener noreferrer">github.com/xcarol/moviescout</a></li>
+  </ul>
+
+  <footer>
+    <p>&copy; 2026 MovieScout. <a href="index.html">Home</a> | <a href="terms.html">Terms of Service</a></p>
+  </footer>
 </body>
 
 </html>
