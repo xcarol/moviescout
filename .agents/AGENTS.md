@@ -8,3 +8,6 @@
 
 # Implementation Plan & Task Rules
 - NEVER overwrite an existing Implementation Plan or Task document/artifact. If a new version or plan is needed, simply rename the previous file by adding a version number instead of overwriting it.
+
+# Hot reload & Restart
+- DO NOT ask to reload or restart the application, just let me know and I will do it manually.
