@@ -64,7 +64,7 @@ class LocalTitleRepository {
 
         final entryCreatedAt = title.createdAt ??
             existingEntry?.createdAt ??
-            now.add(Duration(milliseconds: j));
+            now.add(Duration(seconds: j));
 
         await _db.into(_db.userListEntries).insertOnConflictUpdate(
               UserListEntriesCompanion(
@@ -352,7 +352,8 @@ class LocalTitleRepository {
 
   Future<List<UserListEntry>> getAllEntries(String listName) async {
     final query = _db.select(_db.userListEntries)
-      ..where((e) => e.listName.equals(listName));
+      ..where((e) => e.listName.equals(listName))
+      ..orderBy([(e) => OrderingTerm.asc(e.createdAt)]);
     final results = await query.get();
     return results.map(DriftMapper.toDomainUserListEntry).toList();
   }
