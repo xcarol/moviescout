@@ -54,11 +54,21 @@ class SupabaseAuthService extends ChangeNotifier {
               'avatar_url': avatar,
             };
             notifyListeners();
-          } catch (_) {}
+          } catch (e, stackTrace) {
+            ErrorService.log(
+              e,
+              userMessage: 'Error creating user profile',
+              stackTrace: stackTrace,
+            );
+          }
         }
       }
-    } catch (e) {
-      // Ignorar errors de càrrega
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        userMessage: 'Error fetching user profile',
+        stackTrace: stackTrace,
+      );
     }
   }
 

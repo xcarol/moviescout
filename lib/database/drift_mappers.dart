@@ -118,7 +118,7 @@ class DriftMapper {
       listName: data.listName,
       tmdbId: data.tmdbId,
       mediaType: data.mediaType,
-      addedOrder: data.addedOrder,
+      createdAt: data.createdAt,
     );
   }
 
@@ -130,7 +130,7 @@ class DriftMapper {
       listName: Value(domainObj.listName),
       tmdbId: Value(domainObj.tmdbId),
       mediaType: Value(domainObj.mediaType),
-      addedOrder: Value(domainObj.addedOrder),
+      createdAt: Value(domainObj.createdAt),
     );
   }
 

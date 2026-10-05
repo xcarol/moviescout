@@ -4,27 +4,30 @@ import 'package:moviescout/models/user_list_entry.dart';
 void main() {
   group('UserListEntry', () {
     test('instantiates with all fields and allows updating them', () {
+      final initialDate = DateTime.utc(2026, 1, 1);
+      final updatedDate = DateTime.utc(2026, 1, 2);
+
       final entry = UserListEntry(
         listName: 'Favorites',
         tmdbId: 550,
         mediaType: 'movie',
-        addedOrder: 1,
+        createdAt: initialDate,
       );
 
       expect(entry.listName, 'Favorites');
       expect(entry.tmdbId, 550);
       expect(entry.mediaType, 'movie');
-      expect(entry.addedOrder, 1);
+      expect(entry.createdAt, initialDate);
 
       entry.listName = 'Watchlist';
       entry.tmdbId = 600;
       entry.mediaType = 'tv';
-      entry.addedOrder = 2;
+      entry.createdAt = updatedDate;
 
       expect(entry.listName, 'Watchlist');
       expect(entry.tmdbId, 600);
       expect(entry.mediaType, 'tv');
-      expect(entry.addedOrder, 2);
+      expect(entry.createdAt, updatedDate);
     });
   });
 }

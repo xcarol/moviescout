@@ -31,15 +31,17 @@ class $UserListEntriesTable extends UserListEntries
   late final GeneratedColumn<String> mediaType = GeneratedColumn<String>(
       'media_type', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _addedOrderMeta =
-      const VerificationMeta('addedOrder');
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
   @override
-  late final GeneratedColumn<int> addedOrder = GeneratedColumn<int>(
-      'added_order', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, listName, tmdbId, mediaType, addedOrder];
+      [id, listName, tmdbId, mediaType, createdAt];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -73,13 +75,9 @@ class $UserListEntriesTable extends UserListEntries
     } else if (isInserting) {
       context.missing(_mediaTypeMeta);
     }
-    if (data.containsKey('added_order')) {
-      context.handle(
-          _addedOrderMeta,
-          addedOrder.isAcceptableOrUnknown(
-              data['added_order']!, _addedOrderMeta));
-    } else if (isInserting) {
-      context.missing(_addedOrderMeta);
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
     }
     return context;
   }
@@ -98,8 +96,8 @@ class $UserListEntriesTable extends UserListEntries
           .read(DriftSqlType.int, data['${effectivePrefix}tmdb_id'])!,
       mediaType: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}media_type'])!,
-      addedOrder: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}added_order'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
     );
   }
 
@@ -115,13 +113,13 @@ class UserListEntryData extends DataClass
   final String listName;
   final int tmdbId;
   final String mediaType;
-  final int addedOrder;
+  final DateTime createdAt;
   const UserListEntryData(
       {required this.id,
       required this.listName,
       required this.tmdbId,
       required this.mediaType,
-      required this.addedOrder});
+      required this.createdAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -129,7 +127,7 @@ class UserListEntryData extends DataClass
     map['list_name'] = Variable<String>(listName);
     map['tmdb_id'] = Variable<int>(tmdbId);
     map['media_type'] = Variable<String>(mediaType);
-    map['added_order'] = Variable<int>(addedOrder);
+    map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
 
@@ -139,7 +137,7 @@ class UserListEntryData extends DataClass
       listName: Value(listName),
       tmdbId: Value(tmdbId),
       mediaType: Value(mediaType),
-      addedOrder: Value(addedOrder),
+      createdAt: Value(createdAt),
     );
   }
 
@@ -151,7 +149,7 @@ class UserListEntryData extends DataClass
       listName: serializer.fromJson<String>(json['listName']),
       tmdbId: serializer.fromJson<int>(json['tmdbId']),
       mediaType: serializer.fromJson<String>(json['mediaType']),
-      addedOrder: serializer.fromJson<int>(json['addedOrder']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
   @override
@@ -162,7 +160,7 @@ class UserListEntryData extends DataClass
       'listName': serializer.toJson<String>(listName),
       'tmdbId': serializer.toJson<int>(tmdbId),
       'mediaType': serializer.toJson<String>(mediaType),
-      'addedOrder': serializer.toJson<int>(addedOrder),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
 
@@ -171,13 +169,13 @@ class UserListEntryData extends DataClass
           String? listName,
           int? tmdbId,
           String? mediaType,
-          int? addedOrder}) =>
+          DateTime? createdAt}) =>
       UserListEntryData(
         id: id ?? this.id,
         listName: listName ?? this.listName,
         tmdbId: tmdbId ?? this.tmdbId,
         mediaType: mediaType ?? this.mediaType,
-        addedOrder: addedOrder ?? this.addedOrder,
+        createdAt: createdAt ?? this.createdAt,
       );
   UserListEntryData copyWithCompanion(UserListEntriesCompanion data) {
     return UserListEntryData(
@@ -185,8 +183,7 @@ class UserListEntryData extends DataClass
       listName: data.listName.present ? data.listName.value : this.listName,
       tmdbId: data.tmdbId.present ? data.tmdbId.value : this.tmdbId,
       mediaType: data.mediaType.present ? data.mediaType.value : this.mediaType,
-      addedOrder:
-          data.addedOrder.present ? data.addedOrder.value : this.addedOrder,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
 
@@ -197,13 +194,13 @@ class UserListEntryData extends DataClass
           ..write('listName: $listName, ')
           ..write('tmdbId: $tmdbId, ')
           ..write('mediaType: $mediaType, ')
-          ..write('addedOrder: $addedOrder')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, listName, tmdbId, mediaType, addedOrder);
+  int get hashCode => Object.hash(id, listName, tmdbId, mediaType, createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -212,7 +209,7 @@ class UserListEntryData extends DataClass
           other.listName == this.listName &&
           other.tmdbId == this.tmdbId &&
           other.mediaType == this.mediaType &&
-          other.addedOrder == this.addedOrder);
+          other.createdAt == this.createdAt);
 }
 
 class UserListEntriesCompanion extends UpdateCompanion<UserListEntryData> {
@@ -220,14 +217,14 @@ class UserListEntriesCompanion extends UpdateCompanion<UserListEntryData> {
   final Value<String> listName;
   final Value<int> tmdbId;
   final Value<String> mediaType;
-  final Value<int> addedOrder;
+  final Value<DateTime> createdAt;
   final Value<int> rowid;
   const UserListEntriesCompanion({
     this.id = const Value.absent(),
     this.listName = const Value.absent(),
     this.tmdbId = const Value.absent(),
     this.mediaType = const Value.absent(),
-    this.addedOrder = const Value.absent(),
+    this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserListEntriesCompanion.insert({
@@ -235,19 +232,18 @@ class UserListEntriesCompanion extends UpdateCompanion<UserListEntryData> {
     required String listName,
     required int tmdbId,
     required String mediaType,
-    required int addedOrder,
+    this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         listName = Value(listName),
         tmdbId = Value(tmdbId),
-        mediaType = Value(mediaType),
-        addedOrder = Value(addedOrder);
+        mediaType = Value(mediaType);
   static Insertable<UserListEntryData> custom({
     Expression<String>? id,
     Expression<String>? listName,
     Expression<int>? tmdbId,
     Expression<String>? mediaType,
-    Expression<int>? addedOrder,
+    Expression<DateTime>? createdAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -255,7 +251,7 @@ class UserListEntriesCompanion extends UpdateCompanion<UserListEntryData> {
       if (listName != null) 'list_name': listName,
       if (tmdbId != null) 'tmdb_id': tmdbId,
       if (mediaType != null) 'media_type': mediaType,
-      if (addedOrder != null) 'added_order': addedOrder,
+      if (createdAt != null) 'created_at': createdAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -265,14 +261,14 @@ class UserListEntriesCompanion extends UpdateCompanion<UserListEntryData> {
       Value<String>? listName,
       Value<int>? tmdbId,
       Value<String>? mediaType,
-      Value<int>? addedOrder,
+      Value<DateTime>? createdAt,
       Value<int>? rowid}) {
     return UserListEntriesCompanion(
       id: id ?? this.id,
       listName: listName ?? this.listName,
       tmdbId: tmdbId ?? this.tmdbId,
       mediaType: mediaType ?? this.mediaType,
-      addedOrder: addedOrder ?? this.addedOrder,
+      createdAt: createdAt ?? this.createdAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -292,8 +288,8 @@ class UserListEntriesCompanion extends UpdateCompanion<UserListEntryData> {
     if (mediaType.present) {
       map['media_type'] = Variable<String>(mediaType.value);
     }
-    if (addedOrder.present) {
-      map['added_order'] = Variable<int>(addedOrder.value);
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -308,7 +304,7 @@ class UserListEntriesCompanion extends UpdateCompanion<UserListEntryData> {
           ..write('listName: $listName, ')
           ..write('tmdbId: $tmdbId, ')
           ..write('mediaType: $mediaType, ')
-          ..write('addedOrder: $addedOrder, ')
+          ..write('createdAt: $createdAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4064,7 +4060,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $TmdbEpisodesTable tmdbEpisodes = $TmdbEpisodesTable(this);
   late final Index idxUserListEntriesListOrder = Index(
       'idx_user_list_entries_list_order',
-      'CREATE INDEX idx_user_list_entries_list_order ON user_list_entries (list_name, added_order)');
+      'CREATE INDEX idx_user_list_entries_list_order ON user_list_entries (list_name, created_at)');
   late final Index idxUserListEntriesLookup = Index(
       'idx_user_list_entries_lookup',
       'CREATE INDEX idx_user_list_entries_lookup ON user_list_entries (list_name, tmdb_id, media_type)');
@@ -4097,7 +4093,7 @@ typedef $$UserListEntriesTableCreateCompanionBuilder = UserListEntriesCompanion
   required String listName,
   required int tmdbId,
   required String mediaType,
-  required int addedOrder,
+  Value<DateTime> createdAt,
   Value<int> rowid,
 });
 typedef $$UserListEntriesTableUpdateCompanionBuilder = UserListEntriesCompanion
@@ -4106,7 +4102,7 @@ typedef $$UserListEntriesTableUpdateCompanionBuilder = UserListEntriesCompanion
   Value<String> listName,
   Value<int> tmdbId,
   Value<String> mediaType,
-  Value<int> addedOrder,
+  Value<DateTime> createdAt,
   Value<int> rowid,
 });
 
@@ -4131,8 +4127,8 @@ class $$UserListEntriesTableFilterComposer
   ColumnFilters<String> get mediaType => $composableBuilder(
       column: $table.mediaType, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get addedOrder => $composableBuilder(
-      column: $table.addedOrder, builder: (column) => ColumnFilters(column));
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
 }
 
 class $$UserListEntriesTableOrderingComposer
@@ -4156,8 +4152,8 @@ class $$UserListEntriesTableOrderingComposer
   ColumnOrderings<String> get mediaType => $composableBuilder(
       column: $table.mediaType, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get addedOrder => $composableBuilder(
-      column: $table.addedOrder, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
 }
 
 class $$UserListEntriesTableAnnotationComposer
@@ -4181,8 +4177,8 @@ class $$UserListEntriesTableAnnotationComposer
   GeneratedColumn<String> get mediaType =>
       $composableBuilder(column: $table.mediaType, builder: (column) => column);
 
-  GeneratedColumn<int> get addedOrder => $composableBuilder(
-      column: $table.addedOrder, builder: (column) => column);
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
 }
 
 class $$UserListEntriesTableTableManager extends RootTableManager<
@@ -4216,7 +4212,7 @@ class $$UserListEntriesTableTableManager extends RootTableManager<
             Value<String> listName = const Value.absent(),
             Value<int> tmdbId = const Value.absent(),
             Value<String> mediaType = const Value.absent(),
-            Value<int> addedOrder = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               UserListEntriesCompanion(
@@ -4224,7 +4220,7 @@ class $$UserListEntriesTableTableManager extends RootTableManager<
             listName: listName,
             tmdbId: tmdbId,
             mediaType: mediaType,
-            addedOrder: addedOrder,
+            createdAt: createdAt,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -4232,7 +4228,7 @@ class $$UserListEntriesTableTableManager extends RootTableManager<
             required String listName,
             required int tmdbId,
             required String mediaType,
-            required int addedOrder,
+            Value<DateTime> createdAt = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               UserListEntriesCompanion.insert(
@@ -4240,7 +4236,7 @@ class $$UserListEntriesTableTableManager extends RootTableManager<
             listName: listName,
             tmdbId: tmdbId,
             mediaType: mediaType,
-            addedOrder: addedOrder,
+            createdAt: createdAt,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0

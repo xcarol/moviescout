@@ -30,6 +30,9 @@ class CloudTitleRepository {
       final dateRated = r['rated_date'] != null
           ? DateTime.parse(r['rated_date'] as String)
           : DateTime.parse(AppConstants.defaultDate);
+      final createdAt = r['created_at'] != null
+          ? DateTime.parse(r['created_at'] as String)
+          : null;
       return TmdbTitle(
         tmdbId: r['tmdb_id'] as int,
         mediaType: r['media_type'] as String,
@@ -38,6 +41,7 @@ class CloudTitleRepository {
         voteAverage: (r['vote_average'] as num?)?.toDouble() ?? 0.0,
         lastUpdated: AppConstants.defaultDate,
         dateRated: dateRated,
+        createdAt: createdAt,
       )
         ..isPinned = r['is_pinned'] as bool? ?? false
         ..rating = (r['rating'] as num?)?.toDouble() ?? 0.0

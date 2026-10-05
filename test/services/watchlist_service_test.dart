@@ -154,10 +154,8 @@ void main() {
       );
       title.isPinned = true;
 
-      when(() => mockRepository.getMaxAddedOrder(AppConstants.watchlist))
-          .thenAnswer((_) async => 0);
-      when(() => mockRepository.saveTitles([title], AppConstants.watchlist,
-          addedOrders: any(named: 'addedOrders'))).thenAnswer((_) async {});
+      when(() => mockRepository.saveTitles([title], AppConstants.watchlist))
+          .thenAnswer((_) async {});
       when(() => mockRepository.getTitleGlobal(title.tmdbId, title.mediaType))
           .thenAnswer((_) async => null);
       when(() => mockRepository.updateIsPinnedList([title]))
@@ -166,8 +164,8 @@ void main() {
       await service.updateWatchlistTitle(title, true);
 
       expect(title.isPinned, false);
-      verify(() => mockRepository.saveTitles([title], AppConstants.watchlist,
-          addedOrders: any(named: 'addedOrders'))).called(1);
+      verify(() => mockRepository.saveTitles([title], AppConstants.watchlist))
+          .called(1);
       verify(() => mockRepository.updateIsPinnedList([title])).called(1);
       verify(() => mockQueryBuilder.upsert(any(),
           onConflict: any(named: 'onConflict'))).called(1);
@@ -216,8 +214,7 @@ void main() {
 
       await service.updateWatchlistTitle(title, true);
 
-      verifyNever(() => mockRepository.saveTitles(any(), any(),
-          addedOrders: any(named: 'addedOrders')));
+      verifyNever(() => mockRepository.saveTitles(any(), any()));
       verifyNever(() =>
           mockQueryBuilder.upsert(any(), onConflict: any(named: 'onConflict')));
     });
