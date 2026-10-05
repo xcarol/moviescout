@@ -45,7 +45,7 @@ void main() {
         dateRated: DateTime.now(),
       );
 
-      await repository.saveTitles([title], 'watchlist', addedOrders: [0]);
+      await repository.saveTitles([title], 'watchlist');
 
       title.overview = 'Updated overview';
       await repository.updateTitlesMetadata([title]);
@@ -70,7 +70,7 @@ void main() {
         dateRated: DateTime.now(),
       );
 
-      await repository.saveTitles([t1, t2], 'watchlist', addedOrders: [0, 1]);
+      await repository.saveTitles([t1, t2], 'watchlist');
 
       t1.overview = 'OV1';
       t2.overview = 'OV2';
@@ -89,8 +89,7 @@ void main() {
       expect(await repository.countTitles('watchlist'), 0);
     });
 
-    test('saveTitles assigns sequential order when addedOrders is omitted',
-        () async {
+    test('saveTitles assigns sequential createdAt when omitted', () async {
       final t1 = TmdbTitle(
         tmdbId: 1,
         name: 'T1',
@@ -109,8 +108,7 @@ void main() {
       await repository.saveTitles([t1, t2], 'watchlist');
       final entries = await repository.getAllEntries('watchlist');
       expect(entries.length, 2);
-      expect(entries[0].addedOrder, 0);
-      expect(entries[1].addedOrder, 1);
+      expect(entries[0].createdAt.isBefore(entries[1].createdAt), isTrue);
     });
 
     test('saveTitles merges metadata when title already exists in database',
@@ -126,7 +124,7 @@ void main() {
         notifyNewSeasons: true,
         lastNotifiedSeason: 2,
       );
-      await repository.saveTitles([initial], 'rateslist', addedOrders: [0]);
+      await repository.saveTitles([initial], 'rateslist');
 
       final incoming = TmdbTitle(
         tmdbId: 10,
@@ -136,7 +134,7 @@ void main() {
         dateRated: DateTime.fromMillisecondsSinceEpoch(0),
         rating: 0.0,
       );
-      await repository.saveTitles([incoming], 'otherlist', addedOrders: [0]);
+      await repository.saveTitles([incoming], 'otherlist');
 
       final saved = await repository.getTitleGlobal(10, 'movie');
       expect(saved!.name, 'Updated Name');
@@ -165,7 +163,7 @@ void main() {
         lastUpdated: '2026-07-14',
         dateRated: DateTime.now(),
       );
-      await repository.saveTitles([t1, t2], 'watchlist', addedOrders: [0, 1]);
+      await repository.saveTitles([t1, t2], 'watchlist');
 
       await repository.deleteTitles('watchlist', [1, 2], ['movie', 'tv']);
 
@@ -184,8 +182,8 @@ void main() {
         lastUpdated: '2026-01-01',
         dateRated: DateTime.now(),
       );
-      await repository.saveTitles([title], 'watchlist', addedOrders: [0]);
-      await repository.saveTitles([title], 'favorites', addedOrders: [0]);
+      await repository.saveTitles([title], 'watchlist');
+      await repository.saveTitles([title], 'favorites');
 
       await repository.deleteTitles('watchlist', [10], ['movie']);
       expect(
@@ -207,7 +205,7 @@ void main() {
         lastUpdated: '2026-01-01',
         dateRated: DateTime.now(),
       );
-      await repository.saveTitles([tv], 'watchlist', addedOrders: [0]);
+      await repository.saveTitles([tv], 'watchlist');
 
       await repository.putSeason(TmdbSeason(
         tmdbId: 501,
@@ -248,7 +246,7 @@ void main() {
         lastUpdated: '2026-01-01',
         dateRated: DateTime.now(),
       );
-      await repository.saveTitles([mini], 'watchlist', addedOrders: [0]);
+      await repository.saveTitles([mini], 'watchlist');
 
       await repository.putSeason(TmdbSeason(
         tmdbId: 601,
@@ -299,9 +297,8 @@ void main() {
         dateRated: DateTime.now(),
       );
 
-      await repository.saveTitles([sharedMovie, exclusiveTv], 'listA',
-          addedOrders: [0, 1]);
-      await repository.saveTitles([sharedMovie], 'listB', addedOrders: [0]);
+      await repository.saveTitles([sharedMovie, exclusiveTv], 'listA');
+      await repository.saveTitles([sharedMovie], 'listB');
 
       await repository.putSeason(TmdbSeason(
         tmdbId: 20,
@@ -351,7 +348,7 @@ void main() {
         dateRated: DateTime.now(),
       );
 
-      await repository.saveTitles([mini], 'watchlist', addedOrders: [0]);
+      await repository.saveTitles([mini], 'watchlist');
 
       await repository.putSeason(TmdbSeason(
         tmdbId: 301,
@@ -404,8 +401,7 @@ void main() {
         rating: AppConstants.seenRating,
       );
 
-      await repository.saveTitles([unrated, seenOnly], 'watchlist',
-          addedOrders: [0, 1]);
+      await repository.saveTitles([unrated, seenOnly], 'watchlist');
       expect(await repository.hasRatedTitles('watchlist'), isFalse);
 
       final rated = TmdbTitle(
@@ -416,7 +412,7 @@ void main() {
         dateRated: DateTime.now(),
         rating: 8.0,
       );
-      await repository.saveTitles([rated], 'watchlist', addedOrders: [2]);
+      await repository.saveTitles([rated], 'watchlist');
       expect(await repository.hasRatedTitles('watchlist'), isTrue);
     });
 
@@ -428,7 +424,7 @@ void main() {
         lastUpdated: '2026-07-14',
         dateRated: DateTime.now(),
       );
-      await repository.saveTitles([t1], 'watchlist', addedOrders: [0]);
+      await repository.saveTitles([t1], 'watchlist');
 
       t1.isPinned = true;
       await repository.updateIsPinnedList([t1]);
@@ -445,7 +441,7 @@ void main() {
         lastUpdated: '2026-07-14',
         dateRated: DateTime.now(),
       );
-      await repository.saveTitles([t1], 'watchlist', addedOrders: [0]);
+      await repository.saveTitles([t1], 'watchlist');
 
       t1.rating = 9.0;
       await repository.updateRatingList([t1]);
@@ -464,7 +460,7 @@ void main() {
         lastUpdated: '2026-07-14',
         dateRated: DateTime.now(),
       );
-      await repository.saveTitles([t1], 'watchlist', addedOrders: [0]);
+      await repository.saveTitles([t1], 'watchlist');
 
       t1.notifyNewSeasons = true;
       t1.lastNotifiedSeason = 3;
@@ -543,7 +539,7 @@ void main() {
         lastUpdated: '2026-07-14',
         dateRated: DateTime.now(),
       );
-      await repository.saveTitles([t1], 'watchlist', addedOrders: [5]);
+      await repository.saveTitles([t1], 'watchlist');
 
       expect(await repository.hasTitlesInList([10], 'watchlist'), isTrue);
       expect(await repository.hasTitlesInList([99], 'watchlist'), isFalse);
@@ -561,30 +557,9 @@ void main() {
       final entries = await repository.getAllEntries('watchlist');
       expect(entries.length, 1);
       expect(entries.first.tmdbId, 10);
-      expect(entries.first.addedOrder, 5);
+      expect(entries.first.createdAt, isNotNull);
       expect(entries.first.listName, 'watchlist');
       expect(entries.first.mediaType, 'movie');
-    });
-
-    test('getMaxAddedOrder returns maximum order or -1 when empty', () async {
-      expect(await repository.getMaxAddedOrder('empty_list'), -1);
-
-      final t1 = TmdbTitle(
-        tmdbId: 1,
-        name: 'T1',
-        mediaType: 'movie',
-        lastUpdated: '2026-01-01',
-        dateRated: DateTime.now(),
-      );
-      final t2 = TmdbTitle(
-        tmdbId: 2,
-        name: 'T2',
-        mediaType: 'movie',
-        lastUpdated: '2026-01-01',
-        dateRated: DateTime.now(),
-      );
-      await repository.saveTitles([t1, t2], 'watchlist', addedOrders: [3, 9]);
-      expect(await repository.getMaxAddedOrder('watchlist'), 9);
     });
 
     test('getUninitializedTitles finds uninitialized', () async {
@@ -595,7 +570,7 @@ void main() {
         lastUpdated: AppConstants.defaultDate,
         dateRated: DateTime.now(),
       );
-      await repository.saveTitles([t1], 'watchlist', addedOrders: [0]);
+      await repository.saveTitles([t1], 'watchlist');
 
       final uninit = await repository.getUninitializedTitles();
       expect(uninit.length, 1);
@@ -610,7 +585,7 @@ void main() {
         lastUpdated: '2026-07-14',
         dateRated: DateTime.now(),
       );
-      await repository.saveTitles([t1], 'watchlist', addedOrders: [0]);
+      await repository.saveTitles([t1], 'watchlist');
 
       final foundTitle =
           await repository.getTitleByTmdbId('watchlist', 1, 'movie');
@@ -702,7 +677,7 @@ void main() {
         dateRated: DateTime.now(),
       );
       t1.genreIds = [28, 12];
-      await repository.saveTitles([t1], 'watchlist', addedOrders: [0]);
+      await repository.saveTitles([t1], 'watchlist');
 
       final genresList = await repository.getAllGenreIds('watchlist');
       expect(genresList.length, 1);
@@ -760,8 +735,7 @@ void main() {
         t3.effectiveRuntime = 5;
         t3.voteAverage = 9.4;
 
-        await repository.saveTitles([t1, t2, t3], 'watchlist',
-            addedOrders: [0, 1, 2]);
+        await repository.saveTitles([t1, t2, t3], 'watchlist');
       });
 
       test('Filter by text matching name, originalName, overview, or tagline',

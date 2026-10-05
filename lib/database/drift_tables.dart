@@ -24,7 +24,7 @@ class IntListConverter extends TypeConverter<List<int>, String> {
 
 @DataClassName('UserListEntryData')
 @TableIndex(
-    name: 'idx_user_list_entries_list_order', columns: {#listName, #addedOrder})
+    name: 'idx_user_list_entries_list_order', columns: {#listName, #createdAt})
 @TableIndex(
     name: 'idx_user_list_entries_lookup',
     columns: {#listName, #tmdbId, #mediaType})
@@ -33,7 +33,7 @@ class UserListEntries extends Table {
   TextColumn get listName => text()();
   IntColumn get tmdbId => integer()();
   TextColumn get mediaType => text()();
-  IntColumn get addedOrder => integer()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   @override
   Set<Column> get primaryKey => {id};

@@ -207,6 +207,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
         existing.rating = element.rating;
         existing.dateRated = element.dateRated;
         existing.notifyNewSeasons = element.notifyNewSeasons;
+        existing.createdAt = element.createdAt;
         serverList.add(existing);
       } else {
         serverList.add(element);
@@ -247,11 +248,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
           .toList();
 
       if (titlesToAdd.isNotEmpty) {
-        int currentMax = await repository.getMaxAddedOrder(listNameVal);
-        final addedOrders =
-            List.generate(titlesToAdd.length, (i) => currentMax + 1 + i);
-        await repository.saveTitles(titlesToAdd, listNameVal,
-            addedOrders: addedOrders);
+        await repository.saveTitles(titlesToAdd, listNameVal);
       }
 
       final titlesToUpdate = serverList
@@ -288,9 +285,8 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
 
   @protected
   Future<void> updateLocalTitle(TmdbTitle title) async {
-    int currentMax = await repository.getMaxAddedOrder(listNameVal);
-    await repository.saveTitles([title], listNameVal,
-        addedOrders: [++currentMax]);
+    title.createdAt ??= DateTime.now().toUtc();
+    await repository.saveTitles([title], listNameVal);
   }
 
   @protected

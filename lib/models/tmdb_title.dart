@@ -152,6 +152,7 @@ class TmdbTitle implements TmdbItem {
   late String lastAirDate;
   @override
   late String lastUpdated;
+  DateTime? createdAt;
 
   // Numbers
   late double voteAverage;
@@ -259,6 +260,7 @@ class TmdbTitle implements TmdbItem {
     this.isPinned = false,
     this.notifyNewSeasons = false,
     this.lastNotifiedSeason = 0,
+    this.createdAt,
   }) {
     if (effectiveReleaseDate.isEmpty) {
       effectiveReleaseDate =
@@ -282,6 +284,9 @@ class TmdbTitle implements TmdbItem {
       isPinned: title[TmdbTitleFields.isPinned] ?? false,
       notifyNewSeasons: title[TmdbTitleFields.notifyNewSeasons] ?? false,
       lastNotifiedSeason: title[TmdbTitleFields.lastNotifiedSeason] ?? 0,
+      createdAt: title['created_at'] != null
+          ? DateTime.tryParse(title['created_at'].toString())
+          : null,
     )..fillFromMap(title);
   }
 
@@ -293,6 +298,9 @@ class TmdbTitle implements TmdbItem {
   int get hashCode => tmdbId.hashCode;
 
   void fillFromMap(Map<dynamic, dynamic> title) {
+    if (title['created_at'] != null) {
+      createdAt = DateTime.tryParse(title['created_at'].toString());
+    }
     if (title[TmdbTitleFields.id] != null) {
       tmdbId = title[TmdbTitleFields.id];
     }

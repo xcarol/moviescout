@@ -79,14 +79,28 @@ class TmdbImportService extends TmdbBaseService {
         count: ratedEpisodes.length,
       );
 
+      int index = 0;
+      final baseTime = DateTime.now().toUtc();
+
+      for (var j = 0; j < watchlistTitles.length; j++) {
+        watchlistTitles[j].createdAt ??=
+            baseTime.add(Duration(milliseconds: index++));
+      }
+
+      for (var j = 0; j < rateslistTitles.length; j++) {
+        final title = rateslistTitles[j];
+        if (title.rating > 0 && title.dateRated.year >= 2000) {
+          title.createdAt = title.dateRated.toUtc();
+        } else {
+          title.createdAt = baseTime.add(Duration(milliseconds: index++));
+        }
+      }
+
       await _repository.saveTitles(watchlistTitles, AppConstants.watchlist);
       await _repository.saveTitles(rateslistTitles, AppConstants.rateslist);
       for (final episode in ratedEpisodes) {
         await _repository.putEpisode(episode);
       }
-
-      int index = 0;
-      final baseTime = DateTime.now().toUtc();
 
       final watchlistRecords = watchlistTitles.map((title) {
         return <String, dynamic>{
@@ -100,8 +114,7 @@ class TmdbImportService extends TmdbBaseService {
           'name': title.name,
           'poster_path': title.posterPathSuffix,
           'vote_average': title.voteAverage,
-          'created_at':
-              baseTime.add(Duration(milliseconds: index++)).toIso8601String(),
+          'created_at': (title.createdAt ?? baseTime).toIso8601String(),
         };
       }).toList();
 
@@ -117,8 +130,7 @@ class TmdbImportService extends TmdbBaseService {
           'name': title.name,
           'poster_path': title.posterPathSuffix,
           'vote_average': title.voteAverage,
-          'created_at':
-              baseTime.add(Duration(milliseconds: index++)).toIso8601String(),
+          'created_at': (title.createdAt ?? baseTime).toIso8601String(),
         };
         if (title.rating > 0 && title.dateRated.year >= 2000) {
           record['rated_date'] = title.dateRated.toUtc().toIso8601String();

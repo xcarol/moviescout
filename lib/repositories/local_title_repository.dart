@@ -36,10 +36,10 @@ class LocalTitleRepository {
     newTitle.omdbRatingsJson ??= currentTitle.omdbRatingsJson;
   }
 
-  Future<void> saveTitles(List<TmdbTitle> titles, String listName,
-      {List<int>? addedOrders}) async {
+  Future<void> saveTitles(List<TmdbTitle> titles, String listName) async {
     if (titles.isEmpty) return;
 
+    final now = DateTime.now().toUtc();
     await _db.transaction(() async {
       for (var j = 0; j < titles.length; j++) {
         final title = titles[j];
@@ -57,14 +57,22 @@ class LocalTitleRepository {
             .into(_db.tmdbTitles)
             .insertOnConflictUpdate(DriftMapper.toCompanionTitle(title));
 
-        final order = addedOrders != null ? addedOrders[j] : j;
+        final entryId = '${listName}_${title.tmdbId}_${title.mediaType}';
+        final existingEntry = await (_db.select(_db.userListEntries)
+              ..where((e) => e.id.equals(entryId)))
+            .getSingleOrNull();
+
+        final entryCreatedAt = title.createdAt ??
+            existingEntry?.createdAt ??
+            now.add(Duration(milliseconds: j));
+
         await _db.into(_db.userListEntries).insertOnConflictUpdate(
               UserListEntriesCompanion(
-                id: Value('${listName}_${title.tmdbId}_${title.mediaType}'),
+                id: Value(entryId),
                 listName: Value(listName),
                 tmdbId: Value(title.tmdbId),
                 mediaType: Value(title.mediaType),
-                addedOrder: Value(order),
+                createdAt: Value(entryCreatedAt),
               ),
             );
       }
@@ -258,15 +266,6 @@ class LocalTitleRepository {
       ..where(_db.userListEntries.listName.equals(listName));
     final result = await query.getSingle();
     return result.read(countExp) ?? 0;
-  }
-
-  Future<int> getMaxAddedOrder(String listName) async {
-    final query = _db.select(_db.userListEntries)
-      ..where((e) => e.listName.equals(listName))
-      ..orderBy([(e) => OrderingTerm.desc(e.addedOrder)])
-      ..limit(1);
-    final result = await query.getSingleOrNull();
-    return result?.addedOrder ?? -1;
   }
 
   Future<TmdbTitle?> getTitleByTmdbId(
@@ -497,7 +496,7 @@ class LocalTitleRepository {
     if (sortOption == SortOption.addedOrder) {
       query.orderBy([
         OrderingTerm(
-          expression: _db.userListEntries.addedOrder,
+          expression: _db.userListEntries.createdAt,
           mode: sortAscending ? OrderingMode.asc : OrderingMode.desc,
         )
       ]);

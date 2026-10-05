@@ -161,10 +161,8 @@ void main() {
       when(() => mockRepository.deleteTitles(
               AppConstants.watchlist, [title.tmdbId], [title.mediaType]))
           .thenAnswer((_) async {});
-      when(() => mockRepository.saveTitles([title], AppConstants.rateslist,
-          addedOrders: any(named: 'addedOrders'))).thenAnswer((_) async {});
-      when(() => mockRepository.getMaxAddedOrder(AppConstants.rateslist))
-          .thenAnswer((_) async => 0);
+      when(() => mockRepository.saveTitles([title], AppConstants.rateslist))
+          .thenAnswer((_) async {});
       when(() => mockRepository.getTitleGlobal(title.tmdbId, title.mediaType))
           .thenAnswer((_) async => null);
       when(() => mockRepository.updateRatingList([title]))
@@ -181,8 +179,8 @@ void main() {
 
       verify(() => mockRepository.deleteTitles(
           AppConstants.watchlist, [title.tmdbId], [title.mediaType])).called(1);
-      verify(() => mockRepository.saveTitles([title], AppConstants.rateslist,
-          addedOrders: any(named: 'addedOrders'))).called(1);
+      verify(() => mockRepository.saveTitles([title], AppConstants.rateslist))
+          .called(1);
       verify(() => mockRepository.updateRatingList([title])).called(1);
       verify(() => mockQueryBuilder.upsert(any(),
           onConflict: any(named: 'onConflict'))).called(1);
@@ -234,8 +232,7 @@ void main() {
 
       await service.updateTitleRate(title, 8.0);
 
-      verifyNever(() => mockRepository.saveTitles(any(), any(),
-          addedOrders: any(named: 'addedOrders')));
+      verifyNever(() => mockRepository.saveTitles(any(), any()));
       verifyNever(() =>
           mockQueryBuilder.upsert(any(), onConflict: any(named: 'onConflict')));
     });
