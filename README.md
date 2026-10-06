@@ -14,7 +14,7 @@ MovieScout is a movie and TV series tracker powered by TMDB, OMDb, and JustWatch
 - **User-Friendly Design**: Enjoy a clean, modern, and intuitive interface designed for movie and TV enthusiasts.
 
 **Discover. Track. Watch.**  
-Download MovieScout now: [https://xcarol.github.io/moviescout/](https://xcarol.github.io/moviescout/)
+Download MovieScout now: [https://moviescout.xicra.com/](https://moviescout.xicra.com/)
 
 ## Data Privacy
 
