@@ -164,16 +164,27 @@ Get the **API Key** (`OMDB_API_KEY`) from [OMDb API](https://www.omdbapi.com/api
 
 MovieScout relies on a Vercel-hosted environment (located in the `backend/` directory) for:
 
-1. **Android App Links verification:** Serving the `/.well-known/assetlinks.json` file so Android can verify `moviescout.xicra.com` deep links belong to the app.
-2. **URL Redirects (`vercel.json`):** Redirecting TMDB links (`/movie/*`, `/tv/*`, `/person/*`, `/collection/*`) to `themoviedb.org` and root (`/`) to the web landing page.
+1. **Web Landing Page & Legal Terms:** Serving `index.html`, `privacy.html`, `terms.html`, and Google Search Console site verification directly under `https://moviescout.xicra.com/`.
+2. **Android App Links verification:** Serving the `/.well-known/assetlinks.json` file so Android can verify `moviescout.xicra.com` deep links belong to the app.
+3. **URL Redirects (`vercel.json`):** Redirecting TMDB links (`/movie/*`, `/tv/*`, `/person/*`, `/collection/*`) to `themoviedb.org`.
+
+### How Deployment Works
+
+- **Automatic Deploy (via Git):** The Vercel project is linked to the GitHub repository (`xcarol/moviescout`) with **Root Directory** set to `backend`. Pushing commits to the tracked branch (`master`) automatically builds and deploys changes to production (`https://moviescout.xicra.com/`).
+- **Manual Deploy (via CLI):** If deploying without pushing, execute:
+  ```bash
+  cd backend
+  npx -y vercel --prod
+  ```
+
+### Domain & Google Verification
+
+- **Custom Domain:** Configured as `moviescout.xicra.com` in Vercel settings, pointing via DNS CNAME to Vercel.
+- **Google Search Console:** Verified using the URL prefix method (`https://moviescout.xicra.com/`) via the static verification file `backend/public/google*.html`.
+- **Google Cloud OAuth Consent Screen:** `moviescout.xicra.com` is added as an **Authorized Domain**, allowing `https://moviescout.xicra.com/privacy.html` and `https://moviescout.xicra.com/terms.html` to be valid for Google Sign-In and Google Play verification.
+- **App Links Fingerprints:** Ensure `backend/public/.well-known/assetlinks.json` contains the SHA-256 certificate fingerprints for both your local debug keystore and Google Play App Signing key.
 
 *(Note: The legacy Firebase Custom Auth serverless function previously hosted on Vercel has been deprecated and removed, as all authentication and user data are now handled by Supabase).*
-
-### Setup from scratch
-
-1. **Deploy to Vercel:** Push the `backend/` folder to a GitHub repository and link it to a new project in Vercel.
-2. **Custom Domain:** In the Vercel project settings, add your custom domain (e.g., `moviescout.xicra.com`). Configure the DNS `CNAME` record in your domain provider as requested by Vercel to automatically provision the SSL (HTTPS) certificate.
-3. **App Links Fingerprints:** Ensure the `backend/public/.well-known/assetlinks.json` file contains the exact SHA-256 certificate fingerprints for both your local debug keystore and Google Play App Signing key.
 
 ## Supabase & Google Cloud Configuration
 
