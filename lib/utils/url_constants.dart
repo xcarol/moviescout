@@ -14,9 +14,9 @@ class UrlConstants {
   static const String omdbApiUrl = 'https://www.omdbapi.com/';
   static const String githubRepoUrl = 'https://github.com/xcarol/moviescout';
   static const String privacyPolicyUrl =
-      'https://xcarol.github.io/moviescout/privacy.html';
+      '$moviescoutWebUrl/privacy.html';
   static const String termsOfServiceUrl =
-      'https://xcarol.github.io/moviescout/terms.html';
+      '$moviescoutWebUrl/terms.html';
   static const String gravatarUrl = 'https://www.gravatar.com/avatar/';
   static const String imdbTitleUrl = 'https://www.imdb.com/title/';
   static const String imdbNameUrl = 'https://www.imdb.com/name/';
