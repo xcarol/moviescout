@@ -136,4 +136,6 @@ class UrlConstants {
 
   static const String tmdbMovieProvidersEndpoint = 'movie/{ID}/watch/providers';
   static const String tmdbTvProvidersEndpoint = 'tv/{ID}/watch/providers';
+  static const String tmdbWatchProvidersRegionsEndpoint =
+      'watch/providers/regions?language={LOCALE}';
 }

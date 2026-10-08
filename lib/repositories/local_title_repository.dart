@@ -259,6 +259,14 @@ class LocalTitleRepository {
     return results.map(DriftMapper.toDomainTitle).toList();
   }
 
+  Future<void> markAllTitlesUninitialized() async {
+    await _db.update(_db.tmdbTitles).write(
+          const TmdbTitlesCompanion(
+            lastUpdated: Value(AppConstants.defaultDate),
+          ),
+        );
+  }
+
   Future<int> countTitles(String listName) async {
     final countExp = _db.userListEntries.id.count();
     final query = _db.selectOnly(_db.userListEntries)
@@ -388,6 +396,11 @@ class LocalTitleRepository {
     return results
         .map((row) => DriftMapper.toDomainTitle(row.readTable(_db.tmdbTitles)))
         .toList();
+  }
+
+  Future<List<TmdbTitle>> getAllTitles() async {
+    final results = await _db.select(_db.tmdbTitles).get();
+    return results.map(DriftMapper.toDomainTitle).toList();
   }
 
   void _applyFilters({

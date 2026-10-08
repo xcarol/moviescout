@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'package:diacritic/diacritic.dart';
 import 'package:flutter/foundation.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
+import 'package:moviescout/models/tmdb_region.dart';
 import 'package:moviescout/repositories/cloud_title_repository.dart';
 import 'package:moviescout/services/core/cloud_database_service.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
+import 'package:moviescout/utils/url_constants.dart';
 
 const String _tmdbMovieProviders =
     '/watch/providers/movie?language={LOCALE}&watch_region={COUNTRY}';
@@ -16,11 +19,13 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
   final CloudTitleRepository _cloudRepository;
 
   final Map<int, Map<String, String>> _providerMap = {};
+  final Set<int> _allKnownCloudProviderIds = {};
   Map<int, Map<String, String>> get providers => _providerMap;
   bool _isInitialized = false;
   bool _isInitializing = false;
 
   bool get isInitialized => _isInitialized;
+  bool get isInitializing => _isInitializing;
 
   @visibleForTesting
   set isInitialized(bool value) => _isInitialized = value;
@@ -85,6 +90,7 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
 
   void clearProvidersStatus() {
     _isInitialized = false;
+    _allKnownCloudProviderIds.clear();
     for (var entry in _providerMap.entries) {
       entry.value[TmdbProvider.providerEnabled] = 'false';
     }
@@ -174,17 +180,24 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
   }
 
   String _providersToString() {
-    final enabledProviders = _providerMap.entries
+    final enabledCurrentRegion = _providerMap.entries
         .where((entry) => entry.value[TmdbProvider.providerEnabled] == 'true')
         .map((entry) => entry.key)
-        .toList();
-    return enabledProviders.join(',');
+        .toSet();
+
+    final otherRegionIds = _allKnownCloudProviderIds
+        .where((id) => !_providerMap.containsKey(id))
+        .toSet();
+
+    final allEnabled = enabledCurrentRegion.union(otherRegionIds).toList();
+    return allEnabled.join(',');
   }
 
   void _stringToProviders(String providersString) {
     try {
       if (providersString.isEmpty) return;
       final providerIds = providersString.split(',').map(int.parse).toList();
+      _allKnownCloudProviderIds.addAll(providerIds);
       for (var entry in _providerMap.entries) {
         if (providerIds.contains(entry.key)) {
           entry.value[TmdbProvider.providerEnabled] = 'true';
@@ -201,11 +214,40 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
     }
   }
 
+  Future<void> reloadProviders({bool force = false}) async {
+    if (_isInitializing) return;
+    _isInitialized = false;
+    _isInitializing = true;
+    _providerMap.clear();
+    notifyListeners();
+
+    try {
+      if (force || !_getLocalProviders()) {
+        await _retrieveProviders();
+        await fetchProviders();
+        _setLocalProviders(_providerMap);
+      } else {
+        await fetchProviders();
+      }
+    } catch (error, stackTrace) {
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        userMessage: 'Error initializing platforms',
+      );
+    } finally {
+      _isInitialized = true;
+      _isInitializing = false;
+      notifyListeners();
+    }
+  }
+
   bool _getLocalProviders() {
+    final country = getCountryCode();
     final providers =
-        PreferencesService().prefs.getStringList('providers') ?? [];
+        PreferencesService().prefs.getStringList('providers_$country') ?? [];
     final String lastUpdated =
-        PreferencesService().prefs.getString('providers_updateTime') ??
+        PreferencesService().prefs.getString('providers_updateTime_$country') ??
             DateTime(1970).toString();
     bool isUpToDate =
         DateTime.now().difference(DateTime.parse(lastUpdated)).inDays <
@@ -231,6 +273,7 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
   }
 
   void _setLocalProviders(Map<int, Map<String, String>> providers) {
+    final country = getCountryCode();
     final providerList = providers.entries
         .map((entry) => jsonEncode({
               TmdbProvider.providerId: entry.key,
@@ -240,15 +283,20 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
                   entry.value[TmdbProvider.providerEnabled],
             }))
         .toList();
-    PreferencesService().prefs.setStringList('providers', providerList);
+    PreferencesService().prefs.setStringList('providers_$country', providerList);
     PreferencesService()
         .prefs
-        .setString('providers_updateTime', DateTime.now().toString());
+        .setString('providers_updateTime_$country', DateTime.now().toString());
   }
 
   void toggleProvider(int id, bool value) {
     if (_providerMap.containsKey(id)) {
       _providerMap[id]![TmdbProvider.providerEnabled] = value.toString();
+      if (value) {
+        _allKnownCloudProviderIds.add(id);
+      } else {
+        _allKnownCloudProviderIds.remove(id);
+      }
       updateCloudProviders(_providersToString());
       _setLocalProviders(_providerMap);
     }
@@ -268,5 +316,99 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
             (entry) => names.contains(entry.value[TmdbProvider.providerName]))
         .map((entry) => entry.key)
         .toList();
+  }
+
+  List<TmdbRegion> _availableRegions = [];
+  String _cachedRegionsLanguage = '';
+
+  List<TmdbRegion> get availableRegions => _availableRegions;
+
+  void clearRegionsCache() {
+    _availableRegions = [];
+    _cachedRegionsLanguage = '';
+  }
+
+  Future<List<TmdbRegion>> getAvailableRegions({bool forceRefresh = false}) async {
+    final currentLanguage = getLanguageCode();
+
+    if (!forceRefresh &&
+        _availableRegions.isNotEmpty &&
+        _cachedRegionsLanguage == currentLanguage) {
+      return _availableRegions;
+    }
+
+    if (!forceRefresh && _getLocalRegions(currentLanguage)) {
+      return _availableRegions;
+    }
+
+    try {
+      final locale = '$currentLanguage-${getCountryCode()}';
+      final response = await get(UrlConstants.tmdbWatchProvidersRegionsEndpoint
+          .replaceFirst('{LOCALE}', locale));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        final results = (data['results'] as List<dynamic>?) ?? [];
+
+        final regions = results
+            .whereType<Map<String, dynamic>>()
+            .map(TmdbRegion.fromJson)
+            .where((r) => r.isoCode.isNotEmpty)
+            .toList()
+          ..sort((a, b) => removeDiacritics(a.displayName.toLowerCase())
+              .compareTo(removeDiacritics(b.displayName.toLowerCase())));
+
+        _availableRegions = regions;
+        _cachedRegionsLanguage = currentLanguage;
+        _setLocalRegions(currentLanguage, regions);
+        return _availableRegions;
+      } else {
+        ErrorService.log(
+          'Failed to load available regions: ${response.statusCode}',
+          userMessage: 'Error loading regions',
+        );
+      }
+    } catch (error, stackTrace) {
+      ErrorService.log(
+        error,
+        stackTrace: stackTrace,
+        userMessage: 'Error loading regions',
+      );
+    }
+
+    if (_availableRegions.isEmpty) {
+      _getLocalRegions(currentLanguage, ignoreExpiry: true);
+    }
+    return _availableRegions;
+  }
+
+  bool _getLocalRegions(String langCode, {bool ignoreExpiry = false}) {
+    final cacheKey = 'regions_$langCode';
+    final timeKey = 'regions_updateTime_$langCode';
+    final regionsJson =
+        PreferencesService().prefs.getStringList(cacheKey) ?? [];
+    final lastUpdated = PreferencesService().prefs.getString(timeKey) ??
+        DateTime(1970).toString();
+
+    final isUpToDate = ignoreExpiry ||
+        DateTime.now().difference(DateTime.parse(lastUpdated)).inDays < 90;
+
+    if (regionsJson.isEmpty || !isUpToDate) return false;
+
+    _availableRegions = regionsJson
+        .map((str) => jsonDecode(str) as Map<String, dynamic>)
+        .map(TmdbRegion.fromJson)
+        .toList();
+    _cachedRegionsLanguage = langCode;
+    return true;
+  }
+
+  void _setLocalRegions(String langCode, List<TmdbRegion> regions) {
+    final cacheKey = 'regions_$langCode';
+    final timeKey = 'regions_updateTime_$langCode';
+    final regionsJson =
+        regions.map((region) => jsonEncode(region.toJson())).toList();
+    PreferencesService().prefs.setStringList(cacheKey, regionsJson);
+    PreferencesService().prefs.setString(timeKey, DateTime.now().toString());
   }
 }

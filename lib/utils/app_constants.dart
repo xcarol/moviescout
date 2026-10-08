@@ -47,15 +47,29 @@ class AppConstants {
   static const String catalan = 'ca-ES';
   static const String spanish = 'es-ES';
   static const String english = 'en-US';
+  static const String french = 'fr-FR';
+  static const String german = 'de-DE';
+  static const String italian = 'it-IT';
+  static const String portugueseBr = 'pt-BR';
+  static const String portuguesePt = 'pt-PT';
+  static const String basque = 'eu-ES';
+  static const String galician = 'gl-ES';
 
   // Background Tasks
   static const String taskUpdateWatchlist = 'updateWatchlistProviders';
   static const String workerWatchlistUpdate = 'watchlistUpdateTask';
 
   static const List<String> supportedLanguages = [
+    basque,
     catalan,
-    spanish,
     english,
+    french,
+    galician,
+    german,
+    italian,
+    portugueseBr,
+    portuguesePt,
+    spanish,
   ];
 
   // Other

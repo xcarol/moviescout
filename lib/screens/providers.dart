@@ -16,6 +16,7 @@ class ProvidersScreen extends StatefulWidget {
 
 class _ProvidersScreenState extends State<ProvidersScreen> {
   bool _providersChanged = false;
+  String? _lastCountryCode;
   List<MapEntry<int, Map<String, String>>> _sortedProviders = [];
   List<MapEntry<int, Map<String, String>>> _filteredProviders = [];
 
@@ -47,9 +48,15 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final providerService =
-        Provider.of<TmdbProviderService>(context, listen: false);
+    final providerService = Provider.of<TmdbProviderService>(context);
     final map = providerService.providers;
+    final countryCode = providerService.getCountryCode();
+
+    if (_lastCountryCode != countryCode) {
+      _lastCountryCode = countryCode;
+      _sortedProviders = [];
+      _filteredProviders = [];
+    }
 
     if (_sortedProviders.isEmpty && map.isNotEmpty) {
       _sortedProviders = map.entries.where((entry) {
@@ -105,6 +112,12 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
   }
 
   Widget _body(BuildContext context, TmdbProviderService providerService) {
+    if (providerService.isInitializing) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     if (_sortedProviders.isEmpty) {
       return Center(
         child: Text(AppLocalizations.of(context)!.noProvidersAvailable),

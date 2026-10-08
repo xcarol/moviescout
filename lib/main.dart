@@ -287,14 +287,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     regionProvider.addListener(_onRegionChanged);
   }
 
-  void _onRegionChanged() {
+  void _onRegionChanged() async {
     if (!mounted) return;
-    final watchlistService =
-        Provider.of<WatchlistService>(context, listen: false);
-    final rateslistService =
-        Provider.of<RateslistService>(context, listen: false);
-    watchlistService.updateProviders();
-    rateslistService.updateProviders();
+    final providerService =
+        Provider.of<TmdbProviderService>(context, listen: false);
+    await providerService.reloadProviders();
   }
 
   @override
@@ -313,6 +310,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       NotificationService().checkSystemPermission();
+      final regionService = RegionService();
+      if (regionService.manualRegion == null) {
+        regionService.detectRegion();
+      }
     }
   }
 

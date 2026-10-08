@@ -37,14 +37,34 @@ class AppLocalizationsCa extends AppLocalizations {
   String get english => 'English';
 
   @override
+  String get french => 'Français';
+
+  @override
+  String get german => 'Deutsch';
+
+  @override
+  String get italian => 'Italiano';
+
+  @override
+  String get portugueseBr => 'Português (Brasil)';
+
+  @override
+  String get portuguesePt => 'Português (Portugal)';
+
+  @override
+  String get basque => 'Euskara';
+
+  @override
+  String get galician => 'Galego';
+
+  @override
   String get selectLanguage => 'Selecciona l\'idioma';
 
   @override
   String get messageEmptyList => 'Encara no s\'ha escollit cap pel·lícula.';
 
   @override
-  String get messageEmptySearch =>
-      'Pots fer una cerca utilitzant la lupa de la barra inferior.';
+  String get messageEmptySearch => 'Pots fer una cerca utilitzant la lupa de la barra inferior.';
 
   @override
   String get messageEmptyOptions => 'També pots';
@@ -167,12 +187,10 @@ class AppLocalizationsCa extends AppLocalizations {
   String get imdbConfirmationTitle => 'ATENCIÓ';
 
   @override
-  String get imdbResetWatchlistConfirmation =>
-      'Segur que vols eliminar els títols Per Veure?';
+  String get imdbResetWatchlistConfirmation => 'Segur que vols eliminar els títols Per Veure?';
 
   @override
-  String get imdbResetRateslistConfirmation =>
-      'Segur que vols eliminar les Valoracions?';
+  String get imdbResetRateslistConfirmation => 'Segur que vols eliminar les Valoracions?';
 
   @override
   String get resetWatchlistCount => 'Títols Per Veure: ';
@@ -313,15 +331,13 @@ class AppLocalizationsCa extends AppLocalizations {
   String get about => 'Quant a...';
 
   @override
-  String get aboutDescription =>
-      'MovieScout és el teu cercador de pel·lícules i sèries amb dades de TMDb, OMDb i JustWatch.';
+  String get aboutDescription => 'MovieScout és el teu cercador de pel·lícules i sèries amb dades de TMDb, OMDb i JustWatch.';
 
   @override
   String get aboutGithub => 'Visita el projecte a ';
 
   @override
-  String get apiDisclaimer =>
-      'Aquest producte utilitza l\'API de TMDB, però no està avalat ni certificat per TMDB.';
+  String get apiDisclaimer => 'Aquest producte utilitza l\'API de TMDB, però no està avalat ni certificat per TMDB.';
 
   @override
   String get privacyDisclaimerPrefix => 'Consulta la ';
@@ -384,13 +400,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get department => 'Departament';
 
   @override
-  String get languageChangeTitle => 'Canvi d\'idioma';
-
-  @override
-  String get languageChangeContent =>
-      'Has canviat l\'idioma de l\'aplicació. Perquè els títols s\'actualitzin al nou idioma, cal que tanquis la sessió i tornis a entrar.';
-
-  @override
   String get watchingNow => 'Mirant ara';
 
   @override
@@ -422,25 +431,10 @@ class AppLocalizationsCa extends AppLocalizations {
   String get selectRegion => 'Selecciona la regió';
 
   @override
+  String get searchRegion => 'Cerca una regió';
+
+  @override
   String get regionAuto => 'Detecció automàtica (IP)';
-
-  @override
-  String get regionSpain => 'Espanya';
-
-  @override
-  String get regionUSA => 'Estats Units';
-
-  @override
-  String get regionUK => 'Regne Unit';
-
-  @override
-  String get regionFrance => 'França';
-
-  @override
-  String get regionGermany => 'Alemanya';
-
-  @override
-  String get regionItaly => 'Itàlia';
 
   @override
   String get shareLink => 'Compartir';
@@ -463,12 +457,10 @@ class AppLocalizationsCa extends AppLocalizations {
   String get notifications => 'Notificacions';
 
   @override
-  String get notificationsPermissionRequired =>
-      'Cal que permetis les notificacions a la configuració del sistema.';
+  String get notificationsPermissionRequired => 'Cal que permetis les notificacions a la configuració del sistema.';
 
   @override
-  String get notificationsPermissionDescription =>
-      'Per rebre avisos de disponibilitat de pel·lícules i noves temporades, cal que activis les notificacions als ajustos del sistema.';
+  String get notificationsPermissionDescription => 'Per rebre avisos de disponibilitat de pel·lícules i noves temporades, cal que activis les notificacions als ajustos del sistema.';
 
   @override
   String get openSettings => 'Obrir ajustos';
@@ -477,8 +469,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get settings => 'Configuració';
 
   @override
-  String get errorMessageGeneric =>
-      'S\'ha produït un error. Torna-ho a provar més tard.';
+  String get errorMessageGeneric => 'S\'ha produït un error. Torna-ho a provar més tard.';
 
   @override
   String get youtubeSearch => 'Cerca a YouTube';
@@ -490,8 +481,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get notifyCompleteSeason => 'Notificar temporada completa';
 
   @override
-  String get notifyCompleteSeasonSubtitle =>
-      'Només notifica quan tota la temporada està disponible.';
+  String get notifyCompleteSeasonSubtitle => 'Només notifica quan tota la temporada està disponible.';
 
   @override
   String get episodes => 'Episodis';
@@ -508,8 +498,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get notifyTitle => 'Notificar noves temporades';
 
   @override
-  String get notifyMessage =>
-      'Vols que t\'avisem quan hi hagi una nova temporada?';
+  String get notifyMessage => 'Vols que t\'avisem quan hi hagi una nova temporada?';
 
   @override
   String get no => 'No';
@@ -579,8 +568,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get aiSettingsSubtitle => 'Cerca intel·ligent i funcions d\'IA';
 
   @override
-  String get aiSettingsDescription =>
-      'Les funcions d\'IA et permeten trobar pel·lícules i sèries basant-se en descripcions en llenguatge natural i més eines intel·ligents. Per utilitzar-les, pots obtenir una clau gratuïta a OpenRouter (sense necessitat de targeta).';
+  String get aiSettingsDescription => 'Les funcions d\'IA et permeten trobar pel·lícules i sèries basant-se en descripcions en llenguatge natural i més eines intel·ligents. Per utilitzar-les, pots obtenir una clau gratuïta a OpenRouter (sense necessitat de targeta).';
 
   @override
   String get aiGetApiKeyButton => 'Obtenir clau a OpenRouter';
@@ -616,20 +604,16 @@ class AppLocalizationsCa extends AppLocalizations {
   String get aiDeleteConfirmTitle => 'Eliminar clau API';
 
   @override
-  String get aiDeleteConfirmMessage =>
-      'Segur que vols eliminar la clau API? Tingues en compte que OpenRouter no permet consultar la clau un cop creada i n\'hauràs de generar una de nova si no la tens guardada.';
+  String get aiDeleteConfirmMessage => 'Segur que vols eliminar la clau API? Tingues en compte que OpenRouter no permet consultar la clau un cop creada i n\'hauràs de generar una de nova si no la tens guardada.';
 
   @override
-  String get searchTimeout =>
-      'La cerca ha trigat massa temps a respondre. Torna-ho a provar.';
+  String get searchTimeout => 'La cerca ha trigat massa temps a respondre. Torna-ho a provar.';
 
   @override
-  String get aiSearchTimeout =>
-      'La cerca amb IA ha trigat massa temps. Prova amb una descripció menys específica o més curta.';
+  String get aiSearchTimeout => 'La cerca amb IA ha trigat massa temps. Prova amb una descripció menys específica o més curta.';
 
   @override
-  String get aiSearchError =>
-      'S\'ha produït un error en la cerca IA. Torna-ho a provar.';
+  String get aiSearchError => 'S\'ha produït un error en la cerca IA. Torna-ho a provar.';
 
   @override
   String aiRateLimitWithSeconds(int seconds) {
@@ -637,8 +621,7 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
-  String get aiRateLimitGeneric =>
-      'S\'ha superat el límit temporal de l\'API. Espera una estona abans de tornar-ho a provar.';
+  String get aiRateLimitGeneric => 'S\'ha superat el límit temporal de l\'API. Espera una estona abans de tornar-ho a provar.';
 
   @override
   String get signInWithGoogle => 'Inicia sessió amb Google';
@@ -665,8 +648,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get tmdbImportScreenHeader => 'Importa les teves dades de TMDb';
 
   @override
-  String get tmdbImportScreenBody =>
-      'Pots importar les teves llistes de seguiment i valoracions des del teu compte de TMDb al teu compte de MovieScout. Caldrà que iniciïs sessió a TMDb. Un cop finalitzada la importació, la sessió de TMDb es tancarà automàticament.';
+  String get tmdbImportScreenBody => 'Pots importar les teves llistes de seguiment i valoracions des del teu compte de TMDb al teu compte de MovieScout. Caldrà que iniciïs sessió a TMDb. Un cop finalitzada la importació, la sessió de TMDb es tancarà automàticament.';
 
   @override
   String get tmdbImportStartButton => 'Començar la importació';
@@ -678,16 +660,13 @@ class AppLocalizationsCa extends AppLocalizations {
   String get tmdbImportDownloading => 'Descarregant dades de TMDb...';
 
   @override
-  String get tmdbImportDownloadingWatchlist =>
-      'Descarregant la llista de seguiment...';
+  String get tmdbImportDownloadingWatchlist => 'Descarregant la llista de seguiment...';
 
   @override
-  String get tmdbImportDownloadingRateslist =>
-      'Descarregant les valoracions...';
+  String get tmdbImportDownloadingRateslist => 'Descarregant les valoracions...';
 
   @override
-  String get tmdbImportDownloadingEpisodes =>
-      'Descarregant episodis valorats...';
+  String get tmdbImportDownloadingEpisodes => 'Descarregant episodis valorats...';
 
   @override
   String tmdbImportWatchlistCount(Object count) {
@@ -719,16 +698,13 @@ class AppLocalizationsCa extends AppLocalizations {
   String get tmdbImportError => 'Error en importar les dades';
 
   @override
-  String get tmdbImportLoginRequired =>
-      'Inicia sessió a TMDb per començar la importació.';
+  String get tmdbImportLoginRequired => 'Inicia sessió a TMDb per començar la importació.';
 
   @override
-  String get tmdbImportConsentText =>
-      'La importació afegirà les teves llistes i valoracions de TMDb al teu compte de MovieScout de manera segura.';
+  String get tmdbImportConsentText => 'La importació afegirà les teves llistes i valoracions de TMDb al teu compte de MovieScout de manera segura.';
 
   @override
-  String get loginConsentText =>
-      'En iniciar sessió, acceptes emmagatzemar les teves dades als servidors de MovieScout per sincronitzar-les entre dispositius, d\'acord amb la nostra ';
+  String get loginConsentText => 'En iniciar sessió, acceptes emmagatzemar les teves dades als servidors de MovieScout per sincronitzar-les entre dispositius, d\'acord amb la nostra ';
 
   @override
   String get termsOfService => 'termes de servei';
@@ -743,12 +719,10 @@ class AppLocalizationsCa extends AppLocalizations {
   String get deleteAccountConfirmTitle => 'Eliminar compte';
 
   @override
-  String get deleteAccountConfirmMessage =>
-      'Segur que vols eliminar el teu compte? Aquesta acció és irreversible i s\'esborraran totes les teves llistes i dades de manera permanent.';
+  String get deleteAccountConfirmMessage => 'Segur que vols eliminar el teu compte? Aquesta acció és irreversible i s\'esborraran totes les teves llistes i dades de manera permanent.';
 
   @override
-  String get deleteAccountSuccess =>
-      'El teu compte s\'ha eliminat correctament';
+  String get deleteAccountSuccess => 'El teu compte s\'ha eliminat correctament';
 
   @override
   String get deleteAccountError => 'Error en eliminar el compte';

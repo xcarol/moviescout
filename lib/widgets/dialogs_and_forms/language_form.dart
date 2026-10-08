@@ -2,20 +2,59 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
-class LanguageForm extends Dialog {
+class LanguageForm extends StatefulWidget {
   const LanguageForm({super.key, required this.currentLanguage});
 
   final String currentLanguage;
 
   @override
-  Widget build(BuildContext context) {
-    ValueNotifier<String> language = ValueNotifier(currentLanguage);
+  State<LanguageForm> createState() => _LanguageFormState();
+}
 
-    Map<String, String> languages = {
+class _LanguageFormState extends State<LanguageForm> {
+  late String _selectedLanguage;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedLanguage = widget.currentLanguage;
+  }
+
+  Widget _buildRadioTile(String code, String name) {
+    final isSelected = _selectedLanguage == code;
+    return RadioListTile<String>(
+      title: Text(
+        name,
+        style: TextStyle(
+          color: isSelected
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.onSurface,
+        ),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      value: code,
+      selected: isSelected,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Map<String, String> languages = {
       AppConstants.catalan: AppLocalizations.of(context)!.catalan,
       AppConstants.spanish: AppLocalizations.of(context)!.spanish,
       AppConstants.english: AppLocalizations.of(context)!.english,
+      AppConstants.french: AppLocalizations.of(context)!.french,
+      AppConstants.german: AppLocalizations.of(context)!.german,
+      AppConstants.italian: AppLocalizations.of(context)!.italian,
+      AppConstants.portugueseBr: AppLocalizations.of(context)!.portugueseBr,
+      AppConstants.portuguesePt: AppLocalizations.of(context)!.portuguesePt,
+      AppConstants.basque: AppLocalizations.of(context)!.basque,
+      AppConstants.galician: AppLocalizations.of(context)!.galician,
     };
+
+    final entries = languages.entries.toList();
 
     return AlertDialog(
       title: Text(
@@ -23,65 +62,42 @@ class LanguageForm extends Dialog {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      content: ValueListenableBuilder<String>(
-        valueListenable: language,
-        builder: (context, value, child) {
-          List<Widget> languageWidgets = [];
-          languages.forEach((code, name) {
-            languageWidgets.add(
-              RadioListTile<String>(
-                title: Text(name,
-                    style: TextStyle(
-                      color: language.value == code
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).colorScheme.onSurface,
-                    )),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                value: code,
-                selected: language.value == code,
-              ),
-            );
-            languageWidgets.add(
-              const SizedBox(height: 10),
-            );
-          });
-
-          return RadioGroup<String>(
-            groupValue: language.value,
-            onChanged: (newValue) {
-              if (newValue != null) {
-                language.value = newValue;
-              }
+      content: SizedBox(
+        width: double.maxFinite,
+        height: MediaQuery.sizeOf(context).height * 0.65,
+        child: RadioGroup<String>(
+          groupValue: _selectedLanguage,
+          onChanged: (newValue) {
+            if (newValue != null) {
+              setState(() {
+                _selectedLanguage = newValue;
+              });
+            }
+          },
+          child: ListView.separated(
+            itemCount: entries.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 6),
+            itemBuilder: (context, index) {
+              final entry = entries[index];
+              return _buildRadioTile(entry.key, entry.value);
             },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Column(children: languageWidgets),
-                const SizedBox(height: 20),
-                OverflowBar(
-                  alignment: MainAxisAlignment.spaceBetween,
-                  spacing: 10,
-                  overflowSpacing: 10,
-                  children: [
-                    FilledButton.tonal(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(AppLocalizations.of(context)!.cancel)),
-                    FilledButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(language.value);
-                        },
-                        child: Text(AppLocalizations.of(context)!.select)),
-                  ],
-                ),
-              ],
-            ),
-          );
-        },
+          ),
+        ),
       ),
+      actions: [
+        FilledButton.tonal(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text(AppLocalizations.of(context)!.cancel),
+        ),
+        FilledButton(
+          onPressed: () {
+            Navigator.of(context).pop(_selectedLanguage);
+          },
+          child: Text(AppLocalizations.of(context)!.select),
+        ),
+      ],
     );
   }
 }

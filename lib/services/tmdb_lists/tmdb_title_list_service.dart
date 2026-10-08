@@ -29,6 +29,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       {List<TmdbTitle>? titles}) {
     listNameVal = listName;
     UninitializedTitlesWorker.onFinished.stream.listen((_) {
+      updateListGenres();
       filterItems();
     });
     UpdateProvidersWorker.onFinished.stream.listen((_) {

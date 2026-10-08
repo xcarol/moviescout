@@ -9,7 +9,6 @@ import 'package:moviescout/screens/providers.dart';
 import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/services/notifications/notification_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
-import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/language_form.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/notification_permission_dialog.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/region_form.dart';
@@ -165,24 +164,6 @@ class SettingsScreen extends StatelessWidget {
         if (selectedLanguage != null &&
             selectedLanguage != languageProvider.currentLanguage) {
           languageProvider.setLanguage(selectedLanguage);
-          await TmdbGenreService().reload();
-
-          if (context.mounted) {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text(AppLocalizations.of(context)!.languageChangeTitle),
-                content:
-                    Text(AppLocalizations.of(context)!.languageChangeContent),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('OK'),
-                  ),
-                ],
-              ),
-            );
-          }
         }
       },
     );
@@ -196,6 +177,7 @@ class SettingsScreen extends StatelessWidget {
       title: Text(
         AppLocalizations.of(context)!.selectRegion,
       ),
+      subtitle: Text(_regionSubtitle(regionProvider, context)),
       onTap: () async {
         final String? selectedRegion = await showDialog<String?>(
           context: context,
@@ -211,5 +193,26 @@ class SettingsScreen extends StatelessWidget {
         }
       },
     );
+  }
+
+  String _regionSubtitle(RegionService regionProvider, BuildContext context) {
+    final manual = regionProvider.manualRegion;
+    String subtitle;
+
+    if (manual != null) {
+      final name = regionProvider.getRegionName(manual);
+      subtitle = name.isNotEmpty ? name : manual;
+    } else {
+      final autoText = AppLocalizations.of(context)!.regionAuto;
+      final detected = regionProvider.detectedRegion;
+      if (detected != null && detected.isNotEmpty) {
+        final name = regionProvider.getRegionName(detected);
+        subtitle = '$autoText (${name.isNotEmpty ? name : detected})';
+      } else {
+        subtitle = autoText;
+      }
+    }
+
+    return subtitle;
   }
 }
