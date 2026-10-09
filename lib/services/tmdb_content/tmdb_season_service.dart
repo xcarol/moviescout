@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -107,7 +108,7 @@ class TmdbSeasonService extends TmdbBaseService {
       }
     }
 
-    if (includeYoutubeSearch && seriesName != null) {
+    if (includeYoutubeSearch && seriesName != null && !kIsWeb) {
       final lang = getLanguageCode();
       final country = getCountryCode();
       final query = '$seriesName season $seasonNumber';

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:moviescout/utils/url_constants.dart';
 import 'dart:convert';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -103,7 +104,7 @@ class TmdbTitleService extends TmdbBaseService {
     _mergeMediaFallback(details, details);
     _mergeTranslationsFallback(details, mediaType);
 
-    if (includeYoutubeSearch) {
+    if (includeYoutubeSearch && !kIsWeb) {
       await _addYoutubeTrailers(details);
     }
 
