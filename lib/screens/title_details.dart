@@ -18,7 +18,7 @@ import 'package:moviescout/screens/collection_details.dart';
 import 'package:moviescout/screens/season_details.dart';
 import 'package:moviescout/screens/title_people_list.dart';
 import 'package:moviescout/services/settings/language_service.dart';
-import 'package:moviescout/services/settings/region_service.dart';
+import 'package:moviescout/utils/country_translator.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/buttons/trailer_buttons.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
@@ -360,15 +360,19 @@ class _TitleDetailsState extends State<TitleDetails> {
                       style: TextStyle(
                         color: colorScheme.onSurfaceVariant,
                       ))),
-              _infoColumn(
-                  AppLocalizations.of(context)!.originCountry,
-                  Text(
-                      title.originCountry
-                          .map((c) => RegionService().getRegionName(c))
-                          .join(', '),
-                      style: TextStyle(
-                        color: colorScheme.onSurfaceVariant,
-                      ))),
+                _infoColumn(
+                    AppLocalizations.of(context)!.originCountry,
+                    Text(
+                        title.originCountry
+                            .map((c) => CountryTranslator.translate(
+                                c,
+                                Provider.of<LanguageService>(context,
+                                        listen: false)
+                                    .currentLanguage))
+                            .join(', '),
+                        style: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                        ))),
               if (title.status.isNotEmpty)
                 _infoColumn(
                     AppLocalizations.of(context)!.status,

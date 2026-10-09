@@ -37,6 +37,7 @@ import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
 import 'package:moviescout/screens/main_screen.dart';
 import 'package:moviescout/services/system/deep_link_service.dart';
+import 'package:moviescout/utils/country_translator.dart';
 import 'package:moviescout/utils/language_translator.dart';
 import 'package:moviescout/utils/person_translator.dart';
 import 'package:moviescout/utils/genre_translator.dart';
@@ -146,6 +147,7 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       RegionService().init(),
       TmdbGenreService().init(),
       TmdbConfigurationService().init(),
+      CountryTranslator.init(),
       LanguageTranslator.init(),
       PersonTranslator.init(),
       GenreTranslator.init(),
@@ -287,14 +289,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     regionProvider.addListener(_onRegionChanged);
   }
 
-  void _onRegionChanged() {
+  void _onRegionChanged() async {
     if (!mounted) return;
-    final watchlistService =
-        Provider.of<WatchlistService>(context, listen: false);
-    final rateslistService =
-        Provider.of<RateslistService>(context, listen: false);
-    watchlistService.updateProviders();
-    rateslistService.updateProviders();
+    final providerService =
+        Provider.of<TmdbProviderService>(context, listen: false);
+    await providerService.reloadProviders();
   }
 
   @override
@@ -313,6 +312,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       NotificationService().checkSystemPermission();
+      final regionService = RegionService();
+      if (regionService.manualRegion == null) {
+        regionService.detectRegion();
+      }
     }
   }
 

@@ -19,48 +19,18 @@ class UpdateProvidersWorker {
     _runAsync(listName);
   }
 
+  static void dispatchAll() {
+    if (_isRunning) return;
+    _runAllAsync();
+  }
+
   static Future<void> _runAsync(String listName) async {
     _isRunning = true;
     try {
       final repository = LocalTitleRepository();
-      final titleService = TmdbTitleService();
-      final notificationService = NotificationService();
-
-      final totalCount = await repository.countTitles(listName);
-      if (totalCount == 0) return;
-
-      final localeStr =
-          PreferencesService().prefs.getString(AppConstants.language) ?? 'ca';
-      final locale = LanguageService.parseLocale(localeStr);
-      final localizations = await AppLocalizations.delegate.load(locale);
-
-      const batchSize = AppConstants.defaultBatchSize;
-
-      for (var i = 0; i < totalCount; i += batchSize) {
-        await notificationService.showProgressNotification(
-          id: AppConstants.updateProvidersNotificationId,
-          title: localizations.notificationUpdatingProviders,
-          body: localizations.notificationCheckingAvailability(i, totalCount),
-          progress: i,
-          maxProgress: totalCount,
-        );
-
-        final batch = await repository.getTitles(
-          listName: listName,
-          offset: i,
-          limit: batchSize,
-        );
-
-        final futures = batch.map((t) => titleService.updateTitleProviders(t));
-        final updated = await Future.wait(futures);
-
-        await repository.updateTitlesMetadata(updated.cast<TmdbTitle>());
-        await Future.delayed(const Duration(milliseconds: 50));
-      }
-
-      await notificationService
-          .cancelNotification(AppConstants.updateProvidersNotificationId);
-      onFinished.add(null);
+      final titles = await repository.getAllTitlesInList(listName);
+      if (titles.isEmpty) return;
+      await _processTitles(titles, repository);
     } catch (e, stack) {
       ErrorService.log(
         e.toString(),
@@ -72,5 +42,62 @@ class UpdateProvidersWorker {
     } finally {
       _isRunning = false;
     }
+  }
+
+  static Future<void> _runAllAsync() async {
+    _isRunning = true;
+    try {
+      final repository = LocalTitleRepository();
+      final titles = await repository.getAllTitles();
+      if (titles.isEmpty) return;
+      await _processTitles(titles, repository);
+    } catch (e, stack) {
+      ErrorService.log(
+        e.toString(),
+        stackTrace: stack,
+        userMessage: 'Error in UpdateProvidersWorker',
+      );
+      await NotificationService()
+          .cancelNotification(AppConstants.updateProvidersNotificationId);
+    } finally {
+      _isRunning = false;
+    }
+  }
+
+  static Future<void> _processTitles(
+      List<TmdbTitle> titles, LocalTitleRepository repository) async {
+    final titleService = TmdbTitleService();
+    final notificationService = NotificationService();
+
+    final totalCount = titles.length;
+    final localeStr =
+        PreferencesService().prefs.getString(AppConstants.language) ?? 'ca';
+    final locale = LanguageService.parseLocale(localeStr);
+    final localizations = await AppLocalizations.delegate.load(locale);
+
+    const batchSize = AppConstants.defaultBatchSize;
+
+    for (var i = 0; i < totalCount; i += batchSize) {
+      final end = (i + batchSize < totalCount) ? i + batchSize : totalCount;
+
+      await notificationService.showProgressNotification(
+        id: AppConstants.updateProvidersNotificationId,
+        title: localizations.notificationUpdatingProviders,
+        body: localizations.notificationCheckingAvailability(i, totalCount),
+        progress: i,
+        maxProgress: totalCount,
+      );
+
+      final batch = titles.sublist(i, end);
+      final futures = batch.map((t) => titleService.updateTitleProviders(t));
+      final updated = await Future.wait(futures);
+
+      await repository.updateTitlesMetadata(updated.cast<TmdbTitle>());
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+
+    await notificationService
+        .cancelNotification(AppConstants.updateProvidersNotificationId);
+    onFinished.add(null);
   }
 }

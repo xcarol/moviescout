@@ -9,9 +9,7 @@ class PersonTranslator {
 
   static Future<void> init() async {
     for (var lang in AppConstants.supportedLanguages) {
-      if (lang != AppConstants.english) {
-        await _load(lang);
-      }
+      await _load(lang);
     }
   }
 

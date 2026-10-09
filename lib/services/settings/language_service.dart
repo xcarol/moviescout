@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/repositories/local_title_repository.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
+import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
+import 'package:moviescout/services/workers/uninitialized_titles_worker.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/language_translator.dart';
 
@@ -28,10 +31,15 @@ class LanguageService with ChangeNotifier {
     return Locale(parts[0]);
   }
 
-  void setLanguage(String languageCode) {
+  Future<void> setLanguage(String languageCode) async {
+    if (_currentLanguage == languageCode) return;
     _currentLanguage = languageCode;
     PreferencesService().prefs.setString(AppConstants.language, languageCode);
     notifyListeners();
+
+    await TmdbGenreService().reload();
+    await LocalTitleRepository().markAllTitlesUninitialized();
+    UninitializedTitlesWorker.dispatch();
   }
 
   String getLanguageName(String? languageCode) {

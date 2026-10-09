@@ -6,8 +6,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_ca.dart';
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_eu.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_gl.dart';
+import 'app_localizations_it.dart';
+import 'app_localizations_pt.dart';
 
 // ignore_for_file: type=lint
 
@@ -63,8 +69,7 @@ import 'app_localizations_es.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -72,8 +77,7 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -85,8 +89,7 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -96,8 +99,15 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ca'),
+    Locale('de'),
     Locale('en'),
-    Locale('es')
+    Locale('es'),
+    Locale('eu'),
+    Locale('fr'),
+    Locale('gl'),
+    Locale('it'),
+    Locale('pt'),
+    Locale('pt', 'PT')
   ];
 
   /// No description provided for @notificationDownloadingTitle.
@@ -147,6 +157,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'English'**
   String get english;
+
+  /// No description provided for @french.
+  ///
+  /// In en, this message translates to:
+  /// **'Français'**
+  String get french;
+
+  /// No description provided for @german.
+  ///
+  /// In en, this message translates to:
+  /// **'Deutsch'**
+  String get german;
+
+  /// No description provided for @italian.
+  ///
+  /// In en, this message translates to:
+  /// **'Italiano'**
+  String get italian;
+
+  /// No description provided for @portugueseBr.
+  ///
+  /// In en, this message translates to:
+  /// **'Português (Brasil)'**
+  String get portugueseBr;
+
+  /// No description provided for @portuguesePt.
+  ///
+  /// In en, this message translates to:
+  /// **'Português (Portugal)'**
+  String get portuguesePt;
+
+  /// No description provided for @basque.
+  ///
+  /// In en, this message translates to:
+  /// **'Euskara'**
+  String get basque;
+
+  /// No description provided for @galician.
+  ///
+  /// In en, this message translates to:
+  /// **'Galego'**
+  String get galician;
 
   /// No description provided for @selectLanguage.
   ///
@@ -832,18 +884,6 @@ abstract class AppLocalizations {
   /// **'Department'**
   String get department;
 
-  /// No description provided for @languageChangeTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Language Change'**
-  String get languageChangeTitle;
-
-  /// No description provided for @languageChangeContent.
-  ///
-  /// In en, this message translates to:
-  /// **'You have changed the application language. In order for titles to be updated to the new language, you need to log out and log back in.'**
-  String get languageChangeContent;
-
   /// No description provided for @watchingNow.
   ///
   /// In en, this message translates to:
@@ -898,47 +938,17 @@ abstract class AppLocalizations {
   /// **'Select region'**
   String get selectRegion;
 
+  /// No description provided for @searchRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Search region'**
+  String get searchRegion;
+
   /// No description provided for @regionAuto.
   ///
   /// In en, this message translates to:
   /// **'Automatic detection (IP)'**
   String get regionAuto;
-
-  /// No description provided for @regionSpain.
-  ///
-  /// In en, this message translates to:
-  /// **'Spain'**
-  String get regionSpain;
-
-  /// No description provided for @regionUSA.
-  ///
-  /// In en, this message translates to:
-  /// **'USA'**
-  String get regionUSA;
-
-  /// No description provided for @regionUK.
-  ///
-  /// In en, this message translates to:
-  /// **'UK'**
-  String get regionUK;
-
-  /// No description provided for @regionFrance.
-  ///
-  /// In en, this message translates to:
-  /// **'France'**
-  String get regionFrance;
-
-  /// No description provided for @regionGermany.
-  ///
-  /// In en, this message translates to:
-  /// **'Germany'**
-  String get regionGermany;
-
-  /// No description provided for @regionItaly.
-  ///
-  /// In en, this message translates to:
-  /// **'Italy'**
-  String get regionItaly;
 
   /// No description provided for @shareLink.
   ///
@@ -1487,8 +1497,7 @@ abstract class AppLocalizations {
   String get deleteAccountError;
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -1497,27 +1506,41 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['ca', 'en', 'es'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['ca', 'de', 'en', 'es', 'eu', 'fr', 'gl', 'it', 'pt'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+
+  // Lookup logic when language+country codes are specified.
+  switch (locale.languageCode) {
+    case 'pt': {
+  switch (locale.countryCode) {
+    case 'PT': return AppLocalizationsPtPt();
+   }
+  break;
+   }
+  }
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'ca':
-      return AppLocalizationsCa();
-    case 'en':
-      return AppLocalizationsEn();
-    case 'es':
-      return AppLocalizationsEs();
+    case 'ca': return AppLocalizationsCa();
+    case 'de': return AppLocalizationsDe();
+    case 'en': return AppLocalizationsEn();
+    case 'es': return AppLocalizationsEs();
+    case 'eu': return AppLocalizationsEu();
+    case 'fr': return AppLocalizationsFr();
+    case 'gl': return AppLocalizationsGl();
+    case 'it': return AppLocalizationsIt();
+    case 'pt': return AppLocalizationsPt();
   }
 
   throw FlutterError(
-      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.'
+  );
 }

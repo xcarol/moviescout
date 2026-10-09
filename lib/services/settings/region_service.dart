@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
-import 'package:moviescout/services/core/tmdb_configuration_service.dart';
+import 'package:moviescout/services/settings/language_service.dart';
+import 'package:moviescout/services/workers/update_providers_worker.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/utils/country_translator.dart';
 
 class RegionService with ChangeNotifier {
   static final RegionService _instance = RegionService._internal();
@@ -17,7 +19,9 @@ class RegionService with ChangeNotifier {
 
   RegionService._internal();
 
-  String? _detectedRegion;
+  String? _detectedRegion =
+      PreferencesService().prefs.getString('detected_region') ??
+          ui.PlatformDispatcher.instance.locale.countryCode;
   String? _manualRegion =
       PreferencesService().prefs.getString(AppConstants.region);
 
@@ -37,7 +41,9 @@ class RegionService with ChangeNotifier {
     final String? fallbackCountryCode =
         ui.PlatformDispatcher.instance.locale.countryCode;
 
-    if (fallbackCountryCode != null && fallbackCountryCode.isNotEmpty) {
+    if (_detectedRegion == null &&
+        fallbackCountryCode != null &&
+        fallbackCountryCode.isNotEmpty) {
       _detectedRegion = fallbackCountryCode;
       notifyListeners();
     }
@@ -52,8 +58,12 @@ class RegionService with ChangeNotifier {
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
           final newRegion = data['country_code'];
-          if (_detectedRegion != newRegion) {
+          if (newRegion != null && _detectedRegion != newRegion) {
             _detectedRegion = newRegion;
+            PreferencesService().prefs.setString('detected_region', newRegion);
+            if (_manualRegion == null) {
+              UpdateProvidersWorker.dispatchAll();
+            }
             notifyListeners();
           }
           return;
@@ -75,17 +85,20 @@ class RegionService with ChangeNotifier {
   }
 
   void setManualRegion(String? countryCode) {
+    if (_manualRegion == countryCode) return;
     _manualRegion = countryCode;
     if (countryCode != null) {
       PreferencesService().prefs.setString(AppConstants.region, countryCode);
     } else {
       PreferencesService().prefs.remove(AppConstants.region);
     }
+    UpdateProvidersWorker.dispatchAll();
     notifyListeners();
   }
 
   String getRegionName(String? countryCode) {
     if (countryCode == null) return '';
-    return TmdbConfigurationService().getCountryName(countryCode);
+    return CountryTranslator.translate(
+        countryCode, LanguageService().currentLanguage);
   }
 }
