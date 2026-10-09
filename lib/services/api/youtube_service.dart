@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:diacritic/diacritic.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -23,6 +24,8 @@ class YoutubeExplodeService implements YoutubeService {
   @override
   Future<List<Map<String, dynamic>>> searchTrailers(
       String title, String locale) async {
+    if (kIsWeb) return [];
+
     final List<Map<String, dynamic>> youtubeResults = [];
     final parts = locale.split('-');
     final ll = parts[0];
@@ -36,8 +39,10 @@ class YoutubeExplodeService implements YoutubeService {
         cc.isNotEmpty &&
         ll.toLowerCase() != cc.toLowerCase()) {
       final fallbackQuery = YoutubeQueryMapper.getQueryForCountry(cc, title);
-      final fallbackResults = await _searchRelevant(title, fallbackQuery, cc);
-      youtubeResults.addAll(fallbackResults);
+      if (fallbackQuery != primaryQuery) {
+        final fallbackResults = await _searchRelevant(title, fallbackQuery, cc);
+        youtubeResults.addAll(fallbackResults);
+      }
     }
 
     return youtubeResults;

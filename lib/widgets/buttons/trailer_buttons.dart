@@ -13,15 +13,8 @@ class TrailerButtons extends StatelessWidget {
     VideoPlayerService().playVideo(videoId);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final ytVideos = videos.where((v) => v['site'] == 'YouTube').toList();
-
-    if (ytVideos.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    final mainVideo = ytVideos.firstWhere(
+  Map<String, dynamic> _findMainVideo(List<Map<String, dynamic>> ytVideos) {
+    return ytVideos.firstWhere(
       (v) {
         final name = (v['name'] as String?)?.toLowerCase() ?? '';
         final isSearchResult = v['is_search_result'] == true;
@@ -55,17 +48,24 @@ class TrailerButtons extends StatelessWidget {
         ),
       ),
     );
+  }
 
-    final String mainVideoId = mainVideo['key'] as String;
-
-    final remainingVideos =
-        ytVideos.where((v) => v['key'] != mainVideoId).toList();
+  @override
+  Widget build(BuildContext context) {
+    final ytVideos = videos.where((v) => v['site'] == 'YouTube').toList();
+    final mainVideo = ytVideos.isNotEmpty ? _findMainVideo(ytVideos) : null;
+    final mainVideoId = mainVideo?['key'] as String?;
+    final remainingVideos = mainVideoId != null
+        ? ytVideos.where((v) => v['key'] != mainVideoId).toList()
+        : const <Map<String, dynamic>>[];
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         FilledButton.icon(
-          onPressed: () => _playVideo(context, mainVideoId),
+          onPressed: mainVideoId != null
+              ? () => _playVideo(context, mainVideoId)
+              : null,
           icon: const Icon(Icons.play_arrow, size: 16),
           label: Text(AppLocalizations.of(context)!.trailer),
           style: FilledButton.styleFrom(
