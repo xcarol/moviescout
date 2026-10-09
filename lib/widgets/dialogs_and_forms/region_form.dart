@@ -2,8 +2,10 @@ import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_region.dart';
+import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
+import 'package:moviescout/utils/country_translator.dart';
 import 'package:moviescout/widgets/inputs_and_filters/text_filter_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -43,11 +45,22 @@ class _RegionFormState extends State<RegionForm> {
     super.dispose();
   }
 
+  String _getRegionDisplayName(TmdbRegion region) {
+    final localized = CountryTranslator.translate(
+        region.isoCode, LanguageService().currentLanguage);
+    if (localized.isNotEmpty && localized != region.isoCode) {
+      return localized;
+    }
+    return region.displayName;
+  }
+
   Future<void> _loadRegions() async {
     final providerService =
         Provider.of<TmdbProviderService>(context, listen: false);
     final regions = await providerService.getAvailableRegions();
     if (!mounted) return;
+    regions.sort((a, b) => _normalize(_getRegionDisplayName(a))
+        .compareTo(_normalize(_getRegionDisplayName(b))));
     setState(() {
       _allRegions = regions;
       _isLoading = false;
@@ -61,7 +74,9 @@ class _RegionFormState extends State<RegionForm> {
       _filteredRegions = _allRegions;
     } else {
       _filteredRegions = _allRegions.where((region) {
-        return _normalize(region.displayName).contains(query) ||
+        final localizedName = _getRegionDisplayName(region);
+        return _normalize(localizedName).contains(query) ||
+            _normalize(region.displayName).contains(query) ||
             _normalize(region.englishName).contains(query) ||
             region.isoCode.toLowerCase().contains(query);
       }).toList();
@@ -89,6 +104,11 @@ class _RegionFormState extends State<RegionForm> {
 
   String? _findRegionName(String? isoCode) {
     if (isoCode == null) return null;
+    final localized = CountryTranslator.translate(
+        isoCode, LanguageService().currentLanguage);
+    if (localized.isNotEmpty && localized != isoCode) {
+      return localized;
+    }
     final found = _allRegions.cast<TmdbRegion?>().firstWhere(
       (r) => r?.isoCode.toUpperCase() == isoCode.toUpperCase(),
       orElse: () => null,
@@ -177,7 +197,7 @@ class _RegionFormState extends State<RegionForm> {
                                 final region = _filteredRegions[regionIndex];
                                 return _buildRadioTile(
                                   value: region.isoCode,
-                                  title: region.displayName,
+                                  title: _getRegionDisplayName(region),
                                 );
                               },
                             ),

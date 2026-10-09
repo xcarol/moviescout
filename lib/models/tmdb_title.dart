@@ -389,6 +389,14 @@ class TmdbTitle implements TmdbItem {
     if (title[TmdbTitleFields.originCountry] is List) {
       originCountry = List<String>.from(title[TmdbTitleFields.originCountry]);
     }
+    if (originCountry.isEmpty &&
+        title[TmdbTitleFields.productionCountries] is List) {
+      originCountry = (title[TmdbTitleFields.productionCountries] as List)
+          .whereType<Map>()
+          .map((c) => c[AppConstants.iso3166_1] as String?)
+          .whereType<String>()
+          .toList();
+    }
 
     if (title[TmdbTitleFields.credits] != null ||
         title[TmdbTitleFields.aggregateCredits] != null) {

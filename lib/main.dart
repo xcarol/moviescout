@@ -37,6 +37,7 @@ import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
 import 'package:moviescout/screens/main_screen.dart';
 import 'package:moviescout/services/system/deep_link_service.dart';
+import 'package:moviescout/utils/country_translator.dart';
 import 'package:moviescout/utils/language_translator.dart';
 import 'package:moviescout/utils/person_translator.dart';
 import 'package:moviescout/utils/genre_translator.dart';
@@ -146,6 +147,7 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       RegionService().init(),
       TmdbGenreService().init(),
       TmdbConfigurationService().init(),
+      CountryTranslator.init(),
       LanguageTranslator.init(),
       PersonTranslator.init(),
       GenreTranslator.init(),

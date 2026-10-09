@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/core/tmdb_cacheable_service.dart';
+import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class TmdbConfigData {
@@ -56,7 +57,7 @@ class TmdbConfigurationService extends TmdbCacheableService<TmdbConfigData> {
       }
 
       final countryResponse = await get(
-          'configuration/countries?language=${getLanguageCode()}-${getCountryCode()}');
+          'configuration/countries?language=${LanguageService().currentLanguage}');
       if (countryResponse.statusCode == 200) {
         final List<dynamic> countries = jsonDecode(countryResponse.body);
         for (var country in countries) {
