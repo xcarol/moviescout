@@ -5,7 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/logs_screen.dart';
 import 'package:moviescout/screens/notifications_screen.dart';
@@ -73,46 +73,28 @@ class AppDrawer extends StatelessWidget {
   }
 
   Widget _userProfileTile(BuildContext context) {
-    var tmdbUser = Provider.of<TmdbUserService>(context).user;
     var supabaseAuth = Provider.of<SupabaseAuthService>(context);
 
-    ImageProvider<Object>? userImage;
+    String? avatarUrl;
     String? userName;
 
     if (supabaseAuth.isLoggedIn) {
       final profile = supabaseAuth.userProfile;
       final metadata = supabaseAuth.currentUser?.userMetadata;
 
-      final avatarUrl = profile?['avatar_url'] ??
-          metadata?['avatar_url'] ??
-          metadata?['picture'];
-      if (avatarUrl != null && avatarUrl.toString().isNotEmpty) {
-        userImage = CachedNetworkImageProvider(avatarUrl);
-      }
+      final profileAvatar = profile?['avatar_url'] as String?;
+      final metadataAvatar =
+          (metadata?['avatar_url'] ?? metadata?['picture']) as String?;
+      avatarUrl = (profileAvatar != null && profileAvatar.isNotEmpty)
+          ? profileAvatar
+          : metadataAvatar;
 
-      userName =
-          profile?['username'] ?? metadata?['full_name'] ?? metadata?['name'];
-    }
-
-    if (userName == null || userName.isEmpty) {
-      if (tmdbUser != null) {
-        userName = tmdbUser['name'].toString().isNotEmpty
-            ? tmdbUser['name']
-            : tmdbUser['username'];
-      }
-    }
-
-    if (userImage == null && tmdbUser != null) {
-      if (tmdbUser['avatar']['tmdb'] != null &&
-          tmdbUser['avatar']['tmdb'].isNotEmpty) {
-        userImage = CachedNetworkImageProvider(
-            UrlConstants.tmdbImageW185Template.replaceFirst(
-                '{PATH}', '/${tmdbUser['avatar']['tmdb']['avatar_path']}'));
-      } else if (tmdbUser['avatar']['gravatar'] != null) {
-        userImage = CachedNetworkImageProvider(UrlConstants.gravatarTemplate
-            .replaceFirst('{HASH}', tmdbUser['avatar']['gravatar']['hash'])
-            .replaceFirst('{SIZE}', '200'));
-      }
+      final profileUsername = profile?['username'] as String?;
+      final metadataName =
+          (metadata?['full_name'] ?? metadata?['name']) as String?;
+      userName = (profileUsername != null && profileUsername.isNotEmpty)
+          ? profileUsername
+          : metadataName;
     }
 
     userName ??= AppLocalizations.of(context)!.anonymousUser;
@@ -126,17 +108,41 @@ class AppDrawer extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            userImage != null
-                ? CircleAvatar(
-                    backgroundImage: userImage,
-                  )
-                : CircleAvatar(
-                    child: Image.asset(
-                      'assets/account.png',
-                      width: 80,
-                      height: 80,
-                    ),
-                  ),
+            CircleAvatar(
+              backgroundColor: Colors.transparent,
+              child: ClipOval(
+                child: avatarUrl != null && avatarUrl.isNotEmpty
+                    ? (kIsWeb
+                        ? Image.network(
+                            avatarUrl,
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Image.asset(
+                              'assets/account.png',
+                              width: 40,
+                              height: 40,
+                            ),
+                          )
+                        : CachedNetworkImage(
+                            imageUrl: avatarUrl,
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.cover,
+                            errorWidget: (context, url, error) => Image.asset(
+                              'assets/account.png',
+                              width: 40,
+                              height: 40,
+                            ),
+                          ))
+                    : Image.asset(
+                        'assets/account.png',
+                        width: 40,
+                        height: 40,
+                      ),
+              ),
+            ),
             const SizedBox(height: 16),
             Text(userName,
                 style: TextStyle(

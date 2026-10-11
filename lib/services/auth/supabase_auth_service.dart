@@ -11,6 +11,9 @@ class SupabaseAuthService extends ChangeNotifier {
   Map<String, dynamic>? userProfile;
 
   SupabaseAuthService._internal() {
+    if (_supabase.auth.currentUser != null) {
+      fetchProfile();
+    }
     _supabase.auth.onAuthStateChange.listen((data) async {
       if (_supabase.auth.currentUser != null) {
         await fetchProfile();
@@ -35,13 +38,44 @@ class SupabaseAuthService extends ChangeNotifier {
             .select()
             .eq('id', user.id)
             .maybeSingle();
+        final metadata = user.userMetadata;
+        final displayName = metadata?['full_name'] ?? metadata?['name'] ?? '';
+        final avatar = metadata?['avatar_url'] ?? metadata?['picture'] ?? '';
+
         if (response != null) {
+          final currentUsername = response['username'] as String?;
+          final currentAvatar = response['avatar_url'] as String?;
+
+          final needsUsername =
+              (currentUsername == null || currentUsername.isEmpty) &&
+                  displayName.isNotEmpty;
+          final needsAvatar =
+              (currentAvatar == null || currentAvatar.isEmpty) &&
+                  avatar.isNotEmpty;
+
+          if (needsUsername || needsAvatar) {
+            final updates = <String, dynamic>{};
+            if (needsUsername) updates['username'] = displayName;
+            if (needsAvatar) updates['avatar_url'] = avatar;
+
+            try {
+              await _supabase
+                  .from('profiles')
+                  .update(updates)
+                  .eq('id', user.id);
+              response.addAll(updates);
+            } catch (e, stackTrace) {
+              ErrorService.log(
+                e,
+                userMessage: 'Error updating user profile',
+                stackTrace: stackTrace,
+              );
+            }
+          }
+
           userProfile = response;
           notifyListeners();
         } else {
-          final metadata = user.userMetadata;
-          final displayName = metadata?['full_name'] ?? metadata?['name'] ?? '';
-          final avatar = metadata?['avatar_url'] ?? metadata?['picture'] ?? '';
           try {
             await _supabase.from('profiles').upsert({
               'id': user.id,
