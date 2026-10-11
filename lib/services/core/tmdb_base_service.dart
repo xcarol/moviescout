@@ -15,12 +15,13 @@ import 'package:moviescout/utils/app_constants.dart';
 
 enum ApiVersion { v3, v4 }
 
-const int _maxRequestsCount = 40;
+const int _maxRequestsCount = 20;
 const int _initialDelayMs = 200;
 const int _maxDelayMs = 5000;
 
 class TmdbBaseService {
   static int _requestCount = 0;
+  static DateTime? _rateLimitCooldownUntil;
 
   dynamic body(http.Response response) {
     return jsonDecode(response.body);
@@ -69,6 +70,12 @@ class TmdbBaseService {
     const Duration maxDelay = Duration(milliseconds: _maxDelayMs);
     Duration delay = initialDelay;
 
+    while (_rateLimitCooldownUntil != null &&
+        DateTime.now().isBefore(_rateLimitCooldownUntil!)) {
+      final remaining = _rateLimitCooldownUntil!.difference(DateTime.now());
+      await Future.delayed(remaining.isNegative ? Duration.zero : remaining);
+    }
+
     while (_requestCount >= _maxRequestsCount) {
       await Future.delayed(initialDelay);
     }
@@ -88,8 +95,22 @@ class TmdbBaseService {
           'Authorization': 'Bearer $token',
         }).timeout(const Duration(seconds: 10));
 
-        if (response.statusCode == 429 ||
-            (response.statusCode >= 500 && response.statusCode < 600)) {
+        if (response.statusCode == 429) {
+          final retryAfterHeader = response.headers['retry-after'];
+          final retrySeconds = int.tryParse(retryAfterHeader ?? '');
+          final waitDuration = retrySeconds != null && retrySeconds > 0
+              ? Duration(seconds: retrySeconds)
+              : const Duration(seconds: 2);
+          _rateLimitCooldownUntil = DateTime.now().add(waitDuration);
+          delay = await _handleRetry(
+              'TmdbBaseService get status 429',
+              waitDuration,
+              maxDelay);
+          retryCount++;
+          continue;
+        }
+
+        if (response.statusCode >= 500 && response.statusCode < 600) {
           delay = await _handleRetry(
               'TmdbBaseService get status ${response.statusCode}',
               delay,

@@ -33,20 +33,4 @@ class UpdateManager {
   Future<void> removeLastUpdate(String key) async {
     await _prefs.remove('$key${AppConstants.lastUpdateSuffix}');
   }
-
-  bool isWatchlistUpToDate() =>
-      isUpToDate(AppConstants.watchlist, watchlistTimeout);
-  bool isRateslistUpToDate() =>
-      isUpToDate(AppConstants.rateslist, rateslistTimeout);
-  bool isDiscoverlistUpToDate() =>
-      isUpToDate(AppConstants.discoverlist, discoverlistTimeout);
-  bool isGenresUpToDate() => isUpToDate('genres', genresTimeout);
-
-  Future<void> updateWatchlistLastUpdate() =>
-      updateLastUpdate(AppConstants.watchlist);
-  Future<void> updateRateslistLastUpdate() =>
-      updateLastUpdate(AppConstants.rateslist);
-  Future<void> updateDiscoverlistLastUpdate() =>
-      updateLastUpdate(AppConstants.discoverlist);
-  Future<void> updateGenresLastUpdate() => updateLastUpdate('genres');
 }

@@ -93,7 +93,7 @@ class UpdateProvidersWorker {
       final updated = await Future.wait(futures);
 
       await repository.updateTitlesMetadata(updated.cast<TmdbTitle>());
-      await Future.delayed(const Duration(milliseconds: 50));
+      await Future.delayed(const Duration(milliseconds: 100));
     }
 
     await notificationService

@@ -83,7 +83,7 @@ class AppConstants {
   static const int maxSearchTvShows = 20;
   static const int maxSearchPersons = 20;
   static const int maxSearchCollections = 20;
-  static const int defaultBatchSize = 25;
+  static const int defaultBatchSize = 20;
 
   static const String notificationProgressChannelId = 'progress_channel';
   static const String notificationProgressChannelName = 'Background Tasks';
