@@ -44,7 +44,9 @@ class RegionService with ChangeNotifier {
         await http.get(Uri.parse(url)).timeout(const Duration(seconds: 3));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final country = (data['country_code'] ?? data['country'])?.toString();
+      final country =
+          (data['country_code'] ?? data['countryCode'] ?? data['country'])
+              ?.toString();
       if (country != null && country.length == 2) {
         return country.toUpperCase();
       }
@@ -55,7 +57,7 @@ class RegionService with ChangeNotifier {
   Future<void> detectRegion() async {
     final endpoints = [
       UrlConstants.ipWhoIsUrl,
-      UrlConstants.countryIsUrl,
+      UrlConstants.ipInfoUrl,
     ];
 
     int retryCount = 0;

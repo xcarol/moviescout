@@ -11,7 +11,7 @@ class UrlConstants {
   static const String tmdbImageW500Url = 'https://image.tmdb.org/t/p/w500';
 
   static const String ipWhoIsUrl = 'https://ipwho.is/';
-  static const String countryIsUrl = 'https://api.country.is/';
+  static const String ipInfoUrl = 'https://ipinfo.io/json';
   static const String omdbApiUrl = 'https://www.omdbapi.com/';
   static const String githubRepoUrl = 'https://github.com/xcarol/moviescout';
   static const String privacyPolicyUrl = '$moviescoutWebUrl/privacy.html';
