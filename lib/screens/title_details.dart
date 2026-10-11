@@ -360,19 +360,19 @@ class _TitleDetailsState extends State<TitleDetails> {
                       style: TextStyle(
                         color: colorScheme.onSurfaceVariant,
                       ))),
-                _infoColumn(
-                    AppLocalizations.of(context)!.originCountry,
-                    Text(
-                        title.originCountry
-                            .map((c) => CountryTranslator.translate(
-                                c,
-                                Provider.of<LanguageService>(context,
-                                        listen: false)
-                                    .currentLanguage))
-                            .join(', '),
-                        style: TextStyle(
-                          color: colorScheme.onSurfaceVariant,
-                        ))),
+              _infoColumn(
+                  AppLocalizations.of(context)!.originCountry,
+                  Text(
+                      title.originCountry
+                          .map((c) => CountryTranslator.translate(
+                              c,
+                              Provider.of<LanguageService>(context,
+                                      listen: false)
+                                  .currentLanguage))
+                          .join(', '),
+                      style: TextStyle(
+                        color: colorScheme.onSurfaceVariant,
+                      ))),
               if (title.status.isNotEmpty)
                 _infoColumn(
                     AppLocalizations.of(context)!.status,

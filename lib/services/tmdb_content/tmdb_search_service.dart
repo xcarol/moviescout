@@ -263,8 +263,7 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
     notifyListeners();
   }
 
-  Future<void> retrieveSearchlist(
-      String searchTerm, Locale locale) async {
+  Future<void> retrieveSearchlist(String searchTerm, Locale locale) async {
     final searchId = ++_activeSearchId;
     isLoading.value = true;
     filterText = searchTerm;

@@ -272,7 +272,9 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
                   entry.value[TmdbProvider.providerEnabled],
             }))
         .toList();
-    PreferencesService().prefs.setStringList('providers_$country', providerList);
+    PreferencesService()
+        .prefs
+        .setStringList('providers_$country', providerList);
     PreferencesService()
         .prefs
         .setString('providers_updateTime_$country', DateTime.now().toString());
@@ -317,7 +319,8 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
     _cachedRegionsLanguage = '';
   }
 
-  Future<List<TmdbRegion>> getAvailableRegions({bool forceRefresh = false}) async {
+  Future<List<TmdbRegion>> getAvailableRegions(
+      {bool forceRefresh = false}) async {
     final currentLanguage = getLanguageCode();
 
     if (!forceRefresh &&
