@@ -244,7 +244,7 @@ class TmdbPersonTitlesService extends TmdbTitleListService
       await filterItems(retainPagination: true);
       notifyListeners();
 
-      await Future.delayed(const Duration(milliseconds: 50));
+      await Future.delayed(const Duration(milliseconds: 100));
     }
   }
 

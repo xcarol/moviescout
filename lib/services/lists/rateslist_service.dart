@@ -1,4 +1,3 @@
-import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
@@ -14,7 +13,6 @@ class RateslistService extends TmdbTitleListService {
   final CloudTitleRepository _cloudRepository;
 
   FollowingService? followingService;
-  String? _lastUserId;
 
   RateslistService(LocalTitleRepository repository,
       {CloudTitleRepository? cloudRepository})
@@ -204,16 +202,6 @@ class RateslistService extends TmdbTitleListService {
         userMessage: 'Error toggling notify for ${title.name}',
       );
       title.notifyNewSeasons = !title.notifyNewSeasons;
-    }
-  }
-
-  void updateAuth(SupabaseAuthService authService) {
-    final user = authService.currentUser;
-    if (user != null && _lastUserId != user.id) {
-      _lastUserId = user.id;
-      syncFromServer(forceUpdate: true);
-    } else if (user == null) {
-      _lastUserId = null;
     }
   }
 }
