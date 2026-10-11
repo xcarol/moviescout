@@ -16,14 +16,26 @@ import 'package:provider/provider.dart';
 
 enum ImportState { idle, importing, success, error }
 
-class ImportTmdbScreen extends StatefulWidget {
+class ImportTmdbScreen extends StatelessWidget {
   const ImportTmdbScreen({super.key});
 
   @override
-  State<ImportTmdbScreen> createState() => _ImportTmdbScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => TmdbUserService()..setup(),
+      child: const _ImportTmdbView(),
+    );
+  }
 }
 
-class _ImportTmdbScreenState extends State<ImportTmdbScreen> {
+class _ImportTmdbView extends StatefulWidget {
+  const _ImportTmdbView();
+
+  @override
+  State<_ImportTmdbView> createState() => _ImportTmdbViewState();
+}
+
+class _ImportTmdbViewState extends State<_ImportTmdbView> {
   late final AppLinks _appLinks;
   StreamSubscription<Uri>? _linkSubscription;
 
@@ -152,7 +164,7 @@ class _ImportTmdbScreenState extends State<ImportTmdbScreen> {
 
       if (mounted) {
         // Automatically close TMDB session once import completes
-        await userService.logout(context);
+        await userService.logout();
 
         // Refresh local lists from cloud
         await watchlistService.syncFromServer(

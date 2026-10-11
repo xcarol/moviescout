@@ -104,15 +104,15 @@ class _RegionFormState extends State<RegionForm> {
 
   String? _findRegionName(String? isoCode) {
     if (isoCode == null) return null;
-    final localized = CountryTranslator.translate(
-        isoCode, LanguageService().currentLanguage);
+    final localized =
+        CountryTranslator.translate(isoCode, LanguageService().currentLanguage);
     if (localized.isNotEmpty && localized != isoCode) {
       return localized;
     }
     final found = _allRegions.cast<TmdbRegion?>().firstWhere(
-      (r) => r?.isoCode.toUpperCase() == isoCode.toUpperCase(),
-      orElse: () => null,
-    );
+          (r) => r?.isoCode.toUpperCase() == isoCode.toUpperCase(),
+          orElse: () => null,
+        );
     return found?.displayName;
   }
 

@@ -12,11 +12,9 @@ import 'package:moviescout/screens/notifications_screen.dart';
 import 'package:moviescout/screens/settings.dart';
 import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:provider/provider.dart';
-import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -263,8 +261,6 @@ class AppDrawer extends StatelessWidget {
   }
 
   void _logout(BuildContext context) async {
-    final tmdbUserService =
-        Provider.of<TmdbUserService>(context, listen: false);
     final supabaseAuthService =
         Provider.of<SupabaseAuthService>(context, listen: false);
     final tmdbWatchlistService =
@@ -275,13 +271,6 @@ class AppDrawer extends StatelessWidget {
         Provider.of<TmdbDiscoverlistService>(context, listen: false);
     final logoutSuccessText = AppLocalizations.of(context)!.logoutSuccess;
     final userLocale = Localizations.localeOf(context);
-
-    await tmdbUserService.logout(context).catchError((error, stackTrace) {
-      ErrorService.log(
-        error,
-        stackTrace: stackTrace,
-      );
-    });
 
     await supabaseAuthService.signOut();
 
@@ -320,8 +309,6 @@ class AppDrawer extends StatelessWidget {
     final deleteColor = customColors?.destructiveAction ?? Colors.redAccent;
     final supabaseAuthService =
         Provider.of<SupabaseAuthService>(context, listen: false);
-    final tmdbUserService =
-        Provider.of<TmdbUserService>(context, listen: false);
     final tmdbWatchlistService =
         Provider.of<WatchlistService>(context, listen: false);
     final tmdbRateslistService =
@@ -355,13 +342,6 @@ class AppDrawer extends StatelessWidget {
                 final success = await supabaseAuthService.deleteAccount();
 
                 if (success) {
-                  if (context.mounted) {
-                    await tmdbUserService.logout(context).catchError(
-                      (error, stackTrace) {
-                        ErrorService.log(error, stackTrace: stackTrace);
-                      },
-                    );
-                  }
                   await tmdbWatchlistService.clearList();
                   await tmdbRateslistService.clearList();
                   await tmdbDiscoverlistService.clearList();

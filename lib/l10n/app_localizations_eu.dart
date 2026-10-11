@@ -64,7 +64,8 @@ class AppLocalizationsEu extends AppLocalizations {
   String get messageEmptyList => 'Oraindik ez da filma hautatu.';
 
   @override
-  String get messageEmptySearch => 'Bilaketa bat egin dezakezu beheko barran dagoen lupa erabiliz.';
+  String get messageEmptySearch =>
+      'Bilaketa bat egin dezakezu beheko barran dagoen lupa erabiliz.';
 
   @override
   String get messageEmptyOptions => 'Zuk ere egin dezakezu';
@@ -76,7 +77,8 @@ class AppLocalizationsEu extends AppLocalizations {
   String get search => 'Bilatu izenburu bat';
 
   @override
-  String get searchAiHint => 'Deskribatu bilatzen ari zaren filma edo seriea...';
+  String get searchAiHint =>
+      'Deskribatu bilatzen ari zaren filma edo seriea...';
 
   @override
   String get searchAiTooltip => 'Bilaketa adimenduna (AI)';
@@ -166,7 +168,8 @@ class AppLocalizationsEu extends AppLocalizations {
   String get imdbImport => 'IMDB inportazioa';
 
   @override
-  String get imdbImportHint => 'Hautatu IMDBtik esportatutako CSV fitxategi bat';
+  String get imdbImportHint =>
+      'Hautatu IMDBtik esportatutako CSV fitxategi bat';
 
   @override
   String get imdbImportWatchlist => 'Inportatu Ikustera';
@@ -187,10 +190,12 @@ class AppLocalizationsEu extends AppLocalizations {
   String get imdbConfirmationTitle => 'ADI';
 
   @override
-  String get imdbResetWatchlistConfirmation => 'Ziur Ikusi beharreko izenburuak kendu nahi dituzula?';
+  String get imdbResetWatchlistConfirmation =>
+      'Ziur Ikusi beharreko izenburuak kendu nahi dituzula?';
 
   @override
-  String get imdbResetRateslistConfirmation => 'Ziur Iritziak ezabatu nahi dituzula?';
+  String get imdbResetRateslistConfirmation =>
+      'Ziur Iritziak ezabatu nahi dituzula?';
 
   @override
   String get resetWatchlistCount => 'Ikusi beharreko tituluak:';
@@ -331,13 +336,15 @@ class AppLocalizationsEu extends AppLocalizations {
   String get about => 'Buruz...';
 
   @override
-  String get aboutDescription => 'MovieScout zure film eta serie bilatzailea da, TMDb, OMDb eta JustWatch-en datuekin.';
+  String get aboutDescription =>
+      'MovieScout zure film eta serie bilatzailea da, TMDb, OMDb eta JustWatch-en datuekin.';
 
   @override
   String get aboutGithub => 'Bisitatu proiektua helbidean';
 
   @override
-  String get apiDisclaimer => 'Produktu honek TMDB APIa erabiltzen du, baina ez du TMDB-k onartzen edo ziurtatuta.';
+  String get apiDisclaimer =>
+      'Produktu honek TMDB APIa erabiltzen du, baina ez du TMDB-k onartzen edo ziurtatuta.';
 
   @override
   String get privacyDisclaimerPrefix => 'Kontsultatu';
@@ -457,10 +464,12 @@ class AppLocalizationsEu extends AppLocalizations {
   String get notifications => 'Jakinarazpenak';
 
   @override
-  String get notificationsPermissionRequired => 'Sistemaren ezarpenetan jakinarazpenak onartu behar dituzu.';
+  String get notificationsPermissionRequired =>
+      'Sistemaren ezarpenetan jakinarazpenak onartu behar dituzu.';
 
   @override
-  String get notificationsPermissionDescription => 'Filmen eta denboraldi berrien erabilgarritasunari buruzko jakinarazpenak jasotzeko, sistemaren ezarpenetan jakinarazpenak aktibatu behar dituzu.';
+  String get notificationsPermissionDescription =>
+      'Filmen eta denboraldi berrien erabilgarritasunari buruzko jakinarazpenak jasotzeko, sistemaren ezarpenetan jakinarazpenak aktibatu behar dituzu.';
 
   @override
   String get openSettings => 'Ireki ezarpenak';
@@ -469,7 +478,8 @@ class AppLocalizationsEu extends AppLocalizations {
   String get settings => 'Konfigurazioa';
 
   @override
-  String get errorMessageGeneric => 'Errore bat gertatu da. Saiatu berriro geroago.';
+  String get errorMessageGeneric =>
+      'Errore bat gertatu da. Saiatu berriro geroago.';
 
   @override
   String get youtubeSearch => 'YouTube Bilaketa';
@@ -481,7 +491,8 @@ class AppLocalizationsEu extends AppLocalizations {
   String get notifyCompleteSeason => 'Jakinarazi denboraldi osoa';
 
   @override
-  String get notifyCompleteSeasonSubtitle => 'Denboraldi osoa erabilgarri dagoenean bakarrik jakinarazten du.';
+  String get notifyCompleteSeasonSubtitle =>
+      'Denboraldi osoa erabilgarri dagoenean bakarrik jakinarazten du.';
 
   @override
   String get episodes => 'Pasarteak';
@@ -498,7 +509,8 @@ class AppLocalizationsEu extends AppLocalizations {
   String get notifyTitle => 'Jakinarazi urtaro berriei';
 
   @override
-  String get notifyMessage => 'Jakinarazpen bat jaso nahi duzu denboraldi berri bat emititzen denean?';
+  String get notifyMessage =>
+      'Jakinarazpen bat jaso nahi duzu denboraldi berri bat emititzen denean?';
 
   @override
   String get no => 'Ez';
@@ -568,7 +580,8 @@ class AppLocalizationsEu extends AppLocalizations {
   String get aiSettingsSubtitle => 'Bilaketa adimenduna eta AI Ezaugarriak';
 
   @override
-  String get aiSettingsDescription => 'AI funtzioek hizkuntza naturaleko deskribapenetan eta tresna adimentsuagoetan oinarritutako filmak eta serieak aurki ditzakezu. Horiek erabiltzeko, doako gako bat lor dezakezu OpenRouter-en (ez da txartelik behar).';
+  String get aiSettingsDescription =>
+      'AI funtzioek hizkuntza naturaleko deskribapenetan eta tresna adimentsuagoetan oinarritutako filmak eta serieak aurki ditzakezu. Horiek erabiltzeko, doako gako bat lor dezakezu OpenRouter-en (ez da txartelik behar).';
 
   @override
   String get aiGetApiKeyButton => 'Lortu gakoa OpenRouter-en';
@@ -604,16 +617,20 @@ class AppLocalizationsEu extends AppLocalizations {
   String get aiDeleteConfirmTitle => 'Ezabatu API gakoa';
 
   @override
-  String get aiDeleteConfirmMessage => 'Ziur API gakoa ezabatu nahi duzula? Kontuan izan OpenRouter-ek ez dizula gakoa kontsultatzen uzten behin sortuta eta beste bat sortu beharko duzula gordeta ez baduzu.';
+  String get aiDeleteConfirmMessage =>
+      'Ziur API gakoa ezabatu nahi duzula? Kontuan izan OpenRouter-ek ez dizula gakoa kontsultatzen uzten behin sortuta eta beste bat sortu beharko duzula gordeta ez baduzu.';
 
   @override
-  String get searchTimeout => 'Bilaketa luzeegia izan da erantzuteko. Saiatu berriro.';
+  String get searchTimeout =>
+      'Bilaketa luzeegia izan da erantzuteko. Saiatu berriro.';
 
   @override
-  String get aiSearchTimeout => 'AI bilaketak luzeegia hartu du. Saiatu deskribapen ez hain zehatza edo laburrago batekin.';
+  String get aiSearchTimeout =>
+      'AI bilaketak luzeegia hartu du. Saiatu deskribapen ez hain zehatza edo laburrago batekin.';
 
   @override
-  String get aiSearchError => 'Errore bat gertatu da AI bilaketan. Saiatu berriro.';
+  String get aiSearchError =>
+      'Errore bat gertatu da AI bilaketan. Saiatu berriro.';
 
   @override
   String aiRateLimitWithSeconds(int seconds) {
@@ -621,7 +638,8 @@ class AppLocalizationsEu extends AppLocalizations {
   }
 
   @override
-  String get aiRateLimitGeneric => 'APIaren denbora-muga gainditu da. Itxaron une bat berriro saiatu aurretik.';
+  String get aiRateLimitGeneric =>
+      'APIaren denbora-muga gainditu da. Itxaron une bat berriro saiatu aurretik.';
 
   @override
   String get signInWithGoogle => 'Hasi saioa Google-rekin';
@@ -630,7 +648,8 @@ class AppLocalizationsEu extends AppLocalizations {
   String get googleSignInButton => 'Sar zaitez Google-rekin';
 
   @override
-  String get alreadyUsingMovieScout => 'Dagoeneko erabiltzen al zenuen MovieScout?';
+  String get alreadyUsingMovieScout =>
+      'Dagoeneko erabiltzen al zenuen MovieScout?';
 
   @override
   String get importTmdbData => 'Inportatu zure datu zaharrak TMDBtik.';
@@ -648,7 +667,8 @@ class AppLocalizationsEu extends AppLocalizations {
   String get tmdbImportScreenHeader => 'Inportatu zure TMDb datuak';
 
   @override
-  String get tmdbImportScreenBody => 'Zure TMDb kontutik zure jarraipen zerrendak eta balorazioak inporta ditzakezu MovieScout kontura. TMDb-n saioa hasi beharko duzu. Inportazioa amaitutakoan, TMDb saioa automatikoki itxiko da.';
+  String get tmdbImportScreenBody =>
+      'Zure TMDb kontutik zure jarraipen zerrendak eta balorazioak inporta ditzakezu MovieScout kontura. TMDb-n saioa hasi beharko duzu. Inportazioa amaitutakoan, TMDb saioa automatikoki itxiko da.';
 
   @override
   String get tmdbImportStartButton => 'Hasi inportazioa';
@@ -660,7 +680,8 @@ class AppLocalizationsEu extends AppLocalizations {
   String get tmdbImportDownloading => 'TMDb-tik datuak deskargatzen...';
 
   @override
-  String get tmdbImportDownloadingWatchlist => 'Jarraipen zerrenda deskargatzen...';
+  String get tmdbImportDownloadingWatchlist =>
+      'Jarraipen zerrenda deskargatzen...';
 
   @override
   String get tmdbImportDownloadingRateslist => 'Iritziak deskargatzen...';
@@ -698,13 +719,16 @@ class AppLocalizationsEu extends AppLocalizations {
   String get tmdbImportError => 'Errore bat gertatu da datuak inportatzean';
 
   @override
-  String get tmdbImportLoginRequired => 'Hasi saioa TMDb-n inportazioa hasteko.';
+  String get tmdbImportLoginRequired =>
+      'Hasi saioa TMDb-n inportazioa hasteko.';
 
   @override
-  String get tmdbImportConsentText => 'Inportazioak modu seguruan gehituko ditu zure TMDb zerrendak eta balorazioak MovieScout kontuan.';
+  String get tmdbImportConsentText =>
+      'Inportazioak modu seguruan gehituko ditu zure TMDb zerrendak eta balorazioak MovieScout kontuan.';
 
   @override
-  String get loginConsentText => 'Saioa hasita, zure datuak MovieScout zerbitzarietan gordetzea onartzen duzu gailuen artean sinkronizatzeko, gure';
+  String get loginConsentText =>
+      'Saioa hasita, zure datuak MovieScout zerbitzarietan gordetzea onartzen duzu gailuen artean sinkronizatzeko, gure';
 
   @override
   String get termsOfService => 'zerbitzu baldintzak';
@@ -719,7 +743,8 @@ class AppLocalizationsEu extends AppLocalizations {
   String get deleteAccountConfirmTitle => 'Ezabatu kontua';
 
   @override
-  String get deleteAccountConfirmMessage => 'Ziur zure kontua ezabatu nahi duzula? Ekintza hau itzulezina da eta zure zerrenda eta datu guztiak betiko ezabatuko ditu.';
+  String get deleteAccountConfirmMessage =>
+      'Ziur zure kontua ezabatu nahi duzula? Ekintza hau itzulezina da eta zure zerrenda eta datu guztiak betiko ezabatuko ditu.';
 
   @override
   String get deleteAccountSuccess => 'Zure kontua behar bezala ezabatu da';
