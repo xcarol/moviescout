@@ -20,8 +20,7 @@ class RegionService with ChangeNotifier {
   RegionService._internal();
 
   String? _detectedRegion =
-      PreferencesService().prefs.getString('detected_region') ??
-          ui.PlatformDispatcher.instance.locale.countryCode;
+      PreferencesService().prefs.getString('detected_region');
   String? _manualRegion =
       PreferencesService().prefs.getString(AppConstants.region);
 
@@ -29,7 +28,10 @@ class RegionService with ChangeNotifier {
   String? get manualRegion => _manualRegion;
 
   /// Returns the effective country code: manual override > detected region > null
-  String? get currentRegion => _manualRegion ?? _detectedRegion;
+  String? get currentRegion =>
+      _manualRegion ??
+      _detectedRegion ??
+      ui.PlatformDispatcher.instance.locale.countryCode;
 
   Future<void> init() async {
     if (_manualRegion == null) {
@@ -37,49 +39,69 @@ class RegionService with ChangeNotifier {
     }
   }
 
-  Future<void> detectRegion() async {
-    final String? fallbackCountryCode =
-        ui.PlatformDispatcher.instance.locale.countryCode;
-
-    if (_detectedRegion == null &&
-        fallbackCountryCode != null &&
-        fallbackCountryCode.isNotEmpty) {
-      _detectedRegion = fallbackCountryCode;
-      notifyListeners();
+  Future<String?> _fetchRegionFromUrl(String url) async {
+    final response =
+        await http.get(Uri.parse(url)).timeout(const Duration(seconds: 3));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final country = (data['country_code'] ?? data['country'])?.toString();
+      if (country != null && country.length == 2) {
+        return country.toUpperCase();
+      }
     }
+    return null;
+  }
+
+  Future<void> detectRegion() async {
+    final endpoints = [
+      UrlConstants.ipWhoIsUrl,
+      UrlConstants.countryIsUrl,
+    ];
 
     int retryCount = 0;
     while (retryCount < 5) {
-      try {
-        final response = await http
-            .get(Uri.parse(UrlConstants.ipApiUrl))
-            .timeout(const Duration(seconds: 3));
-
-        if (response.statusCode == 200) {
-          final data = jsonDecode(response.body);
-          final newRegion = data['country_code'];
-          if (newRegion != null && _detectedRegion != newRegion) {
-            _detectedRegion = newRegion;
-            PreferencesService().prefs.setString('detected_region', newRegion);
-            if (_manualRegion == null) {
-              UpdateProvidersWorker.dispatchAll();
+      for (final url in endpoints) {
+        try {
+          final newRegion = await _fetchRegionFromUrl(url);
+          if (newRegion != null) {
+            if (_detectedRegion != newRegion) {
+              _detectedRegion = newRegion;
+              PreferencesService()
+                  .prefs
+                  .setString('detected_region', newRegion);
+              if (_manualRegion == null) {
+                UpdateProvidersWorker.dispatchAll();
+              }
+              notifyListeners();
             }
-            notifyListeners();
+            return;
           }
-          return;
-        }
-      } catch (e, stackTrace) {
-        if (retryCount == 4) {
-          ErrorService.log(
-            e,
-            stackTrace: stackTrace,
-            userMessage: 'Error detecting region',
-          );
+        } catch (e, stackTrace) {
+          if (retryCount == 4 && url == endpoints.last) {
+            ErrorService.log(
+              e,
+              stackTrace: stackTrace,
+              userMessage: 'Error detecting region',
+            );
+          }
         }
       }
+
       retryCount++;
       if (retryCount < 5) {
         await Future.delayed(const Duration(seconds: 2));
+      }
+    }
+
+    if (_detectedRegion == null) {
+      final fallbackCountryCode =
+          ui.PlatformDispatcher.instance.locale.countryCode;
+      if (fallbackCountryCode != null && fallbackCountryCode.isNotEmpty) {
+        _detectedRegion = fallbackCountryCode;
+        if (_manualRegion == null) {
+          UpdateProvidersWorker.dispatchAll();
+        }
+        notifyListeners();
       }
     }
   }
