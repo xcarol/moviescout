@@ -96,19 +96,8 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
     }
   }
 
-  Future<void> setup([
-    String? accountId,
-    String? sessionId,
-    String? accessToken,
-  ]) async {
+  Future<void> setup() async {
     final isSupabaseLoggedIn = CloudDatabaseService.isLoggedIn;
-
-    if (!isSupabaseLoggedIn &&
-        ((accountId ?? '').isEmpty ||
-            (sessionId ?? '').isEmpty ||
-            (accessToken ?? '').isEmpty)) {
-      return;
-    }
 
     if (_isInitialized || _isInitializing) {
       if (isSupabaseLoggedIn) {

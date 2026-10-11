@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/settings/search_history_service.dart';
-import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_search_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
@@ -391,8 +390,7 @@ class _SearchState extends State<Search> {
       if (_isAiMode) {
         await _searchService.retrieveAiSearchlist(term, locale);
       } else {
-        await _searchService.retrieveSearchlist(
-            anonymousAccountId, term, locale);
+        await _searchService.retrieveSearchlist(term, locale);
       }
     } on TimeoutException catch (e, stackTrace) {
       _resetLastSearch();

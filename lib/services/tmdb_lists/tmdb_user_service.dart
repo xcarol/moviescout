@@ -1,14 +1,10 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/core/tmdb_base_service.dart';
-import 'package:moviescout/services/lists/following_service.dart';
-import 'package:moviescout/services/lists/pinned_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
-import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/url_constants.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TmdbUserService extends TmdbBaseService with ChangeNotifier {
@@ -172,8 +168,6 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     prefs.remove('accessToken');
     prefs.remove('accountId');
     prefs.remove('sessionId');
-    prefs.remove('pinnedListId');
-    prefs.remove('followingListId');
   }
 
   Future<Map> login() async {
@@ -181,19 +175,11 @@ class TmdbUserService extends TmdbBaseService with ChangeNotifier {
     return _startLogin();
   }
 
-  Future<void> logout(BuildContext context) async {
+  Future<void> logout() async {
     _accountId = '';
     _sessionId = '';
     _accessToken = '';
     user = null;
-    final providerService =
-        Provider.of<TmdbProviderService>(context, listen: false);
-    providerService.clearProvidersStatus();
-    final pinnedService = Provider.of<PinnedService>(context, listen: false);
-    pinnedService.clearPinnedStatus();
-    final followingService =
-        Provider.of<FollowingService>(context, listen: false);
-    followingService.clearFollowingStatus();
     _clearTmdbPrefs();
     notifyListeners();
   }

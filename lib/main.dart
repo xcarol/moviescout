@@ -25,7 +25,6 @@ import 'package:moviescout/services/core/tmdb_configuration_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
 import 'package:moviescout/services/api/web_translation_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/services/lists/pinned_service.dart';
 import 'package:moviescout/services/lists/following_service.dart';
@@ -190,14 +189,9 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => SupabaseAuthService()),
-      ChangeNotifierProvider(create: (_) => TmdbUserService()),
-      ChangeNotifierProxyProvider2<TmdbUserService, SupabaseAuthService,
-          TmdbProviderService>(
+      ChangeNotifierProxyProvider<SupabaseAuthService, TmdbProviderService>(
         create: (_) => TmdbProviderService(cloudRepository: cloudRepository),
-        update: (_, userService, authService, providerService) =>
-            providerService!
-              ..setup(userService.accountId, userService.sessionId,
-                  userService.accessToken),
+        update: (_, authService, providerService) => providerService!..setup(),
       ),
       ChangeNotifierProvider<PinnedService>(
         create: (_) =>
@@ -282,8 +276,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     final themeProvider = ThemeService();
     themeProvider.setupTheme();
-    final userService = Provider.of<TmdbUserService>(context, listen: false);
-    userService.setup();
 
     final regionProvider = Provider.of<RegionService>(context, listen: false);
     regionProvider.addListener(_onRegionChanged);
