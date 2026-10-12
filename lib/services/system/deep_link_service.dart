@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_collection.dart';
@@ -16,13 +17,25 @@ class DeepLinkService {
   static final DeepLinkService _instance = DeepLinkService._internal();
   factory DeepLinkService() => _instance;
   DeepLinkService._internal();
-
-  bool isShortcutMode = false;
-
   final _appLinks = AppLinks();
   StreamSubscription<Uri>? _linkSubscription;
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   late TmdbTitleListService _tmdbListService;
+
+  Route? _externalRoute;
+  bool _isShortcut = false;
+
+  bool get isExternalRouteActive =>
+      _externalRoute != null && _externalRoute!.isActive;
+
+  bool get isExternalRouteAtTop =>
+      _externalRoute != null &&
+      _externalRoute!.isActive &&
+      _externalRoute!.isCurrent;
+
+  bool get isShortcut => _isShortcut;
+  bool get isShortcutActive => isExternalRouteActive && _isShortcut;
+  bool get isShortcutAtTop => isExternalRouteAtTop && _isShortcut;
 
   bool _isInitialized = false;
   String? _lastNavigatedId;
@@ -32,6 +45,14 @@ class DeepLinkService {
   void init(TmdbTitleListService tmdbListService) {
     _tmdbListService = tmdbListService;
     _isInitialized = true;
+
+    _shortcutChannel.setMethodCallHandler((call) async {
+      if (call.method == 'resetToHome') {
+        if (isExternalRouteActive) {
+          navigatorKey.currentState?.popUntil((route) => route.isFirst);
+        }
+      }
+    });
 
     _appLinks.getInitialLink().then((uri) {
       if (uri != null) {
@@ -51,7 +72,7 @@ class DeepLinkService {
   void _handleDeepLink(Uri uri) {
     if (uri.scheme == 'moviescout') return;
 
-    if (isShortcutMode && uri.queryParameters['shortcut'] == 'true') return;
+    navigatorKey.currentState?.popUntil((route) => route.isFirst);
 
     String? type;
     String? id;
@@ -70,8 +91,16 @@ class DeepLinkService {
       }
     }
 
+    final isShortcut = uri.queryParameters['shortcut'] == 'true';
+
     if (type != null && id != null) {
-      unawaited(_navigate(type, id, seasonNumber: seasonNumber));
+      unawaited(_navigate(
+        type,
+        id,
+        seasonNumber: seasonNumber,
+        isExternal: true,
+        isShortcut: isShortcut,
+      ));
     }
   }
 
@@ -79,7 +108,43 @@ class DeepLinkService {
     unawaited(_navigate(type, tmdbId.toString()));
   }
 
-  Future<void> _navigate(String type, String id, {int? seasonNumber}) async {
+  void _pushRoute(
+    Widget child, {
+    required bool isExternal,
+    required bool isShortcut,
+  }) {
+    final route = MaterialPageRoute(
+      builder: (context) => isShortcut
+          ? PopScope(
+              canPop: false,
+              onPopInvokedWithResult: (didPop, _) {
+                if (didPop) return;
+                DeepLinkService.moveToBackground();
+              },
+              child: child,
+            )
+          : child,
+    );
+    if (isExternal) {
+      _externalRoute = route;
+      _isShortcut = isShortcut;
+      route.popped.then((_) {
+        if (_externalRoute == route) {
+          _externalRoute = null;
+          _isShortcut = false;
+        }
+      });
+    }
+    navigatorKey.currentState?.push(route);
+  }
+
+  Future<void> _navigate(
+    String type,
+    String id, {
+    int? seasonNumber,
+    bool isExternal = false,
+    bool isShortcut = false,
+  }) async {
     while (!_isInitialized || navigatorKey.currentState == null) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
@@ -112,47 +177,58 @@ class DeepLinkService {
           });
 
       if (type == ApiConstants.tv && seasonNumber != null) {
-        navigatorKey.currentState?.push(
-          MaterialPageRoute(
-            builder: (context) => SeasonDetails(
-              title: title,
-              seasonNumber: seasonNumber,
-              tmdbListService: _tmdbListService,
-            ),
+        _pushRoute(
+          SeasonDetails(
+            title: title,
+            seasonNumber: seasonNumber,
+            tmdbListService: _tmdbListService,
           ),
+          isExternal: isExternal,
+          isShortcut: isShortcut,
         );
       } else {
-        navigatorKey.currentState?.push(
-          MaterialPageRoute(
-            builder: (context) => TitleDetails(
-              title: title,
-              tmdbListService: _tmdbListService,
-            ),
+        _pushRoute(
+          TitleDetails(
+            title: title,
+            tmdbListService: _tmdbListService,
           ),
+          isExternal: isExternal,
+          isShortcut: isShortcut,
         );
       }
     } else if (type == ApiConstants.person) {
-      navigatorKey.currentState?.push(
-        MaterialPageRoute(
-          builder: (context) => PersonDetails(
-            person: TmdbPerson.fromMap(person: {
-              PersonAttributes.id: tmdbId,
-            }),
-            tmdbListService: _tmdbListService,
-          ),
+      _pushRoute(
+        PersonDetails(
+          person: TmdbPerson.fromMap(person: {
+            PersonAttributes.id: tmdbId,
+          }),
+          tmdbListService: _tmdbListService,
         ),
+        isExternal: isExternal,
+        isShortcut: isShortcut,
       );
     } else if (type == ApiConstants.collection) {
-      navigatorKey.currentState?.push(
-        MaterialPageRoute(
-          builder: (context) => CollectionDetails(
-            collection: TmdbCollection.fromMap(collection: {
-              'id': tmdbId,
-            }),
-            tmdbListService: _tmdbListService,
-          ),
+      _pushRoute(
+        CollectionDetails(
+          collection: TmdbCollection.fromMap(collection: {
+            'id': tmdbId,
+          }),
+          tmdbListService: _tmdbListService,
         ),
+        isExternal: isExternal,
+        isShortcut: isShortcut,
       );
+    }
+  }
+
+  static const MethodChannel _shortcutChannel =
+      MethodChannel('com.xicra.moviescout/shortcut');
+
+  static Future<void> moveToBackground() async {
+    try {
+      await _shortcutChannel.invokeMethod('moveToBackground');
+    } catch (_) {
+      await SystemNavigator.pop();
     }
   }
 }

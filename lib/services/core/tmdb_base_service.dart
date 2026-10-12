@@ -103,9 +103,7 @@ class TmdbBaseService {
               : const Duration(seconds: 2);
           _rateLimitCooldownUntil = DateTime.now().add(waitDuration);
           delay = await _handleRetry(
-              'TmdbBaseService get status 429',
-              waitDuration,
-              maxDelay);
+              'TmdbBaseService get status 429', waitDuration, maxDelay);
           retryCount++;
           continue;
         }

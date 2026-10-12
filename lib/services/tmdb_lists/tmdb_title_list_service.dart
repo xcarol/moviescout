@@ -85,7 +85,10 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
   }
 
   bool get listIsEmpty {
-    return anyFilterApplied && !hasActiveFilter && selectedItemCount.value == 0;
+    return anyFilterApplied &&
+        !isDbLoading &&
+        !hasActiveFilter &&
+        selectedItemCount.value == 0;
   }
 
   bool get listIsNotEmpty {
