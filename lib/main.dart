@@ -45,9 +45,6 @@ import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/services/notifications/notification_service.dart';
 import 'package:moviescout/services/workers/watchlist_update_service.dart';
 import 'package:moviescout/services/settings/edit_settings_service.dart';
-import 'package:app_links/app_links.dart';
-import 'package:moviescout/widgets/misc/shortcut_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:moviescout/services/workers/uninitialized_titles_worker.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -58,28 +55,15 @@ final RouteObserver<ModalRoute<void>> routeObserver =
 
 @pragma('vm:entry-point')
 void mainShortcut() {
-  _runMain(isFromShortcutActivity: true);
+  _runMain();
 }
 
 void main(List<String> args) async {
-  _runMain(isFromShortcutActivity: args.contains('--from-shortcut-activity'));
+  _runMain();
 }
 
-void _runMain({bool isFromShortcutActivity = false}) async {
+void _runMain() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  final appLinks = AppLinks();
-  Uri? initialUri = await appLinks.getInitialLink();
-
-  if (isFromShortcutActivity && initialUri == null) {
-    final prefs = await SharedPreferences.getInstance();
-    final saved = prefs.getString('last_shortcut_uri');
-    if (saved != null) {
-      initialUri = Uri.tryParse(saved);
-    }
-  }
-
-  final isShortcut = isFromShortcutActivity;
 
   try {
     if (defaultTargetPlatform == TargetPlatform.android) {
@@ -155,16 +139,15 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       EditSettingsService().init(),
     ]).timeout(const Duration(seconds: 5), onTimeout: () => []);
 
-    if (!isShortcut &&
-        (defaultTargetPlatform == TargetPlatform.android ||
-            defaultTargetPlatform == TargetPlatform.iOS)) {
+    if (defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS) {
       try {
         await Workmanager().initialize(
           callbackDispatcher,
         );
         WatchlistUpdateService().setupWorker();
       } catch (e) {
-        // Ignore Workmanager initialization errors (especially in separate processes)
+        // Ignore Workmanager initialization errors
       }
     }
   } catch (error, stackTrace) {
@@ -178,9 +161,7 @@ void _runMain({bool isFromShortcutActivity = false}) async {
   final repository = LocalTitleRepository();
   final cloudRepository = CloudTitleRepository();
 
-  if (!isShortcut) {
-    UninitializedTitlesWorker.dispatch();
-  }
+  UninitializedTitlesWorker.dispatch();
 
   runApp(MultiProvider(
     providers: [
@@ -240,15 +221,12 @@ void _runMain({bool isFromShortcutActivity = false}) async {
       ChangeNotifierProvider(create: (_) => EditSettingsService()),
       ChangeNotifierProvider(create: (_) => WebTranslationService()),
     ],
-    child: MyApp(isShortcut: isShortcut, initialUri: initialUri),
+    child: const MyApp(),
   ));
 }
 
 class MyApp extends StatefulWidget {
-  final bool isShortcut;
-  final Uri? initialUri;
-
-  const MyApp({super.key, this.isShortcut = false, this.initialUri});
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -263,7 +241,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     final watchlistService =
         Provider.of<WatchlistService>(context, listen: false);
-    DeepLinkService().isShortcutMode = widget.isShortcut;
     DeepLinkService().init(watchlistService);
     NotificationService().handleColdStartNotification();
 
@@ -312,6 +289,25 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   @override
+  Future<bool> didPushRoute(String route) async {
+    return true;
+  }
+
+  @override
+  Future<bool> didPushRouteInformation(RouteInformation routeInformation) async {
+    return true;
+  }
+
+  @override
+  Future<bool> didPopRoute() async {
+    if (DeepLinkService().isExternalRouteAtTop) {
+      DeepLinkService.moveToBackground();
+      return true;
+    }
+    return false;
+  }
+
+  @override
   void didChangePlatformBrightness() {
     super.didChangePlatformBrightness();
     setState(() {});
@@ -354,11 +350,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ],
       ),
       title: 'MovieScout',
-      home: widget.isShortcut
-          ? (widget.initialUri != null
-              ? ShortcutRouter(uri: widget.initialUri!)
-              : const Scaffold(body: Center(child: Text('Shortcut not found'))))
-          : const MainScreen(),
+      home: const MainScreen(),
       scaffoldMessengerKey: scaffoldMessengerKey,
       navigatorKey: DeepLinkService().navigatorKey,
       navigatorObservers: [routeObserver],
@@ -376,7 +368,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             },
           );
         }
-        return null;
+        return PageRouteBuilder(
+          settings: settings,
+          pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+        );
       },
       builder: (context, child) {
         WidgetsBinding.instance.addPostFrameCallback((_) {

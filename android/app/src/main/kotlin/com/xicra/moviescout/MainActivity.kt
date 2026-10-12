@@ -19,6 +19,7 @@ import io.flutter.plugin.common.MethodChannel
  */
 class MainActivity: FlutterFragmentActivity() {
     private val CHANNEL = "com.xicra.moviescout/shortcut"
+    private var methodChannel: MethodChannel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -27,7 +28,9 @@ class MainActivity: FlutterFragmentActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+        val channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+        methodChannel = channel
+        channel.setMethodCallHandler { call, result ->
             if (call.method == "pinShortcut") {
                 val id = call.argument<String>("id")
                 val shortLabel = call.argument<String>("shortLabel")
@@ -38,10 +41,10 @@ class MainActivity: FlutterFragmentActivity() {
                     result.error("INVALID_ARGS", "Missing required arguments", null)
                 } else {
                     if (ShortcutManagerCompat.isRequestPinShortcutSupported(this)) {
-                        val intent = Intent(this, ShortcutActivity::class.java).apply {
+                        val intent = Intent(this, MainActivity::class.java).apply {
                             action = Intent.ACTION_VIEW
                             data = Uri.parse(url)
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         }
 
                         val builder = ShortcutInfoCompat.Builder(this, id)
@@ -62,9 +65,20 @@ class MainActivity: FlutterFragmentActivity() {
                         result.success(false)
                     }
                 }
+            } else if (call.method == "moveToBackground") {
+                moveTaskToBack(true)
+                result.success(true)
             } else {
                 result.notImplemented()
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.action == Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_LAUNCHER)) {
+            methodChannel?.invokeMethod("resetToHome", null)
         }
     }
 }
