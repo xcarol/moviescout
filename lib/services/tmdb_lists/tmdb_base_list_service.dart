@@ -141,8 +141,6 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
     final currentRequestId = ++filterRequestId;
     final int pagesToLoad = (retainPagination && pageVal > 0) ? pageVal : 1;
 
-    anyFilterApplied = true;
-
     await preFilterItems(currentRequestId);
     if (currentRequestId != filterRequestId) return;
 
@@ -170,6 +168,7 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
       loadedItemsVal.addAll(items);
       pageVal = pagesToLoad;
       hasMoreVal = computeHasMore(items.length, limit);
+      anyFilterApplied = true;
     } catch (error, stackTrace) {
       ErrorService.log(
         error.toString(),
