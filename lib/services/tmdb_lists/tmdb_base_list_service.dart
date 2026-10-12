@@ -60,12 +60,14 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
   @protected
   RatingFilter filterRating = RatingFilter.all;
 
+  RatingFilter get defaultRatingFilter => RatingFilter.all;
+
   bool get hasActiveFilter =>
       filterText.isNotEmpty ||
       filterMediaType.isNotEmpty ||
       filterGenres.isNotEmpty ||
-      filterProvidersIds.isNotEmpty ||
-      filterRating != RatingFilter.all;
+      filterByProviders ||
+      filterRating != defaultRatingFilter;
 
   String get defaultSort => selectedSort;
   bool get defaultSortAsc => isSortAsc;
@@ -182,11 +184,12 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
   Future<void> loadNextPage() async {
     if (isDbLoading || !hasMoreVal) return;
 
+    if (!anyFilterApplied) {
+      return await filterItems();
+    }
+
     isDbLoading = true;
     try {
-      if (!anyFilterApplied) {
-        return await filterItems();
-      }
       final currentRequestId = ++filterRequestId;
 
       final items =

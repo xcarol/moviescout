@@ -205,10 +205,7 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
 
   Future<void> reloadProviders({bool force = false}) async {
     if (_isInitializing) return;
-    _isInitialized = false;
     _isInitializing = true;
-    _providerMap.clear();
-    notifyListeners();
 
     try {
       if (force || !_getLocalProviders()) {

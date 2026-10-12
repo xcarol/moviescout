@@ -3,21 +3,30 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
+    show RatingFilter;
 import 'package:moviescout/services/lists/following_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/repositories/cloud_title_repository.dart';
 import 'package:moviescout/repositories/local_title_repository.dart';
 import 'package:moviescout/services/core/cloud_database_service.dart';
+import 'package:moviescout/services/auth/supabase_auth_service.dart';
 
 class RateslistService extends TmdbTitleListService {
   final CloudTitleRepository _cloudRepository;
 
   FollowingService? followingService;
+  String? _lastUserId = CloudDatabaseService.currentUser?.id;
+
+  @override
+  RatingFilter get defaultRatingFilter => RatingFilter.rated;
 
   RateslistService(LocalTitleRepository repository,
       {CloudTitleRepository? cloudRepository})
       : _cloudRepository = cloudRepository ?? CloudTitleRepository(),
-        super(AppConstants.rateslist, repository);
+        super(AppConstants.rateslist, repository) {
+    filterRating = RatingFilter.rated;
+  }
 
   Future<double> getRatingAsync(int titleId, String mediaType) async {
     final title = await getTitleByTmdbId(titleId, mediaType);
@@ -202,6 +211,16 @@ class RateslistService extends TmdbTitleListService {
         userMessage: 'Error toggling notify for ${title.name}',
       );
       title.notifyNewSeasons = !title.notifyNewSeasons;
+    }
+  }
+
+  void updateAuth(SupabaseAuthService authService) {
+    final user = authService.currentUser;
+    if (user != null && _lastUserId != user.id) {
+      _lastUserId = user.id;
+      syncFromServer(forceUpdate: true);
+    } else if (user == null) {
+      _lastUserId = null;
     }
   }
 }

@@ -4,6 +4,8 @@ import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
+import 'package:moviescout/widgets/layout/custom_refresh_builder.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:provider/provider.dart';
 
 class WatchList extends StatefulWidget {
@@ -73,7 +75,7 @@ class _WatchListState extends State<WatchList> {
     List<Widget> children = [];
 
     final isGoogleLoggedIn =
-        Provider.of<SupabaseAuthService>(context, listen: false).isLoggedIn;
+        Provider.of<SupabaseAuthService>(context).isLoggedIn;
     if (isGoogleLoggedIn) {
       children.add(
         Text(
@@ -112,10 +114,27 @@ class _WatchListState extends State<WatchList> {
         ),
       );
     }
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: children,
+    return CustomRefreshIndicator(
+      onRefresh: () async {
+        await _watchlistService.syncFromServer(
+          locale: Localizations.localeOf(context),
+          forceUpdate: true,
+        );
+      },
+      builder: customRefreshBuilder,
+      child: LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: children,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

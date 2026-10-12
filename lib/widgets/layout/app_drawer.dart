@@ -1,4 +1,3 @@
-import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
@@ -36,7 +35,6 @@ class AppDrawer extends StatelessWidget {
           _aboutTile(context),
           const Divider(),
           _userSessionTile(context, isLoggedIn),
-          if (isLoggedIn) _deleteAccountTile(context),
         ],
       ),
     );
@@ -288,79 +286,5 @@ class AppDrawer extends StatelessWidget {
     if (context.mounted) {
       Navigator.of(context).popUntil((route) => route.isFirst);
     }
-  }
-
-  Widget _deleteAccountTile(BuildContext context) {
-    final customColors = Theme.of(context).extension<CustomColors>();
-    final deleteColor = customColors?.destructiveAction ?? Colors.redAccent;
-
-    return ListTile(
-      leading: Icon(Icons.delete_forever, color: deleteColor),
-      title: Text(
-        AppLocalizations.of(context)!.deleteAccount,
-        style: TextStyle(color: deleteColor),
-      ),
-      onTap: () => _confirmDeleteAccount(context),
-    );
-  }
-
-  void _confirmDeleteAccount(BuildContext context) {
-    final customColors = Theme.of(context).extension<CustomColors>();
-    final deleteColor = customColors?.destructiveAction ?? Colors.redAccent;
-    final supabaseAuthService =
-        Provider.of<SupabaseAuthService>(context, listen: false);
-    final tmdbWatchlistService =
-        Provider.of<WatchlistService>(context, listen: false);
-    final tmdbRateslistService =
-        Provider.of<RateslistService>(context, listen: false);
-    final tmdbDiscoverlistService =
-        Provider.of<TmdbDiscoverlistService>(context, listen: false);
-    final userLocale = Localizations.localeOf(context);
-    final successMessage = AppLocalizations.of(context)!.deleteAccountSuccess;
-    final errorMessage = AppLocalizations.of(context)!.deleteAccountError;
-    final navigator = Navigator.of(context);
-
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.deleteAccountConfirmTitle),
-          content:
-              Text(AppLocalizations.of(context)!.deleteAccountConfirmMessage),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: Text(AppLocalizations.of(context)!.cancel),
-            ),
-            FilledButton(
-              style: FilledButton.styleFrom(
-                backgroundColor: deleteColor,
-              ),
-              onPressed: () async {
-                Navigator.of(dialogContext).pop();
-
-                final success = await supabaseAuthService.deleteAccount();
-
-                if (success) {
-                  await tmdbWatchlistService.clearList();
-                  await tmdbRateslistService.clearList();
-                  await tmdbDiscoverlistService.clearList();
-                  await tmdbDiscoverlistService.retrieveDiscoverlist(
-                    userLocale,
-                    forceUpdate: true,
-                  );
-
-                  SnackMessage.showSnackBar(successMessage);
-                  navigator.popUntil((route) => route.isFirst);
-                } else {
-                  SnackMessage.showSnackBar(errorMessage);
-                }
-              },
-              child: Text(AppLocalizations.of(context)!.deleteAccount),
-            ),
-          ],
-        );
-      },
-    );
   }
 }

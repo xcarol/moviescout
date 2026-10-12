@@ -201,22 +201,26 @@ void _runMain({bool isFromShortcutActivity = false}) async {
         create: (_) =>
             FollowingService(repository, cloudRepository: cloudRepository),
       ),
-      ChangeNotifierProxyProvider<FollowingService, RateslistService>(
+      ChangeNotifierProxyProvider2<FollowingService, SupabaseAuthService,
+          RateslistService>(
         create: (_) =>
             RateslistService(repository, cloudRepository: cloudRepository),
-        update: (_, followingService, rateslistService) {
+        update: (_, followingService, authService, rateslistService) {
           rateslistService!.followingService = followingService;
+          rateslistService.updateAuth(authService);
           return rateslistService;
         },
       ),
-      ChangeNotifierProxyProvider2<RateslistService, PinnedService,
-          WatchlistService>(
+      ChangeNotifierProxyProvider3<RateslistService, PinnedService,
+          SupabaseAuthService, WatchlistService>(
         create: (_) =>
             WatchlistService(repository, cloudRepository: cloudRepository),
-        update: (_, rateslistService, pinnedService, watchlistService) {
+        update: (_, rateslistService, pinnedService, authService,
+            watchlistService) {
           rateslistService.removeListener(watchlistService!.refresh);
           rateslistService.addListener(watchlistService.refresh);
           watchlistService.pinnedService = pinnedService;
+          watchlistService.updateAuth(authService);
           return watchlistService;
         },
       ),

@@ -4,6 +4,8 @@ import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
+import 'package:moviescout/widgets/layout/custom_refresh_builder.dart';
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:provider/provider.dart';
 
 class DiscoverList extends StatefulWidget {
@@ -151,8 +153,22 @@ class _DiscoverListState extends State<DiscoverList> {
   }
 
   Widget emptyBody() {
-    return Center(
-      child: Text(AppLocalizations.of(context)!.emptyList),
+    return CustomRefreshIndicator(
+      onRefresh: () async {
+        _updateDiscoverList(forceUpdate: true);
+      },
+      builder: customRefreshBuilder,
+      child: LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: Text(AppLocalizations.of(context)!.emptyList),
+            ),
+          ),
+        ),
+      ),
     );
   }
 

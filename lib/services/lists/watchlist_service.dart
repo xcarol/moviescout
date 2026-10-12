@@ -3,6 +3,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/cloud_title_repository.dart';
 import 'package:moviescout/repositories/local_title_repository.dart';
 import 'package:moviescout/services/core/cloud_database_service.dart';
+import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/services/lists/pinned_service.dart';
@@ -12,6 +13,7 @@ class WatchlistService extends TmdbTitleListService {
   final CloudTitleRepository _cloudRepository;
 
   PinnedService? pinnedService;
+  String? _lastUserId = CloudDatabaseService.currentUser?.id;
 
   WatchlistService(
     LocalTitleRepository repository, {
@@ -147,6 +149,16 @@ class WatchlistService extends TmdbTitleListService {
         userMessage: 'Error toggling pin for ${title.name}',
       );
       title.isPinned = !title.isPinned;
+    }
+  }
+
+  void updateAuth(SupabaseAuthService authService) {
+    final user = authService.currentUser;
+    if (user != null && _lastUserId != user.id) {
+      _lastUserId = user.id;
+      syncFromServer(forceUpdate: true);
+    } else if (user == null) {
+      _lastUserId = null;
     }
   }
 }
