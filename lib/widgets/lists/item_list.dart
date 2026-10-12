@@ -322,13 +322,15 @@ class _ItemListState extends SearchableListState<ItemList> {
           _controller.initializeControlLocalizations(context);
           return Consumer<TmdbProviderService>(
             builder: (context, providerService, _) {
-              final providerList = providerService.enabledProviderIds;
+              if (providerService.isInitialized) {
+                final providerList = providerService.enabledProviderIds;
 
-              if (!const ListEquality()
-                  .equals(providerList, _controller.providerListIds)) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _controller.setProviderListIds(providerList);
-                });
+                if (!const ListEquality()
+                    .equals(providerList, _controller.providerListIds)) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _controller.setProviderListIds(providerList);
+                  });
+                }
               }
 
               final anyFilterActive = _controller.anyFilterActive;
