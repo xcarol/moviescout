@@ -1,14 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/models/custom_colors.dart';
 import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/screens/ai_settings.dart';
 import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/screens/import_tmdb.dart';
 import 'package:moviescout/screens/providers.dart';
+import 'package:moviescout/services/lists/rateslist_service.dart';
+import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/services/notifications/notification_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
+import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
+import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/language_form.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/notification_permission_dialog.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/region_form.dart';
@@ -40,6 +45,7 @@ class SettingsScreen extends StatelessWidget {
           _notificationsTile(context),
           _notifyCompleteSeasonTile(context),
           _aiSettingsTile(context),
+          if (isUserLoggedIn) _deleteAccountTile(context),
         ],
       ),
     );
@@ -214,5 +220,79 @@ class SettingsScreen extends StatelessWidget {
     }
 
     return subtitle;
+  }
+
+  Widget _deleteAccountTile(BuildContext context) {
+    final customColors = Theme.of(context).extension<CustomColors>();
+    final deleteColor = customColors?.destructiveAction ?? Colors.redAccent;
+
+    return ListTile(
+      leading: Icon(Icons.delete_forever, color: deleteColor),
+      title: Text(
+        AppLocalizations.of(context)!.deleteAccount,
+        style: TextStyle(color: deleteColor),
+      ),
+      onTap: () => _confirmDeleteAccount(context),
+    );
+  }
+
+  void _confirmDeleteAccount(BuildContext context) {
+    final customColors = Theme.of(context).extension<CustomColors>();
+    final deleteColor = customColors?.destructiveAction ?? Colors.redAccent;
+    final supabaseAuthService =
+        Provider.of<SupabaseAuthService>(context, listen: false);
+    final tmdbWatchlistService =
+        Provider.of<WatchlistService>(context, listen: false);
+    final tmdbRateslistService =
+        Provider.of<RateslistService>(context, listen: false);
+    final tmdbDiscoverlistService =
+        Provider.of<TmdbDiscoverlistService>(context, listen: false);
+    final userLocale = Localizations.localeOf(context);
+    final successMessage = AppLocalizations.of(context)!.deleteAccountSuccess;
+    final errorMessage = AppLocalizations.of(context)!.deleteAccountError;
+    final navigator = Navigator.of(context);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.deleteAccountConfirmTitle),
+          content:
+              Text(AppLocalizations.of(context)!.deleteAccountConfirmMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: deleteColor,
+              ),
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+
+                final success = await supabaseAuthService.deleteAccount();
+
+                if (success) {
+                  await tmdbWatchlistService.clearList();
+                  await tmdbRateslistService.clearList();
+                  await tmdbDiscoverlistService.clearList();
+                  await tmdbDiscoverlistService.retrieveDiscoverlist(
+                    userLocale,
+                    forceUpdate: true,
+                  );
+
+                  SnackMessage.showSnackBar(successMessage);
+                  navigator.popUntil((route) => route.isFirst);
+                } else {
+                  SnackMessage.showSnackBar(errorMessage);
+                }
+              },
+              child: Text(AppLocalizations.of(context)!.deleteAccount),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
