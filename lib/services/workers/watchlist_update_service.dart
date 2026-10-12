@@ -1,6 +1,11 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:moviescout/firebase_options.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/cloud_title_repository.dart';
 import 'package:moviescout/repositories/local_title_repository.dart';
@@ -210,6 +215,7 @@ class WatchlistUpdateService {
         e,
         stackTrace: stackTrace,
         userMessage: 'Error syncing notification to Supabase',
+        reportToCrashlytics: true,
       );
     }
   }
@@ -226,6 +232,37 @@ class WatchlistUpdateService {
 
       await LocalDatabaseService.init();
       await NotificationService().init();
+
+      if (!kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.android ||
+              defaultTargetPlatform == TargetPlatform.iOS)) {
+        try {
+          if (Firebase.apps.isEmpty) {
+            await Firebase.initializeApp(
+              options: DefaultFirebaseOptions.currentPlatform,
+            );
+          }
+        } catch (_) {}
+      }
+
+      final supabaseUrl = dotenv.env['SUPABASE_URL'];
+      final supabaseKey = dotenv.env['SUPABASE_API_KEY'];
+      if (supabaseUrl != null &&
+          supabaseUrl.isNotEmpty &&
+          supabaseKey != null &&
+          supabaseKey.isNotEmpty) {
+        try {
+          await Supabase.initialize(
+            url: supabaseUrl,
+            publishableKey: supabaseKey,
+          );
+          CloudDatabaseService.init();
+        } catch (_) {
+          try {
+            CloudDatabaseService.init();
+          } catch (_) {}
+        }
+      }
 
       logLines.add('---------------------------');
       logLines.add(
