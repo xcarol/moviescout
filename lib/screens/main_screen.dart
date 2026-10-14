@@ -23,6 +23,12 @@ class _MainScreenState extends State<MainScreen> {
 
   bool? _wasLoggedIn;
 
+  int get _defaultIndex {
+    final authService =
+        Provider.of<SupabaseAuthService>(context, listen: false);
+    return authService.isLoggedIn ? 0 : 2;
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -34,11 +40,7 @@ class _MainScreenState extends State<MainScreen> {
 
     if (_wasLoggedIn != isLoggedIn) {
       _wasLoggedIn = isLoggedIn;
-      if (isLoggedIn) {
-        _currentIndex = 0;
-      } else {
-        _currentIndex = 2;
-      }
+      _currentIndex = _defaultIndex;
     }
   }
 
@@ -48,9 +50,10 @@ class _MainScreenState extends State<MainScreen> {
 
     return DoubleBackExitWrapper(
       onPopHandled: () {
-        if (_currentIndex != 0) {
+        final defaultIndex = _defaultIndex;
+        if (_currentIndex != defaultIndex) {
           setState(() {
-            _currentIndex = 0;
+            _currentIndex = defaultIndex;
           });
           return true;
         }
