@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import "package:moviescout/services/auth/supabase_auth_service.dart";
@@ -35,8 +34,7 @@ class SettingsScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          if (isUserLoggedIn && defaultTargetPlatform == TargetPlatform.linux)
-            _importImdbTile(context),
+          if (isUserLoggedIn) _importImdbTile(context),
           if (isUserLoggedIn) _importTmdbTile(context),
           if (isUserLoggedIn) _providersTile(context),
           _languageTile(context),
