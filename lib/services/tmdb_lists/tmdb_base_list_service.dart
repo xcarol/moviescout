@@ -41,7 +41,7 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
   @protected
   String filterText = '';
 
-  ValueNotifier<int> selectedItemCount = ValueNotifier(0);
+  ValueNotifier<int?> selectedItemCount = ValueNotifier(null);
 
   @protected
   String filterMediaType = '';
@@ -97,7 +97,7 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
   void clearLoadedItems({bool resetCount = false}) {
     loadedItemsVal.clear();
     if (resetCount) {
-      selectedItemCount.value = 0;
+      selectedItemCount.value = null;
     }
     anyFilterApplied = false;
     hasMoreVal = true;

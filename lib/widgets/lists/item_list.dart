@@ -79,32 +79,34 @@ class _ItemListState extends SearchableListState<ItemList> {
         : titleTheme.infoLineActiveFilterBackground;
 
     return [
-      DropdownSelector(
-        backgroundColor: backgroundColor,
-        textStyle: TextStyle(
-          color: textColor,
-          fontSize: 16,
-        ),
-        borderRadius: BorderRadius.circular(5),
-        leading: ValueListenableBuilder(
-          valueListenable: widget.listService.selectedItemCount,
-          builder: (context, count, child) {
-            return Text(
-              count.toString(),
-              style: TextStyle(
-                color: textColor,
-                fontSize: 16,
-              ),
-            );
-          },
-        ),
-        selectedOption: _controller.getSelectedTypeLabel(localizations),
-        options: _controller.titleTypes,
-        onSelected: (value) => _controller.setSelectedType(context, value),
-        arrowIcon: Icon(
-          Icons.arrow_drop_down,
-          color: textColor,
-        ),
+      ValueListenableBuilder<int?>(
+        valueListenable: widget.listService.selectedItemCount,
+        builder: (context, count, child) {
+          return DropdownSelector(
+            backgroundColor: backgroundColor,
+            textStyle: TextStyle(
+              color: textColor,
+              fontSize: 16,
+            ),
+            borderRadius: BorderRadius.circular(5),
+            leading: count != null
+                ? Text(
+                    count.toString(),
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 16,
+                    ),
+                  )
+                : null,
+            selectedOption: _controller.getSelectedTypeLabel(localizations),
+            options: _controller.titleTypes,
+            onSelected: (value) => _controller.setSelectedType(context, value),
+            arrowIcon: Icon(
+              Icons.arrow_drop_down,
+              color: textColor,
+            ),
+          );
+        },
       ),
     ];
   }
