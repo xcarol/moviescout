@@ -32,7 +32,7 @@ class PersonListController with ChangeNotifier {
   List<String> get personSorts => _personSorts;
   bool get isGridView => _isGridView;
 
-  int get itemCount => listService.selectedItemCount.value;
+  int get itemCount => listService.selectedItemCount.value ?? 0;
 
   void initializeControlLocalizations(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;

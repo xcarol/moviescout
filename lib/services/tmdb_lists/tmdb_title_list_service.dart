@@ -120,7 +120,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     loadedItemsVal.clear();
     pinnedTitlesVal.clear();
     if (resetCount) {
-      selectedItemCount.value = 0;
+      selectedItemCount.value = null;
     }
     anyFilterApplied = false;
     hasMoreVal = true;
