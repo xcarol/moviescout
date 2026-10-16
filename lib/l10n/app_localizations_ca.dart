@@ -643,7 +643,11 @@ class AppLocalizationsCa extends AppLocalizations {
   String get signInWithGoogle => 'Inicia sessió amb Google';
 
   @override
-  String get googleSignInButton => 'Entra amb Google';
+  String get loginSubtitle =>
+      'Inicia sessió per desar i sincronitzar les teves llistes i valoracions.';
+
+  @override
+  String get googleSignInButton => 'Continua amb Google';
 
   @override
   String get alreadyUsingMovieScout => 'Ja feies servir MovieScout?';
