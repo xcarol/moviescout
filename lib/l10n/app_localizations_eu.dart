@@ -645,7 +645,11 @@ class AppLocalizationsEu extends AppLocalizations {
   String get signInWithGoogle => 'Hasi saioa Google-rekin';
 
   @override
-  String get googleSignInButton => 'Sar zaitez Google-rekin';
+  String get loginSubtitle =>
+      'Hasi saioa zure zerrendak eta balorazioak gorde eta sinkronizatzeko.';
+
+  @override
+  String get googleSignInButton => 'Jarraitu Google-rekin';
 
   @override
   String get alreadyUsingMovieScout =>

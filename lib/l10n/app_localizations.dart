@@ -1313,10 +1313,16 @@ abstract class AppLocalizations {
   /// **'Sign in with Google'**
   String get signInWithGoogle;
 
+  /// No description provided for @loginSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to save and sync your lists and ratings.'**
+  String get loginSubtitle;
+
   /// No description provided for @googleSignInButton.
   ///
   /// In en, this message translates to:
-  /// **'Google Sign-In'**
+  /// **'Continue with Google'**
   String get googleSignInButton;
 
   /// No description provided for @alreadyUsingMovieScout.

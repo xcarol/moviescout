@@ -93,6 +93,7 @@ flutter:
     - assets/l10n/
     - assets/account.png
     - assets/facebook.png
+    - assets/google-logo.svg
     - assets/imdb-logo.png
     - assets/instagram.png
     - assets/logo-icon.png

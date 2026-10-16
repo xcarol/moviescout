@@ -646,7 +646,11 @@ class AppLocalizationsGl extends AppLocalizations {
   String get signInWithGoogle => 'Inicia sesión con Google';
 
   @override
-  String get googleSignInButton => 'Acceso con Google';
+  String get loginSubtitle =>
+      'Inicia sesión para gardar e sincronizar as túas listas e valoracións.';
+
+  @override
+  String get googleSignInButton => 'Continuar con Google';
 
   @override
   String get alreadyUsingMovieScout => 'Xa usaches MovieScout?';
