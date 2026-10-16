@@ -185,6 +185,11 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
         stackTrace: stackTrace,
         userMessage: 'Error updating list $listNameVal',
       );
+      if (loadedItemsVal.isEmpty) {
+        try {
+          await filterItems();
+        } catch (_) {}
+      }
     } finally {
       isLoading.value = false;
       completer.complete();

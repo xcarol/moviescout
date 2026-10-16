@@ -120,6 +120,9 @@ class _WatchListState extends State<WatchList> {
           locale: Localizations.localeOf(context),
           forceUpdate: true,
         );
+        if (!_watchlistService.hasLoadedItems) {
+          await _watchlistService.filterItems();
+        }
       },
       builder: customRefreshBuilder,
       child: LayoutBuilder(

@@ -218,9 +218,11 @@ class RateslistService extends TmdbTitleListService {
     final user = authService.currentUser;
     if (user != null && _lastUserId != user.id) {
       _lastUserId = user.id;
+      clearLoadedItems(resetCount: true);
       syncFromServer(forceUpdate: true);
-    } else if (user == null) {
+    } else if (user == null && _lastUserId != null) {
       _lastUserId = null;
+      clearLoadedItems(resetCount: true);
     }
   }
 }
