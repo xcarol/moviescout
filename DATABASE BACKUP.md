@@ -33,6 +33,8 @@ sudo apt update && sudo apt install -y postgresql-client
 - Direct link format:
   `https://supabase.com/dashboard/project/<PROJECT_ID>/database/settings#database-password`
 
+**_It may happen that options are moved around the Supabase dashboard, you can use the search bar at the top of the dashboard to find them._**
+
 ---
 
 ## 3. Creating the Backup
