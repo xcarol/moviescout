@@ -330,20 +330,24 @@ class WatchlistUpdateService {
           break;
         }
 
-        updatedCount++;
-        final notified = await _updateTitle(
-            title,
-            logLines,
-            providersList,
-            enabledProviderIds,
-            titleService,
-            repository,
-            localizations,
-            now,
-            notifyCompleteSeason);
+        try {
+          updatedCount++;
+          final notified = await _updateTitle(
+              title,
+              logLines,
+              providersList,
+              enabledProviderIds,
+              titleService,
+              repository,
+              localizations,
+              now,
+              notifyCompleteSeason);
 
-        if (notified) {
-          notifiedCount++;
+          if (notified) {
+            notifiedCount++;
+          }
+        } catch (e) {
+          logLines.add('Error updating ${title.name}: $e');
         }
 
         await Future.delayed(const Duration(milliseconds: 200));

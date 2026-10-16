@@ -17,6 +17,7 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
   @protected
   final List<T> loadedItemsVal = List.empty(growable: true);
   int get loadedItemCount => loadedItemsVal.length;
+  bool get hasLoadedItems => loadedItemsVal.isNotEmpty;
 
   bool get userRatingAvailable => false;
 

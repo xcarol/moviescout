@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:sqlite3/common.dart';
 import 'package:moviescout/database/connection/setup_sqlite.dart';
 import 'package:moviescout/database/drift_tables.dart';
 
@@ -46,9 +47,9 @@ class AppDatabase extends _$AppDatabase {
       beforeOpen: (details) async {
         if (!kIsWeb) {
           await customStatement('PRAGMA journal_mode = WAL;');
+          await customStatement('PRAGMA busy_timeout = 10000;');
         }
         await customStatement('PRAGMA foreign_keys = ON;');
-        await _migrateUserListEntriesOrder();
       },
     );
   }
@@ -90,6 +91,7 @@ class AppDatabase extends _$AppDatabase {
       name: 'moviescout',
       native: const DriftNativeOptions(
         databaseDirectory: getApplicationSupportDirectory,
+        setup: _setupDatabase,
       ),
       web: DriftWebOptions(
         sqlite3Wasm: Uri.parse('sqlite3.wasm'),
@@ -97,4 +99,9 @@ class AppDatabase extends _$AppDatabase {
       ),
     );
   }
+}
+
+void _setupDatabase(CommonDatabase db) {
+  db.execute('PRAGMA busy_timeout = 10000;');
+  db.execute('PRAGMA journal_mode = WAL;');
 }

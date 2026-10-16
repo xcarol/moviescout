@@ -76,6 +76,9 @@ class _RatesListState extends State<RatesList> {
           locale: Localizations.localeOf(context),
           forceUpdate: true,
         );
+        if (!_rateslistService.hasLoadedItems) {
+          await _rateslistService.filterItems();
+        }
       },
       builder: customRefreshBuilder,
       child: LayoutBuilder(

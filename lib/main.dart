@@ -285,6 +285,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       if (regionService.manualRegion == null) {
         regionService.detectRegion();
       }
+
+      final watchlistService =
+          Provider.of<WatchlistService>(context, listen: false);
+      if (!watchlistService.hasLoadedItems) {
+        watchlistService.filterItems();
+      }
+      final rateslistService =
+          Provider.of<RateslistService>(context, listen: false);
+      if (!rateslistService.hasLoadedItems) {
+        rateslistService.filterItems();
+      }
     }
   }
 

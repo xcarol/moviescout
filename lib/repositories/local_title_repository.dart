@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:sqlite3/common.dart';
 import 'package:moviescout/database/app_database.dart';
 import 'package:moviescout/database/drift_mappers.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -16,6 +17,26 @@ class LocalTitleRepository {
 
   LocalTitleRepository({AppDatabase? db})
       : _db = db ?? LocalDatabaseService.instance;
+
+  Future<T> _retryOnLocked<T>(Future<T> Function() action,
+      {int maxAttempts = 3}) async {
+    int attempts = 0;
+    while (true) {
+      try {
+        return await action();
+      } catch (e) {
+        attempts++;
+        final isLocked = e.toString().contains('database is locked') ||
+            (e is SqliteException &&
+                (e.resultCode == 5 || e.extendedResultCode == 261));
+        if (isLocked && attempts < maxAttempts) {
+          await Future.delayed(Duration(milliseconds: 150 * attempts));
+          continue;
+        }
+        rethrow;
+      }
+    }
+  }
 
   void _mergeTitleMetadata(TmdbTitle newTitle, TmdbTitle currentTitle,
       {String? listName}) {
@@ -40,119 +61,131 @@ class LocalTitleRepository {
     if (titles.isEmpty) return;
 
     final now = DateTime.now().toUtc();
-    await _db.transaction(() async {
-      for (var j = 0; j < titles.length; j++) {
-        final title = titles[j];
-        final id = '${title.tmdbId}_${title.mediaType}';
-        final existing = await (_db.select(_db.tmdbTitles)
-              ..where((t) => t.id.equals(id)))
-            .getSingleOrNull();
+    await _retryOnLocked(() async {
+      await _db.transaction(() async {
+        for (var j = 0; j < titles.length; j++) {
+          final title = titles[j];
+          final id = '${title.tmdbId}_${title.mediaType}';
+          final existing = await (_db.select(_db.tmdbTitles)
+                ..where((t) => t.id.equals(id)))
+              .getSingleOrNull();
 
-        if (existing != null) {
-          _mergeTitleMetadata(title, DriftMapper.toDomainTitle(existing),
-              listName: listName);
+          if (existing != null) {
+            _mergeTitleMetadata(title, DriftMapper.toDomainTitle(existing),
+                listName: listName);
+          }
+
+          await _db
+              .into(_db.tmdbTitles)
+              .insertOnConflictUpdate(DriftMapper.toCompanionTitle(title));
+
+          final entryId = '${listName}_${title.tmdbId}_${title.mediaType}';
+          final existingEntry = await (_db.select(_db.userListEntries)
+                ..where((e) => e.id.equals(entryId)))
+              .getSingleOrNull();
+
+          final entryCreatedAt = title.createdAt ??
+              existingEntry?.createdAt ??
+              now.add(Duration(seconds: j));
+
+          await _db.into(_db.userListEntries).insertOnConflictUpdate(
+                UserListEntriesCompanion(
+                  id: Value(entryId),
+                  listName: Value(listName),
+                  tmdbId: Value(title.tmdbId),
+                  mediaType: Value(title.mediaType),
+                  createdAt: Value(entryCreatedAt),
+                ),
+              );
         }
-
-        await _db
-            .into(_db.tmdbTitles)
-            .insertOnConflictUpdate(DriftMapper.toCompanionTitle(title));
-
-        final entryId = '${listName}_${title.tmdbId}_${title.mediaType}';
-        final existingEntry = await (_db.select(_db.userListEntries)
-              ..where((e) => e.id.equals(entryId)))
-            .getSingleOrNull();
-
-        final entryCreatedAt = title.createdAt ??
-            existingEntry?.createdAt ??
-            now.add(Duration(seconds: j));
-
-        await _db.into(_db.userListEntries).insertOnConflictUpdate(
-              UserListEntriesCompanion(
-                id: Value(entryId),
-                listName: Value(listName),
-                tmdbId: Value(title.tmdbId),
-                mediaType: Value(title.mediaType),
-                createdAt: Value(entryCreatedAt),
-              ),
-            );
-      }
+      });
     });
   }
 
   Future<void> updateTitlesMetadata(List<TmdbTitle> titles) async {
     if (titles.isEmpty) return;
 
-    await _db.transaction(() async {
-      for (final title in titles) {
-        final id = '${title.tmdbId}_${title.mediaType}';
-        final existing = await (_db.select(_db.tmdbTitles)
-              ..where((t) => t.id.equals(id)))
-            .getSingleOrNull();
+    await _retryOnLocked(() async {
+      await _db.transaction(() async {
+        for (final title in titles) {
+          final id = '${title.tmdbId}_${title.mediaType}';
+          final existing = await (_db.select(_db.tmdbTitles)
+                ..where((t) => t.id.equals(id)))
+              .getSingleOrNull();
 
-        if (existing != null) {
-          _mergeTitleMetadata(title, DriftMapper.toDomainTitle(existing));
+          if (existing != null) {
+            _mergeTitleMetadata(title, DriftMapper.toDomainTitle(existing));
+          }
+
+          await _db
+              .into(_db.tmdbTitles)
+              .insertOnConflictUpdate(DriftMapper.toCompanionTitle(title));
         }
-
-        await _db
-            .into(_db.tmdbTitles)
-            .insertOnConflictUpdate(DriftMapper.toCompanionTitle(title));
-      }
+      });
     });
   }
 
   Future<void> updateIsPinnedList(List<TmdbTitle> titles) async {
-    await _db.batch((batch) {
-      for (final title in titles) {
-        final id = '${title.tmdbId}_${title.mediaType}';
-        batch.update(
-          _db.tmdbTitles,
-          TmdbTitlesCompanion(isPinned: Value(title.isPinned)),
-          where: (t) => t.id.equals(id),
-        );
-      }
+    await _retryOnLocked(() async {
+      await _db.batch((batch) {
+        for (final title in titles) {
+          final id = '${title.tmdbId}_${title.mediaType}';
+          batch.update(
+            _db.tmdbTitles,
+            TmdbTitlesCompanion(isPinned: Value(title.isPinned)),
+            where: (t) => t.id.equals(id),
+          );
+        }
+      });
     });
   }
 
   Future<void> updateRatingList(List<TmdbTitle> titles) async {
-    await _db.batch((batch) {
-      for (final title in titles) {
-        final id = '${title.tmdbId}_${title.mediaType}';
-        batch.update(
-          _db.tmdbTitles,
-          TmdbTitlesCompanion(
-            rating: Value(title.rating),
-            dateRated: Value(title.dateRated),
-          ),
-          where: (t) => t.id.equals(id),
-        );
-      }
+    await _retryOnLocked(() async {
+      await _db.batch((batch) {
+        for (final title in titles) {
+          final id = '${title.tmdbId}_${title.mediaType}';
+          batch.update(
+            _db.tmdbTitles,
+            TmdbTitlesCompanion(
+              rating: Value(title.rating),
+              dateRated: Value(title.dateRated),
+            ),
+            where: (t) => t.id.equals(id),
+          );
+        }
+      });
     });
   }
 
   Future<void> updateNotifyNewSeasonsList(List<TmdbTitle> titles) async {
-    await _db.batch((batch) {
-      for (final title in titles) {
-        final id = '${title.tmdbId}_${title.mediaType}';
-        batch.update(
-          _db.tmdbTitles,
-          TmdbTitlesCompanion(
-            notifyNewSeasons: Value(title.notifyNewSeasons),
-            lastNotifiedSeason: Value(title.lastNotifiedSeason),
-          ),
-          where: (t) => t.id.equals(id),
-        );
-      }
+    await _retryOnLocked(() async {
+      await _db.batch((batch) {
+        for (final title in titles) {
+          final id = '${title.tmdbId}_${title.mediaType}';
+          batch.update(
+            _db.tmdbTitles,
+            TmdbTitlesCompanion(
+              notifyNewSeasons: Value(title.notifyNewSeasons),
+              lastNotifiedSeason: Value(title.lastNotifiedSeason),
+            ),
+            where: (t) => t.id.equals(id),
+          );
+        }
+      });
     });
   }
 
   Future<void> invalidateSeasonsAndEpisodes(int tvId) async {
     final epochDateStr =
         DateTime.fromMillisecondsSinceEpoch(0).toIso8601String();
-    await _db.transaction(() async {
-      await (_db.update(_db.tmdbSeasons)..where((s) => s.tvId.equals(tvId)))
-          .write(TmdbSeasonsCompanion(lastUpdated: Value(epochDateStr)));
-      await (_db.update(_db.tmdbEpisodes)..where((e) => e.tvId.equals(tvId)))
-          .write(TmdbEpisodesCompanion(lastUpdated: Value(epochDateStr)));
+    await _retryOnLocked(() async {
+      await _db.transaction(() async {
+        await (_db.update(_db.tmdbSeasons)..where((s) => s.tvId.equals(tvId)))
+            .write(TmdbSeasonsCompanion(lastUpdated: Value(epochDateStr)));
+        await (_db.update(_db.tmdbEpisodes)..where((e) => e.tvId.equals(tvId)))
+            .write(TmdbEpisodesCompanion(lastUpdated: Value(epochDateStr)));
+      });
     });
   }
 
@@ -160,8 +193,9 @@ class LocalTitleRepository {
       String listName, List<int> tmdbIds, List<String> mediaTypes) async {
     if (tmdbIds.isEmpty) return;
 
-    await _db.transaction(() async {
-      for (var i = 0; i < tmdbIds.length; i++) {
+    await _retryOnLocked(() async {
+      await _db.transaction(() async {
+        for (var i = 0; i < tmdbIds.length; i++) {
         final id = tmdbIds[i];
         final type = mediaTypes[i];
 
@@ -190,10 +224,12 @@ class LocalTitleRepository {
         }
       }
     });
+  });
   }
 
   Future<void> clearList(String listName) async {
-    await _db.transaction(() async {
+    await _retryOnLocked(() async {
+      await _db.transaction(() async {
       final entries = await (_db.select(_db.userListEntries)
             ..where((e) => e.listName.equals(listName)))
           .get();
@@ -225,6 +261,7 @@ class LocalTitleRepository {
         }
       }
     });
+  });
   }
 
   Future<bool> hasRatedTitles(String listName) async {
@@ -568,25 +605,27 @@ class LocalTitleRepository {
     int offset = 0,
     int limit = 10,
   }) async {
-    final query = _buildJoinedQuery(
-      listName: listName,
-      filterText: filterText,
-      filterMediaType: filterMediaType,
-      filterGenres: filterGenres,
-      filterExcludeGenres: filterExcludeGenres,
-      filterByProviders: filterByProviders,
-      filterProvidersIds: filterProvidersIds,
-      sortOption: sortOption,
-      sortAscending: sortAscending,
-      filterRating: filterRating,
-      pinned: pinned,
-    );
+    return _retryOnLocked(() async {
+      final query = _buildJoinedQuery(
+        listName: listName,
+        filterText: filterText,
+        filterMediaType: filterMediaType,
+        filterGenres: filterGenres,
+        filterExcludeGenres: filterExcludeGenres,
+        filterByProviders: filterByProviders,
+        filterProvidersIds: filterProvidersIds,
+        sortOption: sortOption,
+        sortAscending: sortAscending,
+        filterRating: filterRating,
+        pinned: pinned,
+      );
 
-    query.limit(limit, offset: offset);
-    final rows = await query.get();
-    return rows
-        .map((row) => DriftMapper.toDomainTitle(row.readTable(_db.tmdbTitles)))
-        .toList();
+      query.limit(limit, offset: offset);
+      final rows = await query.get();
+      return rows
+          .map((row) => DriftMapper.toDomainTitle(row.readTable(_db.tmdbTitles)))
+          .toList();
+    });
   }
 
   Future<int> countTitlesFiltered({
@@ -600,31 +639,33 @@ class LocalTitleRepository {
     RatingFilter filterRating = RatingFilter.all,
     bool? pinned,
   }) async {
-    final countExp = _db.tmdbTitles.id.count();
-    final query = _db.selectOnly(_db.tmdbTitles).join([
-      innerJoin(
-        _db.userListEntries,
-        _db.userListEntries.tmdbId.equalsExp(_db.tmdbTitles.tmdbId) &
-            _db.userListEntries.mediaType.equalsExp(_db.tmdbTitles.mediaType),
-      ),
-    ])
-      ..addColumns([countExp]);
+    return _retryOnLocked(() async {
+      final countExp = _db.tmdbTitles.id.count();
+      final query = _db.selectOnly(_db.tmdbTitles).join([
+        innerJoin(
+          _db.userListEntries,
+          _db.userListEntries.tmdbId.equalsExp(_db.tmdbTitles.tmdbId) &
+              _db.userListEntries.mediaType.equalsExp(_db.tmdbTitles.mediaType),
+        ),
+      ])
+        ..addColumns([countExp]);
 
-    _applyFilters(
-      query: query,
-      listName: listName,
-      filterText: filterText,
-      filterMediaType: filterMediaType,
-      filterGenres: filterGenres,
-      filterExcludeGenres: filterExcludeGenres,
-      filterByProviders: filterByProviders,
-      filterProvidersIds: filterProvidersIds,
-      filterRating: filterRating,
-      pinned: pinned,
-    );
+      _applyFilters(
+        query: query,
+        listName: listName,
+        filterText: filterText,
+        filterMediaType: filterMediaType,
+        filterGenres: filterGenres,
+        filterExcludeGenres: filterExcludeGenres,
+        filterByProviders: filterByProviders,
+        filterProvidersIds: filterProvidersIds,
+        filterRating: filterRating,
+        pinned: pinned,
+      );
 
-    final result = await query.getSingle();
-    return result.read(countExp) ?? 0;
+      final result = await query.getSingle();
+      return result.read(countExp) ?? 0;
+    });
   }
 
   Future<bool> hasTitlesFiltered({
