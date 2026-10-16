@@ -79,32 +79,38 @@ class _ItemListState extends SearchableListState<ItemList> {
         : titleTheme.infoLineActiveFilterBackground;
 
     return [
-      ValueListenableBuilder<int?>(
-        valueListenable: widget.listService.selectedItemCount,
-        builder: (context, count, child) {
-          return DropdownSelector(
-            backgroundColor: backgroundColor,
-            textStyle: TextStyle(
-              color: textColor,
-              fontSize: 16,
-            ),
-            borderRadius: BorderRadius.circular(5),
-            leading: count != null
-                ? Text(
-                    count.toString(),
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 16,
-                    ),
-                  )
-                : null,
-            selectedOption: _controller.getSelectedTypeLabel(localizations),
-            options: _controller.titleTypes,
-            onSelected: (value) => _controller.setSelectedType(context, value),
-            arrowIcon: Icon(
-              Icons.arrow_drop_down,
-              color: textColor,
-            ),
+      ValueListenableBuilder<bool>(
+        valueListenable: widget.listService.isLoading,
+        builder: (context, isLoading, child) {
+          return ValueListenableBuilder<int?>(
+            valueListenable: widget.listService.selectedItemCount,
+            builder: (context, count, child) {
+              final showCount = count != null && !(count == 0 && isLoading);
+              return DropdownSelector(
+                backgroundColor: backgroundColor,
+                textStyle: TextStyle(
+                  color: textColor,
+                  fontSize: 16,
+                ),
+                borderRadius: BorderRadius.circular(5),
+                leading: showCount
+                    ? Text(
+                        count.toString(),
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: 16,
+                        ),
+                      )
+                    : null,
+                selectedOption: _controller.getSelectedTypeLabel(localizations),
+                options: _controller.titleTypes,
+                onSelected: (value) => _controller.setSelectedType(context, value),
+                arrowIcon: Icon(
+                  Icons.arrow_drop_down,
+                  color: textColor,
+                ),
+              );
+            },
           );
         },
       ),
