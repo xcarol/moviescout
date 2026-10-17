@@ -53,6 +53,11 @@ class _ItemListState extends SearchableListState<ItemList> {
   void initState() {
     super.initState();
     _controller = ListController(widget.listService);
+    final providerService =
+        Provider.of<TmdbProviderService>(context, listen: false);
+    if (providerService.isInitialized) {
+      _controller.setProviderListIds(providerService.enabledProviderIds);
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _controller.setupFilters();
@@ -85,7 +90,12 @@ class _ItemListState extends SearchableListState<ItemList> {
           return ValueListenableBuilder<int?>(
             valueListenable: widget.listService.selectedItemCount,
             builder: (context, count, child) {
-              final showCount = count != null && !(count == 0 && isLoading);
+              final hasValidActiveFilter =
+                  widget.listService.hasActiveFilter &&
+                      (!_controller.filterByProviders ||
+                          _controller.providerListIds.isNotEmpty);
+              final showCount = count != null &&
+                  (count > 0 || (hasValidActiveFilter && !isLoading));
               return DropdownSelector(
                 backgroundColor: backgroundColor,
                 textStyle: TextStyle(
