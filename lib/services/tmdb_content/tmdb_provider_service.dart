@@ -115,6 +115,7 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
         await fetchProviders();
         _setLocalProviders(_providerMap);
       } else {
+        _isInitialized = true;
         await fetchProviders();
       }
     } catch (error, stackTrace) {
@@ -213,6 +214,7 @@ class TmdbProviderService extends TmdbBaseService with ChangeNotifier {
         await fetchProviders();
         _setLocalProviders(_providerMap);
       } else {
+        _isInitialized = true;
         await fetchProviders();
       }
     } catch (error, stackTrace) {
