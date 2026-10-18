@@ -141,7 +141,19 @@ class _CommentDialogState extends State<CommentDialog> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          _dialogContentHeader(loc),
+          const SizedBox(height: 12),
+          _commentInputField(loc),
+        ],
+      ),
+    );
+  }
+
+  Widget _dialogContentHeader(AppLocalizations loc) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
             widget.title.name,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -150,29 +162,33 @@ class _CommentDialogState extends State<CommentDialog> {
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _controller,
-            autofocus: true,
-            enabled: !_isLoading,
-            maxLines: 6,
-            minLines: 3,
-            maxLength: 1000,
-            textCapitalization: TextCapitalization.sentences,
-            decoration: InputDecoration(
-              hintText: loc.writeComment,
-              border: const OutlineInputBorder(),
-              suffixIcon: _hasText && !_isLoading
-                  ? IconButton(
-                      icon: const Icon(Icons.clear, size: 18),
-                      tooltip:
-                          MaterialLocalizations.of(context).deleteButtonTooltip,
-                      onPressed: () => _controller.clear(),
-                    )
-                  : null,
-            ),
+        ),
+        if (_hasText && !_isLoading) ...[
+          const SizedBox(width: 8),
+          IconButton(
+            icon: const Icon(Icons.clear, size: 18),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
+            onPressed: () => _controller.clear(),
           ),
         ],
+      ],
+    );
+  }
+
+  Widget _commentInputField(AppLocalizations loc) {
+    return TextField(
+      controller: _controller,
+      autofocus: true,
+      enabled: !_isLoading,
+      maxLines: 6,
+      minLines: 3,
+      maxLength: 1000,
+      textCapitalization: TextCapitalization.sentences,
+      decoration: InputDecoration(
+        hintText: loc.writeComment,
+        border: const OutlineInputBorder(),
       ),
     );
   }
