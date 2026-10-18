@@ -1,8 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moviescout/main.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class LogsScreen extends StatefulWidget {
@@ -17,6 +21,7 @@ class _LogsScreenState extends State<LogsScreen>
   List<String> _logs = [];
   String _lastBackgroundRunHeader = 'none';
   final ScrollController _scrollController = ScrollController();
+  bool _isSharing = false;
 
   @override
   void initState() {
@@ -86,6 +91,65 @@ class _LogsScreenState extends State<LogsScreen>
     _loadState();
   }
 
+  Future<void> _shareLogs(BuildContext buttonContext) async {
+    if (_logs.isEmpty || _isSharing) return;
+
+    setState(() {
+      _isSharing = true;
+    });
+
+    try {
+      XFile xFile;
+      if (kIsWeb) {
+        final String logText = _logs.join('\n\n---\n\n');
+        xFile = XFile.fromData(
+          utf8.encode(logText),
+          mimeType: 'text/plain',
+          name: 'moviescout_logs.txt',
+        );
+      } else {
+        final tempDir = await getTemporaryDirectory();
+        final file = File('${tempDir.path}/moviescout_logs.txt');
+        final sink = file.openWrite();
+        try {
+          for (var i = 0; i < _logs.length; i++) {
+            if (i > 0) sink.write('\n\n---\n\n');
+            sink.write(_logs[i]);
+          }
+          await sink.flush();
+        } finally {
+          await sink.close();
+        }
+        xFile = XFile(file.path);
+      }
+
+      if (!buttonContext.mounted) return;
+      final box = buttonContext.findRenderObject() as RenderBox?;
+      final origin =
+          box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [xFile],
+          subject: 'App Logs',
+          sharePositionOrigin: origin,
+        ),
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error exporting logs: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSharing = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,13 +157,20 @@ class _LogsScreenState extends State<LogsScreen>
         title: const Text('App Logs'),
         actions: [
           if (_logs.isNotEmpty) ...[
-            IconButton(
-              icon: const Icon(Icons.share),
-              tooltip: 'Share logs',
-              onPressed: () {
-                final String logText = _logs.join('\n\n---\n\n');
-                SharePlus.instance
-                    .share(ShareParams(text: logText, subject: 'App Logs'));
+            Builder(
+              builder: (buttonContext) {
+                return IconButton(
+                  icon: _isSharing
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.share),
+                  tooltip: 'Share logs',
+                  onPressed:
+                      _isSharing ? null : () => _shareLogs(buttonContext),
+                );
               },
             ),
             IconButton(
