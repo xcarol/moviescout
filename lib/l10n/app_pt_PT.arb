@@ -234,5 +234,15 @@
   "deleteAccountConfirmTitle": "Eliminar conta",
   "deleteAccountConfirmMessage": "Tem a certeza de que pretende eliminar a sua conta? Esta ação é irreversível.",
   "deleteAccountSuccess": "A sua conta foi eliminada com sucesso",
-  "deleteAccountError": "Erro ao eliminar a conta"
+  "deleteAccountError": "Erro ao eliminar a conta",
+  "comments": "Comentários",
+  "addComment": "Adicionar comentário",
+  "editComment": "Editar comentário",
+  "deleteComment": "Eliminar comentário",
+  "writeComment": "Escreva um comentário...",
+  "noCommentsYet": "Ainda sem comentários",
+  "signInToComment": "É necessário ter sessão iniciada para adicionar um comentário.",
+  "deleteCommentConfirm": "Tem a certeza de que pretende eliminar o seu comentário?",
+  "save": "Guardar",
+  "you": "Tu"
 }

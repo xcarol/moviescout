@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
+import 'package:moviescout/models/title_comment.dart';
 import 'package:moviescout/services/core/cloud_database_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -288,6 +289,64 @@ class CloudTitleRepository {
       await _client
           .from('profiles')
           .upsert({'id': userId, 'providers_string': data});
+    });
+  }
+
+  Future<List<TitleComment>> fetchTitleComments({
+    required int tmdbId,
+    required String mediaType,
+  }) async {
+    return _retryOnFutureJwt(() async {
+      final response = await _client
+          .from('user_comments')
+          .select(
+              'id, user_id, tmdb_id, media_type, comment, created_at, updated_at, profiles(username)')
+          .eq('tmdb_id', tmdbId)
+          .eq('media_type', mediaType)
+          .order('created_at', ascending: false);
+
+      return (response as List<dynamic>).map((row) {
+        return TitleComment.fromMap(row as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+
+  Future<TitleComment> upsertComment({
+    required String userId,
+    required int tmdbId,
+    required String mediaType,
+    required String comment,
+  }) async {
+    return _retryOnFutureJwt(() async {
+      final response = await _client
+          .from('user_comments')
+          .upsert({
+            'user_id': userId,
+            'tmdb_id': tmdbId,
+            'media_type': mediaType,
+            'comment': comment,
+            'updated_at': DateTime.now().toUtc().toIso8601String(),
+          }, onConflict: 'user_id, tmdb_id, media_type')
+          .select(
+              'id, user_id, tmdb_id, media_type, comment, created_at, updated_at, profiles(username)')
+          .single();
+
+      return TitleComment.fromMap(response);
+    });
+  }
+
+  Future<void> deleteComment({
+    required String userId,
+    required int tmdbId,
+    required String mediaType,
+  }) async {
+    await _retryOnFutureJwt(() async {
+      await _client
+          .from('user_comments')
+          .delete()
+          .eq('user_id', userId)
+          .eq('tmdb_id', tmdbId)
+          .eq('media_type', mediaType);
     });
   }
 }

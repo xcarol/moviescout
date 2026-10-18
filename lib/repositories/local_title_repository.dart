@@ -6,6 +6,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/user_list_entry.dart';
+import 'package:moviescout/models/title_comment.dart';
 import 'package:moviescout/services/core/local_database_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
@@ -196,72 +197,79 @@ class LocalTitleRepository {
     await _retryOnLocked(() async {
       await _db.transaction(() async {
         for (var i = 0; i < tmdbIds.length; i++) {
-        final id = tmdbIds[i];
-        final type = mediaTypes[i];
+          final id = tmdbIds[i];
+          final type = mediaTypes[i];
 
-        await (_db.delete(_db.userListEntries)
-              ..where((e) =>
-                  e.listName.equals(listName) &
-                  e.tmdbId.equals(id) &
-                  e.mediaType.equals(type)))
-            .go();
-
-        final remainingEntries = await (_db.select(_db.userListEntries)
-              ..where((e) => e.tmdbId.equals(id) & e.mediaType.equals(type)))
-            .get();
-
-        final titleId = '${id}_$type';
-        if (remainingEntries.isEmpty) {
-          await (_db.delete(_db.tmdbTitles)..where((t) => t.id.equals(titleId)))
+          await (_db.delete(_db.userListEntries)
+                ..where((e) =>
+                    e.listName.equals(listName) &
+                    e.tmdbId.equals(id) &
+                    e.mediaType.equals(type)))
               .go();
-          if (type == ApiConstants.tv || type == AppConstants.miniseries) {
-            await (_db.delete(_db.tmdbSeasons)..where((s) => s.tvId.equals(id)))
+
+          final remainingEntries = await (_db.select(_db.userListEntries)
+                ..where((e) => e.tmdbId.equals(id) & e.mediaType.equals(type)))
+              .get();
+
+          final titleId = '${id}_$type';
+          if (remainingEntries.isEmpty) {
+            await (_db.delete(_db.tmdbTitles)
+                  ..where((t) => t.id.equals(titleId)))
                 .go();
-            await (_db.delete(_db.tmdbEpisodes)
-                  ..where((e) => e.tvId.equals(id)))
+            await (_db.delete(_db.titleComments)
+                  ..where(
+                      (c) => c.tmdbId.equals(id) & c.mediaType.equals(type)))
                 .go();
+            if (type == ApiConstants.tv || type == AppConstants.miniseries) {
+              await (_db.delete(_db.tmdbSeasons)
+                    ..where((s) => s.tvId.equals(id)))
+                  .go();
+              await (_db.delete(_db.tmdbEpisodes)
+                    ..where((e) => e.tvId.equals(id)))
+                  .go();
+            }
           }
         }
-      }
+      });
     });
-  });
   }
 
   Future<void> clearList(String listName) async {
     await _retryOnLocked(() async {
       await _db.transaction(() async {
-      final entries = await (_db.select(_db.userListEntries)
-            ..where((e) => e.listName.equals(listName)))
-          .get();
-
-      await (_db.delete(_db.userListEntries)
-            ..where((e) => e.listName.equals(listName)))
-          .go();
-
-      for (final entry in entries) {
-        final remaining = await (_db.select(_db.userListEntries)
-              ..where((e) =>
-                  e.tmdbId.equals(entry.tmdbId) &
-                  e.mediaType.equals(entry.mediaType)))
+        final entries = await (_db.select(_db.userListEntries)
+              ..where((e) => e.listName.equals(listName)))
             .get();
 
-        final titleId = '${entry.tmdbId}_${entry.mediaType}';
-        if (remaining.isEmpty) {
-          await (_db.delete(_db.tmdbTitles)..where((t) => t.id.equals(titleId)))
-              .go();
-          if (entry.mediaType == ApiConstants.tv ||
-              entry.mediaType == AppConstants.miniseries) {
-            await (_db.delete(_db.tmdbSeasons)
-                  ..where((s) => s.tvId.equals(entry.tmdbId)))
+        await (_db.delete(_db.userListEntries)
+              ..where((e) => e.listName.equals(listName)))
+            .go();
+
+        for (final entry in entries) {
+          final remaining = await (_db.select(_db.userListEntries)
+                ..where((e) =>
+                    e.tmdbId.equals(entry.tmdbId) &
+                    e.mediaType.equals(entry.mediaType)))
+              .get();
+
+          final titleId = '${entry.tmdbId}_${entry.mediaType}';
+          if (remaining.isEmpty) {
+            await (_db.delete(_db.tmdbTitles)
+                  ..where((t) => t.id.equals(titleId)))
                 .go();
-            await (_db.delete(_db.tmdbEpisodes)
-                  ..where((e) => e.tvId.equals(entry.tmdbId)))
-                .go();
+            if (entry.mediaType == ApiConstants.tv ||
+                entry.mediaType == AppConstants.miniseries) {
+              await (_db.delete(_db.tmdbSeasons)
+                    ..where((s) => s.tvId.equals(entry.tmdbId)))
+                  .go();
+              await (_db.delete(_db.tmdbEpisodes)
+                    ..where((e) => e.tvId.equals(entry.tmdbId)))
+                  .go();
+            }
           }
         }
-      }
+      });
     });
-  });
   }
 
   Future<bool> hasRatedTitles(String listName) async {
@@ -623,7 +631,8 @@ class LocalTitleRepository {
       query.limit(limit, offset: offset);
       final rows = await query.get();
       return rows
-          .map((row) => DriftMapper.toDomainTitle(row.readTable(_db.tmdbTitles)))
+          .map(
+              (row) => DriftMapper.toDomainTitle(row.readTable(_db.tmdbTitles)))
           .toList();
     });
   }
@@ -691,5 +700,54 @@ class LocalTitleRepository {
       pinned: pinned,
     );
     return count > 0;
+  }
+
+  Stream<List<TitleComment>> watchCommentsForTitle(
+      int tmdbId, String mediaType) {
+    return (_db.select(_db.titleComments)
+          ..where(
+              (c) => c.tmdbId.equals(tmdbId) & c.mediaType.equals(mediaType))
+          ..orderBy([(c) => OrderingTerm.desc(c.createdAt)]))
+        .watch()
+        .map((rows) => rows.map(DriftMapper.toDomainComment).toList());
+  }
+
+  Future<List<TitleComment>> getCommentsForTitle(
+      int tmdbId, String mediaType) async {
+    final rows = await (_db.select(_db.titleComments)
+          ..where(
+              (c) => c.tmdbId.equals(tmdbId) & c.mediaType.equals(mediaType))
+          ..orderBy([(c) => OrderingTerm.desc(c.createdAt)]))
+        .get();
+    return rows.map(DriftMapper.toDomainComment).toList();
+  }
+
+  Future<void> saveComments(List<TitleComment> comments) async {
+    if (comments.isEmpty) return;
+    await _retryOnLocked(() async {
+      await _db.batch((batch) {
+        for (final comment in comments) {
+          batch.insert(
+            _db.titleComments,
+            DriftMapper.toCompanionComment(comment),
+            mode: InsertMode.insertOrReplace,
+          );
+        }
+      });
+    });
+  }
+
+  Future<void> saveComment(TitleComment comment) async {
+    await _retryOnLocked(() async {
+      await _db
+          .into(_db.titleComments)
+          .insertOnConflictUpdate(DriftMapper.toCompanionComment(comment));
+    });
+  }
+
+  Future<void> deleteComment(String id) async {
+    await _retryOnLocked(() async {
+      await (_db.delete(_db.titleComments)..where((c) => c.id.equals(id))).go();
+    });
   }
 }

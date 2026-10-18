@@ -752,6 +752,38 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get deleteAccountError => 'Erro ao excluir conta';
+
+  @override
+  String get comments => 'Comentários';
+
+  @override
+  String get addComment => 'Adicionar comentário';
+
+  @override
+  String get editComment => 'Editar comentário';
+
+  @override
+  String get deleteComment => 'Excluir comentário';
+
+  @override
+  String get writeComment => 'Escreva um comentário...';
+
+  @override
+  String get noCommentsYet => 'Nenhum comentário ainda';
+
+  @override
+  String get signInToComment =>
+      'Você precisa estar conectado para adicionar um comentário.';
+
+  @override
+  String get deleteCommentConfirm =>
+      'Tem certeza de que deseja excluir seu comentário?';
+
+  @override
+  String get save => 'Salvar';
+
+  @override
+  String get you => 'Você';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -1503,4 +1535,36 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get deleteAccountError => 'Erro ao eliminar a conta';
+
+  @override
+  String get comments => 'Comentários';
+
+  @override
+  String get addComment => 'Adicionar comentário';
+
+  @override
+  String get editComment => 'Editar comentário';
+
+  @override
+  String get deleteComment => 'Eliminar comentário';
+
+  @override
+  String get writeComment => 'Escreva um comentário...';
+
+  @override
+  String get noCommentsYet => 'Ainda sem comentários';
+
+  @override
+  String get signInToComment =>
+      'É necessário ter sessão iniciada para adicionar um comentário.';
+
+  @override
+  String get deleteCommentConfirm =>
+      'Tem a certeza de que pretende eliminar o seu comentário?';
+
+  @override
+  String get save => 'Guardar';
+
+  @override
+  String get you => 'Tu';
 }

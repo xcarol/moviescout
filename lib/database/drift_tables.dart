@@ -159,3 +159,22 @@ class TmdbEpisodes extends Table {
   @override
   Set<Column> get primaryKey => {id};
 }
+
+@DataClassName('TitleCommentData')
+@TableIndex(name: 'idx_title_comments_lookup', columns: {#tmdbId, #mediaType})
+@TableIndex(
+    name: 'idx_title_comments_user_lookup',
+    columns: {#userId, #tmdbId, #mediaType})
+class TitleComments extends Table {
+  TextColumn get id => text()();
+  TextColumn get userId => text()();
+  TextColumn get username => text().nullable()();
+  IntColumn get tmdbId => integer()();
+  TextColumn get mediaType => text()();
+  TextColumn get comment => text()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}

@@ -755,4 +755,34 @@ class AppLocalizationsEu extends AppLocalizations {
 
   @override
   String get deleteAccountError => 'Errore bat gertatu da kontua ezabatzean';
+
+  @override
+  String get comments => 'Iruzkinak';
+
+  @override
+  String get addComment => 'Gehitu iruzkina';
+
+  @override
+  String get editComment => 'Editatu iruzkina';
+
+  @override
+  String get deleteComment => 'Ezabatu iruzkina';
+
+  @override
+  String get writeComment => 'Idatzi iruzkin bat...';
+
+  @override
+  String get noCommentsYet => 'Ez dago iruzkinik oraindik';
+
+  @override
+  String get signInToComment => 'Saioa hasi behar duzu iruzkin bat gehitzeko.';
+
+  @override
+  String get deleteCommentConfirm => 'Ziur zure iruzkina ezabatu nahi duzula?';
+
+  @override
+  String get save => 'Gorde';
+
+  @override
+  String get you => 'Zu';
 }

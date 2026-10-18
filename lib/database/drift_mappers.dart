@@ -4,6 +4,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/user_list_entry.dart';
+import 'package:moviescout/models/title_comment.dart';
 
 class DriftMapper {
   static TmdbTitle toDomainTitle(TmdbTitleData data) {
@@ -214,6 +215,32 @@ class DriftMapper {
       crewJson: Value(domainObj.crewJson),
       imagesJson: Value(domainObj.imagesJson),
       videosJson: Value(domainObj.videosJson),
+    );
+  }
+
+  static TitleComment toDomainComment(TitleCommentData data) {
+    return TitleComment(
+      id: data.id,
+      userId: data.userId,
+      username: data.username,
+      tmdbId: data.tmdbId,
+      mediaType: data.mediaType,
+      comment: data.comment,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    );
+  }
+
+  static TitleCommentsCompanion toCompanionComment(TitleComment domainObj) {
+    return TitleCommentsCompanion(
+      id: Value(domainObj.id),
+      userId: Value(domainObj.userId),
+      username: Value(domainObj.username),
+      tmdbId: Value(domainObj.tmdbId),
+      mediaType: Value(domainObj.mediaType),
+      comment: Value(domainObj.comment),
+      createdAt: Value(domainObj.createdAt),
+      updatedAt: Value(domainObj.updatedAt),
     );
   }
 }

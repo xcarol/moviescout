@@ -753,4 +753,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountError => 'Error deleting account';
+
+  @override
+  String get comments => 'Comments';
+
+  @override
+  String get addComment => 'Add comment';
+
+  @override
+  String get editComment => 'Edit comment';
+
+  @override
+  String get deleteComment => 'Delete comment';
+
+  @override
+  String get writeComment => 'Write a comment...';
+
+  @override
+  String get noCommentsYet => 'No comments yet';
+
+  @override
+  String get signInToComment => 'Sign in to add a comment';
+
+  @override
+  String get deleteCommentConfirm =>
+      'Are you sure you want to delete your comment?';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get you => 'You';
 }

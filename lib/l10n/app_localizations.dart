@@ -1504,6 +1504,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error deleting account'**
   String get deleteAccountError;
+
+  /// No description provided for @comments.
+  ///
+  /// In en, this message translates to:
+  /// **'Comments'**
+  String get comments;
+
+  /// No description provided for @addComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Add comment'**
+  String get addComment;
+
+  /// No description provided for @editComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit comment'**
+  String get editComment;
+
+  /// No description provided for @deleteComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete comment'**
+  String get deleteComment;
+
+  /// No description provided for @writeComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a comment...'**
+  String get writeComment;
+
+  /// No description provided for @noCommentsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No comments yet'**
+  String get noCommentsYet;
+
+  /// No description provided for @signInToComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to add a comment'**
+  String get signInToComment;
+
+  /// No description provided for @deleteCommentConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your comment?'**
+  String get deleteCommentConfirm;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @you.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get you;
 }
 
 class _AppLocalizationsDelegate

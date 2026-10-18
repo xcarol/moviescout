@@ -755,4 +755,35 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get deleteAccountError => 'Error en eliminar el compte';
+
+  @override
+  String get comments => 'Comentaris';
+
+  @override
+  String get addComment => 'Afegir comentari';
+
+  @override
+  String get editComment => 'Editar comentari';
+
+  @override
+  String get deleteComment => 'Eliminar comentari';
+
+  @override
+  String get writeComment => 'Escriu un comentari...';
+
+  @override
+  String get noCommentsYet => 'Encara no hi ha cap comentari';
+
+  @override
+  String get signInToComment => 'Inicia sessió per afegir un comentari';
+
+  @override
+  String get deleteCommentConfirm =>
+      'Segur que vols eliminar el teu comentari?';
+
+  @override
+  String get save => 'Desa';
+
+  @override
+  String get you => 'Tu';
 }

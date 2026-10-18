@@ -14,6 +14,8 @@ import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/repositories/local_title_repository.dart'
     show LocalTitleRepository;
+import 'package:moviescout/widgets/buttons/comment_button.dart';
+import 'package:moviescout/widgets/comments/title_comments_section.dart';
 import 'package:moviescout/screens/collection_details.dart';
 import 'package:moviescout/screens/season_details.dart';
 import 'package:moviescout/screens/title_people_list.dart';
@@ -579,6 +581,12 @@ class _TitleDetailsState extends State<TitleDetails> {
           _recommended(title),
           const SizedBox(height: 30),
           _castAndCrew(title, PersonAttributes.crew),
+          const SizedBox(height: 20),
+          Divider(
+            color: Theme.of(context).extension<CustomColors>()!.dividerColor,
+          ),
+          const SizedBox(height: 10),
+          TitleCommentsSection(title: title),
         ],
       ),
     );
@@ -734,6 +742,8 @@ class _TitleDetailsState extends State<TitleDetails> {
         pinButton(context, title),
         const SizedBox(width: 8),
         notifyButton(context, title),
+        const SizedBox(width: 8),
+        commentButton(context, title),
         const Spacer(),
         TrailerButtons(videos: title.videos),
       ],
