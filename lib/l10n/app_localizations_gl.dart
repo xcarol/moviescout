@@ -756,4 +756,36 @@ class AppLocalizationsGl extends AppLocalizations {
 
   @override
   String get deleteAccountError => 'Produciuse un erro ao eliminar a conta';
+
+  @override
+  String get comments => 'Comentarios';
+
+  @override
+  String get addComment => 'Engadir comentario';
+
+  @override
+  String get editComment => 'Editar comentario';
+
+  @override
+  String get deleteComment => 'Eliminar comentario';
+
+  @override
+  String get writeComment => 'Escribe un comentario...';
+
+  @override
+  String get noCommentsYet => 'Aínda non hai comentarios';
+
+  @override
+  String get signInToComment =>
+      'Debes iniciar sesión para engadir un comentario.';
+
+  @override
+  String get deleteCommentConfirm =>
+      'Estás seguro de que queres eliminar o teu comentario?';
+
+  @override
+  String get save => 'Gardar';
+
+  @override
+  String get you => 'Ti';
 }

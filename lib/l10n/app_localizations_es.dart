@@ -755,4 +755,35 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get deleteAccountError => 'Error al eliminar la cuenta';
+
+  @override
+  String get comments => 'Comentarios';
+
+  @override
+  String get addComment => 'Añadir comentario';
+
+  @override
+  String get editComment => 'Editar comentario';
+
+  @override
+  String get deleteComment => 'Eliminar comentario';
+
+  @override
+  String get writeComment => 'Escribe un comentario...';
+
+  @override
+  String get noCommentsYet => 'Aún no hay comentarios';
+
+  @override
+  String get signInToComment => 'Inicia sesión para añadir un comentario';
+
+  @override
+  String get deleteCommentConfirm =>
+      '¿Seguro que quieres eliminar tu comentario?';
+
+  @override
+  String get save => 'Guardar';
+
+  @override
+  String get you => 'Tú';
 }

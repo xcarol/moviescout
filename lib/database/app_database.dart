@@ -13,12 +13,13 @@ part 'app_database.g.dart';
   TmdbTitles,
   TmdbSeasons,
   TmdbEpisodes,
+  TitleComments,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? e]) : super(e ?? _openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration {
@@ -42,6 +43,9 @@ class AppDatabase extends _$AppDatabase {
       onUpgrade: (Migrator m, int from, int to) async {
         if (from < 2) {
           await _migrateUserListEntriesOrder();
+        }
+        if (from < 3) {
+          await m.createTable(titleComments);
         }
       },
       beforeOpen: (details) async {

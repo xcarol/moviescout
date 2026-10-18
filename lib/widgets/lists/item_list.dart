@@ -90,10 +90,9 @@ class _ItemListState extends SearchableListState<ItemList> {
           return ValueListenableBuilder<int?>(
             valueListenable: widget.listService.selectedItemCount,
             builder: (context, count, child) {
-              final hasValidActiveFilter =
-                  widget.listService.hasActiveFilter &&
-                      (!_controller.filterByProviders ||
-                          _controller.providerListIds.isNotEmpty);
+              final hasValidActiveFilter = widget.listService.hasActiveFilter &&
+                  (!_controller.filterByProviders ||
+                      _controller.providerListIds.isNotEmpty);
               final showCount = count != null &&
                   (count > 0 || (hasValidActiveFilter && !isLoading));
               return DropdownSelector(
@@ -114,7 +113,8 @@ class _ItemListState extends SearchableListState<ItemList> {
                     : null,
                 selectedOption: _controller.getSelectedTypeLabel(localizations),
                 options: _controller.titleTypes,
-                onSelected: (value) => _controller.setSelectedType(context, value),
+                onSelected: (value) =>
+                    _controller.setSelectedType(context, value),
                 arrowIcon: Icon(
                   Icons.arrow_drop_down,
                   color: textColor,

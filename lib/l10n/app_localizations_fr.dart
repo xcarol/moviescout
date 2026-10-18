@@ -757,4 +757,36 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get deleteAccountError => 'Erreur lors de la suppression du compte';
+
+  @override
+  String get comments => 'Commentaires';
+
+  @override
+  String get addComment => 'Ajouter un commentaire';
+
+  @override
+  String get editComment => 'Modifier le commentaire';
+
+  @override
+  String get deleteComment => 'Supprimer le commentaire';
+
+  @override
+  String get writeComment => 'Écrire un commentaire...';
+
+  @override
+  String get noCommentsYet => 'Aucun commentaire pour le moment';
+
+  @override
+  String get signInToComment =>
+      'Vous devez être connecté pour ajouter un commentaire.';
+
+  @override
+  String get deleteCommentConfirm =>
+      'Êtes-vous sûr de vouloir supprimer votre commentaire ?';
+
+  @override
+  String get save => 'Enregistrer';
+
+  @override
+  String get you => 'Vous';
 }

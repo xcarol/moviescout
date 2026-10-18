@@ -234,5 +234,15 @@
   "deleteAccountConfirmTitle": "Excluir conta",
   "deleteAccountConfirmMessage": "Tem certeza de que deseja excluir sua conta? Esta ação é irreversível.",
   "deleteAccountSuccess": "Sua conta foi excluída com sucesso",
-  "deleteAccountError": "Erro ao excluir conta"
+  "deleteAccountError": "Erro ao excluir conta",
+  "comments": "Comentários",
+  "addComment": "Adicionar comentário",
+  "editComment": "Editar comentário",
+  "deleteComment": "Excluir comentário",
+  "writeComment": "Escreva um comentário...",
+  "noCommentsYet": "Nenhum comentário ainda",
+  "signInToComment": "Você precisa estar conectado para adicionar um comentário.",
+  "deleteCommentConfirm": "Tem certeza de que deseja excluir seu comentário?",
+  "save": "Salvar",
+  "you": "Você"
 }

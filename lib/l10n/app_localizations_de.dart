@@ -756,4 +756,36 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get deleteAccountError => 'Fehler beim Löschen des Kontos';
+
+  @override
+  String get comments => 'Kommentare';
+
+  @override
+  String get addComment => 'Kommentar hinzufügen';
+
+  @override
+  String get editComment => 'Kommentar bearbeiten';
+
+  @override
+  String get deleteComment => 'Kommentar löschen';
+
+  @override
+  String get writeComment => 'Schreibe einen Kommentar...';
+
+  @override
+  String get noCommentsYet => 'Noch keine Kommentare';
+
+  @override
+  String get signInToComment =>
+      'Du musst angemeldet sein, um einen Kommentar hinzuzufügen.';
+
+  @override
+  String get deleteCommentConfirm =>
+      'Möchtest du deinen Kommentar wirklich löschen?';
+
+  @override
+  String get save => 'Speichern';
+
+  @override
+  String get you => 'Du';
 }
