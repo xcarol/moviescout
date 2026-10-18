@@ -9,6 +9,7 @@ import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/comment_dialog.dart';
+import 'package:moviescout/widgets/text_and_info/expandable_text.dart';
 import 'package:provider/provider.dart';
 
 class TitleCommentsSection extends StatefulWidget {
@@ -269,8 +270,9 @@ class _TitleCommentsSectionState extends State<TitleCommentsSection> {
   }
 
   Widget _commentCardBody(TitleComment comment) {
-    return Text(
-      comment.comment,
+    return ExpandableText(
+      text: comment.comment,
+      initialMaxLines: 3,
       style: const TextStyle(fontSize: 14),
     );
   }
