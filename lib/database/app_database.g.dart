@@ -4050,6 +4050,425 @@ class TmdbEpisodesCompanion extends UpdateCompanion<TmdbEpisodeData> {
   }
 }
 
+class $TitleCommentsTable extends TitleComments
+    with TableInfo<$TitleCommentsTable, TitleCommentData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TitleCommentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+      'user_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _usernameMeta =
+      const VerificationMeta('username');
+  @override
+  late final GeneratedColumn<String> username = GeneratedColumn<String>(
+      'username', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _tmdbIdMeta = const VerificationMeta('tmdbId');
+  @override
+  late final GeneratedColumn<int> tmdbId = GeneratedColumn<int>(
+      'tmdb_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _mediaTypeMeta =
+      const VerificationMeta('mediaType');
+  @override
+  late final GeneratedColumn<String> mediaType = GeneratedColumn<String>(
+      'media_type', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _commentMeta =
+      const VerificationMeta('comment');
+  @override
+  late final GeneratedColumn<String> comment = GeneratedColumn<String>(
+      'comment', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, userId, username, tmdbId, mediaType, comment, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'title_comments';
+  @override
+  VerificationContext validateIntegrity(Insertable<TitleCommentData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(_userIdMeta,
+          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('username')) {
+      context.handle(_usernameMeta,
+          username.isAcceptableOrUnknown(data['username']!, _usernameMeta));
+    }
+    if (data.containsKey('tmdb_id')) {
+      context.handle(_tmdbIdMeta,
+          tmdbId.isAcceptableOrUnknown(data['tmdb_id']!, _tmdbIdMeta));
+    } else if (isInserting) {
+      context.missing(_tmdbIdMeta);
+    }
+    if (data.containsKey('media_type')) {
+      context.handle(_mediaTypeMeta,
+          mediaType.isAcceptableOrUnknown(data['media_type']!, _mediaTypeMeta));
+    } else if (isInserting) {
+      context.missing(_mediaTypeMeta);
+    }
+    if (data.containsKey('comment')) {
+      context.handle(_commentMeta,
+          comment.isAcceptableOrUnknown(data['comment']!, _commentMeta));
+    } else if (isInserting) {
+      context.missing(_commentMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TitleCommentData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TitleCommentData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      userId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}user_id'])!,
+      username: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}username']),
+      tmdbId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}tmdb_id'])!,
+      mediaType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}media_type'])!,
+      comment: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}comment'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $TitleCommentsTable createAlias(String alias) {
+    return $TitleCommentsTable(attachedDatabase, alias);
+  }
+}
+
+class TitleCommentData extends DataClass
+    implements Insertable<TitleCommentData> {
+  final String id;
+  final String userId;
+  final String? username;
+  final int tmdbId;
+  final String mediaType;
+  final String comment;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const TitleCommentData(
+      {required this.id,
+      required this.userId,
+      this.username,
+      required this.tmdbId,
+      required this.mediaType,
+      required this.comment,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['user_id'] = Variable<String>(userId);
+    if (!nullToAbsent || username != null) {
+      map['username'] = Variable<String>(username);
+    }
+    map['tmdb_id'] = Variable<int>(tmdbId);
+    map['media_type'] = Variable<String>(mediaType);
+    map['comment'] = Variable<String>(comment);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  TitleCommentsCompanion toCompanion(bool nullToAbsent) {
+    return TitleCommentsCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      username: username == null && nullToAbsent
+          ? const Value.absent()
+          : Value(username),
+      tmdbId: Value(tmdbId),
+      mediaType: Value(mediaType),
+      comment: Value(comment),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory TitleCommentData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TitleCommentData(
+      id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String>(json['userId']),
+      username: serializer.fromJson<String?>(json['username']),
+      tmdbId: serializer.fromJson<int>(json['tmdbId']),
+      mediaType: serializer.fromJson<String>(json['mediaType']),
+      comment: serializer.fromJson<String>(json['comment']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String>(userId),
+      'username': serializer.toJson<String?>(username),
+      'tmdbId': serializer.toJson<int>(tmdbId),
+      'mediaType': serializer.toJson<String>(mediaType),
+      'comment': serializer.toJson<String>(comment),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  TitleCommentData copyWith(
+          {String? id,
+          String? userId,
+          Value<String?> username = const Value.absent(),
+          int? tmdbId,
+          String? mediaType,
+          String? comment,
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      TitleCommentData(
+        id: id ?? this.id,
+        userId: userId ?? this.userId,
+        username: username.present ? username.value : this.username,
+        tmdbId: tmdbId ?? this.tmdbId,
+        mediaType: mediaType ?? this.mediaType,
+        comment: comment ?? this.comment,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  TitleCommentData copyWithCompanion(TitleCommentsCompanion data) {
+    return TitleCommentData(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      username: data.username.present ? data.username.value : this.username,
+      tmdbId: data.tmdbId.present ? data.tmdbId.value : this.tmdbId,
+      mediaType: data.mediaType.present ? data.mediaType.value : this.mediaType,
+      comment: data.comment.present ? data.comment.value : this.comment,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TitleCommentData(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('username: $username, ')
+          ..write('tmdbId: $tmdbId, ')
+          ..write('mediaType: $mediaType, ')
+          ..write('comment: $comment, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id, userId, username, tmdbId, mediaType, comment, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TitleCommentData &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.username == this.username &&
+          other.tmdbId == this.tmdbId &&
+          other.mediaType == this.mediaType &&
+          other.comment == this.comment &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class TitleCommentsCompanion extends UpdateCompanion<TitleCommentData> {
+  final Value<String> id;
+  final Value<String> userId;
+  final Value<String?> username;
+  final Value<int> tmdbId;
+  final Value<String> mediaType;
+  final Value<String> comment;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const TitleCommentsCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.username = const Value.absent(),
+    this.tmdbId = const Value.absent(),
+    this.mediaType = const Value.absent(),
+    this.comment = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TitleCommentsCompanion.insert({
+    required String id,
+    required String userId,
+    this.username = const Value.absent(),
+    required int tmdbId,
+    required String mediaType,
+    required String comment,
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        userId = Value(userId),
+        tmdbId = Value(tmdbId),
+        mediaType = Value(mediaType),
+        comment = Value(comment);
+  static Insertable<TitleCommentData> custom({
+    Expression<String>? id,
+    Expression<String>? userId,
+    Expression<String>? username,
+    Expression<int>? tmdbId,
+    Expression<String>? mediaType,
+    Expression<String>? comment,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (username != null) 'username': username,
+      if (tmdbId != null) 'tmdb_id': tmdbId,
+      if (mediaType != null) 'media_type': mediaType,
+      if (comment != null) 'comment': comment,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TitleCommentsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? userId,
+      Value<String?>? username,
+      Value<int>? tmdbId,
+      Value<String>? mediaType,
+      Value<String>? comment,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt,
+      Value<int>? rowid}) {
+    return TitleCommentsCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      username: username ?? this.username,
+      tmdbId: tmdbId ?? this.tmdbId,
+      mediaType: mediaType ?? this.mediaType,
+      comment: comment ?? this.comment,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (username.present) {
+      map['username'] = Variable<String>(username.value);
+    }
+    if (tmdbId.present) {
+      map['tmdb_id'] = Variable<int>(tmdbId.value);
+    }
+    if (mediaType.present) {
+      map['media_type'] = Variable<String>(mediaType.value);
+    }
+    if (comment.present) {
+      map['comment'] = Variable<String>(comment.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TitleCommentsCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('username: $username, ')
+          ..write('tmdbId: $tmdbId, ')
+          ..write('mediaType: $mediaType, ')
+          ..write('comment: $comment, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4058,6 +4477,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $TmdbTitlesTable tmdbTitles = $TmdbTitlesTable(this);
   late final $TmdbSeasonsTable tmdbSeasons = $TmdbSeasonsTable(this);
   late final $TmdbEpisodesTable tmdbEpisodes = $TmdbEpisodesTable(this);
+  late final $TitleCommentsTable titleComments = $TitleCommentsTable(this);
   late final Index idxUserListEntriesListOrder = Index(
       'idx_user_list_entries_list_order',
       'CREATE INDEX idx_user_list_entries_list_order ON user_list_entries (list_name, created_at)');
@@ -4070,6 +4490,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       'CREATE INDEX idx_seasons_tv_id ON tmdb_seasons (tv_id)');
   late final Index idxEpisodesTvId = Index('idx_episodes_tv_id',
       'CREATE INDEX idx_episodes_tv_id ON tmdb_episodes (tv_id)');
+  late final Index idxTitleCommentsLookup = Index('idx_title_comments_lookup',
+      'CREATE INDEX idx_title_comments_lookup ON title_comments (tmdb_id, media_type)');
+  late final Index idxTitleCommentsUserLookup = Index(
+      'idx_title_comments_user_lookup',
+      'CREATE INDEX idx_title_comments_user_lookup ON title_comments (user_id, tmdb_id, media_type)');
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4079,11 +4504,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         tmdbTitles,
         tmdbSeasons,
         tmdbEpisodes,
+        titleComments,
         idxUserListEntriesListOrder,
         idxUserListEntriesLookup,
         idxTmdbTitlesLookup,
         idxSeasonsTvId,
-        idxEpisodesTvId
+        idxEpisodesTvId,
+        idxTitleCommentsLookup,
+        idxTitleCommentsUserLookup
       ];
 }
 
@@ -5817,6 +6245,224 @@ typedef $$TmdbEpisodesTableProcessedTableManager = ProcessedTableManager<
     ),
     TmdbEpisodeData,
     PrefetchHooks Function()>;
+typedef $$TitleCommentsTableCreateCompanionBuilder = TitleCommentsCompanion
+    Function({
+  required String id,
+  required String userId,
+  Value<String?> username,
+  required int tmdbId,
+  required String mediaType,
+  required String comment,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
+});
+typedef $$TitleCommentsTableUpdateCompanionBuilder = TitleCommentsCompanion
+    Function({
+  Value<String> id,
+  Value<String> userId,
+  Value<String?> username,
+  Value<int> tmdbId,
+  Value<String> mediaType,
+  Value<String> comment,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
+});
+
+class $$TitleCommentsTableFilterComposer
+    extends Composer<_$AppDatabase, $TitleCommentsTable> {
+  $$TitleCommentsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get username => $composableBuilder(
+      column: $table.username, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get tmdbId => $composableBuilder(
+      column: $table.tmdbId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get mediaType => $composableBuilder(
+      column: $table.mediaType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get comment => $composableBuilder(
+      column: $table.comment, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$TitleCommentsTableOrderingComposer
+    extends Composer<_$AppDatabase, $TitleCommentsTable> {
+  $$TitleCommentsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get username => $composableBuilder(
+      column: $table.username, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get tmdbId => $composableBuilder(
+      column: $table.tmdbId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get mediaType => $composableBuilder(
+      column: $table.mediaType, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get comment => $composableBuilder(
+      column: $table.comment, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$TitleCommentsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TitleCommentsTable> {
+  $$TitleCommentsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get username =>
+      $composableBuilder(column: $table.username, builder: (column) => column);
+
+  GeneratedColumn<int> get tmdbId =>
+      $composableBuilder(column: $table.tmdbId, builder: (column) => column);
+
+  GeneratedColumn<String> get mediaType =>
+      $composableBuilder(column: $table.mediaType, builder: (column) => column);
+
+  GeneratedColumn<String> get comment =>
+      $composableBuilder(column: $table.comment, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$TitleCommentsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $TitleCommentsTable,
+    TitleCommentData,
+    $$TitleCommentsTableFilterComposer,
+    $$TitleCommentsTableOrderingComposer,
+    $$TitleCommentsTableAnnotationComposer,
+    $$TitleCommentsTableCreateCompanionBuilder,
+    $$TitleCommentsTableUpdateCompanionBuilder,
+    (
+      TitleCommentData,
+      BaseReferences<_$AppDatabase, $TitleCommentsTable, TitleCommentData>
+    ),
+    TitleCommentData,
+    PrefetchHooks Function()> {
+  $$TitleCommentsTableTableManager(_$AppDatabase db, $TitleCommentsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TitleCommentsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TitleCommentsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TitleCommentsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> userId = const Value.absent(),
+            Value<String?> username = const Value.absent(),
+            Value<int> tmdbId = const Value.absent(),
+            Value<String> mediaType = const Value.absent(),
+            Value<String> comment = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TitleCommentsCompanion(
+            id: id,
+            userId: userId,
+            username: username,
+            tmdbId: tmdbId,
+            mediaType: mediaType,
+            comment: comment,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String userId,
+            Value<String?> username = const Value.absent(),
+            required int tmdbId,
+            required String mediaType,
+            required String comment,
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TitleCommentsCompanion.insert(
+            id: id,
+            userId: userId,
+            username: username,
+            tmdbId: tmdbId,
+            mediaType: mediaType,
+            comment: comment,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$TitleCommentsTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $TitleCommentsTable,
+    TitleCommentData,
+    $$TitleCommentsTableFilterComposer,
+    $$TitleCommentsTableOrderingComposer,
+    $$TitleCommentsTableAnnotationComposer,
+    $$TitleCommentsTableCreateCompanionBuilder,
+    $$TitleCommentsTableUpdateCompanionBuilder,
+    (
+      TitleCommentData,
+      BaseReferences<_$AppDatabase, $TitleCommentsTable, TitleCommentData>
+    ),
+    TitleCommentData,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5829,4 +6475,6 @@ class $AppDatabaseManager {
       $$TmdbSeasonsTableTableManager(_db, _db.tmdbSeasons);
   $$TmdbEpisodesTableTableManager get tmdbEpisodes =>
       $$TmdbEpisodesTableTableManager(_db, _db.tmdbEpisodes);
+  $$TitleCommentsTableTableManager get titleComments =>
+      $$TitleCommentsTableTableManager(_db, _db.titleComments);
 }

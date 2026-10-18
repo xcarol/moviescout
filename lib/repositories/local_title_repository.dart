@@ -6,6 +6,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/user_list_entry.dart';
+import 'package:moviescout/models/title_comment.dart';
 import 'package:moviescout/services/core/local_database_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
@@ -213,6 +214,9 @@ class LocalTitleRepository {
         final titleId = '${id}_$type';
         if (remainingEntries.isEmpty) {
           await (_db.delete(_db.tmdbTitles)..where((t) => t.id.equals(titleId)))
+              .go();
+          await (_db.delete(_db.titleComments)
+                ..where((c) => c.tmdbId.equals(id) & c.mediaType.equals(type)))
               .go();
           if (type == ApiConstants.tv || type == AppConstants.miniseries) {
             await (_db.delete(_db.tmdbSeasons)..where((s) => s.tvId.equals(id)))
@@ -691,5 +695,54 @@ class LocalTitleRepository {
       pinned: pinned,
     );
     return count > 0;
+  }
+
+  Stream<List<TitleComment>> watchCommentsForTitle(
+      int tmdbId, String mediaType) {
+    return (_db.select(_db.titleComments)
+          ..where((c) =>
+              c.tmdbId.equals(tmdbId) & c.mediaType.equals(mediaType))
+          ..orderBy([(c) => OrderingTerm.desc(c.createdAt)]))
+        .watch()
+        .map((rows) => rows.map(DriftMapper.toDomainComment).toList());
+  }
+
+  Future<List<TitleComment>> getCommentsForTitle(
+      int tmdbId, String mediaType) async {
+    final rows = await (_db.select(_db.titleComments)
+          ..where((c) =>
+              c.tmdbId.equals(tmdbId) & c.mediaType.equals(mediaType))
+          ..orderBy([(c) => OrderingTerm.desc(c.createdAt)]))
+        .get();
+    return rows.map(DriftMapper.toDomainComment).toList();
+  }
+
+  Future<void> saveComments(List<TitleComment> comments) async {
+    if (comments.isEmpty) return;
+    await _retryOnLocked(() async {
+      await _db.batch((batch) {
+        for (final comment in comments) {
+          batch.insert(
+            _db.titleComments,
+            DriftMapper.toCompanionComment(comment),
+            mode: InsertMode.insertOrReplace,
+          );
+        }
+      });
+    });
+  }
+
+  Future<void> saveComment(TitleComment comment) async {
+    await _retryOnLocked(() async {
+      await _db
+          .into(_db.titleComments)
+          .insertOnConflictUpdate(DriftMapper.toCompanionComment(comment));
+    });
+  }
+
+  Future<void> deleteComment(String id) async {
+    await _retryOnLocked(() async {
+      await (_db.delete(_db.titleComments)..where((c) => c.id.equals(id))).go();
+    });
   }
 }

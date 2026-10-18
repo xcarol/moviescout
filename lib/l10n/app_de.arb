@@ -234,5 +234,15 @@
   "deleteAccountConfirmTitle": "Konto löschen",
   "deleteAccountConfirmMessage": "Möchtest du dein Konto wirklich löschen? Dies kann nicht rückgängig gemacht werden.",
   "deleteAccountSuccess": "Dein Konto wurde erfolgreich gelöscht",
-  "deleteAccountError": "Fehler beim Löschen des Kontos"
+  "deleteAccountError": "Fehler beim Löschen des Kontos",
+  "comments": "Kommentare",
+  "addComment": "Kommentar hinzufügen",
+  "editComment": "Kommentar bearbeiten",
+  "deleteComment": "Kommentar löschen",
+  "writeComment": "Schreibe einen Kommentar...",
+  "noCommentsYet": "Noch keine Kommentare",
+  "signInToComment": "Du musst angemeldet sein, um einen Kommentar hinzuzufügen.",
+  "deleteCommentConfirm": "Möchtest du deinen Kommentar wirklich löschen?",
+  "save": "Speichern",
+  "you": "Du"
 }

@@ -9,8 +9,7 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get notificationDownloadingTitle =>
-      'Téléchargement des détails du titre';
+  String get notificationDownloadingTitle => 'Téléchargement des détails du titre';
 
   @override
   String notificationFetchingData(int progress, int total) {
@@ -65,8 +64,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get messageEmptyList => 'Aucun film sélectionné pour l\'instant.';
 
   @override
-  String get messageEmptySearch =>
-      'Vous pouvez lancer une recherche avec la loupe en bas.';
+  String get messageEmptySearch => 'Vous pouvez lancer une recherche avec la loupe en bas.';
 
   @override
   String get messageEmptyOptions => 'Vous pouvez aussi';
@@ -78,8 +76,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get search => 'Rechercher un titre';
 
   @override
-  String get searchAiHint =>
-      'Décrivez le film ou la série que vous recherchez...';
+  String get searchAiHint => 'Décrivez le film ou la série que vous recherchez...';
 
   @override
   String get searchAiTooltip => 'Recherche Intelligente (IA)';
@@ -154,8 +151,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get signupToTmdb => 'S\'inscrire sur TMDb';
 
   @override
-  String get signInToWatchlist =>
-      'Vous devez être connecté pour ajouter des titres.';
+  String get signInToWatchlist => 'Vous devez être connecté pour ajouter des titres.';
 
   @override
   String get tvShow => 'Série';
@@ -191,12 +187,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get imdbConfirmationTitle => 'ATTENTION';
 
   @override
-  String get imdbResetWatchlistConfirmation =>
-      'Voulez-vous vraiment réinitialiser la Watchlist ?';
+  String get imdbResetWatchlistConfirmation => 'Voulez-vous vraiment réinitialiser la Watchlist ?';
 
   @override
-  String get imdbResetRateslistConfirmation =>
-      'Voulez-vous vraiment réinitialiser les notes ?';
+  String get imdbResetRateslistConfirmation => 'Voulez-vous vraiment réinitialiser les notes ?';
 
   @override
   String get resetWatchlistCount => 'Titres en Watchlist : ';
@@ -337,15 +331,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get about => 'À propos...';
 
   @override
-  String get aboutDescription =>
-      'MovieScout est votre suivi de films et séries alimenté par TMDb, OMDb & JustWatch.';
+  String get aboutDescription => 'MovieScout est votre suivi de films et séries alimenté par TMDb, OMDb & JustWatch.';
 
   @override
   String get aboutGithub => 'Voir le projet sur ';
 
   @override
-  String get apiDisclaimer =>
-      'Ce produit utilise l\'API TMDb mais n\'est ni approuvé ni certifié par TMDb.';
+  String get apiDisclaimer => 'Ce produit utilise l\'API TMDb mais n\'est ni approuvé ni certifié par TMDb.';
 
   @override
   String get privacyDisclaimerPrefix => 'Consultez la ';
@@ -411,8 +403,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get watchingNow => 'En cours de visionnage';
 
   @override
-  String get pinLimitReached =>
-      'Vous avez atteint la limite de 5 titres épinglés.';
+  String get pinLimitReached => 'Vous avez atteint la limite de 5 titres épinglés.';
 
   @override
   String get pin => 'Épingler';
@@ -466,12 +457,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get notifications => 'Notifications';
 
   @override
-  String get notificationsPermissionRequired =>
-      'Vous devez autoriser les notifications dans les paramètres système.';
+  String get notificationsPermissionRequired => 'Vous devez autoriser les notifications dans les paramètres système.';
 
   @override
-  String get notificationsPermissionDescription =>
-      'Pour être informé de la disponibilité des films et des nouvelles saisons, activez les notifications.';
+  String get notificationsPermissionDescription => 'Pour être informé de la disponibilité des films et des nouvelles saisons, activez les notifications.';
 
   @override
   String get openSettings => 'Ouvrir les paramètres';
@@ -480,8 +469,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settings => 'Paramètres';
 
   @override
-  String get errorMessageGeneric =>
-      'Une erreur est survenue. Veuillez réessayer plus tard.';
+  String get errorMessageGeneric => 'Une erreur est survenue. Veuillez réessayer plus tard.';
 
   @override
   String get youtubeSearch => 'Recherche YouTube';
@@ -493,8 +481,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get notifyCompleteSeason => 'Notifier saison complète';
 
   @override
-  String get notifyCompleteSeasonSubtitle =>
-      'Notifie uniquement lorsque toute la saison est disponible.';
+  String get notifyCompleteSeasonSubtitle => 'Notifie uniquement lorsque toute la saison est disponible.';
 
   @override
   String get episodes => 'Épisodes';
@@ -511,8 +498,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get notifyTitle => 'Notifier les nouvelles saisons';
 
   @override
-  String get notifyMessage =>
-      'Voulez-vous être notifié lors de la diffusion d\'une nouvelle saison ?';
+  String get notifyMessage => 'Voulez-vous être notifié lors de la diffusion d\'une nouvelle saison ?';
 
   @override
   String get no => 'Non';
@@ -582,8 +568,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get aiSettingsSubtitle => 'Recherche intelligente et fonctions d\'IA';
 
   @override
-  String get aiSettingsDescription =>
-      'L\'IA vous permet de trouver des films et séries par description naturelle. Obtenez une clé API gratuite sur OpenRouter.';
+  String get aiSettingsDescription => 'L\'IA vous permet de trouver des films et séries par description naturelle. Obtenez une clé API gratuite sur OpenRouter.';
 
   @override
   String get aiGetApiKeyButton => 'Obtenir une clé sur OpenRouter';
@@ -619,20 +604,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get aiDeleteConfirmTitle => 'Supprimer la clé API';
 
   @override
-  String get aiDeleteConfirmMessage =>
-      'Êtes-vous sûr de vouloir supprimer la clé API ? OpenRouter ne permet pas de la revoir une fois créée.';
+  String get aiDeleteConfirmMessage => 'Êtes-vous sûr de vouloir supprimer la clé API ? OpenRouter ne permet pas de la revoir une fois créée.';
 
   @override
-  String get searchTimeout =>
-      'La recherche a pris trop de temps. Veuillez réessayer.';
+  String get searchTimeout => 'La recherche a pris trop de temps. Veuillez réessayer.';
 
   @override
-  String get aiSearchTimeout =>
-      'La recherche IA a expiré. Essayez une description plus courte.';
+  String get aiSearchTimeout => 'La recherche IA a expiré. Essayez une description plus courte.';
 
   @override
-  String get aiSearchError =>
-      'Une erreur est survenue lors de la recherche IA.';
+  String get aiSearchError => 'Une erreur est survenue lors de la recherche IA.';
 
   @override
   String aiRateLimitWithSeconds(int seconds) {
@@ -640,15 +621,13 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get aiRateLimitGeneric =>
-      'Limite de requêtes atteinte. Veuillez patienter un instant.';
+  String get aiRateLimitGeneric => 'Limite de requêtes atteinte. Veuillez patienter un instant.';
 
   @override
   String get signInWithGoogle => 'Se connecter avec Google';
 
   @override
-  String get loginSubtitle =>
-      'Connectez-vous pour enregistrer et synchroniser vos listes et vos notes.';
+  String get loginSubtitle => 'Connectez-vous pour enregistrer et synchroniser vos listes et vos notes.';
 
   @override
   String get googleSignInButton => 'Continuer avec Google';
@@ -672,8 +651,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tmdbImportScreenHeader => 'Importez vos données TMDb';
 
   @override
-  String get tmdbImportScreenBody =>
-      'Vous pouvez importer votre watchlist et vos notes depuis votre compte TMDb. Connectez-vous à TMDb pour continuer.';
+  String get tmdbImportScreenBody => 'Vous pouvez importer votre watchlist et vos notes depuis votre compte TMDb. Connectez-vous à TMDb pour continuer.';
 
   @override
   String get tmdbImportStartButton => 'Démarrer l\'import';
@@ -685,15 +663,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tmdbImportDownloading => 'Téléchargement des données TMDb...';
 
   @override
-  String get tmdbImportDownloadingWatchlist =>
-      'Téléchargement de la watchlist...';
+  String get tmdbImportDownloadingWatchlist => 'Téléchargement de la watchlist...';
 
   @override
   String get tmdbImportDownloadingRateslist => 'Téléchargement des notes...';
 
   @override
-  String get tmdbImportDownloadingEpisodes =>
-      'Téléchargement des épisodes notés...';
+  String get tmdbImportDownloadingEpisodes => 'Téléchargement des épisodes notés...';
 
   @override
   String tmdbImportWatchlistCount(Object count) {
@@ -725,16 +701,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tmdbImportError => 'Erreur lors de l\'importation des données';
 
   @override
-  String get tmdbImportLoginRequired =>
-      'Connectez-vous à TMDb pour lancer l\'import.';
+  String get tmdbImportLoginRequired => 'Connectez-vous à TMDb pour lancer l\'import.';
 
   @override
-  String get tmdbImportConsentText =>
-      'L\'import ajoutera en toute sécurité vos listes et notes TMDb à votre compte MovieScout.';
+  String get tmdbImportConsentText => 'L\'import ajoutera en toute sécurité vos listes et notes TMDb à votre compte MovieScout.';
 
   @override
-  String get loginConsentText =>
-      'En vous connectant, vous acceptez de stocker vos données sur les serveurs de MovieScout selon nos ';
+  String get loginConsentText => 'En vous connectant, vous acceptez de stocker vos données sur les serveurs de MovieScout selon nos ';
 
   @override
   String get termsOfService => 'conditions d\'utilisation';
@@ -749,12 +722,41 @@ class AppLocalizationsFr extends AppLocalizations {
   String get deleteAccountConfirmTitle => 'Supprimer le compte';
 
   @override
-  String get deleteAccountConfirmMessage =>
-      'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.';
+  String get deleteAccountConfirmMessage => 'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.';
 
   @override
   String get deleteAccountSuccess => 'Votre compte a été supprimé avec succès';
 
   @override
   String get deleteAccountError => 'Erreur lors de la suppression du compte';
+
+  @override
+  String get comments => 'Commentaires';
+
+  @override
+  String get addComment => 'Ajouter un commentaire';
+
+  @override
+  String get editComment => 'Modifier le commentaire';
+
+  @override
+  String get deleteComment => 'Supprimer le commentaire';
+
+  @override
+  String get writeComment => 'Écrire un commentaire...';
+
+  @override
+  String get noCommentsYet => 'Aucun commentaire pour le moment';
+
+  @override
+  String get signInToComment => 'Vous devez être connecté pour ajouter un commentaire.';
+
+  @override
+  String get deleteCommentConfirm => 'Êtes-vous sûr de vouloir supprimer votre commentaire ?';
+
+  @override
+  String get save => 'Enregistrer';
+
+  @override
+  String get you => 'Vous';
 }

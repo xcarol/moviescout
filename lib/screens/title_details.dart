@@ -12,11 +12,17 @@ import 'package:moviescout/models/tmdb_collection.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:intl/intl.dart';
+import 'package:moviescout/models/title_comment.dart';
+import 'package:moviescout/repositories/cloud_title_repository.dart';
 import 'package:moviescout/repositories/local_title_repository.dart'
     show LocalTitleRepository;
+import 'package:moviescout/widgets/buttons/comment_button.dart';
+import 'package:moviescout/widgets/dialogs_and_forms/comment_dialog.dart';
 import 'package:moviescout/screens/collection_details.dart';
 import 'package:moviescout/screens/season_details.dart';
 import 'package:moviescout/screens/title_people_list.dart';
+import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/utils/country_translator.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
@@ -75,7 +81,20 @@ class _TitleDetailsState extends State<TitleDetails> {
     super.initState();
     _currentTitle = widget._title;
     _initializeRatings();
+    _fetchAndSyncComments();
     _updateDetails();
+  }
+
+  Future<void> _fetchAndSyncComments() async {
+    try {
+      final cloudRepo = CloudTitleRepository();
+      final comments = await cloudRepo.fetchTitleComments(
+        tmdbId: _currentTitle.tmdbId,
+        mediaType: _currentTitle.mediaType,
+      );
+      final localRepo = LocalTitleRepository();
+      await localRepo.saveComments(comments);
+    } catch (_) {}
   }
 
   @override
@@ -579,6 +598,12 @@ class _TitleDetailsState extends State<TitleDetails> {
           _recommended(title),
           const SizedBox(height: 30),
           _castAndCrew(title, PersonAttributes.crew),
+          const SizedBox(height: 20),
+          Divider(
+            color: Theme.of(context).extension<CustomColors>()!.dividerColor,
+          ),
+          const SizedBox(height: 10),
+          _commentsSection(title),
         ],
       ),
     );
@@ -734,6 +759,8 @@ class _TitleDetailsState extends State<TitleDetails> {
         pinButton(context, title),
         const SizedBox(width: 8),
         notifyButton(context, title),
+        const SizedBox(width: 8),
+        commentButton(context, title),
         const Spacer(),
         TrailerButtons(videos: title.videos),
       ],
@@ -1333,6 +1360,314 @@ class _TitleDetailsState extends State<TitleDetails> {
               tmdbListService: widget._tmdbListService,
             ),
           ),
+        );
+      },
+    );
+  }
+
+  Widget _commentsSection(TmdbTitle title) {
+    final loc = AppLocalizations.of(context)!;
+    final localRepo = LocalTitleRepository();
+    final authService = Provider.of<SupabaseAuthService>(context);
+    final currentUser = authService.currentUser;
+
+    return StreamBuilder<List<TitleComment>>(
+      stream: localRepo.watchCommentsForTitle(title.tmdbId, title.mediaType),
+      builder: (context, snapshot) {
+        final comments = snapshot.data ?? const [];
+        final TitleComment? userComment = currentUser != null
+            ? comments.where((c) => c.userId == currentUser.id).firstOrNull
+            : null;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${loc.comments} (${comments.length})',
+                  style:
+                      const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                if (userComment == null)
+                  IconButton(
+                    icon: const Icon(Icons.add_comment_outlined),
+                    tooltip: loc.addComment,
+                    onPressed: () {
+                      if (currentUser == null) {
+                        SnackMessage.showSnackBar(loc.signInToComment);
+                        return;
+                      }
+                      showDialog<void>(
+                        context: context,
+                        builder: (dialogContext) => CommentDialog(
+                          title: title,
+                          onSave: (text) async {
+                            try {
+                              final cloudRepo = CloudTitleRepository();
+                              final saved = await cloudRepo.upsertComment(
+                                userId: currentUser.id,
+                                tmdbId: title.tmdbId,
+                                mediaType: title.mediaType,
+                                comment: text,
+                              );
+                              await localRepo.saveComment(saved);
+                            } catch (error, stackTrace) {
+                              ErrorService.log(error, stackTrace: stackTrace);
+                              final fallback = TitleComment(
+                                id: '${currentUser.id}_${title.tmdbId}_${title.mediaType}',
+                                userId: currentUser.id,
+                                username:
+                                    currentUser.userMetadata?['name'] as String? ??
+                                        currentUser.email,
+                                tmdbId: title.tmdbId,
+                                mediaType: title.mediaType,
+                                comment: text,
+                                createdAt: DateTime.now(),
+                                updatedAt: DateTime.now(),
+                              );
+                              await localRepo.saveComment(fallback);
+                            }
+                          },
+                        ),
+                      );
+                    },
+                  ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            if (comments.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Text(
+                  loc.noCommentsYet,
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: comments.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 10),
+                itemBuilder: (context, index) {
+                  final comment = comments[index];
+                  final isAuthor =
+                      currentUser != null && comment.userId == currentUser.id;
+                  final authorName = isAuthor
+                      ? loc.you
+                      : (comment.username != null &&
+                              comment.username!.isNotEmpty
+                          ? comment.username!
+                          : 'User');
+
+                  final localeTag =
+                      Localizations.localeOf(context).toLanguageTag();
+                  final dateStr = DateFormat.yMMMMd(localeTag)
+                      .add_Hm()
+                      .format(comment.updatedAt);
+
+                  return Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .surfaceContainerHighest
+                          .withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isAuthor
+                            ? Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withValues(alpha: 0.5)
+                            : Theme.of(context)
+                                .colorScheme
+                                .outlineVariant
+                                .withValues(alpha: 0.3),
+                        width: isAuthor ? 1.5 : 1,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.account_circle,
+                                  size: 20,
+                                  color: isAuthor
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  authorName,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: isAuthor
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  dateStr,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                                ),
+                                if (isAuthor) ...[
+                                  const SizedBox(width: 4),
+                                  IconButton(
+                                    icon: const Icon(Icons.edit_outlined,
+                                        size: 18),
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                    tooltip: loc.editComment,
+                                    onPressed: () {
+                                      showDialog<void>(
+                                        context: context,
+                                        builder: (dialogContext) =>
+                                            CommentDialog(
+                                          title: title,
+                                          initialComment: comment,
+                                          onSave: (text) async {
+                                            try {
+                                              final cloudRepo =
+                                                  CloudTitleRepository();
+                                              final saved = await cloudRepo
+                                                  .upsertComment(
+                                                userId: currentUser.id,
+                                                tmdbId: title.tmdbId,
+                                                mediaType: title.mediaType,
+                                                comment: text,
+                                              );
+                                              await localRepo.saveComment(saved);
+                                            } catch (error, stackTrace) {
+                                              ErrorService.log(error,
+                                                  stackTrace: stackTrace);
+                                              final updated = comment.copyWith(
+                                                comment: text,
+                                                updatedAt: DateTime.now(),
+                                              );
+                                              await localRepo.saveComment(updated);
+                                            }
+                                          },
+                                          onDelete: () async {
+                                            try {
+                                              final cloudRepo =
+                                                  CloudTitleRepository();
+                                              await cloudRepo.deleteComment(
+                                                userId: currentUser.id,
+                                                tmdbId: title.tmdbId,
+                                                mediaType: title.mediaType,
+                                              );
+                                            } catch (error, stackTrace) {
+                                              ErrorService.log(error,
+                                                  stackTrace: stackTrace);
+                                            }
+                                            await localRepo
+                                                .deleteComment(comment.id);
+                                          },
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.delete_outline,
+                                      size: 18,
+                                      color:
+                                          Theme.of(context).colorScheme.error,
+                                    ),
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                    tooltip: loc.deleteComment,
+                                    onPressed: () async {
+                                      final confirm = await showDialog<bool>(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          title: Text(loc.deleteComment),
+                                          content:
+                                              Text(loc.deleteCommentConfirm),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(ctx, false),
+                                              child: Text(loc.cancel),
+                                            ),
+                                            FilledButton(
+                                              style: FilledButton.styleFrom(
+                                                backgroundColor:
+                                                    Theme.of(ctx)
+                                                        .colorScheme
+                                                        .error,
+                                                foregroundColor:
+                                                    Theme.of(ctx)
+                                                        .colorScheme
+                                                        .onError,
+                                              ),
+                                              onPressed: () =>
+                                                  Navigator.pop(ctx, true),
+                                              child: Text(loc.delete),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                      if (confirm == true) {
+                                        try {
+                                          final cloudRepo =
+                                              CloudTitleRepository();
+                                          await cloudRepo.deleteComment(
+                                            userId: currentUser.id,
+                                            tmdbId: title.tmdbId,
+                                            mediaType: title.mediaType,
+                                          );
+                                        } catch (error, stackTrace) {
+                                          ErrorService.log(error,
+                                              stackTrace: stackTrace);
+                                        }
+                                        await localRepo
+                                            .deleteComment(comment.id);
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          comment.comment,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+          ],
         );
       },
     );
