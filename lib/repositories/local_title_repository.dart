@@ -12,6 +12,7 @@ import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/services/core/error_service.dart';
 
 class LocalTitleRepository {
   final AppDatabase _db;
@@ -20,19 +21,28 @@ class LocalTitleRepository {
       : _db = db ?? LocalDatabaseService.instance;
 
   Future<T> _retryOnLocked<T>(Future<T> Function() action,
-      {int maxAttempts = 3}) async {
+      {int maxAttempts = 4}) async {
     int attempts = 0;
     while (true) {
       try {
         return await action();
-      } catch (e) {
+      } catch (e, stackTrace) {
         attempts++;
         final isLocked = e.toString().contains('database is locked') ||
             (e is SqliteException &&
-                (e.resultCode == 5 || e.extendedResultCode == 261));
+                (e.resultCode == 5 ||
+                    e.extendedResultCode == 261 ||
+                    e.extendedResultCode == 517));
         if (isLocked && attempts < maxAttempts) {
-          await Future.delayed(Duration(milliseconds: 150 * attempts));
+          await Future.delayed(Duration(milliseconds: 250 * attempts));
           continue;
+        }
+        if (isLocked) {
+          ErrorService.log(
+            e,
+            stackTrace: stackTrace,
+            userMessage: 'Database locked after $attempts attempts',
+          );
         }
         rethrow;
       }
