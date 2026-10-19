@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/services/core/error_service.dart';
+import 'package:moviescout/services/core/cloud_database_service.dart';
 
 class SupabaseAuthService extends ChangeNotifier {
   static final SupabaseAuthService _instance = SupabaseAuthService._internal();
@@ -33,11 +34,13 @@ class SupabaseAuthService extends ChangeNotifier {
     try {
       final user = _supabase.auth.currentUser;
       if (user != null) {
-        final response = await _supabase
-            .from('profiles')
-            .select()
-            .eq('id', user.id)
-            .maybeSingle();
+        final response = await CloudDatabaseService.retryOnFutureJwt(
+          () => _supabase
+              .from('profiles')
+              .select()
+              .eq('id', user.id)
+              .maybeSingle(),
+        );
         final metadata = user.userMetadata;
         final displayName = metadata?['full_name'] ?? metadata?['name'] ?? '';
         final avatar = metadata?['avatar_url'] ?? metadata?['picture'] ?? '';
@@ -59,10 +62,12 @@ class SupabaseAuthService extends ChangeNotifier {
             if (needsAvatar) updates['avatar_url'] = avatar;
 
             try {
-              await _supabase
-                  .from('profiles')
-                  .update(updates)
-                  .eq('id', user.id);
+              await CloudDatabaseService.retryOnFutureJwt(
+                () => _supabase
+                    .from('profiles')
+                    .update(updates)
+                    .eq('id', user.id),
+              );
               response.addAll(updates);
             } catch (e, stackTrace) {
               ErrorService.log(
@@ -77,11 +82,13 @@ class SupabaseAuthService extends ChangeNotifier {
           notifyListeners();
         } else {
           try {
-            await _supabase.from('profiles').upsert({
-              'id': user.id,
-              'username': displayName,
-              'avatar_url': avatar,
-            });
+            await CloudDatabaseService.retryOnFutureJwt(
+              () => _supabase.from('profiles').upsert({
+                'id': user.id,
+                'username': displayName,
+                'avatar_url': avatar,
+              }),
+            );
             userProfile = {
               'id': user.id,
               'username': displayName,
@@ -151,11 +158,13 @@ class SupabaseAuthService extends ChangeNotifier {
             '';
 
         try {
-          await _supabase.from('profiles').upsert({
-            'id': authResponse.user!.id,
-            'username': displayName,
-            'avatar_url': avatar,
-          });
+          await CloudDatabaseService.retryOnFutureJwt(
+            () => _supabase.from('profiles').upsert({
+              'id': authResponse.user!.id,
+              'username': displayName,
+              'avatar_url': avatar,
+            }),
+          );
         } catch (_) {}
 
         await fetchProfile();
@@ -194,7 +203,9 @@ class SupabaseAuthService extends ChangeNotifier {
       final user = _supabase.auth.currentUser;
       if (user == null) return false;
 
-      await _supabase.rpc('delete_user_account');
+      await CloudDatabaseService.retryOnFutureJwt(
+        () => _supabase.rpc('delete_user_account'),
+      );
 
       if (!kIsWeb) {
         try {

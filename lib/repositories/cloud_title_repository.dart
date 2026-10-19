@@ -11,17 +11,8 @@ class CloudTitleRepository {
   CloudTitleRepository({SupabaseClient? client})
       : _client = client ?? CloudDatabaseService.instance;
 
-  Future<T> _retryOnFutureJwt<T>(Future<T> Function() operation) async {
-    try {
-      return await operation();
-    } on PostgrestException catch (e) {
-      if (e.code == 'PGRST303' || e.message.contains('JWT issued at future')) {
-        await Future.delayed(const Duration(milliseconds: 1500));
-        return await operation();
-      }
-      rethrow;
-    }
-  }
+  Future<T> _retryOnFutureJwt<T>(Future<T> Function() operation) =>
+      CloudDatabaseService.retryOnFutureJwt(operation);
 
   Future<List<TmdbTitle>> fetchUserTitles({
     required String userId,
