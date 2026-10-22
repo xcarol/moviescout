@@ -91,7 +91,7 @@ void _runMain() async {
       };
 
       await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
-        kDebugMode,
+        !kDebugMode,
       );
     }
   } catch (error, stackTrace) {
