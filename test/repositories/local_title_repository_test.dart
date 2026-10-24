@@ -6,6 +6,7 @@ import 'package:moviescout/database/app_database.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
+import 'package:moviescout/models/title_comment.dart';
 import 'package:moviescout/repositories/local_title_repository.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -973,6 +974,109 @@ void main() {
           filterRating: RatingFilter.seenOnly,
         );
         expect(countSeen, 1);
+      });
+    });
+
+    group('Title Comments in LocalTitleRepository', () {
+      test('saveComment and getCommentsForTitle', () async {
+        final comment = TitleComment(
+          id: 'c1',
+          userId: 'u1',
+          tmdbId: 100,
+          mediaType: ApiConstants.movie,
+          comment: 'Great movie!',
+          createdAt: DateTime.now().toUtc(),
+          updatedAt: DateTime.now().toUtc(),
+          username: 'alice',
+        );
+
+        await repository.saveComment(comment);
+        final comments =
+            await repository.getCommentsForTitle(100, ApiConstants.movie);
+
+        expect(comments.length, 1);
+        expect(comments.first.id, 'c1');
+        expect(comments.first.comment, 'Great movie!');
+        expect(comments.first.username, 'alice');
+      });
+
+      test('saveComments with batch and empty list', () async {
+        await repository.saveComments([]);
+
+        final c1 = TitleComment(
+          id: 'c1',
+          userId: 'u1',
+          tmdbId: 200,
+          mediaType: ApiConstants.movie,
+          comment: 'Comment 1',
+          createdAt: DateTime.now().toUtc(),
+          updatedAt: DateTime.now().toUtc(),
+          username: 'bob',
+        );
+        final c2 = TitleComment(
+          id: 'c2',
+          userId: 'u2',
+          tmdbId: 200,
+          mediaType: ApiConstants.movie,
+          comment: 'Comment 2',
+          createdAt: DateTime.now().toUtc().add(const Duration(minutes: 5)),
+          updatedAt: DateTime.now().toUtc(),
+          username: 'charlie',
+        );
+
+        await repository.saveComments([c1, c2]);
+        final comments =
+            await repository.getCommentsForTitle(200, ApiConstants.movie);
+
+        expect(comments.length, 2);
+        expect(comments.first.id, 'c2');
+      });
+
+      test('watchCommentsForTitle emits stream updates', () async {
+        final c1 = TitleComment(
+          id: 'c1',
+          userId: 'u1',
+          tmdbId: 300,
+          mediaType: ApiConstants.movie,
+          comment: 'Live comment',
+          createdAt: DateTime.now().toUtc(),
+          updatedAt: DateTime.now().toUtc(),
+          username: 'dan',
+        );
+
+        final stream =
+            repository.watchCommentsForTitle(300, ApiConstants.movie);
+        expectLater(
+          stream,
+          emitsInOrder([
+            isEmpty,
+            hasLength(1),
+          ]),
+        );
+
+        await Future.delayed(const Duration(milliseconds: 10));
+        await repository.saveComment(c1);
+      });
+
+      test('deleteComment removes comment by id', () async {
+        final comment = TitleComment(
+          id: 'del-1',
+          userId: 'u1',
+          tmdbId: 400,
+          mediaType: ApiConstants.movie,
+          comment: 'To delete',
+          createdAt: DateTime.now().toUtc(),
+          updatedAt: DateTime.now().toUtc(),
+          username: 'alice',
+        );
+
+        await repository.saveComment(comment);
+        expect(await repository.getCommentsForTitle(400, ApiConstants.movie),
+            hasLength(1));
+
+        await repository.deleteComment('del-1');
+        expect(await repository.getCommentsForTitle(400, ApiConstants.movie),
+            isEmpty);
       });
     });
   });

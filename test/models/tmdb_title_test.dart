@@ -589,5 +589,65 @@ void main() {
 
       expect(title.flatrateProviderIds, [8, 337]);
     });
+
+    test('fromMap extracts originCountry from production_countries when origin_country is empty', () {
+      final map = {
+        TmdbTitleFields.id: 1,
+        TmdbTitleFields.title: 'Country Test',
+        TmdbTitleFields.productionCountries: [
+          {'iso_3166_1': 'US', 'name': 'United States'},
+          {'iso_3166_1': 'GB', 'name': 'United Kingdom'},
+        ],
+      };
+
+      final title = TmdbTitle.fromMap(title: map);
+      expect(title.originCountry, ['US', 'GB']);
+    });
+
+    test('externalIds returns empty map when json is invalid', () {
+      final title = TmdbTitle(
+        tmdbId: 1,
+        name: 'Invalid External Ids',
+        lastUpdated: '',
+        dateRated: DateTime.now(),
+      )..externalIdsJson = 'invalid-json';
+
+      expect(title.externalIds, isEmpty);
+    });
+
+    test('recommendations returns empty list when json is invalid or not a list', () {
+      final title = TmdbTitle(
+        tmdbId: 1,
+        name: 'Invalid Recs',
+        lastUpdated: '',
+        dateRated: DateTime.now(),
+      );
+
+      title.recommendationsJson = '{"not": "a list"}';
+      expect(title.recommendations, isEmpty);
+    });
+
+    test('providers getter decodes providersJson or returns empty TmdbProviders', () {
+      final title = TmdbTitle(
+        tmdbId: 1,
+        name: 'Providers Test',
+        lastUpdated: '',
+        dateRated: DateTime.now(),
+      );
+
+      expect(title.providers.isEmpty, isTrue);
+
+      final titleWithProviders = TmdbTitle(
+        tmdbId: 2,
+        name: 'Providers Test 2',
+        lastUpdated: '',
+        dateRated: DateTime.now(),
+      )..providersJson = jsonEncode({
+          'flatrate': [
+            {'provider_id': 8}
+          ]
+        });
+      expect(titleWithProviders.providers.flatrate.isNotEmpty, isTrue);
+    });
   });
 }

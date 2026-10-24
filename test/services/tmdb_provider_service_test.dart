@@ -38,6 +38,8 @@ void main() {
     when(() => mockUser.id).thenReturn('user-123');
     when(() => mockAuth.currentUser).thenReturn(mockUser);
     when(() => mockSupabaseClient.auth).thenReturn(mockAuth);
+    when(() => mockCloudRepository.updateUserProviders(any(), any()))
+        .thenAnswer((_) async {});
 
     CloudDatabaseService.init(client: mockSupabaseClient);
     service = TmdbProviderService(cloudRepository: mockCloudRepository);
@@ -146,7 +148,52 @@ void main() {
       expect(service.enabledProviderIds, isEmpty);
     });
 
-    test('fetchProviders retrieves user providers and applies them', () async {
+    test('toggleProvider disables provider when enabled is false', () {
+      service.isInitialized = true;
+      service.providers[8] = {
+        TmdbProvider.providerId: '8',
+        TmdbProvider.providerName: 'Netflix',
+        TmdbProvider.logoPathName: '/netflix.png',
+        TmdbProvider.providerEnabled: 'true',
+      };
+
+      service.toggleProvider(8, false);
+
+      expect(service.enabledProviderIds, isEmpty);
+      verify(() => mockCloudRepository.updateUserProviders('user-123', ''))
+          .called(1);
+    });
+
+    test('toggleProvider does nothing if user is not logged in', () {
+      when(() => mockAuth.currentUser).thenReturn(null);
+      service.isInitialized = true;
+      service.providers[8] = {
+        TmdbProvider.providerId: '8',
+        TmdbProvider.providerName: 'Netflix',
+        TmdbProvider.logoPathName: '/netflix.png',
+        TmdbProvider.providerEnabled: 'false',
+      };
+
+      service.toggleProvider(8, true);
+
+      verifyNever(() => mockCloudRepository.updateUserProviders(any(), any()));
+    });
+
+    test('fetchProviders does nothing if user is not logged in', () async {
+      when(() => mockAuth.currentUser).thenReturn(null);
+      await service.fetchProviders();
+      verifyNever(() => mockCloudRepository.fetchUserProviders(any()));
+    });
+
+    test('fetchProviders catches error if fetchUserProviders throws', () async {
+      when(() => mockCloudRepository.fetchUserProviders('user-123'))
+          .thenThrow(Exception('Network error'));
+
+      await service.fetchProviders();
+      expect(service.enabledProviderIds, isEmpty);
+    });
+
+    test('fetchProviders does nothing if remote providers string is null', () async {
       service.isInitialized = true;
       service.providers[8] = {
         TmdbProvider.providerId: '8',
@@ -156,13 +203,11 @@ void main() {
       };
 
       when(() => mockCloudRepository.fetchUserProviders('user-123'))
-          .thenAnswer((_) async => '8');
+          .thenAnswer((_) async => null);
 
       await service.fetchProviders();
 
-      expect(service.enabledProviderIds, equals([8]));
-      verify(() => mockCloudRepository.fetchUserProviders('user-123'))
-          .called(1);
+      expect(service.enabledProviderIds, isEmpty);
     });
   });
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 import 'package:moviescout/services/api/ai_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -7,6 +8,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
+    await PreferencesService().init();
+  });
 
   group('AiTitleSuggestion', () {
     test('parses json correctly with integer year and movie type', () {
@@ -195,6 +201,195 @@ void main() {
         () => service.suggestTitles('mystery movies'),
         throwsA(isA<Exception>()),
       );
+    });
+
+    test('translate throws when key is missing', () async {
+      final service = AiService();
+      await service.saveApiKey('');
+      expect(
+        () => service.translate(
+          'Hello',
+          sourceLanguage: 'en',
+          targetLanguage: 'es',
+        ),
+        throwsA(isA<Exception>()),
+      );
+    });
+  });
+
+  group('AiService cleanTranslation', () {
+    final service = AiService();
+
+    test('strips safety prefixes with newlines and quotes', () {
+      expect(
+        service.cleanTranslation('User Safety: safe.\n"Hola Mundo"'),
+        'Hola Mundo',
+      );
+      expect(
+        service.cleanTranslation('Safety: safe\nBonjour'),
+        'Bonjour',
+      );
+      expect(
+        service.cleanTranslation('user safety: safe'),
+        '',
+      );
+    });
+
+    test('strips surrounding quotes without prefixes', () {
+      expect(service.cleanTranslation('"Just a quoted string"'), 'Just a quoted string');
+      expect(service.cleanTranslation('Unquoted text'), 'Unquoted text');
+    });
+  });
+
+  group('AiService handleErrorResponse', () {
+    final service = AiService();
+
+    test('throws AiRateLimitException on 429 status', () {
+      final response = http.Response('Too many requests. Please retry in 15s', 429);
+      expect(
+        () => service.handleErrorResponse(response),
+        throwsA(isA<AiRateLimitException>().having(
+          (e) => e.retrySeconds,
+          'retrySeconds',
+          15,
+        )),
+      );
+    });
+
+    test('throws AiRateLimitException on rate-limited or RESOURCE_EXHAUSTED body', () {
+      final rateLimitedResponse = http.Response('Server error: rate-limited', 500);
+      expect(
+        () => service.handleErrorResponse(rateLimitedResponse),
+        throwsA(isA<AiRateLimitException>()),
+      );
+
+      final exhaustedResponse = http.Response('RESOURCE_EXHAUSTED', 400);
+      expect(
+        () => service.handleErrorResponse(exhaustedResponse),
+        throwsA(isA<AiRateLimitException>()),
+      );
+    });
+
+    test('throws generic Exception on non-rate-limited error status', () {
+      final response = http.Response('Internal Server Error', 500);
+      expect(
+        () => service.handleErrorResponse(response),
+        throwsA(isA<Exception>()),
+      );
+    });
+  });
+
+  group('AiService advanced parsing branches', () {
+    final service = AiService();
+
+    test('parses JSON with suggestions, results, titles, movies, or items keys', () {
+      final bodyWithSuggestions = jsonEncode({
+        'choices': [
+          {
+            'message': {
+              'content': jsonEncode({
+                'suggestions': [
+                  {'title': 'Dune', 'year': 2021, 'media_type': 'movie'}
+                ]
+              })
+            }
+          }
+        ]
+      });
+      expect(service.parseSuggestions(bodyWithSuggestions).first.title, 'Dune');
+
+      final bodyWithResults = jsonEncode({
+        'choices': [
+          {
+            'message': {
+              'content': jsonEncode({
+                'results': [
+                  {'title': 'Blade Runner', 'year': 1982, 'media_type': 'movie'}
+                ]
+              })
+            }
+          }
+        ]
+      });
+      expect(service.parseSuggestions(bodyWithResults).first.title, 'Blade Runner');
+
+      final bodyWithTitles = jsonEncode({
+        'choices': [
+          {
+            'message': {
+              'content': jsonEncode({
+                'titles': [
+                  {'title': 'Interstellar', 'year': 2014, 'media_type': 'movie'}
+                ]
+              })
+            }
+          }
+        ]
+      });
+      expect(service.parseSuggestions(bodyWithTitles).first.title, 'Interstellar');
+    });
+
+    test('parses markdown code block without json identifier and single object block', () {
+      final body = jsonEncode({
+        'choices': [
+          {
+            'message': {
+              'content': '```\n[{"title": "Tenet", "year": 2020, "media_type": "movie"}]\n```'
+            }
+          }
+        ]
+      });
+      expect(service.parseSuggestions(body).first.title, 'Tenet');
+
+      final singleObjectBody = jsonEncode({
+        'choices': [
+          {
+            'message': {
+              'content': '{"data": [{"title": "Memento", "year": 2000, "media_type": "movie"}]}'
+            }
+          }
+        ]
+      });
+      expect(service.parseSuggestions(singleObjectBody).first.title, 'Memento');
+    });
+
+    test('parses text suggestions with media type and conversational preamble', () {
+      final body = jsonEncode({
+        'choices': [
+          {
+            'message': {
+              'content': '''Sure, here are some recommendations:
+Certainly! Check these out:
+Note: great sci-fi
+1. Westworld tv
+2. "Fight Club" (1999) - movie
+3. Inception (2010)
+'''
+            }
+          }
+        ]
+      });
+      final results = service.parseSuggestions(body);
+      expect(results.length, 3);
+      expect(results[0].title, 'Westworld');
+      expect(results[0].mediaType, 'tv');
+      expect(results[1].title, 'Fight Club');
+      expect(results[1].year, 1999);
+      expect(results[2].title, 'Inception');
+      expect(results[2].year, 2010);
+    });
+
+    test('handles empty choices or null message gracefully', () {
+      expect(service.parseSuggestions(jsonEncode({'choices': []})), isEmpty);
+      expect(
+        service.parseSuggestions(jsonEncode({
+          'choices': [
+            {'message': null}
+          ]
+        })),
+        isEmpty,
+      );
+      expect(service.parseSuggestions('completely malformed json {{{'), isEmpty);
     });
   });
 }

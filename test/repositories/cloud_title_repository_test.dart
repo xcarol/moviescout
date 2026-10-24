@@ -24,6 +24,18 @@ class FakePostgrestMapFilterBuilder extends Fake
   }
 }
 
+class FakePostgrestSingleBuilder extends Fake
+    implements PostgrestTransformBuilder<PostgrestMap> {
+  final PostgrestMap _data;
+  FakePostgrestSingleBuilder(this._data);
+
+  @override
+  Future<R> then<R>(FutureOr<R> Function(PostgrestMap value) onValue,
+      {Function? onError}) {
+    return Future.value(_data).then(onValue, onError: onError);
+  }
+}
+
 class FakePostgrestListFilterBuilder extends Fake
     implements PostgrestFilterBuilder<PostgrestList> {
   final PostgrestList _data;
@@ -49,6 +61,10 @@ class FakePostgrestListFilterBuilder extends Fake
       FakePostgrestMapFilterBuilder(_data.isNotEmpty ? _data.first : null);
 
   @override
+  PostgrestTransformBuilder<PostgrestMap> single() =>
+      FakePostgrestSingleBuilder(_data.isNotEmpty ? _data.first : {});
+
+  @override
   Future<R> then<R>(FutureOr<R> Function(PostgrestList value) onValue,
       {Function? onError}) {
     return Future.value(_data).then(onValue, onError: onError);
@@ -57,15 +73,20 @@ class FakePostgrestListFilterBuilder extends Fake
 
 class FakePostgrestFilterBuilder extends Fake
     implements PostgrestFilterBuilder<dynamic> {
-  final Future<dynamic> _future = Future.value(null);
+  final Map<String, dynamic>? _singleData;
+  FakePostgrestFilterBuilder([this._singleData]);
 
   @override
   PostgrestFilterBuilder<dynamic> eq(String column, Object value) => this;
 
   @override
+  PostgrestTransformBuilder<PostgrestList> select([String columns = '*']) =>
+      FakePostgrestListFilterBuilder(_singleData != null ? [_singleData] : []);
+
+  @override
   Future<R> then<R>(FutureOr<R> Function(dynamic value) onValue,
       {Function? onError}) {
-    return _future.then(onValue, onError: onError);
+    return Future.value(_singleData).then(onValue, onError: onError);
   }
 }
 
@@ -313,6 +334,103 @@ void main() {
       verify(() => mockClient.from('profiles')).called(1);
       verify(() => mockQueryBuilder
           .upsert({'id': 'u1', 'providers_string': '8,337'})).called(1);
+    });
+
+    test('syncNotification syncs notification and watchlist conditionally', () async {
+      final title = TmdbTitle(
+        tmdbId: 789,
+        mediaType: ApiConstants.tv,
+        name: 'Show',
+        lastUpdated: '2026-01-01',
+        dateRated: DateTime.now(),
+      );
+      title.notifyNewSeasons = true;
+      title.lastNotifiedSeason = 2;
+
+      await repository.syncNotification(
+        userId: 'u1',
+        title: title,
+        addedToWatchlist: true,
+        isInRateslist: true,
+      );
+
+      verify(() => mockClient.from('user_titles')).called(2);
+    });
+
+    test('bulkUpsertUserTitles returns early when records is empty', () async {
+      await repository.bulkUpsertUserTitles([]);
+      verifyNever(() => mockClient.from('user_titles'));
+    });
+
+    test('bulkUpsertEpisodeRatings returns early when records is empty', () async {
+      await repository.bulkUpsertEpisodeRatings([]);
+      verifyNever(() => mockClient.from('user_episode_ratings'));
+    });
+
+    test('fetchTitleComments fetches and maps comments', () async {
+      when(() => mockQueryBuilder.select(any())).thenAnswer(
+        (_) => FakePostgrestListFilterBuilder([
+          {
+            'id': 'c1',
+            'user_id': 'u1',
+            'tmdb_id': 100,
+            'media_type': ApiConstants.movie,
+            'comment': 'Awesome!',
+            'created_at': '2026-10-01T12:00:00Z',
+            'updated_at': '2026-10-01T12:00:00Z',
+            'profiles': {'username': 'movie_buff'},
+          }
+        ]),
+      );
+
+      final comments = await repository.fetchTitleComments(
+        tmdbId: 100,
+        mediaType: ApiConstants.movie,
+      );
+
+      expect(comments.length, 1);
+      expect(comments.first.id, 'c1');
+      expect(comments.first.comment, 'Awesome!');
+      expect(comments.first.username, 'movie_buff');
+      verify(() => mockClient.from('user_comments')).called(1);
+    });
+
+    test('upsertComment upserts comment and returns TitleComment', () async {
+      final fakeBuilder = FakePostgrestFilterBuilder({
+        'id': 'c2',
+        'user_id': 'u1',
+        'tmdb_id': 100,
+        'media_type': ApiConstants.movie,
+        'comment': 'Updated comment',
+        'created_at': '2026-10-01T12:00:00Z',
+        'updated_at': '2026-10-01T12:00:00Z',
+        'profiles': {'username': 'movie_buff'},
+      });
+      when(() => mockQueryBuilder.upsert(any(),
+              onConflict: any(named: 'onConflict')))
+          .thenAnswer((_) => fakeBuilder);
+
+      final comment = await repository.upsertComment(
+        userId: 'u1',
+        tmdbId: 100,
+        mediaType: ApiConstants.movie,
+        comment: 'Updated comment',
+      );
+
+      expect(comment.id, 'c2');
+      expect(comment.comment, 'Updated comment');
+      verify(() => mockClient.from('user_comments')).called(1);
+    });
+
+    test('deleteComment deletes comment for user and title', () async {
+      await repository.deleteComment(
+        userId: 'u1',
+        tmdbId: 100,
+        mediaType: ApiConstants.movie,
+      );
+
+      verify(() => mockClient.from('user_comments')).called(1);
+      verify(() => mockQueryBuilder.delete()).called(1);
     });
   });
 }
