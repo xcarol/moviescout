@@ -789,4 +789,36 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get you => 'Vous';
+
+  @override
+  String get followingTab => 'Abonnements';
+
+  @override
+  String get users => 'Utilisateurs';
+
+  @override
+  String get user => 'Utilisateur';
+
+  @override
+  String get follow => 'Suivre';
+
+  @override
+  String get following => 'Suivi';
+
+  @override
+  String get unfollow => 'Ne plus suivre';
+
+  @override
+  String get latestRatedTitles => 'Derniers titres notés';
+
+  @override
+  String get emptyFollowingList =>
+      'Vous ne suivez aucun utilisateur pour le moment.';
+
+  @override
+  String get emptyFollowingSearchHint =>
+      'Recherchez des utilisateurs pour les suivre et voir leur activité.';
+
+  @override
+  String get cannotFollowSelf => 'Vous ne pouvez pas vous suivre vous-même';
 }

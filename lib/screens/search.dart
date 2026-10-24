@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/settings/search_history_service.dart';
-import 'package:moviescout/services/tmdb_content/tmdb_search_service.dart';
+import 'package:moviescout/services/tmdb_content/search_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:moviescout/repositories/local_title_repository.dart';
@@ -23,7 +23,7 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   final FocusNode _searchFocusNode = FocusNode();
   late TextEditingController _controller;
-  late TmdbSearchService _searchService;
+  late SearchService _searchService;
   late TmdbTitleListService _titleListServiceSupport;
   final SearchHistoryService _historyService = SearchHistoryService();
   late Widget _searchWidget;
@@ -50,7 +50,7 @@ class _SearchState extends State<Search> {
       AppConstants.searchList,
       context.read<LocalTitleRepository>(),
     );
-    _searchService = TmdbSearchService(
+    _searchService = SearchService(
       AppConstants.searchList,
       context.read<LocalTitleRepository>(),
     );

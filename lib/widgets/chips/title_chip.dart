@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/screens/title_details.dart';
+import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/cards/title_card.dart';
 import 'package:moviescout/widgets/buttons/watchlist_button.dart';
+import 'package:moviescout/utils/app_constants.dart';
 
 // ignore: constant_identifier_names
 const double CARD_HEIGHT = 336.0;
@@ -25,42 +28,79 @@ class TitleChip extends StatefulWidget {
   });
 
   @override
-  State<TitleChip> createState() => _TitleChipState();
+  State<TitleChip> createState() => TitleChipState();
 }
 
-class _TitleChipState extends State<TitleChip> {
-  Future<TmdbTitle>? _titleFuture;
-  TmdbTitle? _localTitle;
+class TitleChipState<T extends TitleChip> extends State<T> {
+  @protected
+  Future<TmdbTitle>? titleFuture;
+  @protected
+  TmdbTitle? localTitle;
+  @protected
+  TmdbTitle? ratedTitle;
 
   @override
   void initState() {
     super.initState();
-    _loadLocalTitle();
+    loadLocalTitle();
   }
 
   @override
-  void didUpdateWidget(covariant TitleChip oldWidget) {
+  void didUpdateWidget(covariant T oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.title.tmdbId != oldWidget.title.tmdbId ||
         widget.title.mediaType != oldWidget.title.mediaType) {
-      _loadLocalTitle();
+      loadLocalTitle();
     }
   }
 
-  Future<void> _loadLocalTitle() async {
+  @protected
+  Future<void> loadLocalTitle() async {
     final local = await widget.tmdbListService
         .getTitleByTmdbId(widget.title.tmdbId, widget.title.mediaType);
 
+    TmdbTitle? rated;
+    if (mounted) {
+      try {
+        final ratesService =
+            Provider.of<RateslistService>(context, listen: false);
+        rated = await ratesService.getTitleByTmdbId(
+            widget.title.tmdbId, widget.title.mediaType);
+      } catch (_) {}
+    }
+
     if (mounted) {
       setState(() {
-        _localTitle = local;
+        localTitle = local;
+        ratedTitle = rated;
         if (local == null) {
-          _titleFuture = TmdbTitleService().updateTitleLight(widget.title);
+          titleFuture = TmdbTitleService().updateTitleLight(widget.title);
         } else {
-          _titleFuture = Future.value(local);
+          titleFuture = Future.value(local);
         }
       });
     }
+  }
+
+  @protected
+  bool get shouldDim {
+    final isRatedByMainUser = ratedTitle != null &&
+        (ratedTitle!.rating > 0 ||
+            ratedTitle!.rating == AppConstants.seenRating);
+    final isLocallyRated = localTitle != null &&
+        (localTitle!.rating > 0 ||
+            localTitle!.rating == AppConstants.seenRating);
+    return widget.isDimmed || isLocallyRated || isRatedByMainUser;
+  }
+
+  @protected
+  Widget buildContent(BuildContext context, TmdbTitle titleToDisplay) {
+    return TitleChipContent(
+      title: titleToDisplay,
+      tmdbListService: widget.tmdbListService,
+      isDimmed: shouldDim,
+      onReturnFromDetails: loadLocalTitle,
+    );
   }
 
   @override
@@ -71,20 +111,15 @@ class _TitleChipState extends State<TitleChip> {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: FutureBuilder<TmdbTitle>(
-        future: _titleFuture,
+        future: titleFuture,
         builder: (context, snapshot) {
           // Fallback to widget.title (API data) while waiting to prevent spinners/flickers
-          final titleToDisplay = _localTitle ?? snapshot.data ?? widget.title;
+          final titleToDisplay = localTitle ?? snapshot.data ?? widget.title;
 
           return MediaQuery(
             data: mediaQuery.copyWith(
                 textScaler: TextScaler.linear(clampedScale)),
-            child: _TitleChipContent(
-              title: titleToDisplay,
-              tmdbListService: widget.tmdbListService,
-              isDimmed: widget.isDimmed,
-              onReturnFromDetails: _loadLocalTitle,
-            ),
+            child: buildContent(context, titleToDisplay),
           );
         },
       ),
@@ -92,17 +127,50 @@ class _TitleChipState extends State<TitleChip> {
   }
 }
 
-class _TitleChipContent extends TitleCard {
+class TitleChipContent extends TitleCard {
   final TmdbTitle _title;
   final VoidCallback? onReturnFromDetails;
   final bool isDimmed;
 
-  const _TitleChipContent({
+  const TitleChipContent({
+    super.key,
     required super.title,
     required super.tmdbListService,
     this.onReturnFromDetails,
     this.isDimmed = false,
   }) : _title = title;
+
+  Widget posterOverlay(BuildContext context) {
+    if (isDimmed) {
+      return Container(
+        color: Theme.of(context)
+            .extension<CustomColors>()!
+            .watchedOverlayColor,
+      );
+    }
+
+    return Consumer<RateslistService>(
+      builder: (context, rateslistService, _) {
+        return FutureBuilder<TmdbTitle?>(
+          future: rateslistService.getTitleByTmdbId(
+              _title.tmdbId, _title.mediaType),
+          builder: (context, snapshot) {
+            final rated = snapshot.data;
+            final isRated = rated != null &&
+                (rated.rating > 0 || rated.rating == AppConstants.seenRating);
+            if (isRated) {
+              return Container(
+                color: Theme.of(context)
+                    .extension<CustomColors>()!
+                    .watchedOverlayColor,
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,12 +207,7 @@ class _TitleChipContent extends TitleCard {
                     fit: StackFit.expand,
                     children: [
                       titlePoster(_title.posterPath),
-                      if (isDimmed)
-                        Container(
-                          color: Theme.of(context)
-                              .extension<CustomColors>()!
-                              .watchedOverlayColor,
-                        ),
+                      posterOverlay(context),
                     ],
                   ),
                 ),
@@ -177,7 +240,7 @@ class _TitleChipContent extends TitleCard {
                           .chipCardBackground
                           .withValues(alpha: 0.95),
                       padding: const EdgeInsets.all(8.0),
-                      child: _titleDetails(context, _title),
+                      child: titleDetails(context, _title),
                     ),
                   ),
                 ),
@@ -189,7 +252,19 @@ class _TitleChipContent extends TitleCard {
     );
   }
 
-  Widget _titleDetails(BuildContext context, TmdbTitle tmdbTitle) {
+  Widget titleDetails(BuildContext context, TmdbTitle tmdbTitle) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        titleHeaderDetails(context, tmdbTitle),
+        const SizedBox(height: 5),
+        titleBottomDetails(context, tmdbTitle),
+      ],
+    );
+  }
+
+  Widget titleHeaderDetails(BuildContext context, TmdbTitle tmdbTitle) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -219,12 +294,14 @@ class _TitleChipContent extends TitleCard {
           scrollDirection: Axis.horizontal,
           child: titleRating(context, tmdbTitle, isCompact: true),
         ),
-        const SizedBox(height: 5),
-        SizedBox(
-          height: 30,
-          child: providers(tmdbTitle),
-        ),
       ],
+    );
+  }
+
+  Widget titleBottomDetails(BuildContext context, TmdbTitle tmdbTitle) {
+    return SizedBox(
+      height: 30,
+      child: providers(tmdbTitle),
     );
   }
 }

@@ -1564,6 +1564,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You'**
   String get you;
+
+  /// No description provided for @followingTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get followingTab;
+
+  /// No description provided for @users.
+  ///
+  /// In en, this message translates to:
+  /// **'Users'**
+  String get users;
+
+  /// No description provided for @user.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get user;
+
+  /// No description provided for @follow.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow'**
+  String get follow;
+
+  /// No description provided for @following.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get following;
+
+  /// No description provided for @unfollow.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfollow'**
+  String get unfollow;
+
+  /// No description provided for @latestRatedTitles.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest rated titles'**
+  String get latestRatedTitles;
+
+  /// No description provided for @emptyFollowingList.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not following any users yet.'**
+  String get emptyFollowingList;
+
+  /// No description provided for @emptyFollowingSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for users to follow them and see their activity.'**
+  String get emptyFollowingSearchHint;
+
+  /// No description provided for @cannotFollowSelf.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot follow yourself'**
+  String get cannotFollowSelf;
 }
 
 class _AppLocalizationsDelegate

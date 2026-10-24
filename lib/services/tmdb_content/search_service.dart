@@ -6,20 +6,24 @@ import 'package:moviescout/models/tmdb_item.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_collection.dart';
+import 'package:moviescout/models/user_profile.dart';
 import 'package:moviescout/repositories/local_title_repository.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
+import 'package:moviescout/services/lists/user_following_service.dart';
+import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/api/ai_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/url_constants.dart';
 
-class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
+class SearchService extends TmdbBaseListService<TmdbItem> {
   final LocalTitleRepository titleRepository;
   final List<TmdbPerson> _memoryPersons = [];
   final List<TmdbCollection> _memoryCollections = [];
+  final List<UserProfile> _memoryUsers = [];
 
-  TmdbSearchService(String listName, this.titleRepository) {
+  SearchService(String listName, this.titleRepository) {
     listNameVal = listName;
     selectedSort = SortOption.relevance;
   }
@@ -130,6 +134,18 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
         final query = filterText.toLowerCase().trim();
         allItems.addAll(_memoryCollections.where((c) {
           return c.name.toLowerCase().contains(query);
+        }));
+      }
+    }
+
+    if (filterMediaType == '' || filterMediaType == ApiConstants.user) {
+      if (filterText.isEmpty) {
+        allItems.addAll(_memoryUsers);
+      } else {
+        final query = filterText.toLowerCase().trim();
+        allItems.addAll(_memoryUsers.where((u) {
+          return u.name.toLowerCase().contains(query) ||
+              (u.email?.toLowerCase().contains(query) ?? false);
         }));
       }
     }
@@ -259,6 +275,7 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
     await titleRepository.clearList(listNameVal);
     _memoryPersons.clear();
     _memoryCollections.clear();
+    _memoryUsers.clear();
     clearLoadedItems(resetCount: true);
     notifyListeners();
   }
@@ -275,12 +292,14 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
 
       _memoryPersons.clear();
       _memoryCollections.clear();
+      _memoryUsers.clear();
 
       await Future.wait([
         _fetchAndSaveMovies(searchTerm, locale, searchId),
         _fetchAndSaveTvShows(searchTerm, locale, searchId),
         _fetchAndSavePersons(searchTerm, locale, searchId),
         _fetchAndSaveCollections(searchTerm, locale, searchId),
+        _fetchAndSaveUsers(searchTerm, searchId),
       ]);
 
       if (_activeSearchChanged(searchId)) return;
@@ -296,6 +315,20 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
     }
   }
 
+  Future<void> _fetchAndSaveUsers(String searchTerm, int searchId) async {
+    try {
+      final users = await UserFollowingService().searchUsers(searchTerm);
+      if (_activeSearchChanged(searchId)) return;
+      _memoryUsers.addAll(users);
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Error fetching users for search',
+      );
+    }
+  }
+
   Future<void> retrieveAiSearchlist(String searchTerm, Locale locale) async {
     isLoading.value = true;
     filterText = searchTerm;
@@ -305,6 +338,7 @@ class TmdbSearchService extends TmdbBaseListService<TmdbItem> {
       await titleRepository.clearList(listNameVal);
       _memoryPersons.clear();
       _memoryCollections.clear();
+      _memoryUsers.clear();
 
       await _fetchAndSaveAiSuggestions(searchTerm, locale);
 

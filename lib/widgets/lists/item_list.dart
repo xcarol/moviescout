@@ -27,7 +27,9 @@ import 'package:moviescout/widgets/lists/searchable_list_state.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_collection.dart';
+import 'package:moviescout/models/user_profile.dart';
 import 'package:moviescout/widgets/cards/person_card.dart';
+import 'package:moviescout/widgets/cards/user_card.dart';
 import 'package:moviescout/utils/ui_utils.dart';
 
 class ItemList extends StatefulWidget {
@@ -198,6 +200,8 @@ class _ItemListState extends SearchableListState<ItemList> {
                       collection: item,
                       tmdbListService: supportService,
                     );
+                  } else if (item is UserProfile) {
+                    card = UserCard(user: item);
                   } else {
                     card = const SizedBox.shrink();
                   }

@@ -784,6 +784,38 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get you => 'Você';
+
+  @override
+  String get followingTab => 'Seguindo';
+
+  @override
+  String get users => 'Usuários';
+
+  @override
+  String get user => 'Usuário';
+
+  @override
+  String get follow => 'Seguir';
+
+  @override
+  String get following => 'Seguindo';
+
+  @override
+  String get unfollow => 'Deixar de seguir';
+
+  @override
+  String get latestRatedTitles => 'Últimos títulos avaliados';
+
+  @override
+  String get emptyFollowingList =>
+      'Você ainda não está seguindo nenhum usuário.';
+
+  @override
+  String get emptyFollowingSearchHint =>
+      'Pesquise usuários para segui-los e ver suas atividades.';
+
+  @override
+  String get cannotFollowSelf => 'Você não pode seguir a si mesmo';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -1567,4 +1599,35 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get you => 'Tu';
+
+  @override
+  String get followingTab => 'A seguir';
+
+  @override
+  String get users => 'Utilizadores';
+
+  @override
+  String get user => 'Utilizador';
+
+  @override
+  String get follow => 'Seguir';
+
+  @override
+  String get following => 'A seguir';
+
+  @override
+  String get unfollow => 'Deixar de seguir';
+
+  @override
+  String get latestRatedTitles => 'Últimos títulos avaliados';
+
+  @override
+  String get emptyFollowingList => 'Ainda não está a seguir nenhum utilizador.';
+
+  @override
+  String get emptyFollowingSearchHint =>
+      'Pesquise utilizadores para segui-los e ver a sua atividade.';
+
+  @override
+  String get cannotFollowSelf => 'Não se pode seguir a si próprio';
 }

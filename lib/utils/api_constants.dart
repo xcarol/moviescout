@@ -4,6 +4,7 @@ class ApiConstants {
   static const String tv = 'tv';
   static const String person = 'person';
   static const String collection = 'collection';
+  static const String user = 'user';
 
   // Results Keys
   static const String movieResults = 'movie_results';

@@ -785,4 +785,36 @@ class AppLocalizationsEu extends AppLocalizations {
 
   @override
   String get you => 'Zu';
+
+  @override
+  String get followingTab => 'Jarraitzen';
+
+  @override
+  String get users => 'Erabiltzaileak';
+
+  @override
+  String get user => 'Erabiltzailea';
+
+  @override
+  String get follow => 'Jarraitu';
+
+  @override
+  String get following => 'Jarraitzen';
+
+  @override
+  String get unfollow => 'Jarraitzeari utzi';
+
+  @override
+  String get latestRatedTitles => 'Baloratutako azken izenburuak';
+
+  @override
+  String get emptyFollowingList =>
+      'Oraindik ez duzu erabiltzailerik jarraitzen.';
+
+  @override
+  String get emptyFollowingSearchHint =>
+      'Bilatu erabiltzaileak haiei jarraitzeko eta haien jarduera ikusteko.';
+
+  @override
+  String get cannotFollowSelf => 'Ezin diozu zure buruari jarraitu';
 }

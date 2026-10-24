@@ -244,5 +244,15 @@
   "signInToComment": "Devi aver effettuato l'accesso per aggiungere un commento.",
   "deleteCommentConfirm": "Sei sicuro di voler eliminare il tuo commento?",
   "save": "Salva",
-  "you": "Tu"
+  "you": "Tu",
+  "followingTab": "Seguiti",
+  "users": "Utenti",
+  "user": "Utente",
+  "follow": "Segui",
+  "following": "Seguito",
+  "unfollow": "Non seguire più",
+  "latestRatedTitles": "Ultimi titoli valutati",
+  "emptyFollowingList": "Non stai ancora seguendo nessun utente.",
+  "emptyFollowingSearchHint": "Cerca utenti per seguirli e vedere la loro attività.",
+  "cannotFollowSelf": "Non puoi seguire te stesso"
 }

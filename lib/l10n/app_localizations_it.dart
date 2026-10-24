@@ -784,4 +784,35 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get you => 'Tu';
+
+  @override
+  String get followingTab => 'Seguiti';
+
+  @override
+  String get users => 'Utenti';
+
+  @override
+  String get user => 'Utente';
+
+  @override
+  String get follow => 'Segui';
+
+  @override
+  String get following => 'Seguito';
+
+  @override
+  String get unfollow => 'Non seguire più';
+
+  @override
+  String get latestRatedTitles => 'Ultimi titoli valutati';
+
+  @override
+  String get emptyFollowingList => 'Non stai ancora seguendo nessun utente.';
+
+  @override
+  String get emptyFollowingSearchHint =>
+      'Cerca utenti per seguirli e vedere la loro attività.';
+
+  @override
+  String get cannotFollowSelf => 'Non puoi seguire te stesso';
 }

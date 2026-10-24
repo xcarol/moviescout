@@ -28,6 +28,7 @@ import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/services/lists/pinned_service.dart';
 import 'package:moviescout/services/lists/following_service.dart';
+import 'package:moviescout/services/lists/user_following_service.dart';
 import "package:moviescout/services/lists/watchlist_service.dart";
 import "package:moviescout/services/lists/rateslist_service.dart";
 import 'package:moviescout/services/auth/supabase_auth_service.dart';
@@ -181,6 +182,13 @@ void _runMain() async {
       ChangeNotifierProvider<FollowingService>(
         create: (_) =>
             FollowingService(repository, cloudRepository: cloudRepository),
+      ),
+      ChangeNotifierProxyProvider<SupabaseAuthService, UserFollowingService>(
+        create: (_) => UserFollowingService(),
+        update: (_, authService, userFollowingService) {
+          userFollowingService!.updateAuth(authService);
+          return userFollowingService;
+        },
       ),
       ChangeNotifierProxyProvider2<FollowingService, SupabaseAuthService,
           RateslistService>(

@@ -244,5 +244,15 @@
   "signInToComment": "É necessário ter sessão iniciada para adicionar um comentário.",
   "deleteCommentConfirm": "Tem a certeza de que pretende eliminar o seu comentário?",
   "save": "Guardar",
-  "you": "Tu"
+  "you": "Tu",
+  "followingTab": "A seguir",
+  "users": "Utilizadores",
+  "user": "Utilizador",
+  "follow": "Seguir",
+  "following": "A seguir",
+  "unfollow": "Deixar de seguir",
+  "latestRatedTitles": "Últimos títulos avaliados",
+  "emptyFollowingList": "Ainda não está a seguir nenhum utilizador.",
+  "emptyFollowingSearchHint": "Pesquise utilizadores para segui-los e ver a sua atividade.",
+  "cannotFollowSelf": "Não se pode seguir a si próprio"
 }
