@@ -80,11 +80,51 @@ class TitleCard extends StatelessWidget {
     );
   }
 
+  static const double iconTextSpacingCompact = 2.0;
+  static const double iconTextSpacingDefault = 5.0;
+  static const double betweenSpacingCompact = 8.0;
+  static const double betweenSpacingDefault = 20.0;
+
+  List<Widget> buildRatingWidgets(
+    BuildContext context, {
+    required double rating,
+    required Color color,
+    bool isCompact = false,
+  }) {
+    final double iconTextSpacing =
+        isCompact ? iconTextSpacingCompact : iconTextSpacingDefault;
+
+    if (rating == AppConstants.seenRating) {
+      return [
+        Icon(
+          Icons.check,
+          color: color,
+        ),
+        if (!isCompact) ...[
+          SizedBox(width: iconTextSpacing),
+          Text(AppLocalizations.of(context)!.seen),
+        ],
+      ];
+    } else if (rating > 0) {
+      return [
+        Icon(
+          Icons.star,
+          color: color,
+        ),
+        SizedBox(width: iconTextSpacing),
+        Text(rating == 10.0 ? '10' : rating.toStringAsFixed(1)),
+      ];
+    }
+    return [];
+  }
+
   Widget titleRating(BuildContext context, TmdbTitle tmdbTitle,
       {bool isCompact = false}) {
     final customColors = Theme.of(context).extension<CustomColors>()!;
-    final double iconTextSpacing = isCompact ? 2.0 : 5.0;
-    final double betweenSpacing = isCompact ? 8.0 : 20.0;
+    final double iconTextSpacing =
+        isCompact ? iconTextSpacingCompact : iconTextSpacingDefault;
+    final double betweenSpacing =
+        isCompact ? betweenSpacingCompact : betweenSpacingDefault;
 
     if (tmdbTitle.voteAverage == 0.0) {
       return const SizedBox();
@@ -115,30 +155,14 @@ class TitleCard extends StatelessWidget {
               if (ratingChildren.isNotEmpty) {
                 ratingChildren.add(SizedBox(width: betweenSpacing));
               }
-              if (ratedTitle.rating == AppConstants.seenRating) {
-                ratingChildren.add(
-                  Icon(
-                    Icons.check,
-                    color: customColors.userRatedTitle,
-                  ),
-                );
-                if (!isCompact) {
-                  ratingChildren.add(
-                    Text(AppLocalizations.of(context)!.seen),
-                  );
-                }
-              } else {
-                ratingChildren.addAll([
-                  Icon(
-                    Icons.star,
-                    color: customColors.userRatedTitle,
-                  ),
-                  SizedBox(width: iconTextSpacing),
-                  Text(ratedTitle.rating == 10.0
-                      ? '10'
-                      : ratedTitle.rating.toStringAsFixed(1)),
-                ]);
-              }
+              ratingChildren.addAll(
+                buildRatingWidgets(
+                  context,
+                  rating: ratedTitle.rating,
+                  color: customColors.userRatedTitle,
+                  isCompact: isCompact,
+                ),
+              );
             }
 
             if (ratingChildren.isEmpty) {

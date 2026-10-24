@@ -7,7 +7,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/core/tmdb_base_service.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
-import 'package:moviescout/services/tmdb_content/tmdb_search_service.dart';
+import 'package:moviescout/services/tmdb_content/search_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/repositories/local_title_repository.dart';
@@ -327,7 +327,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
       final watchlistService =
           Provider.of<WatchlistService>(context, listen: false);
       final tmdbBaseService = TmdbBaseService();
-      final tmdbSearchService = TmdbSearchService(
+      final tmdbSearchService = SearchService(
         searchServiceListName,
         context.read<LocalTitleRepository>(),
       );
@@ -424,7 +424,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
       final ratelistService =
           Provider.of<RateslistService>(context, listen: false);
       final tmdbBaseService = TmdbBaseService();
-      final tmdbSearchService = TmdbSearchService(
+      final tmdbSearchService = SearchService(
         searchServiceListName,
         context.read<LocalTitleRepository>(),
       );

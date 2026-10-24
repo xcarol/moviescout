@@ -3,6 +3,7 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/screens/discover_list.dart';
+import 'package:moviescout/screens/following_list.dart';
 import 'package:moviescout/screens/rates_list.dart';
 import 'package:moviescout/screens/watch_list.dart';
 import 'package:moviescout/widgets/layout/app_drawer.dart';
@@ -68,16 +69,17 @@ class _MainScreenState extends State<MainScreen> {
           ),
           backgroundColor: customColors.appBarBackground,
         ),
-        drawer: AppDrawer(),
+        drawer: const AppDrawer(),
         body: Column(children: [
           Expanded(
             child: IndexedStack(
               index: _currentIndex,
               children: [
-                WatchList(),
-                RatesList(),
+                const WatchList(),
+                const RatesList(),
                 DiscoverList(isActive: _currentIndex == 2),
-                Search(),
+                const FollowingList(),
+                const Search(),
               ],
             ),
           ),
@@ -113,6 +115,12 @@ class _MainScreenState extends State<MainScreen> {
               backgroundColor: customColors.bottomNavigationBarBackground,
             ),
             BottomNavigationBarItem(
+              icon: Icon(Icons.people_alt_outlined),
+              label: '',
+              tooltip: AppLocalizations.of(context)!.followingTab,
+              backgroundColor: customColors.bottomNavigationBarBackground,
+            ),
+            BottomNavigationBarItem(
               icon: Icon(Icons.search),
               label: '',
               tooltip: AppLocalizations.of(context)!.search,
@@ -134,6 +142,8 @@ class _MainScreenState extends State<MainScreen> {
       case 2:
         return l10n.discoverlistTitle;
       case 3:
+        return l10n.followingTab;
+      case 4:
         return l10n.search;
       default:
         return '';

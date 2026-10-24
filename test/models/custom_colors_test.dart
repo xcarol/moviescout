@@ -19,6 +19,7 @@ void main() {
     appBarText: Color(0xFFDDDDDD),
     watchedOverlayColor: Color(0xFFEEEEEE),
     destructiveAction: Color(0xFFFFFFFF),
+    followingUserRatedTitle: Color(0xFF123456),
   );
 
   group('CustomColors', () {
@@ -39,6 +40,7 @@ void main() {
       expect(sampleColors.appBarText, const Color(0xFFDDDDDD));
       expect(sampleColors.watchedOverlayColor, const Color(0xFFEEEEEE));
       expect(sampleColors.destructiveAction, const Color(0xFFFFFFFF));
+      expect(sampleColors.followingUserRatedTitle, const Color(0xFF123456));
     });
 
     test('copyWith preserves existing colors when arguments are null', () {
@@ -60,6 +62,8 @@ void main() {
       expect(copy.appBarText, sampleColors.appBarText);
       expect(copy.watchedOverlayColor, sampleColors.watchedOverlayColor);
       expect(copy.destructiveAction, sampleColors.destructiveAction);
+      expect(
+          copy.followingUserRatedTitle, sampleColors.followingUserRatedTitle);
     });
 
     test('copyWith overrides specified colors', () {
@@ -79,6 +83,7 @@ void main() {
         appBarText: const Color(0xFF00000D),
         watchedOverlayColor: const Color(0xFF00000E),
         destructiveAction: const Color(0xFF00000F),
+        followingUserRatedTitle: const Color(0xFF000010),
       );
 
       expect(updated.inWatchlist, const Color(0xFF000001));
@@ -96,6 +101,7 @@ void main() {
       expect(updated.appBarText, const Color(0xFF00000D));
       expect(updated.watchedOverlayColor, const Color(0xFF00000E));
       expect(updated.destructiveAction, const Color(0xFF00000F));
+      expect(updated.followingUserRatedTitle, const Color(0xFF000010));
     });
 
     test('lerp returns this when other is not CustomColors or null', () {
@@ -120,6 +126,7 @@ void main() {
         appBarText: Color(0xFFFFFFFF),
         watchedOverlayColor: Color(0xFFFFFFFF),
         destructiveAction: Color(0xFF000000),
+        followingUserRatedTitle: Color(0xFFFFFFFF),
       );
 
       final lerpedZero = sampleColors.lerp(otherColors, 0.0);

@@ -244,5 +244,15 @@
   "signInToComment": "Você precisa estar conectado para adicionar um comentário.",
   "deleteCommentConfirm": "Tem certeza de que deseja excluir seu comentário?",
   "save": "Salvar",
-  "you": "Você"
+  "you": "Você",
+  "followingTab": "Seguindo",
+  "users": "Usuários",
+  "user": "Usuário",
+  "follow": "Seguir",
+  "following": "Seguindo",
+  "unfollow": "Deixar de seguir",
+  "latestRatedTitles": "Últimos títulos avaliados",
+  "emptyFollowingList": "Você ainda não está seguindo nenhum usuário.",
+  "emptyFollowingSearchHint": "Pesquise usuários para segui-los e ver suas atividades.",
+  "cannotFollowSelf": "Você não pode seguir a si mesmo"
 }

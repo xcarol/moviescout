@@ -3,7 +3,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart';
-import 'package:moviescout/services/tmdb_content/tmdb_search_service.dart';
+import 'package:moviescout/services/tmdb_content/search_service.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -28,7 +28,7 @@ class ListController with ChangeNotifier {
 
   bool get isSearchList =>
       listService.listName == AppConstants.searchList ||
-      listService is TmdbSearchService;
+      listService is SearchService;
 
   late final String _showFiltersPreferencesName;
   late final String _textFilterPreferencesName;
@@ -103,6 +103,7 @@ class ListController with ChangeNotifier {
         localizations.tvshows,
         localizations.cast,
         localizations.collection,
+        localizations.users,
       ];
     } else {
       _titleTypes = [
@@ -340,6 +341,8 @@ class ListController with ChangeNotifier {
       return ApiConstants.person;
     } else if (type == localizations.collection) {
       return ApiConstants.collection;
+    } else if (type == localizations.users) {
+      return ApiConstants.user;
     }
     return (type == localizations.allTypes || type == localizations.results)
         ? ''
@@ -357,6 +360,8 @@ class ListController with ChangeNotifier {
       return localizations.cast;
     } else if (option == ApiConstants.collection) {
       return localizations.collection;
+    } else if (option == ApiConstants.user) {
+      return localizations.users;
     }
     return isSearchList ? localizations.results : localizations.allTypes;
   }
