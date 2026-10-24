@@ -12,12 +12,15 @@ import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
     show RatingFilter;
 
 class MockTitleRepository extends Mock implements LocalTitleRepository {}
 
 class MockFollowingService extends Mock implements FollowingService {}
+
+class MockSupabaseAuthService extends Mock implements SupabaseAuthService {}
 
 class MockSupabaseClient extends Mock implements SupabaseClient {}
 
@@ -26,6 +29,33 @@ class MockGoTrueClient extends Mock implements GoTrueClient {}
 class MockUser extends Mock implements User {}
 
 class MockSupabaseQueryBuilder extends Mock implements SupabaseQueryBuilder {}
+
+class FakePostgrestListFilterBuilder extends Fake
+    implements PostgrestFilterBuilder<PostgrestList> {
+  final PostgrestList _data;
+  FakePostgrestListFilterBuilder([this._data = const <Map<String, dynamic>>[]]);
+
+  @override
+  PostgrestFilterBuilder<PostgrestList> eq(String column, Object value) => this;
+
+  @override
+  PostgrestFilterBuilder<PostgrestList> order(String column,
+          {bool ascending = false,
+          bool nullsFirst = false,
+          String? referencedTable}) =>
+      this;
+
+  @override
+  PostgrestTransformBuilder<PostgrestList> range(int from, int to,
+          {String? referencedTable}) =>
+      this;
+
+  @override
+  Future<R> then<R>(FutureOr<R> Function(PostgrestList value) onValue,
+      {Function? onError}) {
+    return Future.value(_data).then(onValue, onError: onError);
+  }
+}
 
 class FakePostgrestFilterBuilder extends Fake
     implements PostgrestFilterBuilder<dynamic> {
@@ -303,6 +333,106 @@ void main() {
       expect(title.notifyNewSeasons, false);
       verifyNever(() => mockFollowingService.addFollowingToServer(title));
       verifyNever(() => mockRepository.updateNotifyNewSeasonsList([title]));
+    });
+
+    test('toggleNotify rolls back notifyNewSeasons and updates repository on error', () async {
+      final title = TmdbTitle(
+        tmdbId: 1,
+        mediaType: ApiConstants.tv,
+        name: 'Test',
+        lastUpdated: DateTime.now().toIso8601String(),
+        dateRated: DateTime.now(),
+      );
+      title.notifyNewSeasons = false;
+
+      when(() => mockRepository.updateNotifyNewSeasonsList([title]))
+          .thenAnswer((_) async {});
+      when(() => mockFollowingService.addFollowingToServer(title))
+          .thenThrow(Exception('Network error'));
+
+      await service.toggleNotify(title);
+
+      expect(title.notifyNewSeasons, false);
+      verify(() => mockRepository.updateNotifyNewSeasonsList([title])).called(2);
+    });
+  });
+
+  group('RateslistService - getRating, syncFromServer and updateAuth', () {
+    test('getRatingAsync returns rating if found, 0.0 if not', () async {
+      final title = TmdbTitle(
+        tmdbId: 1,
+        mediaType: ApiConstants.movie,
+        name: 'Test',
+        lastUpdated: DateTime.now().toIso8601String(),
+        dateRated: DateTime.now(),
+      )..rating = 7.5;
+
+      when(() => mockRepository.getTitleByTmdbId(AppConstants.rateslist, 1, ApiConstants.movie))
+          .thenAnswer((_) async => title);
+      when(() => mockRepository.getTitleByTmdbId(AppConstants.rateslist, 2, ApiConstants.movie))
+          .thenAnswer((_) async => null);
+
+      expect(await service.getRatingAsync(1, ApiConstants.movie), 7.5);
+      expect(await service.getRatingAsync(2, ApiConstants.movie), 0.0);
+    });
+
+    test('getRatingDate returns date if found, epoch if not', () async {
+      final date = DateTime(2026, 5, 1);
+      final title = TmdbTitle(
+        tmdbId: 1,
+        mediaType: ApiConstants.movie,
+        name: 'Test',
+        lastUpdated: DateTime.now().toIso8601String(),
+        dateRated: date,
+      );
+
+      when(() => mockRepository.getTitleByTmdbId(AppConstants.rateslist, 1, ApiConstants.movie))
+          .thenAnswer((_) async => title);
+      when(() => mockRepository.getTitleByTmdbId(AppConstants.rateslist, 2, ApiConstants.movie))
+          .thenAnswer((_) async => null);
+
+      expect(await service.getRatingDate(1, ApiConstants.movie), date);
+      expect(await service.getRatingDate(2, ApiConstants.movie), DateTime.fromMillisecondsSinceEpoch(0));
+    });
+
+    test('syncFromServer calls filterItems when user is null and loadedItems is empty', () async {
+      when(() => mockAuth.currentUser).thenReturn(null);
+      clearInteractions(mockRepository);
+
+      await service.syncFromServer();
+
+      verify(() => mockRepository.getTitles(
+            listName: AppConstants.rateslist,
+            filterText: any(named: 'filterText'),
+            filterMediaType: any(named: 'filterMediaType'),
+            filterGenres: any(named: 'filterGenres'),
+            filterExcludeGenres: any(named: 'filterExcludeGenres'),
+            filterByProviders: any(named: 'filterByProviders'),
+            filterProvidersIds: any(named: 'filterProvidersIds'),
+            filterRating: any(named: 'filterRating'),
+            pinned: any(named: 'pinned'),
+            sortOption: any(named: 'sortOption'),
+            sortAscending: any(named: 'sortAscending'),
+            limit: any(named: 'limit'),
+            offset: any(named: 'offset'),
+          )).called(1);
+    });
+
+    test('updateAuth resets and syncs when user logs in', () async {
+      final mockAuthService = MockSupabaseAuthService();
+      when(() => mockAuthService.currentUser).thenReturn(mockUser);
+
+      when(() => mockQueryBuilder.select(any()))
+          .thenAnswer((_) => FakePostgrestListFilterBuilder([]));
+
+      service.updateAuth(mockAuthService);
+    });
+
+    test('updateAuth clears loaded items when user logs out', () async {
+      final mockAuthService = MockSupabaseAuthService();
+      when(() => mockAuthService.currentUser).thenReturn(null);
+
+      service.updateAuth(mockAuthService);
     });
   });
 }

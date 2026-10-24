@@ -272,6 +272,13 @@ class AiService {
   List<AiTitleSuggestion> parseSuggestions(String responseBody) =>
       _parseSuggestions(responseBody);
 
+  @visibleForTesting
+  String cleanTranslation(String text) => _cleanTranslation(text);
+
+  @visibleForTesting
+  Never handleErrorResponse(http.Response response) =>
+      _handleErrorResponse(response);
+
   List<AiTitleSuggestion> _parseSuggestions(String responseBody) {
     try {
       final content = _extractMessageContent(responseBody);

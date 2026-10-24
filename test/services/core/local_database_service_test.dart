@@ -28,5 +28,18 @@ void main() {
       await LocalDatabaseService.close();
       expect(() => LocalDatabaseService.instance, throwsA(isA<TypeError>()));
     });
+
+    test('close when db is null completes without error', () async {
+      await LocalDatabaseService.close();
+      expect(() => LocalDatabaseService.instance, throwsA(isA<TypeError>()));
+    });
+
+    test('init without args when already initialized returns early', () async {
+      await LocalDatabaseService.init(db: db);
+      expect(LocalDatabaseService.instance, equals(db));
+
+      await LocalDatabaseService.init();
+      expect(LocalDatabaseService.instance, equals(db));
+    });
   });
 }
