@@ -108,6 +108,7 @@ class UserFollowingService with ChangeNotifier {
         e,
         stackTrace: stackTrace,
         userMessage: 'Error following user',
+        showSnackBar: true,
       );
       return false;
     }
@@ -149,6 +150,7 @@ class UserFollowingService with ChangeNotifier {
         e,
         stackTrace: stackTrace,
         userMessage: 'Error unfollowing user',
+        showSnackBar: true,
       );
       return false;
     }

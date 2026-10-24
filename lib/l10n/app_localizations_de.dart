@@ -819,4 +819,8 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get cannotFollowSelf => 'Du kannst dir nicht selbst folgen';
+
+  @override
+  String get networkErrorMessage =>
+      'Verbindung zum Server nicht möglich. Bitte überprüfe deine Internetverbindung.';
 }

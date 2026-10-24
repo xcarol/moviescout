@@ -18,16 +18,18 @@ class ErrorService {
     bool showSnackBar = false,
     bool? reportToCrashlytics,
   }) {
-    debugPrint('--- ERROR ---');
+    final isNetwork = isNetworkError(error);
+    debugPrint(isNetwork ? '--- NETWORK ---' : '--- ERROR ---');
     debugPrint('Error: $error');
     debugPrint('StackTrace: $stackTrace');
     debugPrint('-------------');
 
     if (userMessage == null || userMessage != AppConstants.saveLogsMessage) {
+      final tag = isNetwork ? '== NETWORK ==' : '== ERROR ==';
       saveLogs([
-        '== ERROR ==',
+        tag,
         'Error: $error',
-        '== ERROR ==',
+        tag,
       ]);
     }
 
@@ -59,12 +61,19 @@ class ErrorService {
       final context = scaffoldMessengerKey.currentContext;
       String message = userMessage ?? '';
 
-      if (message.isEmpty && context != null) {
-        try {
-          message = AppLocalizations.of(context)!.errorMessageGeneric;
-        } catch (e) {
-          message = 'An error occurred. Please try again later.';
+      if (context != null) {
+        final loc = AppLocalizations.of(context);
+        if (isNetwork) {
+          message = loc?.networkErrorMessage ??
+              'Unable to connect to the server. Please check your internet connection.';
+        } else if (message.isEmpty || message.startsWith('Error ')) {
+          message = loc?.errorMessageGeneric ??
+              'An error occurred. Please try again later.';
         }
+      } else if (message.isEmpty || message.startsWith('Error ')) {
+        message = isNetwork
+            ? 'Unable to connect to the server. Please check your internet connection.'
+            : 'An error occurred. Please try again later.';
       }
 
       if (message.isNotEmpty) {
@@ -73,11 +82,29 @@ class ErrorService {
     }
   }
 
-  static bool _shouldReportAutomatically(dynamic error) {
+  static bool isNetworkError(dynamic error) {
     if (error is SocketException ||
         error is HandshakeException ||
         error is HttpException ||
-        error is TimeoutException) {
+        error is TimeoutException ||
+        error is TlsException) {
+      return true;
+    }
+
+    final msg = error.toString().toLowerCase();
+    return msg.contains('socketexception') ||
+        msg.contains('failed host lookup') ||
+        msg.contains('network is unreachable') ||
+        msg.contains('connection refused') ||
+        msg.contains('connection reset') ||
+        msg.contains('connection closed') ||
+        msg.contains('connection timed out') ||
+        msg.contains('clientexception') ||
+        msg.contains('software caused connection abort');
+  }
+
+  static bool _shouldReportAutomatically(dynamic error) {
+    if (isNetworkError(error)) {
       return false;
     }
 

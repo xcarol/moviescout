@@ -821,4 +821,8 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get cannotFollowSelf => 'Vous ne pouvez pas vous suivre vous-même';
+
+  @override
+  String get networkErrorMessage =>
+      'Impossible de se connecter au serveur. Veuillez vérifier votre connexion Internet.';
 }

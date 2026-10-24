@@ -569,5 +569,7 @@
   "emptyFollowingSearchHint": "Busca usuarios para segilos e ver a súa actividade.",
   "@emptyFollowingSearchHint": {},
   "cannotFollowSelf": "Non te podes seguir a ti mesmo",
-  "@cannotFollowSelf": {}
+  "@cannotFollowSelf": {},
+  "networkErrorMessage": "Non se puido conectar co servidor. Comproba a túa conexión a internet.",
+  "@networkErrorMessage": {}
 }

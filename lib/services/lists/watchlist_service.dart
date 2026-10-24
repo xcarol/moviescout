@@ -106,6 +106,7 @@ class WatchlistService extends TmdbTitleListService {
         error,
         stackTrace: stackTrace,
         userMessage: 'Error updating watchlist for ${title.name}',
+        showSnackBar: true,
       );
     }
   }
@@ -147,8 +148,11 @@ class WatchlistService extends TmdbTitleListService {
         error,
         stackTrace: stackTrace,
         userMessage: 'Error toggling pin for ${title.name}',
+        showSnackBar: true,
       );
       title.isPinned = !title.isPinned;
+      await repository.updateIsPinnedList([title]);
+      await filterItems(retainPagination: true);
     }
   }
 

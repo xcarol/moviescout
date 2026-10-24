@@ -569,5 +569,7 @@
   "emptyFollowingSearchHint": "Bilatu erabiltzaileak haiei jarraitzeko eta haien jarduera ikusteko.",
   "@emptyFollowingSearchHint": {},
   "cannotFollowSelf": "Ezin diozu zure buruari jarraitu",
-  "@cannotFollowSelf": {}
+  "@cannotFollowSelf": {},
+  "networkErrorMessage": "Ezin izan da zerbitzariarekin konektatu. Egiaztatu Interneteko konexioa.",
+  "@networkErrorMessage": {}
 }

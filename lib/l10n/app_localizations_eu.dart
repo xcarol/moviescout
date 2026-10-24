@@ -817,4 +817,8 @@ class AppLocalizationsEu extends AppLocalizations {
 
   @override
   String get cannotFollowSelf => 'Ezin diozu zure buruari jarraitu';
+
+  @override
+  String get networkErrorMessage =>
+      'Ezin izan da zerbitzariarekin konektatu. Egiaztatu Interneteko konexioa.';
 }
