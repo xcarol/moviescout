@@ -185,6 +185,7 @@ class RateslistService extends TmdbTitleListService {
         error,
         stackTrace: stackTrace,
         userMessage: 'Error updating rate for ${title.name}',
+        showSnackBar: true,
       );
     }
   }
@@ -209,8 +210,11 @@ class RateslistService extends TmdbTitleListService {
         error,
         stackTrace: stackTrace,
         userMessage: 'Error toggling notify for ${title.name}',
+        showSnackBar: true,
       );
       title.notifyNewSeasons = !title.notifyNewSeasons;
+      await repository.updateNotifyNewSeasonsList([title]);
+      await filterItems(retainPagination: true);
     }
   }
 

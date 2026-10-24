@@ -816,6 +816,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get cannotFollowSelf => 'Você não pode seguir a si mesmo';
+
+  @override
+  String get networkErrorMessage =>
+      'Não foi possível conectar ao servidor. Verifique sua conexão com a internet.';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -1630,4 +1634,8 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get cannotFollowSelf => 'Não se pode seguir a si próprio';
+
+  @override
+  String get networkErrorMessage =>
+      'Não foi possível ligar ao servidor. Verifique a sua ligação à internet.';
 }

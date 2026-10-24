@@ -254,5 +254,6 @@
   "latestRatedTitles": "Últimos títulos avaliados",
   "emptyFollowingList": "Você ainda não está seguindo nenhum usuário.",
   "emptyFollowingSearchHint": "Pesquise usuários para segui-los e ver suas atividades.",
-  "cannotFollowSelf": "Você não pode seguir a si mesmo"
+  "cannotFollowSelf": "Você não pode seguir a si mesmo",
+  "networkErrorMessage": "Não foi possível conectar ao servidor. Verifique sua conexão com a internet."
 }

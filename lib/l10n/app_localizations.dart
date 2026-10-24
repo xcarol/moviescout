@@ -1624,6 +1624,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You cannot follow yourself'**
   String get cannotFollowSelf;
+
+  /// No description provided for @networkErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to connect to the server. Please check your internet connection.'**
+  String get networkErrorMessage;
 }
 
 class _AppLocalizationsDelegate

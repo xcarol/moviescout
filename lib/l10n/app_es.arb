@@ -569,5 +569,7 @@
   "emptyFollowingSearchHint": "Busca usuarios para seguirlos y ver su actividad.",
   "@emptyFollowingSearchHint": {},
   "cannotFollowSelf": "No puedes seguirte a ti mismo",
-  "@cannotFollowSelf": {}
+  "@cannotFollowSelf": {},
+  "networkErrorMessage": "No se ha podido conectar con el servidor. Comprueba la conexión a internet.",
+  "@networkErrorMessage": {}
 }
