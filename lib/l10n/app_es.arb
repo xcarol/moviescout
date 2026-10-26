@@ -581,5 +581,9 @@
   "enablePublicProfileBanner": "Activa tu perfil público para compartir lo que ves con la comunidad. Se puede desactivar desde la configuración.",
   "@enablePublicProfileBanner": {},
   "enablePublicProfileButton": "Activar perfil público",
-  "@enablePublicProfileButton": {}
+  "@enablePublicProfileButton": {},
+  "noWatchingNowTitles": "No está viendo ningún título ahora mismo",
+  "@noWatchingNowTitles": {},
+  "noRatedTitles": "No hay ningún título valorado",
+  "@noRatedTitles": {}
 }

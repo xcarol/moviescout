@@ -83,10 +83,8 @@ class _UserDetailsState extends State<UserDetails> {
             if (!isCurrentUser && !_isPublic)
               _privateProfileNotice(context)
             else ...[
-              if (_pinnedTitles.isNotEmpty) ...[
-                _pinnedSection(context),
-                Divider(color: customColors.dividerColor),
-              ],
+              _pinnedSection(context),
+              Divider(color: customColors.dividerColor),
               _ratedSection(context),
             ],
           ],
@@ -323,22 +321,42 @@ class _UserDetailsState extends State<UserDetails> {
             ],
           ),
         ),
-        SizedBox(
-          height: CARD_HEIGHT + 10,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            itemCount: _pinnedTitles.length,
-            itemBuilder: (context, index) {
-              final watchlistService =
-                  Provider.of<WatchlistService>(context, listen: false);
-              return UserTitleChip(
-                title: _pinnedTitles[index],
-                tmdbListService: watchlistService,
-              );
-            },
+        if (_isLoading)
+          const Center(
+            child: Padding(
+              padding: EdgeInsets.all(24.0),
+              child: CircularProgressIndicator(),
+            ),
+          )
+        else if (_pinnedTitles.isEmpty)
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Text(
+                loc.noWatchingNowTitles,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+          )
+        else
+          SizedBox(
+            height: CARD_HEIGHT + 10,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              itemCount: _pinnedTitles.length,
+              itemBuilder: (context, index) {
+                final watchlistService =
+                    Provider.of<WatchlistService>(context, listen: false);
+                return UserTitleChip(
+                  title: _pinnedTitles[index],
+                  tmdbListService: watchlistService,
+                );
+              },
+            ),
           ),
-        ),
         const SizedBox(height: 8),
       ],
     );
@@ -382,7 +400,7 @@ class _UserDetailsState extends State<UserDetails> {
             padding: const EdgeInsets.all(16.0),
             child: Center(
               child: Text(
-                loc.messageEmptyList,
+                loc.noRatedTitles,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),

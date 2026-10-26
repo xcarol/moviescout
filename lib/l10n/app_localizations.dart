@@ -1660,6 +1660,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enable public profile'**
   String get enablePublicProfileButton;
+
+  /// No description provided for @noWatchingNowTitles.
+  ///
+  /// In en, this message translates to:
+  /// **'Not watching any title right now'**
+  String get noWatchingNowTitles;
+
+  /// No description provided for @noRatedTitles.
+  ///
+  /// In en, this message translates to:
+  /// **'No rated titles'**
+  String get noRatedTitles;
 }
 
 class _AppLocalizationsDelegate

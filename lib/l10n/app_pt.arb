@@ -260,5 +260,7 @@
   "publicProfileSubtitle": "Ative seu perfil público para compartilhar o que você assiste com a comunidade",
   "privateProfileMessage": "Este perfil é privado",
   "enablePublicProfileBanner": "Ative seu perfil público para compartilhar o que você assiste com a comunidade. Pode ser desativado nas configurações.",
-  "enablePublicProfileButton": "Ativar perfil público"
+  "enablePublicProfileButton": "Ativar perfil público",
+  "noWatchingNowTitles": "Não está assistindo a nenhum título no momento",
+  "noRatedTitles": "Nenhum título avaliado"
 }

@@ -581,5 +581,9 @@
   "enablePublicProfileBanner": "Enable your public profile to share what you watch with the community. It can be disabled from settings.",
   "@enablePublicProfileBanner": {},
   "enablePublicProfileButton": "Enable public profile",
-  "@enablePublicProfileButton": {}
+  "@enablePublicProfileButton": {},
+  "noWatchingNowTitles": "Not watching any title right now",
+  "@noWatchingNowTitles": {},
+  "noRatedTitles": "No rated titles",
+  "@noRatedTitles": {}
 }

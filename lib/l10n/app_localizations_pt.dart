@@ -837,6 +837,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get enablePublicProfileButton => 'Ativar perfil público';
+
+  @override
+  String get noWatchingNowTitles =>
+      'Não está assistindo a nenhum título no momento';
+
+  @override
+  String get noRatedTitles => 'Nenhum título avaliado';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -1672,4 +1679,10 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get enablePublicProfileButton => 'Ativar perfil público';
+
+  @override
+  String get noWatchingNowTitles => 'Não está a ver nenhum título no momento';
+
+  @override
+  String get noRatedTitles => 'Nenhum título avaliado';
 }

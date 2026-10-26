@@ -838,4 +838,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get enablePublicProfileButton => 'Activar perfil público';
+
+  @override
+  String get noWatchingNowTitles => 'No está viendo ningún título ahora mismo';
+
+  @override
+  String get noRatedTitles => 'No hay ningún título valorado';
 }

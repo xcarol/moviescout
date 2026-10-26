@@ -260,5 +260,7 @@
   "publicProfileSubtitle": "Aktiviere dein öffentliches Profil, um deine gesehene Titel mit der Community zu teilen",
   "privateProfileMessage": "Dieses Profil ist privat",
   "enablePublicProfileBanner": "Aktiviere dein öffentliches Profil, um deine gesehene Titel mit der Community zu teilen. Es kann in den Einstellungen deaktiviert werden.",
-  "enablePublicProfileButton": "Öffentliches Profil aktivieren"
+  "enablePublicProfileButton": "Öffentliches Profil aktivieren",
+  "noWatchingNowTitles": "Schaut gerade keine Titel",
+  "noRatedTitles": "Keine bewerteten Titel"
 }

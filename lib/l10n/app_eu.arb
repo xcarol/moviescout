@@ -581,5 +581,9 @@
   "enablePublicProfileBanner": "Aktibatu zure profil publikoa ikusten ari zarena komunitatearekin partekatzeko. Ezarpenetatik desaktiba daiteke.",
   "@enablePublicProfileBanner": {},
   "enablePublicProfileButton": "Aktibatu profil publikoa",
-  "@enablePublicProfileButton": {}
+  "@enablePublicProfileButton": {},
+  "noWatchingNowTitles": "Ez dago titulurik ikusten orain",
+  "@noWatchingNowTitles": {},
+  "noRatedTitles": "Ez dago baloratutako titulurik",
+  "@noRatedTitles": {}
 }

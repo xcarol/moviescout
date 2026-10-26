@@ -838,4 +838,10 @@ class AppLocalizationsEu extends AppLocalizations {
 
   @override
   String get enablePublicProfileButton => 'Aktibatu profil publikoa';
+
+  @override
+  String get noWatchingNowTitles => 'Ez dago titulurik ikusten orain';
+
+  @override
+  String get noRatedTitles => 'Ez dago baloratutako titulurik';
 }
