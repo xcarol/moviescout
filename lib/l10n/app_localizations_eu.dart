@@ -821,4 +821,21 @@ class AppLocalizationsEu extends AppLocalizations {
   @override
   String get networkErrorMessage =>
       'Ezin izan da zerbitzariarekin konektatu. Egiaztatu Interneteko konexioa.';
+
+  @override
+  String get publicProfileTitle => 'Profil publikoa';
+
+  @override
+  String get publicProfileSubtitle =>
+      'Aktibatu zure profil publikoa ikusten ari zarena komunitatearekin partekatzeko';
+
+  @override
+  String get privateProfileMessage => 'Profil hau pribatua da';
+
+  @override
+  String get enablePublicProfileBanner =>
+      'Aktibatu zure profil publikoa ikusten ari zarena komunitatearekin partekatzeko. Ezarpenetatik desaktiba daiteke.';
+
+  @override
+  String get enablePublicProfileButton => 'Aktibatu profil publikoa';
 }

@@ -29,6 +29,32 @@ class SupabaseAuthService extends ChangeNotifier {
 
   User? get currentUser => _supabase.auth.currentUser;
   bool get isLoggedIn => currentUser != null;
+  bool get isPublicProfile => (userProfile?['is_public'] as bool?) ?? false;
+
+  Future<void> setPublicProfile(bool isPublic) async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) return;
+
+    try {
+      await CloudDatabaseService.retryOnFutureJwt(
+        () => _supabase
+            .from('profiles')
+            .update({'is_public': isPublic}).eq('id', user.id),
+      );
+      if (userProfile != null) {
+        userProfile!['is_public'] = isPublic;
+      } else {
+        userProfile = {'id': user.id, 'is_public': isPublic};
+      }
+      notifyListeners();
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        userMessage: 'Error updating profile privacy',
+        stackTrace: stackTrace,
+      );
+    }
+  }
 
   Future<void> fetchProfile() async {
     try {
@@ -44,12 +70,10 @@ class SupabaseAuthService extends ChangeNotifier {
         final metadata = user.userMetadata;
         final displayName = metadata?['full_name'] ?? metadata?['name'] ?? '';
         final avatar = metadata?['avatar_url'] ?? metadata?['picture'] ?? '';
-        final email = user.email ?? '';
 
         if (response != null) {
           final currentUsername = response['username'] as String?;
           final currentAvatar = response['avatar_url'] as String?;
-          final currentEmail = response['email'] as String?;
 
           final needsUsername =
               (currentUsername == null || currentUsername.isEmpty) &&
@@ -57,14 +81,11 @@ class SupabaseAuthService extends ChangeNotifier {
           final needsAvatar =
               (currentAvatar == null || currentAvatar.isEmpty) &&
                   avatar.isNotEmpty;
-          final needsEmail = (currentEmail == null || currentEmail.isEmpty) &&
-              email.isNotEmpty;
 
-          if (needsUsername || needsAvatar || needsEmail) {
+          if (needsUsername || needsAvatar) {
             final updates = <String, dynamic>{};
             if (needsUsername) updates['username'] = displayName;
             if (needsAvatar) updates['avatar_url'] = avatar;
-            if (needsEmail) updates['email'] = email;
 
             try {
               await CloudDatabaseService.retryOnFutureJwt(
@@ -92,14 +113,14 @@ class SupabaseAuthService extends ChangeNotifier {
                 'id': user.id,
                 'username': displayName,
                 'avatar_url': avatar,
-                'email': email,
+                'is_public': false,
               }),
             );
             userProfile = {
               'id': user.id,
               'username': displayName,
               'avatar_url': avatar,
-              'email': email,
+              'is_public': false,
             };
             notifyListeners();
           } catch (e, stackTrace) {
@@ -170,7 +191,6 @@ class SupabaseAuthService extends ChangeNotifier {
               'id': authResponse.user!.id,
               'username': displayName,
               'avatar_url': avatar,
-              'email': authResponse.user!.email,
             }),
           );
         } catch (_) {}

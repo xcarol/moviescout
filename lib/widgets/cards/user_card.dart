@@ -81,9 +81,6 @@ class UserCard extends StatelessWidget {
   }
 
   Widget _details(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final email = user.email;
-
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
@@ -100,18 +97,6 @@ class UserCard extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            if (email != null && email.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                email,
-                style: TextStyle(
-                  color: colorScheme.onSurfaceVariant,
-                  fontSize: 13,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
           ],
         ),
       ),

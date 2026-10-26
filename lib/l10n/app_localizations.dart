@@ -1630,6 +1630,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unable to connect to the server. Please check your internet connection.'**
   String get networkErrorMessage;
+
+  /// No description provided for @publicProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Public profile'**
+  String get publicProfileTitle;
+
+  /// No description provided for @publicProfileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable your public profile to share what you watch with the community'**
+  String get publicProfileSubtitle;
+
+  /// No description provided for @privateProfileMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This profile is private'**
+  String get privateProfileMessage;
+
+  /// No description provided for @enablePublicProfileBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable your public profile to share what you watch with the community. It can be disabled from settings.'**
+  String get enablePublicProfileBanner;
+
+  /// No description provided for @enablePublicProfileButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable public profile'**
+  String get enablePublicProfileButton;
 }
 
 class _AppLocalizationsDelegate

@@ -255,5 +255,10 @@
   "emptyFollowingList": "Non stai ancora seguendo nessun utente.",
   "emptyFollowingSearchHint": "Cerca utenti per seguirli e vedere la loro attività.",
   "cannotFollowSelf": "Non puoi seguire te stesso",
-  "networkErrorMessage": "Impossibile connettersi al server. Verifica la tua connessione Internet."
+  "networkErrorMessage": "Impossibile connettersi al server. Verifica la tua connessione Internet.",
+  "publicProfileTitle": "Profilo pubblico",
+  "publicProfileSubtitle": "Attiva il tuo profilo pubblico per condividere ciò che guardi con la community",
+  "privateProfileMessage": "Questo profilo è privato",
+  "enablePublicProfileBanner": "Attiva il tuo profilo pubblico per condividere ciò che guardi con la community. Può essere disattivato dalle impostazioni.",
+  "enablePublicProfileButton": "Attiva profilo pubblico"
 }

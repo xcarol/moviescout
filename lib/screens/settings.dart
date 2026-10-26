@@ -34,6 +34,7 @@ class SettingsScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
+          if (isUserLoggedIn) _publicProfileTile(context),
           if (isUserLoggedIn) _importImdbTile(context),
           if (isUserLoggedIn) _importTmdbTile(context),
           if (isUserLoggedIn) _providersTile(context),
@@ -105,6 +106,20 @@ class SettingsScreen extends StatelessWidget {
               await notificationService.setNotifyCompleteSeason(value);
             }
           : null,
+    );
+  }
+
+  Widget _publicProfileTile(BuildContext context) {
+    final authService = Provider.of<SupabaseAuthService>(context);
+
+    return SwitchListTile(
+      secondary: const Icon(Icons.public),
+      title: Text(AppLocalizations.of(context)!.publicProfileTitle),
+      subtitle: Text(AppLocalizations.of(context)!.publicProfileSubtitle),
+      value: authService.isPublicProfile,
+      onChanged: (bool value) async {
+        await authService.setPublicProfile(value);
+      },
     );
   }
 

@@ -820,6 +820,23 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get networkErrorMessage =>
       'Não foi possível conectar ao servidor. Verifique sua conexão com a internet.';
+
+  @override
+  String get publicProfileTitle => 'Perfil público';
+
+  @override
+  String get publicProfileSubtitle =>
+      'Ative seu perfil público para compartilhar o que você assiste com a comunidade';
+
+  @override
+  String get privateProfileMessage => 'Este perfil é privado';
+
+  @override
+  String get enablePublicProfileBanner =>
+      'Ative seu perfil público para compartilhar o que você assiste com a comunidade. Pode ser desativado nas configurações.';
+
+  @override
+  String get enablePublicProfileButton => 'Ativar perfil público';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -1638,4 +1655,21 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   @override
   String get networkErrorMessage =>
       'Não foi possível ligar ao servidor. Verifique a sua ligação à internet.';
+
+  @override
+  String get publicProfileTitle => 'Perfil público';
+
+  @override
+  String get publicProfileSubtitle =>
+      'Ative o seu perfil público para partilhar o que vê com a comunidade';
+
+  @override
+  String get privateProfileMessage => 'Este perfil é privado';
+
+  @override
+  String get enablePublicProfileBanner =>
+      'Ative o seu perfil público para partilhar o que vê com a comunidade. Pode ser desativado nas definições.';
+
+  @override
+  String get enablePublicProfileButton => 'Ativar perfil público';
 }

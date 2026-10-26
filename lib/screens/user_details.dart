@@ -28,6 +28,7 @@ class UserDetails extends StatefulWidget {
 class _UserDetailsState extends State<UserDetails> {
   late UserProfile _user;
   bool _isLoading = true;
+  bool _isPublic = true;
   List<TmdbTitle> _pinnedTitles = [];
   List<TmdbTitle> _latestRatedTitles = [];
 
@@ -35,6 +36,7 @@ class _UserDetailsState extends State<UserDetails> {
   void initState() {
     super.initState();
     _user = widget.user;
+    _isPublic = widget.user.isPublic;
     _loadUserDetails();
   }
 
@@ -48,6 +50,7 @@ class _UserDetailsState extends State<UserDetails> {
         if (data['profile'] is UserProfile) {
           _user = data['profile'] as UserProfile;
         }
+        _isPublic = (data['isPublic'] as bool?) ?? _user.isPublic;
         _pinnedTitles = (data['pinnedTitles'] as List<TmdbTitle>?) ?? [];
         _latestRatedTitles =
             (data['latestRatedTitles'] as List<TmdbTitle>?) ?? [];
@@ -77,11 +80,45 @@ class _UserDetailsState extends State<UserDetails> {
           children: [
             _profileHeader(context, isCurrentUser),
             Divider(color: customColors.dividerColor),
-            if (_pinnedTitles.isNotEmpty) ...[
-              _pinnedSection(context),
-              Divider(color: customColors.dividerColor),
+            if (!isCurrentUser && !_isPublic)
+              _privateProfileNotice(context)
+            else ...[
+              if (_pinnedTitles.isNotEmpty) ...[
+                _pinnedSection(context),
+                Divider(color: customColors.dividerColor),
+              ],
+              _ratedSection(context),
             ],
-            _ratedSection(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _privateProfileNotice(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 24.0),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              loc.privateProfileMessage,
+              style: TextStyle(
+                color: colorScheme.onSurfaceVariant,
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),
@@ -91,7 +128,6 @@ class _UserDetailsState extends State<UserDetails> {
   Widget _profileHeader(BuildContext context, bool isCurrentUser) {
     final colorScheme = Theme.of(context).colorScheme;
     final loc = AppLocalizations.of(context)!;
-    final email = _user.email;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -138,38 +174,31 @@ class _UserDetailsState extends State<UserDetails> {
             ),
             textAlign: TextAlign.center,
           ),
-          if (email != null && email.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(
-              email,
-              style: TextStyle(
-                color: colorScheme.onSurfaceVariant,
-                fontSize: 14,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _countBadge(
-                context,
-                icon: Icons.remove_red_eye,
-                count: _user.watchlistCount,
-                label: loc.watchlistTitle,
-              ),
-              _countBadge(
-                context,
-                icon: Icons.rate_review,
-                count: _user.rateslistCount,
-                label: loc.rateslistTitle,
-              ),
-            ],
-          ),
-          if (!isCurrentUser) ...[
+          if (!isCurrentUser && !_isPublic) ...[
+            const SizedBox(height: 8),
+          ] else ...[
             const SizedBox(height: 16),
-            _followButton(context),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _countBadge(
+                  context,
+                  icon: Icons.remove_red_eye,
+                  count: _user.watchlistCount,
+                  label: loc.watchlistTitle,
+                ),
+                _countBadge(
+                  context,
+                  icon: Icons.rate_review,
+                  count: _user.rateslistCount,
+                  label: loc.rateslistTitle,
+                ),
+              ],
+            ),
+            if (!isCurrentUser) ...[
+              const SizedBox(height: 16),
+              _followButton(context),
+            ],
           ],
         ],
       ),

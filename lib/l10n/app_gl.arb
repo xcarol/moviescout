@@ -571,5 +571,15 @@
   "cannotFollowSelf": "Non te podes seguir a ti mesmo",
   "@cannotFollowSelf": {},
   "networkErrorMessage": "Non se puido conectar co servidor. Comproba a túa conexión a internet.",
-  "@networkErrorMessage": {}
+  "@networkErrorMessage": {},
+  "publicProfileTitle": "Perfil público",
+  "@publicProfileTitle": {},
+  "publicProfileSubtitle": "Activa o teu perfil público para compartir o que ves coa comunidade",
+  "@publicProfileSubtitle": {},
+  "privateProfileMessage": "Este perfil é privado",
+  "@privateProfileMessage": {},
+  "enablePublicProfileBanner": "Activa o teu perfil público para compartir o que ves coa comunidade. Pódese desactivar dende a configuración.",
+  "@enablePublicProfileBanner": {},
+  "enablePublicProfileButton": "Activar perfil público",
+  "@enablePublicProfileButton": {}
 }

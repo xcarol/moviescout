@@ -825,4 +825,21 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get networkErrorMessage =>
       'Impossible de se connecter au serveur. Veuillez vérifier votre connexion Internet.';
+
+  @override
+  String get publicProfileTitle => 'Profil public';
+
+  @override
+  String get publicProfileSubtitle =>
+      'Activez votre profil public pour partager ce que vous regardez avec la communauté';
+
+  @override
+  String get privateProfileMessage => 'Ce profil est privé';
+
+  @override
+  String get enablePublicProfileBanner =>
+      'Activez votre profil public pour partager ce que vous regardez avec la communauté. Il peut être désactivé depuis les paramètres.';
+
+  @override
+  String get enablePublicProfileButton => 'Activer le profil public';
 }

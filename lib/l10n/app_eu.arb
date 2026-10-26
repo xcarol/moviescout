@@ -571,5 +571,15 @@
   "cannotFollowSelf": "Ezin diozu zure buruari jarraitu",
   "@cannotFollowSelf": {},
   "networkErrorMessage": "Ezin izan da zerbitzariarekin konektatu. Egiaztatu Interneteko konexioa.",
-  "@networkErrorMessage": {}
+  "@networkErrorMessage": {},
+  "publicProfileTitle": "Profil publikoa",
+  "@publicProfileTitle": {},
+  "publicProfileSubtitle": "Aktibatu zure profil publikoa ikusten ari zarena komunitatearekin partekatzeko",
+  "@publicProfileSubtitle": {},
+  "privateProfileMessage": "Profil hau pribatua da",
+  "@privateProfileMessage": {},
+  "enablePublicProfileBanner": "Aktibatu zure profil publikoa ikusten ari zarena komunitatearekin partekatzeko. Ezarpenetatik desaktiba daiteke.",
+  "@enablePublicProfileBanner": {},
+  "enablePublicProfileButton": "Aktibatu profil publikoa",
+  "@enablePublicProfileButton": {}
 }

@@ -823,4 +823,21 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get networkErrorMessage =>
       'Verbindung zum Server nicht möglich. Bitte überprüfe deine Internetverbindung.';
+
+  @override
+  String get publicProfileTitle => 'Öffentliches Profil';
+
+  @override
+  String get publicProfileSubtitle =>
+      'Aktiviere dein öffentliches Profil, um deine gesehene Titel mit der Community zu teilen';
+
+  @override
+  String get privateProfileMessage => 'Dieses Profil ist privat';
+
+  @override
+  String get enablePublicProfileBanner =>
+      'Aktiviere dein öffentliches Profil, um deine gesehene Titel mit der Community zu teilen. Es kann in den Einstellungen deaktiviert werden.';
+
+  @override
+  String get enablePublicProfileButton => 'Öffentliches Profil aktivieren';
 }

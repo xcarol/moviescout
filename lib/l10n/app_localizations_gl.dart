@@ -823,4 +823,21 @@ class AppLocalizationsGl extends AppLocalizations {
   @override
   String get networkErrorMessage =>
       'Non se puido conectar co servidor. Comproba a túa conexión a internet.';
+
+  @override
+  String get publicProfileTitle => 'Perfil público';
+
+  @override
+  String get publicProfileSubtitle =>
+      'Activa o teu perfil público para compartir o que ves coa comunidade';
+
+  @override
+  String get privateProfileMessage => 'Este perfil é privado';
+
+  @override
+  String get enablePublicProfileBanner =>
+      'Activa o teu perfil público para compartir o que ves coa comunidade. Pódese desactivar dende a configuración.';
+
+  @override
+  String get enablePublicProfileButton => 'Activar perfil público';
 }

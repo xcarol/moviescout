@@ -571,5 +571,15 @@
   "cannotFollowSelf": "You cannot follow yourself",
   "@cannotFollowSelf": {},
   "networkErrorMessage": "Unable to connect to the server. Please check your internet connection.",
-  "@networkErrorMessage": {}
+  "@networkErrorMessage": {},
+  "publicProfileTitle": "Public profile",
+  "@publicProfileTitle": {},
+  "publicProfileSubtitle": "Enable your public profile to share what you watch with the community",
+  "@publicProfileSubtitle": {},
+  "privateProfileMessage": "This profile is private",
+  "@privateProfileMessage": {},
+  "enablePublicProfileBanner": "Enable your public profile to share what you watch with the community. It can be disabled from settings.",
+  "@enablePublicProfileBanner": {},
+  "enablePublicProfileButton": "Enable public profile",
+  "@enablePublicProfileButton": {}
 }

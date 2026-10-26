@@ -4,7 +4,7 @@ class UserProfile implements TmdbItem {
   final String id;
   final String username;
   final String? avatarUrl;
-  final String? email;
+  final bool isPublic;
   final int watchlistCount;
   final int rateslistCount;
   final DateTime? createdAt;
@@ -13,7 +13,7 @@ class UserProfile implements TmdbItem {
     required this.id,
     required this.username,
     this.avatarUrl,
-    this.email,
+    this.isPublic = false,
     this.watchlistCount = 0,
     this.rateslistCount = 0,
     this.createdAt,
@@ -33,7 +33,7 @@ class UserProfile implements TmdbItem {
       id: map['id'] as String? ?? '',
       username: map['username'] as String? ?? '',
       avatarUrl: map['avatar_url'] as String?,
-      email: map['email'] as String?,
+      isPublic: map['is_public'] as bool? ?? false,
       watchlistCount: (map['watchlist_count'] as num?)?.toInt() ?? 0,
       rateslistCount: (map['rateslist_count'] as num?)?.toInt() ?? 0,
       createdAt: map['created_at'] != null
@@ -47,7 +47,7 @@ class UserProfile implements TmdbItem {
       'id': id,
       'username': username,
       'avatar_url': avatarUrl,
-      'email': email,
+      'is_public': isPublic,
       'watchlist_count': watchlistCount,
       'rateslist_count': rateslistCount,
       'created_at': createdAt?.toIso8601String(),
@@ -58,7 +58,7 @@ class UserProfile implements TmdbItem {
     String? id,
     String? username,
     String? avatarUrl,
-    String? email,
+    bool? isPublic,
     int? watchlistCount,
     int? rateslistCount,
     DateTime? createdAt,
@@ -67,7 +67,7 @@ class UserProfile implements TmdbItem {
       id: id ?? this.id,
       username: username ?? this.username,
       avatarUrl: avatarUrl ?? this.avatarUrl,
-      email: email ?? this.email,
+      isPublic: isPublic ?? this.isPublic,
       watchlistCount: watchlistCount ?? this.watchlistCount,
       rateslistCount: rateslistCount ?? this.rateslistCount,
       createdAt: createdAt ?? this.createdAt,

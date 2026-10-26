@@ -819,4 +819,21 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get networkErrorMessage =>
       'Unable to connect to the server. Please check your internet connection.';
+
+  @override
+  String get publicProfileTitle => 'Public profile';
+
+  @override
+  String get publicProfileSubtitle =>
+      'Enable your public profile to share what you watch with the community';
+
+  @override
+  String get privateProfileMessage => 'This profile is private';
+
+  @override
+  String get enablePublicProfileBanner =>
+      'Enable your public profile to share what you watch with the community. It can be disabled from settings.';
+
+  @override
+  String get enablePublicProfileButton => 'Enable public profile';
 }

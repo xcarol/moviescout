@@ -144,8 +144,7 @@ class SearchService extends TmdbBaseListService<TmdbItem> {
       } else {
         final query = filterText.toLowerCase().trim();
         allItems.addAll(_memoryUsers.where((u) {
-          return u.name.toLowerCase().contains(query) ||
-              (u.email?.toLowerCase().contains(query) ?? false);
+          return u.name.toLowerCase().contains(query);
         }));
       }
     }
