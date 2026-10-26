@@ -60,7 +60,8 @@ void main() {
     when(() => mockService.setRatingFilter(any())).thenAnswer((_) {});
     when(() => mockService.setProvidersFilter(any(), any())).thenAnswer((_) {});
     when(() => mockService.setGenresFilter(any(), any())).thenAnswer((_) {});
-    when(() => mockService.applySortProperties(any(), any())).thenAnswer((_) {});
+    when(() => mockService.applySortProperties(any(), any()))
+        .thenAnswer((_) {});
     when(() => mockService.addListener(any())).thenAnswer((_) {});
     when(() => mockService.removeListener(any())).thenAnswer((_) {});
     when(() => mockService.hasMore).thenReturn(true);
@@ -69,7 +70,8 @@ void main() {
     when(() => mockService.loadNextPage()).thenAnswer((_) async {});
   });
 
-  testWidgets('ListController resets sort option when userRating is no longer available',
+  testWidgets(
+      'ListController resets sort option when userRating is no longer available',
       (WidgetTester tester) async {
     when(() => mockService.userRatingAvailable).thenReturn(false);
 
@@ -91,17 +93,20 @@ void main() {
 
     await tester.pumpAndSettle();
     expect(controller.selectedSort, SortOption.alphabetically);
-    verify(() => mockService.setSort(SortOption.alphabetically, true)).called(1);
+    verify(() => mockService.setSort(SortOption.alphabetically, true))
+        .called(1);
     controller.dispose();
   });
 
-  testWidgets('ListController resets sort option to relevance when searchList and dateRated no longer available',
+  testWidgets(
+      'ListController resets sort option to relevance when searchList and dateRated no longer available',
       (WidgetTester tester) async {
     when(() => mockService.listName).thenReturn(AppConstants.searchList);
     when(() => mockService.userRatingAvailable).thenReturn(false);
 
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('${AppConstants.searchList}_SelectedSort', SortOption.dateRated);
+    await prefs.setString(
+        '${AppConstants.searchList}_SelectedSort', SortOption.dateRated);
 
     final controller = ListController(mockService);
 
@@ -122,7 +127,8 @@ void main() {
     controller.dispose();
   });
 
-  testWidgets('initializeControlLocalizations sets types and sorts for standard and search list',
+  testWidgets(
+      'initializeControlLocalizations sets types and sorts for standard and search list',
       (WidgetTester tester) async {
     final standardController = ListController(mockService);
     late AppLocalizations loc;
@@ -140,7 +146,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(standardController.titleTypes, containsAll([loc.allTypes, loc.movies, loc.tvshows, loc.miniseries]));
+    expect(standardController.titleTypes,
+        containsAll([loc.allTypes, loc.movies, loc.tvshows, loc.miniseries]));
     expect(standardController.titleSorts, contains(loc.sortAddedOrder));
     expect(standardController.titleSorts, isNot(contains(loc.sortRelevance)));
     standardController.dispose();
@@ -160,13 +167,23 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(searchController.titleTypes, containsAll([loc.results, loc.movies, loc.tvshows, loc.cast, loc.collection, loc.users]));
+    expect(
+        searchController.titleTypes,
+        containsAll([
+          loc.results,
+          loc.movies,
+          loc.tvshows,
+          loc.cast,
+          loc.collection,
+          loc.users
+        ]));
     expect(searchController.titleSorts, contains(loc.sortRelevance));
     expect(searchController.titleSorts, isNot(contains(loc.sortAddedOrder)));
     searchController.dispose();
   });
 
-  test('anyFilterActive reflects genre, provider, text, and rating filters', () {
+  test('anyFilterActive reflects genre, provider, text, and rating filters',
+      () {
     final controller = ListController(mockService);
     expect(controller.anyFilterActive, isFalse);
 
@@ -227,7 +244,8 @@ void main() {
     controller.dispose();
   });
 
-  testWidgets('setSelectedSort and getSelectedSortLabel work for all sort options',
+  testWidgets(
+      'setSelectedSort and getSelectedSortLabel work for all sort options',
       (WidgetTester tester) async {
     final controller = ListController(mockService);
     late BuildContext currentContext;
@@ -266,7 +284,8 @@ void main() {
     controller.dispose();
   });
 
-  testWidgets('setSelectedType and getSelectedTypeLabel work for all media types',
+  testWidgets(
+      'setSelectedType and getSelectedTypeLabel work for all media types',
       (WidgetTester tester) async {
     final controller = ListController(mockService);
     late BuildContext currentContext;
@@ -335,7 +354,9 @@ void main() {
     controller.dispose();
   });
 
-  test('onScrollNotification triggers loadNextPage only when conditions are met', () {
+  test(
+      'onScrollNotification triggers loadNextPage only when conditions are met',
+      () {
     final controller = ListController(mockService);
 
     final triggerMetrics = FixedScrollMetrics(
@@ -370,4 +391,3 @@ void main() {
     controller.dispose();
   });
 }
-

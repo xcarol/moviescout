@@ -524,7 +524,8 @@ void main() {
       expect(trigger, NotificationTrigger.newAvailability);
     });
 
-    test('Serie: Notifies on episode 1 fallback when season airDate is missing', () {
+    test('Serie: Notifies on episode 1 fallback when season airDate is missing',
+        () {
       final serverJson = loadJson('[Dorohedoro]_serie_new_season.json');
       serverJson['last_episode_to_air'] = {
         'season_number': 2,
@@ -554,7 +555,9 @@ void main() {
       expect(logLines.any((l) => l.contains('episode is 1. Notify')), isTrue);
     });
 
-    test('Serie [notifyCompleteSeason: true]: Does NOT notify if season ended too long ago', () {
+    test(
+        'Serie [notifyCompleteSeason: true]: Does NOT notify if season ended too long ago',
+        () {
       final serverJson = loadJson('[Dorohedoro]_serie_new_season.json');
       serverJson['number_of_seasons'] = 2;
       serverJson['next_episode_to_air'] = null;
