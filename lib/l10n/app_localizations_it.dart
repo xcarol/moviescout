@@ -842,4 +842,15 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get noRatedTitles => 'Nessun titolo valutato';
+
+  @override
+  String get communityTabTitle => 'Scheda community';
+
+  @override
+  String get communityTabSubtitle =>
+      'Mostra la scheda community nella barra di navigazione';
+
+  @override
+  String get emptyFollowingCommunityHint =>
+      'Puoi nascondere questa scheda dalle impostazioni se non la usi.';
 }

@@ -119,6 +119,14 @@ class _FollowingListState extends State<FollowingList> {
           },
           child: Text(loc.messageEmptyLogin),
         ),
+        Text(
+          loc.emptyFollowingCommunityHint,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+            fontSize: 13,
+          ),
+        ),
       ]);
     } else {
       final authService = Provider.of<SupabaseAuthService>(context);
@@ -153,6 +161,15 @@ class _FollowingListState extends State<FollowingList> {
             fontSize: 14,
           ),
         ),
+        if (authService.isLoggedIn && !authService.isPublicProfile)
+          Text(
+            loc.emptyFollowingCommunityHint,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+              fontSize: 13,
+            ),
+          ),
       ]);
     }
 

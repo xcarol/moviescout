@@ -1672,6 +1672,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No rated titles'**
   String get noRatedTitles;
+
+  /// No description provided for @communityTabTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Community tab'**
+  String get communityTabTitle;
+
+  /// No description provided for @communityTabSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the community tab in the navigation bar'**
+  String get communityTabSubtitle;
+
+  /// No description provided for @emptyFollowingCommunityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can hide this tab from settings if you do not use it.'**
+  String get emptyFollowingCommunityHint;
 }
 
 class _AppLocalizationsDelegate

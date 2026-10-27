@@ -262,5 +262,8 @@
   "enablePublicProfileBanner": "Ative o seu perfil público para partilhar o que vê com a comunidade. Pode ser desativado nas definições.",
   "enablePublicProfileButton": "Ativar perfil público",
   "noWatchingNowTitles": "Não está a ver nenhum título no momento",
-  "noRatedTitles": "Nenhum título avaliado"
+  "noRatedTitles": "Nenhum título avaliado",
+  "communityTabTitle": "Separador da comunidade",
+  "communityTabSubtitle": "Mostrar o separador da comunidade na barra de navegação",
+  "emptyFollowingCommunityHint": "Pode ocultar este separador nas definições se não o usar."
 }

@@ -846,4 +846,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get noRatedTitles => 'Keine bewerteten Titel';
+
+  @override
+  String get communityTabTitle => 'Community-Tab';
+
+  @override
+  String get communityTabSubtitle =>
+      'Community-Tab in der Navigationsleiste anzeigen';
+
+  @override
+  String get emptyFollowingCommunityHint =>
+      'Du kannst diesen Tab in den Einstellungen ausblenden, wenn du ihn nicht verwendest.';
 }

@@ -262,5 +262,8 @@
   "enablePublicProfileBanner": "Aktiviere dein öffentliches Profil, um deine gesehene Titel mit der Community zu teilen. Es kann in den Einstellungen deaktiviert werden.",
   "enablePublicProfileButton": "Öffentliches Profil aktivieren",
   "noWatchingNowTitles": "Schaut gerade keine Titel",
-  "noRatedTitles": "Keine bewerteten Titel"
+  "noRatedTitles": "Keine bewerteten Titel",
+  "communityTabTitle": "Community-Tab",
+  "communityTabSubtitle": "Community-Tab in der Navigationsleiste anzeigen",
+  "emptyFollowingCommunityHint": "Du kannst diesen Tab in den Einstellungen ausblenden, wenn du ihn nicht verwendest."
 }

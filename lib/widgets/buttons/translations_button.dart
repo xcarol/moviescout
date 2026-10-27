@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/models/tmdb_translation.dart';
-import 'package:moviescout/services/settings/edit_settings_service.dart';
+import 'package:moviescout/services/settings/app_settings_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/screens/translations.dart';
 
@@ -42,7 +42,7 @@ class _TranslationsButtonState extends State<TranslationsButton> {
 
   @override
   Widget build(BuildContext context) {
-    if (!Provider.of<EditSettingsService>(context).showEditContent) {
+    if (!Provider.of<AppSettingsService>(context).showEditContent) {
       return const SizedBox.shrink();
     }
 

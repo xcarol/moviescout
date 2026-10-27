@@ -262,5 +262,8 @@
   "enablePublicProfileBanner": "Attiva il tuo profilo pubblico per condividere ciò che guardi con la community. Può essere disattivato dalle impostazioni.",
   "enablePublicProfileButton": "Attiva profilo pubblico",
   "noWatchingNowTitles": "Non sta guardando alcun titolo al momento",
-  "noRatedTitles": "Nessun titolo valutato"
+  "noRatedTitles": "Nessun titolo valutato",
+  "communityTabTitle": "Scheda community",
+  "communityTabSubtitle": "Mostra la scheda community nella barra di navigazione",
+  "emptyFollowingCommunityHint": "Puoi nascondere questa scheda dalle impostazioni se non la usi."
 }

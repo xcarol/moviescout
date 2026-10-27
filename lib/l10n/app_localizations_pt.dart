@@ -844,6 +844,17 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get noRatedTitles => 'Nenhum título avaliado';
+
+  @override
+  String get communityTabTitle => 'Aba da comunidade';
+
+  @override
+  String get communityTabSubtitle =>
+      'Mostrar a aba da comunidade na barra de navegação';
+
+  @override
+  String get emptyFollowingCommunityHint =>
+      'Você pode ocultar esta aba nas configurações se não a usar.';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -1685,4 +1696,15 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get noRatedTitles => 'Nenhum título avaliado';
+
+  @override
+  String get communityTabTitle => 'Separador da comunidade';
+
+  @override
+  String get communityTabSubtitle =>
+      'Mostrar o separador da comunidade na barra de navegação';
+
+  @override
+  String get emptyFollowingCommunityHint =>
+      'Pode ocultar este separador nas definições se não o usar.';
 }

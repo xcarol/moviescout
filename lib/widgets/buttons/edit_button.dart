@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/services/settings/edit_settings_service.dart';
+import 'package:moviescout/services/settings/app_settings_service.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:moviescout/services/settings/language_service.dart';
@@ -12,7 +12,7 @@ class EditButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!Provider.of<EditSettingsService>(context).showEditContent) {
+    if (!Provider.of<AppSettingsService>(context).showEditContent) {
       return const SizedBox.shrink();
     }
 

@@ -844,4 +844,15 @@ class AppLocalizationsEu extends AppLocalizations {
 
   @override
   String get noRatedTitles => 'Ez dago baloratutako titulurik';
+
+  @override
+  String get communityTabTitle => 'Komunitatearen fitxa';
+
+  @override
+  String get communityTabSubtitle =>
+      'Erakutsi komunitatearen fitxa nabigazio-barran';
+
+  @override
+  String get emptyFollowingCommunityHint =>
+      'Fitxa hau ezarpenetatik ezkutatu dezakezu erabiltzen ez baduzu.';
 }

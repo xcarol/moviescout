@@ -262,5 +262,8 @@
   "enablePublicProfileBanner": "Ative seu perfil público para compartilhar o que você assiste com a comunidade. Pode ser desativado nas configurações.",
   "enablePublicProfileButton": "Ativar perfil público",
   "noWatchingNowTitles": "Não está assistindo a nenhum título no momento",
-  "noRatedTitles": "Nenhum título avaliado"
+  "noRatedTitles": "Nenhum título avaliado",
+  "communityTabTitle": "Aba da comunidade",
+  "communityTabSubtitle": "Mostrar a aba da comunidade na barra de navegação",
+  "emptyFollowingCommunityHint": "Você pode ocultar esta aba nas configurações se não a usar."
 }

@@ -585,5 +585,11 @@
   "noWatchingNowTitles": "No està mirant cap títol ara mateix",
   "@noWatchingNowTitles": {},
   "noRatedTitles": "No hi ha cap títol valorat",
-  "@noRatedTitles": {}
+  "@noRatedTitles": {},
+  "communityTabTitle": "Pestanya de comunitat",
+  "@communityTabTitle": {},
+  "communityTabSubtitle": "Mostra la pestanya de comunitat a la barra de navegació",
+  "@communityTabSubtitle": {},
+  "emptyFollowingCommunityHint": "Pots amagar aquesta pestanya des de la configuració si no la fas servir.",
+  "@emptyFollowingCommunityHint": {}
 }

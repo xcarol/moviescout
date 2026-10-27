@@ -585,5 +585,11 @@
   "noWatchingNowTitles": "Ez dago titulurik ikusten orain",
   "@noWatchingNowTitles": {},
   "noRatedTitles": "Ez dago baloratutako titulurik",
-  "@noRatedTitles": {}
+  "@noRatedTitles": {},
+  "communityTabTitle": "Komunitatearen fitxa",
+  "@communityTabTitle": {},
+  "communityTabSubtitle": "Erakutsi komunitatearen fitxa nabigazio-barran",
+  "@communityTabSubtitle": {},
+  "emptyFollowingCommunityHint": "Fitxa hau ezarpenetatik ezkutatu dezakezu erabiltzen ez baduzu.",
+  "@emptyFollowingCommunityHint": {}
 }

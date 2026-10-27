@@ -585,5 +585,11 @@
   "noWatchingNowTitles": "No está viendo ningún título ahora mismo",
   "@noWatchingNowTitles": {},
   "noRatedTitles": "No hay ningún título valorado",
-  "@noRatedTitles": {}
+  "@noRatedTitles": {},
+  "communityTabTitle": "Pestaña de comunidad",
+  "@communityTabTitle": {},
+  "communityTabSubtitle": "Muestra la pestaña de comunidad en la barra de navegación",
+  "@communityTabSubtitle": {},
+  "emptyFollowingCommunityHint": "Puedes ocultar esta pestaña desde la configuración si no la usas.",
+  "@emptyFollowingCommunityHint": {}
 }

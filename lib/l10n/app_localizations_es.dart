@@ -844,4 +844,15 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get noRatedTitles => 'No hay ningún título valorado';
+
+  @override
+  String get communityTabTitle => 'Pestaña de comunidad';
+
+  @override
+  String get communityTabSubtitle =>
+      'Muestra la pestaña de comunidad en la barra de navegación';
+
+  @override
+  String get emptyFollowingCommunityHint =>
+      'Puedes ocultar esta pestaña desde la configuración si no la usas.';
 }

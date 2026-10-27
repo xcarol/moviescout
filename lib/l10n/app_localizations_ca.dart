@@ -844,4 +844,15 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get noRatedTitles => 'No hi ha cap títol valorat';
+
+  @override
+  String get communityTabTitle => 'Pestanya de comunitat';
+
+  @override
+  String get communityTabSubtitle =>
+      'Mostra la pestanya de comunitat a la barra de navegació';
+
+  @override
+  String get emptyFollowingCommunityHint =>
+      'Pots amagar aquesta pestanya des de la configuració si no la fas servir.';
 }

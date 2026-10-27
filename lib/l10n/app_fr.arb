@@ -262,5 +262,8 @@
   "enablePublicProfileBanner": "Activez votre profil public pour partager ce que vous regardez avec la communauté. Il peut être désactivé depuis les paramètres.",
   "enablePublicProfileButton": "Activer le profil public",
   "noWatchingNowTitles": "Ne regarde aucun titre pour le moment",
-  "noRatedTitles": "Aucun titre noté"
+  "noRatedTitles": "Aucun titre noté",
+  "communityTabTitle": "Onglet communauté",
+  "communityTabSubtitle": "Afficher l'onglet communauté dans la barre de navigation",
+  "emptyFollowingCommunityHint": "Vous pouvez masquer cet onglet dans les paramètres si vous ne l'utilisez pas."
 }

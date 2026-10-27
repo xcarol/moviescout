@@ -848,4 +848,15 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get noRatedTitles => 'Aucun titre noté';
+
+  @override
+  String get communityTabTitle => 'Onglet communauté';
+
+  @override
+  String get communityTabSubtitle =>
+      'Afficher l\'onglet communauté dans la barre de navigation';
+
+  @override
+  String get emptyFollowingCommunityHint =>
+      'Vous pouvez masquer cet onglet dans les paramètres si vous ne l\'utilisez pas.';
 }

@@ -585,5 +585,11 @@
   "noWatchingNowTitles": "Not watching any title right now",
   "@noWatchingNowTitles": {},
   "noRatedTitles": "No rated titles",
-  "@noRatedTitles": {}
+  "@noRatedTitles": {},
+  "communityTabTitle": "Community tab",
+  "@communityTabTitle": {},
+  "communityTabSubtitle": "Show the community tab in the navigation bar",
+  "@communityTabSubtitle": {},
+  "emptyFollowingCommunityHint": "You can hide this tab from settings if you do not use it.",
+  "@emptyFollowingCommunityHint": {}
 }
