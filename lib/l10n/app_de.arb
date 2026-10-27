@@ -265,5 +265,9 @@
   "noRatedTitles": "Keine bewerteten Titel",
   "communityTabTitle": "Community-Tab",
   "communityTabSubtitle": "Community-Tab in der Navigationsleiste anzeigen",
-  "emptyFollowingCommunityHint": "Du kannst diesen Tab in den Einstellungen ausblenden, wenn du ihn nicht verwendest."
+  "emptyFollowingCommunityHint": "Du kannst diesen Tab in den Einstellungen ausblenden, wenn du ihn nicht verwendest.",
+  "shareAppCommunityPrompt": "Teile MovieScout mit deinen Bekannten und baue dein Netzwerk auf.",
+  "shareAppButton": "MovieScout teilen",
+  "shareAppMessage": "Tritt MovieScout bei, um Filme und Serien zu entdecken und zu teilen!",
+  "shareAppGooglePlay": "Auf Google Play installieren:"
 }

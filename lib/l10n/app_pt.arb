@@ -265,5 +265,9 @@
   "noRatedTitles": "Nenhum título avaliado",
   "communityTabTitle": "Aba da comunidade",
   "communityTabSubtitle": "Mostrar a aba da comunidade na barra de navegação",
-  "emptyFollowingCommunityHint": "Você pode ocultar esta aba nas configurações se não a usar."
+  "emptyFollowingCommunityHint": "Você pode ocultar esta aba nas configurações se não a usar.",
+  "shareAppCommunityPrompt": "Compartilhe o MovieScout com seus conhecidos e comece a criar sua rede.",
+  "shareAppButton": "Compartilhar MovieScout",
+  "shareAppMessage": "Junte-se ao MovieScout para descobrir e compartilhar filmes e séries!",
+  "shareAppGooglePlay": "Instale no Google Play:"
 }

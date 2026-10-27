@@ -9,8 +9,7 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get notificationDownloadingTitle =>
-      'Titeldetails werden heruntergeladen';
+  String get notificationDownloadingTitle => 'Titeldetails werden heruntergeladen';
 
   @override
   String notificationFetchingData(int progress, int total) {
@@ -18,8 +17,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get notificationUpdatingProviders =>
-      'Streaming-Dienste werden aktualisiert';
+  String get notificationUpdatingProviders => 'Streaming-Dienste werden aktualisiert';
 
   @override
   String notificationCheckingAvailability(int progress, int total) {
@@ -66,8 +64,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get messageEmptyList => 'Noch keine Filme ausgewählt.';
 
   @override
-  String get messageEmptySearch =>
-      'Du kannst mit der Lupe in der unteren Leiste suchen.';
+  String get messageEmptySearch => 'Du kannst mit der Lupe in der unteren Leiste suchen.';
 
   @override
   String get messageEmptyOptions => 'Du kannst auch';
@@ -79,8 +76,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get search => 'Nach einem Titel suchen';
 
   @override
-  String get searchAiHint =>
-      'Beschreibe den Film oder die Serie, die du suchst...';
+  String get searchAiHint => 'Beschreibe den Film oder die Serie, die du suchst...';
 
   @override
   String get searchAiTooltip => 'Smarte Suche (KI)';
@@ -155,8 +151,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get signupToTmdb => 'Bei TMDb registrieren';
 
   @override
-  String get signInToWatchlist =>
-      'Du musst angemeldet sein, um Titel hinzuzufügen.';
+  String get signInToWatchlist => 'Du musst angemeldet sein, um Titel hinzuzufügen.';
 
   @override
   String get tvShow => 'Serie';
@@ -192,12 +187,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get imdbConfirmationTitle => 'WARNUNG';
 
   @override
-  String get imdbResetWatchlistConfirmation =>
-      'Möchtest du die Watchlist wirklich zurücksetzen?';
+  String get imdbResetWatchlistConfirmation => 'Möchtest du die Watchlist wirklich zurücksetzen?';
 
   @override
-  String get imdbResetRateslistConfirmation =>
-      'Möchtest du die Bewertungen wirklich zurücksetzen?';
+  String get imdbResetRateslistConfirmation => 'Möchtest du die Bewertungen wirklich zurücksetzen?';
 
   @override
   String get resetWatchlistCount => 'Watchlist-Titel: ';
@@ -338,15 +331,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get about => 'Über...';
 
   @override
-  String get aboutDescription =>
-      'MovieScout ist dein Film- und Serientracker, unterstützt von TMDb, OMDb & JustWatch.';
+  String get aboutDescription => 'MovieScout ist dein Film- und Serientracker, unterstützt von TMDb, OMDb & JustWatch.';
 
   @override
   String get aboutGithub => 'Projekt ansehen auf ';
 
   @override
-  String get apiDisclaimer =>
-      'Dieses Produkt nutzt die TMDb-API, wird jedoch nicht von TMDb unterstützt oder zertifiziert.';
+  String get apiDisclaimer => 'Dieses Produkt nutzt die TMDb-API, wird jedoch nicht von TMDb unterstützt oder zertifiziert.';
 
   @override
   String get privacyDisclaimerPrefix => 'Lies die ';
@@ -412,8 +403,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get watchingNow => 'Wird gerade geschaut';
 
   @override
-  String get pinLimitReached =>
-      'Du hast das Limit von 5 angehefteten Titeln erreicht.';
+  String get pinLimitReached => 'Du hast das Limit von 5 angehefteten Titeln erreicht.';
 
   @override
   String get pin => 'Anheften';
@@ -467,12 +457,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notifications => 'Benachrichtigungen';
 
   @override
-  String get notificationsPermissionRequired =>
-      'Du musst Benachrichtigungen in den Systemeinstellungen erlauben.';
+  String get notificationsPermissionRequired => 'Du musst Benachrichtigungen in den Systemeinstellungen erlauben.';
 
   @override
-  String get notificationsPermissionDescription =>
-      'Um Updates zu Filmverfügbarkeiten und neuen Staffeln zu erhalten, aktiviere Benachrichtigungen.';
+  String get notificationsPermissionDescription => 'Um Updates zu Filmverfügbarkeiten und neuen Staffeln zu erhalten, aktiviere Benachrichtigungen.';
 
   @override
   String get openSettings => 'Einstellungen öffnen';
@@ -481,8 +469,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settings => 'Einstellungen';
 
   @override
-  String get errorMessageGeneric =>
-      'Ein Fehler ist aufgetreten. Bitte versuche es später erneut.';
+  String get errorMessageGeneric => 'Ein Fehler ist aufgetreten. Bitte versuche es später erneut.';
 
   @override
   String get youtubeSearch => 'YouTube-Suche';
@@ -494,8 +481,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notifyCompleteSeason => 'Komplette Staffel melden';
 
   @override
-  String get notifyCompleteSeasonSubtitle =>
-      'Benachrichtigt nur, wenn die ganze Staffel verfügbar ist.';
+  String get notifyCompleteSeasonSubtitle => 'Benachrichtigt nur, wenn die ganze Staffel verfügbar ist.';
 
   @override
   String get episodes => 'Episoden';
@@ -512,8 +498,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notifyTitle => 'Neue Staffeln melden';
 
   @override
-  String get notifyMessage =>
-      'Möchtest du benachrichtigt werden, wenn eine neue Staffel ausgestrahlt wird?';
+  String get notifyMessage => 'Möchtest du benachrichtigt werden, wenn eine neue Staffel ausgestrahlt wird?';
 
   @override
   String get no => 'Nein';
@@ -583,8 +568,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get aiSettingsSubtitle => 'Smarte Suche und KI-Funktionen';
 
   @override
-  String get aiSettingsDescription =>
-      'KI ermöglicht das Finden von Filmen anhand natürlicher Beschreibungen. Hole dir einen kostenlosen API-Schlüssel bei OpenRouter.';
+  String get aiSettingsDescription => 'KI ermöglicht das Finden von Filmen anhand natürlicher Beschreibungen. Hole dir einen kostenlosen API-Schlüssel bei OpenRouter.';
 
   @override
   String get aiGetApiKeyButton => 'Schlüssel bei OpenRouter holen';
@@ -620,16 +604,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get aiDeleteConfirmTitle => 'API-Schlüssel löschen';
 
   @override
-  String get aiDeleteConfirmMessage =>
-      'Möchtest du den API-Schlüssel wirklich löschen? OpenRouter zeigt ihn nach der Erstellung nicht mehr an.';
+  String get aiDeleteConfirmMessage => 'Möchtest du den API-Schlüssel wirklich löschen? OpenRouter zeigt ihn nach der Erstellung nicht mehr an.';
 
   @override
-  String get searchTimeout =>
-      'Die Suche hat zu lange gedauert. Bitte versuche es erneut.';
+  String get searchTimeout => 'Die Suche hat zu lange gedauert. Bitte versuche es erneut.';
 
   @override
-  String get aiSearchTimeout =>
-      'Zeitüberschreitung bei der KI-Suche. Versuche eine kürzere Beschreibung.';
+  String get aiSearchTimeout => 'Zeitüberschreitung bei der KI-Suche. Versuche eine kürzere Beschreibung.';
 
   @override
   String get aiSearchError => 'Ein Fehler ist bei der KI-Suche aufgetreten.';
@@ -640,15 +621,13 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get aiRateLimitGeneric =>
-      'API-Limit erreicht. Bitte warte einen Moment.';
+  String get aiRateLimitGeneric => 'API-Limit erreicht. Bitte warte einen Moment.';
 
   @override
   String get signInWithGoogle => 'Mit Google anmelden';
 
   @override
-  String get loginSubtitle =>
-      'Melde dich an, um deine Listen und Bewertungen zu speichern und zu synchronisieren.';
+  String get loginSubtitle => 'Melde dich an, um deine Listen und Bewertungen zu speichern und zu synchronisieren.';
 
   @override
   String get googleSignInButton => 'Mit Google fortfahren';
@@ -672,8 +651,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tmdbImportScreenHeader => 'Importiere deine TMDb-Daten';
 
   @override
-  String get tmdbImportScreenBody =>
-      'Du kannst deine Watchlist und Bewertungen von TMDb importieren. Melde dich bei TMDb an, um fortzufahren.';
+  String get tmdbImportScreenBody => 'Du kannst deine Watchlist und Bewertungen von TMDb importieren. Melde dich bei TMDb an, um fortzufahren.';
 
   @override
   String get tmdbImportStartButton => 'Import starten';
@@ -691,8 +669,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tmdbImportDownloadingRateslist => 'Bewertungen werden geladen...';
 
   @override
-  String get tmdbImportDownloadingEpisodes =>
-      'Bewertete Episoden werden geladen...';
+  String get tmdbImportDownloadingEpisodes => 'Bewertete Episoden werden geladen...';
 
   @override
   String tmdbImportWatchlistCount(Object count) {
@@ -724,16 +701,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tmdbImportError => 'Fehler beim Importieren der Daten';
 
   @override
-  String get tmdbImportLoginRequired =>
-      'Melde dich bei TMDb an, um den Import zu starten.';
+  String get tmdbImportLoginRequired => 'Melde dich bei TMDb an, um den Import zu starten.';
 
   @override
-  String get tmdbImportConsentText =>
-      'Der Import fügt deine TMDb-Listen sicher zu deinem MovieScout-Konto hinzu.';
+  String get tmdbImportConsentText => 'Der Import fügt deine TMDb-Listen sicher zu deinem MovieScout-Konto hinzu.';
 
   @override
-  String get loginConsentText =>
-      'Mit der Anmeldung stimmst du der Speicherung auf MovieScout-Servern zu, gemäß unserer ';
+  String get loginConsentText => 'Mit der Anmeldung stimmst du der Speicherung auf MovieScout-Servern zu, gemäß unserer ';
 
   @override
   String get termsOfService => 'Nutzungsbedingungen';
@@ -748,8 +722,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get deleteAccountConfirmTitle => 'Konto löschen';
 
   @override
-  String get deleteAccountConfirmMessage =>
-      'Möchtest du dein Konto wirklich löschen? Dies kann nicht rückgängig gemacht werden.';
+  String get deleteAccountConfirmMessage => 'Möchtest du dein Konto wirklich löschen? Dies kann nicht rückgängig gemacht werden.';
 
   @override
   String get deleteAccountSuccess => 'Dein Konto wurde erfolgreich gelöscht';
@@ -776,12 +749,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get noCommentsYet => 'Noch keine Kommentare';
 
   @override
-  String get signInToComment =>
-      'Du musst angemeldet sein, um einen Kommentar hinzuzufügen.';
+  String get signInToComment => 'Du musst angemeldet sein, um einen Kommentar hinzuzufügen.';
 
   @override
-  String get deleteCommentConfirm =>
-      'Möchtest du deinen Kommentar wirklich löschen?';
+  String get deleteCommentConfirm => 'Möchtest du deinen Kommentar wirklich löschen?';
 
   @override
   String get save => 'Speichern';
@@ -814,29 +785,25 @@ class AppLocalizationsDe extends AppLocalizations {
   String get emptyFollowingList => 'Du folgst noch keinen Benutzern.';
 
   @override
-  String get emptyFollowingSearchHint =>
-      'Suche nach Benutzern, um ihnen zu folgen und ihre Aktivitäten zu sehen.';
+  String get emptyFollowingSearchHint => 'Suche nach Benutzern, um ihnen zu folgen und ihre Aktivitäten zu sehen.';
 
   @override
   String get cannotFollowSelf => 'Du kannst dir nicht selbst folgen';
 
   @override
-  String get networkErrorMessage =>
-      'Verbindung zum Server nicht möglich. Bitte überprüfe deine Internetverbindung.';
+  String get networkErrorMessage => 'Verbindung zum Server nicht möglich. Bitte überprüfe deine Internetverbindung.';
 
   @override
   String get publicProfileTitle => 'Öffentliches Profil';
 
   @override
-  String get publicProfileSubtitle =>
-      'Aktiviere dein öffentliches Profil, um deine gesehene Titel mit der Community zu teilen';
+  String get publicProfileSubtitle => 'Aktiviere dein öffentliches Profil, um deine gesehene Titel mit der Community zu teilen';
 
   @override
   String get privateProfileMessage => 'Dieses Profil ist privat';
 
   @override
-  String get enablePublicProfileBanner =>
-      'Aktiviere dein öffentliches Profil, um deine gesehene Titel mit der Community zu teilen. Es kann in den Einstellungen deaktiviert werden.';
+  String get enablePublicProfileBanner => 'Aktiviere dein öffentliches Profil, um deine gesehene Titel mit der Community zu teilen. Es kann in den Einstellungen deaktiviert werden.';
 
   @override
   String get enablePublicProfileButton => 'Öffentliches Profil aktivieren';
@@ -851,10 +818,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get communityTabTitle => 'Community-Tab';
 
   @override
-  String get communityTabSubtitle =>
-      'Community-Tab in der Navigationsleiste anzeigen';
+  String get communityTabSubtitle => 'Community-Tab in der Navigationsleiste anzeigen';
 
   @override
-  String get emptyFollowingCommunityHint =>
-      'Du kannst diesen Tab in den Einstellungen ausblenden, wenn du ihn nicht verwendest.';
+  String get emptyFollowingCommunityHint => 'Du kannst diesen Tab in den Einstellungen ausblenden, wenn du ihn nicht verwendest.';
+
+  @override
+  String get shareAppCommunityPrompt => 'Teile MovieScout mit deinen Bekannten und baue dein Netzwerk auf.';
+
+  @override
+  String get shareAppButton => 'MovieScout teilen';
+
+  @override
+  String get shareAppMessage => 'Tritt MovieScout bei, um Filme und Serien zu entdecken und zu teilen!';
+
+  @override
+  String get shareAppGooglePlay => 'Auf Google Play installieren:';
 }

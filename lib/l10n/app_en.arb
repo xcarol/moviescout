@@ -591,5 +591,13 @@
   "communityTabSubtitle": "Show the community tab in the navigation bar",
   "@communityTabSubtitle": {},
   "emptyFollowingCommunityHint": "You can hide this tab from settings if you do not use it.",
-  "@emptyFollowingCommunityHint": {}
+  "@emptyFollowingCommunityHint": {},
+  "shareAppCommunityPrompt": "Share MovieScout with your acquaintances and start creating your network.",
+  "@shareAppCommunityPrompt": {},
+  "shareAppButton": "Share MovieScout",
+  "@shareAppButton": {},
+  "shareAppMessage": "Join MovieScout to discover and share movies and series!",
+  "@shareAppMessage": {},
+  "shareAppGooglePlay": "Install on Google Play:",
+  "@shareAppGooglePlay": {}
 }

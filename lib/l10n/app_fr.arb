@@ -265,5 +265,9 @@
   "noRatedTitles": "Aucun titre noté",
   "communityTabTitle": "Onglet communauté",
   "communityTabSubtitle": "Afficher l'onglet communauté dans la barre de navigation",
-  "emptyFollowingCommunityHint": "Vous pouvez masquer cet onglet dans les paramètres si vous ne l'utilisez pas."
+  "emptyFollowingCommunityHint": "Vous pouvez masquer cet onglet dans les paramètres si vous ne l'utilisez pas.",
+  "shareAppCommunityPrompt": "Partagez MovieScout avec vos proches et commencez à créer votre réseau.",
+  "shareAppButton": "Partager MovieScout",
+  "shareAppMessage": "Rejoignez MovieScout pour découvrir et partager des films et des séries !",
+  "shareAppGooglePlay": "Installez-la sur Google Play :"
 }
