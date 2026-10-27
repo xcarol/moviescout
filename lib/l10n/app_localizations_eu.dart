@@ -88,9 +88,6 @@ class AppLocalizationsEu extends AppLocalizations {
   String get searchPerson => 'norbaiten bila';
 
   @override
-  String get searchPlaceholder => 'Bilatu filmak edo serieak...';
-
-  @override
   String get gallery => 'Galeria';
 
   @override
@@ -115,16 +112,10 @@ class AppLocalizationsEu extends AppLocalizations {
   String get username => 'Erabiltzailea';
 
   @override
-  String get password => 'Pasahitza';
-
-  @override
   String get anonymousUser => 'Erabiltzailerik ez';
 
   @override
   String get loginTitle => 'Saioa hasi';
-
-  @override
-  String get loginDescription => 'Hasi saioa zure TMDB kontuan';
 
   @override
   String get login => 'Hasi saioa';
@@ -146,9 +137,6 @@ class AppLocalizationsEu extends AppLocalizations {
 
   @override
   String get completeLoginToTmdb => 'Osatu saioa hasteko';
-
-  @override
-  String get signupToTmdb => 'Eman izena TMDb-en';
 
   @override
   String get signInToWatchlist => 'Saioa hasi behar duzu izenburuak gehitzeko.';
@@ -173,30 +161,6 @@ class AppLocalizationsEu extends AppLocalizations {
 
   @override
   String get imdbImportRateslist => 'Inportatu Iritziak';
-
-  @override
-  String get imdbImportCount => 'Inportatu dira tituluak';
-
-  @override
-  String get imdbResetWatchlist => 'EZABATU IKUSTEKO';
-
-  @override
-  String get imdbResetRateslist => 'IRUZKINAK EZABATU';
-
-  @override
-  String get imdbConfirmationTitle => 'ADI';
-
-  @override
-  String get imdbResetWatchlistConfirmation => 'Ziur Ikusi beharreko izenburuak kendu nahi dituzula?';
-
-  @override
-  String get imdbResetRateslistConfirmation => 'Ziur Iritziak ezabatu nahi dituzula?';
-
-  @override
-  String get resetWatchlistCount => 'Ikusi beharreko tituluak:';
-
-  @override
-  String get resetRateslistCount => 'Baloratutako tituluak:';
 
   @override
   String get missingDescription => 'Deskribapena falta da';
@@ -286,9 +250,6 @@ class AppLocalizationsEu extends AppLocalizations {
   String get followingOnly => 'Jarraian';
 
   @override
-  String get pendingOnly => 'Belarritakoak';
-
-  @override
   String get emptyList => 'Hemen ezer ez.';
 
   @override
@@ -313,19 +274,7 @@ class AppLocalizationsEu extends AppLocalizations {
   String get originCountry => 'Herrialdea';
 
   @override
-  String get schemeSelectTitle => 'Hautatu kolorea';
-
-  @override
   String get defaultScheme => 'Lehenetsia';
-
-  @override
-  String get blackScheme => 'Beltza';
-
-  @override
-  String get blueScheme => 'Urdina';
-
-  @override
-  String get redScheme => 'Gorria';
 
   @override
   String get about => 'Buruz...';
@@ -472,16 +421,10 @@ class AppLocalizationsEu extends AppLocalizations {
   String get errorMessageGeneric => 'Errore bat gertatu da. Saiatu berriro geroago.';
 
   @override
-  String get youtubeSearch => 'YouTube Bilaketa';
-
-  @override
   String get notificationsHistory => 'Azken jakinarazpenak';
 
   @override
   String get notifyCompleteSeason => 'Jakinarazi denboraldi osoa';
-
-  @override
-  String get notifyCompleteSeasonSubtitle => 'Denboraldi osoa erabilgarri dagoenean bakarrik jakinarazten du.';
 
   @override
   String get episodes => 'Pasarteak';
@@ -542,9 +485,6 @@ class AppLocalizationsEu extends AppLocalizations {
 
   @override
   String get addToHomeScreen => 'Gehitu hasierako pantailara';
-
-  @override
-  String get shortcutAdded => 'Lasterbidea gehitu da';
 
   @override
   String get shortcutFailed => 'Ezin izan da lasterbidea gehitu';
@@ -633,12 +573,6 @@ class AppLocalizationsEu extends AppLocalizations {
   String get googleSignInButton => 'Jarraitu Google-rekin';
 
   @override
-  String get alreadyUsingMovieScout => 'Dagoeneko erabiltzen al zenuen MovieScout?';
-
-  @override
-  String get importTmdbData => 'Inportatu zure datu zaharrak TMDBtik.';
-
-  @override
   String get tmdbAccount => 'TMDb kontua';
 
   @override
@@ -658,9 +592,6 @@ class AppLocalizationsEu extends AppLocalizations {
 
   @override
   String get tmdbImportSuccess => 'Datuak ondo inportatu dira!';
-
-  @override
-  String get tmdbImportDownloading => 'TMDb-tik datuak deskargatzen...';
 
   @override
   String get tmdbImportDownloadingWatchlist => 'Jarraipen zerrenda deskargatzen...';
@@ -699,9 +630,6 @@ class AppLocalizationsEu extends AppLocalizations {
 
   @override
   String get tmdbImportError => 'Errore bat gertatu da datuak inportatzean';
-
-  @override
-  String get tmdbImportLoginRequired => 'Hasi saioa TMDb-n inportazioa hasteko.';
 
   @override
   String get tmdbImportConsentText => 'Inportazioak modu seguruan gehituko ditu zure TMDb zerrendak eta balorazioak MovieScout kontuan.';
@@ -788,9 +716,6 @@ class AppLocalizationsEu extends AppLocalizations {
   String get emptyFollowingSearchHint => 'Bilatu erabiltzaileak haiei jarraitzeko eta haien jarduera ikusteko.';
 
   @override
-  String get cannotFollowSelf => 'Ezin diozu zure buruari jarraitu';
-
-  @override
   String get networkErrorMessage => 'Ezin izan da zerbitzariarekin konektatu. Egiaztatu Interneteko konexioa.';
 
   @override
@@ -834,4 +759,201 @@ class AppLocalizationsEu extends AppLocalizations {
 
   @override
   String get shareAppGooglePlay => 'Instalatu Google Play-n:';
+
+  @override
+  String get settingsSectionPreferences => 'Edukiaren hobespenak';
+
+  @override
+  String get settingsSectionNotifications => 'Jakinarazpenak';
+
+  @override
+  String get settingsSectionCommunity => 'Komunitatea eta profila';
+
+  @override
+  String get settingsSectionTools => 'Tresnak eta funtzioak';
+
+  @override
+  String get settingsSectionData => 'Datuak eta inportazioa';
+
+  @override
+  String get settingsNotificationsEnabledSubtitle => 'Erabilgarritasun-alertak aktibo';
+
+  @override
+  String get settingsNotificationsDisabledSubtitle => 'Erabilgarritasun-alertak desgaituta';
+
+  @override
+  String get settingsNotifySeasonComplete => 'Denboraldi osoa dagoenean jakinarazten du';
+
+  @override
+  String get settingsNotifySeasonFirstEp => 'Lehen atala estreinatzean bakarrik jakinarazten du';
+
+  @override
+  String settingsProvidersCount(Object count) {
+    return '$count plataforma hautatuta';
+  }
+
+  @override
+  String get settingsProvidersNone => 'Ez dago plataformarik hautatuta';
+
+  @override
+  String get settingsAiConfigured => 'API gakoa konfiguratuta';
+
+  @override
+  String get settingsAiNotConfigured => 'API gakorik gabe';
+
+  @override
+  String get settingsProfilePublic => 'Komunitatearentzat ikusgai';
+
+  @override
+  String get settingsProfilePrivate => 'Profil pribatua';
+
+  @override
+  String get settingsCommunityVisible => 'Beheko barran ikusgai';
+
+  @override
+  String get settingsCommunityHidden => 'Ezkutuan';
+
+  @override
+  String get settingsEditVisible => 'Fitxetan ikusgai';
+
+  @override
+  String get settingsEditHidden => 'Ezkutuan';
+
+  @override
+  String get settingsImdbSubtitle => 'CSV fitxategia (jarraipen-zerrenda eta iritziak)';
+
+  @override
+  String get settingsTmdbSubtitle => 'Jarraipen-zerrenda eta iritziak';
+
+  @override
+  String get settingsDeleteAccountSubtitle => 'Ekintza itzulezina';
+
+  @override
+  String get understood => 'Ulertuta';
+
+  @override
+  String get settingsInfoProvidersTitle => 'Eduki-plataformak';
+
+  @override
+  String get settingsInfoProvidersIntro => 'Nola erabiltzen ditu MovieScout-ek zure plataformak?';
+
+  @override
+  String get settingsInfoProvidersItem1Title => 'Erabilgarritasun-alertak';
+
+  @override
+  String get settingsInfoProvidersItem1Desc => 'MovieScout-ek aldizka eguneratzen du zure zerrendako titulu bakoitza TMDb-tik (JustWatch-en datuekin) non emititzen den jakiteko. Hemen hautatutako plataformaren batean badago, jakinaraziko dizu.';
+
+  @override
+  String get settingsInfoProvidersItem2Title => 'Bilaketetako iragazkia';
+
+  @override
+  String get settingsInfoProvidersItem2Desc => 'Iragazi katalogoa zure harpidetza aktiboekin ikus dezakezuna bakarrik ikusteko.';
+
+  @override
+  String get settingsInfoProvidersItem3Title => 'Eskualdeko katalogoa';
+
+  @override
+  String get settingsInfoProvidersItem3Desc => 'Erabilgarritasuna automatikoki egokitzen da ezarpenetan hautatutako herrialdera.';
+
+  @override
+  String get settingsInfoNotificationsTitle => 'Nola funtzionatzen dute jakinarazpenek?';
+
+  @override
+  String get settingsInfoNotificationsIntro => 'Erabilgarritasun-alerta automatikoak';
+
+  @override
+  String get settingsInfoNotificationsItem1Title => 'Zerrendako estreinaldiak';
+
+  @override
+  String get settingsInfoNotificationsItem1Desc => 'Jaso jakinarazpen bat zure jarraipen-zerrendako titulu bat hautatutako plataformetan erabilgarri dagoenean.';
+
+  @override
+  String get settingsInfoNotificationsItem2Title => 'Serieen denboraldi berriak';
+
+  @override
+  String get settingsInfoNotificationsItem2Desc => 'Lehenetsita lehen atalarekin jakinarazten dugu. \'Denboraldi osoa\' aktibatuta, atal guztiak emititu arte itxaroten da.';
+
+  @override
+  String get settingsInfoNotificationsItem3Title => 'Hondoko egiaztapenak';
+
+  @override
+  String get settingsInfoNotificationsItem3Desc => 'MovieScout-ek aldizka eta modu isilean egiaztatzen ditu berritasunak bateria gastatu gabe.';
+
+  @override
+  String get settingsInfoAiTitle => 'Adimen Artifiziala';
+
+  @override
+  String get settingsInfoAiIntro => 'Itzulpenen eta tituluen bilaketen hobekuntzak';
+
+  @override
+  String get settingsInfoAiItem1Title => 'Testuinguruko itzulpenak';
+
+  @override
+  String get settingsInfoAiItem1Desc => 'Sinopsien eta tituluen itzulpen naturalak sortzen ditu zure hizkuntzan erabilgarri ez daudenean.';
+
+  @override
+  String get settingsInfoAiItem2Title => 'Bilaketa adimenduna';
+
+  @override
+  String get settingsInfoAiItem2Desc => 'Bilatu filmak eszenak edo argumentuak deskribatuz titulua gogoratzen ez baduzu ere.';
+
+  @override
+  String get settingsInfoAiItem3Title => 'Gako pribatu eta segurua';
+
+  @override
+  String get settingsInfoAiItem3Desc => 'Zure API gakoa zure gailuan bakarrik gordetzen da modu seguru eta pribatuan.';
+
+  @override
+  String get settingsInfoAiNote => 'Garrantzitsua: Doako IA ereduek erantzun-denbora motelagoak edo aldi baterako mugak izan ditzakete. Errendimendu hoberena lortzeko, ordainpeko zerbitzua gomendatzen da.';
+
+  @override
+  String get settingsInfoProfileTitle => 'Profil Publikoa eta Komunitatea';
+
+  @override
+  String get settingsInfoProfileIntro => 'MovieScout-en alderdi soziala';
+
+  @override
+  String get settingsInfoProfileItem1Title => 'Partekatu zure jarduera';
+
+  @override
+  String get settingsInfoProfileItem1Desc => 'Beste erabiltzaileei zure profila aurkitzeko eta ikusten eta baloratzen duzuna ikusteko aukera ematen die.';
+
+  @override
+  String get settingsInfoProfileItem2Title => 'Pribatutasuna bermatuta';
+
+  @override
+  String get settingsInfoProfileItem2Desc => 'Profil pribatura alda dezakezu nahi duzunean. Tituluak eta balorazioak bakarrik partekatzen dira, inoiz ez datu pertsonalak.';
+
+  @override
+  String get settingsInfoProfileItem3Title => 'Komunitatearen fitxa';
+
+  @override
+  String get settingsInfoProfileItem3Desc => 'Erakutsi edo ezkutatu komunitatearen fitxa beheko barran zure hobespenen arabera.';
+
+  @override
+  String get settingsInfoEditTitle => 'Lankidetza eta edizioa TMDbn';
+
+  @override
+  String get settingsInfoEditIntro => 'Lagundu datu-base librea handitzen eta informazioa hobetzen.';
+
+  @override
+  String get settingsInfoEditItem1Title => 'Fitxatik zuzeneko sarbidea';
+
+  @override
+  String get settingsInfoEditItem1Desc => 'Arkatz ikono bat erakusten du filmen eta telesailen fitxetan, TMDb-ko edizio orrira zuzenean joateko.';
+
+  @override
+  String get settingsInfoEditItem2Title => 'Komunitatea eta datu irekiak';
+
+  @override
+  String get settingsInfoEditItem2Desc => 'MovieScout-eko informazio guztia The Movie Database (TMDb)-tik dator, komunitateak mantendutako proiektu kolaboratiboa.';
+
+  @override
+  String get settingsInfoEditItem3Title => 'Edukiak eta itzulpenak hobetzea';
+
+  @override
+  String get settingsInfoEditItem3Desc => 'Edozein hizkuntzatan izenburuak, sinopsiak eta xehetasunak gehitu edo zuzendu ditzakezu.';
+
+  @override
+  String get settingsInfoEditNote => 'TMDb-n edukia editatzeko themoviedb.org webgunean doako kontu batekin saioa hasi besterik ez duzu behar.';
 }

@@ -88,9 +88,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get searchPerson => 'Cerca una persona';
 
   @override
-  String get searchPlaceholder => 'Cerca film o serie TV...';
-
-  @override
   String get gallery => 'Galleria';
 
   @override
@@ -115,16 +112,10 @@ class AppLocalizationsIt extends AppLocalizations {
   String get username => 'Nome utente';
 
   @override
-  String get password => 'Password';
-
-  @override
   String get anonymousUser => 'Utente anonimo';
 
   @override
   String get loginTitle => 'Accedi';
-
-  @override
-  String get loginDescription => 'Accedi al tuo account TMDB';
 
   @override
   String get login => 'Accedi';
@@ -146,9 +137,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get completeLoginToTmdb => 'Completa il processo di accesso';
-
-  @override
-  String get signupToTmdb => 'Registrati su TMDb';
 
   @override
   String get signInToWatchlist => 'Devi aver effettuato l\'accesso per aggiungere titoli.';
@@ -173,30 +161,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get imdbImportRateslist => 'Importa valutazioni';
-
-  @override
-  String get imdbImportCount => 'Titoli importati con successo';
-
-  @override
-  String get imdbResetWatchlist => 'REIMPOSTA WATCHLIST';
-
-  @override
-  String get imdbResetRateslist => 'REIMPOSTA VALUTAZIONI';
-
-  @override
-  String get imdbConfirmationTitle => 'ATTENZIONE';
-
-  @override
-  String get imdbResetWatchlistConfirmation => 'Vuoi davvero reimpostare la Watchlist?';
-
-  @override
-  String get imdbResetRateslistConfirmation => 'Vuoi davvero reimpostare le valutazioni?';
-
-  @override
-  String get resetWatchlistCount => 'Titoli in Watchlist: ';
-
-  @override
-  String get resetRateslistCount => 'Titoli valutati: ';
 
   @override
   String get missingDescription => 'Descrizione mancante';
@@ -286,9 +250,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get followingOnly => 'Seguiti';
 
   @override
-  String get pendingOnly => 'In attesa';
-
-  @override
   String get emptyList => 'Non c\'è niente qui.';
 
   @override
@@ -313,19 +274,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get originCountry => 'Paese';
 
   @override
-  String get schemeSelectTitle => 'Seleziona colore';
-
-  @override
   String get defaultScheme => 'Predefinito';
-
-  @override
-  String get blackScheme => 'Nero';
-
-  @override
-  String get blueScheme => 'Blu';
-
-  @override
-  String get redScheme => 'Rosso';
 
   @override
   String get about => 'Info...';
@@ -472,16 +421,10 @@ class AppLocalizationsIt extends AppLocalizations {
   String get errorMessageGeneric => 'Si è verificato un errore. Riprova più tardi.';
 
   @override
-  String get youtubeSearch => 'Cerca su YouTube';
-
-  @override
   String get notificationsHistory => 'Ultime notifiche';
 
   @override
   String get notifyCompleteSeason => 'Notifica stagione completa';
-
-  @override
-  String get notifyCompleteSeasonSubtitle => 'Notifica solo quando l\'intera stagione è disponibile.';
 
   @override
   String get episodes => 'Episodi';
@@ -542,9 +485,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get addToHomeScreen => 'Aggiungi alla schermata Home';
-
-  @override
-  String get shortcutAdded => 'Scorciatoia aggiunta';
 
   @override
   String get shortcutFailed => 'Impossibile aggiungere scorciatoia';
@@ -633,12 +573,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get googleSignInButton => 'Continua con Google';
 
   @override
-  String get alreadyUsingMovieScout => 'Usi già MovieScout?';
-
-  @override
-  String get importTmdbData => 'Importa i tuoi dati da TMDb.';
-
-  @override
   String get tmdbAccount => 'Account TMDb';
 
   @override
@@ -658,9 +592,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get tmdbImportSuccess => 'Dati importati con successo!';
-
-  @override
-  String get tmdbImportDownloading => 'Scaricamento dati TMDb...';
 
   @override
   String get tmdbImportDownloadingWatchlist => 'Scaricamento watchlist...';
@@ -699,9 +630,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get tmdbImportError => 'Errore durante l\'importazione dei dati';
-
-  @override
-  String get tmdbImportLoginRequired => 'Accedi a TMDb per iniziare l\'importazione.';
 
   @override
   String get tmdbImportConsentText => 'L\'importazione aggiungerà in sicurezza le tue liste e voti TMDb al tuo account MovieScout.';
@@ -788,9 +716,6 @@ class AppLocalizationsIt extends AppLocalizations {
   String get emptyFollowingSearchHint => 'Cerca utenti per seguirli e vedere la loro attività.';
 
   @override
-  String get cannotFollowSelf => 'Non puoi seguire te stesso';
-
-  @override
   String get networkErrorMessage => 'Impossibile connettersi al server. Verifica la tua connessione Internet.';
 
   @override
@@ -834,4 +759,201 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get shareAppGooglePlay => 'Installala su Google Play:';
+
+  @override
+  String get settingsSectionPreferences => 'Preferenze di contenuto';
+
+  @override
+  String get settingsSectionNotifications => 'Notifiche';
+
+  @override
+  String get settingsSectionCommunity => 'Community e profilo';
+
+  @override
+  String get settingsSectionTools => 'Strumenti e funzionalità';
+
+  @override
+  String get settingsSectionData => 'Dati e importazione';
+
+  @override
+  String get settingsNotificationsEnabledSubtitle => 'Avvisi di disponibilità attivi';
+
+  @override
+  String get settingsNotificationsDisabledSubtitle => 'Avvisi di disponibilità disattivati';
+
+  @override
+  String get settingsNotifySeasonComplete => 'Notifica quando la stagione è completa';
+
+  @override
+  String get settingsNotifySeasonFirstEp => 'Notifica solo all\'uscita del primo episodio';
+
+  @override
+  String settingsProvidersCount(Object count) {
+    return '$count piattaforme selezionate';
+  }
+
+  @override
+  String get settingsProvidersNone => 'Nessuna piattaforma selezionata';
+
+  @override
+  String get settingsAiConfigured => 'Chiave API configurata';
+
+  @override
+  String get settingsAiNotConfigured => 'Nessuna chiave configurata';
+
+  @override
+  String get settingsProfilePublic => 'Visibile alla community';
+
+  @override
+  String get settingsProfilePrivate => 'Profilo privato';
+
+  @override
+  String get settingsCommunityVisible => 'Visibile nella barra di navigazione';
+
+  @override
+  String get settingsCommunityHidden => 'Nascosta';
+
+  @override
+  String get settingsEditVisible => 'Visibili sulle schede';
+
+  @override
+  String get settingsEditHidden => 'Nascosti';
+
+  @override
+  String get settingsImdbSubtitle => 'File CSV (watchlist e valutazioni)';
+
+  @override
+  String get settingsTmdbSubtitle => 'Watchlist e valutazioni';
+
+  @override
+  String get settingsDeleteAccountSubtitle => 'Azione irreversibile';
+
+  @override
+  String get understood => 'Ho capito';
+
+  @override
+  String get settingsInfoProvidersTitle => 'Piattaforme di streaming';
+
+  @override
+  String get settingsInfoProvidersIntro => 'Come utilizza MovieScout le tue piattaforme?';
+
+  @override
+  String get settingsInfoProvidersItem1Title => 'Avvisi di disponibilità';
+
+  @override
+  String get settingsInfoProvidersItem1Desc => 'MovieScout aggiorna periodicamente ogni titolo della tua watchlist da TMDb (con i dati di streaming forniti da JustWatch). Se è trasmesso su una delle piattaforme selezionate qui, riceverai una notifica.';
+
+  @override
+  String get settingsInfoProvidersItem2Title => 'Filtro nelle ricerche';
+
+  @override
+  String get settingsInfoProvidersItem2Desc => 'Filtra rapidamente il catalogo per vedere solo i contenuti disponibili con i tuoi abbonamenti attivi.';
+
+  @override
+  String get settingsInfoProvidersItem3Title => 'Catalogo regionale';
+
+  @override
+  String get settingsInfoProvidersItem3Desc => 'La disponibilità si adatta automaticamente al paese selezionato nelle impostazioni.';
+
+  @override
+  String get settingsInfoNotificationsTitle => 'Come funzionano le notifiche?';
+
+  @override
+  String get settingsInfoNotificationsIntro => 'Avvisi automatici di disponibilità';
+
+  @override
+  String get settingsInfoNotificationsItem1Title => 'Uscite della watchlist';
+
+  @override
+  String get settingsInfoNotificationsItem1Desc => 'Ricevi un avviso quando un titolo della tua watchlist diventa disponibile sulle tue piattaforme selezionate.';
+
+  @override
+  String get settingsInfoNotificationsItem2Title => 'Nuove stagioni di serie TV';
+
+  @override
+  String get settingsInfoNotificationsItem2Desc => 'Per impostazione predefinita ti avvisiamo al primo episodio. Con \'Stagione completa\' attiva, l\'avviso attende che tutti gli episodi siano trasmessi.';
+
+  @override
+  String get settingsInfoNotificationsItem3Title => 'Controlli in background';
+
+  @override
+  String get settingsInfoNotificationsItem3Desc => 'MovieScout controlla gli aggiornamenti periodicamente in modo silenzioso e senza consumare batteria.';
+
+  @override
+  String get settingsInfoAiTitle => 'Intelligenza Artificiale';
+
+  @override
+  String get settingsInfoAiIntro => 'Miglioramenti nella ricerca e traduzione dei titoli';
+
+  @override
+  String get settingsInfoAiItem1Title => 'Traduzioni contestuali';
+
+  @override
+  String get settingsInfoAiItem1Desc => 'Genera traduzioni naturali di trame e titoli adatte al contesto cinematografico quando non sono disponibili nella tua lingua.';
+
+  @override
+  String get settingsInfoAiItem2Title => 'Ricerca intelligente';
+
+  @override
+  String get settingsInfoAiItem2Desc => 'Trova film descrivendo scene, trame o personaggi anche se non ricordi il titolo esatto.';
+
+  @override
+  String get settingsInfoAiItem3Title => 'Chiave privata e sicura';
+
+  @override
+  String get settingsInfoAiItem3Desc => 'La tua chiave API è salvata in modo sicuro e privato solo sul tuo dispositivo.';
+
+  @override
+  String get settingsInfoAiNote => 'Importante: I modelli gratuiti di IA possono presentare tempi di risposta più lenti o limiti temporali a seconda del provider. Per prestazioni ottimali, si consiglia un servizio a consumo.';
+
+  @override
+  String get settingsInfoProfileTitle => 'Profilo Pubblico & Community';
+
+  @override
+  String get settingsInfoProfileIntro => 'La dimensione sociale di MovieScout';
+
+  @override
+  String get settingsInfoProfileItem1Title => 'Condividi la tua attività';
+
+  @override
+  String get settingsInfoProfileItem1Desc => 'Permette ad altri utenti di trovare il tuo profilo, seguirti e scoprire cosa stai guardando e votando.';
+
+  @override
+  String get settingsInfoProfileItem2Title => 'Privacy garantita';
+
+  @override
+  String get settingsInfoProfileItem2Desc => 'Puoi passare alla modalità privata in qualsiasi momento. Vengono condivisi solo titoli e valutazioni, mai dati personali.';
+
+  @override
+  String get settingsInfoProfileItem3Title => 'Scheda community';
+
+  @override
+  String get settingsInfoProfileItem3Desc => 'Mostra o nascondi la scheda community nella barra inferiore in base alle tue preferenze.';
+
+  @override
+  String get settingsInfoEditTitle => 'Collaborazione e modifica su TMDb';
+
+  @override
+  String get settingsInfoEditIntro => 'Aiuta a far crescere il database aperto e a migliorare le informazioni.';
+
+  @override
+  String get settingsInfoEditItem1Title => 'Accesso diretto dalla scheda';
+
+  @override
+  String get settingsInfoEditItem1Desc => 'Mostra un\'icona a matita nelle schede di film e serie per accedere direttamente alla pagina di modifica.';
+
+  @override
+  String get settingsInfoEditItem2Title => 'Comunità e dati aperti';
+
+  @override
+  String get settingsInfoEditItem2Desc => 'Tutte le informazioni di MovieScout provengono da The Movie Database (TMDb), un progetto collaborativo della comunità.';
+
+  @override
+  String get settingsInfoEditItem3Title => 'Miglioramento di contenuti e traduzioni';
+
+  @override
+  String get settingsInfoEditItem3Desc => 'Puoi aggiungere o correggere titoli, trame e dettagli in qualsiasi lingua a beneficio di tutti.';
+
+  @override
+  String get settingsInfoEditNote => 'Per modificare contenuti su TMDb basta accedere con un account gratuito su themoviedb.org.';
 }
