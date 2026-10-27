@@ -255,5 +255,15 @@
   "emptyFollowingList": "Ainda não está a seguir nenhum utilizador.",
   "emptyFollowingSearchHint": "Pesquise utilizadores para segui-los e ver a sua atividade.",
   "cannotFollowSelf": "Não se pode seguir a si próprio",
-  "networkErrorMessage": "Não foi possível ligar ao servidor. Verifique a sua ligação à internet."
+  "networkErrorMessage": "Não foi possível ligar ao servidor. Verifique a sua ligação à internet.",
+  "publicProfileTitle": "Perfil público",
+  "publicProfileSubtitle": "Ative o seu perfil público para partilhar o que vê com a comunidade",
+  "privateProfileMessage": "Este perfil é privado",
+  "enablePublicProfileBanner": "Ative o seu perfil público para partilhar o que vê com a comunidade. Pode ser desativado nas definições.",
+  "enablePublicProfileButton": "Ativar perfil público",
+  "noWatchingNowTitles": "Não está a ver nenhum título no momento",
+  "noRatedTitles": "Nenhum título avaliado",
+  "communityTabTitle": "Separador da comunidade",
+  "communityTabSubtitle": "Mostrar o separador da comunidade na barra de navegação",
+  "emptyFollowingCommunityHint": "Pode ocultar este separador nas definições se não o usar."
 }

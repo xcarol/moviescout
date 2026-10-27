@@ -119,8 +119,24 @@ class _FollowingListState extends State<FollowingList> {
           },
           child: Text(loc.messageEmptyLogin),
         ),
+        Text(
+          loc.emptyFollowingCommunityHint,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+            fontSize: 13,
+          ),
+        ),
       ]);
     } else {
+      final authService = Provider.of<SupabaseAuthService>(context);
+      if (authService.isLoggedIn && !authService.isPublicProfile) {
+        children.addAll([
+          _publicProfileBanner(context),
+          const SizedBox(height: 16),
+        ]);
+      }
+
       children.addAll([
         Icon(
           Icons.people_alt_outlined,
@@ -145,6 +161,15 @@ class _FollowingListState extends State<FollowingList> {
             fontSize: 14,
           ),
         ),
+        if (authService.isLoggedIn && !authService.isPublicProfile)
+          Text(
+            loc.emptyFollowingCommunityHint,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+              fontSize: 13,
+            ),
+          ),
       ]);
     }
 
@@ -169,13 +194,18 @@ class _FollowingListState extends State<FollowingList> {
 
   Widget followingBody(UserFollowingService followingService) {
     final customColors = Theme.of(context).extension<CustomColors>()!;
+    final authService = Provider.of<SupabaseAuthService>(context);
     final users = followingService.followingUsers;
+    final showBanner = authService.isLoggedIn && !authService.isPublicProfile;
 
     return ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: users.length,
+      itemCount: users.length + (showBanner ? 1 : 0),
       itemBuilder: (context, index) {
-        final user = users[index];
+        if (showBanner && index == 0) {
+          return _publicProfileBanner(context);
+        }
+        final user = users[showBanner ? index - 1 : index];
         return Column(
           children: [
             UserCard(user: user),
@@ -186,6 +216,63 @@ class _FollowingListState extends State<FollowingList> {
           ],
         );
       },
+    );
+  }
+
+  Widget _publicProfileBanner(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+    final authService =
+        Provider.of<SupabaseAuthService>(context, listen: false);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.public, color: colorScheme.primary, size: 22),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  loc.publicProfileTitle,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            loc.enablePublicProfileBanner,
+            style: TextStyle(
+              color: colorScheme.onSurfaceVariant,
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerRight,
+            child: FilledButton.tonal(
+              onPressed: () async {
+                await authService.setPublicProfile(true);
+              },
+              child: Text(loc.enablePublicProfileButton),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

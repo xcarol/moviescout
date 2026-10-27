@@ -16,7 +16,7 @@ import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/language_form.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/notification_permission_dialog.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/region_form.dart';
-import 'package:moviescout/services/settings/edit_settings_service.dart';
+import 'package:moviescout/services/settings/app_settings_service.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -42,6 +42,8 @@ class SettingsScreen extends StatelessWidget {
           _showEditContentTile(context),
           _notificationsTile(context),
           _notifyCompleteSeasonTile(context),
+          if (isUserLoggedIn) _publicProfileTile(context),
+          _showCommunityTabTile(context),
           _aiSettingsTile(context),
           if (isUserLoggedIn) _deleteAccountTile(context),
         ],
@@ -50,14 +52,28 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _showEditContentTile(BuildContext context) {
-    final editService = Provider.of<EditSettingsService>(context);
+    final appSettings = Provider.of<AppSettingsService>(context);
 
     return SwitchListTile(
       secondary: const Icon(Icons.edit),
       title: Text(AppLocalizations.of(context)!.showEditContent),
-      value: editService.showEditContent,
+      value: appSettings.showEditContent,
       onChanged: (bool value) async {
-        await editService.setShowEditContent(value);
+        await appSettings.setShowEditContent(value);
+      },
+    );
+  }
+
+  Widget _showCommunityTabTile(BuildContext context) {
+    final appSettings = Provider.of<AppSettingsService>(context);
+
+    return SwitchListTile(
+      secondary: const Icon(Icons.people_alt_outlined),
+      title: Text(AppLocalizations.of(context)!.communityTabTitle),
+      subtitle: Text(AppLocalizations.of(context)!.communityTabSubtitle),
+      value: appSettings.showCommunityTab,
+      onChanged: (bool value) async {
+        await appSettings.setShowCommunityTab(value);
       },
     );
   }
@@ -105,6 +121,20 @@ class SettingsScreen extends StatelessWidget {
               await notificationService.setNotifyCompleteSeason(value);
             }
           : null,
+    );
+  }
+
+  Widget _publicProfileTile(BuildContext context) {
+    final authService = Provider.of<SupabaseAuthService>(context);
+
+    return SwitchListTile(
+      secondary: const Icon(Icons.group),
+      title: Text(AppLocalizations.of(context)!.publicProfileTitle),
+      subtitle: Text(AppLocalizations.of(context)!.publicProfileSubtitle),
+      value: authService.isPublicProfile,
+      onChanged: (bool value) async {
+        await authService.setPublicProfile(value);
+      },
     );
   }
 

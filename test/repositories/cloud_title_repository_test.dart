@@ -336,7 +336,8 @@ void main() {
           .upsert({'id': 'u1', 'providers_string': '8,337'})).called(1);
     });
 
-    test('syncNotification syncs notification and watchlist conditionally', () async {
+    test('syncNotification syncs notification and watchlist conditionally',
+        () async {
       final title = TmdbTitle(
         tmdbId: 789,
         mediaType: ApiConstants.tv,
@@ -362,7 +363,8 @@ void main() {
       verifyNever(() => mockClient.from('user_titles'));
     });
 
-    test('bulkUpsertEpisodeRatings returns early when records is empty', () async {
+    test('bulkUpsertEpisodeRatings returns early when records is empty',
+        () async {
       await repository.bulkUpsertEpisodeRatings([]);
       verifyNever(() => mockClient.from('user_episode_ratings'));
     });
@@ -407,8 +409,7 @@ void main() {
         'profiles': {'username': 'movie_buff'},
       });
       when(() => mockQueryBuilder.upsert(any(),
-              onConflict: any(named: 'onConflict')))
-          .thenAnswer((_) => fakeBuilder);
+          onConflict: any(named: 'onConflict'))).thenAnswer((_) => fakeBuilder);
 
       final comment = await repository.upsertComment(
         userId: 'u1',

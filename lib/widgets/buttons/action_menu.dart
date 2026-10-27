@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/services/settings/edit_settings_service.dart';
+import 'package:moviescout/services/settings/app_settings_service.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -81,7 +81,7 @@ class ActionMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final showEdit = Provider.of<EditSettingsService>(context).showEditContent;
+    final showEdit = Provider.of<AppSettingsService>(context).showEditContent;
 
     return PopupMenuButton<String>(
       onSelected: (value) async {

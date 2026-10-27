@@ -55,7 +55,7 @@ class UserFollowingService with ChangeNotifier {
         final profilesResponse = await CloudDatabaseService.retryOnFutureJwt(
           () => CloudDatabaseService.instance
               .from('profiles')
-              .select('id, username, avatar_url, email, created_at')
+              .select('id, username, avatar_url, is_public, created_at')
               .inFilter('id', followingIdsList),
         );
 
@@ -164,8 +164,9 @@ class UserFollowingService with ChangeNotifier {
       final currentUser = CloudDatabaseService.currentUser;
       var filterBuilder = CloudDatabaseService.instance
           .from('profiles')
-          .select('id, username, avatar_url, email, created_at')
-          .or('username.ilike.%$term%,email.ilike.%$term%');
+          .select('id, username, avatar_url, is_public, created_at')
+          .ilike('username', '%$term%')
+          .eq('is_public', true);
 
       if (currentUser != null) {
         filterBuilder = filterBuilder.neq('id', currentUser.id);
@@ -202,13 +203,28 @@ class UserFollowingService with ChangeNotifier {
       final profileResponse = await CloudDatabaseService.retryOnFutureJwt(
         () => CloudDatabaseService.instance
             .from('profiles')
-            .select('id, username, avatar_url, email, created_at')
+            .select('id, username, avatar_url, is_public, created_at')
             .eq('id', userId)
             .maybeSingle(),
       );
 
       if (profileResponse != null) {
         profile = UserProfile.fromMap(profileResponse);
+      }
+
+      final currentUser = CloudDatabaseService.currentUser;
+      final isSelf = currentUser?.id == userId;
+      final isAllowed = profile != null && (profile.isPublic || isSelf);
+
+      if (!isAllowed) {
+        return {
+          'profile': profile,
+          'watchlistCount': 0,
+          'rateslistCount': 0,
+          'pinnedTitles': <TmdbTitle>[],
+          'latestRatedTitles': <TmdbTitle>[],
+          'isPublic': false,
+        };
       }
 
       final countsResponse = await Future.wait([
@@ -273,6 +289,7 @@ class UserFollowingService with ChangeNotifier {
       'rateslistCount': rateslistCount,
       'pinnedTitles': pinnedTitles,
       'latestRatedTitles': latestRatedTitles,
+      'isPublic': profile?.isPublic ?? false,
     };
   }
 

@@ -143,9 +143,7 @@ class TitleChipContent extends TitleCard {
   Widget posterOverlay(BuildContext context) {
     if (isDimmed) {
       return Container(
-        color: Theme.of(context)
-            .extension<CustomColors>()!
-            .watchedOverlayColor,
+        color: Theme.of(context).extension<CustomColors>()!.watchedOverlayColor,
       );
     }
 

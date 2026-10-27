@@ -104,7 +104,8 @@ void main() {
             );
           }
           return 'retry-success';
-        }, maxAttempts: 3).then((val) => result = val);
+        }, maxAttempts: 3)
+            .then((val) => result = val);
 
         async.elapse(const Duration(seconds: 2));
         expect(calls, 2);
@@ -112,7 +113,8 @@ void main() {
       });
     });
 
-    test('retryOnFutureJwt retries when message contains JWT issued at future', () {
+    test('retryOnFutureJwt retries when message contains JWT issued at future',
+        () {
       fakeAsync((async) {
         int calls = 0;
         String? result;
@@ -125,7 +127,8 @@ void main() {
             );
           }
           return 'jwt-future-success';
-        }, maxAttempts: 3).then((val) => result = val);
+        }, maxAttempts: 3)
+            .then((val) => result = val);
 
         async.elapse(const Duration(seconds: 2));
         expect(calls, 2);
@@ -144,7 +147,8 @@ void main() {
             message: 'JWT error',
             code: 'PGRST303',
           );
-        }, maxAttempts: 2).catchError((err) {
+        }, maxAttempts: 2)
+            .catchError((err) {
           thrownError = err;
         });
 
@@ -154,7 +158,8 @@ void main() {
       });
     });
 
-    test('retryOnFutureJwt rethrows immediately for non-JWT PostgrestException', () async {
+    test('retryOnFutureJwt rethrows immediately for non-JWT PostgrestException',
+        () async {
       int calls = 0;
       expect(
         () => CloudDatabaseService.retryOnFutureJwt(() async {
@@ -169,7 +174,8 @@ void main() {
       expect(calls, 1);
     });
 
-    test('retryOnFutureJwt rethrows non-PostgrestException immediately', () async {
+    test('retryOnFutureJwt rethrows non-PostgrestException immediately',
+        () async {
       int calls = 0;
       expect(
         () => CloudDatabaseService.retryOnFutureJwt(() async {

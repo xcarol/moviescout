@@ -821,4 +821,38 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get networkErrorMessage =>
       'No s\'ha pogut connectar amb el servidor. Comprova la connexió a internet.';
+
+  @override
+  String get publicProfileTitle => 'Perfil públic';
+
+  @override
+  String get publicProfileSubtitle =>
+      'Activa el teu perfil públic per compartir el que mires amb la comunitat';
+
+  @override
+  String get privateProfileMessage => 'Aquest perfil és privat';
+
+  @override
+  String get enablePublicProfileBanner =>
+      'Activa el teu perfil públic per compartir el que mires amb la comunitat. Es pot desactivar des de la configuració.';
+
+  @override
+  String get enablePublicProfileButton => 'Activar perfil públic';
+
+  @override
+  String get noWatchingNowTitles => 'No està mirant cap títol ara mateix';
+
+  @override
+  String get noRatedTitles => 'No hi ha cap títol valorat';
+
+  @override
+  String get communityTabTitle => 'Pestanya de comunitat';
+
+  @override
+  String get communityTabSubtitle =>
+      'Mostra la pestanya de comunitat a la barra de navegació';
+
+  @override
+  String get emptyFollowingCommunityHint =>
+      'Pots amagar aquesta pestanya des de la configuració si no la fas servir.';
 }

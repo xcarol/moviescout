@@ -823,4 +823,38 @@ class AppLocalizationsGl extends AppLocalizations {
   @override
   String get networkErrorMessage =>
       'Non se puido conectar co servidor. Comproba a túa conexión a internet.';
+
+  @override
+  String get publicProfileTitle => 'Perfil público';
+
+  @override
+  String get publicProfileSubtitle =>
+      'Activa o teu perfil público para compartir o que ves coa comunidade';
+
+  @override
+  String get privateProfileMessage => 'Este perfil é privado';
+
+  @override
+  String get enablePublicProfileBanner =>
+      'Activa o teu perfil público para compartir o que ves coa comunidade. Pódese desactivar dende a configuración.';
+
+  @override
+  String get enablePublicProfileButton => 'Activar perfil público';
+
+  @override
+  String get noWatchingNowTitles => 'Non está a ver ningún título agora mesmo';
+
+  @override
+  String get noRatedTitles => 'Non hai ningún título valorado';
+
+  @override
+  String get communityTabTitle => 'Pestana de comunidade';
+
+  @override
+  String get communityTabSubtitle =>
+      'Mostra a pestana de comunidade na barra de navegación';
+
+  @override
+  String get emptyFollowingCommunityHint =>
+      'Podes ocultar esta pestana dende a configuración se non a usas.';
 }

@@ -820,6 +820,41 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get networkErrorMessage =>
       'Não foi possível conectar ao servidor. Verifique sua conexão com a internet.';
+
+  @override
+  String get publicProfileTitle => 'Perfil público';
+
+  @override
+  String get publicProfileSubtitle =>
+      'Ative seu perfil público para compartilhar o que você assiste com a comunidade';
+
+  @override
+  String get privateProfileMessage => 'Este perfil é privado';
+
+  @override
+  String get enablePublicProfileBanner =>
+      'Ative seu perfil público para compartilhar o que você assiste com a comunidade. Pode ser desativado nas configurações.';
+
+  @override
+  String get enablePublicProfileButton => 'Ativar perfil público';
+
+  @override
+  String get noWatchingNowTitles =>
+      'Não está assistindo a nenhum título no momento';
+
+  @override
+  String get noRatedTitles => 'Nenhum título avaliado';
+
+  @override
+  String get communityTabTitle => 'Aba da comunidade';
+
+  @override
+  String get communityTabSubtitle =>
+      'Mostrar a aba da comunidade na barra de navegação';
+
+  @override
+  String get emptyFollowingCommunityHint =>
+      'Você pode ocultar esta aba nas configurações se não a usar.';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -1638,4 +1673,38 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   @override
   String get networkErrorMessage =>
       'Não foi possível ligar ao servidor. Verifique a sua ligação à internet.';
+
+  @override
+  String get publicProfileTitle => 'Perfil público';
+
+  @override
+  String get publicProfileSubtitle =>
+      'Ative o seu perfil público para partilhar o que vê com a comunidade';
+
+  @override
+  String get privateProfileMessage => 'Este perfil é privado';
+
+  @override
+  String get enablePublicProfileBanner =>
+      'Ative o seu perfil público para partilhar o que vê com a comunidade. Pode ser desativado nas definições.';
+
+  @override
+  String get enablePublicProfileButton => 'Ativar perfil público';
+
+  @override
+  String get noWatchingNowTitles => 'Não está a ver nenhum título no momento';
+
+  @override
+  String get noRatedTitles => 'Nenhum título avaliado';
+
+  @override
+  String get communityTabTitle => 'Separador da comunidade';
+
+  @override
+  String get communityTabSubtitle =>
+      'Mostrar o separador da comunidade na barra de navegação';
+
+  @override
+  String get emptyFollowingCommunityHint =>
+      'Pode ocultar este separador nas definições se não o usar.';
 }

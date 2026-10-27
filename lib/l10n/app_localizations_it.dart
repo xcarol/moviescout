@@ -819,4 +819,38 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get networkErrorMessage =>
       'Impossibile connettersi al server. Verifica la tua connessione Internet.';
+
+  @override
+  String get publicProfileTitle => 'Profilo pubblico';
+
+  @override
+  String get publicProfileSubtitle =>
+      'Attiva il tuo profilo pubblico per condividere ciò che guardi con la community';
+
+  @override
+  String get privateProfileMessage => 'Questo profilo è privato';
+
+  @override
+  String get enablePublicProfileBanner =>
+      'Attiva il tuo profilo pubblico per condividere ciò che guardi con la community. Può essere disattivato dalle impostazioni.';
+
+  @override
+  String get enablePublicProfileButton => 'Attiva profilo pubblico';
+
+  @override
+  String get noWatchingNowTitles => 'Non sta guardando alcun titolo al momento';
+
+  @override
+  String get noRatedTitles => 'Nessun titolo valutato';
+
+  @override
+  String get communityTabTitle => 'Scheda community';
+
+  @override
+  String get communityTabSubtitle =>
+      'Mostra la scheda community nella barra di navigazione';
+
+  @override
+  String get emptyFollowingCommunityHint =>
+      'Puoi nascondere questa scheda dalle impostazioni se non la usi.';
 }

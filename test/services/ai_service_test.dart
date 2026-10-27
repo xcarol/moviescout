@@ -236,7 +236,8 @@ void main() {
     });
 
     test('strips surrounding quotes without prefixes', () {
-      expect(service.cleanTranslation('"Just a quoted string"'), 'Just a quoted string');
+      expect(service.cleanTranslation('"Just a quoted string"'),
+          'Just a quoted string');
       expect(service.cleanTranslation('Unquoted text'), 'Unquoted text');
     });
   });
@@ -245,7 +246,8 @@ void main() {
     final service = AiService();
 
     test('throws AiRateLimitException on 429 status', () {
-      final response = http.Response('Too many requests. Please retry in 15s', 429);
+      final response =
+          http.Response('Too many requests. Please retry in 15s', 429);
       expect(
         () => service.handleErrorResponse(response),
         throwsA(isA<AiRateLimitException>().having(
@@ -256,8 +258,11 @@ void main() {
       );
     });
 
-    test('throws AiRateLimitException on rate-limited or RESOURCE_EXHAUSTED body', () {
-      final rateLimitedResponse = http.Response('Server error: rate-limited', 500);
+    test(
+        'throws AiRateLimitException on rate-limited or RESOURCE_EXHAUSTED body',
+        () {
+      final rateLimitedResponse =
+          http.Response('Server error: rate-limited', 500);
       expect(
         () => service.handleErrorResponse(rateLimitedResponse),
         throwsA(isA<AiRateLimitException>()),
@@ -282,7 +287,8 @@ void main() {
   group('AiService advanced parsing branches', () {
     final service = AiService();
 
-    test('parses JSON with suggestions, results, titles, movies, or items keys', () {
+    test('parses JSON with suggestions, results, titles, movies, or items keys',
+        () {
       final bodyWithSuggestions = jsonEncode({
         'choices': [
           {
@@ -311,7 +317,8 @@ void main() {
           }
         ]
       });
-      expect(service.parseSuggestions(bodyWithResults).first.title, 'Blade Runner');
+      expect(service.parseSuggestions(bodyWithResults).first.title,
+          'Blade Runner');
 
       final bodyWithTitles = jsonEncode({
         'choices': [
@@ -326,15 +333,19 @@ void main() {
           }
         ]
       });
-      expect(service.parseSuggestions(bodyWithTitles).first.title, 'Interstellar');
+      expect(
+          service.parseSuggestions(bodyWithTitles).first.title, 'Interstellar');
     });
 
-    test('parses markdown code block without json identifier and single object block', () {
+    test(
+        'parses markdown code block without json identifier and single object block',
+        () {
       final body = jsonEncode({
         'choices': [
           {
             'message': {
-              'content': '```\n[{"title": "Tenet", "year": 2020, "media_type": "movie"}]\n```'
+              'content':
+                  '```\n[{"title": "Tenet", "year": 2020, "media_type": "movie"}]\n```'
             }
           }
         ]
@@ -345,7 +356,8 @@ void main() {
         'choices': [
           {
             'message': {
-              'content': '{"data": [{"title": "Memento", "year": 2000, "media_type": "movie"}]}'
+              'content':
+                  '{"data": [{"title": "Memento", "year": 2000, "media_type": "movie"}]}'
             }
           }
         ]
@@ -353,7 +365,8 @@ void main() {
       expect(service.parseSuggestions(singleObjectBody).first.title, 'Memento');
     });
 
-    test('parses text suggestions with media type and conversational preamble', () {
+    test('parses text suggestions with media type and conversational preamble',
+        () {
       final body = jsonEncode({
         'choices': [
           {
@@ -389,7 +402,8 @@ Note: great sci-fi
         })),
         isEmpty,
       );
-      expect(service.parseSuggestions('completely malformed json {{{'), isEmpty);
+      expect(
+          service.parseSuggestions('completely malformed json {{{'), isEmpty);
     });
   });
 }

@@ -1630,6 +1630,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unable to connect to the server. Please check your internet connection.'**
   String get networkErrorMessage;
+
+  /// No description provided for @publicProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Public profile'**
+  String get publicProfileTitle;
+
+  /// No description provided for @publicProfileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable your public profile to share what you watch with the community'**
+  String get publicProfileSubtitle;
+
+  /// No description provided for @privateProfileMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This profile is private'**
+  String get privateProfileMessage;
+
+  /// No description provided for @enablePublicProfileBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable your public profile to share what you watch with the community. It can be disabled from settings.'**
+  String get enablePublicProfileBanner;
+
+  /// No description provided for @enablePublicProfileButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable public profile'**
+  String get enablePublicProfileButton;
+
+  /// No description provided for @noWatchingNowTitles.
+  ///
+  /// In en, this message translates to:
+  /// **'Not watching any title right now'**
+  String get noWatchingNowTitles;
+
+  /// No description provided for @noRatedTitles.
+  ///
+  /// In en, this message translates to:
+  /// **'No rated titles'**
+  String get noRatedTitles;
+
+  /// No description provided for @communityTabTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Community tab'**
+  String get communityTabTitle;
+
+  /// No description provided for @communityTabSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the community tab in the navigation bar'**
+  String get communityTabSubtitle;
+
+  /// No description provided for @emptyFollowingCommunityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can hide this tab from settings if you do not use it.'**
+  String get emptyFollowingCommunityHint;
 }
 
 class _AppLocalizationsDelegate

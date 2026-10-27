@@ -342,7 +342,9 @@ void main() {
           ));
     });
 
-    test('togglePin aborts without message when limit reached and limitReachedMessage is null', () async {
+    test(
+        'togglePin aborts without message when limit reached and limitReachedMessage is null',
+        () async {
       final title = TmdbTitle(
         tmdbId: 1,
         mediaType: ApiConstants.movie,
@@ -363,7 +365,8 @@ void main() {
       verifyNever(() => mockPinnedService.addPinnedToServer(title));
     });
 
-    test('togglePin rolls back isPinned and saves to repository on failure', () async {
+    test('togglePin rolls back isPinned and saves to repository on failure',
+        () async {
       final title = TmdbTitle(
         tmdbId: 1,
         mediaType: ApiConstants.movie,
@@ -390,7 +393,9 @@ void main() {
   });
 
   group('WatchlistService - syncFromServer and updateAuth', () {
-    test('syncFromServer calls filterItems when user is null and loadedItems is empty', () async {
+    test(
+        'syncFromServer calls filterItems when user is null and loadedItems is empty',
+        () async {
       when(() => mockAuth.currentUser).thenReturn(null);
       clearInteractions(mockRepository);
 
@@ -413,7 +418,9 @@ void main() {
           )).called(2);
     });
 
-    test('updateAuth resets and syncs when user changes from logged out to logged in', () async {
+    test(
+        'updateAuth resets and syncs when user changes from logged out to logged in',
+        () async {
       final mockAuthService = MockSupabaseAuthService();
       when(() => mockAuthService.currentUser).thenReturn(mockUser);
 

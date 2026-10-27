@@ -193,7 +193,8 @@ void main() {
       expect(service.enabledProviderIds, isEmpty);
     });
 
-    test('fetchProviders does nothing if remote providers string is null', () async {
+    test('fetchProviders does nothing if remote providers string is null',
+        () async {
       service.isInitialized = true;
       service.providers[8] = {
         TmdbProvider.providerId: '8',

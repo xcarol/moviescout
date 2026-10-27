@@ -590,7 +590,9 @@ void main() {
       expect(title.flatrateProviderIds, [8, 337]);
     });
 
-    test('fromMap extracts originCountry from production_countries when origin_country is empty', () {
+    test(
+        'fromMap extracts originCountry from production_countries when origin_country is empty',
+        () {
       final map = {
         TmdbTitleFields.id: 1,
         TmdbTitleFields.title: 'Country Test',
@@ -615,7 +617,9 @@ void main() {
       expect(title.externalIds, isEmpty);
     });
 
-    test('recommendations returns empty list when json is invalid or not a list', () {
+    test(
+        'recommendations returns empty list when json is invalid or not a list',
+        () {
       final title = TmdbTitle(
         tmdbId: 1,
         name: 'Invalid Recs',
@@ -627,7 +631,9 @@ void main() {
       expect(title.recommendations, isEmpty);
     });
 
-    test('providers getter decodes providersJson or returns empty TmdbProviders', () {
+    test(
+        'providers getter decodes providersJson or returns empty TmdbProviders',
+        () {
       final title = TmdbTitle(
         tmdbId: 1,
         name: 'Providers Test',

@@ -24,6 +24,7 @@ class AppConstants {
   static const String notificationsAsked = 'notifications_asked';
   static const String savedNotifications = 'saved_notifications';
   static const String showEditContent = 'show_edit_content';
+  static const String showCommunityTab = 'show_community_tab';
   static const String personListIsGridView = 'person_list_is_grid_view';
   static const String aiApiKey = 'ai_api_key';
   static const String aiTranslationEnabled = 'ai_translation_enabled';

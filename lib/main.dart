@@ -45,7 +45,7 @@ import 'package:moviescout/utils/status_translator.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/services/notifications/notification_service.dart';
 import 'package:moviescout/services/workers/watchlist_update_service.dart';
-import 'package:moviescout/services/settings/edit_settings_service.dart';
+import 'package:moviescout/services/settings/app_settings_service.dart';
 import 'package:moviescout/services/workers/uninitialized_titles_worker.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -137,7 +137,7 @@ void _runMain() async {
       GenreTranslator.init(),
       StatusTranslator.init(),
       NotificationService().init(),
-      EditSettingsService().init(),
+      AppSettingsService().init(),
     ]).timeout(const Duration(seconds: 5), onTimeout: () => []);
 
     if (defaultTargetPlatform == TargetPlatform.android ||
@@ -226,7 +226,7 @@ void _runMain() async {
         },
       ),
       ChangeNotifierProvider(create: (_) => NotificationService()),
-      ChangeNotifierProvider(create: (_) => EditSettingsService()),
+      ChangeNotifierProvider(create: (_) => AppSettingsService()),
       ChangeNotifierProvider(create: (_) => WebTranslationService()),
     ],
     child: const MyApp(),

@@ -255,5 +255,15 @@
   "emptyFollowingList": "Vous ne suivez aucun utilisateur pour le moment.",
   "emptyFollowingSearchHint": "Recherchez des utilisateurs pour les suivre et voir leur activité.",
   "cannotFollowSelf": "Vous ne pouvez pas vous suivre vous-même",
-  "networkErrorMessage": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion Internet."
+  "networkErrorMessage": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion Internet.",
+  "publicProfileTitle": "Profil public",
+  "publicProfileSubtitle": "Activez votre profil public pour partager ce que vous regardez avec la communauté",
+  "privateProfileMessage": "Ce profil est privé",
+  "enablePublicProfileBanner": "Activez votre profil public pour partager ce que vous regardez avec la communauté. Il peut être désactivé depuis les paramètres.",
+  "enablePublicProfileButton": "Activer le profil public",
+  "noWatchingNowTitles": "Ne regarde aucun titre pour le moment",
+  "noRatedTitles": "Aucun titre noté",
+  "communityTabTitle": "Onglet communauté",
+  "communityTabSubtitle": "Afficher l'onglet communauté dans la barre de navigation",
+  "emptyFollowingCommunityHint": "Vous pouvez masquer cet onglet dans les paramètres si vous ne l'utilisez pas."
 }

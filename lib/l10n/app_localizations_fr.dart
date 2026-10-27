@@ -825,4 +825,38 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get networkErrorMessage =>
       'Impossible de se connecter au serveur. Veuillez vérifier votre connexion Internet.';
+
+  @override
+  String get publicProfileTitle => 'Profil public';
+
+  @override
+  String get publicProfileSubtitle =>
+      'Activez votre profil public pour partager ce que vous regardez avec la communauté';
+
+  @override
+  String get privateProfileMessage => 'Ce profil est privé';
+
+  @override
+  String get enablePublicProfileBanner =>
+      'Activez votre profil public pour partager ce que vous regardez avec la communauté. Il peut être désactivé depuis les paramètres.';
+
+  @override
+  String get enablePublicProfileButton => 'Activer le profil public';
+
+  @override
+  String get noWatchingNowTitles => 'Ne regarde aucun titre pour le moment';
+
+  @override
+  String get noRatedTitles => 'Aucun titre noté';
+
+  @override
+  String get communityTabTitle => 'Onglet communauté';
+
+  @override
+  String get communityTabSubtitle =>
+      'Afficher l\'onglet communauté dans la barre de navigation';
+
+  @override
+  String get emptyFollowingCommunityHint =>
+      'Vous pouvez masquer cet onglet dans les paramètres si vous ne l\'utilisez pas.';
 }

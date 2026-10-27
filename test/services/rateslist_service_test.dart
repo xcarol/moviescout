@@ -335,7 +335,9 @@ void main() {
       verifyNever(() => mockRepository.updateNotifyNewSeasonsList([title]));
     });
 
-    test('toggleNotify rolls back notifyNewSeasons and updates repository on error', () async {
+    test(
+        'toggleNotify rolls back notifyNewSeasons and updates repository on error',
+        () async {
       final title = TmdbTitle(
         tmdbId: 1,
         mediaType: ApiConstants.tv,
@@ -353,7 +355,8 @@ void main() {
       await service.toggleNotify(title);
 
       expect(title.notifyNewSeasons, false);
-      verify(() => mockRepository.updateNotifyNewSeasonsList([title])).called(2);
+      verify(() => mockRepository.updateNotifyNewSeasonsList([title]))
+          .called(2);
     });
   });
 
@@ -367,9 +370,11 @@ void main() {
         dateRated: DateTime.now(),
       )..rating = 7.5;
 
-      when(() => mockRepository.getTitleByTmdbId(AppConstants.rateslist, 1, ApiConstants.movie))
+      when(() => mockRepository.getTitleByTmdbId(
+              AppConstants.rateslist, 1, ApiConstants.movie))
           .thenAnswer((_) async => title);
-      when(() => mockRepository.getTitleByTmdbId(AppConstants.rateslist, 2, ApiConstants.movie))
+      when(() => mockRepository.getTitleByTmdbId(
+              AppConstants.rateslist, 2, ApiConstants.movie))
           .thenAnswer((_) async => null);
 
       expect(await service.getRatingAsync(1, ApiConstants.movie), 7.5);
@@ -386,16 +391,21 @@ void main() {
         dateRated: date,
       );
 
-      when(() => mockRepository.getTitleByTmdbId(AppConstants.rateslist, 1, ApiConstants.movie))
+      when(() => mockRepository.getTitleByTmdbId(
+              AppConstants.rateslist, 1, ApiConstants.movie))
           .thenAnswer((_) async => title);
-      when(() => mockRepository.getTitleByTmdbId(AppConstants.rateslist, 2, ApiConstants.movie))
+      when(() => mockRepository.getTitleByTmdbId(
+              AppConstants.rateslist, 2, ApiConstants.movie))
           .thenAnswer((_) async => null);
 
       expect(await service.getRatingDate(1, ApiConstants.movie), date);
-      expect(await service.getRatingDate(2, ApiConstants.movie), DateTime.fromMillisecondsSinceEpoch(0));
+      expect(await service.getRatingDate(2, ApiConstants.movie),
+          DateTime.fromMillisecondsSinceEpoch(0));
     });
 
-    test('syncFromServer calls filterItems when user is null and loadedItems is empty', () async {
+    test(
+        'syncFromServer calls filterItems when user is null and loadedItems is empty',
+        () async {
       when(() => mockAuth.currentUser).thenReturn(null);
       clearInteractions(mockRepository);
 
