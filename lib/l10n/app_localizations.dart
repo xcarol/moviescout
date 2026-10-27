@@ -69,8 +69,7 @@ import 'app_localizations_pt.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -78,8 +77,7 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -91,8 +89,7 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -263,12 +260,6 @@ abstract class AppLocalizations {
   /// **'Search for somebody'**
   String get searchPerson;
 
-  /// No description provided for @searchPlaceholder.
-  ///
-  /// In en, this message translates to:
-  /// **'Search Movies or TV Shows...'**
-  String get searchPlaceholder;
-
   /// No description provided for @gallery.
   ///
   /// In en, this message translates to:
@@ -317,12 +308,6 @@ abstract class AppLocalizations {
   /// **'User name'**
   String get username;
 
-  /// No description provided for @password.
-  ///
-  /// In en, this message translates to:
-  /// **'Password'**
-  String get password;
-
   /// No description provided for @anonymousUser.
   ///
   /// In en, this message translates to:
@@ -334,12 +319,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Login'**
   String get loginTitle;
-
-  /// No description provided for @loginDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Login to your TMDB account'**
-  String get loginDescription;
 
   /// No description provided for @login.
   ///
@@ -382,12 +361,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Complete sign in process'**
   String get completeLoginToTmdb;
-
-  /// No description provided for @signupToTmdb.
-  ///
-  /// In en, this message translates to:
-  /// **'Register to TMDb'**
-  String get signupToTmdb;
 
   /// No description provided for @signInToWatchlist.
   ///
@@ -436,54 +409,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Import Rates'**
   String get imdbImportRateslist;
-
-  /// No description provided for @imdbImportCount.
-  ///
-  /// In en, this message translates to:
-  /// **'Succesfully imported titles'**
-  String get imdbImportCount;
-
-  /// No description provided for @imdbResetWatchlist.
-  ///
-  /// In en, this message translates to:
-  /// **'RESET WATCHLIST'**
-  String get imdbResetWatchlist;
-
-  /// No description provided for @imdbResetRateslist.
-  ///
-  /// In en, this message translates to:
-  /// **'RESET RATINGS'**
-  String get imdbResetRateslist;
-
-  /// No description provided for @imdbConfirmationTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'WARNING'**
-  String get imdbConfirmationTitle;
-
-  /// No description provided for @imdbResetWatchlistConfirmation.
-  ///
-  /// In en, this message translates to:
-  /// **'Do you really want to reset Watchlist?'**
-  String get imdbResetWatchlistConfirmation;
-
-  /// No description provided for @imdbResetRateslistConfirmation.
-  ///
-  /// In en, this message translates to:
-  /// **'Do you really want to reset Ratings?'**
-  String get imdbResetRateslistConfirmation;
-
-  /// No description provided for @resetWatchlistCount.
-  ///
-  /// In en, this message translates to:
-  /// **'Watchlist titles: '**
-  String get resetWatchlistCount;
-
-  /// No description provided for @resetRateslistCount.
-  ///
-  /// In en, this message translates to:
-  /// **'Rated titles: '**
-  String get resetRateslistCount;
 
   /// No description provided for @missingDescription.
   ///
@@ -659,12 +584,6 @@ abstract class AppLocalizations {
   /// **'Following'**
   String get followingOnly;
 
-  /// No description provided for @pendingOnly.
-  ///
-  /// In en, this message translates to:
-  /// **'Pending'**
-  String get pendingOnly;
-
   /// No description provided for @emptyList.
   ///
   /// In en, this message translates to:
@@ -713,35 +632,11 @@ abstract class AppLocalizations {
   /// **'Country'**
   String get originCountry;
 
-  /// No description provided for @schemeSelectTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Select color'**
-  String get schemeSelectTitle;
-
   /// No description provided for @defaultScheme.
   ///
   /// In en, this message translates to:
   /// **'Default'**
   String get defaultScheme;
-
-  /// No description provided for @blackScheme.
-  ///
-  /// In en, this message translates to:
-  /// **'Black'**
-  String get blackScheme;
-
-  /// No description provided for @blueScheme.
-  ///
-  /// In en, this message translates to:
-  /// **'Blue'**
-  String get blueScheme;
-
-  /// No description provided for @redScheme.
-  ///
-  /// In en, this message translates to:
-  /// **'Red'**
-  String get redScheme;
 
   /// No description provided for @about.
   ///
@@ -1019,12 +914,6 @@ abstract class AppLocalizations {
   /// **'An error occurred. Please try again later.'**
   String get errorMessageGeneric;
 
-  /// No description provided for @youtubeSearch.
-  ///
-  /// In en, this message translates to:
-  /// **'YouTube Search'**
-  String get youtubeSearch;
-
   /// No description provided for @notificationsHistory.
   ///
   /// In en, this message translates to:
@@ -1036,12 +925,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Notify complete season'**
   String get notifyCompleteSeason;
-
-  /// No description provided for @notifyCompleteSeasonSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Only notifies when the whole season is available.'**
-  String get notifyCompleteSeasonSubtitle;
 
   /// No description provided for @episodes.
   ///
@@ -1150,12 +1033,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add to Home Screen'**
   String get addToHomeScreen;
-
-  /// No description provided for @shortcutAdded.
-  ///
-  /// In en, this message translates to:
-  /// **'Shortcut added'**
-  String get shortcutAdded;
 
   /// No description provided for @shortcutFailed.
   ///
@@ -1325,18 +1202,6 @@ abstract class AppLocalizations {
   /// **'Continue with Google'**
   String get googleSignInButton;
 
-  /// No description provided for @alreadyUsingMovieScout.
-  ///
-  /// In en, this message translates to:
-  /// **'Already using MovieScout?'**
-  String get alreadyUsingMovieScout;
-
-  /// No description provided for @importTmdbData.
-  ///
-  /// In en, this message translates to:
-  /// **'Import your old data from TMDB.'**
-  String get importTmdbData;
-
   /// No description provided for @tmdbAccount.
   ///
   /// In en, this message translates to:
@@ -1378,12 +1243,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Data imported successfully!'**
   String get tmdbImportSuccess;
-
-  /// No description provided for @tmdbImportDownloading.
-  ///
-  /// In en, this message translates to:
-  /// **'Downloading TMDb data...'**
-  String get tmdbImportDownloading;
 
   /// No description provided for @tmdbImportDownloadingWatchlist.
   ///
@@ -1444,12 +1303,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error importing data'**
   String get tmdbImportError;
-
-  /// No description provided for @tmdbImportLoginRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Log in to TMDb to start the import.'**
-  String get tmdbImportLoginRequired;
 
   /// No description provided for @tmdbImportConsentText.
   ///
@@ -1619,12 +1472,6 @@ abstract class AppLocalizations {
   /// **'Search for users to follow them and see their activity.'**
   String get emptyFollowingSearchHint;
 
-  /// No description provided for @cannotFollowSelf.
-  ///
-  /// In en, this message translates to:
-  /// **'You cannot follow yourself'**
-  String get cannotFollowSelf;
-
   /// No description provided for @networkErrorMessage.
   ///
   /// In en, this message translates to:
@@ -1714,10 +1561,399 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Install on Google Play:'**
   String get shareAppGooglePlay;
+
+  /// No description provided for @settingsSectionPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get settingsSectionPreferences;
+
+  /// No description provided for @settingsSectionNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get settingsSectionNotifications;
+
+  /// No description provided for @settingsSectionCommunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get settingsSectionCommunity;
+
+  /// No description provided for @settingsSectionTools.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools & Features'**
+  String get settingsSectionTools;
+
+  /// No description provided for @settingsSectionData.
+  ///
+  /// In en, this message translates to:
+  /// **'Data & Import'**
+  String get settingsSectionData;
+
+  /// No description provided for @settingsNotificationsEnabledSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability alerts active'**
+  String get settingsNotificationsEnabledSubtitle;
+
+  /// No description provided for @settingsNotificationsDisabledSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability alerts disabled'**
+  String get settingsNotificationsDisabledSubtitle;
+
+  /// No description provided for @settingsNotifySeasonComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifies when full season is available'**
+  String get settingsNotifySeasonComplete;
+
+  /// No description provided for @settingsNotifySeasonFirstEp.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifies only on first episode premiere'**
+  String get settingsNotifySeasonFirstEp;
+
+  /// No description provided for @settingsProvidersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} platforms selected'**
+  String settingsProvidersCount(Object count);
+
+  /// No description provided for @settingsProvidersNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No platforms selected'**
+  String get settingsProvidersNone;
+
+  /// No description provided for @settingsAiConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'API key configured'**
+  String get settingsAiConfigured;
+
+  /// No description provided for @settingsAiNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'No API key configured'**
+  String get settingsAiNotConfigured;
+
+  /// No description provided for @settingsProfilePublic.
+  ///
+  /// In en, this message translates to:
+  /// **'Visible to community'**
+  String get settingsProfilePublic;
+
+  /// No description provided for @settingsProfilePrivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Private profile'**
+  String get settingsProfilePrivate;
+
+  /// No description provided for @settingsCommunityVisible.
+  ///
+  /// In en, this message translates to:
+  /// **'Visible in navigation bar'**
+  String get settingsCommunityVisible;
+
+  /// No description provided for @settingsCommunityHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden'**
+  String get settingsCommunityHidden;
+
+  /// No description provided for @settingsEditVisible.
+  ///
+  /// In en, this message translates to:
+  /// **'Visible on title details'**
+  String get settingsEditVisible;
+
+  /// No description provided for @settingsEditHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden'**
+  String get settingsEditHidden;
+
+  /// No description provided for @settingsImdbSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'CSV file (watchlist and ratings)'**
+  String get settingsImdbSubtitle;
+
+  /// No description provided for @settingsTmdbSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist and ratings'**
+  String get settingsTmdbSubtitle;
+
+  /// No description provided for @settingsDeleteAccountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Irreversible action'**
+  String get settingsDeleteAccountSubtitle;
+
+  /// No description provided for @understood.
+  ///
+  /// In en, this message translates to:
+  /// **'Understood'**
+  String get understood;
+
+  /// No description provided for @settingsInfoProvidersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Content Platforms'**
+  String get settingsInfoProvidersTitle;
+
+  /// No description provided for @settingsInfoProvidersIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'How does MovieScout use your platforms?'**
+  String get settingsInfoProvidersIntro;
+
+  /// No description provided for @settingsInfoProvidersItem1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability alerts'**
+  String get settingsInfoProvidersItem1Title;
+
+  /// No description provided for @settingsInfoProvidersItem1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'When you add an unavailable title, MovieScout tracks your selected platforms to notify you when it arrives.'**
+  String get settingsInfoProvidersItem1Desc;
+
+  /// No description provided for @settingsInfoProvidersItem2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Search and list filters'**
+  String get settingsInfoProvidersItem2Title;
+
+  /// No description provided for @settingsInfoProvidersItem2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter the catalog quickly to see only what you can watch with your active subscriptions.'**
+  String get settingsInfoProvidersItem2Desc;
+
+  /// No description provided for @settingsInfoProvidersItem3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Regional catalog'**
+  String get settingsInfoProvidersItem3Title;
+
+  /// No description provided for @settingsInfoProvidersItem3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Platform availability adapts automatically to your selected region in settings.'**
+  String get settingsInfoProvidersItem3Desc;
+
+  /// No description provided for @settingsInfoNotificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How Notifications Work'**
+  String get settingsInfoNotificationsTitle;
+
+  /// No description provided for @settingsInfoNotificationsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic availability alerts'**
+  String get settingsInfoNotificationsIntro;
+
+  /// No description provided for @settingsInfoNotificationsItem1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist releases'**
+  String get settingsInfoNotificationsItem1Title;
+
+  /// No description provided for @settingsInfoNotificationsItem1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get notified when a title from your watchlist becomes available on your chosen platforms.'**
+  String get settingsInfoNotificationsItem1Desc;
+
+  /// No description provided for @settingsInfoNotificationsItem2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'New series seasons'**
+  String get settingsInfoNotificationsItem2Title;
+
+  /// No description provided for @settingsInfoNotificationsItem2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'By default you are alerted on the first episode. If complete season is enabled, alerts wait until the full season airs.'**
+  String get settingsInfoNotificationsItem2Desc;
+
+  /// No description provided for @settingsInfoNotificationsItem3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Background checks'**
+  String get settingsInfoNotificationsItem3Title;
+
+  /// No description provided for @settingsInfoNotificationsItem3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'MovieScout checks for updates quietly in the background without draining your battery.'**
+  String get settingsInfoNotificationsItem3Desc;
+
+  /// No description provided for @settingsInfoAiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Artificial Intelligence'**
+  String get settingsInfoAiTitle;
+
+  /// No description provided for @settingsInfoAiIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Enhancements in translation and search'**
+  String get settingsInfoAiIntro;
+
+  /// No description provided for @settingsInfoAiItem1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Contextual translations'**
+  String get settingsInfoAiItem1Title;
+
+  /// No description provided for @settingsInfoAiItem1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Generates natural synopses and title translations adapted to cinematic context when not available in your language.'**
+  String get settingsInfoAiItem1Desc;
+
+  /// No description provided for @settingsInfoAiItem2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart search'**
+  String get settingsInfoAiItem2Title;
+
+  /// No description provided for @settingsInfoAiItem2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Find movies by describing scenes, plot points, or themes even if you do not recall the title.'**
+  String get settingsInfoAiItem2Desc;
+
+  /// No description provided for @settingsInfoAiItem3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure API key'**
+  String get settingsInfoAiItem3Title;
+
+  /// No description provided for @settingsInfoAiItem3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your API key is stored securely on your device and only used for your direct requests.'**
+  String get settingsInfoAiItem3Desc;
+
+  /// No description provided for @settingsInfoAiNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Important: Free AI models may experience slower response times or temporary rate limits from the provider. For optimal, instant performance, pay-per-use models are recommended.'**
+  String get settingsInfoAiNote;
+
+  /// No description provided for @settingsInfoProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Public Profile & Community'**
+  String get settingsInfoProfileTitle;
+
+  /// No description provided for @settingsInfoProfileIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'The social side of MovieScout'**
+  String get settingsInfoProfileIntro;
+
+  /// No description provided for @settingsInfoProfileItem1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your activity'**
+  String get settingsInfoProfileItem1Title;
+
+  /// No description provided for @settingsInfoProfileItem1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow others to find your profile, follow you, and see what you are watching and your ratings.'**
+  String get settingsInfoProfileItem1Desc;
+
+  /// No description provided for @settingsInfoProfileItem2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Full privacy control'**
+  String get settingsInfoProfileItem2Title;
+
+  /// No description provided for @settingsInfoProfileItem2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to private mode anytime. Only public titles and ratings are shared, never personal data or keys.'**
+  String get settingsInfoProfileItem2Desc;
+
+  /// No description provided for @settingsInfoProfileItem3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Community tab'**
+  String get settingsInfoProfileItem3Title;
+
+  /// No description provided for @settingsInfoProfileItem3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Show or hide the community tab in the bottom bar based on your preference.'**
+  String get settingsInfoProfileItem3Desc;
+
+  /// No description provided for @settingsInfoEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Collaboration and Editing on TMDb'**
+  String get settingsInfoEditTitle;
+
+  /// No description provided for @settingsInfoEditIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Help grow the open database and improve movie information.'**
+  String get settingsInfoEditIntro;
+
+  /// No description provided for @settingsInfoEditItem1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct access from title details'**
+  String get settingsInfoEditItem1Title;
+
+  /// No description provided for @settingsInfoEditItem1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Displays a pencil icon on movie and series details to quickly open their editing page on TMDb.'**
+  String get settingsInfoEditItem1Desc;
+
+  /// No description provided for @settingsInfoEditItem2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Community and open data'**
+  String get settingsInfoEditItem2Title;
+
+  /// No description provided for @settingsInfoEditItem2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'All MovieScout information comes from The Movie Database (TMDb), a collaborative project maintained by the community.'**
+  String get settingsInfoEditItem2Desc;
+
+  /// No description provided for @settingsInfoEditItem3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Content and translation improvements'**
+  String get settingsInfoEditItem3Title;
+
+  /// No description provided for @settingsInfoEditItem3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'You can add or correct titles, overviews, and details in any language for the entire community to enjoy.'**
+  String get settingsInfoEditItem3Desc;
+
+  /// No description provided for @settingsInfoEditNote.
+  ///
+  /// In en, this message translates to:
+  /// **'To edit content on TMDb, you only need to sign in with a free account at themoviedb.org.'**
+  String get settingsInfoEditNote;
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -1726,60 +1962,41 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) => <String>[
-        'ca',
-        'de',
-        'en',
-        'es',
-        'eu',
-        'fr',
-        'gl',
-        'it',
-        'pt'
-      ].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['ca', 'de', 'en', 'es', 'eu', 'fr', 'gl', 'it', 'pt'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+
   // Lookup logic when language+country codes are specified.
   switch (locale.languageCode) {
-    case 'pt':
-      {
-        switch (locale.countryCode) {
-          case 'PT':
-            return AppLocalizationsPtPt();
-        }
-        break;
-      }
+    case 'pt': {
+  switch (locale.countryCode) {
+    case 'PT': return AppLocalizationsPtPt();
+   }
+  break;
+   }
   }
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'ca':
-      return AppLocalizationsCa();
-    case 'de':
-      return AppLocalizationsDe();
-    case 'en':
-      return AppLocalizationsEn();
-    case 'es':
-      return AppLocalizationsEs();
-    case 'eu':
-      return AppLocalizationsEu();
-    case 'fr':
-      return AppLocalizationsFr();
-    case 'gl':
-      return AppLocalizationsGl();
-    case 'it':
-      return AppLocalizationsIt();
-    case 'pt':
-      return AppLocalizationsPt();
+    case 'ca': return AppLocalizationsCa();
+    case 'de': return AppLocalizationsDe();
+    case 'en': return AppLocalizationsEn();
+    case 'es': return AppLocalizationsEs();
+    case 'eu': return AppLocalizationsEu();
+    case 'fr': return AppLocalizationsFr();
+    case 'gl': return AppLocalizationsGl();
+    case 'it': return AppLocalizationsIt();
+    case 'pt': return AppLocalizationsPt();
   }
 
   throw FlutterError(
-      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.'
+  );
 }
