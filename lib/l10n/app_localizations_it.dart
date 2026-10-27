@@ -841,7 +841,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get settingsInfoProvidersItem1Title => 'Avvisi di disponibilità';
 
   @override
-  String get settingsInfoProvidersItem1Desc => 'Quando aggiungi un titolo non disponibile, MovieScout monitora le piattaforme selezionate per avvisarti quando arriva.';
+  String get settingsInfoProvidersItem1Desc => 'MovieScout aggiorna periodicamente ogni titolo della tua watchlist da TMDb (con i dati di streaming forniti da JustWatch). Se è trasmesso su una delle piattaforme selezionate qui, riceverai una notifica.';
 
   @override
   String get settingsInfoProvidersItem2Title => 'Filtro nelle ricerche';

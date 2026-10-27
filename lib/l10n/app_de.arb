@@ -271,7 +271,7 @@
   "settingsInfoProvidersTitle": "Streaming-Dienste",
   "settingsInfoProvidersIntro": "Wie nutzt MovieScout deine Streaming-Dienste?",
   "settingsInfoProvidersItem1Title": "Verfügbarkeitsbenachrichtigungen",
-  "settingsInfoProvidersItem1Desc": "Wenn du einen nicht verfügbaren Titel hinzufügst, prüft MovieScout deine ausgewählten Dienste und benachrichtigt dich bei Verfügbarkeit.",
+  "settingsInfoProvidersItem1Desc": "MovieScout aktualisiert regelmäßig jeden Titel deiner Watchlist über TMDb (mit Streaming-Daten von JustWatch). Sobald ein Titel auf einer deiner hier gewählten Plattformen verfügbar ist, wirst du benachrichtigt.",
   "settingsInfoProvidersItem2Title": "Such- und Listenfilter",
   "settingsInfoProvidersItem2Desc": "Filtere den Katalog, um nur Inhalte deiner aktiven Abonnements zu sehen.",
   "settingsInfoProvidersItem3Title": "Regionales Angebot",

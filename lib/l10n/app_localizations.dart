@@ -1721,7 +1721,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsInfoProvidersItem1Desc.
   ///
   /// In en, this message translates to:
-  /// **'When you add an unavailable title, MovieScout tracks your selected platforms to notify you when it arrives.'**
+  /// **'MovieScout periodically updates each title in your watchlist from TMDb (with streaming data from JustWatch) to detect where it is showing. If it matches any platform selected here, you get notified.'**
   String get settingsInfoProvidersItem1Desc;
 
   /// No description provided for @settingsInfoProvidersItem2Title.

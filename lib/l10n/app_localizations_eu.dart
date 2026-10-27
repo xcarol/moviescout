@@ -841,7 +841,7 @@ class AppLocalizationsEu extends AppLocalizations {
   String get settingsInfoProvidersItem1Title => 'Erabilgarritasun-alertak';
 
   @override
-  String get settingsInfoProvidersItem1Desc => 'Erabilgarri ez dagoen titulu bat gehitzean, MovieScout-ek hautatutako plataformak arakatzen ditu bertara iristean jakinarazteko.';
+  String get settingsInfoProvidersItem1Desc => 'MovieScout-ek aldizka eguneratzen du zure zerrendako titulu bakoitza TMDb-tik (JustWatch-en datuekin) non emititzen den jakiteko. Hemen hautatutako plataformaren batean badago, jakinaraziko dizu.';
 
   @override
   String get settingsInfoProvidersItem2Title => 'Bilaketetako iragazkia';

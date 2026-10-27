@@ -271,7 +271,7 @@
   "settingsInfoProvidersTitle": "Piattaforme di streaming",
   "settingsInfoProvidersIntro": "Come utilizza MovieScout le tue piattaforme?",
   "settingsInfoProvidersItem1Title": "Avvisi di disponibilità",
-  "settingsInfoProvidersItem1Desc": "Quando aggiungi un titolo non disponibile, MovieScout monitora le piattaforme selezionate per avvisarti quando arriva.",
+  "settingsInfoProvidersItem1Desc": "MovieScout aggiorna periodicamente ogni titolo della tua watchlist da TMDb (con i dati di streaming forniti da JustWatch). Se è trasmesso su una delle piattaforme selezionate qui, riceverai una notifica.",
   "settingsInfoProvidersItem2Title": "Filtro nelle ricerche",
   "settingsInfoProvidersItem2Desc": "Filtra rapidamente il catalogo per vedere solo i contenuti disponibili con i tuoi abbonamenti attivi.",
   "settingsInfoProvidersItem3Title": "Catalogo regionale",

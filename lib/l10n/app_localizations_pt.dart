@@ -841,7 +841,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get settingsInfoProvidersItem1Title => 'Alertas de disponibilidade';
 
   @override
-  String get settingsInfoProvidersItem1Desc => 'Ao adicionar um título indisponível, o MovieScout monitoriza as plataformas selecionadas para avisar assim que chegar.';
+  String get settingsInfoProvidersItem1Desc => 'O MovieScout atualiza periodicamente cada título da sua lista a partir do TMDb (com dados de disponibilidade do JustWatch). Se for exibido numa das plataformas selecionadas aqui, recebe uma notificação.';
 
   @override
   String get settingsInfoProvidersItem2Title => 'Filtro em pesquisas';
@@ -1795,7 +1795,7 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   String get settingsInfoProvidersItem1Title => 'Alertas de disponibilidade';
 
   @override
-  String get settingsInfoProvidersItem1Desc => 'Ao adicionar um título indisponível, o MovieScout monitoriza as plataformas selecionadas para avisar assim que chegar.';
+  String get settingsInfoProvidersItem1Desc => 'O MovieScout atualiza periodicamente cada título da sua lista a partir do TMDb (com dados de disponibilidade do JustWatch). Se for exibido numa das plataformas selecionadas aqui, recebe uma notificação.';
 
   @override
   String get settingsInfoProvidersItem2Title => 'Filtro em pesquisas';

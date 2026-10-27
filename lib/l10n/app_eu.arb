@@ -576,7 +576,7 @@
   "settingsInfoProvidersTitle": "Eduki-plataformak",
   "settingsInfoProvidersIntro": "Nola erabiltzen ditu MovieScout-ek zure plataformak?",
   "settingsInfoProvidersItem1Title": "Erabilgarritasun-alertak",
-  "settingsInfoProvidersItem1Desc": "Erabilgarri ez dagoen titulu bat gehitzean, MovieScout-ek hautatutako plataformak arakatzen ditu bertara iristean jakinarazteko.",
+  "settingsInfoProvidersItem1Desc": "MovieScout-ek aldizka eguneratzen du zure zerrendako titulu bakoitza TMDb-tik (JustWatch-en datuekin) non emititzen den jakiteko. Hemen hautatutako plataformaren batean badago, jakinaraziko dizu.",
   "settingsInfoProvidersItem2Title": "Bilaketetako iragazkia",
   "settingsInfoProvidersItem2Desc": "Iragazi katalogoa zure harpidetza aktiboekin ikus dezakezuna bakarrik ikusteko.",
   "settingsInfoProvidersItem3Title": "Eskualdeko katalogoa",

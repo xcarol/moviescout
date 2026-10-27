@@ -576,7 +576,7 @@
   "settingsInfoProvidersTitle": "Plataformes de contingut",
   "settingsInfoProvidersIntro": "Com utilitza MovieScout les teves plataformes?",
   "settingsInfoProvidersItem1Title": "Avisos de disponibilitat",
-  "settingsInfoProvidersItem1Desc": "Quan afegeixes una pel·lícula o sèrie a la teva llista de seguiment que encara no està disponible enlloc, MovieScout rastreja exclusivament els serveis que tinguis marcats aquí per avisar-te quan hi arribi.",
+  "settingsInfoProvidersItem1Desc": "MovieScout actualitza periòdicament cada títol de la teva llista des de TMDb (amb dades de JustWatch) per saber on s'emet. Si coincideix amb alguna de les plataformes que has marcat aquí, t'avisa.",
   "settingsInfoProvidersItem2Title": "Filtre a les cerques i llistes",
   "settingsInfoProvidersItem2Desc": "Podràs filtrar ràpidament el catàleg per veure només el contingut que pots reproduir directament amb les teves subscripcions actives.",
   "settingsInfoProvidersItem3Title": "Catàleg segons la teva regió",
