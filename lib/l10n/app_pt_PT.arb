@@ -265,5 +265,9 @@
   "noRatedTitles": "Nenhum título avaliado",
   "communityTabTitle": "Separador da comunidade",
   "communityTabSubtitle": "Mostrar o separador da comunidade na barra de navegação",
-  "emptyFollowingCommunityHint": "Pode ocultar este separador nas definições se não o usar."
+  "emptyFollowingCommunityHint": "Pode ocultar este separador nas definições se não o usar.",
+  "shareAppCommunityPrompt": "Partilhe o MovieScout com os seus conhecidos e comece a criar a sua rede.",
+  "shareAppButton": "Partilhar MovieScout",
+  "shareAppMessage": "Junte-se ao MovieScout para descobrir e partilhar filmes e séries!",
+  "shareAppGooglePlay": "Instale no Google Play:"
 }

@@ -591,5 +591,13 @@
   "communityTabSubtitle": "Mostra la pestanya de comunitat a la barra de navegació",
   "@communityTabSubtitle": {},
   "emptyFollowingCommunityHint": "Pots amagar aquesta pestanya des de la configuració si no la fas servir.",
-  "@emptyFollowingCommunityHint": {}
+  "@emptyFollowingCommunityHint": {},
+  "shareAppCommunityPrompt": "Comparteix MovieScout amb els teus coneguts i comença a crear la teva xarxa.",
+  "@shareAppCommunityPrompt": {},
+  "shareAppButton": "Compartir MovieScout",
+  "@shareAppButton": {},
+  "shareAppMessage": "Uneix-te a MovieScout per descobrir i compartir pel·lícules i sèries!",
+  "@shareAppMessage": {},
+  "shareAppGooglePlay": "Instal·la-la a Google Play:",
+  "@shareAppGooglePlay": {}
 }

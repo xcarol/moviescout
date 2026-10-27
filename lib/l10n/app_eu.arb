@@ -591,5 +591,13 @@
   "communityTabSubtitle": "Erakutsi komunitatearen fitxa nabigazio-barran",
   "@communityTabSubtitle": {},
   "emptyFollowingCommunityHint": "Fitxa hau ezarpenetatik ezkutatu dezakezu erabiltzen ez baduzu.",
-  "@emptyFollowingCommunityHint": {}
+  "@emptyFollowingCommunityHint": {},
+  "shareAppCommunityPrompt": "Partekatu MovieScout zure ezagunekin eta hasi zure sarea sortzen.",
+  "@shareAppCommunityPrompt": {},
+  "shareAppButton": "Partekatu MovieScout",
+  "@shareAppButton": {},
+  "shareAppMessage": "Batu MovieScout-era filmak eta sailak ezagutzeko eta partekatzeko!",
+  "@shareAppMessage": {},
+  "shareAppGooglePlay": "Instalatu Google Play-n:",
+  "@shareAppGooglePlay": {}
 }

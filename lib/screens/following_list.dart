@@ -7,7 +7,10 @@ import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:moviescout/services/lists/user_following_service.dart';
 import 'package:moviescout/widgets/cards/user_card.dart';
 import 'package:moviescout/widgets/layout/custom_refresh_builder.dart';
+import 'package:moviescout/services/core/error_service.dart';
+import 'package:moviescout/utils/url_constants.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class FollowingList extends StatefulWidget {
   const FollowingList({super.key});
@@ -40,13 +43,7 @@ class _FollowingListState extends State<FollowingList> {
     return FutureBuilder(
       future: _init,
       builder: (context, snapshot) {
-        return CustomRefreshIndicator(
-          onRefresh: () async {
-            await _followingService.fetchFollowingUsers(forceUpdate: true);
-          },
-          builder: customRefreshBuilder,
-          child: body(),
-        );
+        return body();
       },
     );
   }
@@ -130,52 +127,44 @@ class _FollowingListState extends State<FollowingList> {
       ]);
     } else {
       final authService = Provider.of<SupabaseAuthService>(context);
-      if (authService.isLoggedIn && !authService.isPublicProfile) {
+      if (!authService.isPublicProfile) {
         children.addAll([
           _publicProfileBanner(context),
-          const SizedBox(height: 16),
         ]);
-      }
-
-      children.addAll([
-        Icon(
-          Icons.people_alt_outlined,
-          size: 64,
-          color: colorScheme.onSurfaceVariant,
-        ),
-        const SizedBox(height: 16),
-        Text(
-          loc.emptyFollowingList,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          loc.emptyFollowingSearchHint,
-          textAlign: TextAlign.center,
-          style: TextStyle(
+      } else {
+        children.addAll([
+          Icon(
+            Icons.people_alt_outlined,
+            size: 64,
             color: colorScheme.onSurfaceVariant,
-            fontSize: 14,
           ),
-        ),
-        if (authService.isLoggedIn && !authService.isPublicProfile)
+          const SizedBox(height: 16),
           Text(
-            loc.emptyFollowingCommunityHint,
+            loc.emptyFollowingList,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
-              fontSize: 13,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
           ),
-      ]);
+          const SizedBox(height: 8),
+          Text(
+            loc.emptyFollowingSearchHint,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 16),
+          _shareAppBox(context),
+        ]);
+      }
     }
 
     return LayoutBuilder(
       builder: (context, constraints) => SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: constraints.maxHeight),
           child: Center(
@@ -198,7 +187,7 @@ class _FollowingListState extends State<FollowingList> {
     final users = followingService.followingUsers;
     final showBanner = authService.isLoggedIn && !authService.isPublicProfile;
 
-    return ListView.builder(
+    final listView = ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(),
       itemCount: users.length + (showBanner ? 1 : 0),
       itemBuilder: (context, index) {
@@ -217,6 +206,46 @@ class _FollowingListState extends State<FollowingList> {
         );
       },
     );
+
+    if (!authService.isPublicProfile) {
+      return listView;
+    }
+
+    return CustomRefreshIndicator(
+      onRefresh: () async {
+        await _followingService.fetchFollowingUsers(forceUpdate: true);
+      },
+      builder: customRefreshBuilder,
+      child: listView,
+    );
+  }
+
+  Future<void> _shareApp(BuildContext buttonContext) async {
+    try {
+      final loc = AppLocalizations.of(context)!;
+      final box = buttonContext.findRenderObject() as RenderBox?;
+      final origin =
+          box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+
+      final shareText = '${loc.shareAppMessage}\n\n'
+          '${UrlConstants.moviescoutWebUrl}\n\n'
+          '${loc.shareAppGooglePlay}\n'
+          '${UrlConstants.googlePlayUrl}';
+
+      await SharePlus.instance.share(
+        ShareParams(
+          text: shareText,
+          subject: 'MovieScout',
+          sharePositionOrigin: origin,
+        ),
+      );
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'Error sharing app',
+      );
+    }
   }
 
   Widget _publicProfileBanner(BuildContext context) {
@@ -240,7 +269,7 @@ class _FollowingListState extends State<FollowingList> {
         children: [
           Row(
             children: [
-              Icon(Icons.public, color: colorScheme.primary, size: 22),
+              Icon(Icons.public, color: colorScheme.onSurface, size: 22),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -269,6 +298,55 @@ class _FollowingListState extends State<FollowingList> {
                 await authService.setPublicProfile(true);
               },
               child: Text(loc.enablePublicProfileButton),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            loc.emptyFollowingCommunityHint,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+              fontSize: 13,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _shareAppBox(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            loc.shareAppCommunityPrompt,
+            style: TextStyle(
+              color: colorScheme.onSurfaceVariant,
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Builder(
+              builder: (btnContext) => FilledButton.tonalIcon(
+                onPressed: () => _shareApp(btnContext),
+                icon: const Icon(Icons.share, size: 18),
+                label: Text(loc.shareAppButton),
+              ),
             ),
           ),
         ],
