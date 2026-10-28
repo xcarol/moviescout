@@ -136,7 +136,8 @@ class SettingsScreen extends StatelessWidget {
                 enabled: notificationService.enabled,
                 onChanged: notificationService.enabled
                     ? (bool value) async {
-                        await notificationService.setNotifyCompleteSeason(value);
+                        await notificationService
+                            .setNotifyCompleteSeason(value);
                       }
                     : null,
               ),

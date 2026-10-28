@@ -162,7 +162,8 @@ class SettingsInfoSheet extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12.0),
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                    color: colorScheme.surfaceContainerHighest
+                        .withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(12.0),
                     border: Border.all(
                       color: colorScheme.outlineVariant.withValues(alpha: 0.4),
