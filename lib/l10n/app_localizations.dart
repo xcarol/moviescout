@@ -1545,7 +1545,7 @@ abstract class AppLocalizations {
   /// No description provided for @shareAppCommunityPrompt.
   ///
   /// In en, this message translates to:
-  /// **'Share MovieScout with your acquaintances and start creating your network.'**
+  /// **'Share MovieScout with your acquaintances and start creating your community.'**
   String get shareAppCommunityPrompt;
 
   /// No description provided for @shareAppButton.

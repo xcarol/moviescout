@@ -779,7 +779,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get shareAppCommunityPrompt =>
-      'Compartilhe o MovieScout com seus conhecidos e comece a criar sua rede.';
+      'Compartilhe o MovieScout com seus conhecidos e comece a criar sua comunidade.';
 
   @override
   String get shareAppButton => 'Compartilhar MovieScout';
@@ -1796,7 +1796,7 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get shareAppCommunityPrompt =>
-      'Partilhe o MovieScout com os seus conhecidos e comece a criar a sua rede.';
+      'Partilhe o MovieScout com os seus conhecidos e comece a criar a sua comunidade.';
 
   @override
   String get shareAppButton => 'Partilhar MovieScout';

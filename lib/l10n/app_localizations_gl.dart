@@ -781,7 +781,7 @@ class AppLocalizationsGl extends AppLocalizations {
 
   @override
   String get shareAppCommunityPrompt =>
-      'Comparte MovieScout cos teus coñecidos e empeza a crear a túa rede.';
+      'Comparte MovieScout cos teus coñecidos e empeza a crear a túa comunidade.';
 
   @override
   String get shareAppButton => 'Compartir MovieScout';

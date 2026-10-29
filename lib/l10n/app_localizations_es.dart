@@ -86,7 +86,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get searchTitle => 'Búsqueda';
 
   @override
-  String get searchPerson => 'Busca alguien';
+  String get searchPerson => 'Busca a alguien';
 
   @override
   String get gallery => 'Galería';
@@ -779,7 +779,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get shareAppCommunityPrompt =>
-      'Comparte MovieScout con tus conocidos y empieza a crear tu red.';
+      'Comparte MovieScout con tus conocidos y empieza a crear tu comunidad.';
 
   @override
   String get shareAppButton => 'Compartir MovieScout';
@@ -1796,7 +1796,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get shareAppCommunityPrompt =>
-      'Comparte MovieScout con tus conocidos y empieza a crear tu red.';
+      'Comparte MovieScout con tus conocidos y empieza a crear tu comunidad.';
 
   @override
   String get shareAppButton => 'Compartir MovieScout';

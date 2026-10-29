@@ -778,7 +778,7 @@ class AppLocalizationsEu extends AppLocalizations {
 
   @override
   String get shareAppCommunityPrompt =>
-      'Partekatu MovieScout zure ezagunekin eta hasi zure sarea sortzen.';
+      'Partekatu MovieScout zure ezagunekin eta hasi zure komunitatea sortzen.';
 
   @override
   String get shareAppButton => 'Partekatu MovieScout';

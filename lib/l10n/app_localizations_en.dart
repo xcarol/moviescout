@@ -778,7 +778,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shareAppCommunityPrompt =>
-      'Share MovieScout with your acquaintances and start creating your network.';
+      'Share MovieScout with your acquaintances and start creating your community.';
 
   @override
   String get shareAppButton => 'Share MovieScout';
