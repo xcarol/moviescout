@@ -749,7 +749,11 @@ class TmdbTitle implements TmdbItem {
   static void updateProviderIds(TmdbTitle title, dynamic providers) {
     if (providers is Map) {
       final provs = TmdbProviders(providers: providers);
-      title.flatrateProviderIds = provs.flatrate.map((p) => p.id).toList();
+      title.flatrateProviderIds = {
+        ...provs.flatrate.map((p) => p.id),
+        ...provs.free.map((p) => p.id),
+        ...provs.ads.map((p) => p.id),
+      }.toList();
     }
   }
 }

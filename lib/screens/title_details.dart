@@ -593,9 +593,7 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   bool _isAnyProvider(TmdbTitle title) {
-    return title.providers.flatrate.isNotEmpty ||
-        title.providers.rent.isNotEmpty ||
-        title.providers.buy.isNotEmpty;
+    return !title.providers.isEmpty;
   }
 
   Widget _titleLine(TmdbTitle title) {
@@ -1046,6 +1044,20 @@ class _TitleDetailsState extends State<TitleDetails> {
 
   Widget _providers(TmdbTitle title) {
     List<Widget> providers = [];
+
+    if (title.providers.free.isNotEmpty) {
+      providers.add(_providersByType(
+        AppLocalizations.of(context)!.freeProviders,
+        title.providers.free,
+      ));
+    }
+
+    if (title.providers.ads.isNotEmpty) {
+      providers.add(_providersByType(
+        AppLocalizations.of(context)!.adsProviders,
+        title.providers.ads,
+      ));
+    }
 
     if (title.providers.flatrate.isNotEmpty) {
       providers.add(_providersByType(

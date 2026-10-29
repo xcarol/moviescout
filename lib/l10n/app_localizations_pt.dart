@@ -178,6 +178,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get buyProviders => 'Comprar';
 
   @override
+  String get freeProviders => 'Grátis';
+
+  @override
+  String get adsProviders => 'Com anúncios';
+
+  @override
   String get allTypes => 'Títulos';
 
   @override
@@ -1194,6 +1200,12 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get buyProviders => 'Comprar';
+
+  @override
+  String get freeProviders => 'Gratuito';
+
+  @override
+  String get adsProviders => 'Com anúncios';
 
   @override
   String get allTypes => 'Títulos';

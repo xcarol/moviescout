@@ -281,11 +281,24 @@ class TitleCard extends StatelessWidget {
     if (tmdbTitle.providers.isEmpty) {
       return const SizedBox.shrink();
     }
+    final streamableProviders = [
+      ...tmdbTitle.providers.flatrate,
+      ...tmdbTitle.providers.free,
+      ...tmdbTitle.providers.ads,
+    ];
+    final seen = <int>{};
+    final uniqueProviders =
+        streamableProviders.where((p) => seen.add(p.id)).toList();
+
+    if (uniqueProviders.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return SingleChildScrollView(
       key: ValueKey(tmdbTitle.tmdbId),
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: tmdbTitle.providers.flatrate
+        children: uniqueProviders
             .map<Widget>((provider) => _providerLogo(provider))
             .toList(),
       ),

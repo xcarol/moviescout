@@ -179,6 +179,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get buyProviders => 'Achat';
 
   @override
+  String get freeProviders => 'Gratuit';
+
+  @override
+  String get adsProviders => 'Avec pub';
+
+  @override
   String get allTypes => 'Titres';
 
   @override

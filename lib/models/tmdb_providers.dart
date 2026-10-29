@@ -1,6 +1,8 @@
 import 'package:moviescout/models/tmdb_provider.dart';
 
 const _flatrate = 'flatrate';
+const _free = 'free';
+const _ads = 'ads';
 const _rent = 'rent';
 const _buy = 'buy';
 
@@ -33,11 +35,23 @@ class TmdbProviders {
   }
 
   bool get isEmpty {
-    return flatrate.isEmpty && rent.isEmpty && buy.isEmpty;
+    return flatrate.isEmpty &&
+        free.isEmpty &&
+        ads.isEmpty &&
+        rent.isEmpty &&
+        buy.isEmpty;
   }
 
   List<TmdbProvider> get flatrate {
     return _providerList(_flatrate);
+  }
+
+  List<TmdbProvider> get free {
+    return _providerList(_free);
+  }
+
+  List<TmdbProvider> get ads {
+    return _providerList(_ads);
   }
 
   List<TmdbProvider> get rent {
