@@ -105,6 +105,7 @@ abstract class AppLocalizations {
     Locale('de'),
     Locale('en'),
     Locale('es'),
+    Locale('es', '419'),
     Locale('eu'),
     Locale('fr'),
     Locale('gl'),
@@ -152,7 +153,7 @@ abstract class AppLocalizations {
   /// No description provided for @spanish.
   ///
   /// In en, this message translates to:
-  /// **'Español'**
+  /// **'Español (España)'**
   String get spanish;
 
   /// No description provided for @english.
@@ -1954,6 +1955,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'To edit content on TMDb, you only need to sign in with a free account at themoviedb.org.'**
   String get settingsInfoEditNote;
+
+  /// No description provided for @spanishLatam.
+  ///
+  /// In en, this message translates to:
+  /// **'Español (Latinoamérica)'**
+  String get spanishLatam;
 }
 
 class _AppLocalizationsDelegate
@@ -1985,6 +1992,14 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when language+country codes are specified.
   switch (locale.languageCode) {
+    case 'es':
+      {
+        switch (locale.countryCode) {
+          case '419':
+            return AppLocalizationsEs419();
+        }
+        break;
+      }
     case 'pt':
       {
         switch (locale.countryCode) {

@@ -31,7 +31,7 @@ class AppLocalizationsGl extends AppLocalizations {
   String get catalan => 'Català';
 
   @override
-  String get spanish => 'Español';
+  String get spanish => 'Español (España)';
 
   @override
   String get english => 'English';
@@ -1017,4 +1017,7 @@ class AppLocalizationsGl extends AppLocalizations {
   @override
   String get settingsInfoEditNote =>
       'Para editar contido en TMDb só precisas iniciar sesión cunha conta gratuíta en themoviedb.org.';
+
+  @override
+  String get spanishLatam => 'Español (Latinoamérica)';
 }

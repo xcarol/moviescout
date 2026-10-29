@@ -44,6 +44,7 @@ class _LanguageFormState extends State<LanguageForm> {
     final Map<String, String> languages = {
       AppConstants.catalan: AppLocalizations.of(context)!.catalan,
       AppConstants.spanish: AppLocalizations.of(context)!.spanish,
+      AppConstants.spanishLatam: AppLocalizations.of(context)!.spanishLatam,
       AppConstants.english: AppLocalizations.of(context)!.english,
       AppConstants.french: AppLocalizations.of(context)!.french,
       AppConstants.german: AppLocalizations.of(context)!.german,

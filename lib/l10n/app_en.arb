@@ -30,7 +30,7 @@
   "@appTitle": {},
   "catalan": "Català",
   "@catalan": {},
-  "spanish": "Español",
+  "spanish": "Español (España)",
   "@spanish": {},
   "english": "English",
   "@english": {},
@@ -683,5 +683,7 @@
   "settingsInfoEditItem3Desc": "You can add or correct titles, overviews, and details in any language for the entire community to enjoy.",
   "@settingsInfoEditItem3Desc": {},
   "settingsInfoEditNote": "To edit content on TMDb, you only need to sign in with a free account at themoviedb.org.",
-  "@settingsInfoEditNote": {}
+  "@settingsInfoEditNote": {},
+  "spanishLatam": "Español (Latinoamérica)",
+  "@spanishLatam": {}
 }

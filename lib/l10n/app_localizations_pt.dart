@@ -31,7 +31,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get catalan => 'Català';
 
   @override
-  String get spanish => 'Español';
+  String get spanish => 'Español (España)';
 
   @override
   String get english => 'English';
@@ -1017,6 +1017,9 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get settingsInfoEditNote =>
       'Para editar conteúdo no TMDb, só precisa de iniciar sessão com uma conta gratuita em themoviedb.org.';
+
+  @override
+  String get spanishLatam => 'Español (Latinoamérica)';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -1046,7 +1049,7 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   String get catalan => 'Català';
 
   @override
-  String get spanish => 'Español';
+  String get spanish => 'Español (España)';
 
   @override
   String get english => 'English';
@@ -2031,4 +2034,7 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   @override
   String get settingsInfoEditNote =>
       'Para editar conteúdo no TMDb, só precisa de iniciar sessão com uma conta gratuita em themoviedb.org.';
+
+  @override
+  String get spanishLatam => 'Español (Latinoamérica)';
 }

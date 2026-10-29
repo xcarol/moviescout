@@ -47,6 +47,7 @@ class AppConstants {
 
   static const String catalan = 'ca-ES';
   static const String spanish = 'es-ES';
+  static const String spanishLatam = 'es-419';
   static const String english = 'en-US';
   static const String french = 'fr-FR';
   static const String german = 'de-DE';
@@ -71,6 +72,7 @@ class AppConstants {
     portugueseBr,
     portuguesePt,
     spanish,
+    spanishLatam,
   ];
 
   // Other
