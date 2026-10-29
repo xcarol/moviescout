@@ -103,7 +103,8 @@ class SettingsTile extends StatelessWidget {
       subtitle: subtitle != null ? Text(subtitle!, style: subtitleStyle) : null,
       trailing: effectiveTrailing,
       onTap: enabled ? onTap : null,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
     );
   }
 }

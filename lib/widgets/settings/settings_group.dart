@@ -47,7 +47,8 @@ class SettingsGroup extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.0),
             ),
-            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+            color: theme.colorScheme.surfaceContainerHighest
+                .withValues(alpha: 0.35),
             clipBehavior: Clip.antiAlias,
             child: Column(
               children: [

@@ -136,7 +136,8 @@ class SettingsScreen extends StatelessWidget {
                 enabled: notificationService.enabled,
                 onChanged: notificationService.enabled
                     ? (bool value) async {
-                        await notificationService.setNotifyCompleteSeason(value);
+                        await notificationService
+                            .setNotifyCompleteSeason(value);
                       }
                     : null,
               ),
@@ -403,6 +404,8 @@ class SettingsScreen extends StatelessWidget {
         return l10n.catalan;
       case AppConstants.spanish:
         return l10n.spanish;
+      case AppConstants.spanishLatam:
+        return l10n.spanishLatam;
       case AppConstants.english:
         return l10n.english;
       case AppConstants.french:
