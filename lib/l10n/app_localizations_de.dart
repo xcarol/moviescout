@@ -180,6 +180,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get buyProviders => 'Kaufen';
 
   @override
+  String get freeProviders => 'Kostenlos';
+
+  @override
+  String get adsProviders => 'Mit Werbung';
+
+  @override
   String get allTypes => 'Titel';
 
   @override

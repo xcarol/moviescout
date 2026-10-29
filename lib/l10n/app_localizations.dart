@@ -438,6 +438,18 @@ abstract class AppLocalizations {
   /// **'Buy'**
   String get buyProviders;
 
+  /// No description provided for @freeProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get freeProviders;
+
+  /// No description provided for @adsProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'With ads'**
+  String get adsProviders;
+
   /// No description provided for @allTypes.
   ///
   /// In en, this message translates to:

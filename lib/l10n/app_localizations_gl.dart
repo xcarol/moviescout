@@ -177,6 +177,12 @@ class AppLocalizationsGl extends AppLocalizations {
   String get buyProviders => 'Compras';
 
   @override
+  String get freeProviders => 'Gratis';
+
+  @override
+  String get adsProviders => 'Con anuncios';
+
+  @override
   String get allTypes => 'Valores';
 
   @override

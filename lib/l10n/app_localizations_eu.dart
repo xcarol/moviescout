@@ -178,6 +178,12 @@ class AppLocalizationsEu extends AppLocalizations {
   String get buyProviders => 'Erosketak';
 
   @override
+  String get freeProviders => 'Doan';
+
+  @override
+  String get adsProviders => 'Iragarkiekin';
+
+  @override
   String get allTypes => 'Baloreak';
 
   @override

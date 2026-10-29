@@ -177,6 +177,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get buyProviders => 'Buy';
 
   @override
+  String get freeProviders => 'Free';
+
+  @override
+  String get adsProviders => 'With ads';
+
+  @override
   String get allTypes => 'Titles';
 
   @override

@@ -176,6 +176,12 @@ class AppLocalizationsCa extends AppLocalizations {
   String get buyProviders => 'Compra';
 
   @override
+  String get freeProviders => 'Gratuït';
+
+  @override
+  String get adsProviders => 'Amb anuncis';
+
+  @override
   String get allTypes => 'Títols';
 
   @override
