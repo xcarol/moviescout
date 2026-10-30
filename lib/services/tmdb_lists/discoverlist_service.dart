@@ -1,20 +1,79 @@
-import 'package:moviescout/utils/url_constants.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter/widgets.dart';
+import 'package:moviescout/models/discovery_options.dart';
 import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/services/settings/preferences_service.dart';
+import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class UserPreferences {
   final Map<int, double> genreWeights;
-  final Map<int, double> keywordWeights;
+  final List<int> preferredGenres;
+  final List<int> dislikedGenres;
+  final bool hasRatings;
 
-  UserPreferences(this.genreWeights, this.keywordWeights);
+  UserPreferences({
+    required this.genreWeights,
+    required this.preferredGenres,
+    required this.dislikedGenres,
+    required this.hasRatings,
+  });
 }
 
 class TmdbDiscoverlistService extends TmdbTitleListService {
+  static const Set<int> _validTvGenres = {
+    10759,
+    16,
+    35,
+    80,
+    99,
+    18,
+    10751,
+    10762,
+    9648,
+    10763,
+    10764,
+    10765,
+    10766,
+    10767,
+    10768,
+    37
+  };
+
+  static const Set<int> _validMovieGenres = {
+    28,
+    12,
+    16,
+    35,
+    80,
+    99,
+    18,
+    10751,
+    14,
+    36,
+    27,
+    10402,
+    9648,
+    10749,
+    878,
+    10770,
+    53,
+    10752,
+    37
+  };
+
+  static const Map<int, int> _movieToTvGenreMap = {
+    28: 10759,
+    12: 10759,
+    878: 10765,
+    14: 10765,
+    10752: 10768,
+    36: 10768,
+    27: 9648,
+    53: 80,
+  };
+
   bool _isRefreshPaused = false;
   bool _refreshPending = false;
   bool _retrievePending = false;
@@ -24,7 +83,46 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
 
   final ValueNotifier<bool> isRefreshing = ValueNotifier(false);
 
-  TmdbDiscoverlistService(super.listName, super.repository);
+  DiscoveryOptions _options = const DiscoveryOptions();
+  DiscoveryOptions get options => _options;
+
+  List<int> _enabledProviderIds = [];
+  List<int> get enabledProviderIds => _enabledProviderIds;
+
+  bool get anyFilterActive {
+    final hasNonDefaultOptions = !_options.isDefault;
+    final hasToggledProviders =
+        _enabledProviderIds.isNotEmpty && !_options.filterByProviders;
+    return hasNonDefaultOptions || hasToggledProviders;
+  }
+
+  TmdbDiscoverlistService(super.listName, super.repository) {
+    _loadSavedOptions();
+  }
+
+  void _loadSavedOptions() {
+    try {
+      final prefs = PreferencesService().prefs;
+      _options = DiscoveryOptions.loadFromPrefs(prefs);
+    } catch (_) {}
+  }
+
+  void setEnabledProviderIds(List<int> ids) {
+    _enabledProviderIds = ids;
+  }
+
+  Future<void> updateDiscoveryOptions(
+    DiscoveryOptions newOptions,
+    Locale locale,
+  ) async {
+    _options = newOptions;
+    try {
+      final prefs = PreferencesService().prefs;
+      await _options.saveToPrefs(prefs);
+    } catch (_) {}
+    notifyListeners();
+    await retrieveDiscoverlist(locale, forceUpdate: true);
+  }
 
   void clearPendingFlags() {
     _retrievePending = false;
@@ -35,168 +133,331 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     Locale locale, {
     bool forceUpdate = false,
   }) async {
-    if (((_isRefreshPaused && listIsNotEmpty) || isLoading.value) &&
+    if (((_isRefreshPaused && hasLoadedItems) || isLoading.value) &&
         !forceUpdate) {
       _retrievePending = true;
       return;
     }
 
     isRefreshing.value = true;
-    await clearList();
-
-    retrieveList(
+    try {
+      await retrieveList(
         forceUpdate: forceUpdate,
         fetchRemoteData: () async {
-          return fetchAndMergeTmdbLists(
-            retrieveMovies: () async {
-              return _getDiscoveryTitles(locale, ApiConstants.movie,
-                  UrlConstants.tmdbPopularMoviesEndpoint);
-            },
-            retrieveTvshows: () async {
-              return _getDiscoveryTitles(
-                  locale, ApiConstants.tv, UrlConstants.tmdbPopularTvEndpoint);
-            },
+          final titles = await fetchAndMergeTmdbLists(
+            retrieveMovies: () =>
+                _getDiscoveryTitles(locale, ApiConstants.movie),
+            retrieveTvshows: () => _getDiscoveryTitles(locale, ApiConstants.tv),
           );
-        }).whenComplete(() {
+          if (forceUpdate) {
+            await clearList();
+          }
+          return titles;
+        },
+      );
+    } finally {
       isRefreshing.value = false;
-    });
-  }
-
-  Map<int, double> _normalizeWeights(
-      Map<int, double> weights, Map<int, int> counts, int totalTitles) {
-    final Map<int, double> normalizedWeights = {};
-    weights.forEach((id, totalWeight) {
-      final count = counts[id] ?? 1;
-      final avgWeight = totalWeight / count;
-
-      // Specificity Factor (IDF-like):
-      // If a genre/keyword appears in almost all titles, its "importance" is reduced.
-      // specificity = log(Total / Count)
-      // Since this is a mobile app with few titles, we use a smoothed version:
-      final frequency = count / totalTitles;
-      final specificityPenalty = 1.0 /
-          (1.0 +
-              (frequency *
-                  2.0)); // If frequency is 1.0, penalty is 0.33. If 0.1, penalty is 0.83.
-
-      normalizedWeights[id] = (avgWeight * specificityPenalty).clamp(-0.4, 0.6);
-    });
-    return normalizedWeights;
-  }
-
-  void _addWeights(
-      List<int> genres,
-      List<int> keywords,
-      double weight,
-      Map<int, double> genreWeights,
-      Map<int, int> genreCounts,
-      Map<int, double> keywordWeights,
-      Map<int, int> keywordCounts) {
-    for (final id in genres) {
-      genreWeights[id] = (genreWeights[id] ?? 0.0) + weight;
-      genreCounts[id] = (genreCounts[id] ?? 0) + 1;
-    }
-    for (final id in keywords) {
-      keywordWeights[id] = (keywordWeights[id] ?? 0.0) + weight;
-      keywordCounts[id] = (keywordCounts[id] ?? 0) + 1;
     }
   }
 
   double _getWeightForRating(double rating) {
     if (rating >= 4.5) return 1.0;
     if (rating >= 3.5) return 0.7;
-    if (rating >= 2.5) return 0.3;
-    if (rating > 0) return -0.5;
+    if (rating >= 2.5) return 0.2;
+    if (rating > 0) return -0.6;
     return 0.0;
   }
 
-  Future<UserPreferences> _calculatePreferences() async {
+  int? _toTvGenre(int id) {
+    if (_validTvGenres.contains(id)) return id;
+    return _movieToTvGenreMap[id];
+  }
+
+  int? _toMovieGenre(int id) {
+    if (_validMovieGenres.contains(id)) return id;
+    if (id == 10759) return 28;
+    if (id == 10765) return 878;
+    if (id == 10768) return 10752;
+    return null;
+  }
+
+  Future<UserPreferences> _calculatePreferences(String mediaType) async {
     final titleRepo = repository;
     final Map<int, double> genreWeights = {};
     final Map<int, int> genreCounts = {};
-    final Map<int, double> keywordWeights = {};
-    final Map<int, int> keywordCounts = {};
+    final isMovie = mediaType == ApiConstants.movie;
 
     final ratedTitles =
         await titleRepo.getAllTitlesInList(AppConstants.rateslist);
     final watchlistTitles =
         await titleRepo.getAllTitlesInList(AppConstants.watchlist);
 
-    final allTitles = {...ratedTitles, ...watchlistTitles}.toList();
-    final totalTitles = allTitles.length;
+    final matchingRated =
+        ratedTitles.where((t) => t.mediaType == mediaType).toList();
+    final matchingWatchlist =
+        watchlistTitles.where((t) => t.mediaType == mediaType).toList();
 
-    if (totalTitles == 0) return UserPreferences({}, {});
+    final titlesToUseForRated =
+        matchingRated.isNotEmpty ? matchingRated : ratedTitles;
+    final titlesToUseForWatchlist =
+        matchingWatchlist.isNotEmpty ? matchingWatchlist : watchlistTitles;
 
-    for (final title in ratedTitles) {
+    final totalTitles =
+        titlesToUseForRated.length + titlesToUseForWatchlist.length;
+    if (totalTitles == 0) {
+      return UserPreferences(
+        genreWeights: {},
+        preferredGenres: [],
+        dislikedGenres: [],
+        hasRatings: false,
+      );
+    }
+
+    for (final title in titlesToUseForRated) {
       final weight = _getWeightForRating(title.rating);
-      _addWeights(title.genreIds, title.keywordIds, weight, genreWeights,
-          genreCounts, keywordWeights, keywordCounts);
+      for (final id in title.genreIds) {
+        final mappedId = isMovie ? _toMovieGenre(id) : _toTvGenre(id);
+        if (mappedId != null) {
+          genreWeights[mappedId] = (genreWeights[mappedId] ?? 0.0) + weight;
+          genreCounts[mappedId] = (genreCounts[mappedId] ?? 0) + 1;
+        }
+      }
     }
 
-    for (final title in watchlistTitles) {
-      _addWeights(title.genreIds, title.keywordIds, 0.4, genreWeights,
-          genreCounts, keywordWeights, keywordCounts);
+    for (final title in titlesToUseForWatchlist) {
+      for (final id in title.genreIds) {
+        final mappedId = isMovie ? _toMovieGenre(id) : _toTvGenre(id);
+        if (mappedId != null) {
+          genreWeights[mappedId] = (genreWeights[mappedId] ?? 0.0) + 0.3;
+          genreCounts[mappedId] = (genreCounts[mappedId] ?? 0) + 1;
+        }
+      }
     }
+
+    final Map<int, double> normalizedWeights = {};
+    genreWeights.forEach((id, totalWeight) {
+      final count = genreCounts[id] ?? 1;
+      final avgWeight = totalWeight / count;
+      final frequency = count / totalTitles;
+      final specificityPenalty = 1.0 / (1.0 + (frequency * 1.5));
+      normalizedWeights[id] = (avgWeight * specificityPenalty).clamp(-0.5, 0.7);
+    });
+
+    final preferred = normalizedWeights.entries
+        .where((e) => e.value > 0.1)
+        .toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    final disliked = normalizedWeights.entries
+        .where((e) => e.value < -0.2)
+        .toList()
+      ..sort((a, b) => a.value.compareTo(b.value));
 
     return UserPreferences(
-      _normalizeWeights(genreWeights, genreCounts, totalTitles),
-      _normalizeWeights(keywordWeights, keywordCounts, totalTitles),
+      genreWeights: normalizedWeights,
+      preferredGenres: preferred.map((e) => e.key).toList(),
+      dislikedGenres: disliked.map((e) => e.key).toList(),
+      hasRatings: ratedTitles.isNotEmpty,
     );
   }
 
-  Future<List<dynamic>> _fetchDiscoverTitles(String discoverEndpoint,
-      Locale locale, UserPreferences preferences) async {
-    final topGenres = preferences.genreWeights.entries
-        .where((e) => e.value > 0)
-        .toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-    final topKeywords = preferences.keywordWeights.entries
-        .where((e) => e.value > 0)
-        .toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
+  String _buildDiscoverQuery(
+    Locale locale,
+    String mediaType,
+    int page,
+    UserPreferences prefs,
+  ) {
+    final isMovie = mediaType == ApiConstants.movie;
+    final Map<String, String> queryParams = {
+      'page': page.toString(),
+      'language': '${locale.languageCode}-${locale.countryCode ?? "US"}',
+      'include_adult': 'false',
+    };
 
-    final genresQuery = topGenres.take(3).map((e) => e.key).join('|');
-    final keywordsQuery = topKeywords.take(3).map((e) => e.key).join('|');
-
-    if (genresQuery.isEmpty && keywordsQuery.isEmpty) return [];
-
-    try {
-      return await getTitlesFromServer((int page) async {
-        if (page > 1) {
-          return http.Response('{"page":$page,"total_pages":$page}', 200);
-        }
-        return get(discoverEndpoint
-            .replaceFirst('{PAGE}', '1')
-            .replaceFirst(
-                '{LOCALE}', '${locale.languageCode}-${locale.countryCode}')
-            .replaceFirst('{GENRES}', genresQuery)
-            .replaceFirst('{KEYWORDS}', keywordsQuery));
-      });
-    } catch (_) {
-      return [];
+    if (!isMovie) {
+      queryParams['include_null_first_air_dates'] = 'false';
     }
-  }
 
-  List<dynamic> _extractRecommendationsFromSeeds(List<TmdbTitle> seedTitles) {
-    final List<dynamic> allRecommendations = [];
-    final selectedSeeds = seedTitles.take(20).toList();
-    for (final title in selectedSeeds) {
-      final jsonStr = title.recommendationsJson;
-      if (jsonStr != null && jsonStr.isNotEmpty) {
-        try {
-          allRecommendations.addAll(jsonDecode(jsonStr));
-        } catch (_) {}
+    final region = getCountryCode();
+    if (region.isNotEmpty) {
+      queryParams['watch_region'] = region;
+      queryParams['with_watch_monetization_types'] = 'flatrate|free|ads';
+    }
+
+    if (_options.filterByProviders && _enabledProviderIds.isNotEmpty) {
+      queryParams['with_watch_providers'] = _enabledProviderIds.join('|');
+    }
+
+    if (_options.theme != DiscoveryTheme.any) {
+      final def = DiscoveryOptions.themes[_options.theme]!;
+      final genres = isMovie ? def.movieGenreIds : def.tvGenreIds;
+      if (genres.isNotEmpty) {
+        queryParams['with_genres'] = genres.join('|');
+      }
+      if (def.keywordIds.isNotEmpty) {
+        queryParams['with_keywords'] = def.keywordIds.join('|');
+      }
+    } else {
+      if (prefs.preferredGenres.isNotEmpty) {
+        queryParams['with_genres'] = prefs.preferredGenres.take(3).join('|');
+      }
+      if (prefs.dislikedGenres.isNotEmpty) {
+        queryParams['without_genres'] = prefs.dislikedGenres.take(5).join(',');
       }
     }
-    return allRecommendations;
+
+    final today = DateTime.now().toIso8601String().split('T').first;
+    final oneYearAgo = DateTime.now()
+        .subtract(const Duration(days: 365))
+        .toIso8601String()
+        .split('T')
+        .first;
+
+    switch (_options.mode) {
+      case DiscoveryMode.forYou:
+        queryParams['sort_by'] = 'popularity.desc';
+        if (isMovie) {
+          if (prefs.hasRatings) {
+            queryParams['vote_count.gte'] = '100';
+            queryParams['vote_average.gte'] = '6.0';
+          } else {
+            queryParams['vote_count.gte'] = '250';
+            queryParams['vote_average.gte'] = '6.5';
+          }
+        } else {
+          if (prefs.hasRatings) {
+            queryParams['vote_count.gte'] = '30';
+            queryParams['vote_average.gte'] = '6.0';
+          } else {
+            queryParams['vote_count.gte'] = '50';
+            queryParams['vote_average.gte'] = '6.5';
+          }
+        }
+        break;
+      case DiscoveryMode.hiddenGems:
+        queryParams['sort_by'] = 'vote_average.desc';
+        if (isMovie) {
+          queryParams['vote_count.gte'] = '80';
+          queryParams['vote_count.lte'] = '2500';
+          queryParams['vote_average.gte'] = '7.0';
+        } else {
+          queryParams['vote_count.gte'] = '25';
+          queryParams['vote_count.lte'] = '800';
+          queryParams['vote_average.gte'] = '7.0';
+        }
+        break;
+      case DiscoveryMode.topRated:
+        queryParams['sort_by'] = 'vote_average.desc';
+        if (isMovie) {
+          queryParams['vote_count.gte'] = '1500';
+          queryParams['vote_average.gte'] = '7.5';
+        } else {
+          queryParams['vote_count.gte'] = '300';
+          queryParams['vote_average.gte'] = '7.5';
+        }
+        break;
+      case DiscoveryMode.newReleases:
+        if (isMovie) {
+          queryParams['sort_by'] = 'primary_release_date.desc';
+          queryParams['primary_release_date.lte'] = today;
+          queryParams['primary_release_date.gte'] = oneYearAgo;
+          queryParams['vote_count.gte'] = '30';
+        } else {
+          queryParams['sort_by'] = 'first_air_date.desc';
+          queryParams['first_air_date.lte'] = today;
+          queryParams['first_air_date.gte'] = oneYearAgo;
+          queryParams['vote_count.gte'] = '15';
+        }
+        break;
+    }
+
+    final dateKeyGte =
+        isMovie ? 'primary_release_date.gte' : 'first_air_date.gte';
+    final dateKeyLte =
+        isMovie ? 'primary_release_date.lte' : 'first_air_date.lte';
+
+    switch (_options.epoch) {
+      case DiscoveryEpoch.all:
+        break;
+      case DiscoveryEpoch.e2020s:
+        queryParams[dateKeyGte] = '2020-01-01';
+        break;
+      case DiscoveryEpoch.e2010s:
+        queryParams[dateKeyGte] = '2010-01-01';
+        queryParams[dateKeyLte] = '2019-12-31';
+        break;
+      case DiscoveryEpoch.e2000s:
+        queryParams[dateKeyGte] = '2000-01-01';
+        queryParams[dateKeyLte] = '2009-12-31';
+        break;
+      case DiscoveryEpoch.e80s90s:
+        queryParams[dateKeyGte] = '1980-01-01';
+        queryParams[dateKeyLte] = '1999-12-31';
+        break;
+      case DiscoveryEpoch.classics:
+        queryParams[dateKeyLte] = '1979-12-31';
+        break;
+    }
+
+    if (isMovie) {
+      switch (_options.duration) {
+        case DiscoveryDuration.any:
+          break;
+        case DiscoveryDuration.short:
+          queryParams['with_runtime.lte'] = '95';
+          break;
+        case DiscoveryDuration.standard:
+          queryParams['with_runtime.gte'] = '90';
+          queryParams['with_runtime.lte'] = '125';
+          break;
+        case DiscoveryDuration.epic:
+          queryParams['with_runtime.gte'] = '120';
+          break;
+      }
+    }
+
+    final queryString = queryParams.entries
+        .map((e) =>
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
+
+    final baseEndpoint = isMovie ? 'discover/movie' : 'discover/tv';
+    return '$baseEndpoint?$queryString';
   }
 
   void _scoreAndSortRecommendations(
-      List<dynamic> recommendations, UserPreferences preferences) {
+    List<dynamic> recommendations,
+    UserPreferences preferences,
+  ) {
+    if (_options.mode == DiscoveryMode.newReleases) {
+      recommendations.sort((a, b) {
+        final dateA = (a[TmdbTitleFields.releaseDate] ??
+            a[TmdbTitleFields.firstAirDate] ??
+            '') as String;
+        final dateB = (b[TmdbTitleFields.releaseDate] ??
+            b[TmdbTitleFields.firstAirDate] ??
+            '') as String;
+        return dateB.compareTo(dateA);
+      });
+      return;
+    }
+
+    if (_options.mode == DiscoveryMode.hiddenGems ||
+        _options.mode == DiscoveryMode.topRated) {
+      recommendations.sort((a, b) {
+        final scoreA =
+            (a[TmdbTitleFields.voteAverage] as num?)?.toDouble() ?? 0.0;
+        final scoreB =
+            (b[TmdbTitleFields.voteAverage] as num?)?.toDouble() ?? 0.0;
+        return scoreB.compareTo(scoreA);
+      });
+      return;
+    }
+
     recommendations.sort((a, b) {
-      double scoreA =
+      final scoreA =
           (a[TmdbTitleFields.voteAverage] as num?)?.toDouble() ?? 0.0;
-      double scoreB =
+      final scoreB =
           (b[TmdbTitleFields.voteAverage] as num?)?.toDouble() ?? 0.0;
 
       double boostA = 0.0;
@@ -222,26 +483,20 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     });
   }
 
-  Future<List> _getDiscoveryTitles(
-      Locale locale, String mediaType, String popularEndpoint) async {
-    final String discoverEndpoint = mediaType == ApiConstants.movie
-        ? UrlConstants.tmdbDiscoverMoviesEndpoint
-        : UrlConstants.tmdbDiscoverTvEndpoint;
+  Future<List<dynamic>> _getDiscoveryTitles(
+    Locale locale,
+    String mediaType,
+  ) async {
     final List<dynamic> recommendations = [];
     final Set<int> excludedTmdbIds = {};
 
     final titleRepo = repository;
-    final preferences = await _calculatePreferences();
+    final preferences = await _calculatePreferences(mediaType);
 
     final ratedTitles =
         await titleRepo.getAllTitlesInList(AppConstants.rateslist);
     final watchlistTitles =
         await titleRepo.getAllTitlesInList(AppConstants.watchlist);
-
-    final positiveSignalTitles = [
-      ...ratedTitles.where((t) => t.rating > 2.5 && t.mediaType == mediaType),
-      ...watchlistTitles.where((t) => t.mediaType == mediaType)
-    ];
 
     excludedTmdbIds.addAll(ratedTitles
         .where((t) => t.mediaType == mediaType)
@@ -250,51 +505,44 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
         .where((t) => t.mediaType == mediaType)
         .map((t) => t.tmdbId));
 
-    final List<dynamic> allRecommendations = [];
-    allRecommendations.addAll(
-        await _fetchDiscoverTitles(discoverEndpoint, locale, preferences));
-    allRecommendations.addAll(
-        _extractRecommendationsFromSeeds([...positiveSignalTitles]..shuffle()));
+    int page = 1;
+    int totalPages = 1;
+    const int maxPagesToQuery = 5;
+    const int targetCount = 40;
 
-    _scoreAndSortRecommendations(allRecommendations, preferences);
-
-    for (final rec in allRecommendations) {
-      if (recommendations.length >= 40) break;
-      final recId = rec[TmdbTitleFields.id];
-      if (!excludedTmdbIds.contains(recId)) {
-        recommendations.add(rec);
-        excludedTmdbIds.add(recId);
+    while (recommendations.length < targetCount &&
+        page <= totalPages &&
+        page <= maxPagesToQuery) {
+      final query = _buildDiscoverQuery(locale, mediaType, page, preferences);
+      try {
+        final response = await get(query);
+        if (response.statusCode == 200) {
+          final data = body(response);
+          if (data['total_pages'] != null) {
+            totalPages = (data['total_pages'] as num).toInt();
+          }
+          final List<dynamic>? results = data['results'];
+          if (results != null) {
+            for (final title in results) {
+              if (recommendations.length >= targetCount) break;
+              final id = title[TmdbTitleFields.id];
+              if (id != null && !excludedTmdbIds.contains(id)) {
+                recommendations.add(title);
+                excludedTmdbIds.add(id);
+              }
+            }
+          }
+        } else {
+          break;
+        }
+      } catch (_) {
+        break;
       }
+      page++;
     }
 
-    if (recommendations.length < 40) {
-      await _addPopularFallbackTitles(
-          recommendations, excludedTmdbIds, popularEndpoint, locale);
-    }
-
+    _scoreAndSortRecommendations(recommendations, preferences);
     return recommendations;
-  }
-
-  Future<void> _addPopularFallbackTitles(List<dynamic> recommendations,
-      Set<int> excludedTmdbIds, String popularEndpoint, Locale locale) async {
-    final popularTitles = await getTitlesFromServer((int page) async {
-      if (page > 2) {
-        return http.Response('{"page":$page,"total_pages":$page}', 200);
-      }
-      return get(popularEndpoint
-          .replaceFirst('{PAGE}', page.toString())
-          .replaceFirst(
-              '{LOCALE}', '${locale.languageCode}-${locale.countryCode}'));
-    });
-
-    for (final title in popularTitles) {
-      if (recommendations.length >= 40) break;
-      final id = title[TmdbTitleFields.id];
-      if (!excludedTmdbIds.contains(id)) {
-        recommendations.add(title);
-        excludedTmdbIds.add(id);
-      }
-    }
   }
 
   void setRefreshPaused(bool paused) {
@@ -302,8 +550,79 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
   }
 
   @override
+  bool get filterByProviders => false;
+
+  @override
+  void setProvidersFilter(bool filterByProviders, List<int> providerIds) {
+    this.filterByProviders = false;
+    filterProvidersIds = providerIds;
+  }
+
+  @override
+  Future<void> setFilters({
+    String text = '',
+    String type = '',
+    List<String> genres = const [],
+    bool excludeGenres = false,
+    bool filterByProviders = false,
+    List<int> providerListIds = const [],
+    RatingFilter ratingFilter = RatingFilter.all,
+    String sort = SortOption.alphabetically,
+    bool ascending = true,
+  }) async {
+    await super.setFilters(
+      text: text,
+      type: type,
+      genres: genres,
+      excludeGenres: excludeGenres,
+      filterByProviders: false,
+      providerListIds: providerListIds,
+      ratingFilter: ratingFilter,
+      sort: sort,
+      ascending: ascending,
+    );
+  }
+
+  @override
+  @protected
+  Future<List<TmdbTitle>> fetchItems({
+    required int offset,
+    required int limit,
+  }) {
+    return repository.getTitles(
+      listName: listNameVal,
+      filterText: filterText,
+      filterMediaType: filterMediaType,
+      filterGenres: filterGenres,
+      filterExcludeGenres: filterExcludeGenres,
+      filterByProviders: false,
+      filterProvidersIds: const [],
+      sortOption: selectedSort,
+      sortAscending: isSortAsc,
+      filterRating: filterRating,
+      offset: offset,
+      limit: limit,
+    );
+  }
+
+  @override
+  @protected
+  Future<int> countFilteredItems() async {
+    return await repository.countTitlesFiltered(
+      listName: listNameVal,
+      filterText: filterText,
+      filterMediaType: filterMediaType,
+      filterGenres: filterGenres,
+      filterExcludeGenres: filterExcludeGenres,
+      filterByProviders: false,
+      filterProvidersIds: const [],
+      filterRating: filterRating,
+    );
+  }
+
+  @override
   void refresh() {
-    if (_isRefreshPaused && listIsNotEmpty) {
+    if (_isRefreshPaused && hasLoadedItems) {
       _refreshPending = true;
       return;
     }

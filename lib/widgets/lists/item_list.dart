@@ -15,6 +15,8 @@ import 'package:moviescout/widgets/lists/list_info_line.dart';
 import 'package:moviescout/widgets/inputs_and_filters/drop_down_selector.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/widgets/lists/list_control_panel.dart';
+import 'package:moviescout/widgets/lists/discovery_control_panel.dart';
+import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_person_titles_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/widgets/lists/list_controller.dart';
@@ -146,86 +148,119 @@ class _ItemListState extends SearchableListState<ItemList> {
       listenable: widget.listService,
       builder: (context, _) {
         final service = widget.listService;
-        Widget listView = Scrollbar(
-          controller: _controller.scrollController,
-          child: ListView.builder(
-            key: const PageStorageKey('TitleListView'),
-            controller: _controller.scrollController,
-            physics: AlwaysScrollableScrollPhysics(
-              parent: BottomClampingScrollPhysics(
-                topRefreshController: _refreshController,
-                parent: ClampingWithOverscrollPhysics(
-                  state: _refreshController,
+        Widget listView;
+        if (service.loadedItemCount == 0 && !service.isLoading.value) {
+          listView = LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              controller: _controller.scrollController,
+              physics: AlwaysScrollableScrollPhysics(
+                parent: BottomClampingScrollPhysics(
+                  topRefreshController: _refreshController,
+                  parent: ClampingWithOverscrollPhysics(
+                    state: _refreshController,
+                  ),
+                ),
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Text(
+                      AppLocalizations.of(context)!.emptyList,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            itemCount: service.loadedItemCount,
-            itemBuilder: (context, index) {
-              final item = service.getItem(index);
-              if (item == null) {
-                return const SizedBox.shrink();
-              }
-              return Builder(
-                builder: (innerContext) {
-                  final mediaQuery = MediaQuery.of(innerContext);
+          );
+        } else {
+          listView = Scrollbar(
+            controller: _controller.scrollController,
+            child: ListView.builder(
+              key: const PageStorageKey('TitleListView'),
+              controller: _controller.scrollController,
+              physics: AlwaysScrollableScrollPhysics(
+                parent: BottomClampingScrollPhysics(
+                  topRefreshController: _refreshController,
+                  parent: ClampingWithOverscrollPhysics(
+                    state: _refreshController,
+                  ),
+                ),
+              ),
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              itemCount: service.loadedItemCount,
+              itemBuilder: (context, index) {
+                final item = service.getItem(index);
+                if (item == null) {
+                  return const SizedBox.shrink();
+                }
+                return Builder(
+                  builder: (innerContext) {
+                    final mediaQuery = MediaQuery.of(innerContext);
 
-                  final titleTheme =
-                      Theme.of(context).extension<CustomColors>()!;
+                    final titleTheme =
+                        Theme.of(context).extension<CustomColors>()!;
 
-                  TmdbTitleListService supportService =
-                      widget.titleListServiceSupport ??
-                          widget.listService as TmdbTitleListService;
-                  Widget card;
-                  if (item is TmdbTitle) {
-                    if (service is TmdbPersonTitlesService) {
-                      card = PersonTitleCard(
-                        title: item,
+                    TmdbTitleListService supportService =
+                        widget.titleListServiceSupport ??
+                            widget.listService as TmdbTitleListService;
+                    Widget card;
+                    if (item is TmdbTitle) {
+                      if (service is TmdbPersonTitlesService) {
+                        card = PersonTitleCard(
+                          title: item,
+                          tmdbListService: supportService,
+                          role: service.role,
+                        );
+                      } else {
+                        card = TitleCard(
+                          title: item,
+                          tmdbListService: supportService,
+                        );
+                      }
+                    } else if (item is TmdbPerson) {
+                      card = PersonCard(
+                        person: item,
                         tmdbListService: supportService,
-                        role: service.role,
                       );
+                    } else if (item is TmdbCollection) {
+                      card = CollectionCard(
+                        collection: item,
+                        tmdbListService: supportService,
+                      );
+                    } else if (item is UserProfile) {
+                      card = UserCard(user: item);
                     } else {
-                      card = TitleCard(
-                        title: item,
-                        tmdbListService: supportService,
-                      );
+                      card = const SizedBox.shrink();
                     }
-                  } else if (item is TmdbPerson) {
-                    card = PersonCard(
-                      person: item,
-                      tmdbListService: supportService,
-                    );
-                  } else if (item is TmdbCollection) {
-                    card = CollectionCard(
-                      collection: item,
-                      tmdbListService: supportService,
-                    );
-                  } else if (item is UserProfile) {
-                    card = UserCard(user: item);
-                  } else {
-                    card = const SizedBox.shrink();
-                  }
 
-                  return MediaQuery(
-                    data: mediaQuery.copyWith(
-                      textScaler: TextScaler.linear(
-                          UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
-                    ),
-                    child: Column(
-                      children: [
-                        card,
-                        Divider(
-                          height: 1,
-                          color: titleTheme.dividerColor,
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-        );
+                    return MediaQuery(
+                      data: mediaQuery.copyWith(
+                        textScaler: TextScaler.linear(
+                            UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
+                      ),
+                      child: Column(
+                        children: [
+                          card,
+                          Divider(
+                            height: 1,
+                            color: titleTheme.dividerColor,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          );
+        }
 
         Widget content = NotificationListener<ScrollNotification>(
           onNotification: (scrollInfo) {
@@ -353,9 +388,25 @@ class _ItemListState extends SearchableListState<ItemList> {
                     _controller.setProviderListIds(providerList);
                   });
                 }
+
+                if (widget.listService is TmdbDiscoverlistService) {
+                  final discoverService =
+                      widget.listService as TmdbDiscoverlistService;
+                  if (!const ListEquality().equals(
+                      providerList, discoverService.enabledProviderIds)) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      discoverService.setEnabledProviderIds(providerList);
+                    });
+                  }
+                }
               }
 
-              final anyFilterActive = _controller.anyFilterActive;
+              final isDiscoverList =
+                  widget.listService is TmdbDiscoverlistService;
+              final anyFilterActive = isDiscoverList
+                  ? (widget.listService as TmdbDiscoverlistService)
+                      .anyFilterActive
+                  : _controller.anyFilterActive;
 
               return ChangeNotifierProvider<TmdbBaseListService>.value(
                 value: widget.listService,
@@ -372,12 +423,17 @@ class _ItemListState extends SearchableListState<ItemList> {
                       anyFilterActive: anyFilterActive,
                     ),
                     if (_controller.showFilters)
-                      ListControlPanel(
-                        controller: _controller,
-                        listService: widget.listService,
-                        showRatingFilter:
-                            widget.listService is RateslistService,
-                      ),
+                      isDiscoverList
+                          ? DiscoveryControlPanel(
+                              discoverlistService:
+                                  widget.listService as TmdbDiscoverlistService,
+                            )
+                          : ListControlPanel(
+                              controller: _controller,
+                              listService: widget.listService,
+                              showRatingFilter:
+                                  widget.listService is RateslistService,
+                            ),
                     _pinnedTitlesRow(),
                     Expanded(child: _itemList()),
                   ],

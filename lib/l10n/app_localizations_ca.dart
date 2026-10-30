@@ -1027,4 +1027,100 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get spanishLatam => 'Español (Latinoamérica)';
+
+  @override
+  String get discoveryResetFilters => 'Restablir filtres';
+
+  @override
+  String get discoveryThemeAny => 'Qualsevol';
+
+  @override
+  String get discoveryThemeSpace => 'Espai i Univers';
+
+  @override
+  String get discoveryThemeTimeTravel => 'Viatges en el temps i Multivers';
+
+  @override
+  String get discoveryThemeDystopiaAi => 'Distòpies, IA i Ciberpunk';
+
+  @override
+  String get discoveryThemeHeist => 'Atracaments i Estafes';
+
+  @override
+  String get discoveryThemeWhodunit => 'Intriga i Enigmes (Whodunit)';
+
+  @override
+  String get discoveryThemePsychologicalThriller => 'Thrillers psicològics';
+
+  @override
+  String get discoveryThemeSuperhero => 'Superherois i Còmic';
+
+  @override
+  String get discoveryThemeZombiesApocalypse => 'Zombis i Apocalipsi';
+
+  @override
+  String get discoveryThemeSupernatural => 'Fantasmes i Sobrenatural';
+
+  @override
+  String get discoveryThemeMedievalFantasy => 'Medieval i Bruixeria';
+
+  @override
+  String get discoveryThemeWar => 'Guerra i Conflictes bèl·lics';
+
+  @override
+  String get discoveryThemeAdrenalineAction => 'Acció i Adrenalina';
+
+  @override
+  String get discoveryThemeComedy => 'Comèdia per desconnectar';
+
+  @override
+  String get discoveryThemeTearjerkerDrama => 'Drames i Emoció';
+
+  @override
+  String get discoveryThemeSurvivalAdventure => 'Aventura i Supervivència';
+
+  @override
+  String get discoveryThemeFilmNoirMafia => 'Cinema Negre i Màfia';
+
+  @override
+  String get discoveryModeForYou => 'Per a tu';
+
+  @override
+  String get discoveryModeHiddenGems => 'Joies ocultes';
+
+  @override
+  String get discoveryModeTopRated => 'Aclamades';
+
+  @override
+  String get discoveryModeNewReleases => 'Estrenes';
+
+  @override
+  String get discoveryEpochAll => 'Totes les èpoques';
+
+  @override
+  String get discoveryEpoch2020s => 'Actuals (2020s)';
+
+  @override
+  String get discoveryEpoch2010s => 'Dècada 2010s';
+
+  @override
+  String get discoveryEpoch2000s => 'Dècada 2000s';
+
+  @override
+  String get discoveryEpoch80s90s => 'Anys 80s i 90s';
+
+  @override
+  String get discoveryEpochClassics => 'Clàssics (< 1980)';
+
+  @override
+  String get discoveryDurationAny => 'Qualsevol durada';
+
+  @override
+  String get discoveryDurationShort => 'Curtes (< 90 min)';
+
+  @override
+  String get discoveryDurationStandard => 'Estàndard (90 - 120 min)';
+
+  @override
+  String get discoveryDurationEpic => 'Èpiques (> 120 min)';
 }

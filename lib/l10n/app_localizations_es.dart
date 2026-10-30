@@ -1025,6 +1025,102 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get spanishLatam => 'Español (Latinoamérica)';
+
+  @override
+  String get discoveryResetFilters => 'Restablecer filtros';
+
+  @override
+  String get discoveryThemeAny => 'Cualquiera';
+
+  @override
+  String get discoveryThemeSpace => 'Espacio y Universo';
+
+  @override
+  String get discoveryThemeTimeTravel => 'Viajes en el tiempo y Multiverso';
+
+  @override
+  String get discoveryThemeDystopiaAi => 'Distopías, IA y Cyberpunk';
+
+  @override
+  String get discoveryThemeHeist => 'Atracos y Estafas';
+
+  @override
+  String get discoveryThemeWhodunit => 'Intriga y Enigmas (Whodunit)';
+
+  @override
+  String get discoveryThemePsychologicalThriller => 'Thrillers psicológicos';
+
+  @override
+  String get discoveryThemeSuperhero => 'Superhéroes y Cómics';
+
+  @override
+  String get discoveryThemeZombiesApocalypse => 'Zombis y Apocalipsis';
+
+  @override
+  String get discoveryThemeSupernatural => 'Fantasmas y Sobrenatural';
+
+  @override
+  String get discoveryThemeMedievalFantasy => 'Medieval y Brujería';
+
+  @override
+  String get discoveryThemeWar => 'Guerra y Conflictos bélicos';
+
+  @override
+  String get discoveryThemeAdrenalineAction => 'Acción y Adrenalina';
+
+  @override
+  String get discoveryThemeComedy => 'Comedia para desconectar';
+
+  @override
+  String get discoveryThemeTearjerkerDrama => 'Drama y Emoción';
+
+  @override
+  String get discoveryThemeSurvivalAdventure => 'Aventura y Supervivencia';
+
+  @override
+  String get discoveryThemeFilmNoirMafia => 'Cine Negro y Mafia';
+
+  @override
+  String get discoveryModeForYou => 'Para ti';
+
+  @override
+  String get discoveryModeHiddenGems => 'Joyas ocultas';
+
+  @override
+  String get discoveryModeTopRated => 'Aclamadas';
+
+  @override
+  String get discoveryModeNewReleases => 'Estrenos';
+
+  @override
+  String get discoveryEpochAll => 'Todas las épocas';
+
+  @override
+  String get discoveryEpoch2020s => 'Actuales (2020s)';
+
+  @override
+  String get discoveryEpoch2010s => 'Década 2010s';
+
+  @override
+  String get discoveryEpoch2000s => 'Década 2000s';
+
+  @override
+  String get discoveryEpoch80s90s => 'Años 80s y 90s';
+
+  @override
+  String get discoveryEpochClassics => 'Clásicos (< 1980)';
+
+  @override
+  String get discoveryDurationAny => 'Cualquier duración';
+
+  @override
+  String get discoveryDurationShort => 'Cortas (< 90 min)';
+
+  @override
+  String get discoveryDurationStandard => 'Estándar (90 - 120 min)';
+
+  @override
+  String get discoveryDurationEpic => 'Épicas (> 120 min)';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -2048,4 +2144,100 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get spanishLatam => 'Español (Latinoamérica)';
+
+  @override
+  String get discoveryResetFilters => 'Restablecer filtros';
+
+  @override
+  String get discoveryThemeAny => 'Cualquiera';
+
+  @override
+  String get discoveryThemeSpace => 'Espacio y Universo';
+
+  @override
+  String get discoveryThemeTimeTravel => 'Viajes en el tiempo y Multiverso';
+
+  @override
+  String get discoveryThemeDystopiaAi => 'Distopías, IA y Cyberpunk';
+
+  @override
+  String get discoveryThemeHeist => 'Atracos y Estafas';
+
+  @override
+  String get discoveryThemeWhodunit => 'Intriga y Enigmas (Whodunit)';
+
+  @override
+  String get discoveryThemePsychologicalThriller => 'Thrillers psicológicos';
+
+  @override
+  String get discoveryThemeSuperhero => 'Superhéroes y Cómics';
+
+  @override
+  String get discoveryThemeZombiesApocalypse => 'Zombis y Apocalipsis';
+
+  @override
+  String get discoveryThemeSupernatural => 'Fantasmas y Sobrenatural';
+
+  @override
+  String get discoveryThemeMedievalFantasy => 'Medieval y Brujería';
+
+  @override
+  String get discoveryThemeWar => 'Guerra y Conflictos bélicos';
+
+  @override
+  String get discoveryThemeAdrenalineAction => 'Acción y Adrenalina';
+
+  @override
+  String get discoveryThemeComedy => 'Comedia para desconectar';
+
+  @override
+  String get discoveryThemeTearjerkerDrama => 'Drama y Emoción';
+
+  @override
+  String get discoveryThemeSurvivalAdventure => 'Aventura y Supervivencia';
+
+  @override
+  String get discoveryThemeFilmNoirMafia => 'Cine Negro y Mafia';
+
+  @override
+  String get discoveryModeForYou => 'Para ti';
+
+  @override
+  String get discoveryModeHiddenGems => 'Joyas ocultas';
+
+  @override
+  String get discoveryModeTopRated => 'Aclamadas';
+
+  @override
+  String get discoveryModeNewReleases => 'Estrenos';
+
+  @override
+  String get discoveryEpochAll => 'Todas las épocas';
+
+  @override
+  String get discoveryEpoch2020s => 'Actuales (2020s)';
+
+  @override
+  String get discoveryEpoch2010s => 'Década 2010s';
+
+  @override
+  String get discoveryEpoch2000s => 'Década 2000s';
+
+  @override
+  String get discoveryEpoch80s90s => 'Años 80s y 90s';
+
+  @override
+  String get discoveryEpochClassics => 'Clásicos (< 1980)';
+
+  @override
+  String get discoveryDurationAny => 'Cualquier duración';
+
+  @override
+  String get discoveryDurationShort => 'Cortas (< 90 min)';
+
+  @override
+  String get discoveryDurationStandard => 'Estándar (90 - 120 min)';
+
+  @override
+  String get discoveryDurationEpic => 'Épicas (> 120 min)';
 }

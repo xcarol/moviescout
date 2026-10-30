@@ -1021,4 +1021,100 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get spanishLatam => 'Español (Latinoamérica)';
+
+  @override
+  String get discoveryResetFilters => 'Reset filters';
+
+  @override
+  String get discoveryThemeAny => 'Any';
+
+  @override
+  String get discoveryThemeSpace => 'Space & Universe';
+
+  @override
+  String get discoveryThemeTimeTravel => 'Time Travel & Multiverse';
+
+  @override
+  String get discoveryThemeDystopiaAi => 'Dystopia, AI & Cyberpunk';
+
+  @override
+  String get discoveryThemeHeist => 'Heists & Scams';
+
+  @override
+  String get discoveryThemeWhodunit => 'Mystery & Whodunit';
+
+  @override
+  String get discoveryThemePsychologicalThriller => 'Psychological Thrillers';
+
+  @override
+  String get discoveryThemeSuperhero => 'Superheroes & Comics';
+
+  @override
+  String get discoveryThemeZombiesApocalypse => 'Zombies & Apocalypse';
+
+  @override
+  String get discoveryThemeSupernatural => 'Ghosts & Supernatural';
+
+  @override
+  String get discoveryThemeMedievalFantasy => 'Medieval & Sorcery';
+
+  @override
+  String get discoveryThemeWar => 'War & Military';
+
+  @override
+  String get discoveryThemeAdrenalineAction => 'Action & Adrenaline';
+
+  @override
+  String get discoveryThemeComedy => 'Feel-Good Comedy';
+
+  @override
+  String get discoveryThemeTearjerkerDrama => 'Drama & Emotion';
+
+  @override
+  String get discoveryThemeSurvivalAdventure => 'Adventure & Survival';
+
+  @override
+  String get discoveryThemeFilmNoirMafia => 'Film Noir & Mafia';
+
+  @override
+  String get discoveryModeForYou => 'For you';
+
+  @override
+  String get discoveryModeHiddenGems => 'Hidden gems';
+
+  @override
+  String get discoveryModeTopRated => 'Top rated';
+
+  @override
+  String get discoveryModeNewReleases => 'New releases';
+
+  @override
+  String get discoveryEpochAll => 'All epochs';
+
+  @override
+  String get discoveryEpoch2020s => 'Current (2020s)';
+
+  @override
+  String get discoveryEpoch2010s => '2010s';
+
+  @override
+  String get discoveryEpoch2000s => '2000s';
+
+  @override
+  String get discoveryEpoch80s90s => '80s & 90s';
+
+  @override
+  String get discoveryEpochClassics => 'Classics (< 1980)';
+
+  @override
+  String get discoveryDurationAny => 'Any runtime';
+
+  @override
+  String get discoveryDurationShort => 'Short (< 90 min)';
+
+  @override
+  String get discoveryDurationStandard => 'Standard (90 - 120 min)';
+
+  @override
+  String get discoveryDurationEpic => 'Epic (> 120 min)';
 }

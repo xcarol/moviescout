@@ -1973,6 +1973,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Español (Latinoamérica)'**
   String get spanishLatam;
+
+  /// No description provided for @discoveryResetFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset filters'**
+  String get discoveryResetFilters;
+
+  /// No description provided for @discoveryThemeAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Any'**
+  String get discoveryThemeAny;
+
+  /// No description provided for @discoveryThemeSpace.
+  ///
+  /// In en, this message translates to:
+  /// **'Space & Universe'**
+  String get discoveryThemeSpace;
+
+  /// No description provided for @discoveryThemeTimeTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Travel & Multiverse'**
+  String get discoveryThemeTimeTravel;
+
+  /// No description provided for @discoveryThemeDystopiaAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Dystopia, AI & Cyberpunk'**
+  String get discoveryThemeDystopiaAi;
+
+  /// No description provided for @discoveryThemeHeist.
+  ///
+  /// In en, this message translates to:
+  /// **'Heists & Scams'**
+  String get discoveryThemeHeist;
+
+  /// No description provided for @discoveryThemeWhodunit.
+  ///
+  /// In en, this message translates to:
+  /// **'Mystery & Whodunit'**
+  String get discoveryThemeWhodunit;
+
+  /// No description provided for @discoveryThemePsychologicalThriller.
+  ///
+  /// In en, this message translates to:
+  /// **'Psychological Thrillers'**
+  String get discoveryThemePsychologicalThriller;
+
+  /// No description provided for @discoveryThemeSuperhero.
+  ///
+  /// In en, this message translates to:
+  /// **'Superheroes & Comics'**
+  String get discoveryThemeSuperhero;
+
+  /// No description provided for @discoveryThemeZombiesApocalypse.
+  ///
+  /// In en, this message translates to:
+  /// **'Zombies & Apocalypse'**
+  String get discoveryThemeZombiesApocalypse;
+
+  /// No description provided for @discoveryThemeSupernatural.
+  ///
+  /// In en, this message translates to:
+  /// **'Ghosts & Supernatural'**
+  String get discoveryThemeSupernatural;
+
+  /// No description provided for @discoveryThemeMedievalFantasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Medieval & Sorcery'**
+  String get discoveryThemeMedievalFantasy;
+
+  /// No description provided for @discoveryThemeWar.
+  ///
+  /// In en, this message translates to:
+  /// **'War & Military'**
+  String get discoveryThemeWar;
+
+  /// No description provided for @discoveryThemeAdrenalineAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Action & Adrenaline'**
+  String get discoveryThemeAdrenalineAction;
+
+  /// No description provided for @discoveryThemeComedy.
+  ///
+  /// In en, this message translates to:
+  /// **'Feel-Good Comedy'**
+  String get discoveryThemeComedy;
+
+  /// No description provided for @discoveryThemeTearjerkerDrama.
+  ///
+  /// In en, this message translates to:
+  /// **'Drama & Emotion'**
+  String get discoveryThemeTearjerkerDrama;
+
+  /// No description provided for @discoveryThemeSurvivalAdventure.
+  ///
+  /// In en, this message translates to:
+  /// **'Adventure & Survival'**
+  String get discoveryThemeSurvivalAdventure;
+
+  /// No description provided for @discoveryThemeFilmNoirMafia.
+  ///
+  /// In en, this message translates to:
+  /// **'Film Noir & Mafia'**
+  String get discoveryThemeFilmNoirMafia;
+
+  /// No description provided for @discoveryModeForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'For you'**
+  String get discoveryModeForYou;
+
+  /// No description provided for @discoveryModeHiddenGems.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden gems'**
+  String get discoveryModeHiddenGems;
+
+  /// No description provided for @discoveryModeTopRated.
+  ///
+  /// In en, this message translates to:
+  /// **'Top rated'**
+  String get discoveryModeTopRated;
+
+  /// No description provided for @discoveryModeNewReleases.
+  ///
+  /// In en, this message translates to:
+  /// **'New releases'**
+  String get discoveryModeNewReleases;
+
+  /// No description provided for @discoveryEpochAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All epochs'**
+  String get discoveryEpochAll;
+
+  /// No description provided for @discoveryEpoch2020s.
+  ///
+  /// In en, this message translates to:
+  /// **'Current (2020s)'**
+  String get discoveryEpoch2020s;
+
+  /// No description provided for @discoveryEpoch2010s.
+  ///
+  /// In en, this message translates to:
+  /// **'2010s'**
+  String get discoveryEpoch2010s;
+
+  /// No description provided for @discoveryEpoch2000s.
+  ///
+  /// In en, this message translates to:
+  /// **'2000s'**
+  String get discoveryEpoch2000s;
+
+  /// No description provided for @discoveryEpoch80s90s.
+  ///
+  /// In en, this message translates to:
+  /// **'80s & 90s'**
+  String get discoveryEpoch80s90s;
+
+  /// No description provided for @discoveryEpochClassics.
+  ///
+  /// In en, this message translates to:
+  /// **'Classics (< 1980)'**
+  String get discoveryEpochClassics;
+
+  /// No description provided for @discoveryDurationAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Any runtime'**
+  String get discoveryDurationAny;
+
+  /// No description provided for @discoveryDurationShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Short (< 90 min)'**
+  String get discoveryDurationShort;
+
+  /// No description provided for @discoveryDurationStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard (90 - 120 min)'**
+  String get discoveryDurationStandard;
+
+  /// No description provided for @discoveryDurationEpic.
+  ///
+  /// In en, this message translates to:
+  /// **'Epic (> 120 min)'**
+  String get discoveryDurationEpic;
 }
 
 class _AppLocalizationsDelegate

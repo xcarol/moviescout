@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
+import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
-import 'package:moviescout/widgets/layout/custom_refresh_builder.dart';
-import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:provider/provider.dart';
 
 class DiscoverList extends StatefulWidget {
@@ -70,6 +68,10 @@ class _DiscoverListState extends State<DiscoverList> {
         Provider.of<TmdbDiscoverlistService>(context, listen: false);
     _watchlistService = Provider.of<WatchlistService>(context, listen: false);
     _rateslistService = Provider.of<RateslistService>(context, listen: false);
+    final providerService =
+        Provider.of<TmdbProviderService>(context, listen: false);
+    _discoverlistService
+        .setEnabledProviderIds(providerService.enabledProviderIds);
 
     _removeListeners();
     _addListeners();
@@ -87,13 +89,13 @@ class _DiscoverListState extends State<DiscoverList> {
 
   void _onWatchlistLoading() {
     if (!_watchlistService.isLoading.value) {
-      _updateDiscoverList(forceUpdate: true);
+      _updateDiscoverList();
     }
   }
 
   void _onRateslistLoading() {
     if (!_rateslistService.isLoading.value) {
-      _updateDiscoverList(forceUpdate: true);
+      _updateDiscoverList();
     }
   }
 
@@ -101,6 +103,11 @@ class _DiscoverListState extends State<DiscoverList> {
     if (!mounted || _discoverlistService.isLoading.value) {
       return;
     }
+
+    final providerService =
+        Provider.of<TmdbProviderService>(context, listen: false);
+    _discoverlistService
+        .setEnabledProviderIds(providerService.enabledProviderIds);
 
     if (!forceUpdate) {
       final titleCount = await _discoverlistService.countTitles();
@@ -126,53 +133,6 @@ class _DiscoverListState extends State<DiscoverList> {
   }
 
   Widget body() {
-    final discoverlistService =
-        Provider.of<TmdbDiscoverlistService>(context, listen: false);
-    return ListenableBuilder(
-      listenable: Listenable.merge([
-        discoverlistService.isLoading,
-        discoverlistService.isRefreshing,
-      ]),
-      builder: (context, _) {
-        return Selector<TmdbDiscoverlistService, bool>(
-          selector: (_, service) =>
-              service.listIsEmpty &&
-              !service.isLoading.value &&
-              !service.isRefreshing.value,
-          shouldRebuild: (prev, next) => prev != next,
-          builder: (context, isEmpty, child) {
-            if (isEmpty) {
-              return emptyBody();
-            } else {
-              return discoverylistBody();
-            }
-          },
-        );
-      },
-    );
-  }
-
-  Widget emptyBody() {
-    return CustomRefreshIndicator(
-      onRefresh: () async {
-        _updateDiscoverList(forceUpdate: true);
-      },
-      builder: customRefreshBuilder,
-      child: LayoutBuilder(
-        builder: (context, constraints) => SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: Center(
-              child: Text(AppLocalizations.of(context)!.emptyList),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget discoverylistBody() {
     return _discoverlistWidget;
   }
 }
