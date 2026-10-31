@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
-import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +16,6 @@ class DiscoverList extends StatefulWidget {
 class _DiscoverListState extends State<DiscoverList> {
   late Future<void> _init;
   late TmdbDiscoverlistService _discoverlistService;
-  late WatchlistService _watchlistService;
   late RateslistService _rateslistService;
 
   late Widget _discoverlistWidget;
@@ -54,19 +52,16 @@ class _DiscoverListState extends State<DiscoverList> {
   }
 
   void _addListeners() {
-    _watchlistService.isLoading.addListener(_onWatchlistLoading);
     _rateslistService.isLoading.addListener(_onRateslistLoading);
   }
 
   void _removeListeners() {
-    _watchlistService.isLoading.removeListener(_onWatchlistLoading);
     _rateslistService.isLoading.removeListener(_onRateslistLoading);
   }
 
   Future<void> _loadData() async {
     _discoverlistService =
         Provider.of<TmdbDiscoverlistService>(context, listen: false);
-    _watchlistService = Provider.of<WatchlistService>(context, listen: false);
     _rateslistService = Provider.of<RateslistService>(context, listen: false);
     final providerService =
         Provider.of<TmdbProviderService>(context, listen: false);
@@ -87,15 +82,10 @@ class _DiscoverListState extends State<DiscoverList> {
     });
   }
 
-  void _onWatchlistLoading() {
-    if (!_watchlistService.isLoading.value) {
-      _updateDiscoverList();
-    }
-  }
-
   void _onRateslistLoading() {
     if (!_rateslistService.isLoading.value) {
-      _updateDiscoverList();
+      _discoverlistService.resetPagination();
+      _updateDiscoverList(forceUpdate: true);
     }
   }
 

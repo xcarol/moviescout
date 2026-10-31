@@ -74,6 +74,11 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     53: 80,
   };
 
+  int _moviePage = 1;
+  int _tvPage = 1;
+  final Set<int> _lastBatchMovieIds = {};
+  final Set<int> _lastBatchTvIds = {};
+
   bool _isRefreshPaused = false;
   bool _refreshPending = false;
   bool _retrievePending = false;
@@ -111,11 +116,25 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     _enabledProviderIds = ids;
   }
 
+  void resetPagination() {
+    _moviePage = 1;
+    _tvPage = 1;
+    _lastBatchMovieIds.clear();
+    _lastBatchTvIds.clear();
+  }
+
+  @override
+  Future<void> clearList() async {
+    resetPagination();
+    await super.clearList();
+  }
+
   Future<void> updateDiscoveryOptions(
     DiscoveryOptions newOptions,
     Locale locale,
   ) async {
     _options = newOptions;
+    resetPagination();
     try {
       final prefs = PreferencesService().prefs;
       await _options.saveToPrefs(prefs);
@@ -189,22 +208,14 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
 
     final ratedTitles =
         await titleRepo.getAllTitlesInList(AppConstants.rateslist);
-    final watchlistTitles =
-        await titleRepo.getAllTitlesInList(AppConstants.watchlist);
 
     final matchingRated =
         ratedTitles.where((t) => t.mediaType == mediaType).toList();
-    final matchingWatchlist =
-        watchlistTitles.where((t) => t.mediaType == mediaType).toList();
 
     final titlesToUseForRated =
         matchingRated.isNotEmpty ? matchingRated : ratedTitles;
-    final titlesToUseForWatchlist =
-        matchingWatchlist.isNotEmpty ? matchingWatchlist : watchlistTitles;
 
-    final totalTitles =
-        titlesToUseForRated.length + titlesToUseForWatchlist.length;
-    if (totalTitles == 0) {
+    if (titlesToUseForRated.isEmpty) {
       return UserPreferences(
         genreWeights: {},
         preferredGenres: [],
@@ -224,16 +235,7 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
       }
     }
 
-    for (final title in titlesToUseForWatchlist) {
-      for (final id in title.genreIds) {
-        final mappedId = isMovie ? _toMovieGenre(id) : _toTvGenre(id);
-        if (mappedId != null) {
-          genreWeights[mappedId] = (genreWeights[mappedId] ?? 0.0) + 0.3;
-          genreCounts[mappedId] = (genreCounts[mappedId] ?? 0) + 1;
-        }
-      }
-    }
-
+    final totalTitles = titlesToUseForRated.length;
     final Map<int, double> normalizedWeights = {};
     genreWeights.forEach((id, totalWeight) {
       final count = genreCounts[id] ?? 1;
@@ -490,6 +492,10 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     final List<dynamic> recommendations = [];
     final Set<int> excludedTmdbIds = {};
 
+    final isMovie = mediaType == ApiConstants.movie;
+    final lastBatchIds = isMovie ? _lastBatchMovieIds : _lastBatchTvIds;
+    int page = isMovie ? _moviePage : _tvPage;
+
     final titleRepo = repository;
     final preferences = await _calculatePreferences(mediaType);
 
@@ -504,16 +510,21 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     excludedTmdbIds.addAll(watchlistTitles
         .where((t) => t.mediaType == mediaType)
         .map((t) => t.tmdbId));
+    excludedTmdbIds.addAll(lastBatchIds);
 
-    int page = 1;
     int totalPages = 1;
+    int pagesQueried = 0;
     const int maxPagesToQuery = 5;
     const int targetCount = 40;
+    const int maxPageCeiling = 20;
 
     while (recommendations.length < targetCount &&
-        page <= totalPages &&
-        page <= maxPagesToQuery) {
+        pagesQueried < maxPagesToQuery) {
+      if (totalPages > 1 && page > totalPages) {
+        page = 1;
+      }
       final query = _buildDiscoverQuery(locale, mediaType, page, preferences);
+      pagesQueried++;
       try {
         final response = await get(query);
         if (response.statusCode == 200) {
@@ -539,6 +550,46 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
         break;
       }
       page++;
+      if (page > totalPages || page > maxPageCeiling) {
+        page = 1;
+      }
+    }
+
+    if (recommendations.isEmpty && lastBatchIds.isNotEmpty) {
+      excludedTmdbIds.removeAll(lastBatchIds);
+      page = 1;
+      final query = _buildDiscoverQuery(locale, mediaType, page, preferences);
+      try {
+        final response = await get(query);
+        if (response.statusCode == 200) {
+          final data = body(response);
+          final List<dynamic>? results = data['results'];
+          if (results != null) {
+            for (final title in results) {
+              if (recommendations.length >= targetCount) break;
+              final id = title[TmdbTitleFields.id];
+              if (id != null && !excludedTmdbIds.contains(id)) {
+                recommendations.add(title);
+                excludedTmdbIds.add(id);
+              }
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    lastBatchIds.clear();
+    for (final title in recommendations) {
+      final id = title[TmdbTitleFields.id];
+      if (id != null && id is int) {
+        lastBatchIds.add(id);
+      }
+    }
+
+    if (isMovie) {
+      _moviePage = page;
+    } else {
+      _tvPage = page;
     }
 
     _scoreAndSortRecommendations(recommendations, preferences);
