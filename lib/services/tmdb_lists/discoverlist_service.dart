@@ -403,6 +403,7 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
         case DiscoveryDuration.any:
           break;
         case DiscoveryDuration.short:
+          queryParams['with_runtime.gte'] = '45';
           queryParams['with_runtime.lte'] = '95';
           break;
         case DiscoveryDuration.standard:
