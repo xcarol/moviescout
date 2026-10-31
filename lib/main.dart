@@ -83,10 +83,21 @@ void _runMain() async {
       }
 
       FlutterError.onError = (errorDetails) {
+        if (ErrorService.isNetworkError(errorDetails.exception)) {
+          ErrorService.log(
+            errorDetails.exception,
+            stackTrace: errorDetails.stack,
+          );
+          return;
+        }
         FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
       };
 
       PlatformDispatcher.instance.onError = (error, stack) {
+        if (ErrorService.isNetworkError(error)) {
+          ErrorService.log(error, stackTrace: stack);
+          return true;
+        }
         FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
         return true;
       };
