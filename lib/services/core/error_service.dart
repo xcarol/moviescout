@@ -9,6 +9,7 @@ import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/save_logs.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ErrorService {
   static void log(
@@ -87,7 +88,8 @@ class ErrorService {
         error is HandshakeException ||
         error is HttpException ||
         error is TimeoutException ||
-        error is TlsException) {
+        error is TlsException ||
+        error is AuthRetryableFetchException) {
       return true;
     }
 
@@ -100,7 +102,8 @@ class ErrorService {
         msg.contains('connection closed') ||
         msg.contains('connection timed out') ||
         msg.contains('clientexception') ||
-        msg.contains('software caused connection abort');
+        msg.contains('software caused connection abort') ||
+        msg.contains('authretryablefetchexception');
   }
 
   static bool _shouldReportAutomatically(dynamic error) {

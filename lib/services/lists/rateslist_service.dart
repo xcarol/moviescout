@@ -52,7 +52,7 @@ class RateslistService extends TmdbTitleListService {
       return;
     }
 
-    await retrieveList(
+    final syncSuccess = await retrieveList(
         forceUpdate: forceUpdate,
         fetchRemoteData: () async {
           final List<TmdbTitle> parsed = [];
@@ -79,7 +79,9 @@ class RateslistService extends TmdbTitleListService {
         });
 
     await filterItems();
-    await _retrieveRatedEpisodes();
+    if (syncSuccess) {
+      await _retrieveRatedEpisodes();
+    }
   }
 
   Future<void> _retrieveRatedEpisodes() async {

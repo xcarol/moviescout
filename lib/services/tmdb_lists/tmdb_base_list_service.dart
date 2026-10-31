@@ -78,6 +78,7 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
   ValueNotifier<List<String>> listGenres = ValueNotifier([]);
 
   bool get isRefreshable => true;
+  bool get isDataLoading => !anyFilterApplied || isDbLoading || isLoading.value;
 
   T? getItem(int position) {
     if (position < 0 || position >= loadedItemsVal.length) {

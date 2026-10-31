@@ -127,12 +127,12 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
     pageVal = 0;
   }
 
-  Future<void> retrieveList({
+  Future<bool> retrieveList({
     required Future<List<TmdbTitle>> Function() fetchRemoteData,
     bool forceUpdate = false,
   }) async {
     if (isLoading.value) {
-      return;
+      return false;
     }
 
     if (forceUpdate) {
@@ -149,7 +149,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
         if (loadedItemsVal.isEmpty) {
           await filterItems();
         }
-        return;
+        return true;
       }
 
       isLoading.value = true;
@@ -171,7 +171,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       }
 
       if (hasLocalDataNow && isUpToDateNow && !forceUpdate) {
-        return;
+        return true;
       }
 
       await _syncWithServer(fetchRemoteData);
@@ -179,6 +179,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       await updateListGenres();
 
       setLastUpdate();
+      return true;
     } catch (error, stackTrace) {
       ErrorService.log(
         error,
@@ -190,6 +191,7 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
           await filterItems();
         } catch (_) {}
       }
+      return false;
     } finally {
       isLoading.value = false;
       completer.complete();

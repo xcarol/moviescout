@@ -550,6 +550,9 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
   }
 
   @override
+  bool get isDataLoading => super.isDataLoading || isRefreshing.value;
+
+  @override
   bool get filterByProviders => false;
 
   @override

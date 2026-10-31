@@ -145,11 +145,20 @@ class _ItemListState extends SearchableListState<ItemList> {
 
   Widget _itemList() {
     return ListenableBuilder(
-      listenable: widget.listService,
+      listenable: Listenable.merge([
+        widget.listService,
+        widget.listService.isLoading,
+        if (widget.listService is TmdbDiscoverlistService)
+          (widget.listService as TmdbDiscoverlistService).isRefreshing,
+      ]),
       builder: (context, _) {
         final service = widget.listService;
+        final bool showEmptyMessage = !service.isDataLoading &&
+            service.loadedItemCount == 0 &&
+            (service is TmdbDiscoverlistService || service.hasActiveFilter);
+
         Widget listView;
-        if (service.loadedItemCount == 0 && !service.isLoading.value) {
+        if (showEmptyMessage) {
           listView = LayoutBuilder(
             builder: (context, constraints) => SingleChildScrollView(
               controller: _controller.scrollController,
