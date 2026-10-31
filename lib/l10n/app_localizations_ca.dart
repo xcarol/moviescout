@@ -1116,11 +1116,14 @@ class AppLocalizationsCa extends AppLocalizations {
   String get discoveryDurationAny => 'Qualsevol durada';
 
   @override
-  String get discoveryDurationShort => 'Curtes (< 90 min)';
+  String get discoveryDurationShort => 'Pel·lícules curtes (40 - 90 min)';
 
   @override
   String get discoveryDurationStandard => 'Estàndard (90 - 120 min)';
 
   @override
   String get discoveryDurationEpic => 'Èpiques (> 120 min)';
+
+  @override
+  String get discoveryDurationShortFilm => 'Curtmetratges (< 40 min)';
 }

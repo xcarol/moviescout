@@ -40,6 +40,7 @@ enum DiscoveryEpoch {
 
 enum DiscoveryDuration {
   any,
+  shortFilm,
   short,
   standard,
   epic,
@@ -356,6 +357,8 @@ class DiscoveryOptions {
     switch (duration) {
       case DiscoveryDuration.any:
         return l10n.discoveryDurationAny;
+      case DiscoveryDuration.shortFilm:
+        return l10n.discoveryDurationShortFilm;
       case DiscoveryDuration.short:
         return l10n.discoveryDurationShort;
       case DiscoveryDuration.standard:

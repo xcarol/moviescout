@@ -402,8 +402,22 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
       switch (_options.duration) {
         case DiscoveryDuration.any:
           break;
+        case DiscoveryDuration.shortFilm:
+          queryParams['with_keywords'] = '263548';
+          queryParams['with_runtime.lte'] = '40';
+          if (_options.mode == DiscoveryMode.topRated) {
+            queryParams['vote_count.gte'] = '100';
+          } else if (_options.mode == DiscoveryMode.forYou) {
+            queryParams['vote_count.gte'] = '20';
+          } else if (_options.mode == DiscoveryMode.hiddenGems) {
+            queryParams['vote_count.gte'] = '15';
+            queryParams['vote_count.lte'] = '500';
+          } else if (_options.mode == DiscoveryMode.newReleases) {
+            queryParams['vote_count.gte'] = '5';
+          }
+          break;
         case DiscoveryDuration.short:
-          queryParams['with_runtime.gte'] = '45';
+          queryParams['with_runtime.gte'] = '40';
           queryParams['with_runtime.lte'] = '95';
           break;
         case DiscoveryDuration.standard:
@@ -491,6 +505,9 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     final Set<int> excludedTmdbIds = {};
 
     final isMovie = mediaType == ApiConstants.movie;
+    if (!isMovie && _options.duration == DiscoveryDuration.shortFilm) {
+      return [];
+    }
     final lastBatchIds = isMovie ? _lastBatchMovieIds : _lastBatchTvIds;
     int page = isMovie ? _moviePage : _tvPage;
 

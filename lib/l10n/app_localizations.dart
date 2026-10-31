@@ -2151,7 +2151,7 @@ abstract class AppLocalizations {
   /// No description provided for @discoveryDurationShort.
   ///
   /// In en, this message translates to:
-  /// **'Short (< 90 min)'**
+  /// **'Short movies (40 - 90 min)'**
   String get discoveryDurationShort;
 
   /// No description provided for @discoveryDurationStandard.
@@ -2165,6 +2165,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Epic (> 120 min)'**
   String get discoveryDurationEpic;
+
+  /// No description provided for @discoveryDurationShortFilm.
+  ///
+  /// In en, this message translates to:
+  /// **'Short films (< 40 min)'**
+  String get discoveryDurationShortFilm;
 }
 
 class _AppLocalizationsDelegate
