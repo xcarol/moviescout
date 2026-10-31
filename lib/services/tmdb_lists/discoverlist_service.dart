@@ -180,10 +180,13 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
   }
 
   double _getWeightForRating(double rating) {
-    if (rating >= 4.5) return 1.0;
-    if (rating >= 3.5) return 0.7;
-    if (rating >= 2.5) return 0.2;
-    if (rating > 0) return -0.6;
+    if (rating == AppConstants.seenRating) return 0.0;
+    if (rating >= 9.0) return 1.0;
+    if (rating >= 8.0) return 0.7;
+    if (rating >= 7.0) return 0.4;
+    if (rating >= 6.0) return 0.1;
+    if (rating >= 5.0) return -0.3;
+    if (rating > 0.0) return -0.8;
     return 0.0;
   }
 
