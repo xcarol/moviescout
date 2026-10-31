@@ -526,6 +526,7 @@ class SettingsScreen extends StatelessWidget {
                   await tmdbWatchlistService.clearList();
                   await tmdbRateslistService.clearList();
                   await tmdbDiscoverlistService.clearList();
+                  tmdbDiscoverlistService.resetPagination();
                   await tmdbDiscoverlistService.retrieveDiscoverlist(
                     userLocale,
                     forceUpdate: true,

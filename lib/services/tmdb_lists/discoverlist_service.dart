@@ -123,12 +123,6 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     _lastBatchTvIds.clear();
   }
 
-  @override
-  Future<void> clearList() async {
-    resetPagination();
-    await super.clearList();
-  }
-
   Future<void> updateDiscoveryOptions(
     DiscoveryOptions newOptions,
     Locale locale,
