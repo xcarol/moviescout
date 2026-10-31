@@ -74,6 +74,11 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     53: 80,
   };
 
+  int _moviePage = 1;
+  int _tvPage = 1;
+  final Set<int> _lastBatchMovieIds = {};
+  final Set<int> _lastBatchTvIds = {};
+
   bool _isRefreshPaused = false;
   bool _refreshPending = false;
   bool _retrievePending = false;
@@ -111,11 +116,19 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     _enabledProviderIds = ids;
   }
 
+  void resetPagination() {
+    _moviePage = 1;
+    _tvPage = 1;
+    _lastBatchMovieIds.clear();
+    _lastBatchTvIds.clear();
+  }
+
   Future<void> updateDiscoveryOptions(
     DiscoveryOptions newOptions,
     Locale locale,
   ) async {
     _options = newOptions;
+    resetPagination();
     try {
       final prefs = PreferencesService().prefs;
       await _options.saveToPrefs(prefs);
@@ -161,10 +174,13 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
   }
 
   double _getWeightForRating(double rating) {
-    if (rating >= 4.5) return 1.0;
-    if (rating >= 3.5) return 0.7;
-    if (rating >= 2.5) return 0.2;
-    if (rating > 0) return -0.6;
+    if (rating == AppConstants.seenRating) return 0.0;
+    if (rating >= 9.0) return 1.0;
+    if (rating >= 8.0) return 0.7;
+    if (rating >= 7.0) return 0.4;
+    if (rating >= 6.0) return 0.1;
+    if (rating >= 5.0) return -0.3;
+    if (rating > 0.0) return -0.8;
     return 0.0;
   }
 
@@ -189,22 +205,14 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
 
     final ratedTitles =
         await titleRepo.getAllTitlesInList(AppConstants.rateslist);
-    final watchlistTitles =
-        await titleRepo.getAllTitlesInList(AppConstants.watchlist);
 
     final matchingRated =
         ratedTitles.where((t) => t.mediaType == mediaType).toList();
-    final matchingWatchlist =
-        watchlistTitles.where((t) => t.mediaType == mediaType).toList();
 
     final titlesToUseForRated =
         matchingRated.isNotEmpty ? matchingRated : ratedTitles;
-    final titlesToUseForWatchlist =
-        matchingWatchlist.isNotEmpty ? matchingWatchlist : watchlistTitles;
 
-    final totalTitles =
-        titlesToUseForRated.length + titlesToUseForWatchlist.length;
-    if (totalTitles == 0) {
+    if (titlesToUseForRated.isEmpty) {
       return UserPreferences(
         genreWeights: {},
         preferredGenres: [],
@@ -224,16 +232,7 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
       }
     }
 
-    for (final title in titlesToUseForWatchlist) {
-      for (final id in title.genreIds) {
-        final mappedId = isMovie ? _toMovieGenre(id) : _toTvGenre(id);
-        if (mappedId != null) {
-          genreWeights[mappedId] = (genreWeights[mappedId] ?? 0.0) + 0.3;
-          genreCounts[mappedId] = (genreCounts[mappedId] ?? 0) + 1;
-        }
-      }
-    }
-
+    final totalTitles = titlesToUseForRated.length;
     final Map<int, double> normalizedWeights = {};
     genreWeights.forEach((id, totalWeight) {
       final count = genreCounts[id] ?? 1;
@@ -403,7 +402,22 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
       switch (_options.duration) {
         case DiscoveryDuration.any:
           break;
+        case DiscoveryDuration.shortFilm:
+          queryParams['with_keywords'] = '263548';
+          queryParams['with_runtime.lte'] = '40';
+          if (_options.mode == DiscoveryMode.topRated) {
+            queryParams['vote_count.gte'] = '100';
+          } else if (_options.mode == DiscoveryMode.forYou) {
+            queryParams['vote_count.gte'] = '20';
+          } else if (_options.mode == DiscoveryMode.hiddenGems) {
+            queryParams['vote_count.gte'] = '15';
+            queryParams['vote_count.lte'] = '500';
+          } else if (_options.mode == DiscoveryMode.newReleases) {
+            queryParams['vote_count.gte'] = '5';
+          }
+          break;
         case DiscoveryDuration.short:
+          queryParams['with_runtime.gte'] = '40';
           queryParams['with_runtime.lte'] = '95';
           break;
         case DiscoveryDuration.standard:
@@ -490,6 +504,13 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     final List<dynamic> recommendations = [];
     final Set<int> excludedTmdbIds = {};
 
+    final isMovie = mediaType == ApiConstants.movie;
+    if (!isMovie && _options.duration == DiscoveryDuration.shortFilm) {
+      return [];
+    }
+    final lastBatchIds = isMovie ? _lastBatchMovieIds : _lastBatchTvIds;
+    int page = isMovie ? _moviePage : _tvPage;
+
     final titleRepo = repository;
     final preferences = await _calculatePreferences(mediaType);
 
@@ -504,16 +525,21 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     excludedTmdbIds.addAll(watchlistTitles
         .where((t) => t.mediaType == mediaType)
         .map((t) => t.tmdbId));
+    excludedTmdbIds.addAll(lastBatchIds);
 
-    int page = 1;
     int totalPages = 1;
+    int pagesQueried = 0;
     const int maxPagesToQuery = 5;
     const int targetCount = 40;
+    const int maxPageCeiling = 20;
 
     while (recommendations.length < targetCount &&
-        page <= totalPages &&
-        page <= maxPagesToQuery) {
+        pagesQueried < maxPagesToQuery) {
+      if (totalPages > 1 && page > totalPages) {
+        page = 1;
+      }
       final query = _buildDiscoverQuery(locale, mediaType, page, preferences);
+      pagesQueried++;
       try {
         final response = await get(query);
         if (response.statusCode == 200) {
@@ -539,6 +565,46 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
         break;
       }
       page++;
+      if (page > totalPages || page > maxPageCeiling) {
+        page = 1;
+      }
+    }
+
+    if (recommendations.isEmpty && lastBatchIds.isNotEmpty) {
+      excludedTmdbIds.removeAll(lastBatchIds);
+      page = 1;
+      final query = _buildDiscoverQuery(locale, mediaType, page, preferences);
+      try {
+        final response = await get(query);
+        if (response.statusCode == 200) {
+          final data = body(response);
+          final List<dynamic>? results = data['results'];
+          if (results != null) {
+            for (final title in results) {
+              if (recommendations.length >= targetCount) break;
+              final id = title[TmdbTitleFields.id];
+              if (id != null && !excludedTmdbIds.contains(id)) {
+                recommendations.add(title);
+                excludedTmdbIds.add(id);
+              }
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    lastBatchIds.clear();
+    for (final title in recommendations) {
+      final id = title[TmdbTitleFields.id];
+      if (id != null && id is int) {
+        lastBatchIds.add(id);
+      }
+    }
+
+    if (isMovie) {
+      _moviePage = page;
+    } else {
+      _tvPage = page;
     }
 
     _scoreAndSortRecommendations(recommendations, preferences);

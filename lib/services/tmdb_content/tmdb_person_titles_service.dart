@@ -53,7 +53,7 @@ class TmdbPersonTitlesService extends TmdbTitleListService
   }
 
   @override
-  Future<void> retrieveList({
+  Future<bool> retrieveList({
     required Future<List<TmdbTitle>> Function() fetchRemoteData,
     bool forceUpdate = false,
   }) async {
@@ -65,6 +65,7 @@ class TmdbPersonTitlesService extends TmdbTitleListService
       await updateListGenres();
       await filterItems();
       await _fetchTitlesData();
+      return true;
     } finally {
       isLoading.value = false;
     }

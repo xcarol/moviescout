@@ -748,10 +748,12 @@
   "@discoveryEpochClassics": {},
   "discoveryDurationAny": "Any runtime",
   "@discoveryDurationAny": {},
-  "discoveryDurationShort": "Short (< 90 min)",
+  "discoveryDurationShort": "Films courts (40 - 90 min)",
   "@discoveryDurationShort": {},
   "discoveryDurationStandard": "Standard (90 - 120 min)",
   "@discoveryDurationStandard": {},
   "discoveryDurationEpic": "Epic (> 120 min)",
-  "@discoveryDurationEpic": {}
+  "@discoveryDurationEpic": {},
+  "discoveryDurationShortFilm": "Courts-métrages (< 40 min)",
+  "@discoveryDurationShortFilm": {}
 }

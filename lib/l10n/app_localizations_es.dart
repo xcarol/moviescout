@@ -1114,13 +1114,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get discoveryDurationAny => 'Cualquier duración';
 
   @override
-  String get discoveryDurationShort => 'Cortas (< 90 min)';
+  String get discoveryDurationShort => 'Películas cortas (40 - 90 min)';
 
   @override
   String get discoveryDurationStandard => 'Estándar (90 - 120 min)';
 
   @override
   String get discoveryDurationEpic => 'Épicas (> 120 min)';
+
+  @override
+  String get discoveryDurationShortFilm => 'Cortometrajes (< 40 min)';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -2233,11 +2236,14 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get discoveryDurationAny => 'Cualquier duración';
 
   @override
-  String get discoveryDurationShort => 'Cortas (< 90 min)';
+  String get discoveryDurationShort => 'Películas cortas (40 - 90 min)';
 
   @override
   String get discoveryDurationStandard => 'Estándar (90 - 120 min)';
 
   @override
   String get discoveryDurationEpic => 'Épicas (> 120 min)';
+
+  @override
+  String get discoveryDurationShortFilm => 'Cortometrajes (< 40 min)';
 }

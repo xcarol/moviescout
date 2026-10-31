@@ -30,7 +30,7 @@ class DiscoveryControlPanel extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _buildResetButton(context, titleTheme, l10n, locale),
+              _buildResetButton(context, l10n, locale),
               if (discoverlistService.enabledProviderIds.isNotEmpty)
                 _buildProvidersSelector(
                     context, titleTheme, l10n, options, locale),
@@ -297,7 +297,6 @@ class DiscoveryControlPanel extends StatelessWidget {
 
   Widget _buildResetButton(
     BuildContext context,
-    TitleListTheme titleTheme,
     AppLocalizations l10n,
     Locale locale,
   ) {
@@ -305,37 +304,24 @@ class DiscoveryControlPanel extends StatelessWidget {
     final activeColor = Theme.of(context).colorScheme.primary;
     final disabledColor = Theme.of(context).disabledColor;
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        IconButton(
-          visualDensity: VisualDensity.compact,
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-          icon: Icon(
-            hasFilters ? Icons.filter_alt_off : Icons.filter_alt,
-            size: 20,
-            color: hasFilters ? activeColor : disabledColor,
-          ),
-          tooltip: hasFilters ? l10n.discoveryResetFilters : null,
-          onPressed: hasFilters
-              ? () {
-                  discoverlistService.updateDiscoveryOptions(
-                    const DiscoveryOptions(),
-                    locale,
-                  );
-                }
-              : null,
-        ),
-        Text(
-          l10n.discoveryResetFilters,
-          style: TextStyle(
-            fontSize: 14,
-            color: titleTheme.controlPanelForeground,
-          ),
-        ),
-      ],
+    return IconButton(
+      visualDensity: VisualDensity.compact,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+      icon: Icon(
+        hasFilters ? Icons.filter_alt_off : Icons.filter_alt,
+        size: 20,
+        color: hasFilters ? activeColor : disabledColor,
+      ),
+      tooltip: l10n.discoveryResetFilters,
+      onPressed: hasFilters
+          ? () {
+              discoverlistService.updateDiscoveryOptions(
+                const DiscoveryOptions(),
+                locale,
+              );
+            }
+          : null,
     );
   }
 }

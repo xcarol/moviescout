@@ -748,10 +748,12 @@
   "@discoveryEpochClassics": {},
   "discoveryDurationAny": "Any runtime",
   "@discoveryDurationAny": {},
-  "discoveryDurationShort": "Short (< 90 min)",
+  "discoveryDurationShort": "Film motzak (40 - 90 min)",
   "@discoveryDurationShort": {},
   "discoveryDurationStandard": "Standard (90 - 120 min)",
   "@discoveryDurationStandard": {},
   "discoveryDurationEpic": "Epic (> 120 min)",
-  "@discoveryDurationEpic": {}
+  "@discoveryDurationEpic": {},
+  "discoveryDurationShortFilm": "Film laburrak (< 40 min)",
+  "@discoveryDurationShortFilm": {}
 }

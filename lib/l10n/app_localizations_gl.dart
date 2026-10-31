@@ -1115,11 +1115,14 @@ class AppLocalizationsGl extends AppLocalizations {
   String get discoveryDurationAny => 'Any runtime';
 
   @override
-  String get discoveryDurationShort => 'Short (< 90 min)';
+  String get discoveryDurationShort => 'Películas curtas (40 - 90 min)';
 
   @override
   String get discoveryDurationStandard => 'Standard (90 - 120 min)';
 
   @override
   String get discoveryDurationEpic => 'Epic (> 120 min)';
+
+  @override
+  String get discoveryDurationShortFilm => 'Curtametraxes (< 40 min)';
 }

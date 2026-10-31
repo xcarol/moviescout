@@ -1115,13 +1115,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get discoveryDurationAny => 'Any runtime';
 
   @override
-  String get discoveryDurationShort => 'Short (< 90 min)';
+  String get discoveryDurationShort => 'Filmes curtos (40 - 90 min)';
 
   @override
   String get discoveryDurationStandard => 'Standard (90 - 120 min)';
 
   @override
   String get discoveryDurationEpic => 'Epic (> 120 min)';
+
+  @override
+  String get discoveryDurationShortFilm => 'Curtas-metragens (< 40 min)';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -2234,11 +2237,14 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   String get discoveryDurationAny => 'Any runtime';
 
   @override
-  String get discoveryDurationShort => 'Short (< 90 min)';
+  String get discoveryDurationShort => 'Filmes curtos (40 - 90 min)';
 
   @override
   String get discoveryDurationStandard => 'Standard (90 - 120 min)';
 
   @override
   String get discoveryDurationEpic => 'Epic (> 120 min)';
+
+  @override
+  String get discoveryDurationShortFilm => 'Curtas-metragens (< 40 min)';
 }
