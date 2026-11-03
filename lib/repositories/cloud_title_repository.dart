@@ -70,6 +70,7 @@ class CloudTitleRepository {
         'name': title.name,
         'poster_path': title.posterPathSuffix,
         'vote_average': title.voteAverage,
+        'last_notified_season': title.lastNotifiedSeason,
       }, onConflict: 'user_id, tmdb_id, media_type, list_name');
     });
   }
@@ -191,6 +192,18 @@ class CloudTitleRepository {
         lastNotifiedSeason: title.lastNotifiedSeason,
       );
     }
+
+    if (title.lastNotifiedSeason > 0) {
+      await _retryOnFutureJwt(() async {
+        await _client
+            .from('user_titles')
+            .update({'last_notified_season': title.lastNotifiedSeason})
+            .eq('user_id', userId)
+            .eq('tmdb_id', title.tmdbId)
+            .eq('media_type', title.mediaType);
+      });
+    }
+
     if (addedToWatchlist) {
       await upsertWatchlistTitle(
         userId: userId,
