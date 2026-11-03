@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/user_profile.dart';
 import 'package:moviescout/screens/user_details.dart';
 
@@ -15,6 +16,8 @@ class UserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isPrivate = !user.isPublic;
+
     return RepaintBoundary(
       child: SizedBox(
         height: cardHeight,
@@ -28,12 +31,15 @@ class UserCard extends StatelessWidget {
                 ),
               );
             },
-            child: Row(
-              children: [
-                _avatar(context),
-                const SizedBox(width: 12),
-                _details(context),
-              ],
+            child: Opacity(
+              opacity: isPrivate ? 0.6 : 1.0,
+              child: Row(
+                children: [
+                  _avatar(context),
+                  const SizedBox(width: 12),
+                  _details(context),
+                ],
+              ),
             ),
           ),
         ),
@@ -81,6 +87,10 @@ class UserCard extends StatelessWidget {
   }
 
   Widget _details(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final loc = AppLocalizations.of(context)!;
+    final isPrivate = !user.isPublic;
+
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
@@ -97,6 +107,27 @@ class UserCard extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
+            if (isPrivate) ...[
+              const SizedBox(height: 6),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.lock_outline,
+                    size: 14,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    loc.settingsProfilePrivate,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
