@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import "package:moviescout/services/auth/supabase_auth_service.dart";
-import 'package:moviescout/services/settings/app_settings_service.dart';
+import 'package:moviescout/services/core/app_service.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/screens/discover_list.dart';
 import 'package:moviescout/screens/following_list.dart';
@@ -58,7 +58,7 @@ class _MainScreenState extends State<MainScreen> {
 
     SupabaseAuthService authService =
         Provider.of<SupabaseAuthService>(context, listen: true);
-    final appSettings = Provider.of<AppSettingsService>(context, listen: true);
+    final appSettings = Provider.of<AppService>(context, listen: true);
 
     bool isLoggedIn = authService.isLoggedIn;
     final activeTabs = _getActiveTabs(appSettings.showCommunityTab);
@@ -74,7 +74,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final customColors = Theme.of(context).extension<CustomColors>()!;
-    final appSettings = Provider.of<AppSettingsService>(context);
+    final appSettings = Provider.of<AppService>(context);
     final activeTabs = _getActiveTabs(appSettings.showCommunityTab);
 
     if (_currentIndex >= activeTabs.length) {

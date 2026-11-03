@@ -45,7 +45,7 @@ import 'package:moviescout/utils/status_translator.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/services/notifications/notification_service.dart';
 import 'package:moviescout/services/workers/watchlist_update_service.dart';
-import 'package:moviescout/services/settings/app_settings_service.dart';
+import 'package:moviescout/services/core/app_service.dart';
 import 'package:moviescout/services/workers/uninitialized_titles_worker.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -148,7 +148,7 @@ void _runMain() async {
       GenreTranslator.init(),
       StatusTranslator.init(),
       NotificationService().init(),
-      AppSettingsService().init(),
+      AppService().init(),
     ]).timeout(const Duration(seconds: 5), onTimeout: () => []);
 
     if (defaultTargetPlatform == TargetPlatform.android ||
@@ -173,6 +173,22 @@ void _runMain() async {
   final repository = LocalTitleRepository();
   final cloudRepository = CloudTitleRepository();
 
+  final tmdbProviderService =
+      TmdbProviderService(cloudRepository: cloudRepository);
+  final rateslistService =
+      RateslistService(repository, cloudRepository: cloudRepository);
+  final watchlistService =
+      WatchlistService(repository, cloudRepository: cloudRepository);
+  final discoverlistService =
+      TmdbDiscoverlistService(AppConstants.discoverlist, repository);
+
+  AppService().attachServices(
+    watchlistService: watchlistService,
+    rateslistService: rateslistService,
+    discoverlistService: discoverlistService,
+    providerService: tmdbProviderService,
+  );
+
   UninitializedTitlesWorker.dispatch();
 
   runApp(MultiProvider(
@@ -183,7 +199,7 @@ void _runMain() async {
       ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => SupabaseAuthService()),
       ChangeNotifierProxyProvider<SupabaseAuthService, TmdbProviderService>(
-        create: (_) => TmdbProviderService(cloudRepository: cloudRepository),
+        create: (_) => tmdbProviderService,
         update: (_, authService, providerService) => providerService!..setup(),
       ),
       ChangeNotifierProvider<PinnedService>(
@@ -203,8 +219,7 @@ void _runMain() async {
       ),
       ChangeNotifierProxyProvider2<FollowingService, SupabaseAuthService,
           RateslistService>(
-        create: (_) =>
-            RateslistService(repository, cloudRepository: cloudRepository),
+        create: (_) => rateslistService,
         update: (_, followingService, authService, rateslistService) {
           rateslistService!.followingService = followingService;
           rateslistService.updateAuth(authService);
@@ -213,8 +228,7 @@ void _runMain() async {
       ),
       ChangeNotifierProxyProvider3<RateslistService, PinnedService,
           SupabaseAuthService, WatchlistService>(
-        create: (_) =>
-            WatchlistService(repository, cloudRepository: cloudRepository),
+        create: (_) => watchlistService,
         update: (_, rateslistService, pinnedService, authService,
             watchlistService) {
           rateslistService.removeListener(watchlistService!.refresh);
@@ -226,8 +240,7 @@ void _runMain() async {
       ),
       ChangeNotifierProxyProvider2<RateslistService, WatchlistService,
           TmdbDiscoverlistService>(
-        create: (_) =>
-            TmdbDiscoverlistService(AppConstants.discoverlist, repository),
+        create: (_) => discoverlistService,
         update: (_, rateslistService, watchlistService, discoverlistService) {
           rateslistService.removeListener(discoverlistService!.refresh);
           watchlistService.removeListener(discoverlistService.refresh);
@@ -237,7 +250,7 @@ void _runMain() async {
         },
       ),
       ChangeNotifierProvider(create: (_) => NotificationService()),
-      ChangeNotifierProvider(create: (_) => AppSettingsService()),
+      ChangeNotifierProvider(create: (_) => AppService()),
       ChangeNotifierProvider(create: (_) => WebTranslationService()),
     ],
     child: const MyApp(),
