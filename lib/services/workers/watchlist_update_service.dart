@@ -77,6 +77,9 @@ class WatchlistUpdateService {
         now,
         notifyCompleteSeason: notifyCompleteSeason,
       );
+      titleBeforeUpdate.lastNotifiedSeason = title.lastNotifiedSeason;
+      logLines.add(
+          '- [Baseline Season] ${title.name}: set to ${title.lastNotifiedSeason}');
       await repository.updateNotifyNewSeasonsList([title]);
     }
 
@@ -134,13 +137,16 @@ class WatchlistUpdateService {
       } else {
         title.notifyNewSeasons = false;
       }
+      logLines.add(
+          '- [DB Local] ${title.name}: lastNotifiedSeason saved as ${title.lastNotifiedSeason}');
       await repository.updateNotifyNewSeasonsList([title]);
       final isInRateslist = await repository
           .hasTitlesInList([title.tmdbId], AppConstants.rateslist);
-      await _syncNotificationToSupabase(
+      await _syncNotificationToCloudDatabase(
         title,
         addedToWatchlist: false,
         isInRateslist: isInRateslist,
+        logLines: logLines,
       );
 
       return true;
@@ -169,6 +175,8 @@ class WatchlistUpdateService {
       ));
 
       title.lastNotifiedSeason = title.numberOfSeasons;
+      logLines.add(
+          '- [DB Local] ${title.name}: lastNotifiedSeason saved as ${title.lastNotifiedSeason}');
 
       bool addedToWatchlist = false;
       final isInWatchlist = await repository
@@ -181,10 +189,11 @@ class WatchlistUpdateService {
       await repository.updateNotifyNewSeasonsList([title]);
       final isInRateslist = await repository
           .hasTitlesInList([title.tmdbId], AppConstants.rateslist);
-      await _syncNotificationToSupabase(
+      await _syncNotificationToCloudDatabase(
         title,
         addedToWatchlist: addedToWatchlist,
         isInRateslist: isInRateslist,
+        logLines: logLines,
       );
       return true;
     }
@@ -192,16 +201,24 @@ class WatchlistUpdateService {
     return false;
   }
 
-  Future<void> _syncNotificationToSupabase(
+  Future<void> _syncNotificationToCloudDatabase(
     TmdbTitle title, {
     required bool addedToWatchlist,
     required bool isInRateslist,
     CloudTitleRepository? cloudRepository,
+    List<String>? logLines,
   }) async {
     try {
-      if (CloudDatabaseService.currentSession == null) return;
+      final session = CloudDatabaseService.currentSession;
       final user = CloudDatabaseService.currentUser;
-      if (user == null) return;
+      if (session == null || user == null) {
+        logLines?.add(
+            '- [CloudDatabase Sync] ${title.name}: Skipped (session: ${session != null ? 'active' : 'null'}, user: ${user?.id ?? 'null'})');
+        return;
+      }
+
+      logLines?.add(
+          '- [CloudDatabase Sync] ${title.name}: Syncing (user: ${user.id}, lastNotifiedSeason: ${title.lastNotifiedSeason}, inRateslist: $isInRateslist, addedToWatchlist: $addedToWatchlist)');
 
       final repo = cloudRepository ?? CloudTitleRepository();
       await repo.syncNotification(
@@ -210,11 +227,14 @@ class WatchlistUpdateService {
         addedToWatchlist: addedToWatchlist,
         isInRateslist: isInRateslist,
       );
+      logLines
+          ?.add('- [CloudDatabase Sync] ${title.name}: Completed successfully');
     } catch (e, stackTrace) {
+      logLines?.add('- [CloudDatabase Sync] ${title.name}: Error $e');
       ErrorService.log(
         e,
         stackTrace: stackTrace,
-        userMessage: 'Error syncing notification to Supabase',
+        userMessage: 'Error syncing notification to CloudDatabase',
         reportToCrashlytics: true,
       );
     }

@@ -92,6 +92,9 @@ class WatchlistNotificationEvaluator {
       final currentSeason = titleAfterUpdate.numberOfSeasons;
       final lastNotified = titleBeforeUpdate.lastNotifiedSeason;
 
+      logLines?.add(
+          '- check newSeason (${titleAfterUpdate.name}): currentSeason=$currentSeason, lastNotified=$lastNotified');
+
       if (currentSeason > lastNotified) {
         if (_hasNewSeasonStarted(
           logLines ?? [],

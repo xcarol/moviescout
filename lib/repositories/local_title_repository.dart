@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:drift/drift.dart';
 import 'package:sqlite3/common.dart';
 import 'package:moviescout/database/app_database.dart';
@@ -57,8 +58,12 @@ class LocalTitleRepository {
 
     if (listName != AppConstants.rateslist) {
       newTitle.notifyNewSeasons = currentTitle.notifyNewSeasons;
-      newTitle.lastNotifiedSeason = currentTitle.lastNotifiedSeason;
     }
+
+    newTitle.lastNotifiedSeason = math.max(
+      newTitle.lastNotifiedSeason,
+      currentTitle.lastNotifiedSeason,
+    );
 
     if (newTitle.rating == 0.0 && currentTitle.rating > 0.0) {
       newTitle.rating = currentTitle.rating;
