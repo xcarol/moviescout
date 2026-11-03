@@ -1,3 +1,4 @@
+import 'package:moviescout/services/core/app_service.dart';
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
@@ -9,9 +10,6 @@ import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/screens/logs_screen.dart';
 import 'package:moviescout/screens/notifications_screen.dart';
 import 'package:moviescout/screens/settings.dart';
-import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
-import 'package:moviescout/services/lists/rateslist_service.dart';
-import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/utils/snack_bar.dart';
@@ -259,33 +257,13 @@ class AppDrawer extends StatelessWidget {
   }
 
   void _logout(BuildContext context) async {
-    final supabaseAuthService =
-        Provider.of<SupabaseAuthService>(context, listen: false);
-    final tmdbWatchlistService =
-        Provider.of<WatchlistService>(context, listen: false);
-    final tmdbRateslistService =
-        Provider.of<RateslistService>(context, listen: false);
-    final tmdbDiscoverlistService =
-        Provider.of<TmdbDiscoverlistService>(context, listen: false);
+    final navigator = Navigator.of(context);
     final logoutSuccessText = AppLocalizations.of(context)!.logoutSuccess;
-    final userLocale = Localizations.localeOf(context);
 
-    await supabaseAuthService.signOut();
-
-    await tmdbWatchlistService.clearList();
-    await tmdbRateslistService.clearList();
-    await tmdbDiscoverlistService.clearList();
-    tmdbDiscoverlistService.resetPagination();
-
-    await tmdbDiscoverlistService.retrieveDiscoverlist(
-      userLocale,
-      forceUpdate: true,
-    );
+    await SupabaseAuthService().signOut();
+    await AppService().clearUserData();
 
     SnackMessage.showSnackBar(logoutSuccessText);
-
-    if (context.mounted) {
-      Navigator.of(context).popUntil((route) => route.isFirst);
-    }
+    navigator.popUntil((route) => route.isFirst);
   }
 }

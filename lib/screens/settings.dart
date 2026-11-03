@@ -7,19 +7,16 @@ import 'package:moviescout/screens/import_imdb.dart';
 import 'package:moviescout/screens/import_tmdb.dart';
 import 'package:moviescout/screens/providers.dart';
 import 'package:moviescout/services/api/ai_service.dart';
-import 'package:moviescout/services/lists/rateslist_service.dart';
-import 'package:moviescout/services/lists/watchlist_service.dart';
-import 'package:moviescout/services/settings/language_service.dart';
+import 'package:moviescout/services/core/app_service.dart';
 import 'package:moviescout/services/notifications/notification_service.dart';
+import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
-import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/language_form.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/notification_permission_dialog.dart';
 import 'package:moviescout/widgets/dialogs_and_forms/region_form.dart';
-import 'package:moviescout/services/settings/app_settings_service.dart';
 import 'package:moviescout/widgets/settings/settings_group.dart';
 import 'package:moviescout/widgets/settings/settings_info_sheet.dart';
 import 'package:moviescout/widgets/settings/settings_switch_tile.dart';
@@ -36,7 +33,7 @@ class SettingsScreen extends StatelessWidget {
     final authService = Provider.of<SupabaseAuthService>(context);
     final languageProvider = Provider.of<LanguageService>(context);
     final regionProvider = Provider.of<RegionService>(context);
-    final appSettings = Provider.of<AppSettingsService>(context);
+    final appSettings = Provider.of<AppService>(context);
     final notificationService = Provider.of<NotificationService>(context);
     final providerService = Provider.of<TmdbProviderService>(context);
     final isUserLoggedIn = authService.isLoggedIn;
@@ -490,13 +487,6 @@ class SettingsScreen extends StatelessWidget {
     final deleteColor = customColors?.destructiveAction ?? Colors.redAccent;
     final supabaseAuthService =
         Provider.of<SupabaseAuthService>(context, listen: false);
-    final tmdbWatchlistService =
-        Provider.of<WatchlistService>(context, listen: false);
-    final tmdbRateslistService =
-        Provider.of<RateslistService>(context, listen: false);
-    final tmdbDiscoverlistService =
-        Provider.of<TmdbDiscoverlistService>(context, listen: false);
-    final userLocale = Localizations.localeOf(context);
     final successMessage = AppLocalizations.of(context)!.deleteAccountSuccess;
     final errorMessage = AppLocalizations.of(context)!.deleteAccountError;
     final navigator = Navigator.of(context);
@@ -523,15 +513,7 @@ class SettingsScreen extends StatelessWidget {
                 final success = await supabaseAuthService.deleteAccount();
 
                 if (success) {
-                  await tmdbWatchlistService.clearList();
-                  await tmdbRateslistService.clearList();
-                  await tmdbDiscoverlistService.clearList();
-                  tmdbDiscoverlistService.resetPagination();
-                  await tmdbDiscoverlistService.retrieveDiscoverlist(
-                    userLocale,
-                    forceUpdate: true,
-                  );
-
+                  await AppService().clearUserData();
                   SnackMessage.showSnackBar(successMessage);
                   navigator.popUntil((route) => route.isFirst);
                 } else {
