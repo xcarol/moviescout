@@ -55,6 +55,10 @@ class _FollowingListState extends State<FollowingList> {
       return emptyBody(isNotLoggedIn: true);
     }
 
+    if (!authService.isPublicProfile) {
+      return emptyBody(isNotLoggedIn: false);
+    }
+
     return Consumer<UserFollowingService>(
       builder: (context, followingService, _) {
         if (followingService.isLoading &&
@@ -183,18 +187,13 @@ class _FollowingListState extends State<FollowingList> {
 
   Widget followingBody(UserFollowingService followingService) {
     final customColors = Theme.of(context).extension<CustomColors>()!;
-    final authService = Provider.of<SupabaseAuthService>(context);
     final users = followingService.followingUsers;
-    final showBanner = authService.isLoggedIn && !authService.isPublicProfile;
 
     final listView = ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: users.length + (showBanner ? 1 : 0),
+      itemCount: users.length,
       itemBuilder: (context, index) {
-        if (showBanner && index == 0) {
-          return _publicProfileBanner(context);
-        }
-        final user = users[showBanner ? index - 1 : index];
+        final user = users[index];
         return Column(
           children: [
             UserCard(user: user),
@@ -206,10 +205,6 @@ class _FollowingListState extends State<FollowingList> {
         );
       },
     );
-
-    if (!authService.isPublicProfile) {
-      return listView;
-    }
 
     return CustomRefreshIndicator(
       onRefresh: () async {

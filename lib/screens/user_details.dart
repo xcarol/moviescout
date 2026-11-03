@@ -172,9 +172,7 @@ class _UserDetailsState extends State<UserDetails> {
             ),
             textAlign: TextAlign.center,
           ),
-          if (!isCurrentUser && !_isPublic) ...[
-            const SizedBox(height: 8),
-          ] else ...[
+          if (isCurrentUser || _isPublic) ...[
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -193,10 +191,10 @@ class _UserDetailsState extends State<UserDetails> {
                 ),
               ],
             ),
-            if (!isCurrentUser) ...[
-              const SizedBox(height: 16),
-              _followButton(context),
-            ],
+          ],
+          if (!isCurrentUser) ...[
+            const SizedBox(height: 16),
+            _followButton(context),
           ],
         ],
       ),
