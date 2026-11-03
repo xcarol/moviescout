@@ -1,3 +1,4 @@
+import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
@@ -267,6 +268,8 @@ class AppDrawer extends StatelessWidget {
         Provider.of<RateslistService>(context, listen: false);
     final tmdbDiscoverlistService =
         Provider.of<TmdbDiscoverlistService>(context, listen: false);
+    final tmdbProviderService =
+        Provider.of<TmdbProviderService>(context, listen: false);
     final logoutSuccessText = AppLocalizations.of(context)!.logoutSuccess;
     final userLocale = Localizations.localeOf(context);
 
@@ -276,6 +279,7 @@ class AppDrawer extends StatelessWidget {
     await tmdbRateslistService.clearList();
     await tmdbDiscoverlistService.clearList();
     tmdbDiscoverlistService.resetPagination();
+    tmdbProviderService.clearProvidersStatus();
 
     await tmdbDiscoverlistService.retrieveDiscoverlist(
       userLocale,

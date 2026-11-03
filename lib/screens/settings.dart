@@ -496,6 +496,8 @@ class SettingsScreen extends StatelessWidget {
         Provider.of<RateslistService>(context, listen: false);
     final tmdbDiscoverlistService =
         Provider.of<TmdbDiscoverlistService>(context, listen: false);
+    final tmdbProviderService =
+        Provider.of<TmdbProviderService>(context, listen: false);
     final userLocale = Localizations.localeOf(context);
     final successMessage = AppLocalizations.of(context)!.deleteAccountSuccess;
     final errorMessage = AppLocalizations.of(context)!.deleteAccountError;
@@ -527,6 +529,8 @@ class SettingsScreen extends StatelessWidget {
                   await tmdbRateslistService.clearList();
                   await tmdbDiscoverlistService.clearList();
                   tmdbDiscoverlistService.resetPagination();
+                  tmdbProviderService.clearProvidersStatus();
+
                   await tmdbDiscoverlistService.retrieveDiscoverlist(
                     userLocale,
                     forceUpdate: true,
