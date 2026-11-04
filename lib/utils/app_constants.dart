@@ -27,10 +27,25 @@ class AppConstants {
   static const String showCommunityTab = 'show_community_tab';
   static const String personListIsGridView = 'person_list_is_grid_view';
   static const String aiApiKey = 'ai_api_key';
+  static const String aiModelKey = 'ai_model';
   static const String aiTranslationEnabled = 'ai_translation_enabled';
-  static const String aiModel = 'openrouter/free';
+  static const String aiModelFree = 'openrouter/free';
+  static const String aiModelAuto = 'openrouter/auto';
+  static const String aiModelCustom = 'custom';
+  static const String defaultAiModel = aiModelFree;
+  static const String aiModel = defaultAiModel;
+  static const List<String> availableAiModels = [
+    aiModelFree,
+    aiModelAuto,
+    'google/gemini-3.1-flash-lite', // $0.25 / $1.50per 1M
+    'openai/gpt-4o-mini', // $0.15 / $0.60per 1M
+    'deepseek/deepseek-v4.1-flash', // $0.022 / $0.40per 1M
+    'anthropic/claude-haiku-5.5', // $0.10 / $0.50per 1M
+    'meta-llama/llama-4-maverick', // $0.1875 / $0.6525per 1M
+  ];
   static const double aiTemperature = 0.2;
   static const int aiMaxSuggestions = 10;
+  static const int aiMaxTokens = 1000;
   static const String aiSearchSystemPrompt =
       'You are an expert movie and TV show search assistant for the MovieScout app.\n'
       'Suggest 1 to $aiMaxSuggestions movies or TV shows that best match the user\'s description.\n'

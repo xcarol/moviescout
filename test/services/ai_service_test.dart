@@ -194,6 +194,28 @@ void main() {
       );
     });
 
+    test('selectedModel defaults to defaultAiModel', () {
+      final service = AiService();
+      expect(service.selectedModel, AppConstants.defaultAiModel);
+    });
+
+    test('saveSelectedModel persists model to preferences', () async {
+      final service = AiService();
+      await service.saveSelectedModel('openai/gpt-4o-mini');
+      expect(service.selectedModel, 'openai/gpt-4o-mini');
+      expect(
+        PreferencesService().prefs.getString(AppConstants.aiModelKey),
+        'openai/gpt-4o-mini',
+      );
+
+      await service.saveSelectedModel(AppConstants.defaultAiModel);
+      expect(service.selectedModel, AppConstants.defaultAiModel);
+      expect(
+        PreferencesService().prefs.getString(AppConstants.aiModelKey),
+        isNull,
+      );
+    });
+
     test('suggestTitles throws when key is missing', () async {
       final service = AiService();
       await service.saveApiKey('');
@@ -272,6 +294,35 @@ void main() {
       expect(
         () => service.handleErrorResponse(exhaustedResponse),
         throwsA(isA<AiRateLimitException>()),
+      );
+    });
+
+    test('throws AiApiException on 40x status with extracted error message',
+        () {
+      final response404 = http.Response(
+        jsonEncode({
+          'error': {'message': 'Model not found', 'code': 404}
+        }),
+        404,
+      );
+      expect(
+        () => service.handleErrorResponse(response404),
+        throwsA(isA<AiApiException>()
+            .having((e) => e.statusCode, 'statusCode', 404)
+            .having((e) => e.message, 'message', 'Model not found')),
+      );
+
+      final response402 = http.Response(
+        jsonEncode({
+          'error': {'message': 'Insufficient credits', 'code': 402}
+        }),
+        402,
+      );
+      expect(
+        () => service.handleErrorResponse(response402),
+        throwsA(isA<AiApiException>()
+            .having((e) => e.statusCode, 'statusCode', 402)
+            .having((e) => e.message, 'message', 'Insufficient credits')),
       );
     });
 

@@ -552,6 +552,25 @@ class AppLocalizationsCa extends AppLocalizations {
   String get aiStatusNotConfigured => 'Clau API no configurada';
 
   @override
+  String get aiModelLabel => 'Model d\'IA';
+
+  @override
+  String get aiModelHelper =>
+      'Selecciona el model que s\'utilitzarà per a les cerques i traduccions. Els models gratuïts no consumeixen crèdits.';
+
+  @override
+  String get aiModelFreeLabel => 'Gratuït (openrouter/free)';
+
+  @override
+  String get aiModelAutoLabel => 'Automàtic (openrouter/auto)';
+
+  @override
+  String get aiModelCustomLabel => 'Model personalitzat...';
+
+  @override
+  String get aiModelCustomHint => 'ex. meta-llama/llama-3.3-70b-instruct';
+
+  @override
   String get delete => 'Eliminar';
 
   @override

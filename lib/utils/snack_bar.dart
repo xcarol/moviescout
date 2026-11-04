@@ -2,10 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/main.dart';
 
 class SnackMessage {
-  static void showSnackBar(String message) {
-    final scaffold = scaffoldMessengerKey.currentState;
+  static void showSnackBar(String message, {BuildContext? context}) {
+    final scaffold =
+        (context != null ? ScaffoldMessenger.maybeOf(context) : null) ??
+            scaffoldMessengerKey.currentState;
 
-    scaffold?.showSnackBar(SnackBar(
+    if (scaffold == null) {
+      debugPrint(
+          'SnackMessage: ScaffoldMessenger is null, cannot show "$message"');
+      return;
+    }
+
+    scaffold.clearSnackBars();
+    scaffold.showSnackBar(SnackBar(
       content: Text(message),
       action: SnackBarAction(
         label: 'OK',
@@ -13,7 +22,7 @@ class SnackMessage {
           scaffold.hideCurrentSnackBar();
         },
       ),
-      duration: Duration(minutes: 1),
+      duration: const Duration(minutes: 1),
     ));
   }
 }

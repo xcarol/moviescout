@@ -58,6 +58,16 @@ class AiRateLimitException implements Exception {
       'AiRateLimitException(retrySeconds: $retrySeconds, rawMessage: $rawMessage)';
 }
 
+class AiApiException implements Exception {
+  final int statusCode;
+  final String message;
+
+  AiApiException({required this.statusCode, required this.message});
+
+  @override
+  String toString() => message;
+}
+
 class AiService {
   static final AiService _instance = AiService._internal();
 
@@ -72,9 +82,28 @@ class AiService {
 
   bool get hasApiKey => apiKey.trim().isNotEmpty;
 
+  String get selectedModel {
+    final saved = PreferencesService().prefs.getString(AppConstants.aiModelKey);
+    if (saved != null && saved.trim().isNotEmpty) {
+      return saved.trim();
+    }
+    return AppConstants.defaultAiModel;
+  }
+
   Future<void> saveApiKey(String key) async {
     final trimmed = key.trim();
     await PreferencesService().prefs.setString(AppConstants.aiApiKey, trimmed);
+  }
+
+  Future<void> saveSelectedModel(String model) async {
+    final trimmed = model.trim();
+    if (trimmed.isEmpty || trimmed == AppConstants.defaultAiModel) {
+      await PreferencesService().prefs.remove(AppConstants.aiModelKey);
+    } else {
+      await PreferencesService()
+          .prefs
+          .setString(AppConstants.aiModelKey, trimmed);
+    }
   }
 
   static int? extractRetrySeconds(String errorMessage) {
@@ -103,7 +132,7 @@ class AiService {
 
     final targetUrl = Uri.parse(UrlConstants.openRouterApiUrl);
     final headers = _buildHeaders(key);
-    final body = jsonEncode(_buildRequestBody(userQuery));
+    final body = jsonEncode(_buildSuggestionBody(userQuery));
 
     try {
       final response = await http
@@ -146,21 +175,8 @@ class AiService {
 
     final targetUrl = Uri.parse(UrlConstants.openRouterApiUrl);
     final headers = _buildHeaders(key);
-    final body = jsonEncode({
-      'model': AppConstants.aiModel,
-      'temperature': AppConstants.aiTemperature,
-      'messages': [
-        {
-          'role': 'system',
-          'content': AppConstants.aiTranslateSystemPrompt,
-        },
-        {
-          'role': 'user',
-          'content':
-              'Translate from $sourceLanguage to $targetLanguage:\n\n$text'
-        }
-      ]
-    });
+    final body =
+        jsonEncode(_buildTranslationBody(sourceLanguage, targetLanguage, text));
 
     try {
       final response = await http
@@ -241,15 +257,35 @@ class AiService {
         'X-Title': 'MovieScout',
       };
 
-  Map<String, dynamic> _buildRequestBody(String query) => {
-        'model': AppConstants.aiModel,
+  Map<String, dynamic> _buildSuggestionBody(String query) => {
+        'model': selectedModel,
         'temperature': AppConstants.aiTemperature,
+        'max_tokens': AppConstants.aiMaxTokens,
         'messages': [
           {
             'role': 'system',
             'content': AppConstants.aiSearchSystemPrompt,
           },
           {'role': 'user', 'content': 'Movies or TV shows about: $query'}
+        ]
+      };
+
+  Map<String, dynamic> _buildTranslationBody(
+          String sourceLanguage, String targetLanguage, String text) =>
+      {
+        'model': selectedModel,
+        'temperature': AppConstants.aiTemperature,
+        'max_tokens': AppConstants.aiMaxTokens,
+        'messages': [
+          {
+            'role': 'system',
+            'content': AppConstants.aiTranslateSystemPrompt,
+          },
+          {
+            'role': 'user',
+            'content':
+                'Translate from $sourceLanguage to $targetLanguage:\n\n$text'
+          }
         ]
       };
 
@@ -261,6 +297,23 @@ class AiService {
         retrySeconds: extractRetrySeconds(response.body),
         rawMessage: response.body,
       );
+    }
+
+    if (response.statusCode >= 400 && response.statusCode < 500) {
+      String message = 'API request failed (${response.statusCode})';
+      try {
+        final data = jsonDecode(response.body);
+        if (data is Map && data['error'] != null) {
+          final err = data['error'];
+          if (err is Map && err['message'] != null) {
+            message = err['message'].toString().trim();
+          } else if (err is String) {
+            message = err.trim();
+          }
+        }
+      } catch (_) {}
+
+      throw AiApiException(statusCode: response.statusCode, message: message);
     }
 
     throw Exception(
@@ -305,6 +358,12 @@ class AiService {
 
   String? _extractMessageContent(String responseBody) {
     final data = jsonDecode(responseBody);
+    if (data is Map && data['error'] != null) {
+      final err = data['error'];
+      final message =
+          err is Map ? (err['message'] ?? err.toString()) : err.toString();
+      throw Exception('OpenRouter API error: $message');
+    }
     final choices = data['choices'] as List<dynamic>?;
     if (choices == null || choices.isEmpty) return null;
 

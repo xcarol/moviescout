@@ -118,7 +118,7 @@ class _SearchState extends State<Search> {
       if (!_isAiMode) {
         _debounce = Timer(const Duration(milliseconds: 300), () {
           if (mounted) {
-            searchTitle(context, _controller.text);
+            searchTitle(_controller.text);
           }
         });
       }
@@ -186,7 +186,7 @@ class _SearchState extends State<Search> {
                           onTap: () {
                             _controller.text = suggestion;
                             _removeOverlay();
-                            searchTitle(context, suggestion);
+                            searchTitle(suggestion);
                           },
                         );
                       },
@@ -354,7 +354,7 @@ class _SearchState extends State<Search> {
                   ),
                 ),
                 onSubmitted: (title) {
-                  searchTitle(context, title);
+                  searchTitle(title);
                 },
               ),
             ),
@@ -368,9 +368,11 @@ class _SearchState extends State<Search> {
     return Expanded(child: _searchWidget);
   }
 
-  void searchTitle(BuildContext context, String title) async {
+  void searchTitle(String title) async {
     final term = title.trim();
     if (term.isEmpty) return;
+
+    _removeOverlay();
 
     final locale = Localizations.localeOf(context);
 
@@ -382,8 +384,6 @@ class _SearchState extends State<Search> {
 
     _lastSearchedText = term;
     _lastSearchedAiMode = _isAiMode;
-
-    _removeOverlay();
 
     await _resetTitle();
     try {
@@ -399,32 +399,51 @@ class _SearchState extends State<Search> {
         stackTrace: stackTrace,
         userMessage: _isAiMode ? 'AI search timeout' : 'Search timeout',
       );
-      if (context.mounted) {
+      if (mounted) {
         SnackMessage.showSnackBar(
           _isAiMode
               ? AppLocalizations.of(context)!.aiSearchTimeout
               : AppLocalizations.of(context)!.searchTimeout,
+          context: context,
         );
       }
-    } on AiRateLimitException catch (e) {
+    } on AiRateLimitException catch (e, stackTrace) {
       _resetLastSearch();
-      if (context.mounted) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'AI search rate limited: ${e.rawMessage}',
+      );
+      if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         final msg = e.retrySeconds != null && e.retrySeconds! > 0
             ? l10n.aiRateLimitWithSeconds(e.retrySeconds!)
             : l10n.aiRateLimitGeneric;
-        SnackMessage.showSnackBar(msg);
+        SnackMessage.showSnackBar(msg, context: context);
+      }
+    } on AiApiException catch (e, stackTrace) {
+      _resetLastSearch();
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        userMessage: 'AI API error (${e.statusCode}): ${e.message}',
+      );
+      if (mounted) {
+        SnackMessage.showSnackBar(e.message, context: context);
       }
     } catch (e, stackTrace) {
       _resetLastSearch();
       ErrorService.log(
         e,
         stackTrace: stackTrace,
-        userMessage: _isAiMode ? 'AI search error' : 'Search error',
+        userMessage: _isAiMode ? 'AI search error: $e' : 'Search error',
       );
-      if (_isAiMode && context.mounted) {
+      if (_isAiMode && mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        final isKeyMissing = e.toString().contains('not configured');
         SnackMessage.showSnackBar(
-          AppLocalizations.of(context)!.aiSearchError,
+          isKeyMissing ? l10n.aiStatusNotConfigured : l10n.aiSearchError,
+          context: context,
         );
       }
     }

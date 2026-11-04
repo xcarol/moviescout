@@ -554,6 +554,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiStatusNotConfigured => 'API key not configured';
 
   @override
+  String get aiModelLabel => 'AI Model';
+
+  @override
+  String get aiModelHelper =>
+      'Select the model to use for searches and translations. Free models do not consume credits.';
+
+  @override
+  String get aiModelFreeLabel => 'Free (openrouter/free)';
+
+  @override
+  String get aiModelAutoLabel => 'Automatic (openrouter/auto)';
+
+  @override
+  String get aiModelCustomLabel => 'Custom model...';
+
+  @override
+  String get aiModelCustomHint => 'e.g. meta-llama/llama-3.3-70b-instruct';
+
+  @override
   String get delete => 'Delete';
 
   @override
