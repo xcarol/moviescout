@@ -1152,6 +1152,42 @@ abstract class AppLocalizations {
   /// **'API key not configured'**
   String get aiStatusNotConfigured;
 
+  /// No description provided for @aiModelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Model'**
+  String get aiModelLabel;
+
+  /// No description provided for @aiModelHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the model to use for searches and translations. Free models do not consume credits.'**
+  String get aiModelHelper;
+
+  /// No description provided for @aiModelFreeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Free (openrouter/free)'**
+  String get aiModelFreeLabel;
+
+  /// No description provided for @aiModelAutoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic (openrouter/auto)'**
+  String get aiModelAutoLabel;
+
+  /// No description provided for @aiModelCustomLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom model...'**
+  String get aiModelCustomLabel;
+
+  /// No description provided for @aiModelCustomHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. meta-llama/llama-3.3-70b-instruct'**
+  String get aiModelCustomHint;
+
   /// No description provided for @delete.
   ///
   /// In en, this message translates to:

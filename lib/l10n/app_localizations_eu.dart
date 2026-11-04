@@ -554,6 +554,25 @@ class AppLocalizationsEu extends AppLocalizations {
   String get aiStatusNotConfigured => 'API gakoa ez dago konfiguratuta';
 
   @override
+  String get aiModelLabel => 'AA eredua';
+
+  @override
+  String get aiModelHelper =>
+      'Hautatu bilaketa eta itzulpenetarako erabiliko den eredua. Doako ereduek ez dute krediturik kontsumitzen.';
+
+  @override
+  String get aiModelFreeLabel => 'Doakoa (openrouter/free)';
+
+  @override
+  String get aiModelAutoLabel => 'Automatikoa (openrouter/auto)';
+
+  @override
+  String get aiModelCustomLabel => 'Eredu pertsonalizatua...';
+
+  @override
+  String get aiModelCustomHint => 'adib. meta-llama/llama-3.3-70b-instruct';
+
+  @override
   String get delete => 'Ezabatu';
 
   @override

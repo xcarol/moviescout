@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/api/ai_service.dart';
+import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,8 +15,10 @@ class AiSettingsScreen extends StatefulWidget {
 
 class _AiSettingsScreenState extends State<AiSettingsScreen> {
   final TextEditingController _apiKeyController = TextEditingController();
+  final TextEditingController _customModelController = TextEditingController();
   bool _obscureText = true;
   bool _hasSavedKey = false;
+  late String _selectedModelDropdown;
 
   @override
   void initState() {
@@ -23,11 +26,20 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
     final currentKey = AiService().apiKey;
     _apiKeyController.text = currentKey;
     _hasSavedKey = currentKey.trim().isNotEmpty;
+
+    final currentModel = AiService().selectedModel;
+    if (AppConstants.availableAiModels.contains(currentModel)) {
+      _selectedModelDropdown = currentModel;
+    } else {
+      _selectedModelDropdown = AppConstants.aiModelCustom;
+      _customModelController.text = currentModel;
+    }
   }
 
   @override
   void dispose() {
     _apiKeyController.dispose();
+    _customModelController.dispose();
     super.dispose();
   }
 
@@ -88,6 +100,40 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
 
     if (confirmed == true) {
       await _clearKey();
+    }
+  }
+
+  Future<void> _onModelSelected(String? newModel) async {
+    if (newModel == null) return;
+    setState(() {
+      _selectedModelDropdown = newModel;
+    });
+
+    if (newModel != AppConstants.aiModelCustom) {
+      await AiService().saveSelectedModel(newModel);
+    }
+  }
+
+  bool get _canSaveCustomModel {
+    final customModel = _customModelController.text.trim();
+    return customModel.isNotEmpty && customModel != AiService().selectedModel;
+  }
+
+  Future<void> _saveCustomModel() async {
+    final customModel = _customModelController.text.trim();
+    if (!_canSaveCustomModel) return;
+    await AiService().saveSelectedModel(customModel);
+    setState(() {});
+  }
+
+  String _modelLabel(String model, AppLocalizations l10n) {
+    switch (model) {
+      case AppConstants.aiModelFree:
+        return l10n.aiModelFreeLabel;
+      case AppConstants.aiModelAuto:
+        return l10n.aiModelAutoLabel;
+      default:
+        return model;
     }
   }
 
@@ -237,6 +283,76 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
                 ),
               ],
             ),
+            const Divider(height: 48),
+            Text(
+              l10n.aiModelLabel,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              l10n.aiModelHelper,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<String>(
+              initialValue: _selectedModelDropdown,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.psychology_outlined),
+              ),
+              isExpanded: true,
+              items: [
+                ...AppConstants.availableAiModels.map(
+                  (model) => DropdownMenuItem(
+                    value: model,
+                    child: Text(_modelLabel(model, l10n)),
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: AppConstants.aiModelCustom,
+                  child: Text(l10n.aiModelCustomLabel),
+                ),
+              ],
+              onChanged: _onModelSelected,
+            ),
+            if (_selectedModelDropdown == AppConstants.aiModelCustom) ...[
+              const SizedBox(height: 12),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _customModelController,
+                      onChanged: (_) => setState(() {}),
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        hintText: l10n.aiModelCustomHint,
+                        prefixIcon: const Icon(Icons.tune),
+                      ),
+                      onSubmitted: _canSaveCustomModel
+                          ? (_) => _saveCustomModel()
+                          : null,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  FilledButton.icon(
+                    onPressed: _canSaveCustomModel ? _saveCustomModel : null,
+                    icon: const Icon(Icons.save),
+                    label: Text(l10n.save),
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),

@@ -555,6 +555,25 @@ class AppLocalizationsGl extends AppLocalizations {
   String get aiStatusNotConfigured => 'A chave da API non está configurada';
 
   @override
+  String get aiModelLabel => 'Modelo de IA';
+
+  @override
+  String get aiModelHelper =>
+      'Selecciona o modelo a utilizar para procuras e traducións. Os modelos gratuítos non consumen créditos.';
+
+  @override
+  String get aiModelFreeLabel => 'Gratuíto (openrouter/free)';
+
+  @override
+  String get aiModelAutoLabel => 'Automático (openrouter/auto)';
+
+  @override
+  String get aiModelCustomLabel => 'Modelo personalizado...';
+
+  @override
+  String get aiModelCustomHint => 'ex. meta-llama/llama-3.3-70b-instruct';
+
+  @override
   String get delete => 'Eliminar';
 
   @override

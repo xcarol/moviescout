@@ -554,6 +554,25 @@ class AppLocalizationsPt extends AppLocalizations {
   String get aiStatusNotConfigured => 'Chave de API não configurada';
 
   @override
+  String get aiModelLabel => 'Modelo de IA';
+
+  @override
+  String get aiModelHelper =>
+      'Selecione o modelo a utilizar para pesquisas e traduções. Os modelos gratuitos não consomem créditos.';
+
+  @override
+  String get aiModelFreeLabel => 'Gratuito (openrouter/free)';
+
+  @override
+  String get aiModelAutoLabel => 'Automático (openrouter/auto)';
+
+  @override
+  String get aiModelCustomLabel => 'Modelo personalizado...';
+
+  @override
+  String get aiModelCustomHint => 'ex. meta-llama/llama-3.3-70b-instruct';
+
+  @override
   String get delete => 'Excluir';
 
   @override
@@ -1676,6 +1695,25 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get aiStatusNotConfigured => 'Chave de API não configurada';
+
+  @override
+  String get aiModelLabel => 'Modelo de IA';
+
+  @override
+  String get aiModelHelper =>
+      'Selecione o modelo a utilizar para pesquisas e traduções. Os modelos gratuitos não consomem créditos.';
+
+  @override
+  String get aiModelFreeLabel => 'Gratuito (openrouter/free)';
+
+  @override
+  String get aiModelAutoLabel => 'Automático (openrouter/auto)';
+
+  @override
+  String get aiModelCustomLabel => 'Modelo personalizado...';
+
+  @override
+  String get aiModelCustomHint => 'ex. meta-llama/llama-3.3-70b-instruct';
 
   @override
   String get delete => 'Eliminar';

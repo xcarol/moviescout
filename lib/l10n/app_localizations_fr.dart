@@ -556,6 +556,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get aiStatusNotConfigured => 'Clé API non configurée';
 
   @override
+  String get aiModelLabel => 'Modèle d\'IA';
+
+  @override
+  String get aiModelHelper =>
+      'Sélectionnez le modèle à utiliser pour les recherches et les traductions. Les modèles gratuits ne consomment pas de crédits.';
+
+  @override
+  String get aiModelFreeLabel => 'Gratuit (openrouter/free)';
+
+  @override
+  String get aiModelAutoLabel => 'Automatique (openrouter/auto)';
+
+  @override
+  String get aiModelCustomLabel => 'Modèle personnalisé...';
+
+  @override
+  String get aiModelCustomHint => 'ex. meta-llama/llama-3.3-70b-instruct';
+
+  @override
   String get delete => 'Supprimer';
 
   @override

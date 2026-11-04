@@ -70,4 +70,3 @@ class AppService extends ChangeNotifier {
     notifyListeners();
   }
 }
-
