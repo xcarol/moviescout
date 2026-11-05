@@ -193,14 +193,15 @@ class CloudTitleRepository {
       );
     }
 
-    if (title.lastNotifiedSeason > 0) {
+    if (!addedToWatchlist && title.lastNotifiedSeason > 0) {
       await _retryOnFutureJwt(() async {
         await _client
             .from('user_titles')
             .update({'last_notified_season': title.lastNotifiedSeason})
             .eq('user_id', userId)
             .eq('tmdb_id', title.tmdbId)
-            .eq('media_type', title.mediaType);
+            .eq('media_type', title.mediaType)
+            .eq('list_name', AppConstants.watchlist);
       });
     }
 
