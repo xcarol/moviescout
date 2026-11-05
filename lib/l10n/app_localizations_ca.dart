@@ -521,17 +521,40 @@ class AppLocalizationsCa extends AppLocalizations {
   String get aiSettingsSubtitle => 'Cerca intel·ligent i funcions d\'IA';
 
   @override
-  String get aiSettingsDescription =>
+  String get aiProviderLabel => 'Proveïdor d\'IA';
+
+  @override
+  String get aiGoogleSettingsDescription =>
+      'Les funcions d\'IA et permeten trobar pel·lícules i sèries basant-se en descripcions en llenguatge natural i més eines intel·ligents. Per utilitzar-les sense cost, pots obtenir una clau gratuïta a Google AI Studio (sense necessitat de targeta).';
+
+  @override
+  String get aiGoogleGetApiKeyButton => 'Obtenir clau a Google AI Studio';
+
+  @override
+  String get aiGoogleApiKeyLabel => 'Clau API de Google AI Studio';
+
+  @override
+  String get aiGoogleApiKeyHint => 'AIzaSy...';
+
+  @override
+  String get aiGoogleModelCustomHint => 'ex. gemini-3.1-flash-lite-preview';
+
+  @override
+  String get aiGoogleDeleteConfirmMessage =>
+      'Segur que vols eliminar la clau API de Google AI Studio d\'aquest dispositiu?';
+
+  @override
+  String get aiOpenRouterSettingsDescription =>
       'Les funcions d\'IA et permeten trobar pel·lícules i sèries basant-se en descripcions en llenguatge natural i més eines intel·ligents. Per utilitzar-les, pots obtenir una clau gratuïta a OpenRouter (sense necessitat de targeta).';
 
   @override
-  String get aiGetApiKeyButton => 'Obtenir clau a OpenRouter';
+  String get aiOpenRouterGetApiKeyButton => 'Obtenir clau a OpenRouter';
 
   @override
-  String get aiApiKeyLabel => 'Clau API d\'OpenRouter';
+  String get aiOpenRouterApiKeyLabel => 'Clau API d\'OpenRouter';
 
   @override
-  String get aiApiKeyHint => 'sk-or-v1-...';
+  String get aiOpenRouterApiKeyHint => 'sk-or-v1-...';
 
   @override
   String get aiSaveKeyButton => 'Desar clau';
@@ -559,16 +582,17 @@ class AppLocalizationsCa extends AppLocalizations {
       'Selecciona el model que s\'utilitzarà per a les cerques i traduccions. Els models gratuïts no consumeixen crèdits.';
 
   @override
-  String get aiModelFreeLabel => 'Gratuït (openrouter/free)';
+  String get aiOpenRouterModelFreeLabel => 'Gratuït (openrouter/free)';
 
   @override
-  String get aiModelAutoLabel => 'Automàtic (openrouter/auto)';
+  String get aiOpenRouterModelAutoLabel => 'Automàtic (openrouter/auto)';
 
   @override
   String get aiModelCustomLabel => 'Model personalitzat...';
 
   @override
-  String get aiModelCustomHint => 'ex. meta-llama/llama-3.3-70b-instruct';
+  String get aiOpenRouterModelCustomHint =>
+      'ex. meta-llama/llama-3.3-70b-instruct';
 
   @override
   String get delete => 'Eliminar';
@@ -577,7 +601,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get aiDeleteConfirmTitle => 'Eliminar clau API';
 
   @override
-  String get aiDeleteConfirmMessage =>
+  String get aiOpenRouterDeleteConfirmMessage =>
       'Segur que vols eliminar la clau API? Tingues en compte que OpenRouter no permet consultar la clau un cop creada i n\'hauràs de generar una de nova si no la tens guardada.';
 
   @override
@@ -591,6 +615,14 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get aiSearchError =>
       'S\'ha produït un error en la cerca IA. Torna-ho a provar.';
+
+  @override
+  String get aiTranslationTimeout =>
+      'La traducció amb IA ha trigat massa temps a respondre. Torna-ho a provar més tard o canvia de model.';
+
+  @override
+  String get aiTranslationError =>
+      'S\'ha produït un error en la traducció amb IA. Torna-ho a provar.';
 
   @override
   String aiRateLimitWithSeconds(int seconds) {
@@ -983,7 +1015,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get settingsInfoAiNote =>
-      'Important: Els models gratuïts d\'IA poden tenir temps de resposta més lents o límits de peticions temporals dependents del proveïdor. Per a un rendiment òptim i instantani, es recomana un servei de pagament per ús.';
+      'Important: Els models gratuïts d\'IA poden tenir temps de resposta més lents o límits de peticions temporals.';
 
   @override
   String get settingsInfoProfileTitle => 'Perfil Públic i Comunitat';

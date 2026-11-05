@@ -524,17 +524,40 @@ class AppLocalizationsGl extends AppLocalizations {
       'Busca intelixente e funcións de intelixencia artificial';
 
   @override
-  String get aiSettingsDescription =>
+  String get aiProviderLabel => 'Provedor de IA';
+
+  @override
+  String get aiGoogleSettingsDescription =>
+      'As funcións de IA permítenche atopar películas e series baseadas en descricións en linguaxe natural. Para usalas sen custo, podes obter unha chave gratuíta en Google AI Studio (sen necesidade de tarxeta).';
+
+  @override
+  String get aiGoogleGetApiKeyButton => 'Obter clave en Google AI Studio';
+
+  @override
+  String get aiGoogleApiKeyLabel => 'Clave da API de Google AI Studio';
+
+  @override
+  String get aiGoogleApiKeyHint => 'AIzaSy...';
+
+  @override
+  String get aiGoogleModelCustomHint => 'ex. gemini-3.1-flash-lite-preview';
+
+  @override
+  String get aiGoogleDeleteConfirmMessage =>
+      'Estás seguro de que queres eliminar a clave API de Google AI Studio deste dispositivo?';
+
+  @override
+  String get aiOpenRouterSettingsDescription =>
       'As funcións de IA permítenche atopar películas e series baseadas en descricións en linguaxe natural e en ferramentas máis intelixentes. Para usalos, podes obter unha chave gratuíta en OpenRouter (non se precisa ningunha tarxeta).';
 
   @override
-  String get aiGetApiKeyButton => 'Obter clave en OpenRouter';
+  String get aiOpenRouterGetApiKeyButton => 'Obter clave en OpenRouter';
 
   @override
-  String get aiApiKeyLabel => 'Clave da API de OpenRouter';
+  String get aiOpenRouterApiKeyLabel => 'Clave da API de OpenRouter';
 
   @override
-  String get aiApiKeyHint => 'sk-ou-v1-...';
+  String get aiOpenRouterApiKeyHint => 'sk-ou-v1-...';
 
   @override
   String get aiSaveKeyButton => 'Tecla de gardar';
@@ -562,16 +585,17 @@ class AppLocalizationsGl extends AppLocalizations {
       'Selecciona o modelo a utilizar para procuras e traducións. Os modelos gratuítos non consumen créditos.';
 
   @override
-  String get aiModelFreeLabel => 'Gratuíto (openrouter/free)';
+  String get aiOpenRouterModelFreeLabel => 'Gratuíto (openrouter/free)';
 
   @override
-  String get aiModelAutoLabel => 'Automático (openrouter/auto)';
+  String get aiOpenRouterModelAutoLabel => 'Automático (openrouter/auto)';
 
   @override
   String get aiModelCustomLabel => 'Modelo personalizado...';
 
   @override
-  String get aiModelCustomHint => 'ex. meta-llama/llama-3.3-70b-instruct';
+  String get aiOpenRouterModelCustomHint =>
+      'ex. meta-llama/llama-3.3-70b-instruct';
 
   @override
   String get delete => 'Eliminar';
@@ -580,7 +604,7 @@ class AppLocalizationsGl extends AppLocalizations {
   String get aiDeleteConfirmTitle => 'Eliminar a clave API';
 
   @override
-  String get aiDeleteConfirmMessage =>
+  String get aiOpenRouterDeleteConfirmMessage =>
       'Estás seguro de que queres eliminar a clave API? Ten en conta que OpenRouter non permite consultar a clave unha vez creada e terás que xerar unha nova se non a tes gardada.';
 
   @override
@@ -594,6 +618,14 @@ class AppLocalizationsGl extends AppLocalizations {
   @override
   String get aiSearchError =>
       'Produciuse un erro na busca da IA. Téntao de novo.';
+
+  @override
+  String get aiTranslationTimeout =>
+      'A tradución con IA tardou demasiado en responder. Téntao de novo máis tarde ou cambia de modelo.';
+
+  @override
+  String get aiTranslationError =>
+      'Produciuse un erro na tradución con IA. Téntao de novo.';
 
   @override
   String aiRateLimitWithSeconds(int seconds) {
@@ -982,7 +1014,7 @@ class AppLocalizationsGl extends AppLocalizations {
 
   @override
   String get settingsInfoAiNote =>
-      'Importante: Os modelos gratuítos de IA poden ter tempos de resposta máis lentos ou límites de peticións dependentes do provedor. Recoméndase un servizo de pago por uso para un rendemento óptimo.';
+      'Importante: Os modelos gratuítos de IA poden ter tempos de resposta máis lentos ou límites temporais de peticións.';
 
   @override
   String get settingsInfoProfileTitle => 'Perfil Público e Comunidade';

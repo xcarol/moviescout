@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -81,6 +82,7 @@ class TranslationsScreen extends StatefulWidget {
 class TranslationsScreenState extends State<TranslationsScreen> {
   String _translatedTitle = '';
   String _translatedDescription = '';
+  String? _translationError;
 
   bool _isTranslating = false;
   final ScrollController _scrollController = ScrollController();
@@ -119,6 +121,7 @@ class TranslationsScreenState extends State<TranslationsScreen> {
   Future<void> _performTranslation() async {
     setState(() {
       _isTranslating = true;
+      _translationError = null;
     });
 
     final service = context.read<WebTranslationService>();
@@ -140,13 +143,39 @@ class TranslationsScreenState extends State<TranslationsScreen> {
       // not found
     }
 
-    final translatedTitle = await service.translate(sourceTitle);
-    final translatedDesc = await service.translate(sourceDesc);
+    try {
+      final result = await service.translateTitleAndSynopsis(
+        title: sourceTitle,
+        description: sourceDesc,
+      );
 
-    if (mounted) {
+      if (mounted) {
+        setState(() {
+          _translatedTitle = result.title;
+          _translatedDescription = result.description;
+          _isTranslating = false;
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      final String errorMessage;
+      if (e is TimeoutException) {
+        errorMessage = l10n.aiTranslationTimeout;
+      } else if (e is AiRateLimitException) {
+        errorMessage = e.retrySeconds != null && e.retrySeconds! > 0
+            ? l10n.aiRateLimitWithSeconds(e.retrySeconds!)
+            : l10n.aiRateLimitGeneric;
+      } else if (e is AiApiException) {
+        errorMessage = e.message;
+      } else {
+        errorMessage = l10n.aiTranslationError;
+      }
+
       setState(() {
-        _translatedTitle = translatedTitle;
-        _translatedDescription = translatedDesc;
+        _translatedTitle = '';
+        _translatedDescription = '';
+        _translationError = errorMessage;
         _isTranslating = false;
       });
     }
@@ -309,6 +338,41 @@ class TranslationsScreenState extends State<TranslationsScreen> {
             const SizedBox(height: 12),
             if (_isTranslating)
               const Center(child: CircularProgressIndicator())
+            else if (_translationError != null)
+              Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.errorContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.onErrorContainer,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _translationError!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onErrorContainer,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.refresh,
+                        size: 20,
+                        color: Theme.of(context).colorScheme.onErrorContainer,
+                      ),
+                      onPressed: _performTranslation,
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ],
+                ),
+              )
             else
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

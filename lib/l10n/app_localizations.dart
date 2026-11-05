@@ -1092,29 +1092,71 @@ abstract class AppLocalizations {
   /// **'Smart search and AI features'**
   String get aiSettingsSubtitle;
 
-  /// No description provided for @aiSettingsDescription.
+  /// No description provided for @aiProviderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Provider'**
+  String get aiProviderLabel;
+
+  /// No description provided for @aiGoogleSettingsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'AI features allow you to find movies and TV shows based on natural language descriptions and more smart tools. To use them at no cost, you can get a free API key at Google AI Studio (no credit card required).'**
+  String get aiGoogleSettingsDescription;
+
+  /// No description provided for @aiGoogleGetApiKeyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Get API key at Google AI Studio'**
+  String get aiGoogleGetApiKeyButton;
+
+  /// No description provided for @aiGoogleApiKeyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Google AI Studio API Key'**
+  String get aiGoogleApiKeyLabel;
+
+  /// No description provided for @aiGoogleApiKeyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'AIzaSy...'**
+  String get aiGoogleApiKeyHint;
+
+  /// No description provided for @aiGoogleModelCustomHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. gemini-3.1-flash-lite-preview'**
+  String get aiGoogleModelCustomHint;
+
+  /// No description provided for @aiGoogleDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete the Google AI Studio API key from this device?'**
+  String get aiGoogleDeleteConfirmMessage;
+
+  /// No description provided for @aiOpenRouterSettingsDescription.
   ///
   /// In en, this message translates to:
   /// **'AI features allow you to find movies and TV shows based on natural language descriptions and more smart tools. To use them, you can get a free API key at OpenRouter (no credit card required).'**
-  String get aiSettingsDescription;
+  String get aiOpenRouterSettingsDescription;
 
-  /// No description provided for @aiGetApiKeyButton.
+  /// No description provided for @aiOpenRouterGetApiKeyButton.
   ///
   /// In en, this message translates to:
   /// **'Get API key at OpenRouter'**
-  String get aiGetApiKeyButton;
+  String get aiOpenRouterGetApiKeyButton;
 
-  /// No description provided for @aiApiKeyLabel.
+  /// No description provided for @aiOpenRouterApiKeyLabel.
   ///
   /// In en, this message translates to:
   /// **'OpenRouter API Key'**
-  String get aiApiKeyLabel;
+  String get aiOpenRouterApiKeyLabel;
 
-  /// No description provided for @aiApiKeyHint.
+  /// No description provided for @aiOpenRouterApiKeyHint.
   ///
   /// In en, this message translates to:
   /// **'sk-or-v1-...'**
-  String get aiApiKeyHint;
+  String get aiOpenRouterApiKeyHint;
 
   /// No description provided for @aiSaveKeyButton.
   ///
@@ -1164,17 +1206,17 @@ abstract class AppLocalizations {
   /// **'Select the model to use for searches and translations. Free models do not consume credits.'**
   String get aiModelHelper;
 
-  /// No description provided for @aiModelFreeLabel.
+  /// No description provided for @aiOpenRouterModelFreeLabel.
   ///
   /// In en, this message translates to:
   /// **'Free (openrouter/free)'**
-  String get aiModelFreeLabel;
+  String get aiOpenRouterModelFreeLabel;
 
-  /// No description provided for @aiModelAutoLabel.
+  /// No description provided for @aiOpenRouterModelAutoLabel.
   ///
   /// In en, this message translates to:
   /// **'Automatic (openrouter/auto)'**
-  String get aiModelAutoLabel;
+  String get aiOpenRouterModelAutoLabel;
 
   /// No description provided for @aiModelCustomLabel.
   ///
@@ -1182,11 +1224,11 @@ abstract class AppLocalizations {
   /// **'Custom model...'**
   String get aiModelCustomLabel;
 
-  /// No description provided for @aiModelCustomHint.
+  /// No description provided for @aiOpenRouterModelCustomHint.
   ///
   /// In en, this message translates to:
   /// **'e.g. meta-llama/llama-3.3-70b-instruct'**
-  String get aiModelCustomHint;
+  String get aiOpenRouterModelCustomHint;
 
   /// No description provided for @delete.
   ///
@@ -1200,11 +1242,11 @@ abstract class AppLocalizations {
   /// **'Delete API Key'**
   String get aiDeleteConfirmTitle;
 
-  /// No description provided for @aiDeleteConfirmMessage.
+  /// No description provided for @aiOpenRouterDeleteConfirmMessage.
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to delete the API key? Note that OpenRouter does not allow viewing the key once created and you will need to generate a new one if you do not have it saved.'**
-  String get aiDeleteConfirmMessage;
+  String get aiOpenRouterDeleteConfirmMessage;
 
   /// No description provided for @searchTimeout.
   ///
@@ -1223,6 +1265,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An error occurred during AI search. Please try again.'**
   String get aiSearchError;
+
+  /// No description provided for @aiTranslationTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'AI translation took too long to respond. Please try again later or switch models.'**
+  String get aiTranslationTimeout;
+
+  /// No description provided for @aiTranslationError.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred during AI translation. Please try again.'**
+  String get aiTranslationError;
 
   /// No description provided for @aiRateLimitWithSeconds.
   ///
@@ -1899,7 +1953,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsInfoAiNote.
   ///
   /// In en, this message translates to:
-  /// **'Important: Free AI models may experience slower response times or temporary rate limits from the provider. For optimal, instant performance, pay-per-use models are recommended.'**
+  /// **'Important: Free AI models may experience slower response times or temporary rate limits.'**
   String get settingsInfoAiNote;
 
   /// No description provided for @settingsInfoProfileTitle.

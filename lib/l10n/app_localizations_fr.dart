@@ -525,17 +525,40 @@ class AppLocalizationsFr extends AppLocalizations {
   String get aiSettingsSubtitle => 'Recherche intelligente et fonctions d\'IA';
 
   @override
-  String get aiSettingsDescription =>
+  String get aiProviderLabel => 'Fournisseur d\'IA';
+
+  @override
+  String get aiGoogleSettingsDescription =>
+      'L\'IA vous permet de trouver des films et séries par description naturelle. Pour les utiliser sans frais, obtenez une clé API gratuite sur Google AI Studio (sans carte bancaire).';
+
+  @override
+  String get aiGoogleGetApiKeyButton => 'Obtenir une clé sur Google AI Studio';
+
+  @override
+  String get aiGoogleApiKeyLabel => 'Clé API Google AI Studio';
+
+  @override
+  String get aiGoogleApiKeyHint => 'AIzaSy...';
+
+  @override
+  String get aiGoogleModelCustomHint => 'ex. gemini-3.1-flash-lite-preview';
+
+  @override
+  String get aiGoogleDeleteConfirmMessage =>
+      'Êtes-vous sûr de vouloir supprimer la clé API Google AI Studio de cet appareil ?';
+
+  @override
+  String get aiOpenRouterSettingsDescription =>
       'L\'IA vous permet de trouver des films et séries par description naturelle. Obtenez une clé API gratuite sur OpenRouter.';
 
   @override
-  String get aiGetApiKeyButton => 'Obtenir une clé sur OpenRouter';
+  String get aiOpenRouterGetApiKeyButton => 'Obtenir une clé sur OpenRouter';
 
   @override
-  String get aiApiKeyLabel => 'Clé API OpenRouter';
+  String get aiOpenRouterApiKeyLabel => 'Clé API OpenRouter';
 
   @override
-  String get aiApiKeyHint => 'sk-or-v1-...';
+  String get aiOpenRouterApiKeyHint => 'sk-or-v1-...';
 
   @override
   String get aiSaveKeyButton => 'Enregistrer la clé';
@@ -563,16 +586,17 @@ class AppLocalizationsFr extends AppLocalizations {
       'Sélectionnez le modèle à utiliser pour les recherches et les traductions. Les modèles gratuits ne consomment pas de crédits.';
 
   @override
-  String get aiModelFreeLabel => 'Gratuit (openrouter/free)';
+  String get aiOpenRouterModelFreeLabel => 'Gratuit (openrouter/free)';
 
   @override
-  String get aiModelAutoLabel => 'Automatique (openrouter/auto)';
+  String get aiOpenRouterModelAutoLabel => 'Automatique (openrouter/auto)';
 
   @override
   String get aiModelCustomLabel => 'Modèle personnalisé...';
 
   @override
-  String get aiModelCustomHint => 'ex. meta-llama/llama-3.3-70b-instruct';
+  String get aiOpenRouterModelCustomHint =>
+      'ex. meta-llama/llama-3.3-70b-instruct';
 
   @override
   String get delete => 'Supprimer';
@@ -581,7 +605,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get aiDeleteConfirmTitle => 'Supprimer la clé API';
 
   @override
-  String get aiDeleteConfirmMessage =>
+  String get aiOpenRouterDeleteConfirmMessage =>
       'Êtes-vous sûr de vouloir supprimer la clé API ? OpenRouter ne permet pas de la revoir une fois créée.';
 
   @override
@@ -595,6 +619,14 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get aiSearchError =>
       'Une erreur est survenue lors de la recherche IA.';
+
+  @override
+  String get aiTranslationTimeout =>
+      'La traduction par IA a mis trop de temps à répondre. Veuillez réessayer plus tard ou changer de modèle.';
+
+  @override
+  String get aiTranslationError =>
+      'Une erreur est survenue lors de la traduction par IA. Veuillez réessayer.';
 
   @override
   String aiRateLimitWithSeconds(int seconds) {
@@ -984,7 +1016,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsInfoAiNote =>
-      'Important : Les modèles d\'IA gratuits peuvent présenter des temps de réponse plus longs ou des limites temporaires selon le fournisseur. Pour des performances optimales, un service payant à l\'usage est recommandé.';
+      'Important : Les modèles d\'IA gratuits peuvent présenter des temps de réponse plus longs ou des limites temporaires de requêtes.';
 
   @override
   String get settingsInfoProfileTitle => 'Profil Public & Communauté';
