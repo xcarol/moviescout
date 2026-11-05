@@ -51,10 +51,6 @@ class SettingsScreen extends StatelessWidget {
         ? l10n.settingsNotifySeasonComplete
         : l10n.settingsNotifySeasonFirstEp;
 
-    final aiStatusSubtitle = AiService().apiKey.isNotEmpty
-        ? l10n.settingsAiConfigured
-        : l10n.settingsAiNotConfigured;
-
     final publicProfileSubtitle = authService.isPublicProfile
         ? l10n.settingsProfilePublic
         : l10n.settingsProfilePrivate;
@@ -168,17 +164,24 @@ class SettingsScreen extends StatelessWidget {
           SettingsGroup(
             title: l10n.settingsSectionTools,
             children: [
-              SettingsTile(
-                icon: Icons.auto_awesome,
-                title: l10n.aiSettingsTitle,
-                subtitle: aiStatusSubtitle,
-                onInfoTap: () => _showAiInfo(context),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AiSettingsScreen(),
-                    ),
+              StatefulBuilder(
+                builder: (context, setTileState) {
+                  final aiSubtitle = AiService().hasApiKey
+                      ? '${l10n.settingsAiConfigured} (${AiService().currentProvider.name})'
+                      : l10n.settingsAiNotConfigured;
+                  return SettingsTile(
+                    icon: Icons.auto_awesome,
+                    title: l10n.aiSettingsTitle,
+                    subtitle: aiSubtitle,
+                    onInfoTap: () => _showAiInfo(context),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AiSettingsScreen(),
+                        ),
+                      ).then((_) => setTileState(() {}));
+                    },
                   );
                 },
               ),

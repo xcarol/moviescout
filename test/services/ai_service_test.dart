@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
+import 'package:moviescout/services/api/ai_provider.dart';
 import 'package:moviescout/services/api/ai_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -83,8 +84,53 @@ void main() {
     });
   });
 
-  group('AiService response parsing and safety filtering', () {
+  group('AiService response parsing (Google AI default provider)', () {
     final service = AiService();
+
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+      await PreferencesService().init();
+    });
+
+    test('parses clean Gemini JSON response', () {
+      final responseBody = jsonEncode({
+        'candidates': [
+          {
+            'content': {
+              'parts': [
+                {
+                  'text':
+                      '[{"title": "Arrival", "year": 2016, "media_type": "movie"}]'
+                }
+              ]
+            }
+          }
+        ]
+      });
+      final results = service.parseSuggestions(responseBody);
+      expect(results.length, 1);
+      expect(results.first.title, 'Arrival');
+      expect(results.first.year, 2016);
+      expect(results.first.mediaType, 'movie');
+    });
+
+    test('handles empty candidates or malformed JSON gracefully', () {
+      expect(service.parseSuggestions(jsonEncode({'candidates': []})), isEmpty);
+      expect(
+          service.parseSuggestions('completely malformed json {{{'), isEmpty);
+    });
+  });
+
+  group('AiService response parsing and safety filtering (OpenRouter provider)',
+      () {
+    final service = AiService();
+
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({
+        AppConstants.aiProviderKey: AppConstants.aiProviderOpenRouter,
+      });
+      await PreferencesService().init();
+    });
 
     test('parses clean JSON array', () {
       final responseBody = jsonEncode({
@@ -171,48 +217,82 @@ void main() {
     });
   });
 
-  group('AiService API key management', () {
+  group('AiService provider and API key management', () {
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       await PreferencesService().init();
     });
 
-    test('hasApiKey returns false when key is empty', () {
+    test('defaults to GoogleAiProvider when no provider or keys are saved', () {
       final service = AiService();
+      expect(service.currentProvider, isA<GoogleAiProvider>());
+      expect(service.currentProvider.id, AppConstants.aiProviderGoogle);
       expect(service.hasApiKey, isFalse);
       expect(service.apiKey, isEmpty);
+      expect(service.selectedModel, AppConstants.defaultAiGoogleModel);
     });
 
-    test('saveApiKey persists key to preferences', () async {
+    test(
+        'automatically falls back to OpenRouterProvider when legacy OpenRouter key exists and provider is not explicitly set',
+        () async {
+      SharedPreferences.setMockInitialValues({
+        AppConstants.aiOpenRouterApiKey: 'legacy-or-key',
+      });
+      await PreferencesService().init();
+
       final service = AiService();
-      await service.saveApiKey('test-key-12345');
+      expect(service.currentProvider, isA<OpenRouterProvider>());
+      expect(service.apiKey, 'legacy-or-key');
+      expect(service.selectedModel, AppConstants.defaultAiOpenRouterModel);
+    });
+
+    test('saveApiKey persists key to active provider preferences', () async {
+      final service = AiService();
+      await service.saveApiKey('google-key-12345');
       expect(service.hasApiKey, isTrue);
-      expect(service.apiKey, 'test-key-12345');
+      expect(service.apiKey, 'google-key-12345');
       expect(
-        PreferencesService().prefs.getString(AppConstants.aiApiKey),
-        'test-key-12345',
+        PreferencesService().prefs.getString(AppConstants.aiGoogleApiKey),
+        'google-key-12345',
+      );
+
+      await service.setSelectedProvider(AppConstants.aiProviderOpenRouter);
+      expect(service.currentProvider, isA<OpenRouterProvider>());
+      expect(service.hasApiKey, isFalse);
+
+      await service.saveApiKey('openrouter-key-67890');
+      expect(
+        PreferencesService().prefs.getString(AppConstants.aiOpenRouterApiKey),
+        'openrouter-key-67890',
+      );
+      expect(
+        PreferencesService().prefs.getString(AppConstants.aiGoogleApiKey),
+        'google-key-12345',
       );
     });
 
-    test('selectedModel defaults to defaultAiModel', () {
+    test('saveSelectedModel persists model per provider', () async {
       final service = AiService();
-      expect(service.selectedModel, AppConstants.defaultAiModel);
-    });
+      await service.saveSelectedModel(AppConstants.aiGoogleModelFlashLite);
+      expect(service.selectedModel, AppConstants.aiGoogleModelFlashLite);
+      expect(
+        PreferencesService().prefs.getString(AppConstants.aiGoogleModelKey),
+        AppConstants.aiGoogleModelFlashLite,
+      );
 
-    test('saveSelectedModel persists model to preferences', () async {
-      final service = AiService();
+      await service.saveSelectedModel(AppConstants.defaultAiGoogleModel);
+      expect(service.selectedModel, AppConstants.defaultAiGoogleModel);
+      expect(
+        PreferencesService().prefs.getString(AppConstants.aiGoogleModelKey),
+        isNull,
+      );
+
+      await service.setSelectedProvider(AppConstants.aiProviderOpenRouter);
       await service.saveSelectedModel('openai/gpt-4o-mini');
       expect(service.selectedModel, 'openai/gpt-4o-mini');
       expect(
-        PreferencesService().prefs.getString(AppConstants.aiModelKey),
+        PreferencesService().prefs.getString(AppConstants.aiOpenRouterModelKey),
         'openai/gpt-4o-mini',
-      );
-
-      await service.saveSelectedModel(AppConstants.defaultAiModel);
-      expect(service.selectedModel, AppConstants.defaultAiModel);
-      expect(
-        PreferencesService().prefs.getString(AppConstants.aiModelKey),
-        isNull,
       );
     });
 
@@ -337,6 +417,13 @@ void main() {
 
   group('AiService advanced parsing branches', () {
     final service = AiService();
+
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({
+        AppConstants.aiProviderKey: AppConstants.aiProviderOpenRouter,
+      });
+      await PreferencesService().init();
+    });
 
     test('parses JSON with suggestions, results, titles, movies, or items keys',
         () {

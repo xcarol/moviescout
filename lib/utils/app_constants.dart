@@ -26,26 +26,40 @@ class AppConstants {
   static const String showEditContent = 'show_edit_content';
   static const String showCommunityTab = 'show_community_tab';
   static const String personListIsGridView = 'person_list_is_grid_view';
-  static const String aiApiKey = 'ai_api_key';
-  static const String aiModelKey = 'ai_model';
-  static const String aiTranslationEnabled = 'ai_translation_enabled';
-  static const String aiModelFree = 'openrouter/free';
-  static const String aiModelAuto = 'openrouter/auto';
-  static const String aiModelCustom = 'custom';
-  static const String defaultAiModel = aiModelFree;
-  static const String aiModel = defaultAiModel;
-  static const List<String> availableAiModels = [
-    aiModelFree,
-    aiModelAuto,
-    'google/gemini-3.1-flash-lite', // $0.25 / $1.50per 1M
-    'openai/gpt-4o-mini', // $0.15 / $0.60per 1M
-    'deepseek/deepseek-v4.1-flash', // $0.022 / $0.40per 1M
-    'anthropic/claude-haiku-5.5', // $0.10 / $0.50per 1M
-    'meta-llama/llama-4-maverick', // $0.1875 / $0.6525per 1M
+  static const String aiProviderKey = 'ai_provider';
+  static const String aiProviderGoogle = 'google_ai';
+  static const String aiProviderOpenRouter = 'openrouter';
+
+  static const String aiGoogleApiKey = 'ai_google_api_key';
+  static const String aiGoogleModelKey = 'ai_google_model';
+  static const String aiGoogleModelFlash = 'gemini-flash-latest';
+  static const String aiGoogleModelFlashLite = 'gemini-flash-lite-latest';
+  static const String aiGoogleModelFlash36 = 'gemini-3.6-flash';
+  static const String defaultAiGoogleModel = aiGoogleModelFlash;
+  static const List<String> availableAiGoogleModels = [
+    aiGoogleModelFlash,
+    aiGoogleModelFlashLite,
+    aiGoogleModelFlash36,
   ];
+
+  static const String aiOpenRouterApiKey = 'ai_api_key';
+  static const String aiOpenRouterModelKey = 'ai_model';
+  static const String aiOpenRouterModelFree = 'openrouter/free';
+  static const String aiOpenRouterModelAuto = 'openrouter/auto';
+  static const String aiOpenRouterModelGeminiFlash36 =
+      'google/gemini-3.6-flash';
+  static const String defaultAiOpenRouterModel = aiOpenRouterModelFree;
+  static const List<String> availableAiOpenRouterModels = [
+    aiOpenRouterModelFree,
+    aiOpenRouterModelAuto,
+    aiOpenRouterModelGeminiFlash36,
+  ];
+
+  static const String aiModelCustom = 'custom';
+  static const String aiTranslationEnabled = 'ai_translation_enabled';
   static const double aiTemperature = 0.2;
   static const int aiMaxSuggestions = 10;
-  static const int aiMaxTokens = 1000;
+  static const int aiMaxTokens = 4096;
   static const String aiSearchSystemPrompt =
       'You are an expert movie and TV show search assistant for the MovieScout app.\n'
       'Suggest 1 to $aiMaxSuggestions movies or TV shows that best match the user\'s description.\n'
@@ -57,8 +71,9 @@ class AppConstants {
       'Example:\n'
       '[{"title": "Inception", "year": 2010, "media_type": "movie"}]';
   static const String aiTranslateSystemPrompt =
-      'You are a professional translator. Translate the given text to the target language. '
-      'Return ONLY the translated text without any quotes, formatting, or additional comments.';
+      'You are a professional movie and TV show translator. Translate the given text to the target language. '
+      'If the input contains "TITLE:" and/or "SYNOPSIS:" labels, keep the exact "TITLE:" and "SYNOPSIS:" labels in your response. '
+      'Return ONLY the translated text without any quotes, markdown formatting, or additional comments.';
 
   static const String catalan = 'ca-ES';
   static const String spanish = 'es-ES';

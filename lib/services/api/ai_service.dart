@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:moviescout/services/api/ai_provider.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/utils/url_constants.dart';
 
 class AiTitleSuggestion {
   final String title;
@@ -77,33 +77,56 @@ class AiService {
 
   AiService._internal();
 
-  String get apiKey =>
-      PreferencesService().prefs.getString(AppConstants.aiApiKey) ?? '';
+  final List<AiProvider> providers = [
+    GoogleAiProvider(),
+    OpenRouterProvider(),
+  ];
 
-  bool get hasApiKey => apiKey.trim().isNotEmpty;
-
-  String get selectedModel {
-    final saved = PreferencesService().prefs.getString(AppConstants.aiModelKey);
-    if (saved != null && saved.trim().isNotEmpty) {
-      return saved.trim();
+  AiProvider get currentProvider {
+    final savedId =
+        PreferencesService().prefs.getString(AppConstants.aiProviderKey);
+    if (savedId != null && savedId.trim().isNotEmpty) {
+      for (final provider in providers) {
+        if (provider.id == savedId.trim()) {
+          return provider;
+        }
+      }
     }
-    return AppConstants.defaultAiModel;
+
+    final defaultProvider = providers.first;
+    if (!defaultProvider.hasApiKey) {
+      for (final provider in providers.skip(1)) {
+        if (provider.hasApiKey) {
+          return provider;
+        }
+      }
+    }
+
+    return defaultProvider;
   }
 
+  Future<void> setSelectedProvider(String providerId) async {
+    await PreferencesService()
+        .prefs
+        .setString(AppConstants.aiProviderKey, providerId.trim());
+  }
+
+  String get apiKey => currentProvider.apiKey;
+
+  bool get hasApiKey => currentProvider.hasApiKey;
+
+  String get selectedModel => currentProvider.selectedModel;
+
   Future<void> saveApiKey(String key) async {
-    final trimmed = key.trim();
-    await PreferencesService().prefs.setString(AppConstants.aiApiKey, trimmed);
+    final provider = currentProvider;
+    await setSelectedProvider(provider.id);
+    await provider.saveApiKey(key);
   }
 
   Future<void> saveSelectedModel(String model) async {
-    final trimmed = model.trim();
-    if (trimmed.isEmpty || trimmed == AppConstants.defaultAiModel) {
-      await PreferencesService().prefs.remove(AppConstants.aiModelKey);
-    } else {
-      await PreferencesService()
-          .prefs
-          .setString(AppConstants.aiModelKey, trimmed);
-    }
+    final provider = currentProvider;
+    await setSelectedProvider(provider.id);
+    await provider.saveSelectedModel(model);
   }
 
   static int? extractRetrySeconds(String errorMessage) {
@@ -125,14 +148,15 @@ class AiService {
   }
 
   Future<List<AiTitleSuggestion>> suggestTitles(String userQuery) async {
-    final key = apiKey.trim();
+    final provider = currentProvider;
+    final key = provider.apiKey.trim();
     if (key.isEmpty) {
-      throw Exception('OpenRouter API key is not configured');
+      throw Exception('${provider.name} API key is not configured');
     }
 
-    final targetUrl = Uri.parse(UrlConstants.openRouterApiUrl);
-    final headers = _buildHeaders(key);
-    final body = jsonEncode(_buildSuggestionBody(userQuery));
+    final targetUrl = provider.buildUrl();
+    final headers = provider.buildHeaders(key);
+    final body = jsonEncode(provider.buildSuggestionBody(userQuery));
 
     try {
       final response = await http
@@ -168,15 +192,17 @@ class AiService {
     required String sourceLanguage,
     required String targetLanguage,
   }) async {
-    final key = apiKey.trim();
+    final provider = currentProvider;
+    final key = provider.apiKey.trim();
     if (key.isEmpty) {
-      throw Exception('OpenRouter API key is not configured');
+      throw Exception('${provider.name} API key is not configured');
     }
 
-    final targetUrl = Uri.parse(UrlConstants.openRouterApiUrl);
-    final headers = _buildHeaders(key);
-    final body =
-        jsonEncode(_buildTranslationBody(sourceLanguage, targetLanguage, text));
+    final targetUrl = provider.buildUrl();
+    final headers = provider.buildHeaders(key);
+    final body = jsonEncode(
+      provider.buildTranslationBody(sourceLanguage, targetLanguage, text),
+    );
 
     try {
       final response = await http
@@ -184,12 +210,16 @@ class AiService {
           .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
-        final content = _extractMessageContent(response.body);
+        final content = provider.extractMessageContent(response.body);
         if (content != null && content.isNotEmpty) {
           final cleaned = _cleanTranslation(content);
-          return cleaned.isNotEmpty ? cleaned : text;
+          if (cleaned.isNotEmpty) {
+            return cleaned;
+          }
         }
-        return text;
+        throw Exception(
+          '${provider.name} returned an empty translation: ${response.body}',
+        );
       }
 
       _handleErrorResponse(response);
@@ -250,45 +280,6 @@ class AiService {
     return cleaned;
   }
 
-  Map<String, String> _buildHeaders(String key) => {
-        'Authorization': 'Bearer $key',
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://moviescout.xicra.com',
-        'X-Title': 'MovieScout',
-      };
-
-  Map<String, dynamic> _buildSuggestionBody(String query) => {
-        'model': selectedModel,
-        'temperature': AppConstants.aiTemperature,
-        'max_tokens': AppConstants.aiMaxTokens,
-        'messages': [
-          {
-            'role': 'system',
-            'content': AppConstants.aiSearchSystemPrompt,
-          },
-          {'role': 'user', 'content': 'Movies or TV shows about: $query'}
-        ]
-      };
-
-  Map<String, dynamic> _buildTranslationBody(
-          String sourceLanguage, String targetLanguage, String text) =>
-      {
-        'model': selectedModel,
-        'temperature': AppConstants.aiTemperature,
-        'max_tokens': AppConstants.aiMaxTokens,
-        'messages': [
-          {
-            'role': 'system',
-            'content': AppConstants.aiTranslateSystemPrompt,
-          },
-          {
-            'role': 'user',
-            'content':
-                'Translate from $sourceLanguage to $targetLanguage:\n\n$text'
-          }
-        ]
-      };
-
   Never _handleErrorResponse(http.Response response) {
     if (response.statusCode == 429 ||
         response.body.contains('rate-limited') ||
@@ -299,25 +290,37 @@ class AiService {
       );
     }
 
-    if (response.statusCode >= 400 && response.statusCode < 500) {
-      String message = 'API request failed (${response.statusCode})';
+    if (response.statusCode >= 400) {
       try {
         final data = jsonDecode(response.body);
         if (data is Map && data['error'] != null) {
           final err = data['error'];
           if (err is Map && err['message'] != null) {
-            message = err['message'].toString().trim();
+            throw AiApiException(
+              statusCode: response.statusCode,
+              message: err['message'].toString().trim(),
+            );
           } else if (err is String) {
-            message = err.trim();
+            throw AiApiException(
+              statusCode: response.statusCode,
+              message: err.trim(),
+            );
           }
         }
+      } on AiApiException {
+        rethrow;
       } catch (_) {}
 
-      throw AiApiException(statusCode: response.statusCode, message: message);
+      if (response.statusCode < 500) {
+        throw AiApiException(
+          statusCode: response.statusCode,
+          message: 'API request failed (${response.statusCode})',
+        );
+      }
     }
 
     throw Exception(
-      'OpenRouter API request failed with status: ${response.statusCode} - ${response.body}',
+      '${currentProvider.name} API request failed with status: ${response.statusCode} - ${response.body}',
     );
   }
 
@@ -334,8 +337,14 @@ class AiService {
 
   List<AiTitleSuggestion> _parseSuggestions(String responseBody) {
     try {
-      final content = _extractMessageContent(responseBody);
-      if (content == null || content.isEmpty) return [];
+      final content = currentProvider.extractMessageContent(responseBody);
+      if (content == null || content.isEmpty) {
+        ErrorService.log(
+          'Empty content from ${currentProvider.name}: $responseBody',
+          userMessage: 'Empty ${currentProvider.name} response',
+        );
+        return [];
+      }
 
       final jsonStr = _extractJsonBlock(content);
       if (jsonStr != null) {
@@ -350,29 +359,10 @@ class AiService {
       ErrorService.log(
         e,
         stackTrace: stackTrace,
-        userMessage: 'Error parsing OpenRouter response',
+        userMessage: 'Error parsing ${currentProvider.name} response',
       );
       return [];
     }
-  }
-
-  String? _extractMessageContent(String responseBody) {
-    final data = jsonDecode(responseBody);
-    if (data is Map && data['error'] != null) {
-      final err = data['error'];
-      final message =
-          err is Map ? (err['message'] ?? err.toString()) : err.toString();
-      throw Exception('OpenRouter API error: $message');
-    }
-    final choices = data['choices'] as List<dynamic>?;
-    if (choices == null || choices.isEmpty) return null;
-
-    final firstChoice = choices.first;
-    final message = firstChoice['message'];
-    if (message == null) return null;
-
-    final content = message['content'] as String?;
-    return content?.trim();
   }
 
   String? _extractJsonBlock(String content) {

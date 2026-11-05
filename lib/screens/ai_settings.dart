@@ -3,7 +3,6 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/services/api/ai_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/snack_bar.dart';
-import 'package:moviescout/utils/url_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AiSettingsScreen extends StatefulWidget {
@@ -23,13 +22,20 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    final currentKey = AiService().apiKey;
+    _loadProviderState();
+  }
+
+  void _loadProviderState() {
+    final provider = AiService().currentProvider;
+    final currentKey = provider.apiKey;
     _apiKeyController.text = currentKey;
     _hasSavedKey = currentKey.trim().isNotEmpty;
+    _obscureText = true;
 
-    final currentModel = AiService().selectedModel;
-    if (AppConstants.availableAiModels.contains(currentModel)) {
+    final currentModel = provider.selectedModel;
+    if (provider.availableModels.contains(currentModel)) {
       _selectedModelDropdown = currentModel;
+      _customModelController.clear();
     } else {
       _selectedModelDropdown = AppConstants.aiModelCustom;
       _customModelController.text = currentModel;
@@ -43,8 +49,18 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
     super.dispose();
   }
 
-  Future<void> _openOpenRouter() async {
-    final uri = Uri.parse(UrlConstants.openRouterKeysUrl);
+  Future<void> _onProviderSelected(Set<String> selection) async {
+    if (selection.isEmpty) return;
+    final newProviderId = selection.first;
+    if (newProviderId == AiService().currentProvider.id) return;
+    await AiService().setSelectedProvider(newProviderId);
+    setState(() {
+      _loadProviderState();
+    });
+  }
+
+  Future<void> _openProviderKeys() async {
+    final uri = Uri.parse(AiService().currentProvider.keysUrl);
     await launchUrl(uri, mode: LaunchMode.inAppWebView);
   }
 
@@ -75,6 +91,7 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
 
   Future<void> _confirmClearKey() async {
     final l10n = AppLocalizations.of(context)!;
+    final provider = AiService().currentProvider;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -84,7 +101,7 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
           size: 28,
         ),
         title: Text(l10n.aiDeleteConfirmTitle),
-        content: Text(l10n.aiDeleteConfirmMessage),
+        content: Text(provider.deleteConfirmMessage(l10n)),
         actions: [
           FilledButton.tonal(
             onPressed: () => Navigator.of(context).pop(false),
@@ -126,22 +143,12 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
     setState(() {});
   }
 
-  String _modelLabel(String model, AppLocalizations l10n) {
-    switch (model) {
-      case AppConstants.aiModelFree:
-        return l10n.aiModelFreeLabel;
-      case AppConstants.aiModelAuto:
-        return l10n.aiModelAutoLabel;
-      default:
-        return model;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final provider = AiService().currentProvider;
 
     return Scaffold(
       appBar: AppBar(
@@ -152,6 +159,28 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Text(
+              l10n.aiProviderLabel,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            SegmentedButton<String>(
+              segments: AiService()
+                  .providers
+                  .map(
+                    (p) => ButtonSegment<String>(
+                      value: p.id,
+                      icon: Icon(p.icon),
+                      label: Text(p.name),
+                    ),
+                  )
+                  .toList(),
+              selected: {provider.id},
+              onSelectionChanged: _onProviderSelected,
+            ),
+            const SizedBox(height: 16),
             Card(
               elevation: 0,
               color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
@@ -176,7 +205,7 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      l10n.aiSettingsDescription,
+                      provider.description(l10n),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                       ),
@@ -187,9 +216,9 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
             ),
             const SizedBox(height: 20),
             OutlinedButton.icon(
-              onPressed: _openOpenRouter,
+              onPressed: _openProviderKeys,
               icon: const Icon(Icons.open_in_new),
-              label: Text(l10n.aiGetApiKeyButton),
+              label: Text(provider.getApiKeyButtonLabel(l10n)),
               style: OutlinedButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -197,7 +226,7 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              l10n.aiApiKeyLabel,
+              provider.apiKeyLabel(l10n),
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -210,7 +239,7 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
-                hintText: l10n.aiApiKeyHint,
+                hintText: provider.apiKeyHint(l10n),
                 prefixIcon: const Icon(Icons.key),
                 suffixIcon: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -299,6 +328,7 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
+              key: ValueKey('${provider.id}_$_selectedModelDropdown'),
               initialValue: _selectedModelDropdown,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
@@ -306,10 +336,10 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
               ),
               isExpanded: true,
               items: [
-                ...AppConstants.availableAiModels.map(
+                ...provider.availableModels.map(
                   (model) => DropdownMenuItem(
                     value: model,
-                    child: Text(_modelLabel(model, l10n)),
+                    child: Text(provider.modelDisplayLabel(model, l10n)),
                   ),
                 ),
                 DropdownMenuItem(
@@ -330,7 +360,7 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
                       onChanged: (_) => setState(() {}),
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
-                        hintText: l10n.aiModelCustomHint,
+                        hintText: provider.customModelHint(l10n),
                         prefixIcon: const Icon(Icons.tune),
                       ),
                       onSubmitted: _canSaveCustomModel

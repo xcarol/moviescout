@@ -523,17 +523,40 @@ class AppLocalizationsEu extends AppLocalizations {
   String get aiSettingsSubtitle => 'Bilaketa adimenduna eta AI Ezaugarriak';
 
   @override
-  String get aiSettingsDescription =>
+  String get aiProviderLabel => 'AA hornitzailea';
+
+  @override
+  String get aiGoogleSettingsDescription =>
+      'AI funtzioek hizkuntza naturaleko deskribapenetan oinarritutako filmak eta serieak aurkitzeko aukera ematen dute. Kosturik gabe erabiltzeko, doako gako bat lor dezakezu Google AI Studio-n (txartelik gabe).';
+
+  @override
+  String get aiGoogleGetApiKeyButton => 'Lortu gakoa Google AI Studio-n';
+
+  @override
+  String get aiGoogleApiKeyLabel => 'Google AI Studio API gakoa';
+
+  @override
+  String get aiGoogleApiKeyHint => 'AIzaSy...';
+
+  @override
+  String get aiGoogleModelCustomHint => 'adib. gemini-3.1-flash-lite-preview';
+
+  @override
+  String get aiGoogleDeleteConfirmMessage =>
+      'Ziur Google AI Studio API gakoa gailu honetatik ezabatu nahi duzula?';
+
+  @override
+  String get aiOpenRouterSettingsDescription =>
       'AI funtzioek hizkuntza naturaleko deskribapenetan eta tresna adimentsuagoetan oinarritutako filmak eta serieak aurki ditzakezu. Horiek erabiltzeko, doako gako bat lor dezakezu OpenRouter-en (ez da txartelik behar).';
 
   @override
-  String get aiGetApiKeyButton => 'Lortu gakoa OpenRouter-en';
+  String get aiOpenRouterGetApiKeyButton => 'Lortu gakoa OpenRouter-en';
 
   @override
-  String get aiApiKeyLabel => 'OpenRouter API gakoa';
+  String get aiOpenRouterApiKeyLabel => 'OpenRouter API gakoa';
 
   @override
-  String get aiApiKeyHint => 'sk-edo-v1-...';
+  String get aiOpenRouterApiKeyHint => 'sk-edo-v1-...';
 
   @override
   String get aiSaveKeyButton => 'Gorde tekla';
@@ -561,16 +584,17 @@ class AppLocalizationsEu extends AppLocalizations {
       'Hautatu bilaketa eta itzulpenetarako erabiliko den eredua. Doako ereduek ez dute krediturik kontsumitzen.';
 
   @override
-  String get aiModelFreeLabel => 'Doakoa (openrouter/free)';
+  String get aiOpenRouterModelFreeLabel => 'Doakoa (openrouter/free)';
 
   @override
-  String get aiModelAutoLabel => 'Automatikoa (openrouter/auto)';
+  String get aiOpenRouterModelAutoLabel => 'Automatikoa (openrouter/auto)';
 
   @override
   String get aiModelCustomLabel => 'Eredu pertsonalizatua...';
 
   @override
-  String get aiModelCustomHint => 'adib. meta-llama/llama-3.3-70b-instruct';
+  String get aiOpenRouterModelCustomHint =>
+      'adib. meta-llama/llama-3.3-70b-instruct';
 
   @override
   String get delete => 'Ezabatu';
@@ -579,7 +603,7 @@ class AppLocalizationsEu extends AppLocalizations {
   String get aiDeleteConfirmTitle => 'Ezabatu API gakoa';
 
   @override
-  String get aiDeleteConfirmMessage =>
+  String get aiOpenRouterDeleteConfirmMessage =>
       'Ziur API gakoa ezabatu nahi duzula? Kontuan izan OpenRouter-ek ez dizula gakoa kontsultatzen uzten behin sortuta eta beste bat sortu beharko duzula gordeta ez baduzu.';
 
   @override
@@ -593,6 +617,14 @@ class AppLocalizationsEu extends AppLocalizations {
   @override
   String get aiSearchError =>
       'Errore bat gertatu da AI bilaketan. Saiatu berriro.';
+
+  @override
+  String get aiTranslationTimeout =>
+      'AI itzulpenak denbora gehiegi behar izan du erantzuteko. Saiatu berriro geroago edo aldatu eredua.';
+
+  @override
+  String get aiTranslationError =>
+      'Errore bat gertatu da AI itzulpenean. Saiatu berriro.';
 
   @override
   String aiRateLimitWithSeconds(int seconds) {
@@ -979,7 +1011,7 @@ class AppLocalizationsEu extends AppLocalizations {
 
   @override
   String get settingsInfoAiNote =>
-      'Garrantzitsua: Doako IA ereduek erantzun-denbora motelagoak edo aldi baterako mugak izan ditzakete. Errendimendu hoberena lortzeko, ordainpeko zerbitzua gomendatzen da.';
+      'Garrantzitsua: Doako IA ereduek erantzun-denbora motelagoak edo aldi baterako mugak izan ditzakete.';
 
   @override
   String get settingsInfoProfileTitle => 'Profil Publikoa eta Komunitatea';

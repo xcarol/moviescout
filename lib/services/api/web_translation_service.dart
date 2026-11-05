@@ -68,16 +68,11 @@ class WebTranslationService with ChangeNotifier {
     if (text.isEmpty) return text;
 
     if (AiService().hasApiKey && isAiTranslationEnabled) {
-      try {
-        return await AiService().translate(
-          text,
-          sourceLanguage: sourceLanguageName,
-          targetLanguage: targetLanguageName,
-        );
-      } catch (e) {
-        debugPrint('AI Translation error: $e');
-        // fallback to google on error
-      }
+      return await AiService().translate(
+        text,
+        sourceLanguage: sourceLanguageName,
+        targetLanguage: targetLanguageName,
+      );
     }
 
     try {
@@ -91,5 +86,110 @@ class WebTranslationService with ChangeNotifier {
       debugPrint('Translation error: $e');
       return text; // Return original on error
     }
+  }
+
+  Future<({String title, String description})> translateTitleAndSynopsis({
+    required String title,
+    required String description,
+  }) async {
+    final trimmedTitle = title.trim();
+    final trimmedDesc = description.trim();
+    if (trimmedTitle.isEmpty && trimmedDesc.isEmpty) {
+      return (title: '', description: '');
+    }
+
+    if (AiService().hasApiKey && isAiTranslationEnabled) {
+      if (trimmedTitle.isEmpty) {
+        final translatedDesc = await AiService().translate(
+          trimmedDesc,
+          sourceLanguage: sourceLanguageName,
+          targetLanguage: targetLanguageName,
+        );
+        return (title: '', description: translatedDesc);
+      }
+
+      final payload = trimmedDesc.isNotEmpty
+          ? 'TITLE: $trimmedTitle\nSYNOPSIS: $trimmedDesc'
+          : 'TITLE: $trimmedTitle';
+
+      final response = await AiService().translate(
+        payload,
+        sourceLanguage: sourceLanguageName,
+        targetLanguage: targetLanguageName,
+      );
+
+      return parseTitleAndSynopsis(
+        response,
+        hasDescription: trimmedDesc.isNotEmpty,
+      );
+    }
+
+    final results = await Future.wait([
+      trimmedTitle.isNotEmpty ? translate(trimmedTitle) : Future.value(''),
+      trimmedDesc.isNotEmpty ? translate(trimmedDesc) : Future.value(''),
+    ]);
+    return (title: results[0], description: results[1]);
+  }
+
+  @visibleForTesting
+  ({String title, String description}) parseTitleAndSynopsis(
+    String response, {
+    required bool hasDescription,
+  }) {
+    final titlePrefixRegex = RegExp(
+      r'^\s*(?:TITLE|TÍTOL|TITOL|TÍTULO|TITULO)\s*:\s*',
+      caseSensitive: false,
+    );
+    final synopsisSplitRegex = RegExp(
+      r'\n\s*(?:SYNOPSIS|SINOPSI|SINOPSIS)\s*:\s*',
+      caseSensitive: false,
+    );
+
+    if (!hasDescription) {
+      final cleanedTitle =
+          _stripSurroundingQuotes(response.replaceFirst(titlePrefixRegex, ''));
+      return (title: cleanedTitle, description: '');
+    }
+
+    final match = synopsisSplitRegex.firstMatch(response);
+    if (match != null) {
+      final rawTitle = response.substring(0, match.start);
+      final rawDesc = response.substring(match.end);
+      return (
+        title: _stripSurroundingQuotes(
+          rawTitle.replaceFirst(titlePrefixRegex, ''),
+        ),
+        description: _stripSurroundingQuotes(rawDesc),
+      );
+    }
+
+    final newlineIndex = response.indexOf('\n');
+    if (newlineIndex != -1) {
+      final rawTitle = response.substring(0, newlineIndex);
+      final rawDesc = response.substring(newlineIndex + 1);
+      return (
+        title: _stripSurroundingQuotes(
+          rawTitle.replaceFirst(titlePrefixRegex, ''),
+        ),
+        description: _stripSurroundingQuotes(rawDesc),
+      );
+    }
+
+    return (
+      title: _stripSurroundingQuotes(
+        response.replaceFirst(titlePrefixRegex, ''),
+      ),
+      description: '',
+    );
+  }
+
+  String _stripSurroundingQuotes(String value) {
+    final trimmed = value.trim();
+    if (trimmed.length > 1 &&
+        trimmed.startsWith('"') &&
+        trimmed.endsWith('"')) {
+      return trimmed.substring(1, trimmed.length - 1).trim();
+    }
+    return trimmed;
   }
 }

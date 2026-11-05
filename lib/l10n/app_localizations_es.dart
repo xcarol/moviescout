@@ -522,17 +522,40 @@ class AppLocalizationsEs extends AppLocalizations {
   String get aiSettingsSubtitle => 'Búsqueda inteligente y funciones de IA';
 
   @override
-  String get aiSettingsDescription =>
+  String get aiProviderLabel => 'Proveedor de IA';
+
+  @override
+  String get aiGoogleSettingsDescription =>
+      'Las funciones de IA te permiten encontrar películas y series basándose en descripciones en lenguaje natural y más herramientas inteligentes. Para utilizarlas sin coste, puedes obtener una clave gratuita en Google AI Studio (sin necesidad de tarjeta).';
+
+  @override
+  String get aiGoogleGetApiKeyButton => 'Obtener clave en Google AI Studio';
+
+  @override
+  String get aiGoogleApiKeyLabel => 'Clave API de Google AI Studio';
+
+  @override
+  String get aiGoogleApiKeyHint => 'AIzaSy...';
+
+  @override
+  String get aiGoogleModelCustomHint => 'ej. gemini-3.1-flash-lite-preview';
+
+  @override
+  String get aiGoogleDeleteConfirmMessage =>
+      '¿Seguro que quieres eliminar la clave API de Google AI Studio de este dispositivo?';
+
+  @override
+  String get aiOpenRouterSettingsDescription =>
       'Las funciones de IA te permiten encontrar películas y series basándose en descripciones en lenguaje natural y más herramientas inteligentes. Para utilizarlas, puedes obtener una clave gratuita en OpenRouter (sin necesidad de tarjeta).';
 
   @override
-  String get aiGetApiKeyButton => 'Obtener clave en OpenRouter';
+  String get aiOpenRouterGetApiKeyButton => 'Obtener clave en OpenRouter';
 
   @override
-  String get aiApiKeyLabel => 'Clave API de OpenRouter';
+  String get aiOpenRouterApiKeyLabel => 'Clave API de OpenRouter';
 
   @override
-  String get aiApiKeyHint => 'sk-or-v1-...';
+  String get aiOpenRouterApiKeyHint => 'sk-or-v1-...';
 
   @override
   String get aiSaveKeyButton => 'Guardar clave';
@@ -560,16 +583,17 @@ class AppLocalizationsEs extends AppLocalizations {
       'Selecciona el modelo que se utilizará para búsquedas y traducciones. Los modelos gratuitos no consumen créditos.';
 
   @override
-  String get aiModelFreeLabel => 'Gratuito (openrouter/free)';
+  String get aiOpenRouterModelFreeLabel => 'Gratuito (openrouter/free)';
 
   @override
-  String get aiModelAutoLabel => 'Automático (openrouter/auto)';
+  String get aiOpenRouterModelAutoLabel => 'Automático (openrouter/auto)';
 
   @override
   String get aiModelCustomLabel => 'Modelo personalizado...';
 
   @override
-  String get aiModelCustomHint => 'ej. meta-llama/llama-3.3-70b-instruct';
+  String get aiOpenRouterModelCustomHint =>
+      'ej. meta-llama/llama-3.3-70b-instruct';
 
   @override
   String get delete => 'Eliminar';
@@ -578,7 +602,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get aiDeleteConfirmTitle => 'Eliminar clave API';
 
   @override
-  String get aiDeleteConfirmMessage =>
+  String get aiOpenRouterDeleteConfirmMessage =>
       '¿Seguro que quieres eliminar la clave API? Ten en cuenta que OpenRouter no permite consultar la clave una vez creada y tendrás que generar una nueva si no la tienes guardada.';
 
   @override
@@ -592,6 +616,14 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get aiSearchError =>
       'Se ha producido un error en la búsqueda IA. Inténtalo de nuevo.';
+
+  @override
+  String get aiTranslationTimeout =>
+      'La traducción con IA ha tardado demasiado en responder. Inténtalo de nuevo más tarde o cambia de modelo.';
+
+  @override
+  String get aiTranslationError =>
+      'Se ha producido un error en la traducción con IA. Inténtalo de nuevo.';
 
   @override
   String aiRateLimitWithSeconds(int seconds) {
@@ -981,7 +1013,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsInfoAiNote =>
-      'Importante: Los modelos gratuitos de IA pueden tener tiempos de respuesta más lentos o límites temporales dependientes del proveedor. Para un rendimiento óptimo, se recomienda un servicio de pago por uso.';
+      'Importante: Los modelos gratuitos de IA pueden tener tiempos de respuesta más lentos o límites temporales de peticiones.';
 
   @override
   String get settingsInfoProfileTitle => 'Perfil Público y Comunidad';
@@ -1663,17 +1695,40 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get aiSettingsSubtitle => 'Búsqueda inteligente y funciones de IA';
 
   @override
-  String get aiSettingsDescription =>
+  String get aiProviderLabel => 'Proveedor de IA';
+
+  @override
+  String get aiGoogleSettingsDescription =>
+      'Las funciones de IA te permiten encontrar películas y series basándose en descripciones en lenguaje natural y más herramientas inteligentes. Para utilizarlas sin costo, puedes obtener una clave gratuita en Google AI Studio (sin necesidad de tarjeta).';
+
+  @override
+  String get aiGoogleGetApiKeyButton => 'Obtener clave en Google AI Studio';
+
+  @override
+  String get aiGoogleApiKeyLabel => 'Clave API de Google AI Studio';
+
+  @override
+  String get aiGoogleApiKeyHint => 'AIzaSy...';
+
+  @override
+  String get aiGoogleModelCustomHint => 'ej. gemini-3.1-flash-lite-preview';
+
+  @override
+  String get aiGoogleDeleteConfirmMessage =>
+      '¿Seguro que deseas eliminar la clave de API de Google AI Studio de este dispositivo?';
+
+  @override
+  String get aiOpenRouterSettingsDescription =>
       'Las funciones de IA te permiten encontrar películas y series basándose en descripciones en lenguaje natural y más herramientas inteligentes. Para utilizarlas, puedes obtener una clave gratuita en OpenRouter (sin necesidad de tarjeta).';
 
   @override
-  String get aiGetApiKeyButton => 'Obtener clave en OpenRouter';
+  String get aiOpenRouterGetApiKeyButton => 'Obtener clave en OpenRouter';
 
   @override
-  String get aiApiKeyLabel => 'Clave API de OpenRouter';
+  String get aiOpenRouterApiKeyLabel => 'Clave API de OpenRouter';
 
   @override
-  String get aiApiKeyHint => 'sk-or-v1-...';
+  String get aiOpenRouterApiKeyHint => 'sk-or-v1-...';
 
   @override
   String get aiSaveKeyButton => 'Guardar clave';
@@ -1701,16 +1756,17 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
       'Selecciona el modelo que se utilizará para búsquedas y traducciones. Los modelos gratuitos no consumen créditos.';
 
   @override
-  String get aiModelFreeLabel => 'Gratuito (openrouter/free)';
+  String get aiOpenRouterModelFreeLabel => 'Gratuito (openrouter/free)';
 
   @override
-  String get aiModelAutoLabel => 'Automático (openrouter/auto)';
+  String get aiOpenRouterModelAutoLabel => 'Automático (openrouter/auto)';
 
   @override
   String get aiModelCustomLabel => 'Modelo personalizado...';
 
   @override
-  String get aiModelCustomHint => 'ej. meta-llama/llama-3.3-70b-instruct';
+  String get aiOpenRouterModelCustomHint =>
+      'ej. meta-llama/llama-3.3-70b-instruct';
 
   @override
   String get delete => 'Eliminar';
@@ -1719,7 +1775,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get aiDeleteConfirmTitle => 'Eliminar clave API';
 
   @override
-  String get aiDeleteConfirmMessage =>
+  String get aiOpenRouterDeleteConfirmMessage =>
       '¿Seguro que deseas eliminar la clave de API? Ten en cuenta que OpenRouter no permite consultar la clave una vez creada y tendrás que generar una nueva si no la tienes guardada.';
 
   @override
@@ -1733,6 +1789,14 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get aiSearchError =>
       'Se ha producido un error en la búsqueda IA. Inténtalo de nuevo.';
+
+  @override
+  String get aiTranslationTimeout =>
+      'La traducción con IA ha tardado demasiado en responder. Inténtalo de nuevo más tarde o cambia de modelo.';
+
+  @override
+  String get aiTranslationError =>
+      'Se ha producido un error en la traducción con IA. Inténtalo de nuevo.';
 
   @override
   String aiRateLimitWithSeconds(int seconds) {
@@ -2122,7 +2186,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get settingsInfoAiNote =>
-      'Importante: Los modelos gratuitos de IA pueden tener tiempos de respuesta más lentos o límites temporales dependientes del proveedor. Para un rendimiento óptimo, se recomienda un servicio de pago por uso.';
+      'Importante: Los modelos gratuitos de IA pueden tener tiempos de respuesta más lentos o límites temporales de peticiones.';
 
   @override
   String get settingsInfoProfileTitle => 'Perfil Público y Comunidad';
