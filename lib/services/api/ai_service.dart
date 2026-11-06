@@ -101,9 +101,12 @@ class AiService {
     }
 
     try {
-      final response = await http
-          .get(Uri.parse(UrlConstants.aiModelsConfigUrl))
-          .timeout(const Duration(seconds: 4));
+      final uri = Uri.parse(UrlConstants.aiModelsConfigUrl).replace(
+        queryParameters: {
+          't': DateTime.now().millisecondsSinceEpoch.toString(),
+        },
+      );
+      final response = await http.get(uri).timeout(const Duration(seconds: 4));
 
       if (response.statusCode == 200 && response.body.trim().isNotEmpty) {
         if (applyConfigJson(response.body)) {
@@ -122,8 +125,7 @@ class AiService {
       final decoded = jsonDecode(jsonStr);
       if (decoded is! Map) return false;
 
-      final defaultProviderRaw =
-          decoded['default_provider']?.toString().trim();
+      final defaultProviderRaw = decoded['default_provider']?.toString().trim();
       if (defaultProviderRaw != null && defaultProviderRaw.isNotEmpty) {
         _remoteDefaultProviderId = defaultProviderRaw;
       }
