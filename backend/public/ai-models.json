@@ -10,7 +10,7 @@
         "gemini-3.6-flash"
       ],
       "generation_config": {
-        "thinking_level": "low"
+        "thinking_level": "medium"
       }
     },
     "openrouter": {
