@@ -203,6 +203,7 @@ class FullScreenCarousel extends StatefulWidget {
 class FullScreenCarouselState extends State<FullScreenCarousel> {
   late PageController _pageController;
   late int _currentPage;
+  bool _isZoomed = false;
 
   @override
   void initState() {
@@ -215,6 +216,11 @@ class FullScreenCarouselState extends State<FullScreenCarousel> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  int _getRealIndex(int index, int total) {
+    if (total <= 0) return 0;
+    return ((((index - widget.infiniteBase) % total) + total) % total).toInt();
   }
 
   @override
@@ -235,19 +241,206 @@ class FullScreenCarouselState extends State<FullScreenCarousel> {
         currentPage: _currentPage,
         infiniteBase: widget.infiniteBase,
         showNavButtons: false,
+        isZoomed: _isZoomed,
         onPageChanged: (index) {
           setState(() {
             _currentPage = index;
+            _isZoomed = false;
           });
         },
         itemBuilder: (context, realIndex) {
           final path = widget.images[realIndex];
           final url = UrlConstants.tmdbImageOriginalTemplate
               .replaceFirst('{PATH}', path);
-          return InteractiveViewer(
+          final isCurrent =
+              realIndex == _getRealIndex(_currentPage, totalItems);
+          return _ZoomableImage(
+            key: ValueKey('$path-$realIndex'),
+            imageUrl: url,
+            isActive: isCurrent,
+            onZoomChanged: (isZoomed) {
+              if (isCurrent && _isZoomed != isZoomed) {
+                setState(() {
+                  _isZoomed = isZoomed;
+                });
+              }
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _ZoomableImage extends StatefulWidget {
+  final String imageUrl;
+  final bool isActive;
+  final ValueChanged<bool> onZoomChanged;
+
+  const _ZoomableImage({
+    super.key,
+    required this.imageUrl,
+    required this.isActive,
+    required this.onZoomChanged,
+  });
+
+  @override
+  State<_ZoomableImage> createState() => _ZoomableImageState();
+}
+
+class _ZoomableImageState extends State<_ZoomableImage>
+    with SingleTickerProviderStateMixin {
+  late final TransformationController _transformationController;
+  late final AnimationController _animationController;
+  Animation<Matrix4>? _animation;
+  Offset? _doubleTapPosition;
+  bool _isZoomed = false;
+  static const double _zoomThreshold = 1.01;
+  static const double _doubleTapScale = 2.5;
+  static const double _maxScale = 4.0;
+  static const double _minScale = 1.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _transformationController = TransformationController();
+    _transformationController.addListener(_onTransformationChanged);
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
+    )..addListener(_handleAnimationTick);
+  }
+
+  @override
+  void didUpdateWidget(covariant _ZoomableImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!widget.isActive && oldWidget.isActive) {
+      _resetZoom();
+    }
+  }
+
+  void _handleAnimationTick() {
+    if (_animation != null) {
+      _transformationController.value = _animation!.value;
+    }
+  }
+
+  void _onTransformationChanged() {
+    final scale = _transformationController.value.getMaxScaleOnAxis();
+    final isZoomed = scale > _zoomThreshold;
+    if (isZoomed != _isZoomed) {
+      _isZoomed = isZoomed;
+      if (mounted) {
+        widget.onZoomChanged(isZoomed);
+      }
+    }
+  }
+
+  void _resetZoom() {
+    if (_animationController.isAnimating) {
+      _animationController.stop();
+    }
+    _transformationController.value = Matrix4.identity();
+    if (_isZoomed) {
+      _isZoomed = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          widget.onZoomChanged(false);
+        }
+      });
+    }
+  }
+
+  void _handleDoubleTapDown(TapDownDetails details) {
+    _doubleTapPosition = details.localPosition;
+  }
+
+  void _handleDoubleTap(BoxConstraints constraints) {
+    if (_animationController.isAnimating) return;
+
+    final currentScale = _transformationController.value.getMaxScaleOnAxis();
+    final isZoomed = currentScale > _zoomThreshold;
+
+    if (isZoomed) {
+      _animateTransform(Matrix4.identity());
+    } else {
+      final position = _doubleTapPosition ??
+          Offset(constraints.maxWidth / 2, constraints.maxHeight / 2);
+
+      final double tx = -position.dx * (_doubleTapScale - 1);
+      final double ty = -position.dy * (_doubleTapScale - 1);
+
+      final minTx = -(_doubleTapScale - 1) * constraints.maxWidth;
+      final minTy = -(_doubleTapScale - 1) * constraints.maxHeight;
+
+      final clampedTx = tx.clamp(minTx, 0.0);
+      final clampedTy = ty.clamp(minTy, 0.0);
+
+      final targetMatrix = Matrix4(
+        _doubleTapScale, 0, 0, 0,
+        0, _doubleTapScale, 0, 0,
+        0, 0, 1, 0,
+        clampedTx, clampedTy, 0, 1,
+      );
+
+      _animateTransform(targetMatrix);
+    }
+  }
+
+  void _animateTransform(Matrix4 targetMatrix) {
+    _animation = Matrix4Tween(
+      begin: _transformationController.value,
+      end: targetMatrix,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+    _animationController.forward(from: 0);
+  }
+
+  void _handleInteractionStart(ScaleStartDetails details) {
+    if (_animationController.isAnimating) {
+      _animationController.stop();
+    }
+  }
+
+  void _handleInteractionEnd(ScaleEndDetails details) {
+    final scale = _transformationController.value.getMaxScaleOnAxis();
+    if (scale <= _zoomThreshold) {
+      _transformationController.value = Matrix4.identity();
+    }
+  }
+
+  @override
+  void dispose() {
+    _transformationController.removeListener(_onTransformationChanged);
+    _transformationController.dispose();
+    _animationController.removeListener(_handleAnimationTick);
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return GestureDetector(
+          onDoubleTapDown: _handleDoubleTapDown,
+          onDoubleTap: () => _handleDoubleTap(constraints),
+          child: InteractiveViewer(
+            transformationController: _transformationController,
+            minScale: _minScale,
+            maxScale: _maxScale,
+            panEnabled: _isZoomed,
+            scaleEnabled: true,
+            onInteractionStart: _handleInteractionStart,
+            onInteractionEnd: _handleInteractionEnd,
             child: Center(
               child: CachedNetworkImage(
-                imageUrl: url,
+                imageUrl: widget.imageUrl,
                 fit: BoxFit.contain,
                 placeholder: (context, url) =>
                     const CircularProgressIndicator(),
@@ -255,9 +448,9 @@ class FullScreenCarouselState extends State<FullScreenCarousel> {
                     Icon(Icons.error, color: colorScheme.error),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -268,6 +461,7 @@ class _CarouselBase extends StatelessWidget {
   final int currentPage;
   final int infiniteBase;
   final bool showNavButtons;
+  final bool isZoomed;
   final Widget Function(BuildContext, int realIndex) itemBuilder;
   final ValueChanged<int> onPageChanged;
 
@@ -277,6 +471,7 @@ class _CarouselBase extends StatelessWidget {
     required this.currentPage,
     this.infiniteBase = 0,
     this.showNavButtons = false,
+    this.isZoomed = false,
     required this.itemBuilder,
     required this.onPageChanged,
   });
@@ -363,19 +558,20 @@ class _CarouselBase extends StatelessWidget {
       children: [
         PageView.builder(
           controller: pageController,
-          physics:
-              totalItems == 1 ? const NeverScrollableScrollPhysics() : null,
+          physics: (totalItems == 1 || isZoomed)
+              ? const NeverScrollableScrollPhysics()
+              : null,
           onPageChanged: onPageChanged,
           itemBuilder: (context, index) {
             final realIndex = _getRealIndex(index, totalItems);
             return itemBuilder(context, realIndex);
           },
         ),
-        if (showNavButtons && totalItems > 1)
+        if (showNavButtons && totalItems > 1 && !isZoomed)
           _buildNavButton(context, isLeft: true),
-        if (showNavButtons && totalItems > 1)
+        if (showNavButtons && totalItems > 1 && !isZoomed)
           _buildNavButton(context, isLeft: false),
-        if (totalItems > 1) _buildDotIndicators(context),
+        if (totalItems > 1 && !isZoomed) _buildDotIndicators(context),
       ],
     );
   }
