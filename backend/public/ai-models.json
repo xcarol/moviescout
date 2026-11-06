@@ -11,7 +11,7 @@
         "gemini-3.6-flash"
       ],
       "generation_config": {
-        "thinking_level": "medium"
+        "thinking_level": "low"
       }
     },
     "openrouter": {
@@ -19,7 +19,6 @@
       "models": [
         "openrouter/free",
         "openrouter/auto",
-        "google/gemini-3.6-flash"
       ],
       "generation_config": {
         "max_tokens": 4096,
