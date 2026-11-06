@@ -64,7 +64,11 @@ class WebTranslationService with ChangeNotifier {
     }
   }
 
-  Future<String> translate(String text) async {
+  Future<String> translate(
+    String text, {
+    String? model,
+    String? thinkingLevel,
+  }) async {
     if (text.isEmpty) return text;
 
     if (AiService().hasApiKey && isAiTranslationEnabled) {
@@ -72,6 +76,8 @@ class WebTranslationService with ChangeNotifier {
         text,
         sourceLanguage: sourceLanguageName,
         targetLanguage: targetLanguageName,
+        model: model,
+        thinkingLevel: thinkingLevel,
       );
     }
 
@@ -91,6 +97,8 @@ class WebTranslationService with ChangeNotifier {
   Future<({String title, String description})> translateTitleAndSynopsis({
     required String title,
     required String description,
+    String? model,
+    String? thinkingLevel,
   }) async {
     final trimmedTitle = title.trim();
     final trimmedDesc = description.trim();
@@ -104,6 +112,8 @@ class WebTranslationService with ChangeNotifier {
           trimmedDesc,
           sourceLanguage: sourceLanguageName,
           targetLanguage: targetLanguageName,
+          model: model,
+          thinkingLevel: thinkingLevel,
         );
         return (title: '', description: translatedDesc);
       }
@@ -116,6 +126,8 @@ class WebTranslationService with ChangeNotifier {
         payload,
         sourceLanguage: sourceLanguageName,
         targetLanguage: targetLanguageName,
+        model: model,
+        thinkingLevel: thinkingLevel,
       );
 
       return parseTitleAndSynopsis(

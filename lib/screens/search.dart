@@ -12,6 +12,7 @@ import 'package:moviescout/utils/snack_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/screens/ai_settings.dart';
 import 'package:moviescout/services/api/ai_service.dart';
+import 'package:moviescout/widgets/inputs_and_filters/ai_model_thinking_selector.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -40,6 +41,8 @@ class _SearchState extends State<Search> {
   final double _overlayHeightOffset = 65.0;
   List<String> _overlaySuggestions = [];
   bool _isAiMode = false;
+  String? _selectedAiModel;
+  String? _selectedThinkingLevel;
 
   StateSetter? _overlaySetState;
 
@@ -280,84 +283,111 @@ class _SearchState extends State<Search> {
             selectionHandleColor: textColor,
           ),
         ),
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
-              child: TextField(
-                controller: _controller,
-                focusNode: _searchFocusNode,
-                style: TextStyle(color: textColor),
-                cursorColor: borderColor,
-                minLines: _isAiMode ? 2 : 1,
-                maxLines: _isAiMode ? 2 : 1,
-                textInputAction: TextInputAction.search,
-                decoration: InputDecoration(
-                  hintText: _isAiMode
-                      ? AppLocalizations.of(context)!.searchAiHint
-                      : AppLocalizations.of(context)!.search,
-                  hintStyle: TextStyle(color: textColor),
-                  suffixIconColor: textColor,
-                  suffixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () async =>
-                            await _resetTitle(clearText: true),
-                        tooltip: AppLocalizations.of(context)!.search,
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.auto_awesome,
-                          color: _isAiMode
-                              ? colorScheme.tertiary
-                              : textColor.withValues(alpha: 0.5),
-                          size: 24,
-                        ),
-                        tooltip: AppLocalizations.of(context)!.searchAiTooltip,
-                        onPressed: () {
-                          if (!AiService().hasApiKey) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AiSettingsScreen(),
-                              ),
-                            ).then((_) {
-                              if (AiService().hasApiKey) {
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    focusNode: _searchFocusNode,
+                    style: TextStyle(color: textColor),
+                    cursorColor: borderColor,
+                    minLines: _isAiMode ? 2 : 1,
+                    maxLines: _isAiMode ? 2 : 1,
+                    textInputAction: TextInputAction.search,
+                    decoration: InputDecoration(
+                      hintText: _isAiMode
+                          ? AppLocalizations.of(context)!.searchAiHint
+                          : AppLocalizations.of(context)!.search,
+                      hintStyle: TextStyle(color: textColor),
+                      suffixIconColor: textColor,
+                      suffixIcon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () async =>
+                                await _resetTitle(clearText: true),
+                            tooltip: AppLocalizations.of(context)!.search,
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.auto_awesome,
+                              color: _isAiMode
+                                  ? colorScheme.tertiary
+                                  : textColor.withValues(alpha: 0.5),
+                              size: 24,
+                            ),
+                            tooltip:
+                                AppLocalizations.of(context)!.searchAiTooltip,
+                            onPressed: () {
+                              if (!AiService().hasApiKey) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const AiSettingsScreen(),
+                                  ),
+                                ).then((_) {
+                                  if (AiService().hasApiKey) {
+                                    setState(() {
+                                      _isAiMode = true;
+                                      _resetLastSearch();
+                                    });
+                                  }
+                                });
+                              } else {
                                 setState(() {
-                                  _isAiMode = true;
+                                  _isAiMode = !_isAiMode;
                                   _resetLastSearch();
                                 });
                               }
-                            });
-                          } else {
-                            setState(() {
-                              _isAiMode = !_isAiMode;
-                              _resetLastSearch();
-                            });
-                          }
-                        },
+                            },
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    borderSide: BorderSide(color: borderColor),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    borderSide: BorderSide(color: borderColor),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    borderSide: BorderSide(color: borderColor, width: 2),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(color: borderColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(color: borderColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(color: borderColor, width: 2),
+                      ),
+                    ),
+                    onSubmitted: (title) {
+                      searchTitle(title);
+                    },
                   ),
                 ),
-                onSubmitted: (title) {
-                  searchTitle(title);
+              ],
+            ),
+            if (_isAiMode) ...[
+              const SizedBox(height: 8),
+              AiModelThinkingSelector(
+                selectedModel: _selectedAiModel,
+                selectedThinkingLevel: _selectedThinkingLevel,
+                borderColor: borderColor,
+                textColor: textColor,
+                onChanged: (model, thinkingLevel) {
+                  setState(() {
+                    _selectedAiModel = model;
+                    _selectedThinkingLevel = thinkingLevel;
+                    _resetLastSearch();
+                  });
+                },
+                onRefresh: () {
+                  _resetLastSearch();
+                  searchTitle(_controller.text);
                 },
               ),
-            ),
+            ],
           ],
         ),
       ),
@@ -388,7 +418,12 @@ class _SearchState extends State<Search> {
     await _resetTitle();
     try {
       if (_isAiMode) {
-        await _searchService.retrieveAiSearchlist(term, locale);
+        await _searchService.retrieveAiSearchlist(
+          term,
+          locale,
+          model: _selectedAiModel,
+          thinkingLevel: _selectedThinkingLevel,
+        );
       } else {
         await _searchService.retrieveSearchlist(term, locale);
       }

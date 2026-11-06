@@ -22,7 +22,7 @@ class SnackMessage {
           scaffold.hideCurrentSnackBar();
         },
       ),
-      duration: const Duration(minutes: 1),
+      duration: const Duration(seconds: 15),
     ));
   }
 }

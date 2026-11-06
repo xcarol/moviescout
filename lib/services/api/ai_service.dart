@@ -201,6 +201,8 @@ class AiService {
 
   String get selectedModel => currentProvider.selectedModel;
 
+  String get selectedThinkingLevel => currentProvider.selectedThinkingLevel;
+
   Future<void> saveApiKey(String key) async {
     final provider = currentProvider;
     await setSelectedProvider(provider.id);
@@ -214,6 +216,12 @@ class AiService {
     final provider = currentProvider;
     await setSelectedProvider(provider.id);
     await provider.saveSelectedModel(model, isCustom: isCustom);
+  }
+
+  Future<void> saveSelectedThinkingLevel(String? level) async {
+    final provider = currentProvider;
+    await setSelectedProvider(provider.id);
+    await provider.saveSelectedThinkingLevel(level);
   }
 
   static int? extractRetrySeconds(String errorMessage) {
@@ -234,7 +242,11 @@ class AiService {
     return null;
   }
 
-  Future<List<AiTitleSuggestion>> suggestTitles(String userQuery) async {
+  Future<List<AiTitleSuggestion>> suggestTitles(
+    String userQuery, {
+    String? model,
+    String? thinkingLevel,
+  }) async {
     final provider = currentProvider;
     final key = provider.apiKey.trim();
     if (key.isEmpty) {
@@ -243,7 +255,9 @@ class AiService {
 
     final targetUrl = provider.buildUrl();
     final headers = provider.buildHeaders(key);
-    final body = jsonEncode(provider.buildSuggestionBody(userQuery));
+    final body = jsonEncode(
+      provider.buildSuggestionBody(userQuery, model, thinkingLevel),
+    );
 
     try {
       final response = await http
@@ -278,6 +292,8 @@ class AiService {
     String text, {
     required String sourceLanguage,
     required String targetLanguage,
+    String? model,
+    String? thinkingLevel,
   }) async {
     final provider = currentProvider;
     final key = provider.apiKey.trim();
@@ -288,7 +304,13 @@ class AiService {
     final targetUrl = provider.buildUrl();
     final headers = provider.buildHeaders(key);
     final body = jsonEncode(
-      provider.buildTranslationBody(sourceLanguage, targetLanguage, text),
+      provider.buildTranslationBody(
+        sourceLanguage,
+        targetLanguage,
+        text,
+        model,
+        thinkingLevel,
+      ),
     );
 
     try {

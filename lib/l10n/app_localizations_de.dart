@@ -587,6 +587,22 @@ class AppLocalizationsDe extends AppLocalizations {
       'Wählen Sie das Modell für Suchanfragen und Übersetzungen. Kostenlose Modelle verbrauchen kein Guthaben.';
 
   @override
+  String get aiThinkingLabel => 'Denkstufe';
+
+  @override
+  String get aiThinkingHelper =>
+      'Steuert die Denktiefe des Modells. Höhere Stufen verbessern die Qualität, können aber länger dauern.';
+
+  @override
+  String get aiThinkingLow => 'Niedrig';
+
+  @override
+  String get aiThinkingMedium => 'Mittel';
+
+  @override
+  String get aiThinkingHigh => 'Hoch';
+
+  @override
   String get aiOpenRouterModelFreeLabel => 'Kostenlos (openrouter/free)';
 
   @override

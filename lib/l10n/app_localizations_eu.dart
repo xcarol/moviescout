@@ -584,6 +584,22 @@ class AppLocalizationsEu extends AppLocalizations {
       'Hautatu bilaketa eta itzulpenetarako erabiliko den eredua. Doako ereduek ez dute krediturik kontsumitzen.';
 
   @override
+  String get aiThinkingLabel => 'Pentsamendu maila';
+
+  @override
+  String get aiThinkingHelper =>
+      'Ereduaren arrazoiketa-sakonera kontrolatzen du. Maila altuagoek kalitatea hobetzen dute, baina denbora gehiago behar dezakete.';
+
+  @override
+  String get aiThinkingLow => 'Baxua';
+
+  @override
+  String get aiThinkingMedium => 'Ertaina';
+
+  @override
+  String get aiThinkingHigh => 'Altua';
+
+  @override
   String get aiOpenRouterModelFreeLabel => 'Doakoa (openrouter/free)';
 
   @override

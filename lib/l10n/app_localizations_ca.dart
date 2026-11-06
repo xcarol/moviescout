@@ -582,6 +582,22 @@ class AppLocalizationsCa extends AppLocalizations {
       'Selecciona el model que s\'utilitzarà per a les cerques i traduccions. Els models gratuïts no consumeixen crèdits.';
 
   @override
+  String get aiThinkingLabel => 'Nivell de pensament';
+
+  @override
+  String get aiThinkingHelper =>
+      'Controla la profunditat de raonament del model. Un nivell més alt millora la qualitat però pot trigar més.';
+
+  @override
+  String get aiThinkingLow => 'Baix';
+
+  @override
+  String get aiThinkingMedium => 'Mitjà';
+
+  @override
+  String get aiThinkingHigh => 'Alt';
+
+  @override
   String get aiOpenRouterModelFreeLabel => 'Gratuït (openrouter/free)';
 
   @override

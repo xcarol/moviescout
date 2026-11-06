@@ -4,9 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/widgets/buttons/edit_button.dart';
+import 'package:moviescout/widgets/inputs_and_filters/ai_model_thinking_selector.dart';
 import 'package:moviescout/widgets/inputs_and_filters/drop_down_selector.dart';
 import 'package:moviescout/models/tmdb_translation.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/screens/ai_settings.dart';
 import 'package:moviescout/services/api/ai_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/api/web_translation_service.dart';
@@ -83,6 +85,8 @@ class TranslationsScreenState extends State<TranslationsScreen> {
   String _translatedTitle = '';
   String _translatedDescription = '';
   String? _translationError;
+  String? _selectedAiModel;
+  String? _selectedThinkingLevel;
 
   bool _isTranslating = false;
   final ScrollController _scrollController = ScrollController();
@@ -96,7 +100,11 @@ class TranslationsScreenState extends State<TranslationsScreen> {
   @override
   void initState() {
     super.initState();
-    _performTranslation();
+    final service = context.read<WebTranslationService>();
+    final isAiActive = AiService().hasApiKey && service.isAiTranslationEnabled;
+    if (!isAiActive) {
+      _performTranslation();
+    }
   }
 
   String _getEffectiveSourceCode(String serviceSourceCode) {
@@ -147,6 +155,8 @@ class TranslationsScreenState extends State<TranslationsScreen> {
       final result = await service.translateTitleAndSynopsis(
         title: sourceTitle,
         description: sourceDesc,
+        model: _selectedAiModel,
+        thinkingLevel: _selectedThinkingLevel,
       );
 
       if (mounted) {
@@ -230,6 +240,7 @@ class TranslationsScreenState extends State<TranslationsScreen> {
         (sourceOptions.isNotEmpty ? sourceOptions.first : '');
     final selectedTargetOption =
         TranslationLanguages.supportedLanguages[targetCode] ?? '';
+    final isAiActive = AiService().hasApiKey && service.isAiTranslationEnabled;
 
     return Card(
       color: Theme.of(context).colorScheme.primaryContainer,
@@ -249,24 +260,49 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
-                if (AiService().hasApiKey)
-                  Row(
-                    children: [
-                      const Icon(Symbols.wand_stars, size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        AppLocalizations.of(context)!.enableAiTranslation,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Switch(
-                        value: service.isAiTranslationEnabled,
-                        onChanged: (val) {
+                Row(
+                  children: [
+                    const Icon(Symbols.wand_stars, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      AppLocalizations.of(context)!.enableAiTranslation,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Switch(
+                      value: isAiActive,
+                      onChanged: (val) {
+                        if (val && !AiService().hasApiKey) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AiSettingsScreen(),
+                            ),
+                          ).then((_) {
+                            if (AiService().hasApiKey && mounted) {
+                              service.setAiTranslationEnabled(true);
+                              setState(() {
+                                _translatedTitle = '';
+                                _translatedDescription = '';
+                                _translationError = null;
+                              });
+                            }
+                          });
+                        } else {
                           service.setAiTranslationEnabled(val);
-                          _performTranslation();
-                        },
-                      ),
-                    ],
-                  ),
+                          if (val) {
+                            setState(() {
+                              _translatedTitle = '';
+                              _translatedDescription = '';
+                              _translationError = null;
+                            });
+                          } else {
+                            _performTranslation();
+                          }
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ],
             ),
             const SizedBox(height: 8),
@@ -287,7 +323,9 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                         .firstWhere((e) => e.value == val)
                         .key;
                     service.setSourceLanguageCode(code);
-                    _performTranslation();
+                    if (!isAiActive) {
+                      _performTranslation();
+                    }
                   },
                 );
 
@@ -305,7 +343,9 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                         .firstWhere((e) => e.value == val)
                         .key;
                     service.setTargetLanguageCode(code);
-                    _performTranslation();
+                    if (!isAiActive) {
+                      _performTranslation();
+                    }
                   },
                 );
 
@@ -335,7 +375,25 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                 }
               },
             ),
-            const SizedBox(height: 12),
+            if (isAiActive) ...[
+              const SizedBox(height: 8),
+              AiModelThinkingSelector(
+                selectedModel: _selectedAiModel,
+                selectedThinkingLevel: _selectedThinkingLevel,
+                onChanged: (model, thinkingLevel) {
+                  setState(() {
+                    _selectedAiModel = model;
+                    _selectedThinkingLevel = thinkingLevel;
+                  });
+                },
+                onRefresh: _performTranslation,
+              ),
+            ],
+            if (_isTranslating ||
+                _translationError != null ||
+                _translatedTitle.isNotEmpty ||
+                _translatedDescription.isNotEmpty)
+              const SizedBox(height: 12),
             if (_isTranslating)
               const Center(child: CircularProgressIndicator())
             else if (_translationError != null)
@@ -360,15 +418,6 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                           color: Theme.of(context).colorScheme.onErrorContainer,
                         ),
                       ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.refresh,
-                        size: 20,
-                        color: Theme.of(context).colorScheme.onErrorContainer,
-                      ),
-                      onPressed: _performTranslation,
-                      visualDensity: VisualDensity.compact,
                     ),
                   ],
                 ),

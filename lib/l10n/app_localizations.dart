@@ -1206,6 +1206,36 @@ abstract class AppLocalizations {
   /// **'Select the model to use for searches and translations. Free models do not consume credits.'**
   String get aiModelHelper;
 
+  /// No description provided for @aiThinkingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Thinking level'**
+  String get aiThinkingLabel;
+
+  /// No description provided for @aiThinkingHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Controls the model\'s reasoning depth. Higher levels improve quality but may take longer.'**
+  String get aiThinkingHelper;
+
+  /// No description provided for @aiThinkingLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get aiThinkingLow;
+
+  /// No description provided for @aiThinkingMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get aiThinkingMedium;
+
+  /// No description provided for @aiThinkingHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get aiThinkingHigh;
+
   /// No description provided for @aiOpenRouterModelFreeLabel.
   ///
   /// In en, this message translates to:
