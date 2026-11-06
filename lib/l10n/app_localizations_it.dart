@@ -583,6 +583,22 @@ class AppLocalizationsIt extends AppLocalizations {
       'Seleziona il modello da utilizzare per ricerche e traduzioni. I modelli gratuiti non consumano crediti.';
 
   @override
+  String get aiThinkingLabel => 'Livello di ragionamento';
+
+  @override
+  String get aiThinkingHelper =>
+      'Controlla la profondità di ragionamento del modello. Livelli più alti migliorano la qualità ma possono richiedere più tempo.';
+
+  @override
+  String get aiThinkingLow => 'Basso';
+
+  @override
+  String get aiThinkingMedium => 'Medio';
+
+  @override
+  String get aiThinkingHigh => 'Alto';
+
+  @override
   String get aiOpenRouterModelFreeLabel => 'Gratuito (openrouter/free)';
 
   @override

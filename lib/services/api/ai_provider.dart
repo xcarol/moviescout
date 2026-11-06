@@ -13,6 +13,7 @@ abstract class AiProvider {
   String get apiKeyPrefKey;
   String get modelPrefKey;
   String get isCustomModelPrefKey;
+  String get thinkingPrefKey;
   String get fallbackDefaultModel;
   List<String> get fallbackAvailableModels;
   Map<String, dynamic> get fallbackGenerationConfig;
@@ -26,6 +27,15 @@ abstract class AiProvider {
 
   List<String> get availableModels =>
       _remoteAvailableModels ?? fallbackAvailableModels;
+
+  List<String> get selectableModels {
+    final models = List<String>.from(availableModels);
+    final current = selectedModel;
+    if (current.isNotEmpty && !models.contains(current)) {
+      models.add(current);
+    }
+    return models;
+  }
 
   void applyRemoteConfig(Map<String, dynamic>? config) {
     if (config == null) {
@@ -70,7 +80,7 @@ abstract class AiProvider {
     }
   }
 
-  Map<String, dynamic> effectiveGenerationConfig(String model) {
+  Map<String, dynamic> baseGenerationConfig(String model) {
     final base = Map<String, dynamic>.from(
       _remoteGenerationConfig ?? fallbackGenerationConfig,
     );
@@ -80,6 +90,27 @@ abstract class AiProvider {
     }
     return base;
   }
+
+  Map<String, dynamic> effectiveGenerationConfig(
+    String model, {
+    String? thinkingLevel,
+  }) {
+    final base = baseGenerationConfig(model);
+    final effectiveThinking = thinkingLevel?.trim().isNotEmpty == true
+        ? thinkingLevel!.trim()
+        : PreferencesService().prefs.getString(thinkingPrefKey)?.trim();
+    if (effectiveThinking != null && effectiveThinking.isNotEmpty) {
+      applyThinkingLevelOverride(base, effectiveThinking);
+    }
+    return base;
+  }
+
+  String defaultThinkingLevelForModel(String model);
+
+  void applyThinkingLevelOverride(
+    Map<String, dynamic> config,
+    String thinkingLevel,
+  );
 
   String get apiKey =>
       PreferencesService().prefs.getString(apiKeyPrefKey) ?? '';
@@ -100,6 +131,14 @@ abstract class AiProvider {
     return defaultModel;
   }
 
+  String get selectedThinkingLevel {
+    final saved = PreferencesService().prefs.getString(thinkingPrefKey);
+    if (saved != null && saved.trim().isNotEmpty) {
+      return saved.trim();
+    }
+    return defaultThinkingLevelForModel(selectedModel);
+  }
+
   Future<void> saveApiKey(String key) async {
     final trimmed = key.trim();
     await PreferencesService().prefs.setString(apiKeyPrefKey, trimmed);
@@ -111,6 +150,7 @@ abstract class AiProvider {
   }) async {
     final trimmed = model.trim();
     await PreferencesService().prefs.setBool(isCustomModelPrefKey, isCustom);
+    await PreferencesService().prefs.remove(thinkingPrefKey);
     if (trimmed.isEmpty || (!isCustom && trimmed == defaultModel)) {
       await PreferencesService().prefs.remove(modelPrefKey);
     } else {
@@ -118,14 +158,29 @@ abstract class AiProvider {
     }
   }
 
+  Future<void> saveSelectedThinkingLevel(String? level) async {
+    final trimmed = level?.trim() ?? '';
+    final defaultForCurrent = defaultThinkingLevelForModel(selectedModel);
+    if (trimmed.isEmpty || trimmed == defaultForCurrent) {
+      await PreferencesService().prefs.remove(thinkingPrefKey);
+    } else {
+      await PreferencesService().prefs.setString(thinkingPrefKey, trimmed);
+    }
+  }
+
   Uri buildUrl();
   Map<String, String> buildHeaders(String key);
-  Map<String, dynamic> buildSuggestionBody(String query, [String? model]);
+  Map<String, dynamic> buildSuggestionBody(
+    String query, [
+    String? model,
+    String? thinkingLevel,
+  ]);
   Map<String, dynamic> buildTranslationBody(
     String sourceLanguage,
     String targetLanguage,
     String text, [
     String? model,
+    String? thinkingLevel,
   ]);
   String? extractMessageContent(String responseBody);
 
@@ -161,6 +216,9 @@ class GoogleAiProvider extends AiProvider {
   String get isCustomModelPrefKey => AppConstants.aiGoogleModelIsCustomKey;
 
   @override
+  String get thinkingPrefKey => AppConstants.aiGoogleThinkingKey;
+
+  @override
   String get fallbackDefaultModel => AppConstants.defaultAiGoogleModel;
 
   @override
@@ -173,6 +231,22 @@ class GoogleAiProvider extends AiProvider {
       };
 
   @override
+  String defaultThinkingLevelForModel(String model) {
+    final config = baseGenerationConfig(model);
+    final level = config['thinking_level']?.toString().trim();
+    if (level != null && level.isNotEmpty) return level;
+    return AppConstants.aiThinkingLevel;
+  }
+
+  @override
+  void applyThinkingLevelOverride(
+    Map<String, dynamic> config,
+    String thinkingLevel,
+  ) {
+    config['thinking_level'] = thinkingLevel;
+  }
+
+  @override
   Uri buildUrl() => Uri.parse(UrlConstants.googleAiApiUrl);
 
   @override
@@ -182,9 +256,16 @@ class GoogleAiProvider extends AiProvider {
       };
 
   @override
-  Map<String, dynamic> buildSuggestionBody(String query, [String? model]) {
+  Map<String, dynamic> buildSuggestionBody(
+    String query, [
+    String? model,
+    String? thinkingLevel,
+  ]) {
     final targetModel = model ?? selectedModel;
-    final genConfig = effectiveGenerationConfig(targetModel);
+    final genConfig = effectiveGenerationConfig(
+      targetModel,
+      thinkingLevel: thinkingLevel,
+    );
     return {
       'model': targetModel,
       'system_instruction': AppConstants.aiSearchSystemPrompt,
@@ -199,9 +280,13 @@ class GoogleAiProvider extends AiProvider {
     String targetLanguage,
     String text, [
     String? model,
+    String? thinkingLevel,
   ]) {
     final targetModel = model ?? selectedModel;
-    final genConfig = effectiveGenerationConfig(targetModel);
+    final genConfig = effectiveGenerationConfig(
+      targetModel,
+      thinkingLevel: thinkingLevel,
+    );
     return {
       'model': targetModel,
       'system_instruction': AppConstants.aiTranslateSystemPrompt,
@@ -324,6 +409,9 @@ class OpenRouterProvider extends AiProvider {
   String get isCustomModelPrefKey => AppConstants.aiOpenRouterModelIsCustomKey;
 
   @override
+  String get thinkingPrefKey => AppConstants.aiOpenRouterThinkingKey;
+
+  @override
   String get fallbackDefaultModel => AppConstants.defaultAiOpenRouterModel;
 
   @override
@@ -339,6 +427,30 @@ class OpenRouterProvider extends AiProvider {
       };
 
   @override
+  String defaultThinkingLevelForModel(String model) {
+    final config = baseGenerationConfig(model);
+    final reasoning = config['reasoning'];
+    if (reasoning is Map) {
+      final effort = reasoning['effort']?.toString().trim();
+      if (effort != null && effort.isNotEmpty) return effort;
+    }
+    return AppConstants.aiThinkingLevel;
+  }
+
+  @override
+  void applyThinkingLevelOverride(
+    Map<String, dynamic> config,
+    String thinkingLevel,
+  ) {
+    final existing = config['reasoning'];
+    final reasoningMap = existing is Map
+        ? Map<String, dynamic>.from(existing)
+        : <String, dynamic>{};
+    reasoningMap['effort'] = thinkingLevel;
+    config['reasoning'] = reasoningMap;
+  }
+
+  @override
   Uri buildUrl() => Uri.parse(UrlConstants.openRouterApiUrl);
 
   @override
@@ -350,9 +462,16 @@ class OpenRouterProvider extends AiProvider {
       };
 
   @override
-  Map<String, dynamic> buildSuggestionBody(String query, [String? model]) {
+  Map<String, dynamic> buildSuggestionBody(
+    String query, [
+    String? model,
+    String? thinkingLevel,
+  ]) {
     final targetModel = model ?? selectedModel;
-    final genConfig = effectiveGenerationConfig(targetModel);
+    final genConfig = effectiveGenerationConfig(
+      targetModel,
+      thinkingLevel: thinkingLevel,
+    );
     return {
       'model': targetModel,
       ...genConfig,
@@ -372,9 +491,13 @@ class OpenRouterProvider extends AiProvider {
     String targetLanguage,
     String text, [
     String? model,
+    String? thinkingLevel,
   ]) {
     final targetModel = model ?? selectedModel;
-    final genConfig = effectiveGenerationConfig(targetModel);
+    final genConfig = effectiveGenerationConfig(
+      targetModel,
+      thinkingLevel: thinkingLevel,
+    );
     return {
       'model': targetModel,
       ...genConfig,

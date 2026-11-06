@@ -34,6 +34,7 @@ class AppConstants {
   static const String aiGoogleApiKey = 'ai_google_api_key';
   static const String aiGoogleModelKey = 'ai_google_model';
   static const String aiGoogleModelIsCustomKey = 'ai_google_model_is_custom';
+  static const String aiGoogleThinkingKey = 'ai_google_thinking';
   static const String aiGoogleModelFlash = 'gemini-flash-latest';
   static const String aiGoogleModelFlashLite = 'gemini-flash-lite-latest';
   static const String defaultAiGoogleModel = aiGoogleModelFlash;
@@ -46,6 +47,7 @@ class AppConstants {
   static const String aiOpenRouterModelKey = 'ai_model';
   static const String aiOpenRouterModelIsCustomKey =
       'ai_openrouter_model_is_custom';
+  static const String aiOpenRouterThinkingKey = 'ai_openrouter_thinking';
   static const String aiOpenRouterModelFree = 'openrouter/free';
   static const String aiOpenRouterModelAuto = 'openrouter/auto';
   static const String defaultAiOpenRouterModel = aiOpenRouterModelFree;

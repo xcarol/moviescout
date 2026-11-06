@@ -583,6 +583,22 @@ class AppLocalizationsEs extends AppLocalizations {
       'Selecciona el modelo que se utilizará para búsquedas y traducciones. Los modelos gratuitos no consumen créditos.';
 
   @override
+  String get aiThinkingLabel => 'Nivel de pensamiento';
+
+  @override
+  String get aiThinkingHelper =>
+      'Controla la profundidad de razonamiento del modelo. Un nivel más alto mejora la calidad pero puede tardar más.';
+
+  @override
+  String get aiThinkingLow => 'Bajo';
+
+  @override
+  String get aiThinkingMedium => 'Medio';
+
+  @override
+  String get aiThinkingHigh => 'Alto';
+
+  @override
   String get aiOpenRouterModelFreeLabel => 'Gratuito (openrouter/free)';
 
   @override
@@ -1754,6 +1770,22 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get aiModelHelper =>
       'Selecciona el modelo que se utilizará para búsquedas y traducciones. Los modelos gratuitos no consumen créditos.';
+
+  @override
+  String get aiThinkingLabel => 'Nivel de pensamiento';
+
+  @override
+  String get aiThinkingHelper =>
+      'Controla la profundidad de razonamiento del modelo. Un nivel más alto mejora la calidad pero puede tardar más.';
+
+  @override
+  String get aiThinkingLow => 'Bajo';
+
+  @override
+  String get aiThinkingMedium => 'Medio';
+
+  @override
+  String get aiThinkingHigh => 'Alto';
 
   @override
   String get aiOpenRouterModelFreeLabel => 'Gratuito (openrouter/free)';

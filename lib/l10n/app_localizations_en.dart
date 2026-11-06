@@ -584,6 +584,22 @@ class AppLocalizationsEn extends AppLocalizations {
       'Select the model to use for searches and translations. Free models do not consume credits.';
 
   @override
+  String get aiThinkingLabel => 'Thinking level';
+
+  @override
+  String get aiThinkingHelper =>
+      'Controls the model\'s reasoning depth. Higher levels improve quality but may take longer.';
+
+  @override
+  String get aiThinkingLow => 'Low';
+
+  @override
+  String get aiThinkingMedium => 'Medium';
+
+  @override
+  String get aiThinkingHigh => 'High';
+
+  @override
   String get aiOpenRouterModelFreeLabel => 'Free (openrouter/free)';
 
   @override

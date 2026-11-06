@@ -328,7 +328,12 @@ class SearchService extends TmdbBaseListService<TmdbItem> {
     }
   }
 
-  Future<void> retrieveAiSearchlist(String searchTerm, Locale locale) async {
+  Future<void> retrieveAiSearchlist(
+    String searchTerm,
+    Locale locale, {
+    String? model,
+    String? thinkingLevel,
+  }) async {
     isLoading.value = true;
     filterText = searchTerm;
     notifyListeners();
@@ -339,7 +344,12 @@ class SearchService extends TmdbBaseListService<TmdbItem> {
       _memoryCollections.clear();
       _memoryUsers.clear();
 
-      await _fetchAndSaveAiSuggestions(searchTerm, locale);
+      await _fetchAndSaveAiSuggestions(
+        searchTerm,
+        locale,
+        model: model,
+        thinkingLevel: thinkingLevel,
+      );
 
       await filterItems();
     } finally {
@@ -349,8 +359,16 @@ class SearchService extends TmdbBaseListService<TmdbItem> {
   }
 
   Future<void> _fetchAndSaveAiSuggestions(
-      String searchTerm, Locale locale) async {
-    final suggestions = await AiService().suggestTitles(searchTerm);
+    String searchTerm,
+    Locale locale, {
+    String? model,
+    String? thinkingLevel,
+  }) async {
+    final suggestions = await AiService().suggestTitles(
+      searchTerm,
+      model: model,
+      thinkingLevel: thinkingLevel,
+    );
     if (suggestions.isEmpty) return;
 
     final List<Map<String, dynamic>> rawItems = [];
