@@ -23,12 +23,13 @@ class UrlConstants {
   static const String imdbNameUrl = 'https://www.imdb.com/name/';
   static const String googleAiUrl = 'https://aistudio.google.com';
   static const String googleAiKeysUrl = 'https://aistudio.google.com/apikey';
-  static const String googleAiApiBaseUrl =
-      'https://generativelanguage.googleapis.com/v1beta/models/';
+  static const String googleAiApiUrl =
+      'https://generativelanguage.googleapis.com/v1beta/interactions';
   static const String openRouterUrl = 'https://openrouter.ai';
   static const String openRouterKeysUrl = 'https://openrouter.ai/keys';
   static const String openRouterApiUrl =
       'https://openrouter.ai/api/v1/chat/completions';
+  static const String aiModelsConfigUrl = '$moviescoutWebUrl/ai-models.json';
 
   // Web Templates
   static const String tmdbSignupWebTemplate = '$tmdbWebUrl/account/signup';

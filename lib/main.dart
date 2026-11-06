@@ -23,6 +23,7 @@ import 'package:moviescout/services/settings/theme_service.dart';
 import 'package:moviescout/services/settings/background_tasks_service.dart';
 import 'package:moviescout/services/core/tmdb_configuration_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
+import 'package:moviescout/services/api/ai_service.dart';
 import 'package:moviescout/services/api/web_translation_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
@@ -149,6 +150,7 @@ void _runMain() async {
       StatusTranslator.init(),
       NotificationService().init(),
       AppService().init(),
+      AiService().init(),
     ]).timeout(const Duration(seconds: 5), onTimeout: () => []);
 
     if (defaultTargetPlatform == TargetPlatform.android ||

@@ -33,7 +33,8 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
     _obscureText = true;
 
     final currentModel = provider.selectedModel;
-    if (provider.availableModels.contains(currentModel)) {
+    if (!provider.isCustomModel &&
+        provider.availableModels.contains(currentModel)) {
       _selectedModelDropdown = currentModel;
       _customModelController.clear();
     } else {
@@ -127,19 +128,21 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
     });
 
     if (newModel != AppConstants.aiModelCustom) {
-      await AiService().saveSelectedModel(newModel);
+      await AiService().saveSelectedModel(newModel, isCustom: false);
     }
   }
 
   bool get _canSaveCustomModel {
     final customModel = _customModelController.text.trim();
-    return customModel.isNotEmpty && customModel != AiService().selectedModel;
+    return customModel.isNotEmpty &&
+        (customModel != AiService().selectedModel ||
+            !AiService().currentProvider.isCustomModel);
   }
 
   Future<void> _saveCustomModel() async {
     final customModel = _customModelController.text.trim();
     if (!_canSaveCustomModel) return;
-    await AiService().saveSelectedModel(customModel);
+    await AiService().saveSelectedModel(customModel, isCustom: true);
     setState(() {});
   }
 

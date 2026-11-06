@@ -12,18 +12,90 @@ abstract class AiProvider {
   String get keysUrl;
   String get apiKeyPrefKey;
   String get modelPrefKey;
-  String get defaultModel;
-  List<String> get availableModels;
+  String get isCustomModelPrefKey;
+  String get fallbackDefaultModel;
+  List<String> get fallbackAvailableModels;
+  Map<String, dynamic> get fallbackGenerationConfig;
+
+  String? _remoteDefaultModel;
+  List<String>? _remoteAvailableModels;
+  Map<String, dynamic>? _remoteGenerationConfig;
+  Map<String, Map<String, dynamic>>? _remoteModelOverrides;
+
+  String get defaultModel => _remoteDefaultModel ?? fallbackDefaultModel;
+
+  List<String> get availableModels =>
+      _remoteAvailableModels ?? fallbackAvailableModels;
+
+  void applyRemoteConfig(Map<String, dynamic>? config) {
+    if (config == null) {
+      _remoteDefaultModel = null;
+      _remoteAvailableModels = null;
+      _remoteGenerationConfig = null;
+      _remoteModelOverrides = null;
+      return;
+    }
+
+    final modelsRaw = config['models'];
+    if (modelsRaw is List) {
+      final parsedModels = modelsRaw
+          .map((e) => e.toString().trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+      if (parsedModels.isNotEmpty) {
+        _remoteAvailableModels = parsedModels;
+      }
+    }
+
+    final defaultModelRaw = config['default_model']?.toString().trim();
+    if (defaultModelRaw != null && defaultModelRaw.isNotEmpty) {
+      _remoteDefaultModel = defaultModelRaw;
+    }
+
+    final genConfigRaw = config['generation_config'];
+    if (genConfigRaw is Map) {
+      _remoteGenerationConfig = Map<String, dynamic>.from(genConfigRaw);
+    }
+
+    final overridesRaw = config['model_overrides'];
+    if (overridesRaw is Map) {
+      final parsedOverrides = <String, Map<String, dynamic>>{};
+      for (final entry in overridesRaw.entries) {
+        if (entry.value is Map) {
+          parsedOverrides[entry.key.toString()] =
+              Map<String, dynamic>.from(entry.value as Map);
+        }
+      }
+      _remoteModelOverrides = parsedOverrides;
+    }
+  }
+
+  Map<String, dynamic> effectiveGenerationConfig(String model) {
+    final base = Map<String, dynamic>.from(
+      _remoteGenerationConfig ?? fallbackGenerationConfig,
+    );
+    final override = _remoteModelOverrides?[model];
+    if (override != null) {
+      base.addAll(override);
+    }
+    return base;
+  }
 
   String get apiKey =>
       PreferencesService().prefs.getString(apiKeyPrefKey) ?? '';
 
   bool get hasApiKey => apiKey.trim().isNotEmpty;
 
+  bool get isCustomModel =>
+      PreferencesService().prefs.getBool(isCustomModelPrefKey) ?? false;
+
   String get selectedModel {
     final saved = PreferencesService().prefs.getString(modelPrefKey);
     if (saved != null && saved.trim().isNotEmpty) {
-      return saved.trim();
+      final trimmed = saved.trim();
+      if (isCustomModel || availableModels.contains(trimmed)) {
+        return trimmed;
+      }
     }
     return defaultModel;
   }
@@ -33,16 +105,20 @@ abstract class AiProvider {
     await PreferencesService().prefs.setString(apiKeyPrefKey, trimmed);
   }
 
-  Future<void> saveSelectedModel(String model) async {
+  Future<void> saveSelectedModel(
+    String model, {
+    bool isCustom = false,
+  }) async {
     final trimmed = model.trim();
-    if (trimmed.isEmpty || trimmed == defaultModel) {
+    await PreferencesService().prefs.setBool(isCustomModelPrefKey, isCustom);
+    if (trimmed.isEmpty || (!isCustom && trimmed == defaultModel)) {
       await PreferencesService().prefs.remove(modelPrefKey);
     } else {
       await PreferencesService().prefs.setString(modelPrefKey, trimmed);
     }
   }
 
-  Uri buildUrl([String? model]);
+  Uri buildUrl();
   Map<String, String> buildHeaders(String key);
   Map<String, dynamic> buildSuggestionBody(String query, [String? model]);
   Map<String, dynamic> buildTranslationBody(
@@ -82,18 +158,22 @@ class GoogleAiProvider extends AiProvider {
   String get modelPrefKey => AppConstants.aiGoogleModelKey;
 
   @override
-  String get defaultModel => AppConstants.defaultAiGoogleModel;
+  String get isCustomModelPrefKey => AppConstants.aiGoogleModelIsCustomKey;
 
   @override
-  List<String> get availableModels => AppConstants.availableAiGoogleModels;
+  String get fallbackDefaultModel => AppConstants.defaultAiGoogleModel;
 
   @override
-  Uri buildUrl([String? model]) {
-    final targetModel = model ?? selectedModel;
-    return Uri.parse(
-      '${UrlConstants.googleAiApiBaseUrl}$targetModel:generateContent',
-    );
-  }
+  List<String> get fallbackAvailableModels =>
+      AppConstants.availableAiGoogleModels;
+
+  @override
+  Map<String, dynamic> get fallbackGenerationConfig => {
+        'thinking_level': AppConstants.aiThinkingLevel,
+      };
+
+  @override
+  Uri buildUrl() => Uri.parse(UrlConstants.googleAiApiUrl);
 
   @override
   Map<String, String> buildHeaders(String key) => {
@@ -102,27 +182,16 @@ class GoogleAiProvider extends AiProvider {
       };
 
   @override
-  Map<String, dynamic> buildSuggestionBody(String query, [String? model]) => {
-        'systemInstruction': {
-          'parts': [
-            {'text': AppConstants.aiSearchSystemPrompt},
-          ],
-        },
-        'contents': [
-          {
-            'role': 'user',
-            'parts': [
-              {'text': 'Movies or TV shows about: $query'},
-            ],
-          },
-        ],
-        'generationConfig': {
-          'responseMimeType': 'application/json',
-          'thinkingConfig': {
-            'thinkingLevel': 'LOW',
-          },
-        },
-      };
+  Map<String, dynamic> buildSuggestionBody(String query, [String? model]) {
+    final targetModel = model ?? selectedModel;
+    final genConfig = effectiveGenerationConfig(targetModel);
+    return {
+      'model': targetModel,
+      'system_instruction': AppConstants.aiSearchSystemPrompt,
+      'input': 'Movies or TV shows about: $query',
+      if (genConfig.isNotEmpty) 'generation_config': genConfig,
+    };
+  }
 
   @override
   Map<String, dynamic> buildTranslationBody(
@@ -130,30 +199,16 @@ class GoogleAiProvider extends AiProvider {
     String targetLanguage,
     String text, [
     String? model,
-  ]) =>
-      {
-        'systemInstruction': {
-          'parts': [
-            {'text': AppConstants.aiTranslateSystemPrompt},
-          ],
-        },
-        'contents': [
-          {
-            'role': 'user',
-            'parts': [
-              {
-                'text':
-                    'Translate from $sourceLanguage to $targetLanguage:\n\n$text',
-              },
-            ],
-          },
-        ],
-        'generationConfig': {
-          'thinkingConfig': {
-            'thinkingLevel': 'LOW',
-          },
-        },
-      };
+  ]) {
+    final targetModel = model ?? selectedModel;
+    final genConfig = effectiveGenerationConfig(targetModel);
+    return {
+      'model': targetModel,
+      'system_instruction': AppConstants.aiTranslateSystemPrompt,
+      'input': 'Translate from $sourceLanguage to $targetLanguage:\n\n$text',
+      if (genConfig.isNotEmpty) 'generation_config': genConfig,
+    };
+  }
 
   @override
   String? extractMessageContent(String responseBody) {
@@ -164,6 +219,44 @@ class GoogleAiProvider extends AiProvider {
           err is Map ? (err['message'] ?? err.toString()) : err.toString();
       throw Exception('$name API error: $message');
     }
+
+    if (data is! Map) return null;
+
+    final outputs = data['outputs'];
+    if (outputs is List && outputs.isNotEmpty) {
+      final buffer = StringBuffer();
+      for (final item in outputs) {
+        if (item is Map &&
+            item['type'] != 'thought' &&
+            item['text'] is String) {
+          buffer.write(item['text'] as String);
+        }
+      }
+      final text = buffer.toString().trim();
+      if (text.isNotEmpty) return text;
+    }
+
+    final steps = data['steps'];
+    if (steps is List && steps.isNotEmpty) {
+      final buffer = StringBuffer();
+      for (final step in steps) {
+        if (step is Map && step['type'] == 'model_output') {
+          final contentList = step['content'];
+          if (contentList is List) {
+            for (final item in contentList) {
+              if (item is Map &&
+                  item['type'] != 'thought' &&
+                  item['text'] is String) {
+                buffer.write(item['text'] as String);
+              }
+            }
+          }
+        }
+      }
+      final text = buffer.toString().trim();
+      if (text.isNotEmpty) return text;
+    }
+
     final candidates = data['candidates'] as List<dynamic>?;
     if (candidates == null || candidates.isEmpty) return null;
 
@@ -228,13 +321,25 @@ class OpenRouterProvider extends AiProvider {
   String get modelPrefKey => AppConstants.aiOpenRouterModelKey;
 
   @override
-  String get defaultModel => AppConstants.defaultAiOpenRouterModel;
+  String get isCustomModelPrefKey => AppConstants.aiOpenRouterModelIsCustomKey;
 
   @override
-  List<String> get availableModels => AppConstants.availableAiOpenRouterModels;
+  String get fallbackDefaultModel => AppConstants.defaultAiOpenRouterModel;
 
   @override
-  Uri buildUrl([String? model]) => Uri.parse(UrlConstants.openRouterApiUrl);
+  List<String> get fallbackAvailableModels =>
+      AppConstants.availableAiOpenRouterModels;
+
+  @override
+  Map<String, dynamic> get fallbackGenerationConfig => {
+        'max_tokens': AppConstants.aiMaxTokens,
+        'reasoning': {
+          'effort': AppConstants.aiThinkingLevel,
+        },
+      };
+
+  @override
+  Uri buildUrl() => Uri.parse(UrlConstants.openRouterApiUrl);
 
   @override
   Map<String, String> buildHeaders(String key) => {
@@ -245,20 +350,21 @@ class OpenRouterProvider extends AiProvider {
       };
 
   @override
-  Map<String, dynamic> buildSuggestionBody(String query, [String? model]) => {
-        'model': model ?? selectedModel,
-        'max_tokens': AppConstants.aiMaxTokens,
-        'reasoning': {
-          'effort': 'low',
+  Map<String, dynamic> buildSuggestionBody(String query, [String? model]) {
+    final targetModel = model ?? selectedModel;
+    final genConfig = effectiveGenerationConfig(targetModel);
+    return {
+      'model': targetModel,
+      ...genConfig,
+      'messages': [
+        {
+          'role': 'system',
+          'content': AppConstants.aiSearchSystemPrompt,
         },
-        'messages': [
-          {
-            'role': 'system',
-            'content': AppConstants.aiSearchSystemPrompt,
-          },
-          {'role': 'user', 'content': 'Movies or TV shows about: $query'},
-        ],
-      };
+        {'role': 'user', 'content': 'Movies or TV shows about: $query'},
+      ],
+    };
+  }
 
   @override
   Map<String, dynamic> buildTranslationBody(
@@ -266,25 +372,25 @@ class OpenRouterProvider extends AiProvider {
     String targetLanguage,
     String text, [
     String? model,
-  ]) =>
-      {
-        'model': model ?? selectedModel,
-        'max_tokens': AppConstants.aiMaxTokens,
-        'reasoning': {
-          'effort': 'low',
+  ]) {
+    final targetModel = model ?? selectedModel;
+    final genConfig = effectiveGenerationConfig(targetModel);
+    return {
+      'model': targetModel,
+      ...genConfig,
+      'messages': [
+        {
+          'role': 'system',
+          'content': AppConstants.aiTranslateSystemPrompt,
         },
-        'messages': [
-          {
-            'role': 'system',
-            'content': AppConstants.aiTranslateSystemPrompt,
-          },
-          {
-            'role': 'user',
-            'content':
-                'Translate from $sourceLanguage to $targetLanguage:\n\n$text',
-          },
-        ],
-      };
+        {
+          'role': 'user',
+          'content':
+              'Translate from $sourceLanguage to $targetLanguage:\n\n$text',
+        },
+      ],
+    };
+  }
 
   @override
   String? extractMessageContent(String responseBody) {

@@ -4,8 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:moviescout/services/api/ai_provider.dart';
 import 'package:moviescout/services/core/error_service.dart';
+import 'package:moviescout/services/core/update_manager.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/utils/url_constants.dart';
 
 class AiTitleSuggestion {
   final String title;
@@ -82,6 +84,86 @@ class AiService {
     OpenRouterProvider(),
   ];
 
+  String? _remoteDefaultProviderId;
+
+  Future<void> init() async {
+    final prefs = PreferencesService().prefs;
+    final cachedJson = prefs.getString(AppConstants.aiConfigCacheKey);
+    if (cachedJson != null && cachedJson.isNotEmpty) {
+      applyConfigJson(cachedJson);
+    }
+
+    if (UpdateManager().isUpToDate(
+      AppConstants.aiConfigCacheKey,
+      UpdateManager.aiConfigTimeout,
+    )) {
+      return;
+    }
+
+    try {
+      final response = await http
+          .get(Uri.parse(UrlConstants.aiModelsConfigUrl))
+          .timeout(const Duration(seconds: 4));
+
+      if (response.statusCode == 200 && response.body.trim().isNotEmpty) {
+        if (applyConfigJson(response.body)) {
+          await prefs.setString(AppConstants.aiConfigCacheKey, response.body);
+          await UpdateManager().updateLastUpdate(AppConstants.aiConfigCacheKey);
+        }
+      }
+    } catch (e) {
+      debugPrint('Failed to fetch remote AI models config: $e');
+    }
+  }
+
+  @visibleForTesting
+  bool applyConfigJson(String jsonStr) {
+    try {
+      final decoded = jsonDecode(jsonStr);
+      if (decoded is! Map) return false;
+
+      final defaultProviderRaw =
+          decoded['default_provider']?.toString().trim();
+      if (defaultProviderRaw != null && defaultProviderRaw.isNotEmpty) {
+        _remoteDefaultProviderId = defaultProviderRaw;
+      }
+
+      final providersMap =
+          decoded['providers'] is Map ? decoded['providers'] as Map : decoded;
+      for (final provider in providers) {
+        final providerConfig = providersMap[provider.id];
+        if (providerConfig is Map) {
+          provider.applyRemoteConfig(
+            Map<String, dynamic>.from(providerConfig),
+          );
+        }
+      }
+      return true;
+    } catch (e) {
+      debugPrint('Error parsing AI models config JSON: $e');
+      return false;
+    }
+  }
+
+  @visibleForTesting
+  void resetRemoteConfig() {
+    _remoteDefaultProviderId = null;
+    for (final provider in providers) {
+      provider.applyRemoteConfig(null);
+    }
+  }
+
+  AiProvider get defaultProvider {
+    if (_remoteDefaultProviderId != null) {
+      for (final provider in providers) {
+        if (provider.id == _remoteDefaultProviderId) {
+          return provider;
+        }
+      }
+    }
+    return providers.first;
+  }
+
   AiProvider get currentProvider {
     final savedId =
         PreferencesService().prefs.getString(AppConstants.aiProviderKey);
@@ -93,16 +175,16 @@ class AiService {
       }
     }
 
-    final defaultProvider = providers.first;
-    if (!defaultProvider.hasApiKey) {
-      for (final provider in providers.skip(1)) {
-        if (provider.hasApiKey) {
+    final fallbackDefault = defaultProvider;
+    if (!fallbackDefault.hasApiKey) {
+      for (final provider in providers) {
+        if (provider.id != fallbackDefault.id && provider.hasApiKey) {
           return provider;
         }
       }
     }
 
-    return defaultProvider;
+    return fallbackDefault;
   }
 
   Future<void> setSelectedProvider(String providerId) async {
@@ -123,10 +205,13 @@ class AiService {
     await provider.saveApiKey(key);
   }
 
-  Future<void> saveSelectedModel(String model) async {
+  Future<void> saveSelectedModel(
+    String model, {
+    bool isCustom = false,
+  }) async {
     final provider = currentProvider;
     await setSelectedProvider(provider.id);
-    await provider.saveSelectedModel(model);
+    await provider.saveSelectedModel(model, isCustom: isCustom);
   }
 
   static int? extractRetrySeconds(String errorMessage) {
