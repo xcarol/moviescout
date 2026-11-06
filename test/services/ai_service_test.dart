@@ -93,7 +93,9 @@ void main() {
       service.resetRemoteConfig();
     });
 
-    test('parses Interactions API outputs response with thought and text blocks', () {
+    test(
+        'parses Interactions API outputs response with thought and text blocks',
+        () {
       final responseBody = jsonEncode({
         'id': 'int_123',
         'outputs': [
@@ -105,7 +107,8 @@ void main() {
           },
           {
             'type': 'text',
-            'text': '[{"title": "Arrival", "year": 2016, "media_type": "movie"}]'
+            'text':
+                '[{"title": "Arrival", "year": 2016, "media_type": "movie"}]'
           }
         ]
       });
@@ -321,7 +324,9 @@ void main() {
       );
     });
 
-    test('applyConfigJson updates models, defaults, and falls back removed presets', () async {
+    test(
+        'applyConfigJson updates models, defaults, and falls back removed presets',
+        () async {
       final service = AiService();
       final remoteConfig = jsonEncode({
         'version': 1,

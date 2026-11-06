@@ -3,14 +3,19 @@
   "default_provider": "google_ai",
   "providers": {
     "google_ai": {
-      "default_model": "gemini-flash-latest",
+      "default_model": "gemini-3.6-flash",
       "models": [
+        "gemini-3.6-flash",
         "gemini-flash-latest",
-        "gemini-flash-lite-latest",
-        "gemini-3.6-flash"
+        "gemini-flash-lite-latest"
       ],
       "generation_config": {
-        "thinking_level": "low"
+        "thinking_level": "medium"
+      },
+      "model_overrides": {
+        "gemini-flash-latest": {
+          "thinking_level": "low"
+        }
       }
     },
     "openrouter": {
