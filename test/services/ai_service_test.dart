@@ -90,9 +90,33 @@ void main() {
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       await PreferencesService().init();
+      service.resetRemoteConfig();
     });
 
-    test('parses clean Gemini JSON response', () {
+    test('parses Interactions API outputs response with thought and text blocks', () {
+      final responseBody = jsonEncode({
+        'id': 'int_123',
+        'outputs': [
+          {
+            'type': 'thought',
+            'summary': [
+              {'type': 'text', 'text': 'Internal reasoning'}
+            ]
+          },
+          {
+            'type': 'text',
+            'text': '[{"title": "Arrival", "year": 2016, "media_type": "movie"}]'
+          }
+        ]
+      });
+      final results = service.parseSuggestions(responseBody);
+      expect(results.length, 1);
+      expect(results.first.title, 'Arrival');
+      expect(results.first.year, 2016);
+      expect(results.first.mediaType, 'movie');
+    });
+
+    test('parses clean Gemini JSON response (legacy candidates format)', () {
       final responseBody = jsonEncode({
         'candidates': [
           {
@@ -221,6 +245,7 @@ void main() {
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       await PreferencesService().init();
+      AiService().resetRemoteConfig();
     });
 
     test('defaults to GoogleAiProvider when no provider or keys are saved', () {
@@ -288,12 +313,60 @@ void main() {
       );
 
       await service.setSelectedProvider(AppConstants.aiProviderOpenRouter);
-      await service.saveSelectedModel('openai/gpt-4o-mini');
+      await service.saveSelectedModel('openai/gpt-4o-mini', isCustom: true);
       expect(service.selectedModel, 'openai/gpt-4o-mini');
       expect(
         PreferencesService().prefs.getString(AppConstants.aiOpenRouterModelKey),
         'openai/gpt-4o-mini',
       );
+    });
+
+    test('applyConfigJson updates models, defaults, and falls back removed presets', () async {
+      final service = AiService();
+      final remoteConfig = jsonEncode({
+        'version': 1,
+        'default_provider': 'google_ai',
+        'providers': {
+          'google_ai': {
+            'default_model': 'gemini-flash-latest',
+            'models': [
+              'gemini-flash-latest',
+              'gemini-flash-lite-latest',
+              'gemini-2.5-flash'
+            ],
+            'generation_config': {'thinking_level': 'low'}
+          },
+          'openrouter': {
+            'default_model': 'openrouter/free',
+            'models': ['openrouter/free', 'openrouter/auto'],
+            'generation_config': {
+              'max_tokens': 4096,
+              'reasoning': {'effort': 'low'}
+            }
+          }
+        }
+      });
+
+      service.applyConfigJson(remoteConfig);
+      expect(
+        service.currentProvider.availableModels,
+        contains('gemini-2.5-flash'),
+      );
+
+      await service.saveSelectedModel('gemini-2.5-flash', isCustom: false);
+      expect(service.selectedModel, 'gemini-2.5-flash');
+
+      final updatedConfigWithout25 = jsonEncode({
+        'version': 2,
+        'providers': {
+          'google_ai': {
+            'default_model': 'gemini-flash-latest',
+            'models': ['gemini-flash-latest', 'gemini-flash-lite-latest'],
+          }
+        }
+      });
+      service.applyConfigJson(updatedConfigWithout25);
+      expect(service.selectedModel, 'gemini-flash-latest');
     });
 
     test('suggestTitles throws when key is missing', () async {

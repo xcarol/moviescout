@@ -7,6 +7,7 @@ class UpdateManager {
   static const Duration rateslistTimeout = Duration(days: 1);
   static const Duration discoverlistTimeout = Duration(days: 7);
   static const Duration genresTimeout = Duration(days: 7);
+  static const Duration aiConfigTimeout = Duration(days: 1);
 
   static final UpdateManager _instance = UpdateManager._internal();
   factory UpdateManager() => _instance;

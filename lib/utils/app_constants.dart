@@ -29,30 +29,29 @@ class AppConstants {
   static const String aiProviderKey = 'ai_provider';
   static const String aiProviderGoogle = 'google_ai';
   static const String aiProviderOpenRouter = 'openrouter';
+  static const String aiConfigCacheKey = 'ai_models_config';
 
   static const String aiGoogleApiKey = 'ai_google_api_key';
   static const String aiGoogleModelKey = 'ai_google_model';
+  static const String aiGoogleModelIsCustomKey = 'ai_google_model_is_custom';
   static const String aiGoogleModelFlash = 'gemini-flash-latest';
   static const String aiGoogleModelFlashLite = 'gemini-flash-lite-latest';
-  static const String aiGoogleModelFlash36 = 'gemini-3.6-flash';
   static const String defaultAiGoogleModel = aiGoogleModelFlash;
   static const List<String> availableAiGoogleModels = [
     aiGoogleModelFlash,
     aiGoogleModelFlashLite,
-    aiGoogleModelFlash36,
   ];
 
   static const String aiOpenRouterApiKey = 'ai_api_key';
   static const String aiOpenRouterModelKey = 'ai_model';
+  static const String aiOpenRouterModelIsCustomKey =
+      'ai_openrouter_model_is_custom';
   static const String aiOpenRouterModelFree = 'openrouter/free';
   static const String aiOpenRouterModelAuto = 'openrouter/auto';
-  static const String aiOpenRouterModelGeminiFlash36 =
-      'google/gemini-3.6-flash';
   static const String defaultAiOpenRouterModel = aiOpenRouterModelFree;
   static const List<String> availableAiOpenRouterModels = [
     aiOpenRouterModelFree,
     aiOpenRouterModelAuto,
-    aiOpenRouterModelGeminiFlash36,
   ];
 
   static const String aiModelCustom = 'custom';
@@ -60,6 +59,7 @@ class AppConstants {
   static const double aiTemperature = 0.2;
   static const int aiMaxSuggestions = 10;
   static const int aiMaxTokens = 4096;
+  static const String aiThinkingLevel = 'low';
   static const String aiSearchSystemPrompt =
       'You are an expert movie and TV show search assistant for the MovieScout app.\n'
       'Suggest 1 to $aiMaxSuggestions movies or TV shows that best match the user\'s description.\n'
