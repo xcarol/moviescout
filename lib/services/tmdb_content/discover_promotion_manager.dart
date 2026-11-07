@@ -22,8 +22,7 @@ class DiscoverPromotionManager {
 
   static bool get shouldShowPromoCard {
     final prefs = PreferencesService().prefs;
-    final hasDismissed =
-        prefs.getBool(_hasDismissedDiscoverPromo) ?? false;
+    final hasDismissed = prefs.getBool(_hasDismissedDiscoverPromo) ?? false;
     final hasSeenTab = prefs.getBool(_hasSeenDiscoverBadge) ?? false;
     return !hasDismissed && !hasSeenTab;
   }

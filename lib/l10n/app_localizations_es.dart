@@ -74,10 +74,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get messageEmptyLogin => 'Iniciar sesión en MovieScout';
 
   @override
-  String get search => 'Busca un título';
+  String get searchAiHint => 'Describe la película o serie que buscas...';
 
   @override
-  String get searchAiHint => 'Describe la película o serie que buscas...';
+  String get searchBarHint => 'Películas, series, personas...';
 
   @override
   String get searchAiTooltip => 'Búsqueda Inteligente (IA)';
@@ -813,6 +813,15 @@ class AppLocalizationsEs extends AppLocalizations {
       'Busca usuarios para seguirlos y ver su actividad.';
 
   @override
+  String get searchUsers => 'Buscar usuarios';
+
+  @override
+  String get searchUsersPlaceholder => 'Buscar un usuario...';
+
+  @override
+  String get noUsersFound => 'No se ha encontrado ningún usuario';
+
+  @override
   String get networkErrorMessage =>
       'No se ha podido conectar con el servidor. Comprueba la conexión a internet.';
 
@@ -1281,10 +1290,10 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get messageEmptyLogin => 'Iniciar sesión en MovieScout';
 
   @override
-  String get search => 'Busca un título';
+  String get searchAiHint => 'Describe la película o serie que buscas...';
 
   @override
-  String get searchAiHint => 'Describe la película o serie que buscas...';
+  String get searchBarHint => 'Películas, series, personas...';
 
   @override
   String get searchAiTooltip => 'Búsqueda Inteligente (IA)';
@@ -2018,6 +2027,15 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get emptyFollowingSearchHint =>
       'Busca usuarios para seguirlos y ver su actividad.';
+
+  @override
+  String get searchUsers => 'Buscar usuarios';
+
+  @override
+  String get searchUsersPlaceholder => 'Buscar un usuario...';
+
+  @override
+  String get noUsersFound => 'No se ha encontrado ningún usuario';
 
   @override
   String get networkErrorMessage =>

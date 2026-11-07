@@ -74,10 +74,10 @@ class AppLocalizationsGl extends AppLocalizations {
   String get messageEmptyLogin => 'Inicia sesión en MovieScout';
 
   @override
-  String get search => 'Busca un título';
+  String get searchAiHint => 'Describe a película ou a serie que buscas...';
 
   @override
-  String get searchAiHint => 'Describe a película ou a serie que buscas...';
+  String get searchBarHint => 'Películas, series, persoas...';
 
   @override
   String get searchAiTooltip => 'Busca intelixente (AI)';
@@ -813,6 +813,15 @@ class AppLocalizationsGl extends AppLocalizations {
   @override
   String get emptyFollowingSearchHint =>
       'Busca usuarios para segilos e ver a súa actividade.';
+
+  @override
+  String get searchUsers => 'Buscar usuarios';
+
+  @override
+  String get searchUsersPlaceholder => 'Buscar un usuario...';
+
+  @override
+  String get noUsersFound => 'Non se atoparon usuarios';
 
   @override
   String get networkErrorMessage =>

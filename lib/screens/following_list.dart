@@ -3,6 +3,7 @@ import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/screens/login.dart';
+import 'package:moviescout/screens/user_search_delegate.dart';
 import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:moviescout/services/lists/user_following_service.dart';
 import 'package:moviescout/widgets/cards/user_card.dart';
@@ -159,6 +160,20 @@ class _FollowingListState extends State<FollowingList> {
               color: colorScheme.onSurfaceVariant,
               fontSize: 14,
             ),
+          ),
+          const SizedBox(height: 16),
+          FilledButton.icon(
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: UserSearchDelegate(
+                  _followingService,
+                  searchFieldLabel: loc.searchUsersPlaceholder,
+                ),
+              );
+            },
+            icon: const Icon(Icons.search),
+            label: Text(loc.searchUsers),
           ),
           const SizedBox(height: 16),
           _shareAppBox(context),

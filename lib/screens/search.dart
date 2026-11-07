@@ -300,7 +300,7 @@ class _SearchState extends State<Search> {
                     decoration: InputDecoration(
                       hintText: _isAiMode
                           ? AppLocalizations.of(context)!.searchAiHint
-                          : AppLocalizations.of(context)!.search,
+                          : AppLocalizations.of(context)!.searchBarHint,
                       hintStyle: TextStyle(color: textColor),
                       suffixIconColor: textColor,
                       suffixIcon: Row(
@@ -310,7 +310,6 @@ class _SearchState extends State<Search> {
                             icon: const Icon(Icons.clear),
                             onPressed: () async =>
                                 await _resetTitle(clearText: true),
-                            tooltip: AppLocalizations.of(context)!.search,
                           ),
                           IconButton(
                             icon: Icon(

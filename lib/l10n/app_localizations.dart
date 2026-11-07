@@ -234,17 +234,17 @@ abstract class AppLocalizations {
   /// **'Sign in to MovieScout'**
   String get messageEmptyLogin;
 
-  /// No description provided for @search.
-  ///
-  /// In en, this message translates to:
-  /// **'Search for a title'**
-  String get search;
-
   /// No description provided for @searchAiHint.
   ///
   /// In en, this message translates to:
   /// **'Describe the movie or TV show you are looking for...'**
   String get searchAiHint;
+
+  /// No description provided for @searchBarHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Movies, TV shows, people...'**
+  String get searchBarHint;
 
   /// No description provided for @searchAiTooltip.
   ///
@@ -1607,6 +1607,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search for users to follow them and see their activity.'**
   String get emptyFollowingSearchHint;
+
+  /// No description provided for @searchUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Search users'**
+  String get searchUsers;
+
+  /// No description provided for @searchUsersPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for a user...'**
+  String get searchUsersPlaceholder;
+
+  /// No description provided for @noUsersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No users found'**
+  String get noUsersFound;
 
   /// No description provided for @networkErrorMessage.
   ///

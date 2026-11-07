@@ -75,11 +75,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get messageEmptyLogin => 'Se connecter à MovieScout';
 
   @override
-  String get search => 'Rechercher un titre';
-
-  @override
   String get searchAiHint =>
       'Décrivez le film ou la série que vous recherchez...';
+
+  @override
+  String get searchBarHint => 'Films, séries, personnes...';
 
   @override
   String get searchAiTooltip => 'Recherche Intelligente (IA)';
@@ -815,6 +815,15 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get emptyFollowingSearchHint =>
       'Recherchez des utilisateurs pour les suivre et voir leur activité.';
+
+  @override
+  String get searchUsers => 'Rechercher des utilisateurs';
+
+  @override
+  String get searchUsersPlaceholder => 'Rechercher un utilisateur...';
+
+  @override
+  String get noUsersFound => 'Aucun utilisateur trouvé';
 
   @override
   String get networkErrorMessage =>
