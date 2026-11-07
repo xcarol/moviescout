@@ -795,5 +795,15 @@
   "discoveryDurationEpic": "Epic (> 120 min)",
   "@discoveryDurationEpic": {},
   "discoveryDurationShortFilm": "Courts-métrages (< 40 min)",
-  "@discoveryDurationShortFilm": {}
+  "@discoveryDurationShortFilm": {},
+  "discoveryFilterByYourProviders": "Uniquement disponibles sur vos plateformes",
+  "@discoveryFilterByYourProviders": {},
+  "discoverPromoTitle": "En quête d'inspiration ?",
+  "@discoverPromoTitle": {},
+  "discoverPromoSubtitle": "Essayez la nouvelle Découverte par humeur, époque et durée.",
+  "@discoverPromoSubtitle": {},
+  "discoverPromoExplore": "Explorer",
+  "@discoverPromoExplore": {},
+  "noProvidersSelectedPrompt": "Sélectionnez vos plateformes pour voir uniquement les titres disponibles maintenant.",
+  "@noProvidersSelectedPrompt": {}
 }

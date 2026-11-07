@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/screens/genres.dart';
+import 'package:moviescout/screens/providers.dart';
+import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/widgets/inputs_and_filters/text_filter_widget.dart';
 import 'package:moviescout/widgets/lists/list_controller.dart';
@@ -125,28 +127,65 @@ class ListControlPanel extends StatelessWidget {
     );
   }
 
+  void _promptConfigureProviders(BuildContext context, AppLocalizations l10n) {
+    SnackMessage.showActionSnackBar(
+      message: l10n.noProvidersSelectedPrompt,
+      actionLabel: l10n.settings,
+      onAction: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ProvidersScreen(),
+          ),
+        );
+      },
+      context: context,
+    );
+  }
+
   Widget _providersSelector(BuildContext context) {
     final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          AppLocalizations.of(context)!.filterByProviders,
-          style: TextStyle(
-            fontSize: 16,
-            color: titleTheme.controlPanelForeground,
+    final l10n = AppLocalizations.of(context)!;
+    final hasProviders = controller.providerListIds.isNotEmpty;
+    final isActive = hasProviders && controller.filterByProviders;
+    final activeColor = titleTheme.controlPanelActiveFilterBackground;
+    final inactiveColor = titleTheme.controlPanelInactiveFilterForeground;
+
+    return Tooltip(
+      message: l10n.discoveryFilterByYourProviders,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+            icon: Icon(
+              Icons.tv,
+              size: 20,
+              color: isActive ? activeColor : inactiveColor,
+            ),
+            onPressed: () {
+              if (!hasProviders) {
+                _promptConfigureProviders(context, l10n);
+                return;
+              }
+              controller.setFilterByProviders(!isActive);
+            },
           ),
-        ),
-        const SizedBox(width: 8),
-        Switch(
-          activeThumbColor: titleTheme.controlPanelActiveFilterBackground,
-          inactiveThumbColor: titleTheme.controlPanelInactiveFilterForeground,
-          value: controller.filterByProviders,
-          onChanged: (value) {
-            controller.setFilterByProviders(value);
-          },
-        ),
-      ],
+          const SizedBox(width: 4),
+          Switch(
+            value: isActive,
+            onChanged: (bool value) {
+              if (!hasProviders) {
+                _promptConfigureProviders(context, l10n);
+                return;
+              }
+              controller.setFilterByProviders(value);
+            },
+          ),
+        ],
+      ),
     );
   }
 }

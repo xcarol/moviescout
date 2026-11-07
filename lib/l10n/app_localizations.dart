@@ -273,7 +273,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchProvider.
   ///
   /// In en, this message translates to:
-  /// **'Search for a provider'**
+  /// **'Search for a platform'**
   String get searchProvider;
 
   /// No description provided for @trailer.
@@ -2291,6 +2291,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Short films (< 40 min)'**
   String get discoveryDurationShortFilm;
+
+  /// No description provided for @discoveryFilterByYourProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Only available on your platforms'**
+  String get discoveryFilterByYourProviders;
+
+  /// No description provided for @discoverPromoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for fresh inspiration?'**
+  String get discoverPromoTitle;
+
+  /// No description provided for @discoverPromoSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try the new Discovery by mood, era, and runtime.'**
+  String get discoverPromoSubtitle;
+
+  /// No description provided for @discoverPromoExplore.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore'**
+  String get discoverPromoExplore;
+
+  /// No description provided for @noProvidersSelectedPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your platforms to see only titles available now.'**
+  String get noProvidersSelectedPrompt;
 }
 
 class _AppLocalizationsDelegate

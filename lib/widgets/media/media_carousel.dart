@@ -377,10 +377,22 @@ class _ZoomableImageState extends State<_ZoomableImage>
       final clampedTy = ty.clamp(minTy, 0.0);
 
       final targetMatrix = Matrix4(
-        _doubleTapScale, 0, 0, 0,
-        0, _doubleTapScale, 0, 0,
-        0, 0, 1, 0,
-        clampedTx, clampedTy, 0, 1,
+        _doubleTapScale,
+        0,
+        0,
+        0,
+        0,
+        _doubleTapScale,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        clampedTx,
+        clampedTy,
+        0,
+        1,
       );
 
       _animateTransform(targetMatrix);

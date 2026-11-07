@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/discovery_options.dart';
 import 'package:moviescout/models/title_list_theme.dart';
-import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
+import 'package:moviescout/screens/providers.dart';
+import 'package:moviescout/services/tmdb_content/discoverlist_service.dart';
+import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/widgets/inputs_and_filters/drop_down_selector.dart';
 
 class DiscoveryControlPanel extends StatelessWidget {
@@ -31,9 +33,8 @@ class DiscoveryControlPanel extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _buildResetButton(context, l10n, locale),
-              if (discoverlistService.enabledProviderIds.isNotEmpty)
-                _buildProvidersSelector(
-                    context, titleTheme, l10n, options, locale),
+              _buildProvidersSelector(
+                  context, titleTheme, l10n, options, locale),
             ],
           ),
           Row(
@@ -262,6 +263,22 @@ class DiscoveryControlPanel extends StatelessWidget {
     );
   }
 
+  void _promptConfigureProviders(BuildContext context, AppLocalizations l10n) {
+    SnackMessage.showActionSnackBar(
+      message: l10n.noProvidersSelectedPrompt,
+      actionLabel: l10n.settings,
+      onAction: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ProvidersScreen(),
+          ),
+        );
+      },
+      context: context,
+    );
+  }
+
   Widget _buildProvidersSelector(
     BuildContext context,
     TitleListTheme titleTheme,
@@ -269,29 +286,52 @@ class DiscoveryControlPanel extends StatelessWidget {
     DiscoveryOptions options,
     Locale locale,
   ) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          l10n.filterByProviders,
-          style: TextStyle(
-            fontSize: 14,
-            color: titleTheme.controlPanelForeground,
+    final hasProviders = discoverlistService.enabledProviderIds.isNotEmpty;
+    final isActive = hasProviders && options.filterByProviders;
+    final activeColor = titleTheme.controlPanelActiveFilterBackground;
+    final inactiveColor = titleTheme.controlPanelInactiveFilterForeground;
+
+    return Tooltip(
+      message: l10n.discoveryFilterByYourProviders,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+            icon: Icon(
+              Icons.tv,
+              size: 20,
+              color: isActive ? activeColor : inactiveColor,
+            ),
+            onPressed: () {
+              if (!hasProviders) {
+                _promptConfigureProviders(context, l10n);
+                return;
+              }
+              discoverlistService.updateDiscoveryOptions(
+                options.copyWith(filterByProviders: !isActive),
+                locale,
+              );
+            },
           ),
-        ),
-        const SizedBox(width: 4),
-        Switch(
-          activeThumbColor: titleTheme.controlPanelActiveFilterBackground,
-          inactiveThumbColor: titleTheme.controlPanelInactiveFilterForeground,
-          value: options.filterByProviders,
-          onChanged: (value) {
-            discoverlistService.updateDiscoveryOptions(
-              options.copyWith(filterByProviders: value),
-              locale,
-            );
-          },
-        ),
-      ],
+          const SizedBox(width: 4),
+          Switch(
+            value: isActive,
+            onChanged: (bool value) {
+              if (!hasProviders) {
+                _promptConfigureProviders(context, l10n);
+                return;
+              }
+              discoverlistService.updateDiscoveryOptions(
+                options.copyWith(filterByProviders: value),
+                locale,
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 

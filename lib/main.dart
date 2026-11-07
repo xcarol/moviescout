@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
+import 'package:moviescout/services/tmdb_content/discoverlist_service.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/repositories/cloud_title_repository.dart';
 import 'package:moviescout/repositories/local_title_repository.dart';
@@ -380,6 +380,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         brightness: Brightness.light,
         colorScheme: themeProvider.lightColorScheme,
         scrollbarTheme: themeProvider.lightScrollbarTheme,
+        badgeTheme: BadgeThemeData(
+          backgroundColor: themeProvider.lightCustomColors.badgeColor,
+        ),
         extensions: <ThemeExtension<dynamic>>[
           themeProvider.lightCustomColors,
           themeProvider.lightTitleListTheme,
@@ -390,6 +393,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         brightness: Brightness.dark,
         colorScheme: themeProvider.darkColorScheme,
         scrollbarTheme: themeProvider.darkScrollbarTheme,
+        badgeTheme: BadgeThemeData(
+          backgroundColor: themeProvider.darkCustomColors.badgeColor,
+        ),
         extensions: <ThemeExtension<dynamic>>[
           themeProvider.darkCustomColors,
           themeProvider.darkTitleListTheme,

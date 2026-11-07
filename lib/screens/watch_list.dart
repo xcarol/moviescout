@@ -3,13 +3,17 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'package:moviescout/screens/login.dart';
 import 'package:moviescout/services/lists/watchlist_service.dart';
+import 'package:moviescout/services/tmdb_content/discover_promotion_manager.dart';
+import 'package:moviescout/widgets/cards/discover_promo_card.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';
 import 'package:moviescout/widgets/layout/custom_refresh_builder.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:provider/provider.dart';
 
 class WatchList extends StatefulWidget {
-  const WatchList({super.key});
+  final VoidCallback? onExploreDiscover;
+
+  const WatchList({super.key, this.onExploreDiscover});
 
   @override
   State<WatchList> createState() => _WatchListState();
@@ -19,11 +23,17 @@ class _WatchListState extends State<WatchList> {
   late Future<void> _init;
   late WatchlistService _watchlistService;
   late Widget _watchlistWidget;
+  bool get _showPromoCard => DiscoverPromotionManager.shouldShowPromoCard;
 
   @override
   void initState() {
     super.initState();
     _init = _loadData();
+  }
+
+  void _dismissPromo() {
+    DiscoverPromotionManager.dismissPromoCard();
+    setState(() {});
   }
 
   Future<void> _loadData() async {
@@ -60,11 +70,22 @@ class _WatchListState extends State<WatchList> {
           selector: (_, service) => service.listIsEmpty && !isLoading,
           shouldRebuild: (prev, next) => prev != next,
           builder: (context, isEmpty, child) {
-            if (isEmpty) {
-              return emptyBody();
-            } else {
-              return watchlistBody();
+            final content = isEmpty ? emptyBody() : watchlistBody();
+            if (_showPromoCard) {
+              return Column(
+                children: [
+                  DiscoverPromoCard(
+                    onExplore: () {
+                      _dismissPromo();
+                      widget.onExploreDiscover?.call();
+                    },
+                    onDismiss: _dismissPromo,
+                  ),
+                  Expanded(child: content),
+                ],
+              );
             }
+            return content;
           },
         );
       },

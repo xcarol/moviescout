@@ -1196,4 +1196,22 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get discoveryDurationShortFilm => 'Courts-métrages (< 40 min)';
+
+  @override
+  String get discoveryFilterByYourProviders =>
+      'Uniquement disponibles sur vos plateformes';
+
+  @override
+  String get discoverPromoTitle => 'En quête d\'inspiration ?';
+
+  @override
+  String get discoverPromoSubtitle =>
+      'Essayez la nouvelle Découverte par humeur, époque et durée.';
+
+  @override
+  String get discoverPromoExplore => 'Explorer';
+
+  @override
+  String get noProvidersSelectedPrompt =>
+      'Sélectionnez vos plateformes pour voir uniquement les titres disponibles maintenant.';
 }

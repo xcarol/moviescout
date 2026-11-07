@@ -20,6 +20,7 @@ void main() {
     watchedOverlayColor: Color(0xFFEEEEEE),
     destructiveAction: Color(0xFFFFFFFF),
     followingUserRatedTitle: Color(0xFF123456),
+    badgeColor: Color(0xFF654321),
   );
 
   group('CustomColors', () {
@@ -41,6 +42,7 @@ void main() {
       expect(sampleColors.watchedOverlayColor, const Color(0xFFEEEEEE));
       expect(sampleColors.destructiveAction, const Color(0xFFFFFFFF));
       expect(sampleColors.followingUserRatedTitle, const Color(0xFF123456));
+      expect(sampleColors.badgeColor, const Color(0xFF654321));
     });
 
     test('copyWith preserves existing colors when arguments are null', () {
@@ -64,6 +66,7 @@ void main() {
       expect(copy.destructiveAction, sampleColors.destructiveAction);
       expect(
           copy.followingUserRatedTitle, sampleColors.followingUserRatedTitle);
+      expect(copy.badgeColor, sampleColors.badgeColor);
     });
 
     test('copyWith overrides specified colors', () {
@@ -84,6 +87,7 @@ void main() {
         watchedOverlayColor: const Color(0xFF00000E),
         destructiveAction: const Color(0xFF00000F),
         followingUserRatedTitle: const Color(0xFF000010),
+        badgeColor: const Color(0xFF000011),
       );
 
       expect(updated.inWatchlist, const Color(0xFF000001));
@@ -102,6 +106,7 @@ void main() {
       expect(updated.watchedOverlayColor, const Color(0xFF00000E));
       expect(updated.destructiveAction, const Color(0xFF00000F));
       expect(updated.followingUserRatedTitle, const Color(0xFF000010));
+      expect(updated.badgeColor, const Color(0xFF000011));
     });
 
     test('lerp returns this when other is not CustomColors or null', () {
@@ -127,17 +132,20 @@ void main() {
         watchedOverlayColor: Color(0xFFFFFFFF),
         destructiveAction: Color(0xFF000000),
         followingUserRatedTitle: Color(0xFFFFFFFF),
+        badgeColor: Color(0xFFFFFFFF),
       );
 
       final lerpedZero = sampleColors.lerp(otherColors, 0.0);
       expect(lerpedZero.inWatchlist, sampleColors.inWatchlist);
       expect(lerpedZero.watchedOverlayColor, sampleColors.watchedOverlayColor);
       expect(lerpedZero.destructiveAction, sampleColors.destructiveAction);
+      expect(lerpedZero.badgeColor, sampleColors.badgeColor);
 
       final lerpedOne = sampleColors.lerp(otherColors, 1.0);
       expect(lerpedOne.inWatchlist, otherColors.inWatchlist);
       expect(lerpedOne.watchedOverlayColor, otherColors.watchedOverlayColor);
       expect(lerpedOne.destructiveAction, otherColors.destructiveAction);
+      expect(lerpedOne.badgeColor, otherColors.badgeColor);
 
       final lerpedMid = sampleColors.lerp(otherColors, 0.5);
       expect(
@@ -153,6 +161,10 @@ void main() {
         lerpedMid.destructiveAction,
         Color.lerp(
             sampleColors.destructiveAction, otherColors.destructiveAction, 0.5),
+      );
+      expect(
+        lerpedMid.badgeColor,
+        Color.lerp(sampleColors.badgeColor, otherColors.badgeColor, 0.5),
       );
     });
   });

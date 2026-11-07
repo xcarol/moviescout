@@ -70,7 +70,7 @@
   "@searchPerson": {},
   "gallery": "Galeria",
   "@gallery": {},
-  "searchProvider": "Bilatu hornitzaile bat",
+  "searchProvider": "Bilatu plataforma bat",
   "@searchProvider": {},
   "trailer": "Trailerra",
   "@trailer": {},
@@ -795,5 +795,15 @@
   "discoveryDurationEpic": "Epic (> 120 min)",
   "@discoveryDurationEpic": {},
   "discoveryDurationShortFilm": "Film laburrak (< 40 min)",
-  "@discoveryDurationShortFilm": {}
+  "@discoveryDurationShortFilm": {},
+  "discoveryFilterByYourProviders": "Zure plataformetan soilik eskuragarri",
+  "@discoveryFilterByYourProviders": {},
+  "discoverPromoTitle": "Inspirazio berri bila?",
+  "@discoverPromoTitle": {},
+  "discoverPromoSubtitle": "Probatu Aurkikuntza berria aldarte, garai eta iraupenaren arabera.",
+  "@discoverPromoSubtitle": {},
+  "discoverPromoExplore": "Arakatu",
+  "@discoverPromoExplore": {},
+  "noProvidersSelectedPrompt": "Hautatu zure plataformak orain eskuragarri dauden izenburuak soilik ikusteko.",
+  "@noProvidersSelectedPrompt": {}
 }

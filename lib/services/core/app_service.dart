@@ -4,7 +4,7 @@ import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
-import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
+import 'package:moviescout/services/tmdb_content/discoverlist_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class AppService extends ChangeNotifier {

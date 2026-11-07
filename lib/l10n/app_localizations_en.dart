@@ -93,7 +93,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gallery => 'Gallery';
 
   @override
-  String get searchProvider => 'Search for a provider';
+  String get searchProvider => 'Search for a platform';
 
   @override
   String get trailer => 'Trailer';
@@ -1185,4 +1185,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get discoveryDurationShortFilm => 'Short films (< 40 min)';
+
+  @override
+  String get discoveryFilterByYourProviders =>
+      'Only available on your platforms';
+
+  @override
+  String get discoverPromoTitle => 'Looking for fresh inspiration?';
+
+  @override
+  String get discoverPromoSubtitle =>
+      'Try the new Discovery by mood, era, and runtime.';
+
+  @override
+  String get discoverPromoExplore => 'Explore';
+
+  @override
+  String get noProvidersSelectedPrompt =>
+      'Select your platforms to see only titles available now.';
 }

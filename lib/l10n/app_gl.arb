@@ -70,7 +70,7 @@
   "@searchPerson": {},
   "gallery": "Galería",
   "@gallery": {},
-  "searchProvider": "Atopar un provedor",
+  "searchProvider": "Atopar unha plataforma",
   "@searchProvider": {},
   "trailer": "Tráiler",
   "@trailer": {},
@@ -795,5 +795,15 @@
   "discoveryDurationEpic": "Epic (> 120 min)",
   "@discoveryDurationEpic": {},
   "discoveryDurationShortFilm": "Curtametraxes (< 40 min)",
-  "@discoveryDurationShortFilm": {}
+  "@discoveryDurationShortFilm": {},
+  "discoveryFilterByYourProviders": "Só dispoñibles nas túas plataformas",
+  "@discoveryFilterByYourProviders": {},
+  "discoverPromoTitle": "Buscas nova inspiración?",
+  "@discoverPromoTitle": {},
+  "discoverPromoSubtitle": "Proba o novo Descubrimento por estado de ánimo, época e duración.",
+  "@discoverPromoSubtitle": {},
+  "discoverPromoExplore": "Explorar",
+  "@discoverPromoExplore": {},
+  "noProvidersSelectedPrompt": "Selecciona as túas plataformas para ver só títulos dispoñibles agora.",
+  "@noProvidersSelectedPrompt": {}
 }
