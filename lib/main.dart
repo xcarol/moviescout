@@ -172,8 +172,8 @@ void _runMain() async {
     );
   }
 
-  final repository = LocalTitleRepository();
-  final cloudRepository = CloudTitleRepository();
+  final repository = LocalTitleRepository.instance;
+  final cloudRepository = CloudTitleRepository.instance;
 
   final tmdbProviderService =
       TmdbProviderService(cloudRepository: cloudRepository);
@@ -183,6 +183,10 @@ void _runMain() async {
       WatchlistService(repository, cloudRepository: cloudRepository);
   final discoverlistService =
       TmdbDiscoverlistService(AppConstants.discoverlist, repository);
+
+  rateslistService.addListener(watchlistService.refresh);
+  rateslistService.addListener(discoverlistService.refresh);
+  watchlistService.addListener(discoverlistService.refresh);
 
   AppService().attachServices(
     watchlistService: watchlistService,
@@ -195,8 +199,6 @@ void _runMain() async {
 
   runApp(MultiProvider(
     providers: [
-      Provider.value(value: repository),
-      Provider.value(value: cloudRepository),
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => SupabaseAuthService()),
@@ -228,28 +230,17 @@ void _runMain() async {
           return rateslistService;
         },
       ),
-      ChangeNotifierProxyProvider3<RateslistService, PinnedService,
-          SupabaseAuthService, WatchlistService>(
+      ChangeNotifierProxyProvider2<PinnedService, SupabaseAuthService,
+          WatchlistService>(
         create: (_) => watchlistService,
-        update: (_, rateslistService, pinnedService, authService,
-            watchlistService) {
-          rateslistService.removeListener(watchlistService!.refresh);
-          rateslistService.addListener(watchlistService.refresh);
-          watchlistService.pinnedService = pinnedService;
+        update: (_, pinnedService, authService, watchlistService) {
+          watchlistService!.pinnedService = pinnedService;
           watchlistService.updateAuth(authService);
           return watchlistService;
         },
       ),
-      ChangeNotifierProxyProvider2<RateslistService, WatchlistService,
-          TmdbDiscoverlistService>(
-        create: (_) => discoverlistService,
-        update: (_, rateslistService, watchlistService, discoverlistService) {
-          rateslistService.removeListener(discoverlistService!.refresh);
-          watchlistService.removeListener(discoverlistService.refresh);
-          rateslistService.addListener(discoverlistService.refresh);
-          watchlistService.addListener(discoverlistService.refresh);
-          return discoverlistService;
-        },
+      ChangeNotifierProvider<TmdbDiscoverlistService>.value(
+        value: discoverlistService,
       ),
       ChangeNotifierProvider(create: (_) => NotificationService()),
       ChangeNotifierProvider(create: (_) => AppService()),

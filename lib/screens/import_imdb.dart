@@ -329,7 +329,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
       final tmdbBaseService = TmdbBaseService();
       final tmdbSearchService = SearchService(
         searchServiceListName,
-        context.read<LocalTitleRepository>(),
+        LocalTitleRepository.instance,
       );
       final userLocale = Localizations.localeOf(context);
 
@@ -426,7 +426,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
       final tmdbBaseService = TmdbBaseService();
       final tmdbSearchService = SearchService(
         searchServiceListName,
-        context.read<LocalTitleRepository>(),
+        LocalTitleRepository.instance,
       );
       final userLocale = Localizations.localeOf(context);
 

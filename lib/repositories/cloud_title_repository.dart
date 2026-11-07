@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
@@ -6,10 +7,31 @@ import 'package:moviescout/services/core/cloud_database_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
 class CloudTitleRepository {
+  static CloudTitleRepository? _instance;
   final SupabaseClient _client;
 
-  CloudTitleRepository({SupabaseClient? client})
+  factory CloudTitleRepository({SupabaseClient? client}) {
+    if (client != null) {
+      return CloudTitleRepository._internal(client: client);
+    }
+    return _instance ??= CloudTitleRepository._internal();
+  }
+
+  CloudTitleRepository._internal({SupabaseClient? client})
       : _client = client ?? CloudDatabaseService.instance;
+
+  static CloudTitleRepository get instance =>
+      _instance ??= CloudTitleRepository._internal();
+
+  @visibleForTesting
+  static void setMockInstance(CloudTitleRepository mock) {
+    _instance = mock;
+  }
+
+  @visibleForTesting
+  static void resetInstance() {
+    _instance = null;
+  }
 
   Future<T> _retryOnFutureJwt<T>(Future<T> Function() operation) =>
       CloudDatabaseService.retryOnFutureJwt(operation);

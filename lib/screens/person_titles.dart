@@ -29,7 +29,7 @@ class _PersonTitlesState extends State<PersonTitles> {
     super.initState();
     _personTitlesService = TmdbPersonTitlesService(
       'person_titles_${widget._person.tmdbId}',
-      Provider.of<LocalTitleRepository>(context, listen: false),
+      LocalTitleRepository.instance,
       person: widget._person,
       role: widget.role,
     );

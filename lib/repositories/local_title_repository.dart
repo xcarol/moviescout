@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart';
 import 'package:drift/drift.dart';
 import 'package:sqlite3/common.dart';
 import 'package:moviescout/database/app_database.dart';
@@ -16,10 +17,31 @@ import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/services/core/error_service.dart';
 
 class LocalTitleRepository {
+  static LocalTitleRepository? _instance;
   final AppDatabase _db;
 
-  LocalTitleRepository({AppDatabase? db})
+  factory LocalTitleRepository({AppDatabase? db}) {
+    if (db != null) {
+      return LocalTitleRepository._internal(db: db);
+    }
+    return _instance ??= LocalTitleRepository._internal();
+  }
+
+  LocalTitleRepository._internal({AppDatabase? db})
       : _db = db ?? LocalDatabaseService.instance;
+
+  static LocalTitleRepository get instance =>
+      _instance ??= LocalTitleRepository._internal();
+
+  @visibleForTesting
+  static void setMockInstance(LocalTitleRepository mock) {
+    _instance = mock;
+  }
+
+  @visibleForTesting
+  static void resetInstance() {
+    _instance = null;
+  }
 
   Future<T> _retryOnLocked<T>(Future<T> Function() action,
       {int maxAttempts = 4}) async {

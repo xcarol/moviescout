@@ -107,8 +107,7 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
 
   Future<void> _startImport() async {
     final userService = Provider.of<TmdbUserService>(context, listen: false);
-    final repository =
-        Provider.of<LocalTitleRepository>(context, listen: false);
+    final repository = LocalTitleRepository.instance;
     final watchlistService =
         Provider.of<WatchlistService>(context, listen: false);
     final rateslistService =

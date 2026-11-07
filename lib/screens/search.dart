@@ -51,11 +51,11 @@ class _SearchState extends State<Search> {
     super.initState();
     _titleListServiceSupport = TmdbTitleListService(
       AppConstants.searchList,
-      context.read<LocalTitleRepository>(),
+      LocalTitleRepository.instance,
     );
     _searchService = SearchService(
       AppConstants.searchList,
-      context.read<LocalTitleRepository>(),
+      LocalTitleRepository.instance,
     );
     _searchWidget = ItemList(
       _searchService,
