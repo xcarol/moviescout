@@ -136,6 +136,7 @@ class ThemeService with ChangeNotifier {
     watchedOverlayColor: Colors.black54,
     destructiveAction: Color.fromARGB(0xFF, 0xFF, 0x52, 0x52),
     followingUserRatedTitle: Color.fromARGB(0xFF, 0x2D, 0xD4, 0xBF),
+    badgeColor: Color.fromARGB(0xFF, 0xFF, 0x52, 0x52),
   );
 
   static ColorScheme darkColorSchemeDefault =

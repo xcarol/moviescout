@@ -1192,6 +1192,24 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get discoveryDurationShortFilm => 'Curtas-metragens (< 40 min)';
+
+  @override
+  String get discoveryFilterByYourProviders =>
+      'Apenas disponíveis nas suas plataformas';
+
+  @override
+  String get discoverPromoTitle => 'Procurando nova inspiração?';
+
+  @override
+  String get discoverPromoSubtitle =>
+      'Experimente o novo Descobrir por humor, época e duração.';
+
+  @override
+  String get discoverPromoExplore => 'Explorar';
+
+  @override
+  String get noProvidersSelectedPrompt =>
+      'Seleciona as tuas plataformas para ver apenas títulos disponíveis agora.';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -1826,7 +1844,7 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get aiTranslationTimeout =>
-      'A tradução com IA demorou muito para responder. Tente novamente mais tarde ou mude de modelo.';
+      'A tradução com IA demorou demasiado tempo a responder. Tente novamente mais tarde ou mude de modelo.';
 
   @override
   String get aiTranslationError =>
@@ -2381,4 +2399,22 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get discoveryDurationShortFilm => 'Curtas-metragens (< 40 min)';
+
+  @override
+  String get discoveryFilterByYourProviders =>
+      'Apenas disponíveis nas suas plataformas';
+
+  @override
+  String get discoverPromoTitle => 'Procurando nova inspiração?';
+
+  @override
+  String get discoverPromoSubtitle =>
+      'Experimente o novo Descobrir por humor, época e duração.';
+
+  @override
+  String get discoverPromoExplore => 'Explorar';
+
+  @override
+  String get noProvidersSelectedPrompt =>
+      'Seleciona as tuas plataformas para ver apenas títulos disponíveis agora.';
 }

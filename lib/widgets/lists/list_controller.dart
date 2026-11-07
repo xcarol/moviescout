@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
+import 'package:moviescout/services/tmdb_content/discover_promotion_manager.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_content/search_service.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
@@ -273,7 +274,13 @@ class ListController with ChangeNotifier {
     final prefs = PreferencesService().prefs;
     textFilterController.text =
         prefs.getString(_textFilterPreferencesName) ?? '';
-    _showFilters = prefs.getBool(_showFiltersPreferencesName) ?? false;
+    if (DiscoverPromotionManager.shouldAutoExpandFilters(
+        listService.listName)) {
+      _showFilters = true;
+      prefs.setBool(_showFiltersPreferencesName, true);
+    } else {
+      _showFilters = prefs.getBool(_showFiltersPreferencesName) ?? false;
+    }
     _selectedType = prefs.getString(_selectedTypePreferencesName) ?? '';
     _selectedGenres = prefs.getStringList(_selectedGenresPreferencesName) ?? [];
     _excludeGenres = prefs.getBool(_excludeGenresPreferencesName) ?? false;

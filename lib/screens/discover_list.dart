@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
+import 'package:moviescout/services/tmdb_content/discoverlist_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/widgets/lists/item_list.dart';

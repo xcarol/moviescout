@@ -74,14 +74,15 @@ class DiscoveryOptions {
     this.mode = DiscoveryMode.forYou,
     this.epoch = DiscoveryEpoch.all,
     this.duration = DiscoveryDuration.any,
-    this.filterByProviders = true,
+    this.filterByProviders = false,
   });
 
   bool get isDefault =>
       theme == DiscoveryTheme.any &&
       mode == DiscoveryMode.forYou &&
       epoch == DiscoveryEpoch.all &&
-      duration == DiscoveryDuration.any;
+      duration == DiscoveryDuration.any &&
+      !filterByProviders;
 
   DiscoveryOptions copyWith({
     DiscoveryTheme? theme,
@@ -137,7 +138,7 @@ class DiscoveryOptions {
     }
 
     final filterByProviders =
-        prefs.getBool('discover_filter_by_providers') ?? true;
+        prefs.getBool('discover_filter_by_providers') ?? false;
 
     return DiscoveryOptions(
       theme: theme,

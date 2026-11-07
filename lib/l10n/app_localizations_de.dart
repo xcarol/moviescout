@@ -95,7 +95,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get gallery => 'Galerie';
 
   @override
-  String get searchProvider => 'Streaming-Dienst suchen';
+  String get searchProvider => 'Streaming-Plattform suchen';
 
   @override
   String get trailer => 'Trailer';
@@ -1193,4 +1193,22 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get discoveryDurationShortFilm => 'Kurzfilme (< 40 min)';
+
+  @override
+  String get discoveryFilterByYourProviders =>
+      'Nur auf deinen Plattformen verfügbar';
+
+  @override
+  String get discoverPromoTitle => 'Auf der Suche nach neuer Inspiration?';
+
+  @override
+  String get discoverPromoSubtitle =>
+      'Probiere die neue Entdeckung nach Stimmung, Epoche und Laufzeit.';
+
+  @override
+  String get discoverPromoExplore => 'Erkunden';
+
+  @override
+  String get noProvidersSelectedPrompt =>
+      'Wähle deine Plattformen aus, um nur aktuell verfügbare Titel zu sehen.';
 }

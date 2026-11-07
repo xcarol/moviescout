@@ -16,7 +16,7 @@ import 'package:moviescout/widgets/inputs_and_filters/drop_down_selector.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/widgets/lists/list_control_panel.dart';
 import 'package:moviescout/widgets/lists/discovery_control_panel.dart';
-import 'package:moviescout/services/tmdb_lists/discoverlist_service.dart';
+import 'package:moviescout/services/tmdb_content/discoverlist_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_person_titles_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/widgets/lists/list_controller.dart';

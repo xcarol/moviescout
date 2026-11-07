@@ -70,7 +70,7 @@
   "@searchPerson": {},
   "gallery": "Galería",
   "@gallery": {},
-  "searchProvider": "Busca un proveedor",
+  "searchProvider": "Busca una plataforma",
   "@searchProvider": {},
   "trailer": "Tráiler",
   "@trailer": {},
@@ -795,5 +795,15 @@
   "discoveryDurationEpic": "Épicas (> 120 min)",
   "@discoveryDurationEpic": {},
   "discoveryDurationShortFilm": "Cortometrajes (< 40 min)",
-  "@discoveryDurationShortFilm": {}
+  "@discoveryDurationShortFilm": {},
+  "discoveryFilterByYourProviders": "Solo disponibles en tus plataformas",
+  "@discoveryFilterByYourProviders": {},
+  "discoverPromoTitle": "¿Buscas nueva inspiración?",
+  "@discoverPromoTitle": {},
+  "discoverPromoSubtitle": "Prueba el nuevo Descubrimiento por estado de ánimo, época y duración.",
+  "@discoverPromoSubtitle": {},
+  "discoverPromoExplore": "Explorar",
+  "@discoverPromoExplore": {},
+  "noProvidersSelectedPrompt": "Selecciona tus plataformas para ver solo títulos disponibles ahora.",
+  "@noProvidersSelectedPrompt": {}
 }

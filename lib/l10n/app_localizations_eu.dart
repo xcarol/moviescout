@@ -93,7 +93,7 @@ class AppLocalizationsEu extends AppLocalizations {
   String get gallery => 'Galeria';
 
   @override
-  String get searchProvider => 'Bilatu hornitzaile bat';
+  String get searchProvider => 'Bilatu plataforma bat';
 
   @override
   String get trailer => 'Trailerra';
@@ -1189,4 +1189,22 @@ class AppLocalizationsEu extends AppLocalizations {
 
   @override
   String get discoveryDurationShortFilm => 'Film laburrak (< 40 min)';
+
+  @override
+  String get discoveryFilterByYourProviders =>
+      'Zure plataformetan soilik eskuragarri';
+
+  @override
+  String get discoverPromoTitle => 'Inspirazio berri bila?';
+
+  @override
+  String get discoverPromoSubtitle =>
+      'Probatu Aurkikuntza berria aldarte, garai eta iraupenaren arabera.';
+
+  @override
+  String get discoverPromoExplore => 'Arakatu';
+
+  @override
+  String get noProvidersSelectedPrompt =>
+      'Hautatu zure plataformak orain eskuragarri dauden izenburuak soilik ikusteko.';
 }

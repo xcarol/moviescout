@@ -92,7 +92,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get gallery => 'Galería';
 
   @override
-  String get searchProvider => 'Busca un proveedor';
+  String get searchProvider => 'Busca una plataforma';
 
   @override
   String get trailer => 'Tráiler';
@@ -1191,6 +1191,24 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get discoveryDurationShortFilm => 'Cortometrajes (< 40 min)';
+
+  @override
+  String get discoveryFilterByYourProviders =>
+      'Solo disponibles en tus plataformas';
+
+  @override
+  String get discoverPromoTitle => '¿Buscas nueva inspiración?';
+
+  @override
+  String get discoverPromoSubtitle =>
+      'Prueba el nuevo Descubrimiento por estado de ánimo, época y duración.';
+
+  @override
+  String get discoverPromoExplore => 'Explorar';
+
+  @override
+  String get noProvidersSelectedPrompt =>
+      'Selecciona tus plataformas para ver solo títulos disponibles ahora.';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -1281,7 +1299,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get gallery => 'Galería';
 
   @override
-  String get searchProvider => 'Busca un proveedor';
+  String get searchProvider => 'Busca una plataforma';
 
   @override
   String get trailer => 'Tráiler';
@@ -2380,4 +2398,22 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get discoveryDurationShortFilm => 'Cortometrajes (< 40 min)';
+
+  @override
+  String get discoveryFilterByYourProviders =>
+      'Solo disponibles en tus plataformas';
+
+  @override
+  String get discoverPromoTitle => '¿Buscas nueva inspiración?';
+
+  @override
+  String get discoverPromoSubtitle =>
+      'Prueba el nuevo Descubrimiento por estado de ánimo, época y duración.';
+
+  @override
+  String get discoverPromoExplore => 'Explorar';
+
+  @override
+  String get noProvidersSelectedPrompt =>
+      'Selecciona tus plataformas para ver solo títulos disponibles ahora.';
 }

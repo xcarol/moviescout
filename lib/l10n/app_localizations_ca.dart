@@ -92,7 +92,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get gallery => 'Galeria';
 
   @override
-  String get searchProvider => 'Cerca un proveïdor';
+  String get searchProvider => 'Cerca una plataforma';
 
   @override
   String get trailer => 'Tràiler';
@@ -1193,4 +1193,22 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get discoveryDurationShortFilm => 'Curtmetratges (< 40 min)';
+
+  @override
+  String get discoveryFilterByYourProviders =>
+      'Només disponibles a les teves plataformes';
+
+  @override
+  String get discoverPromoTitle => 'Busques inspiració nova?';
+
+  @override
+  String get discoverPromoSubtitle =>
+      'Prova la nova Descoberta per estat d\'ànim, època i durada.';
+
+  @override
+  String get discoverPromoExplore => 'Explora';
+
+  @override
+  String get noProvidersSelectedPrompt =>
+      'Selecciona les teves plataformes per veure només títols disponibles ara.';
 }

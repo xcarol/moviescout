@@ -1187,4 +1187,22 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get discoveryDurationShortFilm => 'Cortometraggi (< 40 min)';
+
+  @override
+  String get discoveryFilterByYourProviders =>
+      'Disponibili solo sulle tue piattaforme';
+
+  @override
+  String get discoverPromoTitle => 'Cerchi nuova ispirazione?';
+
+  @override
+  String get discoverPromoSubtitle =>
+      'Prova il nuovo Scopri per umore, epoca e durata.';
+
+  @override
+  String get discoverPromoExplore => 'Esplora';
+
+  @override
+  String get noProvidersSelectedPrompt =>
+      'Seleziona le tue piattaforme per vedere solo i titoli disponibili adesso.';
 }

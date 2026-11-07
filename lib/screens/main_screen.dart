@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import "package:moviescout/services/auth/supabase_auth_service.dart";
 import 'package:moviescout/services/core/app_service.dart';
+import 'package:moviescout/services/tmdb_content/discover_promotion_manager.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/screens/discover_list.dart';
 import 'package:moviescout/screens/following_list.dart';
@@ -30,8 +31,24 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+  bool _showDiscoverBadge = false;
 
   bool? _wasLoggedIn;
+
+  @override
+  void initState() {
+    super.initState();
+    _showDiscoverBadge = DiscoverPromotionManager.shouldShowTabBadge;
+  }
+
+  void _clearDiscoverBadge() {
+    if (_showDiscoverBadge) {
+      setState(() {
+        _showDiscoverBadge = false;
+      });
+    }
+    DiscoverPromotionManager.markDiscoverTabVisited();
+  }
 
   List<_NavTab> _getActiveTabs(bool showCommunity) {
     return [
@@ -68,6 +85,10 @@ class _MainScreenState extends State<MainScreen> {
       _currentIndex = _getDefaultIndex(activeTabs);
     } else if (_currentIndex >= activeTabs.length) {
       _currentIndex = activeTabs.length - 1;
+    }
+
+    if (activeTabs[_currentIndex] == _NavTab.discover) {
+      _clearDiscoverBadge();
     }
   }
 
@@ -110,7 +131,18 @@ class _MainScreenState extends State<MainScreen> {
               children: activeTabs.map((tab) {
                 switch (tab) {
                   case _NavTab.watchlist:
-                    return const WatchList();
+                    return WatchList(
+                      onExploreDiscover: () {
+                        final discoverIndex =
+                            activeTabs.indexOf(_NavTab.discover);
+                        if (discoverIndex >= 0) {
+                          setState(() {
+                            _currentIndex = discoverIndex;
+                          });
+                          _clearDiscoverBadge();
+                        }
+                      },
+                    );
                   case _NavTab.rateslist:
                     return const RatesList();
                   case _NavTab.discover:
@@ -136,6 +168,9 @@ class _MainScreenState extends State<MainScreen> {
             setState(() {
               _currentIndex = newIndex;
             });
+            if (activeTabs[newIndex] == _NavTab.discover) {
+              _clearDiscoverBadge();
+            }
           },
           items: activeTabs.map((tab) {
             switch (tab) {
@@ -155,7 +190,12 @@ class _MainScreenState extends State<MainScreen> {
                 );
               case _NavTab.discover:
                 return BottomNavigationBarItem(
-                  icon: const Icon(Symbols.wand_stars),
+                  icon: Badge(
+                    isLabelVisible: _showDiscoverBadge,
+                    backgroundColor: customColors.badgeColor,
+                    smallSize: 8,
+                    child: const Icon(Symbols.wand_stars),
+                  ),
                   label: '',
                   tooltip: AppLocalizations.of(context)!.discoverlistTitle,
                   backgroundColor: customColors.bottomNavigationBarBackground,

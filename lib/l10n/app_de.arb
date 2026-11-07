@@ -70,7 +70,7 @@
   "@searchPerson": {},
   "gallery": "Galerie",
   "@gallery": {},
-  "searchProvider": "Streaming-Dienst suchen",
+  "searchProvider": "Streaming-Plattform suchen",
   "@searchProvider": {},
   "trailer": "Trailer",
   "@trailer": {},
@@ -795,5 +795,15 @@
   "discoveryDurationEpic": "Epic (> 120 min)",
   "@discoveryDurationEpic": {},
   "discoveryDurationShortFilm": "Kurzfilme (< 40 min)",
-  "@discoveryDurationShortFilm": {}
+  "@discoveryDurationShortFilm": {},
+  "discoveryFilterByYourProviders": "Nur auf deinen Plattformen verfügbar",
+  "@discoveryFilterByYourProviders": {},
+  "discoverPromoTitle": "Auf der Suche nach neuer Inspiration?",
+  "@discoverPromoTitle": {},
+  "discoverPromoSubtitle": "Probiere die neue Entdeckung nach Stimmung, Epoche und Laufzeit.",
+  "@discoverPromoSubtitle": {},
+  "discoverPromoExplore": "Erkunden",
+  "@discoverPromoExplore": {},
+  "noProvidersSelectedPrompt": "Wähle deine Plattformen aus, um nur aktuell verfügbare Titel zu sehen.",
+  "@noProvidersSelectedPrompt": {}
 }

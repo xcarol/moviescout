@@ -95,10 +95,13 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
   List<int> get enabledProviderIds => _enabledProviderIds;
 
   bool get anyFilterActive {
-    final hasNonDefaultOptions = !_options.isDefault;
-    final hasToggledProviders =
-        _enabledProviderIds.isNotEmpty && !_options.filterByProviders;
-    return hasNonDefaultOptions || hasToggledProviders;
+    final hasActiveProvidersFilter =
+        _options.filterByProviders && _enabledProviderIds.isNotEmpty;
+    return _options.theme != DiscoveryTheme.any ||
+        _options.mode != DiscoveryMode.forYou ||
+        _options.epoch != DiscoveryEpoch.all ||
+        _options.duration != DiscoveryDuration.any ||
+        hasActiveProvidersFilter;
   }
 
   TmdbDiscoverlistService(super.listName, super.repository) {
