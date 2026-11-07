@@ -12,6 +12,7 @@ import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_user_service.dart';
 import 'package:moviescout/utils/url_constants.dart';
+import 'package:moviescout/widgets/misc/import_step_tile.dart';
 import 'package:provider/provider.dart';
 
 enum ImportState { idle, importing, success, error }
@@ -343,8 +344,7 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Column(
           children: [
-            _buildStepTile(
-              context: context,
+            ImportStepTile(
               isActive: isWatchlistActive,
               isCompleted: isWatchlistDone,
               pendingText: l10n.watchlistTitle,
@@ -353,8 +353,7 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
                   l10n.tmdbImportWatchlistCount(_watchlistCount ?? 0),
             ),
             const Divider(height: 1),
-            _buildStepTile(
-              context: context,
+            ImportStepTile(
               isActive: isRateslistActive,
               isCompleted: isRateslistDone,
               pendingText: l10n.rateslistTitle,
@@ -363,8 +362,7 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
                   l10n.tmdbImportRateslistCount(_rateslistCount ?? 0),
             ),
             const Divider(height: 1),
-            _buildStepTile(
-              context: context,
+            ImportStepTile(
               isActive: isEpisodesActive,
               isCompleted: isEpisodesDone,
               pendingText: l10n.episodes,
@@ -372,8 +370,7 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
               completedText: l10n.tmdbImportEpisodesCount(_episodesCount ?? 0),
             ),
             const Divider(height: 1),
-            _buildStepTile(
-              context: context,
+            ImportStepTile(
               isActive: isUploadActive,
               isCompleted: isUploadDone,
               pendingText: l10n.tmdbImportUploadTitle,
@@ -401,56 +398,6 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildStepTile({
-    required BuildContext context,
-    required bool isActive,
-    required bool isCompleted,
-    required String pendingText,
-    required String activeText,
-    required String completedText,
-    Widget? subtitle,
-  }) {
-    final theme = Theme.of(context);
-    Widget leading;
-    Color? textColor;
-
-    if (isCompleted) {
-      leading = Icon(Icons.check_circle, color: theme.colorScheme.primary);
-      textColor = theme.textTheme.bodyMedium?.color;
-    } else if (isActive) {
-      leading = const SizedBox(
-        width: 20,
-        height: 20,
-        child: CircularProgressIndicator(strokeWidth: 2.0),
-      );
-      textColor = theme.colorScheme.primary;
-    } else {
-      leading = Icon(Icons.radio_button_unchecked, color: theme.disabledColor);
-      textColor = theme.disabledColor;
-    }
-
-    return ListTile(
-      dense: true,
-      leading: SizedBox(
-        width: 24,
-        height: 24,
-        child: Center(child: leading),
-      ),
-      title: Text(
-        isCompleted
-            ? completedText
-            : isActive
-                ? activeText
-                : pendingText,
-        style: TextStyle(
-          color: textColor,
-          fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-        ),
-      ),
-      subtitle: subtitle,
     );
   }
 

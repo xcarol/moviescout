@@ -1,19 +1,11 @@
-import 'dart:convert';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:csv/csv.dart';
-import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/core/error_service.dart';
-import 'package:moviescout/services/core/tmdb_base_service.dart';
+import 'package:moviescout/services/import/imdb_import_service.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
-import 'package:moviescout/services/tmdb_content/search_service.dart';
-import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/lists/watchlist_service.dart';
-import 'package:moviescout/repositories/local_title_repository.dart';
 import 'package:provider/provider.dart';
-
-enum TitleStatus { pending, success, failed }
 
 class ImportIMDB extends StatefulWidget {
   const ImportIMDB({super.key});
@@ -23,18 +15,20 @@ class ImportIMDB extends StatefulWidget {
 }
 
 class _ImportIMDBState extends State<ImportIMDB> {
-  late TextEditingController _filenameController;
-  late List<dynamic> _csvHeaders = List.empty();
-  late List<List<dynamic>> _csvTitles = List.empty();
-  late List<TitleStatus> _csvTitlesStatus = List.empty();
-  late int _imdbIdColumn = -1;
-  late int _imdbTitleColumn = -1;
-  late int _imdbRateColumn = -1;
-  late int _importId = -1;
-  late bool _isRateList = false;
-  late bool _operationInProgress = false;
+  late final TextEditingController _filenameController;
+  final ImdbImportService _importService = ImdbImportService();
 
-  final String searchServiceListName = 'importImdb';
+  ImdbCsvData _csvData = const ImdbCsvData(
+    headers: [],
+    rows: [],
+    imdbIdColumn: -1,
+    imdbTitleColumn: -1,
+    imdbRateColumn: -1,
+    isRateList: false,
+  );
+  List<ImdbTitleStatus> _csvTitlesStatus = const [];
+  int _importId = -1;
+  bool _operationInProgress = false;
 
   @override
   void initState() {
@@ -73,45 +67,28 @@ class _ImportIMDBState extends State<ImportIMDB> {
     _filenameController.clear();
     setState(() {
       _importId = -1;
-      _csvTitles = List.empty();
-      _csvTitlesStatus = List.empty();
-      _filenameController.clear();
+      _csvData = const ImdbCsvData(
+        headers: [],
+        rows: [],
+        imdbIdColumn: -1,
+        imdbTitleColumn: -1,
+        imdbRateColumn: -1,
+        isRateList: false,
+      );
+      _csvTitlesStatus = const [];
     });
   }
 
   Future<void> _readCsvFromFile(PlatformFile file) async {
     try {
       final bytes = await file.readAsBytes();
-      String rawData;
-      try {
-        rawData = utf8.decode(bytes);
-      } catch (_) {
-        rawData = latin1.decode(bytes);
-      }
-
-      final normalizedData = rawData.replaceAll('\r\n', '\n');
-      List<List<dynamic>> csvData = const CsvDecoder().convert(normalizedData);
-      if (csvData.isEmpty) return;
+      final data = ImdbImportService.parseCsvBytes(bytes);
+      if (data.isEmpty) return;
 
       setState(() {
-        _csvHeaders =
-            csvData.first.map((e) => e.toString().toLowerCase()).toList();
-        _imdbIdColumn = _csvHeaders.indexOf('const');
-        _imdbTitleColumn = _csvHeaders.indexOf('title');
-        _imdbRateColumn = _csvHeaders.indexOf('your rating');
-        _csvTitles = csvData
-            .where((row) =>
-                row.length > _imdbIdColumn &&
-                row.length > _imdbTitleColumn &&
-                (_imdbRateColumn == -1 || row.length > _imdbRateColumn))
-            .toList();
-        if (_csvTitles.isNotEmpty) {
-          _csvTitles.removeAt(0);
-        }
-        _csvTitlesStatus = List.filled(_csvTitles.length, TitleStatus.pending);
-        _isRateList = _imdbRateColumn != -1 &&
-            _csvTitles.isNotEmpty &&
-            _csvTitles[0][_imdbRateColumn].toString().isNotEmpty;
+        _csvData = data;
+        _csvTitlesStatus =
+            List.filled(data.length, ImdbTitleStatus.pending);
       });
     } catch (e, stackTrace) {
       ErrorService.log(
@@ -180,7 +157,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
             children: [
               OutlinedButton(
                 onPressed: _filenameController.text.isEmpty ||
-                        _isRateList ||
+                        _csvData.isRateList ||
                         _operationInProgress
                     ? null
                     : () => _importWatchlist(context),
@@ -188,7 +165,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
               ),
               OutlinedButton(
                 onPressed: _filenameController.text.isNotEmpty &&
-                        _isRateList &&
+                        _csvData.isRateList &&
                         !_operationInProgress
                     ? () => _importRateslist(context)
                     : null,
@@ -224,11 +201,11 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
   Widget _infoLine() {
     String totalTitles =
-        '${_csvTitles.length} ${AppLocalizations.of(context)!.titles}';
+        '${_csvData.length} ${AppLocalizations.of(context)!.titles}';
     String importedTitles =
-        '${_csvTitlesStatus.where((status) => status == TitleStatus.success).length} ${AppLocalizations.of(context)!.titles}';
+        '${_csvTitlesStatus.where((status) => status == ImdbTitleStatus.success).length} ${AppLocalizations.of(context)!.titles}';
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -243,7 +220,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
     return Expanded(
       child: ListView.builder(
         key: const PageStorageKey('ImdbListView'),
-        itemCount: _csvTitles.length,
+        itemCount: _csvData.rows.length,
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
           IconData status;
@@ -253,20 +230,21 @@ class _ImportIMDBState extends State<ImportIMDB> {
             status = Icons.hourglass_empty;
           } else {
             switch (_csvTitlesStatus[index]) {
-              case TitleStatus.pending:
+              case ImdbTitleStatus.pending:
                 status = Icons.check_box_outline_blank;
                 break;
-              case TitleStatus.success:
+              case ImdbTitleStatus.success:
                 status = Icons.check_box;
                 statusColor = Colors.green;
                 break;
-              case TitleStatus.failed:
+              case ImdbTitleStatus.failed:
                 status = Icons.cancel_outlined;
                 statusColor = Colors.red;
                 break;
             }
           }
 
+          final row = _csvData.rows[index];
           return Column(
             children: [
               Row(
@@ -274,32 +252,35 @@ class _ImportIMDBState extends State<ImportIMDB> {
                 children: [
                   const SizedBox(width: 10),
                   _importResultsCell(
-                      width: 40,
-                      child: Icon(
-                        status,
-                        color: statusColor,
-                      )),
+                    width: 40,
+                    child: Icon(
+                      status,
+                      color: statusColor,
+                    ),
+                  ),
                   _importResultsCell(
                     width: 100,
-                    child: Text(_csvTitles[index][_imdbIdColumn].toString(),
-                        style: const TextStyle(fontSize: 12)),
+                    child: Text(
+                      row[_csvData.imdbIdColumn].toString(),
+                      style: const TextStyle(fontSize: 12),
+                    ),
                   ),
                   Expanded(
                     child: _importResultsCell(
                       child: Text(
-                        _csvTitles[index][_imdbTitleColumn].toString(),
+                        row[_csvData.imdbTitleColumn].toString(),
                         style: const TextStyle(fontSize: 12),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
-                  if (_isRateList)
+                  if (_csvData.isRateList)
                     _importResultsCell(
                       width: 40,
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          _csvTitles[index][_imdbRateColumn].toString(),
+                          row[_csvData.imdbRateColumn].toString(),
                           style: const TextStyle(fontSize: 12),
                         ),
                       ),
@@ -316,198 +297,75 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
   void _importWatchlist(BuildContext context) async {
     try {
-      setState(() {
-        _operationInProgress = true;
-      });
-      final imdbIds = _csvTitles
-          .where((row) => row.length > _imdbIdColumn)
-          .map((row) => row[_imdbIdColumn])
-          .toList();
+      setState(() => _operationInProgress = true);
 
       final watchlistService =
           Provider.of<WatchlistService>(context, listen: false);
-      final tmdbBaseService = TmdbBaseService();
-      final tmdbSearchService = SearchService(
-        searchServiceListName,
-        LocalTitleRepository.instance,
-      );
       final userLocale = Localizations.localeOf(context);
 
-      for (int index = 0; index < imdbIds.length; index++) {
+      for (int index = 0; index < _csvData.rows.length; index++) {
         if (!mounted || !_operationInProgress) return;
 
-        setState(() {
-          _importId = index;
-        });
+        setState(() => _importId = index);
 
-        final searchResult = await tmdbSearchService.searchImdbTitle(
-          imdbIds[index],
-          userLocale,
+        final imdbId =
+            _csvData.rows[index][_csvData.imdbIdColumn].toString();
+        final status = await _importService.importWatchlistEntry(
+          imdbId: imdbId,
+          locale: userLocale,
+          watchlistService: watchlistService,
         );
 
-        if (searchResult.statusCode == 200) {
-          if (!mounted) return;
-
-          List titlesFromId = tmdbSearchService
-              .fromImdbIdToTitle(tmdbBaseService.body(searchResult));
-
-          if (titlesFromId.isEmpty) {
-            if (mounted) {
-              setState(() {
-                _csvTitlesStatus[index] = TitleStatus.failed;
-              });
-            }
-            continue;
-          }
-
-          if (await watchlistService.contains(titlesFromId.first)) {
-            if (mounted) {
-              setState(() {
-                _csvTitlesStatus[index] = TitleStatus.success;
-              });
-            }
-            continue;
-          }
-
-          TmdbTitle updatedTitle =
-              await TmdbTitleService().updateTitleDetails(titlesFromId.first);
-
-          if (!mounted) return;
-
-          await watchlistService.updateWatchlistTitle(
-            updatedTitle,
-            true,
-          );
-
-          final isSuccess = await watchlistService.contains(titlesFromId.first);
-          if (mounted) {
-            setState(() {
-              _csvTitlesStatus[index] =
-                  isSuccess ? TitleStatus.success : TitleStatus.failed;
-            });
-          }
-        } else {
-          if (mounted) {
-            setState(() {
-              _csvTitlesStatus[index] = TitleStatus.failed;
-            });
-          }
+        if (mounted) {
+          setState(() => _csvTitlesStatus[index] = status);
         }
       }
     } catch (error, stackTrace) {
       if (mounted) {
-        ErrorService.log(
-          error,
-          stackTrace: stackTrace,
-        );
+        ErrorService.log(error, stackTrace: stackTrace);
       }
     } finally {
       if (mounted) {
-        setState(() {
-          _operationInProgress = false;
-        });
+        setState(() => _operationInProgress = false);
       }
     }
   }
 
   void _importRateslist(BuildContext context) async {
-    const int idIndex = 0, rateIndex = 1;
     try {
-      setState(() {
-        _operationInProgress = true;
-      });
-      final imdbIds = _csvTitles
-          .where((row) => row.length > _imdbIdColumn)
-          .map((row) => [row[_imdbIdColumn], row[_imdbRateColumn]])
-          .toList();
+      setState(() => _operationInProgress = true);
 
-      final ratelistService =
+      final rateslistService =
           Provider.of<RateslistService>(context, listen: false);
-      final tmdbBaseService = TmdbBaseService();
-      final tmdbSearchService = SearchService(
-        searchServiceListName,
-        LocalTitleRepository.instance,
-      );
       final userLocale = Localizations.localeOf(context);
 
-      for (int index = 0; index < imdbIds.length; index++) {
+      for (int index = 0; index < _csvData.rows.length; index++) {
         if (!mounted || !_operationInProgress) return;
 
-        setState(() {
-          _importId = index;
-        });
+        setState(() => _importId = index);
 
-        final searchResult = await tmdbSearchService.searchImdbTitle(
-          imdbIds[index][idIndex],
-          userLocale,
+        final row = _csvData.rows[index];
+        final imdbId = row[_csvData.imdbIdColumn].toString();
+        final rawRating = row[_csvData.imdbRateColumn];
+
+        final status = await _importService.importRateslistEntry(
+          imdbId: imdbId,
+          rawRating: rawRating,
+          locale: userLocale,
+          rateslistService: rateslistService,
         );
 
-        if (searchResult.statusCode == 200) {
-          if (!mounted) return;
-
-          List titlesFromId = tmdbSearchService
-              .fromImdbIdToTitle(tmdbBaseService.body(searchResult));
-
-          if (titlesFromId.isEmpty) {
-            if (mounted) {
-              setState(() {
-                _csvTitlesStatus[index] = TitleStatus.failed;
-              });
-            }
-            continue;
-          }
-
-          if (await ratelistService.contains(titlesFromId.first)) {
-            if (mounted) {
-              setState(() {
-                _csvTitlesStatus[index] = TitleStatus.success;
-              });
-            }
-            continue;
-          }
-
-          TmdbTitle updatedTitle =
-              await TmdbTitleService().updateTitleDetails(titlesFromId.first);
-
-          if (!mounted) return;
-
-          final rawRating = imdbIds[index][rateIndex];
-          final double parsedRating = (rawRating is num)
-              ? rawRating.toDouble()
-              : double.tryParse(rawRating.toString()) ?? 0.0;
-
-          await ratelistService.updateTitleRate(
-            updatedTitle,
-            parsedRating,
-          );
-
-          final isSuccess = await ratelistService.contains(titlesFromId.first);
-          if (mounted) {
-            setState(() {
-              _csvTitlesStatus[index] =
-                  isSuccess ? TitleStatus.success : TitleStatus.failed;
-            });
-          }
-        } else {
-          if (mounted) {
-            setState(() {
-              _csvTitlesStatus[index] = TitleStatus.failed;
-            });
-          }
+        if (mounted) {
+          setState(() => _csvTitlesStatus[index] = status);
         }
       }
     } catch (error, stackTrace) {
       if (mounted) {
-        ErrorService.log(
-          error,
-          stackTrace: stackTrace,
-        );
+        ErrorService.log(error, stackTrace: stackTrace);
       }
     } finally {
       if (mounted) {
-        setState(() {
-          _operationInProgress = false;
-        });
+        setState(() => _operationInProgress = false);
       }
     }
   }
