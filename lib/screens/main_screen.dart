@@ -7,7 +7,9 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/screens/discover_list.dart';
 import 'package:moviescout/screens/following_list.dart';
 import 'package:moviescout/screens/rates_list.dart';
+import 'package:moviescout/screens/user_search_delegate.dart';
 import 'package:moviescout/screens/watch_list.dart';
+import 'package:moviescout/services/lists/user_following_service.dart';
 import 'package:moviescout/widgets/layout/app_drawer.dart';
 import 'package:moviescout/widgets/misc/double_back_exit_wrapper.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
@@ -96,6 +98,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     final customColors = Theme.of(context).extension<CustomColors>()!;
     final appSettings = Provider.of<AppService>(context);
+    final authService = Provider.of<SupabaseAuthService>(context);
     final activeTabs = _getActiveTabs(appSettings.showCommunityTab);
 
     if (_currentIndex >= activeTabs.length) {
@@ -122,6 +125,27 @@ class _MainScreenState extends State<MainScreen> {
             style: TextStyle(color: customColors.appBarText),
           ),
           backgroundColor: customColors.appBarBackground,
+          actions: [
+            if (activeTabs[_currentIndex] == _NavTab.following &&
+                authService.isLoggedIn &&
+                authService.isPublicProfile)
+              IconButton(
+                icon: const Icon(Icons.search),
+                tooltip: AppLocalizations.of(context)!.searchUsers,
+                onPressed: () {
+                  final followingService =
+                      Provider.of<UserFollowingService>(context, listen: false);
+                  final loc = AppLocalizations.of(context)!;
+                  showSearch(
+                    context: context,
+                    delegate: UserSearchDelegate(
+                      followingService,
+                      searchFieldLabel: loc.searchUsersPlaceholder,
+                    ),
+                  );
+                },
+              ),
+          ],
         ),
         drawer: const AppDrawer(),
         body: Column(children: [
@@ -211,7 +235,7 @@ class _MainScreenState extends State<MainScreen> {
                 return BottomNavigationBarItem(
                   icon: const Icon(Icons.search),
                   label: '',
-                  tooltip: AppLocalizations.of(context)!.search,
+                  tooltip: AppLocalizations.of(context)!.searchTitle,
                   backgroundColor: customColors.bottomNavigationBarBackground,
                 );
             }
@@ -233,7 +257,7 @@ class _MainScreenState extends State<MainScreen> {
       case _NavTab.following:
         return l10n.followingTab;
       case _NavTab.search:
-        return l10n.search;
+        return l10n.searchTitle;
     }
   }
 }

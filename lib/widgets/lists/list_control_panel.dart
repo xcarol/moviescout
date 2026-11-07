@@ -46,7 +46,7 @@ class ListControlPanel extends StatelessWidget {
                     TextFilterWidget(
                       controller: controller.textFilterController,
                       focusNode: controller.searchFocusNode,
-                      hintText: AppLocalizations.of(context)!.search,
+                      hintText: AppLocalizations.of(context)!.searchTitle,
                       onChanged: (String value) {
                         controller.setTextFilter(value);
                       },

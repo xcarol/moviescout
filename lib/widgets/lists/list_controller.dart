@@ -104,7 +104,6 @@ class ListController with ChangeNotifier {
         localizations.tvshows,
         localizations.cast,
         localizations.collection,
-        localizations.users,
       ];
     } else {
       _titleTypes = [
@@ -348,8 +347,6 @@ class ListController with ChangeNotifier {
       return ApiConstants.person;
     } else if (type == localizations.collection) {
       return ApiConstants.collection;
-    } else if (type == localizations.users) {
-      return ApiConstants.user;
     }
     return (type == localizations.allTypes || type == localizations.results)
         ? ''
@@ -367,8 +364,6 @@ class ListController with ChangeNotifier {
       return localizations.cast;
     } else if (option == ApiConstants.collection) {
       return localizations.collection;
-    } else if (option == ApiConstants.user) {
-      return localizations.users;
     }
     return isSearchList ? localizations.results : localizations.allTypes;
   }

@@ -174,7 +174,6 @@ void main() {
           loc.tvshows,
           loc.cast,
           loc.collection,
-          loc.users
         ]));
     expect(searchController.titleSorts, contains(loc.sortRelevance));
     expect(searchController.titleSorts, isNot(contains(loc.sortAddedOrder)));
@@ -308,7 +307,6 @@ void main() {
       loc.miniseries: AppConstants.miniseries,
       loc.cast: ApiConstants.person,
       loc.collection: ApiConstants.collection,
-      loc.users: ApiConstants.user,
       loc.allTypes: '',
     };
 
