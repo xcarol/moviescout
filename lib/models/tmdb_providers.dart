@@ -42,6 +42,8 @@ class TmdbProviders {
         buy.isEmpty;
   }
 
+  bool get isNotEmpty => !isEmpty;
+
   List<TmdbProvider> get flatrate {
     return _providerList(_flatrate);
   }
