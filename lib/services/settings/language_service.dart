@@ -44,7 +44,6 @@ class LanguageService with ChangeNotifier {
 
   String getLanguageName(String? languageCode) {
     if (languageCode == null) return '';
-    return MetadataTranslator.translateLanguage(
-        languageCode, _currentLanguage);
+    return MetadataTranslator.translateLanguage(languageCode, _currentLanguage);
   }
 }

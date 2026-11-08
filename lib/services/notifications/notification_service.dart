@@ -315,6 +315,10 @@ class NotificationService extends ChangeNotifier {
   }
 
   Future<void> cancelNotification(int id) async {
-    await _notificationsPlugin.cancel(id: id);
+    try {
+      await _notificationsPlugin.cancel(id: id);
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
   }
 }
