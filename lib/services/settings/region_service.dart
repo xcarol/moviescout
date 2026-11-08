@@ -8,7 +8,7 @@ import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/services/workers/update_providers_worker.dart';
 import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/utils/country_translator.dart';
+import 'package:moviescout/utils/metadata_translator.dart';
 
 class RegionService with ChangeNotifier {
   static final RegionService _instance = RegionService._internal();
@@ -122,7 +122,7 @@ class RegionService with ChangeNotifier {
 
   String getRegionName(String? countryCode) {
     if (countryCode == null) return '';
-    return CountryTranslator.translate(
+    return MetadataTranslator.translateCountry(
         countryCode, LanguageService().currentLanguage);
   }
 }

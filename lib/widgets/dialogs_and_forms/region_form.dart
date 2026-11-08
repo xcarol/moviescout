@@ -5,7 +5,7 @@ import 'package:moviescout/models/tmdb_region.dart';
 import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
-import 'package:moviescout/utils/country_translator.dart';
+import 'package:moviescout/utils/metadata_translator.dart';
 import 'package:moviescout/widgets/inputs_and_filters/text_filter_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -46,7 +46,7 @@ class _RegionFormState extends State<RegionForm> {
   }
 
   String _getRegionDisplayName(TmdbRegion region) {
-    final localized = CountryTranslator.translate(
+    final localized = MetadataTranslator.translateCountry(
         region.isoCode, LanguageService().currentLanguage);
     if (localized.isNotEmpty && localized != region.isoCode) {
       return localized;
@@ -104,8 +104,8 @@ class _RegionFormState extends State<RegionForm> {
 
   String? _findRegionName(String? isoCode) {
     if (isoCode == null) return null;
-    final localized =
-        CountryTranslator.translate(isoCode, LanguageService().currentLanguage);
+    final localized = MetadataTranslator.translateCountry(
+        isoCode, LanguageService().currentLanguage);
     if (localized.isNotEmpty && localized != isoCode) {
       return localized;
     }

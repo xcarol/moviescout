@@ -9,8 +9,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
-import 'package:moviescout/utils/country_translator.dart';
-import 'package:moviescout/utils/status_translator.dart';
+import 'package:moviescout/utils/metadata_translator.dart';
 import 'package:moviescout/utils/url_constants.dart';
 import 'package:moviescout/widgets/layout/boxed_widget.dart';
 import 'package:moviescout/widgets/text_and_info/clickable_names.dart';
@@ -113,7 +112,7 @@ class TitleMetadataSection extends StatelessWidget {
                 AppLocalizations.of(context)!.originCountry,
                 Text(
                   title.originCountry
-                      .map((c) => CountryTranslator.translate(
+                      .map((c) => MetadataTranslator.translateCountry(
                           c,
                           Provider.of<LanguageService>(context, listen: false)
                               .currentLanguage))
@@ -125,7 +124,7 @@ class TitleMetadataSection extends StatelessWidget {
                 _infoColumn(
                   AppLocalizations.of(context)!.status,
                   Text(
-                    StatusTranslator.translate(
+                    MetadataTranslator.translateStatus(
                       title.status,
                       Provider.of<LanguageService>(context, listen: false)
                           .currentLanguage,

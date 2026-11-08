@@ -4,7 +4,7 @@ import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
 import 'package:moviescout/services/workers/uninitialized_titles_worker.dart';
 import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/utils/language_translator.dart';
+import 'package:moviescout/utils/metadata_translator.dart';
 
 class LanguageService with ChangeNotifier {
   static final LanguageService _instance = LanguageService._internal();
@@ -44,7 +44,7 @@ class LanguageService with ChangeNotifier {
 
   String getLanguageName(String? languageCode) {
     if (languageCode == null) return '';
-    return LanguageTranslator.translateLanguageCode(
+    return MetadataTranslator.translateLanguage(
         languageCode, _currentLanguage);
   }
 }

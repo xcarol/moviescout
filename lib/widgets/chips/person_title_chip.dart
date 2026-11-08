@@ -5,17 +5,17 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/widgets/cards/title_card.dart';
 import 'package:moviescout/widgets/chips/title_chip.dart';
-import 'package:moviescout/utils/person_translator.dart';
+import 'package:moviescout/utils/metadata_translator.dart';
 
 extension TmdbTitleRoleTranslation on TmdbTitle {
   String localizedJob(BuildContext context) {
     final locale = Localizations.localeOf(context).languageCode;
-    return PersonTranslator.translateJob(job, locale);
+    return MetadataTranslator.translateJob(job, locale);
   }
 
   String localizedDepartment(BuildContext context) {
     final locale = Localizations.localeOf(context).languageCode;
-    return PersonTranslator.translateDepartment(department, locale);
+    return MetadataTranslator.translateDepartment(department, locale);
   }
 
   String getRoleString(BuildContext context,
