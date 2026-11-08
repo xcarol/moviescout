@@ -1,0 +1,258 @@
+import 'package:moviescout/features/people/models/tmdb_person.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/features/discovery/services/tmdb_genre_service.dart';
+import 'package:moviescout/features/titles/services/tmdb_title_service.dart';
+import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
+import 'package:moviescout/core/utils/app_constants.dart';
+
+import 'package:moviescout/features/titles/services/tmdb_memory_list_mixin.dart';
+
+class TmdbPersonTitlesService extends TmdbTitleListService
+    with TmdbMemoryListMixin<TmdbTitle> {
+  final TmdbPerson person;
+  final PersonTitleRole role;
+
+  int _activeFetchId = 0;
+  bool _isDisposed = false;
+  final Map<String, int> _originalOrder = {};
+
+  TmdbPersonTitlesService(
+    super.listName,
+    super.repository, {
+    required this.person,
+    this.role = PersonTitleRole.character,
+  }) {
+    _initializeTitles();
+  }
+
+  @override
+  String get defaultSort => SortOption.releaseDate;
+
+  @override
+  bool get defaultSortAsc => true;
+
+  @override
+  bool get isRefreshable => false;
+
+  void _initializeTitles() {
+    allItems.clear();
+    _originalOrder.clear();
+    final seenIds = <int>{};
+
+    if (role == PersonTitleRole.crew) {
+      allItems.addAll(
+          person.combinedCredits.crew.where((t) => seenIds.add(t.tmdbId)));
+    } else {
+      allItems.addAll(
+          person.combinedCredits.cast.where((t) => seenIds.add(t.tmdbId)));
+    }
+
+    for (int i = 0; i < allItems.length; i++) {
+      _originalOrder['${allItems[i].tmdbId}_${allItems[i].mediaType}'] = i;
+    }
+  }
+
+  @override
+  Future<bool> retrieveList({
+    required Future<List<TmdbTitle>> Function() fetchRemoteData,
+    bool forceUpdate = false,
+  }) async {
+    // In-memory service doesn't need to fetch from server or sync with DB.
+    // It's already initialized with the person's credits.
+    isLoading.value = true;
+    try {
+      await _updateTitles();
+      await updateListGenres();
+      await filterItems();
+      await _fetchTitlesData();
+      return true;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  @override
+  void applyFiltersAndSort() {
+    final filtered = allItems.where((title) {
+      if (filterText.isNotEmpty) {
+        final query = filterText.toLowerCase();
+        if (!title.name.toLowerCase().contains(query) &&
+            !title.character.toLowerCase().contains(query) &&
+            !title.job.toLowerCase().contains(query)) {
+          return false;
+        }
+      }
+
+      if (filterMediaType.isNotEmpty) {
+        if (filterMediaType == AppConstants.miniseries) {
+          if (!title.isMiniSerie) return false;
+        } else if (title.mediaType != filterMediaType) {
+          return false;
+        }
+      }
+      if (filterGenres.isNotEmpty) {
+        if (!title.genreIds.any((id) => filterGenres.contains(id))) {
+          return false;
+        }
+      }
+      if (filterByProviders && filterProvidersIds.isNotEmpty) {
+        if (title.flatrateProviderIds.isEmpty) {
+          return false;
+        }
+        if (!title.flatrateProviderIds
+            .any((id) => filterProvidersIds.contains(id))) {
+          return false;
+        }
+      }
+
+      return true;
+    }).toList();
+
+    filtered.sort((a, b) {
+      int cmp;
+      switch (selectedSort) {
+        case SortOption.alphabetically:
+          cmp = a.name.compareTo(b.name);
+          break;
+        case SortOption.rating:
+          cmp = a.voteAverage.compareTo(b.voteAverage);
+          break;
+        case SortOption.userRating:
+          cmp = a.rating.compareTo(b.rating);
+          break;
+        case SortOption.dateRated:
+          cmp = a.dateRated.compareTo(b.dateRated);
+          break;
+        case SortOption.releaseDate:
+          cmp = a.effectiveReleaseDate.compareTo(b.effectiveReleaseDate);
+          break;
+        case SortOption.runtime:
+          cmp = a.effectiveRuntime.compareTo(b.effectiveRuntime);
+          break;
+        case SortOption.addedOrder:
+          final orderA = _originalOrder['${a.tmdbId}_${a.mediaType}'] ?? 0;
+          final orderB = _originalOrder['${b.tmdbId}_${b.mediaType}'] ?? 0;
+          cmp = orderA.compareTo(orderB);
+          break;
+        default:
+          cmp = 0;
+      }
+      return isSortAsc ? cmp : -cmp;
+    });
+
+    filteredItems = filtered;
+  }
+
+  @override
+  Future<void> updateListGenres() async {
+    listGenresVal.clear();
+    if (allItems.isEmpty) {
+      _initializeTitles();
+    }
+    final uniqueGenreIds = allItems.expand((t) => t.genreIds).toSet().toList();
+    final names = TmdbGenreService().getNamesFromIds(uniqueGenreIds);
+    listGenresVal = names;
+    listGenresVal.sort();
+    listGenres.value = [...listGenresVal];
+  }
+
+  @override
+  Future<bool> contains(TmdbTitle title) async {
+    return allItems
+        .any((t) => t.tmdbId == title.tmdbId && t.mediaType == title.mediaType);
+  }
+
+  @override
+  bool get listIsEmpty => allItems.isEmpty;
+
+  @override
+  Future<void> clearList() async {
+    // Do nothing for in-memory service
+  }
+
+  @override
+  Future<void> updateTitle(
+    TmdbTitle title,
+    bool add,
+    Future<dynamic> Function() updateTitleToServer,
+  ) async {
+    throw Exception(
+        'Update operations are not supported in TmdbPersonTitlesService');
+  }
+
+  bool _localUserRatingAvailable = false;
+
+  @override
+  bool get userRatingAvailable => _localUserRatingAvailable;
+
+  Future<void> _updateTitles() async {
+    if (allItems.isNotEmpty) {
+      final tmdbIds = allItems.map((t) => t.tmdbId).toList();
+      final dbTitles = await repository.getTitlesByTmdbIds(tmdbIds);
+      final dbTitlesMap = {
+        for (var t in dbTitles) '${t.tmdbId}_${t.mediaType}': t
+      };
+
+      for (var title in allItems) {
+        final dbTitle = dbTitlesMap['${title.tmdbId}_${title.mediaType}'];
+        if (dbTitle != null) {
+          final character = title.character;
+          final job = title.job;
+          final department = title.department;
+
+          title.fillFromMap(dbTitle.toMap());
+
+          title.character = character;
+          title.job = job;
+          title.department = department;
+        }
+      }
+      _localUserRatingAvailable = allItems.any((t) => t.rating > 0);
+    }
+    await Future.delayed(Duration.zero);
+    notifyListeners();
+  }
+
+  Future<void> _fetchTitlesData() async {
+    final fetchId = ++_activeFetchId;
+    final titlesToFetch = allItems
+        .where((t) =>
+            t.lastUpdated == AppConstants.defaultDate ||
+            !TmdbTitleService.isUpToDate(t) ||
+            t.providersJson == null ||
+            (t.runtime == 0 && t.isMovie))
+        .toList();
+
+    if (titlesToFetch.isEmpty) return;
+
+    const batchSize = AppConstants.defaultBatchSize;
+    final titleService = TmdbTitleService();
+
+    for (var i = 0; i < titlesToFetch.length; i += batchSize) {
+      if (_isDisposed || fetchId != _activeFetchId) return;
+
+      final end = (i + batchSize < titlesToFetch.length)
+          ? i + batchSize
+          : titlesToFetch.length;
+      final chunk = titlesToFetch.sublist(i, end);
+
+      final futures = chunk.map((t) => titleService.updateTitleLight(t));
+      await Future.wait(futures);
+
+      if (_isDisposed || fetchId != _activeFetchId) return;
+
+      await updateListGenres();
+      await filterItems(retainPagination: true);
+      notifyListeners();
+
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _activeFetchId++;
+    super.dispose();
+  }
+}

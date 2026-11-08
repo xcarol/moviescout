@@ -1,0 +1,58 @@
+import 'package:flutter/material.dart';
+import 'package:moviescout/features/people/models/tmdb_person.dart';
+import 'package:moviescout/core/navigation/app_navigator.dart';
+import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
+
+import 'package:flutter/gestures.dart';
+import 'package:moviescout/core/widgets/expandable_text.dart';
+
+class ClickableNames extends StatelessWidget {
+  final List<TmdbPerson> people;
+  final bool useEllipsis;
+  final TmdbTitleListService tmdbListService;
+
+  const ClickableNames({
+    super.key,
+    required this.people,
+    required this.tmdbListService,
+    this.useEllipsis = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final List<InlineSpan> spans = [];
+
+    for (int i = 0; i < people.length; i++) {
+      final person = people[i];
+      final isLast = i == people.length - 1;
+
+      spans.add(TextSpan(
+        text: person.name,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+        recognizer: TapGestureRecognizer()
+          ..onTap = () {
+            context.toPersonDetails(person, tmdbListService);
+          },
+      ));
+
+      if (!isLast) {
+        spans.add(const TextSpan(text: ', '));
+      }
+    }
+
+    final textSpan = TextSpan(children: spans);
+
+    if (useEllipsis) {
+      return Text.rich(
+        textSpan,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+      );
+    } else {
+      return ExpandableText(
+        textSpan: textSpan,
+        initialMaxLines: 1,
+      );
+    }
+  }
+}

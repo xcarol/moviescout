@@ -10,44 +10,40 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:moviescout/services/tmdb_content/discoverlist_service.dart';
-import 'package:moviescout/services/core/error_service.dart';
-import 'package:moviescout/repositories/cloud_title_repository.dart';
-import 'package:moviescout/repositories/local_title_repository.dart';
-import 'package:moviescout/services/core/cloud_database_service.dart';
-import 'package:moviescout/services/core/local_database_service.dart';
-import 'package:moviescout/services/system/app_lifecycle_service.dart';
-import 'package:moviescout/services/settings/preferences_service.dart';
-import 'package:moviescout/services/settings/language_service.dart';
-import 'package:moviescout/services/settings/theme_service.dart';
-import 'package:moviescout/services/settings/background_tasks_service.dart';
-import 'package:moviescout/services/core/tmdb_configuration_service.dart';
-import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
-import 'package:moviescout/services/api/ai_service.dart';
-import 'package:moviescout/services/api/web_translation_service.dart';
-import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
-import 'package:moviescout/services/settings/region_service.dart';
-import 'package:moviescout/services/lists/pinned_service.dart';
-import 'package:moviescout/services/lists/following_service.dart';
-import 'package:moviescout/services/lists/user_following_service.dart';
-import "package:moviescout/services/lists/watchlist_service.dart";
-import "package:moviescout/services/lists/rateslist_service.dart";
-import 'package:moviescout/services/auth/supabase_auth_service.dart';
-import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/features/discovery/services/discoverlist_service.dart';
+import 'package:moviescout/core/services/error_service.dart';
+import 'package:moviescout/features/titles/repositories/cloud_title_repository.dart';
+import 'package:moviescout/features/titles/repositories/local_title_repository.dart';
+import 'package:moviescout/core/services/cloud_database_service.dart';
+import 'package:moviescout/core/services/local_database_service.dart';
+import 'package:moviescout/features/settings/services/app_lifecycle_service.dart';
+import 'package:moviescout/features/settings/services/preferences_service.dart';
+import 'package:moviescout/features/settings/services/language_service.dart';
+import 'package:moviescout/core/theme/theme_service.dart';
+import 'package:moviescout/features/settings/services/background_tasks_service.dart';
+import 'package:moviescout/core/services/tmdb_configuration_service.dart';
+import 'package:moviescout/features/discovery/services/tmdb_genre_service.dart';
+import 'package:moviescout/features/settings/services/ai_service.dart';
+import 'package:moviescout/core/services/web_translation_service.dart';
+import 'package:moviescout/features/settings/services/tmdb_provider_service.dart';
+import 'package:moviescout/features/settings/services/region_service.dart';
+import 'package:moviescout/features/watchlist/services/pinned_service.dart';
+import 'package:moviescout/features/watchlist/services/following_service.dart';
+import 'package:moviescout/features/watchlist/services/user_following_service.dart';
+import "package:moviescout/features/watchlist/services/watchlist_service.dart";
+import "package:moviescout/features/watchlist/services/rateslist_service.dart";
+import 'package:moviescout/features/auth/services/supabase_auth_service.dart';
+import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/firebase_options.dart';
-import 'package:moviescout/screens/main_screen.dart';
-import 'package:moviescout/services/system/deep_link_service.dart';
-import 'package:moviescout/utils/country_translator.dart';
-import 'package:moviescout/utils/language_translator.dart';
-import 'package:moviescout/utils/person_translator.dart';
-import 'package:moviescout/utils/genre_translator.dart';
-import 'package:moviescout/utils/status_translator.dart';
+import 'package:moviescout/features/home/screens/main_screen.dart';
+import 'package:moviescout/core/navigation/deep_link_service.dart';
+import 'package:moviescout/core/utils/metadata_translator.dart';
 import 'package:workmanager/workmanager.dart';
-import 'package:moviescout/services/notifications/notification_service.dart';
-import 'package:moviescout/services/workers/watchlist_update_service.dart';
-import 'package:moviescout/services/core/app_service.dart';
-import 'package:moviescout/services/workers/uninitialized_titles_worker.dart';
+import 'package:moviescout/features/notifications/services/notification_service.dart';
+import 'package:moviescout/features/watchlist/services/watchlist_update_service.dart';
+import 'package:moviescout/core/services/app_service.dart';
+import 'package:moviescout/features/watchlist/services/uninitialized_titles_worker.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -143,11 +139,7 @@ void _runMain() async {
       RegionService().init(),
       TmdbGenreService().init(),
       TmdbConfigurationService().init(),
-      CountryTranslator.init(),
-      LanguageTranslator.init(),
-      PersonTranslator.init(),
-      GenreTranslator.init(),
-      StatusTranslator.init(),
+      MetadataTranslator.init(),
       NotificationService().init(),
       AppService().init(),
       AiService().init(),
@@ -160,8 +152,8 @@ void _runMain() async {
           callbackDispatcher,
         );
         WatchlistUpdateService().setupWorker();
-      } catch (e) {
-        // Ignore Workmanager initialization errors
+      } catch (e, stackTrace) {
+        ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
       }
     }
   } catch (error, stackTrace) {
@@ -172,8 +164,8 @@ void _runMain() async {
     );
   }
 
-  final repository = LocalTitleRepository();
-  final cloudRepository = CloudTitleRepository();
+  final repository = LocalTitleRepository.instance;
+  final cloudRepository = CloudTitleRepository.instance;
 
   final tmdbProviderService =
       TmdbProviderService(cloudRepository: cloudRepository);
@@ -183,6 +175,10 @@ void _runMain() async {
       WatchlistService(repository, cloudRepository: cloudRepository);
   final discoverlistService =
       TmdbDiscoverlistService(AppConstants.discoverlist, repository);
+
+  rateslistService.addListener(watchlistService.refresh);
+  rateslistService.addListener(discoverlistService.refresh);
+  watchlistService.addListener(discoverlistService.refresh);
 
   AppService().attachServices(
     watchlistService: watchlistService,
@@ -195,8 +191,6 @@ void _runMain() async {
 
   runApp(MultiProvider(
     providers: [
-      Provider.value(value: repository),
-      Provider.value(value: cloudRepository),
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => SupabaseAuthService()),
@@ -228,28 +222,17 @@ void _runMain() async {
           return rateslistService;
         },
       ),
-      ChangeNotifierProxyProvider3<RateslistService, PinnedService,
-          SupabaseAuthService, WatchlistService>(
+      ChangeNotifierProxyProvider2<PinnedService, SupabaseAuthService,
+          WatchlistService>(
         create: (_) => watchlistService,
-        update: (_, rateslistService, pinnedService, authService,
-            watchlistService) {
-          rateslistService.removeListener(watchlistService!.refresh);
-          rateslistService.addListener(watchlistService.refresh);
-          watchlistService.pinnedService = pinnedService;
+        update: (_, pinnedService, authService, watchlistService) {
+          watchlistService!.pinnedService = pinnedService;
           watchlistService.updateAuth(authService);
           return watchlistService;
         },
       ),
-      ChangeNotifierProxyProvider2<RateslistService, WatchlistService,
-          TmdbDiscoverlistService>(
-        create: (_) => discoverlistService,
-        update: (_, rateslistService, watchlistService, discoverlistService) {
-          rateslistService.removeListener(discoverlistService!.refresh);
-          watchlistService.removeListener(discoverlistService.refresh);
-          rateslistService.addListener(discoverlistService.refresh);
-          watchlistService.addListener(discoverlistService.refresh);
-          return discoverlistService;
-        },
+      ChangeNotifierProvider<TmdbDiscoverlistService>.value(
+        value: discoverlistService,
       ),
       ChangeNotifierProvider(create: (_) => NotificationService()),
       ChangeNotifierProvider(create: (_) => AppService()),
@@ -304,7 +287,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     try {
       final regionProvider = Provider.of<RegionService>(context, listen: false);
       regionProvider.removeListener(_onRegionChanged);
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
 
     AppLifecycleService.instance.dispose();
     WidgetsBinding.instance.removeObserver(this);
