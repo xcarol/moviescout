@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/notifications/watchlist_notification_evaluator.dart';
-import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/features/notifications/services/watchlist_notification_evaluator.dart';
+import 'package:moviescout/core/utils/app_constants.dart';
 
 void main() {
   group('WatchlistNotificationEvaluator - checkNeedsUpdate', () {

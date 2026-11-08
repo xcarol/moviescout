@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:moviescout/models/user_list_entry.dart';
+import 'package:moviescout/features/watchlist/models/user_list_entry.dart';
 
 void main() {
   group('UserListEntry', () {

@@ -1,0 +1,116 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/core/navigation/app_navigator.dart';
+import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
+import 'package:moviescout/features/titles/widgets/title_card.dart';
+import 'package:moviescout/features/watchlist/widgets/pin_button.dart';
+
+class PinnedTitleChip extends StatelessWidget {
+  final TmdbTitle title;
+  final TmdbTitleListService listService;
+
+  static const double cardWidth = 100.0;
+  static const double cardHeight = 165.0;
+
+  const PinnedTitleChip({
+    super.key,
+    required this.title,
+    required this.listService,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: cardWidth,
+      height: cardHeight,
+      child: Card(
+        color: Theme.of(context).extension<CustomColors>()!.chipCardBackground,
+        margin: const EdgeInsets.symmetric(horizontal: 4.0),
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: InkWell(
+          onTap: () {
+            context.toTitleDetails(title, listService);
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Stack(
+                  children: [
+                    Positioned.fill(child: _poster(title.posterPath)),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(2.0),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.5),
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(8),
+                          ),
+                        ),
+                        child: pinButton(context, title),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Text(
+                  title.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _poster(String? posterPath) {
+    if (posterPath == null || posterPath.isEmpty) {
+      return Center(
+        child: Image.asset(
+          'assets/movie.png',
+          width: 40,
+          height: 40,
+          fit: BoxFit.contain,
+        ),
+      );
+    }
+
+    return CachedNetworkImage(
+      imageUrl: posterPath,
+      cacheManager: CustomCacheManager.instance,
+      fit: BoxFit.cover,
+      memCacheHeight: 300,
+      memCacheWidth: 200,
+      fadeInDuration: Duration.zero,
+      fadeOutDuration: Duration.zero,
+      placeholderFadeInDuration: Duration.zero,
+      cacheKey: posterPath,
+      errorWidget: (context, error, stackTrace) {
+        return Center(
+          child: Image.asset(
+            'assets/movie.png',
+            width: 40,
+            height: 40,
+            fit: BoxFit.contain,
+          ),
+        );
+      },
+    );
+  }
+}

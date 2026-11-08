@@ -5,16 +5,16 @@ import 'package:drift/native.dart';
 import 'package:sqlite3/open.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:moviescout/database/app_database.dart';
-import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/cloud_title_repository.dart';
-import 'package:moviescout/repositories/local_title_repository.dart';
-import 'package:moviescout/services/core/cloud_database_service.dart';
-import 'package:moviescout/services/core/local_database_service.dart';
-import 'package:moviescout/services/lists/watchlist_service.dart';
-import 'package:moviescout/services/settings/preferences_service.dart';
-import 'package:moviescout/utils/api_constants.dart';
-import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/core/database/app_database.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/features/titles/repositories/cloud_title_repository.dart';
+import 'package:moviescout/features/titles/repositories/local_title_repository.dart';
+import 'package:moviescout/core/services/cloud_database_service.dart';
+import 'package:moviescout/core/services/local_database_service.dart';
+import 'package:moviescout/features/watchlist/services/watchlist_service.dart';
+import 'package:moviescout/features/settings/services/preferences_service.dart';
+import 'package:moviescout/core/utils/api_constants.dart';
+import 'package:moviescout/core/utils/app_constants.dart';
 
 class MockCloudTitleRepository extends Mock implements CloudTitleRepository {}
 
@@ -150,7 +150,8 @@ void main() {
           )).called(1);
     });
 
-    test('syncFromServer resolves differences between local and cloud', () async {
+    test('syncFromServer resolves differences between local and cloud',
+        () async {
       final localOnly = TmdbTitle(
         tmdbId: 201,
         name: 'Local Only Movie',

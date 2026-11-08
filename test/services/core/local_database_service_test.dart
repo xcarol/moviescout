@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:drift/native.dart';
-import 'package:moviescout/database/app_database.dart';
-import 'package:moviescout/services/core/local_database_service.dart';
+import 'package:moviescout/core/database/app_database.dart';
+import 'package:moviescout/core/services/local_database_service.dart';
 
 void main() {
   group('LocalDatabaseService', () {

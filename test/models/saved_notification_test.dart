@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:moviescout/models/saved_notification.dart';
+import 'package:moviescout/features/notifications/models/saved_notification.dart';
 
 void main() {
   group('SavedNotification', () {

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:moviescout/models/tmdb_translation.dart';
-import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/features/titles/models/tmdb_translation.dart';
+import 'package:moviescout/core/utils/app_constants.dart';
 
 void main() {
   group('TmdbTranslation', () {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:moviescout/models/custom_colors.dart';
+import 'package:moviescout/core/theme/custom_colors.dart';
 
 void main() {
   const sampleColors = CustomColors(

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:moviescout/models/tmdb_genre.dart';
+import 'package:moviescout/features/discovery/models/tmdb_genre.dart';
 
 void main() {
   group('TmdbGenre', () {

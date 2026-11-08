@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:moviescout/models/title_list_theme.dart';
+import 'package:moviescout/core/theme/title_list_theme.dart';
 
 void main() {
   const sampleTheme = TitleListTheme(

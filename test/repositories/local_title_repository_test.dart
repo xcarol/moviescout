@@ -2,15 +2,15 @@ import 'dart:ffi';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:drift/native.dart';
 import 'package:sqlite3/open.dart';
-import 'package:moviescout/database/app_database.dart';
-import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/models/tmdb_season.dart';
-import 'package:moviescout/models/tmdb_episode.dart';
-import 'package:moviescout/models/title_comment.dart';
-import 'package:moviescout/repositories/local_title_repository.dart';
-import 'package:moviescout/utils/api_constants.dart';
-import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart'
+import 'package:moviescout/core/database/app_database.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/features/seasons/models/tmdb_season.dart';
+import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
+import 'package:moviescout/features/titles/models/title_comment.dart';
+import 'package:moviescout/features/titles/repositories/local_title_repository.dart';
+import 'package:moviescout/core/utils/api_constants.dart';
+import 'package:moviescout/core/utils/app_constants.dart';
+import 'package:moviescout/features/titles/services/tmdb_base_list_service.dart'
     show RatingFilter;
 
 void main() {

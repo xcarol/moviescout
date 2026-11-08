@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:moviescout/services/api/ai_provider.dart';
-import 'package:moviescout/services/api/ai_service.dart';
-import 'package:moviescout/services/settings/preferences_service.dart';
-import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/features/settings/services/ai_provider.dart';
+import 'package:moviescout/features/settings/services/ai_service.dart';
+import 'package:moviescout/features/settings/services/preferences_service.dart';
+import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

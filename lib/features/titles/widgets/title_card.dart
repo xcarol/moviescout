@@ -1,0 +1,379 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter/material.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/features/settings/models/tmdb_provider.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/core/utils/api_constants.dart';
+import 'package:moviescout/core/navigation/app_navigator.dart';
+import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
+import 'package:moviescout/features/watchlist/services/rateslist_service.dart';
+import 'package:moviescout/core/utils/app_constants.dart';
+import 'package:moviescout/features/watchlist/widgets/watchlist_button.dart';
+import 'package:moviescout/features/watchlist/widgets/pin_button.dart';
+import 'package:moviescout/features/notifications/widgets/notify_button.dart';
+import 'package:provider/provider.dart';
+
+class CustomCacheManager {
+  static const key = 'customCacheKey';
+  static CacheManager instance = CacheManager(
+    Config(
+      key,
+      stalePeriod: const Duration(days: 30),
+      maxNrOfCacheObjects: 500,
+      fileService: HttpFileService(),
+    ),
+  );
+}
+
+class TitleCard extends StatelessWidget {
+  final TmdbTitle _title;
+  final TmdbTitleListService _tmdbListService;
+
+  static double cardHeight = 178.0;
+
+  const TitleCard({
+    super.key,
+    required TmdbTitle title,
+    required TmdbTitleListService tmdbListService,
+  })  : _title = title,
+        _tmdbListService = tmdbListService;
+
+  TmdbTitleListService get tmdbListService => _tmdbListService;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<TmdbTitle?>(
+      future:
+          _tmdbListService.getTitleByTmdbId(_title.tmdbId, _title.mediaType),
+      builder: (context, snapshot) {
+        final tmdbTitle = snapshot.data ?? _title;
+
+        return RepaintBoundary(
+          child: SizedBox(
+            height: cardHeight,
+            child: Card(
+              child: InkWell(
+                onTap: () {
+                  context.toTitleDetails(tmdbTitle, tmdbListService);
+                },
+                child: Row(
+                  children: [
+                    titlePoster(tmdbTitle.posterPath),
+                    const SizedBox(width: 10),
+                    _titleDetails(context, tmdbTitle),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  static const double iconTextSpacingCompact = 2.0;
+  static const double iconTextSpacingDefault = 5.0;
+  static const double betweenSpacingCompact = 8.0;
+  static const double betweenSpacingDefault = 20.0;
+
+  List<Widget> buildRatingWidgets(
+    BuildContext context, {
+    required double rating,
+    required Color color,
+    bool isCompact = false,
+  }) {
+    final double iconTextSpacing =
+        isCompact ? iconTextSpacingCompact : iconTextSpacingDefault;
+
+    if (rating == AppConstants.seenRating) {
+      return [
+        Icon(
+          Icons.check,
+          color: color,
+        ),
+        if (!isCompact) ...[
+          SizedBox(width: iconTextSpacing),
+          Text(AppLocalizations.of(context)!.seen),
+        ],
+      ];
+    } else if (rating > 0) {
+      return [
+        Icon(
+          Icons.star,
+          color: color,
+        ),
+        SizedBox(width: iconTextSpacing),
+        Text(rating == 10.0 ? '10' : rating.toStringAsFixed(1)),
+      ];
+    }
+    return [];
+  }
+
+  Widget titleRating(BuildContext context, TmdbTitle tmdbTitle,
+      {bool isCompact = false}) {
+    final customColors = Theme.of(context).extension<CustomColors>()!;
+    final double iconTextSpacing =
+        isCompact ? iconTextSpacingCompact : iconTextSpacingDefault;
+    final double betweenSpacing =
+        isCompact ? betweenSpacingCompact : betweenSpacingDefault;
+
+    if (tmdbTitle.voteAverage == 0.0) {
+      return const SizedBox();
+    }
+
+    List<Widget> children = [];
+    if (tmdbTitle.voteAverage > 0) {
+      children.addAll([
+        Icon(
+          Icons.star,
+          color: customColors.ratedTitle,
+        ),
+        SizedBox(width: iconTextSpacing),
+        Text(tmdbTitle.voteAverage.toStringAsFixed(2)),
+      ]);
+    }
+
+    return Consumer<RateslistService>(
+      builder: (context, rateslistService, _) {
+        return FutureBuilder<TmdbTitle?>(
+          future: rateslistService.getTitleByTmdbId(
+              tmdbTitle.tmdbId, tmdbTitle.mediaType),
+          builder: (context, snapshot) {
+            final ratedTitle = snapshot.data;
+            final ratingChildren = List<Widget>.from(children);
+
+            if (ratedTitle != null && ratedTitle.tmdbId > 0) {
+              if (ratingChildren.isNotEmpty) {
+                ratingChildren.add(SizedBox(width: betweenSpacing));
+              }
+              ratingChildren.addAll(
+                buildRatingWidgets(
+                  context,
+                  rating: ratedTitle.rating,
+                  color: customColors.userRatedTitle,
+                  isCompact: isCompact,
+                ),
+              );
+            }
+
+            if (ratingChildren.isEmpty) {
+              return SizedBox(height: IconTheme.of(context).size ?? 24.0);
+            }
+
+            return Row(children: ratingChildren);
+          },
+        );
+      },
+    );
+  }
+
+  Widget titlePoster(String? posterPath) {
+    if (posterPath == null || posterPath.isEmpty) {
+      return AspectRatio(
+        aspectRatio: 2 / 3,
+        child: Image.asset(
+          'assets/movie.png',
+          fit: BoxFit.contain,
+        ),
+      );
+    }
+
+    return AspectRatio(
+      aspectRatio: 2 / 3,
+      child: CachedNetworkImage(
+        imageUrl: posterPath,
+        cacheManager: CustomCacheManager.instance,
+        fit: BoxFit.cover,
+        memCacheHeight: 300,
+        memCacheWidth: 200,
+        fadeInDuration: Duration.zero,
+        fadeOutDuration: Duration.zero,
+        placeholderFadeInDuration: Duration.zero,
+        cacheKey: posterPath,
+        errorWidget: (context, error, stackTrace) {
+          return Image.asset(
+            'assets/movie.png',
+            fit: BoxFit.contain,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _titleDetails(BuildContext context, TmdbTitle tmdbTitle) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            titleHeader(tmdbTitle.name, maxLines: 2),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    titleSubtitle(context, tmdbTitle),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 5),
+            titleRating(context, tmdbTitle),
+            const SizedBox(height: 5),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [_titleBottomRow(context, tmdbTitle)],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Text titleHeader(String name, {int maxLines = 1}) {
+    return Text(
+      name,
+      style: const TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
+      maxLines: maxLines,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Row _titleBottomRow(BuildContext context, TmdbTitle tmdbTitle) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Flexible(child: providers(tmdbTitle)),
+        Row(
+          children: [
+            notifyButton(context, tmdbTitle),
+            const SizedBox(width: 8),
+            pinButton(context, tmdbTitle),
+            const SizedBox(width: 8),
+            watchlistButton(context, tmdbTitle),
+            const SizedBox(width: 8),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget providers(TmdbTitle tmdbTitle) {
+    if (tmdbTitle.providers.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final streamableProviders = [
+      ...tmdbTitle.providers.flatrate,
+      ...tmdbTitle.providers.free,
+      ...tmdbTitle.providers.ads,
+    ];
+    final seen = <int>{};
+    final uniqueProviders =
+        streamableProviders.where((p) => seen.add(p.id)).toList();
+
+    if (uniqueProviders.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return SingleChildScrollView(
+      key: ValueKey(tmdbTitle.tmdbId),
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: uniqueProviders
+            .map<Widget>((provider) => _providerLogo(provider))
+            .toList(),
+      ),
+    );
+  }
+
+  Widget _providerLogo(TmdbProvider provider) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 5),
+      child: Tooltip(
+        message: provider.name,
+        child: SizedBox(
+          width: 30,
+          height: 30,
+          child: CachedNetworkImage(
+            imageUrl: provider.logoPath,
+            fit: BoxFit.cover,
+            memCacheHeight: 30,
+            memCacheWidth: 30,
+            fadeInDuration: Duration.zero,
+            fadeOutDuration: Duration.zero,
+            placeholderFadeInDuration: Duration.zero,
+            cacheKey: provider.logoPath,
+            errorWidget: (context, error, stackTrace) {
+              return Image.asset(
+                'assets/movie.png',
+                fit: BoxFit.cover,
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+String titleDate(TmdbTitle tmdbTitle) {
+  String text = '';
+
+  if (tmdbTitle.isMovie) {
+    text = tmdbTitle.releaseDate.isNotEmpty
+        ? tmdbTitle.releaseDate.substring(0, 4)
+        : '';
+  } else if (tmdbTitle.isSerie) {
+    final firstAirDate = tmdbTitle.firstAirDate;
+    final isOnAir = tmdbTitle.isOnAir;
+    final lastAirDate = tmdbTitle.lastAirDate;
+
+    text += firstAirDate.isNotEmpty ? firstAirDate.substring(0, 4) : '';
+
+    if (!tmdbTitle.isMiniSerie) {
+      if (isOnAir) {
+        text += ' - ...';
+      } else if (lastAirDate.isNotEmpty) {
+        text += ' - ${lastAirDate.substring(0, 4)}';
+      }
+    } else if (isOnAir) {
+      text += ' - ...';
+    }
+  }
+
+  return text;
+}
+
+String titleType(BuildContext context, String mediaType) {
+  return mediaType == ApiConstants.movie
+      ? AppLocalizations.of(context)!.movie
+      : AppLocalizations.of(context)!.tvShow;
+}
+
+String titleSubtitle(BuildContext context, TmdbTitle tmdbTitle) {
+  final date = titleDate(tmdbTitle);
+  String typeOrDuration = tmdbTitle.duration;
+  if (typeOrDuration.isEmpty) {
+    typeOrDuration = titleType(context, tmdbTitle.mediaType);
+  }
+
+  if (date.isNotEmpty && typeOrDuration.isNotEmpty) {
+    return '$date - $typeOrDuration';
+  } else if (date.isNotEmpty) {
+    return date;
+  } else {
+    return typeOrDuration;
+  }
+}

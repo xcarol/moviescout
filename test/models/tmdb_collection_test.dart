@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:moviescout/models/tmdb_collection.dart';
-import 'package:moviescout/models/tmdb_item.dart';
-import 'package:moviescout/utils/url_constants.dart';
+import 'package:moviescout/features/discovery/models/tmdb_collection.dart';
+import 'package:moviescout/features/titles/models/tmdb_item.dart';
+import 'package:moviescout/core/utils/url_constants.dart';
 
 void main() {
   group('TmdbCollection', () {

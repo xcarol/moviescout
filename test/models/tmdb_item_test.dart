@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:moviescout/models/tmdb_collection.dart';
-import 'package:moviescout/models/tmdb_episode.dart';
-import 'package:moviescout/models/tmdb_item.dart';
-import 'package:moviescout/models/tmdb_person.dart';
-import 'package:moviescout/models/tmdb_season.dart';
-import 'package:moviescout/models/tmdb_title.dart';
+import 'package:moviescout/features/discovery/models/tmdb_collection.dart';
+import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
+import 'package:moviescout/features/titles/models/tmdb_item.dart';
+import 'package:moviescout/features/people/models/tmdb_person.dart';
+import 'package:moviescout/features/seasons/models/tmdb_season.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
 
 void main() {
   group('TmdbItem interface', () {

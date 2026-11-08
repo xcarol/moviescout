@@ -1,0 +1,41 @@
+import 'package:flutter/foundation.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/features/titles/repositories/cloud_title_repository.dart';
+import 'package:moviescout/features/titles/repositories/local_title_repository.dart';
+import 'package:moviescout/core/services/cloud_database_service.dart';
+
+class FollowingService with ChangeNotifier {
+  final LocalTitleRepository repository;
+  final CloudTitleRepository _cloudRepository;
+
+  FollowingService(this.repository, {CloudTitleRepository? cloudRepository})
+      : _cloudRepository = cloudRepository ?? CloudTitleRepository();
+
+  void clearFollowingStatus() {
+    notifyListeners();
+  }
+
+  Future<bool> addFollowingToServer(TmdbTitle title) async {
+    final user = CloudDatabaseService.currentUser;
+    if (user == null) return false;
+
+    return await _cloudRepository.updateNotification(
+      userId: user.id,
+      tmdbId: title.tmdbId,
+      mediaType: title.mediaType,
+      notifyNewSeasons: true,
+    );
+  }
+
+  Future<bool> removeFollowingFromServer(TmdbTitle title) async {
+    final user = CloudDatabaseService.currentUser;
+    if (user == null) return false;
+
+    return await _cloudRepository.updateNotification(
+      userId: user.id,
+      tmdbId: title.tmdbId,
+      mediaType: title.mediaType,
+      notifyNewSeasons: false,
+    );
+  }
+}

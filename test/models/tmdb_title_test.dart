@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:moviescout/models/tmdb_item.dart';
-import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/utils/api_constants.dart';
-import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/utils/url_constants.dart';
+import 'package:moviescout/features/titles/models/tmdb_item.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/core/utils/api_constants.dart';
+import 'package:moviescout/core/utils/app_constants.dart';
+import 'package:moviescout/core/utils/url_constants.dart';
 
 void main() {
   group('TmdbTitle', () {

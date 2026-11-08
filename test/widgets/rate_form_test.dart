@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/widgets/dialogs_and_forms/rate_form.dart';
+import 'package:moviescout/features/titles/widgets/rate_form.dart';
 
 void main() {
   Widget createWidgetUnderTest({
@@ -79,8 +79,7 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      final resetButton =
-          find.widgetWithText(FilledButton, 'Reset rating');
+      final resetButton = find.widgetWithText(FilledButton, 'Reset rating');
       expect(resetButton, findsOneWidget);
       await tester.tap(resetButton);
       await tester.pumpAndSettle();

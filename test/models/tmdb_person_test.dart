@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:moviescout/models/tmdb_item.dart';
-import 'package:moviescout/models/tmdb_person.dart';
-import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/utils/app_constants.dart';
-import 'package:moviescout/utils/url_constants.dart';
+import 'package:moviescout/features/titles/models/tmdb_item.dart';
+import 'package:moviescout/features/people/models/tmdb_person.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/core/utils/app_constants.dart';
+import 'package:moviescout/core/utils/url_constants.dart';
 
 void main() {
   group('CombinedCredits', () {

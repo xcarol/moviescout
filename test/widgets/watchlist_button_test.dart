@@ -5,12 +5,12 @@ import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/main.dart';
-import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/services/auth/supabase_auth_service.dart';
-import 'package:moviescout/services/lists/watchlist_service.dart';
-import 'package:moviescout/services/settings/theme_service.dart';
-import 'package:moviescout/utils/api_constants.dart';
-import 'package:moviescout/widgets/buttons/watchlist_button.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/features/auth/services/supabase_auth_service.dart';
+import 'package:moviescout/features/watchlist/services/watchlist_service.dart';
+import 'package:moviescout/core/theme/theme_service.dart';
+import 'package:moviescout/core/utils/api_constants.dart';
+import 'package:moviescout/features/watchlist/widgets/watchlist_button.dart';
 
 class MockWatchlistService extends Mock implements WatchlistService {}
 
@@ -83,7 +83,8 @@ void main() {
       await tester.tap(find.byType(IconButton));
       await tester.pump();
 
-      expect(find.text('User must be logged in to add titles.'), findsOneWidget);
+      expect(
+          find.text('User must be logged in to add titles.'), findsOneWidget);
       verifyNever(
           () => mockWatchlistService.updateWatchlistTitle(any(), any()));
     });

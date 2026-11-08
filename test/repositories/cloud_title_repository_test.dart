@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:moviescout/models/tmdb_episode.dart';
-import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/repositories/cloud_title_repository.dart';
-import 'package:moviescout/utils/api_constants.dart';
-import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/features/titles/repositories/cloud_title_repository.dart';
+import 'package:moviescout/core/utils/api_constants.dart';
+import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MockSupabaseClient extends Mock implements SupabaseClient {}

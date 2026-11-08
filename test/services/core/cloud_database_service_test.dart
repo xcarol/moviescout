@@ -1,8 +1,8 @@
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:moviescout/services/core/cloud_database_service.dart';
-import 'package:moviescout/services/settings/preferences_service.dart';
+import 'package:moviescout/core/services/cloud_database_service.dart';
+import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

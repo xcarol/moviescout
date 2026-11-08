@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:moviescout/models/tmdb_provider.dart';
-import 'package:moviescout/utils/url_constants.dart';
+import 'package:moviescout/features/settings/models/tmdb_provider.dart';
+import 'package:moviescout/core/utils/url_constants.dart';
 
 void main() {
   group('TmdbProvider', () {

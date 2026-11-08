@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:moviescout/models/tmdb_providers.dart';
+import 'package:moviescout/features/settings/models/tmdb_providers.dart';
 
 void main() {
   group('TmdbProviders', () {

@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:moviescout/models/tmdb_provider.dart';
-import 'package:moviescout/repositories/cloud_title_repository.dart';
-import 'package:moviescout/services/core/cloud_database_service.dart';
-import 'package:moviescout/services/settings/preferences_service.dart';
-import 'package:moviescout/services/tmdb_content/tmdb_provider_service.dart';
+import 'package:moviescout/features/settings/models/tmdb_provider.dart';
+import 'package:moviescout/features/titles/repositories/cloud_title_repository.dart';
+import 'package:moviescout/core/services/cloud_database_service.dart';
+import 'package:moviescout/features/settings/services/preferences_service.dart';
+import 'package:moviescout/features/settings/services/tmdb_provider_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
