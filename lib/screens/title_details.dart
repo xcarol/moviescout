@@ -52,13 +52,7 @@ class _TitleDetailsState extends State<TitleDetails> {
   }
 
   void _initializeRatings() {
-    if (_currentTitle.omdbRatingsJson != null &&
-        _currentTitle.omdbRatingsJson!.isNotEmpty) {
-      try {
-        _omdbRatings = List<Map<String, dynamic>>.from(
-            jsonDecode(_currentTitle.omdbRatingsJson!));
-      } catch (_) {}
-    }
+    _omdbRatings = _currentTitle.omdbRatings;
 
     final bool wasUpToDate = TmdbTitleService.isUpToDate(_currentTitle);
     if (_omdbRatings == null || _omdbRatings!.isEmpty || !wasUpToDate) {
@@ -118,15 +112,10 @@ class _TitleDetailsState extends State<TitleDetails> {
             });
           }
         } else {
-          if (mounted &&
-              updated.omdbRatingsJson != null &&
-              updated.omdbRatingsJson!.isNotEmpty) {
-            try {
-              setState(() {
-                _omdbRatings = List<Map<String, dynamic>>.from(
-                    jsonDecode(updated.omdbRatingsJson!));
-              });
-            } catch (_) {}
+          if (mounted && updated.omdbRatings.isNotEmpty) {
+            setState(() {
+              _omdbRatings = updated.omdbRatings;
+            });
           }
         }
 

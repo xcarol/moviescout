@@ -167,9 +167,7 @@ class SettingsScreen extends StatelessWidget {
                     subtitle: aiSubtitle,
                     onInfoTap: () => _showAiInfo(context),
                     onTap: () {
-                      context
-                          .toAiSettings()
-                          .then((_) => setTileState(() {}));
+                      context.toAiSettings().then((_) => setTileState(() {}));
                     },
                   );
                 },

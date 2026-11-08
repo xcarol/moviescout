@@ -9,6 +9,7 @@ import 'package:moviescout/models/tmdb_collection.dart';
 import 'package:moviescout/repositories/local_title_repository.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
+import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/services/api/ai_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -286,8 +287,8 @@ class SearchService extends TmdbBaseListService<TmdbItem> {
       if (_activeSearchChanged(searchId)) return;
 
       await filterItems();
-    } catch (e) {
-      // Ignore or log error
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
     } finally {
       if (searchId == _activeSearchId) {
         isLoading.value = false;

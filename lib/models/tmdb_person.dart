@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/person_translator.dart';
+import 'package:moviescout/services/core/error_service.dart';
 
 // ignore_for_file: constant_identifier_names, unused_element
 
@@ -111,7 +112,9 @@ class TmdbPerson implements TmdbItem {
           allImages.addAll((decoded['profiles'] as List)
               .map((e) => e['file_path'].toString()));
         }
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+      }
     }
 
     if (taggedImagesJson != null) {
@@ -140,7 +143,9 @@ class TmdbPerson implements TmdbItem {
             }
           }
         }
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+      }
     }
 
     _imagesCache ??= allImages;

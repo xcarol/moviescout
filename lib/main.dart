@@ -160,8 +160,8 @@ void _runMain() async {
           callbackDispatcher,
         );
         WatchlistUpdateService().setupWorker();
-      } catch (e) {
-        // Ignore Workmanager initialization errors
+      } catch (e, stackTrace) {
+        ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
       }
     }
   } catch (error, stackTrace) {
@@ -295,7 +295,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     try {
       final regionProvider = Provider.of<RegionService>(context, listen: false);
       regionProvider.removeListener(_onRegionChanged);
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
 
     AppLifecycleService.instance.dispose();
     WidgetsBinding.instance.removeObserver(this);

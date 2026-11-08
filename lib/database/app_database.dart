@@ -5,6 +5,7 @@ import 'package:drift_flutter/drift_flutter.dart';
 import 'package:sqlite3/common.dart';
 import 'package:moviescout/database/connection/setup_sqlite.dart';
 import 'package:moviescout/database/drift_tables.dart';
+import 'package:moviescout/services/core/error_service.dart';
 
 part 'app_database.g.dart';
 
@@ -33,7 +34,10 @@ class AppDatabase extends _$AppDatabase {
               try {
                 await m.drop(entity);
                 await m.create(entity);
-              } catch (_) {}
+              } catch (dropErr, st) {
+                ErrorService.log(dropErr,
+                    stackTrace: st, reportToCrashlytics: false);
+              }
             } else {
               rethrow;
             }

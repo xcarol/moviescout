@@ -9,6 +9,7 @@ import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/cards/title_card.dart';
 import 'package:moviescout/widgets/buttons/watchlist_button.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/services/core/error_service.dart';
 
 // ignore: constant_identifier_names
 const double CARD_HEIGHT = 336.0;
@@ -66,7 +67,9 @@ class TitleChipState<T extends TitleChip> extends State<T> {
             Provider.of<RateslistService>(context, listen: false);
         rated = await ratesService.getTitleByTmdbId(
             widget.title.tmdbId, widget.title.mediaType);
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+      }
     }
 
     if (mounted) {

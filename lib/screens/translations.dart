@@ -138,17 +138,15 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     String sourceTitle = widget.originalTitle;
     String sourceDesc = widget.originalDescription;
 
-    try {
-      final sourceTrans =
-          widget.translations.firstWhere((t) => t.iso639_1 == sourceCode);
+    final matches = widget.translations.where((t) => t.iso639_1 == sourceCode);
+    if (matches.isNotEmpty) {
+      final sourceTrans = matches.first;
       if (sourceTrans.translatedTitle.isNotEmpty) {
         sourceTitle = sourceTrans.translatedTitle;
       }
       if (sourceTrans.description.isNotEmpty) {
         sourceDesc = sourceTrans.description;
       }
-    } catch (e) {
-      // not found
     }
 
     try {
@@ -445,17 +443,15 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     String sourceTitle = widget.originalTitle;
     String sourceDesc = widget.originalDescription;
 
-    try {
-      final sourceTrans =
-          widget.translations.firstWhere((t) => t.iso639_1 == sourceCode);
+    final matches = widget.translations.where((t) => t.iso639_1 == sourceCode);
+    if (matches.isNotEmpty) {
+      final sourceTrans = matches.first;
       if (sourceTrans.translatedTitle.isNotEmpty) {
         sourceTitle = sourceTrans.translatedTitle;
       }
       if (sourceTrans.description.isNotEmpty) {
         sourceDesc = sourceTrans.description;
       }
-    } catch (e) {
-      // not found
     }
 
     return Card(

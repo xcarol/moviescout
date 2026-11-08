@@ -193,7 +193,10 @@ class SupabaseAuthService extends ChangeNotifier {
               'avatar_url': avatar,
             }),
           );
-        } catch (_) {}
+        } catch (e, stackTrace) {
+          ErrorService.log(e,
+              stackTrace: stackTrace, reportToCrashlytics: false);
+        }
 
         await fetchProfile();
         return true;
@@ -238,7 +241,10 @@ class SupabaseAuthService extends ChangeNotifier {
       if (!kIsWeb) {
         try {
           await GoogleSignIn.instance.disconnect();
-        } catch (_) {}
+        } catch (e, stackTrace) {
+          ErrorService.log(e,
+              stackTrace: stackTrace, reportToCrashlytics: false);
+        }
       }
 
       await _supabase.auth.signOut();

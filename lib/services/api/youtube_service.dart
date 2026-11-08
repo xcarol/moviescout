@@ -3,6 +3,7 @@ import 'package:diacritic/diacritic.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/utils/youtube_query_mapper.dart';
+import 'package:moviescout/services/core/error_service.dart';
 
 abstract class YoutubeService {
   Future<List<Map<String, dynamic>>> searchTrailers(
@@ -67,8 +68,8 @@ class YoutubeExplodeService implements YoutubeService {
           .toList();
 
       allResults.addAll(results);
-    } catch (_) {
-      // Silently fail
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
     }
 
     return allResults;

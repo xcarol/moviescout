@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/utils/url_constants.dart';
+import 'package:moviescout/services/core/error_service.dart';
 import 'package:http/http.dart' as http;
 
 class HomeScreenShortcutService {
@@ -17,8 +18,8 @@ class HomeScreenShortcutService {
       if (response.statusCode == 200) {
         return response.bodyBytes;
       }
-    } catch (e) {
-      // ignore
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
     }
     return null;
   }

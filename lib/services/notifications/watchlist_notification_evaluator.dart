@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -241,18 +240,14 @@ class WatchlistNotificationEvaluator {
   }
 
   static DateTime? _getSeasonAirDate(TmdbTitle title, int seasonNumber) {
-    if (title.seasonsJson == null) return null;
-    try {
-      final List<dynamic> seasons = jsonDecode(title.seasonsJson!);
-      for (var season in seasons) {
-        if (season['season_number'] == seasonNumber) {
-          final airDateStr = season['air_date'] as String?;
-          if (airDateStr != null) {
-            return DateTime.tryParse(airDateStr);
-          }
+    for (var season in title.seasons) {
+      if (season is Map && season['season_number'] == seasonNumber) {
+        final airDateStr = season['air_date'] as String?;
+        if (airDateStr != null) {
+          return DateTime.tryParse(airDateStr);
         }
       }
-    } catch (_) {}
+    }
     return null;
   }
 }

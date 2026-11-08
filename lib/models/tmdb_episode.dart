@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/models/tmdb_item.dart';
+import 'package:moviescout/services/core/error_service.dart';
 
 class TmdbEpisode implements TmdbItem {
   @override
@@ -106,7 +107,9 @@ class TmdbEpisode implements TmdbItem {
         _imagesCache = decoded.map((e) => e.toString()).toList();
         return _imagesCache!;
       }
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
     return [];
   }
 
@@ -120,7 +123,9 @@ class TmdbEpisode implements TmdbItem {
         _videosCache = decoded.map((e) => e as Map<String, dynamic>).toList();
         return _videosCache!;
       }
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
     return [];
   }
 

@@ -418,7 +418,9 @@ class AiService {
         }
       } on AiApiException {
         rethrow;
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+      }
 
       if (response.statusCode < 500) {
         throw AiApiException(

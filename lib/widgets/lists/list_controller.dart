@@ -8,6 +8,7 @@ import 'package:moviescout/services/tmdb_content/search_service.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
+import 'package:moviescout/services/core/error_service.dart';
 
 class ListController with ChangeNotifier {
   final TmdbBaseListService listService;
@@ -194,7 +195,9 @@ class ListController with ChangeNotifier {
         sort: _selectedSort,
         ascending: _isSortAsc,
       );
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
   }
 
   void setSelectedSort(BuildContext context, String localizedValue) {

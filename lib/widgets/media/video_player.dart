@@ -6,6 +6,7 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:moviescout/services/media/video_player_service.dart';
 import 'package:simple_pip_mode/simple_pip.dart';
 import 'package:simple_pip_mode/pip_widget.dart';
+import 'package:moviescout/services/core/error_service.dart';
 
 class FloatingVideoPlayerWidget extends StatefulWidget {
   const FloatingVideoPlayerWidget({super.key});
@@ -39,7 +40,9 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
         if (isAvailable) {
           await SimplePip().setAutoPipMode(aspectRatio: const (16, 9));
         }
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+      }
     }
   }
 
@@ -60,7 +63,9 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
         if (isAvailable) {
           await SimplePip().setAutoPipMode(autoEnter: false);
         }
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+      }
     }
   }
 

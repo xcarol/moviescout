@@ -4,6 +4,7 @@ import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/services/settings/preferences_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_base_list_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
+import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/api_constants.dart';
 import 'package:moviescout/utils/app_constants.dart';
 
@@ -112,7 +113,9 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     try {
       final prefs = PreferencesService().prefs;
       _options = DiscoveryOptions.loadFromPrefs(prefs);
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
   }
 
   void setEnabledProviderIds(List<int> ids) {
@@ -135,7 +138,9 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
     try {
       final prefs = PreferencesService().prefs;
       await _options.saveToPrefs(prefs);
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
     notifyListeners();
     await retrieveDiscoverlist(locale, forceUpdate: true);
   }
@@ -593,7 +598,9 @@ class TmdbDiscoverlistService extends TmdbTitleListService {
             }
           }
         }
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+      }
     }
 
     lastBatchIds.clear();

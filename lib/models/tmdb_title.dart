@@ -11,6 +11,7 @@ import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_providers.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_genre_service.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
+import 'package:moviescout/services/core/error_service.dart';
 
 class TmdbTitleFields {
   static const String adult = 'adult';
@@ -128,84 +129,136 @@ class SortOption {
 
 class TmdbTitle implements TmdbItem {
   @override
-  late int tmdbId;
+  int tmdbId = 0;
 
   @override
-  late String name;
-  late String originalName;
-  late String originalLanguage;
-  late String overview;
-  late String tagline;
-  late String status;
-  late String mediaType;
-  late String imdbId;
-  late String homepage;
-  late String certification;
-  late String type;
+  String name = '';
+  String originalName = '';
+  String originalLanguage = '';
+  String overview = '';
+  String tagline = '';
+  String status = '';
+  String mediaType = '';
+  String imdbId = '';
+  String homepage = '';
+  String certification = '';
+  String type = '';
 
-  late String? posterPathSuffix;
-  late String? backdropPathSuffix;
+  String? posterPathSuffix;
+  String? backdropPathSuffix;
 
   // Dates
-  late String releaseDate;
-  late String firstAirDate;
-  late String lastAirDate;
+  String releaseDate = '';
+  String firstAirDate = '';
+  String lastAirDate = '';
   @override
-  late String lastUpdated;
+  String lastUpdated = AppConstants.defaultDate;
   DateTime? createdAt;
 
   // Numbers
-  late double voteAverage;
-  late int voteCount;
-  late double rating; // User rating
-  late DateTime dateRated;
-  late int runtime;
-  late int numberOfEpisodes;
-  late int numberOfSeasons;
+  double voteAverage = 0.0;
+  int voteCount = 0;
+  double rating = 0.0; // User rating
+  DateTime dateRated = DateTime.fromMillisecondsSinceEpoch(0);
+  int runtime = 0;
+  int numberOfEpisodes = 0;
+  int numberOfSeasons = 0;
 
   Map<String, dynamic>? _externalIdsCache;
 
   Map<String, dynamic> get externalIds {
     if (_externalIdsCache != null) return _externalIdsCache!;
-    if (externalIdsJson == null) return {};
+    if (externalIdsJson == null || externalIdsJson!.isEmpty) return {};
     try {
       _externalIdsCache = jsonDecode(externalIdsJson!);
       return _externalIdsCache!;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
       return {};
     }
   }
 
-  late double popularity;
-  late int budget;
-  late int revenue;
+  double popularity = 0.0;
+  int budget = 0;
+  int revenue = 0;
 
   // Calculated/Logic fields
-  late int effectiveRuntime;
-  late String effectiveReleaseDate;
-  late bool isPinned;
-  late bool notifyNewSeasons;
+  int effectiveRuntime = 0;
+  String effectiveReleaseDate = '';
+  bool isPinned = false;
+  bool notifyNewSeasons = false;
 
   // Lists (Simple)
-  late List<int> genreIds;
-  late List<int> keywordIds;
-  late List<int> flatrateProviderIds;
-  late List<String> originCountry;
+  List<int> genreIds = const [];
+  List<int> keywordIds = const [];
+  List<int> flatrateProviderIds = const [];
+  List<String> originCountry = const [];
 
   // Complex objects stored as JSON strings
-  late String? creditsJson;
-  late String? providersJson;
-  late String? seasonsJson;
-  late String? recommendationsJson;
-  late String? nextEpisodeToAirJson;
-  late String? lastEpisodeToAirJson;
-  late String? imagesJson;
-  late String? videosJson;
-  late String? omdbRatingsJson;
-  late String? externalIdsJson;
-  late String? belongsToCollectionJson;
+  String? creditsJson;
+  String? providersJson;
+  String? seasonsJson;
+  String? recommendationsJson;
+  String? nextEpisodeToAirJson;
+  String? lastEpisodeToAirJson;
+  String? imagesJson;
+  String? videosJson;
+  String? omdbRatingsJson;
+  String? externalIdsJson;
+  String? belongsToCollectionJson;
 
-  late int lastNotifiedSeason;
+  int lastNotifiedSeason = 0;
+
+  List<dynamic>? _seasonsCache;
+
+  List<dynamic> get seasons {
+    if (_seasonsCache != null) return _seasonsCache!;
+    if (seasonsJson == null || seasonsJson!.isEmpty) return const [];
+    try {
+      final decoded = jsonDecode(seasonsJson!);
+      if (decoded is List) {
+        _seasonsCache = decoded;
+        return _seasonsCache!;
+      }
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
+    return const [];
+  }
+
+  List<Map<String, dynamic>>? _omdbRatingsCache;
+
+  List<Map<String, dynamic>> get omdbRatings {
+    if (_omdbRatingsCache != null) return _omdbRatingsCache!;
+    if (omdbRatingsJson == null || omdbRatingsJson!.isEmpty) return const [];
+    try {
+      final decoded = jsonDecode(omdbRatingsJson!);
+      if (decoded is List) {
+        _omdbRatingsCache =
+            decoded.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        return _omdbRatingsCache!;
+      }
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
+    return const [];
+  }
+
+  void _clearCaches() {
+    _externalIdsCache = null;
+    _recommendationsCache = null;
+    _nextEpisodeToAirCache = null;
+    _lastEpisodeToAirCache = null;
+    _providersCache = null;
+    _creditsMapCache = null;
+    _castCache = null;
+    _crewCache = null;
+    _imagesCache = null;
+    _videosCache = null;
+    _belongsToCollectionCache = null;
+    _seasonsCache = null;
+    _omdbRatingsCache = null;
+  }
 
   String character = '';
   String job = '';
@@ -298,6 +351,7 @@ class TmdbTitle implements TmdbItem {
   int get hashCode => tmdbId.hashCode;
 
   void fillFromMap(Map<dynamic, dynamic> title) {
+    _clearCaches();
     if (title['created_at'] != null) {
       createdAt = DateTime.tryParse(title['created_at'].toString());
     }
@@ -500,17 +554,14 @@ class TmdbTitle implements TmdbItem {
       TmdbTitleFields.keywordIds: keywordIds,
       TmdbTitleFields.flatrateProviderIds: flatrateProviderIds,
       TmdbTitleFields.originCountry: originCountry,
-      TmdbTitleFields.belongsToCollection: belongsToCollectionJson != null
-          ? jsonDecode(belongsToCollectionJson!)
+      TmdbTitleFields.belongsToCollection: belongsToCollection,
+      TmdbTitleFields.externalIds: externalIds.isNotEmpty ? externalIds : null,
+      TmdbTitleFields.credits: creditsJson != null
+          ? (_creditsMapCache ??= jsonDecode(creditsJson!))
           : null,
-      TmdbTitleFields.externalIds:
-          externalIdsJson != null ? jsonDecode(externalIdsJson!) : null,
-      TmdbTitleFields.credits:
-          creditsJson != null ? jsonDecode(creditsJson!) : null,
       TmdbTitleFields.providers:
           providersJson != null ? jsonDecode(providersJson!) : null,
-      TmdbTitleFields.seasons:
-          seasonsJson != null ? jsonDecode(seasonsJson!) : null,
+      TmdbTitleFields.seasons: seasons.isNotEmpty ? seasons : null,
       TmdbTitleFields.recommendations:
           recommendationsJson != null ? jsonDecode(recommendationsJson!) : null,
       TmdbTitleFields.nextEpisodeToAir: nextEpisodeToAirJson != null
@@ -523,8 +574,7 @@ class TmdbTitle implements TmdbItem {
           imagesJson != null ? jsonDecode(imagesJson!) : null,
       TmdbTitleFields.videos:
           videosJson != null ? jsonDecode(videosJson!) : null,
-      TmdbTitleFields.omdbRatings:
-          omdbRatingsJson != null ? jsonDecode(omdbRatingsJson!) : null,
+      TmdbTitleFields.omdbRatings: omdbRatings.isNotEmpty ? omdbRatings : null,
       TmdbTitleFields.character: character,
       TmdbTitleFields.job: job,
       TmdbTitleFields.department: department,
@@ -582,7 +632,8 @@ class TmdbTitle implements TmdbItem {
         return _recommendationsCache!;
       }
       return [];
-    } catch (_) {
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
       return [];
     }
   }
@@ -595,7 +646,9 @@ class TmdbTitle implements TmdbItem {
     try {
       final map = jsonDecode(nextEpisodeToAirJson!) as Map<String, dynamic>;
       _nextEpisodeToAirCache = TmdbEpisode.fromMap(map, tvId: tmdbId);
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
     return _nextEpisodeToAirCache;
   }
 
@@ -607,7 +660,9 @@ class TmdbTitle implements TmdbItem {
     try {
       final map = jsonDecode(lastEpisodeToAirJson!) as Map<String, dynamic>;
       _lastEpisodeToAirCache = TmdbEpisode.fromMap(map, tvId: tmdbId);
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
     return _lastEpisodeToAirCache;
   }
 
@@ -624,8 +679,13 @@ class TmdbTitle implements TmdbItem {
   TmdbProviders get providers {
     if (_providersCache != null) return _providersCache!;
     if (providersJson == null) return TmdbProviders(providers: {});
-    _providersCache = TmdbProviders(providers: jsonDecode(providersJson!));
-    return _providersCache!;
+    try {
+      _providersCache = TmdbProviders(providers: jsonDecode(providersJson!));
+      return _providersCache!;
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+      return TmdbProviders(providers: {});
+    }
   }
 
   Map<String, dynamic>? _creditsMapCache;
@@ -635,13 +695,18 @@ class TmdbTitle implements TmdbItem {
   List<TmdbPerson> get cast {
     if (_castCache != null) return _castCache!;
     if (creditsJson == null) return [];
-    _creditsMapCache ??= jsonDecode(creditsJson!);
-    _castCache = TmdbPerson.parsePersonList(
-        _creditsMapCache![PersonAttributes.cast] is List
-            ? _creditsMapCache![PersonAttributes.cast]
-            : null,
-        PersonAttributes.cast);
-    return _castCache!;
+    try {
+      _creditsMapCache ??= jsonDecode(creditsJson!);
+      _castCache = TmdbPerson.parsePersonList(
+          _creditsMapCache![PersonAttributes.cast] is List
+              ? _creditsMapCache![PersonAttributes.cast]
+              : null,
+          PersonAttributes.cast);
+      return _castCache!;
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+      return [];
+    }
   }
 
   List<TmdbPerson>? _crewCache;
@@ -649,13 +714,18 @@ class TmdbTitle implements TmdbItem {
   List<TmdbPerson> get crew {
     if (_crewCache != null) return _crewCache!;
     if (creditsJson == null) return [];
-    _creditsMapCache ??= jsonDecode(creditsJson!);
-    _crewCache = TmdbPerson.parsePersonList(
-        _creditsMapCache![PersonAttributes.crew] is List
-            ? _creditsMapCache![PersonAttributes.crew]
-            : null,
-        PersonAttributes.crew);
-    return _crewCache!;
+    try {
+      _creditsMapCache ??= jsonDecode(creditsJson!);
+      _crewCache = TmdbPerson.parsePersonList(
+          _creditsMapCache![PersonAttributes.crew] is List
+              ? _creditsMapCache![PersonAttributes.crew]
+              : null,
+          PersonAttributes.crew);
+      return _crewCache!;
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+      return [];
+    }
   }
 
   String get duration {
@@ -695,7 +765,9 @@ class TmdbTitle implements TmdbItem {
         _imagesCache = decoded.map((e) => e.toString()).toList();
         return _imagesCache!;
       }
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
     return [];
   }
 
@@ -710,7 +782,9 @@ class TmdbTitle implements TmdbItem {
         _videosCache = decoded.map((e) => e as Map<String, dynamic>).toList();
         return _videosCache!;
       }
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
     return [];
   }
 
@@ -742,7 +816,9 @@ class TmdbTitle implements TmdbItem {
     if (belongsToCollectionJson == null) return null;
     try {
       _belongsToCollectionCache = jsonDecode(belongsToCollectionJson!);
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
     return _belongsToCollectionCache;
   }
 

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:moviescout/database/app_database.dart';
+import 'package:moviescout/services/core/error_service.dart';
 
 class LocalDatabaseService {
   static AppDatabase? _db;
@@ -41,7 +42,9 @@ class LocalDatabaseService {
           await dir.delete(recursive: true);
         }
       }
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    }
   }
 
   static AppDatabase get instance => _db!;

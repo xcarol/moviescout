@@ -189,7 +189,9 @@ class TmdbTitleListService extends TmdbBaseListService<TmdbTitle> {
       if (loadedItemsVal.isEmpty) {
         try {
           await filterItems();
-        } catch (_) {}
+        } catch (e, st) {
+          ErrorService.log(e, stackTrace: st, reportToCrashlytics: false);
+        }
       }
       return false;
     } finally {

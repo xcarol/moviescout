@@ -87,8 +87,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
       setState(() {
         _csvData = data;
-        _csvTitlesStatus =
-            List.filled(data.length, ImdbTitleStatus.pending);
+        _csvTitlesStatus = List.filled(data.length, ImdbTitleStatus.pending);
       });
     } catch (e, stackTrace) {
       ErrorService.log(
@@ -308,8 +307,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
         setState(() => _importId = index);
 
-        final imdbId =
-            _csvData.rows[index][_csvData.imdbIdColumn].toString();
+        final imdbId = _csvData.rows[index][_csvData.imdbIdColumn].toString();
         final status = await _importService.importWatchlistEntry(
           imdbId: imdbId,
           locale: userLocale,

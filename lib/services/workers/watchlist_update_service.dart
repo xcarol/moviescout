@@ -262,7 +262,10 @@ class WatchlistUpdateService {
               options: DefaultFirebaseOptions.currentPlatform,
             );
           }
-        } catch (_) {}
+        } catch (e, stackTrace) {
+          ErrorService.log(e,
+              stackTrace: stackTrace, reportToCrashlytics: false);
+        }
       }
 
       final supabaseUrl = dotenv.env['SUPABASE_URL'];
@@ -277,10 +280,15 @@ class WatchlistUpdateService {
             publishableKey: supabaseKey,
           );
           CloudDatabaseService.init();
-        } catch (_) {
+        } catch (e, stackTrace) {
+          ErrorService.log(e,
+              stackTrace: stackTrace, reportToCrashlytics: false);
           try {
             CloudDatabaseService.init();
-          } catch (_) {}
+          } catch (e2, stackTrace2) {
+            ErrorService.log(e2,
+                stackTrace: stackTrace2, reportToCrashlytics: false);
+          }
         }
       }
 
