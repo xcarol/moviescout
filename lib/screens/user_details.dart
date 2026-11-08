@@ -4,7 +4,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/user_profile.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/screens/login.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:moviescout/services/core/cloud_database_service.dart';
 import 'package:moviescout/services/lists/user_following_service.dart';
@@ -258,10 +258,7 @@ class _UserDetailsState extends State<UserDetails> {
               final authService =
                   Provider.of<SupabaseAuthService>(context, listen: false);
               if (!authService.isLoggedIn) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Login()),
-                );
+                context.toLogin();
                 return;
               }
 

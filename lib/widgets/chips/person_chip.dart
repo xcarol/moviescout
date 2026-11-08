@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_person.dart';
-import 'package:moviescout/screens/person_details.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/cards/title_card.dart';
 import 'package:moviescout/models/tmdb_title.dart';
@@ -43,16 +43,12 @@ class PersonChip extends StatelessWidget {
           margin: const EdgeInsets.all(0),
           child: InkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => PersonDetails(
-                          person: TmdbPerson.fromMap(person: _person.toMap()),
-                          tmdbListService: _tmdbListService,
-                          titleContext: titleContext,
-                          seasonContext: seasonContext,
-                          episodeContext: episodeContext,
-                        )),
+              context.toPersonDetails(
+                TmdbPerson.fromMap(person: _person.toMap()),
+                _tmdbListService,
+                titleContext: titleContext,
+                seasonContext: seasonContext,
+                episodeContext: episodeContext,
               );
             },
             child: Stack(

@@ -8,7 +8,7 @@ import 'package:moviescout/widgets/inputs_and_filters/ai_model_thinking_selector
 import 'package:moviescout/widgets/inputs_and_filters/drop_down_selector.dart';
 import 'package:moviescout/models/tmdb_translation.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/screens/ai_settings.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/api/ai_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/services/api/web_translation_service.dart';
@@ -272,12 +272,7 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                       value: isAiActive,
                       onChanged: (val) {
                         if (val && !AiService().hasApiKey) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AiSettingsScreen(),
-                            ),
-                          ).then((_) {
+                          context.toAiSettings().then((_) {
                             if (AiService().hasApiKey && mounted) {
                               service.setAiTranslationEnabled(true);
                               setState(() {

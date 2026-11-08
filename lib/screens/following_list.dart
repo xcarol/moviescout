@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/custom_colors.dart';
-import 'package:moviescout/screens/login.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/screens/user_search_delegate.dart';
 import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:moviescout/services/lists/user_following_service.dart';
@@ -114,10 +114,7 @@ class _FollowingListState extends State<FollowingList> {
         const SizedBox(height: 16),
         OutlinedButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const Login()),
-            );
+            context.toLogin();
           },
           child: Text(loc.messageEmptyLogin),
         ),

@@ -6,10 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
-import 'package:moviescout/screens/login.dart';
-import 'package:moviescout/screens/logs_screen.dart';
-import 'package:moviescout/screens/notifications_screen.dart';
-import 'package:moviescout/screens/settings.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/utils/snack_bar.dart';
@@ -44,10 +41,7 @@ class AppDrawer extends StatelessWidget {
       title: Text(AppLocalizations.of(context)!.settings),
       onTap: () {
         Navigator.of(context).pop();
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const SettingsScreen()),
-        );
+        context.toSettings();
       },
     );
   }
@@ -58,10 +52,7 @@ class AppDrawer extends StatelessWidget {
       title: Text(AppLocalizations.of(context)!.notificationsHistory),
       onTap: () {
         Navigator.of(context).pop();
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const NotificationsScreen()),
-        );
+        context.toNotifications();
       },
     );
   }
@@ -219,12 +210,7 @@ class AppDrawer extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pop(); // Close About dialog
                   Navigator.pop(context); // Close Drawer
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LogsScreen(),
-                    ),
-                  );
+                  context.toLogs();
                 },
                 icon: const Icon(Icons.history),
                 label: const Text('App logs'),
@@ -247,10 +233,7 @@ class AppDrawer extends StatelessWidget {
         if (isUserLoggedIn) {
           _logout(context);
         } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const Login()),
-          );
+          context.toLogin();
         }
       },
     );

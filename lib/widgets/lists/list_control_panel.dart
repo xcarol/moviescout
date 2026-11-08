@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/screens/genres.dart';
-import 'package:moviescout/screens/providers.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/models/title_list_theme.dart';
 import 'package:moviescout/widgets/inputs_and_filters/text_filter_widget.dart';
@@ -81,18 +80,13 @@ class ListControlPanel extends StatelessWidget {
 
     return GestureDetector(
       onTap: () async {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => GenresScreen(
-              genresList: genresList,
-              selectedGenres: selectedGenres,
-              excludeGenres: excludeGenres,
-              onGenresChanged: (genres, exclude) {
-                controller.setGenres(genres, exclude);
-              },
-            ),
-          ),
+        await context.toGenres(
+          genresList: genresList,
+          selectedGenres: selectedGenres,
+          excludeGenres: excludeGenres,
+          onGenresChanged: (genres, exclude) {
+            controller.setGenres(genres, exclude);
+          },
         );
       },
       child: Container(
@@ -132,12 +126,7 @@ class ListControlPanel extends StatelessWidget {
       message: l10n.noProvidersSelectedPrompt,
       actionLabel: l10n.settings,
       onAction: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ProvidersScreen(),
-          ),
-        );
+        context.toProviders();
       },
       context: context,
     );

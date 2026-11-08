@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/services/settings/region_service.dart';
 import 'package:moviescout/models/tmdb_translation.dart';
-import 'package:moviescout/screens/translations.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 
 class ActionMenu extends StatelessWidget {
   final String? editUrl;
@@ -59,15 +59,11 @@ class ActionMenu extends StatelessWidget {
       final translations = await fetchTranslations!();
       if (!context.mounted) return;
       Navigator.of(context).pop();
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => TranslationsScreen(
-            translations: translations,
-            originalTitle: originalTitle ?? '',
-            originalDescription: originalDescription ?? '',
-            editUrl: editUrl ?? '',
-          ),
-        ),
+      context.toTranslations(
+        translations: translations,
+        originalTitle: originalTitle ?? '',
+        originalDescription: originalDescription ?? '',
+        editUrl: editUrl ?? '',
       );
     } catch (e) {
       if (!context.mounted) return;

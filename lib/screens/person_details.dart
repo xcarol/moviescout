@@ -14,7 +14,7 @@ import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/widgets/chips/person_title_chip.dart';
 import 'package:moviescout/widgets/text_and_info/expandable_description.dart';
-import 'package:moviescout/screens/person_titles.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/models/tmdb_season.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:provider/provider.dart';
@@ -508,12 +508,7 @@ class _PersonDetailsState extends State<PersonDetails> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PersonTitles(person: person),
-                  ),
-                );
+                context.toPersonTitles(person);
               },
               child: Text(
                 AppLocalizations.of(context)!.seeThemAll,
@@ -570,13 +565,7 @@ class _PersonDetailsState extends State<PersonDetails> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PersonTitles(
-                        person: person, role: PersonTitleRole.crew),
-                  ),
-                );
+                context.toPersonTitles(person, role: PersonTitleRole.crew);
               },
               child: Text(
                 AppLocalizations.of(context)!.seeThemAll,

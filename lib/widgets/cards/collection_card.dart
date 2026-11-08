@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_collection.dart';
-import 'package:moviescout/screens/collection_details.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 
@@ -38,14 +38,7 @@ class CollectionCard extends StatelessWidget {
         child: Card(
           child: InkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => CollectionDetails(
-                          collection: _collection,
-                          tmdbListService: tmdbListService,
-                        )),
-              );
+              context.toCollectionDetails(_collection, tmdbListService);
             },
             child: Row(
               children: [

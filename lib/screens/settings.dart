@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/services/auth/supabase_auth_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/screens/ai_settings.dart';
-import 'package:moviescout/screens/import_imdb.dart';
-import 'package:moviescout/screens/import_tmdb.dart';
-import 'package:moviescout/screens/providers.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/api/ai_service.dart';
 import 'package:moviescout/services/core/app_service.dart';
 import 'package:moviescout/services/notifications/notification_service.dart';
@@ -94,12 +91,7 @@ class SettingsScreen extends StatelessWidget {
                 subtitle: providersSubtitle,
                 onInfoTap: () => _showProvidersInfo(context),
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ProvidersScreen(),
-                    ),
-                  );
+                  context.toProviders();
                 },
               ),
             ],
@@ -175,12 +167,9 @@ class SettingsScreen extends StatelessWidget {
                     subtitle: aiSubtitle,
                     onInfoTap: () => _showAiInfo(context),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AiSettingsScreen(),
-                        ),
-                      ).then((_) => setTileState(() {}));
+                      context
+                          .toAiSettings()
+                          .then((_) => setTileState(() {}));
                     },
                   );
                 },
@@ -206,12 +195,7 @@ class SettingsScreen extends StatelessWidget {
                   title: l10n.tmdbImport,
                   subtitle: l10n.settingsTmdbSubtitle,
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ImportTmdbScreen(),
-                      ),
-                    );
+                    context.toImportTmdb();
                   },
                 ),
                 SettingsTile(
@@ -219,12 +203,7 @@ class SettingsScreen extends StatelessWidget {
                   title: l10n.imdbImport,
                   subtitle: l10n.settingsImdbSubtitle,
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ImportIMDB(),
-                      ),
-                    );
+                    context.toImportImdb();
                   },
                 ),
               ],

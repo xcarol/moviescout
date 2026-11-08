@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/user_profile.dart';
-import 'package:moviescout/screens/user_details.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 
 class UserCard extends StatelessWidget {
   final UserProfile user;
@@ -24,12 +24,7 @@ class UserCard extends StatelessWidget {
         child: Card(
           child: InkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => UserDetails(user: user),
-                ),
-              );
+              context.toUserDetails(user);
             },
             child: Opacity(
               opacity: isPrivate ? 0.6 : 1.0,

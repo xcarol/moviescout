@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:moviescout/models/tmdb_translation.dart';
 import 'package:moviescout/services/core/app_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/screens/translations.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 
 class TranslationsButton extends StatefulWidget {
   final Future<List<TmdbTranslation>> Function() fetchTranslations;
@@ -28,15 +28,11 @@ class _TranslationsButtonState extends State<TranslationsButton> {
 
   void _showTranslationsScreen(
       BuildContext context, List<TmdbTranslation> translations) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => TranslationsScreen(
-          translations: translations,
-          originalTitle: widget.originalTitle,
-          originalDescription: widget.originalDescription,
-          editUrl: widget.editUrl,
-        ),
-      ),
+    context.toTranslations(
+      translations: translations,
+      originalTitle: widget.originalTitle,
+      originalDescription: widget.originalDescription,
+      editUrl: widget.editUrl,
     );
   }
 

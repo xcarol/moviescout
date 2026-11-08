@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/screens/season_details.dart';
-import 'package:moviescout/screens/title_people_list.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/chips/person_chip.dart';
@@ -80,16 +79,9 @@ class _TitleMediaListsSectionState extends State<TitleMediaListsSection> {
               if (seasonIndex < 1) return;
               final seasonNumber = seasonIndex;
 
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SeasonDetails(
-                    title: title,
-                    seasonNumber: seasonNumber,
-                    tmdbListService: widget.tmdbListService,
-                  ),
-                ),
-              ).then((_) {
+              context
+                  .toSeasonDetails(title, seasonNumber, widget.tmdbListService)
+                  .then((_) {
                 if (mounted) {
                   setState(() {
                     _selectedSeason = '';
@@ -137,16 +129,7 @@ class _TitleMediaListsSectionState extends State<TitleMediaListsSection> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => TitlePeopleList(
-                      title: title,
-                      type: type,
-                      tmdbListService: widget.tmdbListService,
-                    ),
-                  ),
-                );
+                context.toTitlePeopleList(title, type, widget.tmdbListService);
               },
               child: Text(
                 AppLocalizations.of(context)!.seeThemAll,

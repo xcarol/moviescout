@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import "package:moviescout/services/auth/supabase_auth_service.dart";
-import 'package:moviescout/screens/login.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/lists/watchlist_service.dart';
 import 'package:moviescout/services/tmdb_content/discover_promotion_manager.dart';
 import 'package:moviescout/widgets/cards/discover_promo_card.dart';
@@ -126,10 +126,7 @@ class _WatchListState extends State<WatchList> {
       children.add(
         OutlinedButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const Login()),
-            );
+            context.toLogin();
           },
           child: Text(AppLocalizations.of(context)!.messageEmptyLogin),
         ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/screens/title_details.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_title_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
@@ -186,14 +186,7 @@ class TitleChipContent extends TitleCard {
           ),
           child: InkWell(
             onTap: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => TitleDetails(
-                          title: _title,
-                          tmdbListService: tmdbListService,
-                        )),
-              );
+              await context.toTitleDetails(_title, tmdbListService);
               onReturnFromDetails?.call();
             },
             child: Stack(

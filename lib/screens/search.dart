@@ -10,7 +10,7 @@ import 'package:moviescout/services/core/error_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:provider/provider.dart';
-import 'package:moviescout/screens/ai_settings.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/api/ai_service.dart';
 import 'package:moviescout/widgets/inputs_and_filters/ai_model_thinking_selector.dart';
 
@@ -323,13 +323,7 @@ class _SearchState extends State<Search> {
                                 AppLocalizations.of(context)!.searchAiTooltip,
                             onPressed: () {
                               if (!AiService().hasApiKey) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const AiSettingsScreen(),
-                                  ),
-                                ).then((_) {
+                                context.toAiSettings().then((_) {
                                   if (AiService().hasApiKey) {
                                     setState(() {
                                       _isAiMode = true;

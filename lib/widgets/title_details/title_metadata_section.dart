@@ -6,7 +6,7 @@ import 'package:moviescout/models/tmdb_collection.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/screens/collection_details.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/settings/language_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/utils/country_translator.dart';
@@ -386,14 +386,9 @@ class TitleMetadataSection extends StatelessWidget {
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CollectionDetails(
-              collection: TmdbCollection.fromMap(collection: collection),
-              tmdbListService: tmdbListService,
-            ),
-          ),
+        context.toCollectionDetails(
+          TmdbCollection.fromMap(collection: collection),
+          tmdbListService,
         );
       },
     );

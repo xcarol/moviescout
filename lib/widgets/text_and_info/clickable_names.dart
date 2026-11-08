@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_person.dart';
-import 'package:moviescout/screens/person_details.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 
 import 'package:flutter/gestures.dart';
@@ -31,15 +31,7 @@ class ClickableNames extends StatelessWidget {
         style: const TextStyle(fontWeight: FontWeight.bold),
         recognizer: TapGestureRecognizer()
           ..onTap = () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PersonDetails(
-                  person: person,
-                  tmdbListService: tmdbListService,
-                ),
-              ),
-            );
+            context.toPersonDetails(person, tmdbListService);
           },
       ));
 

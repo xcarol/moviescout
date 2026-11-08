@@ -7,7 +7,7 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_person.dart';
 import 'package:moviescout/models/tmdb_episode.dart';
 import 'package:moviescout/models/tmdb_title.dart';
-import 'package:moviescout/screens/title_people_list.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/tmdb_content/tmdb_episode_service.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/widgets/media/media_carousel.dart';
@@ -376,15 +376,10 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TitlePeopleList(
-                            title: widget.title,
-                            type: type,
-                            tmdbListService: widget.tmdbListService,
-                            episode: episode,
-                          )),
+                context.toTitlePeopleList(
+                  widget.title,
+                  type,
+                  widget.tmdbListService,
                 );
               },
               child: Text(

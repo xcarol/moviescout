@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/models/discovery_options.dart';
 import 'package:moviescout/models/title_list_theme.dart';
-import 'package:moviescout/screens/providers.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/tmdb_content/discoverlist_service.dart';
 import 'package:moviescout/utils/snack_bar.dart';
 import 'package:moviescout/widgets/inputs_and_filters/drop_down_selector.dart';
@@ -268,12 +268,7 @@ class DiscoveryControlPanel extends StatelessWidget {
       message: l10n.noProvidersSelectedPrompt,
       actionLabel: l10n.settings,
       onAction: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ProvidersScreen(),
-          ),
-        );
+        context.toProviders();
       },
       context: context,
     );

@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/models/tmdb_person.dart';
-import 'package:moviescout/screens/person_details.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/models/tmdb_season.dart';
@@ -51,16 +51,12 @@ class PersonCard extends StatelessWidget {
         child: Card(
           child: InkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => PersonDetails(
-                          person: tmdbPerson,
-                          tmdbListService: tmdbListService,
-                          titleContext: titleContext,
-                          seasonContext: seasonContext,
-                          episodeContext: episodeContext,
-                        )),
+              context.toPersonDetails(
+                tmdbPerson,
+                tmdbListService,
+                titleContext: titleContext,
+                seasonContext: seasonContext,
+                episodeContext: episodeContext,
               );
             },
             child: Row(

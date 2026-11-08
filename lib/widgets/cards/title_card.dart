@@ -6,7 +6,7 @@ import 'package:moviescout/models/custom_colors.dart';
 import 'package:moviescout/models/tmdb_provider.dart';
 import 'package:moviescout/models/tmdb_title.dart';
 import 'package:moviescout/utils/api_constants.dart';
-import 'package:moviescout/screens/title_details.dart';
+import 'package:moviescout/utils/app_navigator.dart';
 import 'package:moviescout/services/tmdb_lists/tmdb_title_list_service.dart';
 import 'package:moviescout/services/lists/rateslist_service.dart';
 import 'package:moviescout/utils/app_constants.dart';
@@ -56,14 +56,7 @@ class TitleCard extends StatelessWidget {
             child: Card(
               child: InkWell(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => TitleDetails(
-                              title: tmdbTitle,
-                              tmdbListService: tmdbListService,
-                            )),
-                  );
+                  context.toTitleDetails(tmdbTitle, tmdbListService);
                 },
                 child: Row(
                   children: [
