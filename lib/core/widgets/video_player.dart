@@ -2,11 +2,12 @@ import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:youtube_player_iframe/youtube_player_iframe.dart';
-import 'package:moviescout/core/services/video_player_service.dart';
-import 'package:simple_pip_mode/simple_pip.dart';
-import 'package:simple_pip_mode/pip_widget.dart';
 import 'package:moviescout/core/services/error_service.dart';
+import 'package:moviescout/core/services/video_player_service.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:simple_pip_mode/pip_widget.dart';
+import 'package:simple_pip_mode/simple_pip.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class FloatingVideoPlayerWidget extends StatefulWidget {
   const FloatingVideoPlayerWidget({super.key});
@@ -20,16 +21,17 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
   YoutubePlayerController? _controller;
   String? _currentVideoId;
 
-  double _x = 16.0;
-  double _y = 100.0;
-  final double _playerWidth = 300.0;
-  final double _playerHeight = 300.0 * (9 / 16);
+  double _x = AppSizes.floatingPlayerInitialX;
+  double _y = AppSizes.floatingPlayerInitialY;
+  final double _playerWidth = AppSizes.floatingPlayerWidth;
+  final double _playerHeight =
+      AppSizes.floatingPlayerWidth / AppSizes.aspectRatioBackdrop;
 
   @override
   void initState() {
     super.initState();
     VideoPlayerService().addListener(_onPlayerStateChanged);
-    _onPlayerStateChanged(); // Initial check
+    _onPlayerStateChanged();
     _enableAutoPip();
   }
 
@@ -50,7 +52,7 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
   void dispose() {
     VideoPlayerService().removeListener(_onPlayerStateChanged);
     _controller?.close();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    SystemChrome.setPreferredOrientations(const []);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     _disableAutoPip();
     super.dispose();
@@ -76,8 +78,7 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
         _controller?.close();
         _controller = null;
         _currentVideoId = null;
-        await SystemChrome.setPreferredOrientations(
-            [DeviceOrientation.portraitUp]);
+        await SystemChrome.setPreferredOrientations(const []);
         await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
         if (mounted) setState(() {});
       } else {
@@ -95,16 +96,14 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
 
         _controller!.setFullScreenListener((isFullScreen) async {
           if (isFullScreen) {
-            await SystemChrome.setPreferredOrientations([
+            await SystemChrome.setPreferredOrientations(const [
               DeviceOrientation.landscapeLeft,
               DeviceOrientation.landscapeRight,
             ]);
             await SystemChrome.setEnabledSystemUIMode(
                 SystemUiMode.immersiveSticky);
           } else {
-            await SystemChrome.setPreferredOrientations([
-              DeviceOrientation.portraitUp,
-            ]);
+            await SystemChrome.setPreferredOrientations(const []);
             await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
           }
         });
@@ -120,15 +119,17 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
       return const SizedBox.shrink();
     }
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     Widget floatingWindow(BuildContext context) {
       return Positioned(
         left: _x,
         top: _y,
         child: Material(
-          elevation: 12,
-          borderRadius: BorderRadius.circular(12),
+          elevation: AppSizes.floatingPlayerElevation,
+          borderRadius: AppRadius.borderMd,
           clipBehavior: Clip.antiAlias,
-          color: Colors.black,
+          color: colorScheme.surfaceContainerHighest,
           child: SizedBox(
             width: _playerWidth,
             child: Column(
@@ -140,39 +141,43 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
                       _x += details.delta.dx;
                       _y += details.delta.dy;
 
-                      final size = MediaQuery.of(context).size;
+                      final mediaQuery = MediaQuery.of(context);
+                      final size = mediaQuery.size;
                       if (_x < 0) _x = 0;
-                      if (_y < MediaQuery.of(context).padding.top) {
-                        _y = MediaQuery.of(context).padding.top;
+                      if (_y < mediaQuery.padding.top) {
+                        _y = mediaQuery.padding.top;
                       }
                       if (_x > size.width - _playerWidth) {
                         _x = size.width - _playerWidth;
                       }
-                      if (_y >
-                          size.height -
-                              _playerHeight -
-                              30 -
-                              MediaQuery.of(context).padding.bottom) {
-                        _y = size.height -
-                            _playerHeight -
-                            30 -
-                            MediaQuery.of(context).padding.bottom;
+                      final maxTop = size.height -
+                          _playerHeight -
+                          AppSizes.floatingPlayerHeaderHeight -
+                          mediaQuery.padding.bottom;
+                      if (_y > maxTop) {
+                        _y = maxTop;
                       }
                     });
                   },
                   child: Container(
-                    height: 30,
-                    color: Colors.grey.shade900,
+                    height: AppSizes.floatingPlayerHeaderHeight,
+                    color: colorScheme.surfaceContainerHigh,
                     child: Row(
                       children: [
-                        const SizedBox(width: 8),
-                        const Icon(Icons.drag_handle,
-                            color: Colors.white54, size: 20),
+                        const SizedBox(width: AppSpacing.xs),
+                        Icon(
+                          Icons.drag_handle,
+                          color: colorScheme.onSurfaceVariant,
+                          size: AppSizes.iconMd,
+                        ),
                         const Spacer(),
                         IconButton(
                           padding: EdgeInsets.zero,
-                          iconSize: 20,
-                          icon: const Icon(Icons.close, color: Colors.white),
+                          iconSize: AppSizes.iconMd,
+                          icon: Icon(
+                            Icons.close,
+                            color: colorScheme.onSurface,
+                          ),
                           onPressed: () {
                             VideoPlayerService().closeVideo();
                           },
@@ -198,8 +203,8 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
       return PipWidget(
         pipBuilder: (context) {
           return Positioned.fill(
-            child: Container(
-              color: Colors.black,
+            child: ColoredBox(
+              color: colorScheme.surface,
               child: YoutubePlayer(controller: _controller!),
             ),
           );

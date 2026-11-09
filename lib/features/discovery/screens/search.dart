@@ -1,18 +1,20 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/features/settings/services/search_history_service.dart';
-import 'package:moviescout/features/discovery/services/search_service.dart';
-import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
-import 'package:moviescout/core/widgets/item_list.dart';
-import 'package:moviescout/features/titles/repositories/local_title_repository.dart';
+import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/core/services/error_service.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/theme/title_list_theme.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:moviescout/core/utils/snack_bar.dart';
-import 'package:provider/provider.dart';
-import 'package:moviescout/core/navigation/app_navigator.dart';
+import 'package:moviescout/core/widgets/item_list.dart';
+import 'package:moviescout/features/discovery/services/search_service.dart';
 import 'package:moviescout/features/settings/services/ai_service.dart';
+import 'package:moviescout/features/settings/services/search_history_service.dart';
 import 'package:moviescout/features/settings/widgets/ai_model_thinking_selector.dart';
+import 'package:moviescout/features/titles/repositories/local_title_repository.dart';
+import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -36,9 +38,9 @@ class _SearchState extends State<Search> {
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
   final String _searchGroupId = 'search_overlay_group';
-  final double _searchHorizontalPadding = 8.0;
-  final double _searchVerticalPadding = 16.0;
-  final double _overlayHeightOffset = 65.0;
+  final double _searchHorizontalPadding = AppSpacing.xs;
+  final double _searchVerticalPadding = AppSpacing.md;
+  final double _overlayHeightOffset = AppSizes.searchOverlayOffset;
   List<String> _overlaySuggestions = [];
   bool _isAiMode = false;
   String? _selectedAiModel;
@@ -119,7 +121,7 @@ class _SearchState extends State<Search> {
 
     if (text.length >= 3) {
       if (!_isAiMode) {
-        _debounce = Timer(const Duration(milliseconds: 300), () {
+        _debounce = Timer(AppDurations.normal, () {
           if (mounted) {
             searchTitle(_controller.text);
           }
@@ -166,8 +168,8 @@ class _SearchState extends State<Search> {
                 builder: (context, setOverlayState) {
                   _overlaySetState = setOverlayState;
                   return Material(
-                    elevation: 4.0,
-                    borderRadius: BorderRadius.circular(8),
+                    elevation: AppSizes.overlayElevation,
+                    borderRadius: AppRadius.borderSm,
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       shrinkWrap: true,
@@ -178,7 +180,10 @@ class _SearchState extends State<Search> {
                           leading: const Icon(Icons.history),
                           title: Text(suggestion),
                           trailing: IconButton(
-                            icon: const Icon(Icons.close, size: 18),
+                            icon: const Icon(
+                              Icons.close,
+                              size: AppSizes.iconSm,
+                            ),
                             onPressed: () async {
                               await _historyService.delete(suggestion);
                               if (mounted) {
@@ -265,22 +270,24 @@ class _SearchState extends State<Search> {
   }
 
   Widget searchBox() {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final titleTheme = theme.extension<TitleListTheme>()!;
     final textColor = colorScheme.onSurface;
-    final borderColor = colorScheme.onSurface;
+    final borderColor = colorScheme.outline;
 
     return Container(
-      color: colorScheme.secondary,
+      color: titleTheme.controlPanelBackground,
       width: double.infinity,
       padding: EdgeInsets.symmetric(
         horizontal: _searchHorizontalPadding,
         vertical: _searchVerticalPadding,
       ),
       child: Theme(
-        data: Theme.of(context).copyWith(
+        data: theme.copyWith(
           textSelectionTheme: TextSelectionThemeData(
-            selectionColor: textColor.withValues(alpha: 0.5),
-            selectionHandleColor: textColor,
+            selectionColor: titleTheme.searchSelectionColor,
+            selectionHandleColor: titleTheme.searchCursorColor,
           ),
         ),
         child: Column(
@@ -292,16 +299,22 @@ class _SearchState extends State<Search> {
                   child: TextField(
                     controller: _controller,
                     focusNode: _searchFocusNode,
-                    style: TextStyle(color: textColor),
-                    cursorColor: borderColor,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: textColor,
+                    ),
+                    cursorColor: titleTheme.searchCursorColor,
                     minLines: _isAiMode ? 2 : 1,
                     maxLines: _isAiMode ? 2 : 1,
                     textInputAction: TextInputAction.search,
                     decoration: InputDecoration(
+                      filled: true,
+                      fillColor: colorScheme.surface,
                       hintText: _isAiMode
                           ? AppLocalizations.of(context)!.searchAiHint
                           : AppLocalizations.of(context)!.searchBarHint,
-                      hintStyle: TextStyle(color: textColor),
+                      hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                        color: titleTheme.searchHintColor,
+                      ),
                       suffixIconColor: textColor,
                       suffixIcon: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -316,8 +329,8 @@ class _SearchState extends State<Search> {
                               Icons.auto_awesome,
                               color: _isAiMode
                                   ? colorScheme.tertiary
-                                  : textColor.withValues(alpha: 0.5),
-                              size: 24,
+                                  : colorScheme.onSurfaceVariant,
+                              size: AppSizes.iconLg,
                             ),
                             tooltip:
                                 AppLocalizations.of(context)!.searchAiTooltip,
@@ -342,16 +355,19 @@ class _SearchState extends State<Search> {
                         ],
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
+                        borderRadius: AppRadius.borderSm,
                         borderSide: BorderSide(color: borderColor),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
+                        borderRadius: AppRadius.borderSm,
                         borderSide: BorderSide(color: borderColor),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(color: borderColor, width: 2),
+                        borderRadius: AppRadius.borderSm,
+                        borderSide: BorderSide(
+                          color: colorScheme.primary,
+                          width: AppSizes.borderWidthFocused,
+                        ),
                       ),
                     ),
                     onSubmitted: (title) {
@@ -362,7 +378,7 @@ class _SearchState extends State<Search> {
               ],
             ),
             if (_isAiMode) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.xs),
               AiModelThinkingSelector(
                 selectedModel: _selectedAiModel,
                 selectedThinkingLevel: _selectedThinkingLevel,
@@ -428,7 +444,7 @@ class _SearchState extends State<Search> {
         userMessage: _isAiMode ? 'AI search timeout' : 'Search timeout',
       );
       if (mounted) {
-        SnackMessage.showSnackBar(
+        SnackMessage.showErrorSnackBar(
           _isAiMode
               ? AppLocalizations.of(context)!.aiSearchTimeout
               : AppLocalizations.of(context)!.searchTimeout,
@@ -447,7 +463,7 @@ class _SearchState extends State<Search> {
         final msg = e.retrySeconds != null && e.retrySeconds! > 0
             ? l10n.aiRateLimitWithSeconds(e.retrySeconds!)
             : l10n.aiRateLimitGeneric;
-        SnackMessage.showSnackBar(msg, context: context);
+        SnackMessage.showErrorSnackBar(msg, context: context);
       }
     } on AiApiException catch (e, stackTrace) {
       _resetLastSearch();
@@ -457,7 +473,7 @@ class _SearchState extends State<Search> {
         userMessage: 'AI API error (${e.statusCode}): ${e.message}',
       );
       if (mounted) {
-        SnackMessage.showSnackBar(e.message, context: context);
+        SnackMessage.showErrorSnackBar(e.message, context: context);
       }
     } catch (e, stackTrace) {
       _resetLastSearch();
@@ -469,7 +485,7 @@ class _SearchState extends State<Search> {
       if (_isAiMode && mounted) {
         final l10n = AppLocalizations.of(context)!;
         final isKeyMissing = e.toString().contains('not configured');
-        SnackMessage.showSnackBar(
+        SnackMessage.showErrorSnackBar(
           isKeyMissing ? l10n.aiStatusNotConfigured : l10n.aiSearchError,
           context: context,
         );

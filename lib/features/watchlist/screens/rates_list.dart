@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/features/watchlist/services/rateslist_service.dart';
-import 'package:moviescout/core/widgets/item_list.dart';
-import 'package:moviescout/core/widgets/custom_refresh_builder.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
+import 'package:flutter/material.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
+import 'package:moviescout/core/widgets/custom_refresh_builder.dart';
+import 'package:moviescout/core/widgets/item_list.dart';
+import 'package:moviescout/features/watchlist/services/rateslist_service.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class RatesList extends StatefulWidget {
@@ -28,7 +29,7 @@ class _RatesListState extends State<RatesList> {
     _rateslistService = Provider.of<RateslistService>(context, listen: false);
     _rateslistWidget = ItemList(
       _rateslistService,
-      key: ValueKey('rateslist'),
+      key: const ValueKey('rateslist'),
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -86,11 +87,9 @@ class _RatesListState extends State<RatesList> {
           physics: const AlwaysScrollableScrollPhysics(),
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: Center(
-              child: Text(
-                AppLocalizations.of(context)!.emptyRates,
-                textAlign: TextAlign.center,
-              ),
+            child: AppEmptyState(
+              icon: Icons.star_border_rounded,
+              message: AppLocalizations.of(context)!.emptyRates,
             ),
           ),
         ),

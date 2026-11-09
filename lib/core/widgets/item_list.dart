@@ -1,36 +1,38 @@
-import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart' show ListEquality;
-import 'package:moviescout/core/theme/custom_colors.dart';
-import 'package:moviescout/features/settings/services/preferences_service.dart';
-import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
-import 'package:moviescout/core/widgets/custom_refresh_builder.dart';
-import 'package:moviescout/features/settings/services/tmdb_provider_service.dart';
-import 'package:moviescout/core/widgets/bottom_clamping_scroll_physics.dart';
-import 'package:moviescout/features/titles/widgets/title_card.dart';
-import 'package:moviescout/features/people/widgets/person_title_card.dart';
-import 'package:moviescout/features/discovery/widgets/collection_card.dart';
-import 'package:moviescout/core/widgets/list_info_line.dart';
-import 'package:moviescout/core/widgets/drop_down_selector.dart';
+import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/theme/title_list_theme.dart';
+import 'package:moviescout/core/utils/app_constants.dart';
+import 'package:moviescout/core/utils/ui_utils.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
+import 'package:moviescout/core/widgets/bottom_clamping_scroll_physics.dart';
+import 'package:moviescout/core/widgets/custom_refresh_builder.dart';
+import 'package:moviescout/core/widgets/drop_down_selector.dart';
 import 'package:moviescout/core/widgets/list_control_panel.dart';
-import 'package:moviescout/features/discovery/widgets/discovery_control_panel.dart';
-import 'package:moviescout/features/discovery/services/discoverlist_service.dart';
-import 'package:moviescout/features/people/services/tmdb_person_titles_service.dart';
-import 'package:provider/provider.dart';
 import 'package:moviescout/core/widgets/list_controller.dart';
+import 'package:moviescout/core/widgets/list_info_line.dart';
+import 'package:moviescout/core/widgets/searchable_list_state.dart';
+import 'package:moviescout/features/discovery/models/tmdb_collection.dart';
+import 'package:moviescout/features/discovery/services/discoverlist_service.dart';
+import 'package:moviescout/features/discovery/widgets/collection_card.dart';
+import 'package:moviescout/features/discovery/widgets/discovery_control_panel.dart';
+import 'package:moviescout/features/people/models/tmdb_person.dart';
+import 'package:moviescout/features/people/services/tmdb_person_titles_service.dart';
+import 'package:moviescout/features/people/widgets/person_card.dart';
+import 'package:moviescout/features/people/widgets/person_title_card.dart';
+import 'package:moviescout/features/settings/services/preferences_service.dart';
+import 'package:moviescout/features/settings/services/tmdb_provider_service.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/titles/services/tmdb_base_list_service.dart';
+import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
+import 'package:moviescout/features/titles/widgets/title_card.dart';
 import 'package:moviescout/features/watchlist/services/rateslist_service.dart';
 import 'package:moviescout/features/watchlist/widgets/pinned_title_chip.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/core/utils/app_constants.dart';
-import 'package:moviescout/core/widgets/searchable_list_state.dart';
-import 'package:moviescout/features/titles/models/tmdb_title.dart';
-import 'package:moviescout/features/people/models/tmdb_person.dart';
-import 'package:moviescout/features/discovery/models/tmdb_collection.dart';
-import 'package:moviescout/features/people/widgets/person_card.dart';
-import 'package:moviescout/core/utils/ui_utils.dart';
+import 'package:provider/provider.dart';
 
 class ItemList extends StatefulWidget {
   final TmdbBaseListService listService;
@@ -74,7 +76,8 @@ class _ItemListState extends SearchableListState<ItemList> {
   }
 
   List<Widget> _buildTypeAndCountWidgets(BuildContext context) {
-    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+    final theme = Theme.of(context);
+    final titleTheme = theme.extension<TitleListTheme>()!;
     final localizations = AppLocalizations.of(context)!;
     final typeOption = _controller.selectedType;
 
@@ -97,20 +100,17 @@ class _ItemListState extends SearchableListState<ItemList> {
                       _controller.providerListIds.isNotEmpty);
               final showCount = count != null &&
                   (count > 0 || (hasValidActiveFilter && !isLoading));
+              final itemTextStyle = theme.textTheme.bodyLarge?.copyWith(
+                color: textColor,
+              );
               return DropdownSelector(
                 backgroundColor: backgroundColor,
-                textStyle: TextStyle(
-                  color: textColor,
-                  fontSize: 16,
-                ),
-                borderRadius: BorderRadius.circular(5),
+                textStyle: itemTextStyle,
+                borderRadius: AppRadius.borderSm,
                 leading: showCount
                     ? Text(
                         count.toString(),
-                        style: TextStyle(
-                          color: textColor,
-                          fontSize: 16,
-                        ),
+                        style: itemTextStyle,
                       )
                     : null,
                 selectedOption: _controller.getSelectedTypeLabel(localizations),
@@ -141,6 +141,37 @@ class _ItemListState extends SearchableListState<ItemList> {
     );
   }
 
+  Widget _buildItemCard(BuildContext context, Object item) {
+    final service = widget.listService;
+    final supportService = widget.titleListServiceSupport ??
+        widget.listService as TmdbTitleListService;
+
+    if (item is TmdbTitle) {
+      if (service is TmdbPersonTitlesService) {
+        return PersonTitleCard(
+          title: item,
+          tmdbListService: supportService,
+          role: service.role,
+        );
+      }
+      return TitleCard(
+        title: item,
+        tmdbListService: supportService,
+      );
+    } else if (item is TmdbPerson) {
+      return PersonCard(
+        person: item,
+        tmdbListService: supportService,
+      );
+    } else if (item is TmdbCollection) {
+      return CollectionCard(
+        collection: item,
+        tmdbListService: supportService,
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
   Widget _itemList() {
     return ListenableBuilder(
       listenable: Listenable.merge([
@@ -155,115 +186,116 @@ class _ItemListState extends SearchableListState<ItemList> {
             service.loadedItemCount == 0 &&
             (service is TmdbDiscoverlistService || service.hasActiveFilter);
 
+        final scrollPhysics = AlwaysScrollableScrollPhysics(
+          parent: BottomClampingScrollPhysics(
+            topRefreshController: _refreshController,
+            parent: ClampingWithOverscrollPhysics(
+              state: _refreshController,
+            ),
+          ),
+        );
+
         Widget listView;
         if (showEmptyMessage) {
           listView = LayoutBuilder(
             builder: (context, constraints) => SingleChildScrollView(
               controller: _controller.scrollController,
-              physics: AlwaysScrollableScrollPhysics(
-                parent: BottomClampingScrollPhysics(
-                  topRefreshController: _refreshController,
-                  parent: ClampingWithOverscrollPhysics(
-                    state: _refreshController,
-                  ),
-                ),
-              ),
+              physics: scrollPhysics,
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Text(
-                      AppLocalizations.of(context)!.emptyList,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
+                child: AppEmptyState(
+                  icon: Icons.movie_filter_outlined,
+                  message: AppLocalizations.of(context)!.emptyList,
                 ),
               ),
             ),
           );
         } else {
-          listView = Scrollbar(
-            controller: _controller.scrollController,
-            child: ListView.builder(
-              key: const PageStorageKey('TitleListView'),
-              controller: _controller.scrollController,
-              physics: AlwaysScrollableScrollPhysics(
-                parent: BottomClampingScrollPhysics(
-                  topRefreshController: _refreshController,
-                  parent: ClampingWithOverscrollPhysics(
-                    state: _refreshController,
-                  ),
-                ),
-              ),
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              itemCount: service.loadedItemCount,
-              itemBuilder: (context, index) {
-                final item = service.getItem(index);
-                if (item == null) {
-                  return const SizedBox.shrink();
-                }
-                return Builder(
-                  builder: (innerContext) {
-                    final mediaQuery = MediaQuery.of(innerContext);
+          listView = LayoutBuilder(
+            builder: (context, constraints) {
+              final isGrid = constraints.maxWidth >= AppBreakpoints.compact;
+              final titleTheme = Theme.of(context).extension<CustomColors>()!;
 
-                    final titleTheme =
-                        Theme.of(context).extension<CustomColors>()!;
-
-                    TmdbTitleListService supportService =
-                        widget.titleListServiceSupport ??
-                            widget.listService as TmdbTitleListService;
-                    Widget card;
-                    if (item is TmdbTitle) {
-                      if (service is TmdbPersonTitlesService) {
-                        card = PersonTitleCard(
-                          title: item,
-                          tmdbListService: supportService,
-                          role: service.role,
-                        );
-                      } else {
-                        card = TitleCard(
-                          title: item,
-                          tmdbListService: supportService,
-                        );
+              if (isGrid) {
+                return Scrollbar(
+                  controller: _controller.scrollController,
+                  child: GridView.builder(
+                    key: const PageStorageKey('TitleListView'),
+                    controller: _controller.scrollController,
+                    padding: AppSpacing.screenPadding,
+                    physics: scrollPhysics,
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: AppBreakpoints.maxGridCardExtent,
+                      mainAxisExtent: TitleCard.cardHeight,
+                      crossAxisSpacing: AppSpacing.sm,
+                      mainAxisSpacing: AppSpacing.sm,
+                    ),
+                    itemCount: service.loadedItemCount,
+                    itemBuilder: (context, index) {
+                      final item = service.getItem(index);
+                      if (item == null) {
+                        return const SizedBox.shrink();
                       }
-                    } else if (item is TmdbPerson) {
-                      card = PersonCard(
-                        person: item,
-                        tmdbListService: supportService,
+                      return Builder(
+                        builder: (innerContext) {
+                          final mediaQuery = MediaQuery.of(innerContext);
+                          return MediaQuery(
+                            data: mediaQuery.copyWith(
+                              textScaler: TextScaler.linear(
+                                UiUtils.scaleFactor(
+                                    innerContext, 1.0, 1.0, 1.3),
+                              ),
+                            ),
+                            child: _buildItemCard(innerContext, item),
+                          );
+                        },
                       );
-                    } else if (item is TmdbCollection) {
-                      card = CollectionCard(
-                        collection: item,
-                        tmdbListService: supportService,
-                      );
-                    } else {
-                      card = const SizedBox.shrink();
-                    }
+                    },
+                  ),
+                );
+              }
 
-                    return MediaQuery(
-                      data: mediaQuery.copyWith(
-                        textScaler: TextScaler.linear(
-                            UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
-                      ),
-                      child: Column(
-                        children: [
-                          card,
-                          Divider(
-                            height: 1,
-                            color: titleTheme.dividerColor,
+              return Scrollbar(
+                controller: _controller.scrollController,
+                child: ListView.builder(
+                  key: const PageStorageKey('TitleListView'),
+                  controller: _controller.scrollController,
+                  physics: scrollPhysics,
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  itemCount: service.loadedItemCount,
+                  itemBuilder: (context, index) {
+                    final item = service.getItem(index);
+                    if (item == null) {
+                      return const SizedBox.shrink();
+                    }
+                    return Builder(
+                      builder: (innerContext) {
+                        final mediaQuery = MediaQuery.of(innerContext);
+                        return MediaQuery(
+                          data: mediaQuery.copyWith(
+                            textScaler: TextScaler.linear(
+                              UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3),
+                            ),
                           ),
-                        ],
-                      ),
+                          child: Column(
+                            children: [
+                              _buildItemCard(innerContext, item),
+                              Divider(
+                                height: AppSizes.borderWidthRegular,
+                                color: titleTheme.dividerColor,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     );
                   },
-                );
-              },
-            ),
+                ),
+              );
+            },
           );
         }
 
@@ -278,7 +310,7 @@ class _ItemListState extends SearchableListState<ItemList> {
         if (service.isRefreshable) {
           content = CustomRefreshIndicator(
             controller: _refreshController,
-            offsetToArmed: 100,
+            offsetToArmed: AppSizes.refreshOffsetToArmed,
             onRefresh: () async {
               if (widget.listService.isLoading.value) {
                 return;
@@ -312,7 +344,8 @@ class _ItemListState extends SearchableListState<ItemList> {
           return const SizedBox.shrink();
         }
 
-        final titleTheme = Theme.of(context).extension<CustomColors>()!;
+        final theme = Theme.of(context);
+        final titleTheme = theme.extension<CustomColors>()!;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,24 +360,26 @@ class _ItemListState extends SearchableListState<ItemList> {
               },
               child: Padding(
                 padding: const EdgeInsets.only(
-                    left: 12.0, top: 8.0, bottom: 4.0, right: 12.0),
+                  left: AppSpacing.sm,
+                  top: AppSpacing.xs,
+                  bottom: AppSpacing.xxs,
+                  right: AppSpacing.sm,
+                ),
                 child: Row(
                   children: [
                     Text(
                       AppLocalizations.of(context)!.watchingNow,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AppSpacing.xxs),
                     Icon(
                       _isPinnedSectionExpanded
                           ? Icons.arrow_drop_up
                           : Icons.arrow_drop_down,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      size: 20,
+                      color: theme.colorScheme.onSurfaceVariant,
+                      size: AppSizes.iconMd,
                     ),
                   ],
                 ),
@@ -355,7 +390,8 @@ class _ItemListState extends SearchableListState<ItemList> {
                 height: PinnedTitleChip.cardHeight,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
                   itemCount: service.pinnedTitles.length,
                   itemBuilder: (context, index) {
                     return PinnedTitleChip(
@@ -365,9 +401,9 @@ class _ItemListState extends SearchableListState<ItemList> {
                   },
                 ),
               ),
-            const SizedBox(height: 8.0),
+            const SizedBox(height: AppSpacing.xs),
             Divider(
-              height: 1,
+              height: AppSizes.borderWidthRegular,
               color: titleTheme.dividerColor,
             ),
           ],

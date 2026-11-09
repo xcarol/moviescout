@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/features/discovery/models/discovery_options.dart';
-import 'package:moviescout/core/theme/title_list_theme.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
-import 'package:moviescout/features/discovery/services/discoverlist_service.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/theme/title_list_theme.dart';
 import 'package:moviescout/core/utils/snack_bar.dart';
 import 'package:moviescout/core/widgets/drop_down_selector.dart';
+import 'package:moviescout/features/discovery/models/discovery_options.dart';
+import 'package:moviescout/features/discovery/services/discoverlist_service.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 
 class DiscoveryControlPanel extends StatelessWidget {
   final TmdbDiscoverlistService discoverlistService;
@@ -24,7 +25,11 @@ class DiscoveryControlPanel extends StatelessWidget {
 
     return Container(
       color: titleTheme.controlPanelBackground,
-      padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+      padding: const EdgeInsets.only(
+        left: AppSpacing.xs,
+        right: AppSpacing.xs,
+        bottom: AppSpacing.xs,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -43,21 +48,21 @@ class DiscoveryControlPanel extends StatelessWidget {
                 child: _buildThemeSelector(
                     context, titleTheme, l10n, options, locale),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.xs),
               Expanded(
                 child: _buildModeSelector(
                     context, titleTheme, l10n, options, locale),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.xs),
           Row(
             children: [
               Expanded(
                 child: _buildEpochSelector(
                     context, titleTheme, l10n, options, locale),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.xs),
               Expanded(
                 child: _buildDurationSelector(
                     context, titleTheme, l10n, options, locale),
@@ -69,6 +74,46 @@ class DiscoveryControlPanel extends StatelessWidget {
     );
   }
 
+  Widget _buildDropdown({
+    required BuildContext context,
+    required TitleListTheme titleTheme,
+    required bool isActive,
+    required String currentLabel,
+    required List<String> labels,
+    required ValueChanged<String> onSelected,
+    double? maxMenuHeight,
+  }) {
+    final theme = Theme.of(context);
+    final backgroundColor = isActive
+        ? titleTheme.controlPanelActiveFilterBackground
+        : titleTheme.controlPanelInactiveFilterBackground;
+    final foregroundColor = isActive
+        ? titleTheme.controlPanelActiveFilterForeground
+        : titleTheme.controlPanelInactiveFilterForeground;
+
+    return DropdownSelector(
+      selectedOption: currentLabel,
+      options: labels,
+      isExpanded: true,
+      buttonBackgroundColor: backgroundColor,
+      border: Border.all(
+        color: isActive ? backgroundColor : theme.colorScheme.outline,
+      ),
+      borderRadius: AppRadius.borderSm,
+      textStyle: theme.textTheme.bodyMedium?.copyWith(
+        color: foregroundColor,
+        fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+      ),
+      arrowIcon: Icon(
+        Icons.arrow_drop_down,
+        color: foregroundColor,
+        size: AppSizes.iconMd,
+      ),
+      maxMenuHeight: maxMenuHeight,
+      onSelected: onSelected,
+    );
+  }
+
   Widget _buildThemeSelector(
     BuildContext context,
     TitleListTheme titleTheme,
@@ -77,13 +122,6 @@ class DiscoveryControlPanel extends StatelessWidget {
     Locale locale,
   ) {
     final isActive = options.theme != DiscoveryTheme.any;
-    final backgroundColor = isActive
-        ? titleTheme.controlPanelActiveFilterBackground
-        : titleTheme.controlPanelInactiveFilterBackground;
-    final foregroundColor = isActive
-        ? titleTheme.controlPanelActiveFilterForeground
-        : titleTheme.controlPanelInactiveFilterForeground;
-
     final themeOptions = DiscoveryTheme.values;
     final labels = themeOptions.map((t) {
       final def = DiscoveryOptions.themes[t]!;
@@ -94,20 +132,13 @@ class DiscoveryControlPanel extends StatelessWidget {
     final currentLabel =
         '${currentDef.emoji} ${DiscoveryOptions.getThemeLabel(context, options.theme)}';
 
-    return DropdownSelector(
-      selectedOption: currentLabel,
-      options: labels,
-      isExpanded: true,
-      buttonBackgroundColor: backgroundColor,
-      border: Border.all(color: titleTheme.controlPanelForeground),
-      borderRadius: BorderRadius.circular(5),
-      textStyle: TextStyle(
-        fontSize: 14,
-        color: foregroundColor,
-        fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-      ),
-      arrowIcon: Icon(Icons.arrow_drop_down, color: foregroundColor, size: 20),
-      maxMenuHeight: 320,
+    return _buildDropdown(
+      context: context,
+      titleTheme: titleTheme,
+      isActive: isActive,
+      currentLabel: currentLabel,
+      labels: labels,
+      maxMenuHeight: AppSizes.dropdownMaxMenuHeight,
       onSelected: (selectedLabel) {
         final index = labels.indexOf(selectedLabel);
         if (index != -1) {
@@ -129,32 +160,18 @@ class DiscoveryControlPanel extends StatelessWidget {
     Locale locale,
   ) {
     final isActive = options.mode != DiscoveryMode.forYou;
-    final backgroundColor = isActive
-        ? titleTheme.controlPanelActiveFilterBackground
-        : titleTheme.controlPanelInactiveFilterBackground;
-    final foregroundColor = isActive
-        ? titleTheme.controlPanelActiveFilterForeground
-        : titleTheme.controlPanelInactiveFilterForeground;
-
     final modeOptions = DiscoveryMode.values;
     final labels = modeOptions
         .map((m) => DiscoveryOptions.getModeLabel(context, m))
         .toList();
     final currentLabel = DiscoveryOptions.getModeLabel(context, options.mode);
 
-    return DropdownSelector(
-      selectedOption: currentLabel,
-      options: labels,
-      isExpanded: true,
-      buttonBackgroundColor: backgroundColor,
-      border: Border.all(color: titleTheme.controlPanelForeground),
-      borderRadius: BorderRadius.circular(5),
-      textStyle: TextStyle(
-        fontSize: 14,
-        color: foregroundColor,
-        fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-      ),
-      arrowIcon: Icon(Icons.arrow_drop_down, color: foregroundColor, size: 20),
+    return _buildDropdown(
+      context: context,
+      titleTheme: titleTheme,
+      isActive: isActive,
+      currentLabel: currentLabel,
+      labels: labels,
       onSelected: (selectedLabel) {
         final index = labels.indexOf(selectedLabel);
         if (index != -1) {
@@ -176,32 +193,18 @@ class DiscoveryControlPanel extends StatelessWidget {
     Locale locale,
   ) {
     final isActive = options.epoch != DiscoveryEpoch.all;
-    final backgroundColor = isActive
-        ? titleTheme.controlPanelActiveFilterBackground
-        : titleTheme.controlPanelInactiveFilterBackground;
-    final foregroundColor = isActive
-        ? titleTheme.controlPanelActiveFilterForeground
-        : titleTheme.controlPanelInactiveFilterForeground;
-
     final epochOptions = DiscoveryEpoch.values;
     final labels = epochOptions
         .map((e) => DiscoveryOptions.getEpochLabel(context, e))
         .toList();
     final currentLabel = DiscoveryOptions.getEpochLabel(context, options.epoch);
 
-    return DropdownSelector(
-      selectedOption: currentLabel,
-      options: labels,
-      isExpanded: true,
-      buttonBackgroundColor: backgroundColor,
-      border: Border.all(color: titleTheme.controlPanelForeground),
-      borderRadius: BorderRadius.circular(5),
-      textStyle: TextStyle(
-        fontSize: 14,
-        color: foregroundColor,
-        fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-      ),
-      arrowIcon: Icon(Icons.arrow_drop_down, color: foregroundColor, size: 20),
+    return _buildDropdown(
+      context: context,
+      titleTheme: titleTheme,
+      isActive: isActive,
+      currentLabel: currentLabel,
+      labels: labels,
       onSelected: (selectedLabel) {
         final index = labels.indexOf(selectedLabel);
         if (index != -1) {
@@ -223,13 +226,6 @@ class DiscoveryControlPanel extends StatelessWidget {
     Locale locale,
   ) {
     final isActive = options.duration != DiscoveryDuration.any;
-    final backgroundColor = isActive
-        ? titleTheme.controlPanelActiveFilterBackground
-        : titleTheme.controlPanelInactiveFilterBackground;
-    final foregroundColor = isActive
-        ? titleTheme.controlPanelActiveFilterForeground
-        : titleTheme.controlPanelInactiveFilterForeground;
-
     final durationOptions = DiscoveryDuration.values;
     final labels = durationOptions
         .map((d) => DiscoveryOptions.getDurationLabel(context, d))
@@ -237,19 +233,12 @@ class DiscoveryControlPanel extends StatelessWidget {
     final currentLabel =
         DiscoveryOptions.getDurationLabel(context, options.duration);
 
-    return DropdownSelector(
-      selectedOption: currentLabel,
-      options: labels,
-      isExpanded: true,
-      buttonBackgroundColor: backgroundColor,
-      border: Border.all(color: titleTheme.controlPanelForeground),
-      borderRadius: BorderRadius.circular(5),
-      textStyle: TextStyle(
-        fontSize: 14,
-        color: foregroundColor,
-        fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-      ),
-      arrowIcon: Icon(Icons.arrow_drop_down, color: foregroundColor, size: 20),
+    return _buildDropdown(
+      context: context,
+      titleTheme: titleTheme,
+      isActive: isActive,
+      currentLabel: currentLabel,
+      labels: labels,
       onSelected: (selectedLabel) {
         final index = labels.indexOf(selectedLabel);
         if (index != -1) {
@@ -294,10 +283,10 @@ class DiscoveryControlPanel extends StatelessWidget {
           IconButton(
             visualDensity: VisualDensity.compact,
             padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+            constraints: AppSizes.compactActionConstraints,
             icon: Icon(
               Icons.tv,
-              size: 20,
+              size: AppSizes.iconMd,
               color: isActive ? activeColor : inactiveColor,
             ),
             onPressed: () {
@@ -311,7 +300,7 @@ class DiscoveryControlPanel extends StatelessWidget {
               );
             },
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: AppSpacing.xxs),
           Switch(
             value: isActive,
             onChanged: (bool value) {
@@ -342,10 +331,10 @@ class DiscoveryControlPanel extends StatelessWidget {
     return IconButton(
       visualDensity: VisualDensity.compact,
       padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+      constraints: AppSizes.suffixIconConstraints,
       icon: Icon(
         hasFilters ? Icons.filter_alt_off : Icons.filter_alt,
-        size: 20,
+        size: AppSizes.iconMd,
         color: hasFilters ? activeColor : disabledColor,
       ),
       tooltip: l10n.discoveryResetFilters,

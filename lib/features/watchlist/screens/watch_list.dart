@@ -1,13 +1,14 @@
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:moviescout/l10n/app_localizations.dart';
-import "package:moviescout/features/auth/services/supabase_auth_service.dart";
 import 'package:moviescout/core/navigation/app_navigator.dart';
-import 'package:moviescout/features/watchlist/services/watchlist_service.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
+import 'package:moviescout/core/widgets/custom_refresh_builder.dart';
+import 'package:moviescout/core/widgets/item_list.dart';
+import 'package:moviescout/features/auth/services/supabase_auth_service.dart';
 import 'package:moviescout/features/discovery/services/discover_promotion_manager.dart';
 import 'package:moviescout/features/discovery/widgets/discover_promo_card.dart';
-import 'package:moviescout/core/widgets/item_list.dart';
-import 'package:moviescout/core/widgets/custom_refresh_builder.dart';
-import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
+import 'package:moviescout/features/watchlist/services/watchlist_service.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class WatchList extends StatefulWidget {
@@ -40,7 +41,7 @@ class _WatchListState extends State<WatchList> {
     _watchlistService = Provider.of<WatchlistService>(context, listen: false);
     _watchlistWidget = ItemList(
       _watchlistService,
-      key: ValueKey('watchlist'),
+      key: const ValueKey('watchlist'),
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -93,45 +94,26 @@ class _WatchListState extends State<WatchList> {
   }
 
   Widget emptyBody() {
-    List<Widget> children = [];
+    final l10n = AppLocalizations.of(context)!;
+    final isLoggedIn = Provider.of<SupabaseAuthService>(context).isLoggedIn;
 
-    final isGoogleLoggedIn =
-        Provider.of<SupabaseAuthService>(context).isLoggedIn;
-    if (isGoogleLoggedIn) {
-      children.add(
-        Text(
-          AppLocalizations.of(context)!.messageEmptyList,
-          textAlign: TextAlign.center,
-        ),
-      );
-    } else {
-      children.add(
-        Text(
-          AppLocalizations.of(context)!.messageEmptySearch,
-          textAlign: TextAlign.center,
-        ),
-      );
-      children.add(
-        const SizedBox(height: 20.0),
-      );
-      children.add(
-        Text(
-          AppLocalizations.of(context)!.messageEmptyOptions,
-          textAlign: TextAlign.center,
-        ),
-      );
-      children.add(
-        const SizedBox(height: 10.0),
-      );
-      children.add(
-        OutlinedButton(
-          onPressed: () {
-            context.toLogin();
-          },
-          child: Text(AppLocalizations.of(context)!.messageEmptyLogin),
-        ),
-      );
-    }
+    final emptyState = isLoggedIn
+        ? AppEmptyState(
+            icon: Icons.bookmark_border_rounded,
+            message: l10n.messageEmptyList,
+          )
+        : AppEmptyState(
+            icon: Icons.bookmark_border_rounded,
+            message: l10n.messageEmptySearch,
+            subtitle: l10n.messageEmptyOptions,
+            action: OutlinedButton(
+              onPressed: () {
+                context.toLogin();
+              },
+              child: Text(l10n.messageEmptyLogin),
+            ),
+          );
+
     return CustomRefreshIndicator(
       onRefresh: () async {
         await _watchlistService.syncFromServer(
@@ -148,12 +130,7 @@ class _WatchListState extends State<WatchList> {
           physics: const AlwaysScrollableScrollPhysics(),
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: children,
-              ),
-            ),
+            child: emptyState,
           ),
         ),
       ),
