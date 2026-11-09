@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_colors.dart';
+import 'package:moviescout/core/theme/app_theme.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/theme/title_list_theme.dart';
 
@@ -13,8 +15,10 @@ class ThemeService with ChangeNotifier {
 
   ColorScheme _lightColorScheme = lightColorSchemeDefault;
   CustomColors _lightCustomColors = lightCustomColorsDefault;
-  TitleListTheme _lightTitleListTheme =
-      _createTitleListTheme(lightColorSchemeDefault, lightCustomColorsDefault);
+  TitleListTheme _lightTitleListTheme = TitleListTheme.fromColorScheme(
+    lightColorSchemeDefault,
+    lightCustomColorsDefault,
+  );
 
   ColorScheme get lightColorScheme => _lightColorScheme;
   CustomColors get lightCustomColors => _lightCustomColors;
@@ -22,39 +26,31 @@ class ThemeService with ChangeNotifier {
 
   ColorScheme _darkColorScheme = darkColorSchemeDefault;
   CustomColors _darkCustomColors = darkCustomColorsDefault;
-  TitleListTheme _darkTitleListTheme =
-      _createTitleListTheme(darkColorSchemeDefault, darkCustomColorsDefault);
+  TitleListTheme _darkTitleListTheme = TitleListTheme.fromColorScheme(
+    darkColorSchemeDefault,
+    darkCustomColorsDefault,
+  );
 
   ColorScheme get darkColorScheme => _darkColorScheme;
   CustomColors get darkCustomColors => _darkCustomColors;
   TitleListTheme get darkTitleListTheme => _darkTitleListTheme;
 
-  ScrollbarThemeData get lightScrollbarTheme => ScrollbarThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.dragged)) {
-            return _lightColorScheme.onSurfaceVariant.withValues(alpha: 0.8);
-          }
-          return _lightColorScheme.onSurfaceVariant.withValues(alpha: 0.5);
-        }),
-        thickness: WidgetStateProperty.all(5.0),
-        radius: const Radius.circular(8),
-        thumbVisibility: WidgetStateProperty.all(false),
-        trackVisibility: WidgetStateProperty.all(false),
-        interactive: true,
+  ScrollbarThemeData get lightScrollbarTheme =>
+      AppTheme.buildScrollbarTheme(_lightColorScheme);
+
+  ScrollbarThemeData get darkScrollbarTheme =>
+      AppTheme.buildScrollbarTheme(_darkColorScheme);
+
+  ThemeData get lightTheme => AppTheme.light(
+        colorScheme: _lightColorScheme,
+        customColors: _lightCustomColors,
+        titleListTheme: _lightTitleListTheme,
       );
 
-  ScrollbarThemeData get darkScrollbarTheme => ScrollbarThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.dragged)) {
-            return _darkColorScheme.onSurfaceVariant.withValues(alpha: 0.8);
-          }
-          return _darkColorScheme.onSurfaceVariant.withValues(alpha: 0.5);
-        }),
-        thickness: WidgetStateProperty.all(5.0),
-        radius: const Radius.circular(8),
-        thumbVisibility: WidgetStateProperty.all(false),
-        trackVisibility: WidgetStateProperty.all(false),
-        interactive: true,
+  ThemeData get darkTheme => AppTheme.dark(
+        colorScheme: _darkColorScheme,
+        customColors: _darkCustomColors,
+        titleListTheme: _darkTitleListTheme,
       );
 
   void setupTheme() {
@@ -74,72 +70,21 @@ class ThemeService with ChangeNotifier {
   ) {
     _lightColorScheme = lightColorScheme;
     _lightCustomColors = lightCustomColors;
-    _lightTitleListTheme =
-        _createTitleListTheme(lightColorScheme, lightCustomColors);
+    _lightTitleListTheme = TitleListTheme.fromColorScheme(
+      lightColorScheme,
+      lightCustomColors,
+    );
     _darkColorScheme = darkColorScheme;
     _darkCustomColors = darkCustomColors;
-    _darkTitleListTheme =
-        _createTitleListTheme(darkColorScheme, darkCustomColors);
-  }
-
-  static TitleListTheme _createTitleListTheme(
-      ColorScheme colorScheme, CustomColors customColors) {
-    return TitleListTheme(
-      infoLineBackground: colorScheme.primaryContainer,
-      infoLineActiveFilterBackground: colorScheme.surface,
-      infoLineActiveFilterForeground: colorScheme.primary,
-      infoLineInactiveFilterBackground: colorScheme.surface,
-      infoLineInactiveFilterForeground: colorScheme.onSurface,
-      controlPanelBackground: colorScheme.secondary,
-      controlPanelForeground: colorScheme.onSurface,
-      controlPanelActiveFilterBackground: colorScheme.primary,
-      controlPanelActiveFilterForeground: colorScheme.onSurface,
-      controlPanelInactiveFilterBackground: colorScheme.secondary,
-      controlPanelInactiveFilterForeground: colorScheme.onSurface,
-      searchCursorColor: colorScheme.onSurface,
-      searchHintColor: colorScheme.onSurface,
-      searchSelectionColor: colorScheme.onSurface.withValues(alpha: 0.5),
+    _darkTitleListTheme = TitleListTheme.fromColorScheme(
+      darkColorScheme,
+      darkCustomColors,
     );
   }
 
-  static ColorScheme lightColorSchemeDefault = ColorScheme(
-    brightness: Brightness.light,
-    primary: Color.fromARGB(0xFF, 0x10, 0xB9, 0x81),
-    onPrimary: Color.fromARGB(0xFF, 0x12, 0x12, 0x12),
-    primaryContainer: Color.fromARGB(0xFF, 0x12, 0x12, 0x12),
-    onPrimaryContainer: Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
-    secondary: Color.fromARGB(0xFF, 0x33, 0x33, 0x33),
-    onSecondary: Color.fromARGB(0xFF, 0xFF, 0xFF, 0xFF),
-    tertiary: Color.fromARGB(0xFF, 0xE5, 0xBA, 0x73),
-    onTertiary: Color.fromARGB(0xFF, 0x33, 0x33, 0x33),
-    error: Color.fromARGB(0xFF, 0x33, 0x33, 0x33),
-    onError: Colors.red,
-    surface: Color.fromARGB(0xFF, 0x1E, 0x1E, 0x1E),
-    onSurface: Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
-    onSurfaceVariant: Color.fromARGB(0xFF, 0x9E, 0x9E, 0x9E),
-  );
+  static ColorScheme lightColorSchemeDefault = AppColors.lightColorScheme;
+  static CustomColors lightCustomColorsDefault = AppColors.lightCustomColors;
 
-  static CustomColors lightCustomColorsDefault = CustomColors(
-    inWatchlist: lightColorSchemeDefault.primary,
-    notInWatchlist: lightColorSchemeDefault.onSurfaceVariant,
-    ratedTitle: lightColorSchemeDefault.tertiary,
-    userRatedTitle: lightColorSchemeDefault.primary,
-    followingTitle: lightColorSchemeDefault.primary,
-    pinnedTitle: lightColorSchemeDefault.tertiary,
-    navigationBarSelected: lightColorSchemeDefault.primary,
-    navigationBarNotSelected: Color.fromARGB(0xFF, 0x8E, 0x8E, 0x8E),
-    chipCardBackground: Color.fromARGB(0xFF, 0x2B, 0x2B, 0x2B),
-    dividerColor: lightColorSchemeDefault.secondary,
-    bottomNavigationBarBackground: lightColorSchemeDefault.secondary,
-    appBarBackground: lightColorSchemeDefault.primaryContainer,
-    appBarText: lightColorSchemeDefault.onSurface,
-    watchedOverlayColor: Colors.black54,
-    destructiveAction: Color.fromARGB(0xFF, 0xFF, 0x52, 0x52),
-    followingUserRatedTitle: Color.fromARGB(0xFF, 0x2D, 0xD4, 0xBF),
-    badgeColor: Color.fromARGB(0xFF, 0xFF, 0x52, 0x52),
-  );
-
-  static ColorScheme darkColorSchemeDefault =
-      lightColorSchemeDefault.copyWith(brightness: Brightness.dark);
-  static CustomColors darkCustomColorsDefault = lightCustomColorsDefault;
+  static ColorScheme darkColorSchemeDefault = AppColors.darkColorScheme;
+  static CustomColors darkCustomColorsDefault = AppColors.darkCustomColors;
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/custom_colors.dart';
 
 @immutable
 class TitleListTheme extends ThemeExtension<TitleListTheme> {
@@ -6,13 +7,11 @@ class TitleListTheme extends ThemeExtension<TitleListTheme> {
   final Color controlPanelForeground;
   final Color infoLineBackground;
 
-  // InfoLine Filter Colors
   final Color infoLineActiveFilterBackground;
   final Color infoLineActiveFilterForeground;
   final Color infoLineInactiveFilterBackground;
   final Color infoLineInactiveFilterForeground;
 
-  // ControlPanel Filter Colors
   final Color controlPanelActiveFilterBackground;
   final Color controlPanelActiveFilterForeground;
   final Color controlPanelInactiveFilterBackground;
@@ -38,6 +37,28 @@ class TitleListTheme extends ThemeExtension<TitleListTheme> {
     required this.searchHintColor,
     required this.searchSelectionColor,
   });
+
+  factory TitleListTheme.fromColorScheme(
+    ColorScheme colorScheme,
+    CustomColors customColors,
+  ) {
+    return TitleListTheme(
+      infoLineBackground: colorScheme.surfaceContainer,
+      infoLineActiveFilterBackground: colorScheme.primaryContainer,
+      infoLineActiveFilterForeground: colorScheme.onPrimaryContainer,
+      infoLineInactiveFilterBackground: colorScheme.surfaceContainerLow,
+      infoLineInactiveFilterForeground: colorScheme.onSurface,
+      controlPanelBackground: colorScheme.surfaceContainerHigh,
+      controlPanelForeground: colorScheme.onSurface,
+      controlPanelActiveFilterBackground: colorScheme.primary,
+      controlPanelActiveFilterForeground: colorScheme.onPrimary,
+      controlPanelInactiveFilterBackground: colorScheme.surfaceContainerLow,
+      controlPanelInactiveFilterForeground: colorScheme.onSurface,
+      searchCursorColor: colorScheme.primary,
+      searchHintColor: colorScheme.onSurfaceVariant,
+      searchSelectionColor: colorScheme.primary.withValues(alpha: 0.3),
+    );
+  }
 
   @override
   TitleListTheme copyWith({

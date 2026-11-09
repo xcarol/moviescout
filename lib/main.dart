@@ -360,32 +360,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           .map((e) => LanguageService.parseLocale(e))
           .toList(),
       locale: languageProvider.locale,
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-        colorScheme: themeProvider.lightColorScheme,
-        scrollbarTheme: themeProvider.lightScrollbarTheme,
-        badgeTheme: BadgeThemeData(
-          backgroundColor: themeProvider.lightCustomColors.badgeColor,
-        ),
-        extensions: <ThemeExtension<dynamic>>[
-          themeProvider.lightCustomColors,
-          themeProvider.lightTitleListTheme,
-        ],
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        colorScheme: themeProvider.darkColorScheme,
-        scrollbarTheme: themeProvider.darkScrollbarTheme,
-        badgeTheme: BadgeThemeData(
-          backgroundColor: themeProvider.darkCustomColors.badgeColor,
-        ),
-        extensions: <ThemeExtension<dynamic>>[
-          themeProvider.darkCustomColors,
-          themeProvider.darkTitleListTheme,
-        ],
-      ),
+      theme: themeProvider.lightTheme,
+      darkTheme: themeProvider.darkTheme,
       title: 'MovieScout',
       home: const MainScreen(),
       scaffoldMessengerKey: scaffoldMessengerKey,
@@ -411,19 +387,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         );
       },
       builder: (context, child) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          final statusBarBrightness = Brightness.light;
-          final navBarBrightness = Brightness.light;
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final iconBrightness = isDark ? Brightness.light : Brightness.dark;
 
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
           SystemChrome.setSystemUIOverlayStyle(
             SystemUiOverlayStyle(
               systemNavigationBarColor: Colors.transparent,
               systemNavigationBarContrastEnforced: false,
-              systemNavigationBarIconBrightness: navBarBrightness,
+              systemNavigationBarIconBrightness: iconBrightness,
               statusBarColor: Colors.transparent,
               systemStatusBarContrastEnforced: false,
-              statusBarIconBrightness: statusBarBrightness,
+              statusBarIconBrightness: iconBrightness,
             ),
           );
         });
