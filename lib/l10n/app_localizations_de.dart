@@ -511,7 +511,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rate => 'Bewerten';
 
   @override
-  String get watchOn => 'Ansehen auf';
+  String get watchOn => 'Weitere Informationen';
 
   @override
   String get status => 'Status';

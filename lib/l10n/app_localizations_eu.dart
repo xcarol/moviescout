@@ -508,7 +508,7 @@ class AppLocalizationsEu extends AppLocalizations {
   String get rate => 'Tarifa';
 
   @override
-  String get watchOn => 'Ikusi';
+  String get watchOn => 'Informazio gehiago';
 
   @override
   String get status => 'Estatua';

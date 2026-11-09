@@ -507,7 +507,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get rate => 'Valuta';
 
   @override
-  String get watchOn => 'Guarda su';
+  String get watchOn => 'Ulteriori informazioni';
 
   @override
   String get status => 'Stato';

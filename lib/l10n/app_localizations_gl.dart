@@ -508,7 +508,7 @@ class AppLocalizationsGl extends AppLocalizations {
   String get rate => 'Valora';
 
   @override
-  String get watchOn => 'Ver en';
+  String get watchOn => 'Máis información';
 
   @override
   String get status => 'Estado';

@@ -507,7 +507,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get rate => 'Valora';
 
   @override
-  String get watchOn => 'Ver en';
+  String get watchOn => 'Más información';
 
   @override
   String get status => 'Estado';
@@ -1723,7 +1723,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get rate => 'Califica';
 
   @override
-  String get watchOn => 'Ver en';
+  String get watchOn => 'Más información';
 
   @override
   String get status => 'Estado';

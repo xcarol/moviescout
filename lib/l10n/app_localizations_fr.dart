@@ -510,7 +510,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get rate => 'Noter';
 
   @override
-  String get watchOn => 'Regarder sur';
+  String get watchOn => 'Plus d\'informations';
 
   @override
   String get status => 'Statut';

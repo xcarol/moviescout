@@ -506,7 +506,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get rate => 'Valora';
 
   @override
-  String get watchOn => 'Veure a';
+  String get watchOn => 'Més informació';
 
   @override
   String get status => 'Estat';

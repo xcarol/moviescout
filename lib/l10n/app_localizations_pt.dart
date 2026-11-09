@@ -508,7 +508,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get rate => 'Avaliar';
 
   @override
-  String get watchOn => 'Assistir em';
+  String get watchOn => 'Mais informações';
 
   @override
   String get status => 'Status';
@@ -1725,7 +1725,7 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   String get rate => 'Avaliar';
 
   @override
-  String get watchOn => 'Ver em';
+  String get watchOn => 'Mais informações';
 
   @override
   String get status => 'Status';

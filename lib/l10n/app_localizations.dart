@@ -1065,7 +1065,7 @@ abstract class AppLocalizations {
   /// No description provided for @watchOn.
   ///
   /// In en, this message translates to:
-  /// **'Watch on'**
+  /// **'More information'**
   String get watchOn;
 
   /// No description provided for @status.

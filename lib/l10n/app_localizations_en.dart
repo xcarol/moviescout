@@ -508,7 +508,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rate => 'Rate';
 
   @override
-  String get watchOn => 'Watch on';
+  String get watchOn => 'More information';
 
   @override
   String get status => 'Status';
