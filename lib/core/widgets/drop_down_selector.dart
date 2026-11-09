@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 
 class DropdownSelector extends StatelessWidget {
   final String selectedOption;
@@ -35,8 +36,12 @@ class DropdownSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MenuController controller = MenuController();
-    final TextStyle effectiveTextStyle = textStyle ?? TextStyle(fontSize: 16);
-    final Icon effectiveArrowIcon = arrowIcon ?? Icon(Icons.arrow_drop_down);
+    final theme = Theme.of(context);
+    final TextStyle effectiveTextStyle =
+        textStyle ?? theme.textTheme.bodyLarge!;
+    final Icon effectiveArrowIcon =
+        arrowIcon ?? const Icon(Icons.arrow_drop_down);
+    final effectiveRadius = borderRadius ?? AppRadius.borderSm;
 
     return MenuAnchor(
       controller: controller,
@@ -48,36 +53,46 @@ class DropdownSelector extends StatelessWidget {
             )
           : null,
       builder: (context, controller, _) {
-        return GestureDetector(
-          onTap: () {
-            controller.isOpen ? controller.close() : controller.open();
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            decoration: BoxDecoration(
-              color: buttonBackgroundColor,
-              border: border,
-              borderRadius: borderRadius,
-            ),
-            child: Row(
-              mainAxisSize: isExpanded ? MainAxisSize.max : MainAxisSize.min,
-              children: [
-                if (leading != null) ...[
-                  leading!,
-                  const SizedBox(width: 8),
+        return Material(
+          color: buttonBackgroundColor ?? Colors.transparent,
+          borderRadius:
+              effectiveRadius is BorderRadius ? effectiveRadius : null,
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            borderRadius:
+                effectiveRadius is BorderRadius ? effectiveRadius : null,
+            onTap: () {
+              controller.isOpen ? controller.close() : controller.open();
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xs,
+                vertical: AppSpacing.xxs,
+              ),
+              decoration: BoxDecoration(
+                border: border,
+                borderRadius: effectiveRadius,
+              ),
+              child: Row(
+                mainAxisSize: isExpanded ? MainAxisSize.max : MainAxisSize.min,
+                children: [
+                  if (leading != null) ...[
+                    leading!,
+                    const SizedBox(width: AppSpacing.xs),
+                  ],
+                  if (isExpanded)
+                    Expanded(
+                      child: Text(
+                        selectedOption,
+                        style: effectiveTextStyle,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    )
+                  else
+                    Text(selectedOption, style: effectiveTextStyle),
+                  effectiveArrowIcon,
                 ],
-                if (isExpanded)
-                  Expanded(
-                    child: Text(
-                      selectedOption,
-                      style: effectiveTextStyle,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  )
-                else
-                  Text(selectedOption, style: effectiveTextStyle),
-                effectiveArrowIcon,
-              ],
+              ),
             ),
           ),
         );

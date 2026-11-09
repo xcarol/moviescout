@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/theme/title_list_theme.dart';
 
 class ListInfoLine extends StatelessWidget {
@@ -29,20 +30,20 @@ class ListInfoLine extends StatelessWidget {
 
     return Container(
       color: titleTheme.infoLineBackground,
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
       child: Row(
         children: [
           ...leadingWidgets,
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSpacing.xs),
           ValueListenableBuilder<bool>(
             valueListenable: isLoading,
             builder: (context, loading, child) {
               if (loading) {
                 return const SizedBox(
-                  width: 20,
-                  height: 20,
+                  width: AppSizes.iconMd,
+                  height: AppSizes.iconMd,
                   child: CircularProgressIndicator(
-                    strokeWidth: 2.0,
+                    strokeWidth: AppSizes.strokeWidthSm,
                   ),
                 );
               }
@@ -61,6 +62,7 @@ class ListInfoLine extends StatelessWidget {
             const Spacer(),
           if (onSwapSort != null)
             IconButton(
+              visualDensity: VisualDensity.compact,
               icon: const Icon(Icons.swap_vert),
               onPressed: onSwapSort,
             ),

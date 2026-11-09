@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
-import 'package:moviescout/core/utils/snack_bar.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/theme/title_list_theme.dart';
-import 'package:moviescout/core/widgets/text_filter_widget.dart';
+import 'package:moviescout/core/utils/snack_bar.dart';
 import 'package:moviescout/core/widgets/list_controller.dart';
 import 'package:moviescout/core/widgets/rating_filter_tabs.dart';
+import 'package:moviescout/core/widgets/text_filter_widget.dart';
 import 'package:moviescout/features/titles/services/tmdb_base_list_service.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 
 class ListControlPanel extends StatelessWidget {
   final ListController controller;
@@ -28,38 +29,37 @@ class ListControlPanel extends StatelessWidget {
         final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
         return Container(
           color: titleTheme.controlPanelBackground,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.xs,
+            vertical: AppSpacing.xxs,
+          ),
           child: Column(
             children: [
-              Container(
-                padding: const EdgeInsets.all(4.0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        _genresSelector(context, genres),
-                        _providersSelector(context),
-                      ],
-                    ),
-                    TextFilterWidget(
-                      controller: controller.textFilterController,
-                      focusNode: controller.searchFocusNode,
-                      hintText: AppLocalizations.of(context)!.searchTitle,
-                      onChanged: (String value) {
-                        controller.setTextFilter(value);
-                      },
-                    ),
-                    const SizedBox(height: 5),
-                    if (showRatingFilter)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [RatingFilterTabs(controller: controller)],
-                      ),
-                  ],
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _genresSelector(context, genres),
+                  _providersSelector(context),
+                ],
               ),
+              const SizedBox(height: AppSpacing.xxs),
+              TextFilterWidget(
+                controller: controller.textFilterController,
+                focusNode: controller.searchFocusNode,
+                hintText: AppLocalizations.of(context)!.searchTitle,
+                onChanged: (String value) {
+                  controller.setTextFilter(value);
+                },
+              ),
+              if (showRatingFilter) ...[
+                const SizedBox(height: AppSpacing.xxs),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [RatingFilterTabs(controller: controller)],
+                ),
+              ],
             ],
           ),
         );
@@ -68,54 +68,61 @@ class ListControlPanel extends StatelessWidget {
   }
 
   Widget _genresSelector(BuildContext context, List<String> genresList) {
-    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+    final theme = Theme.of(context);
+    final titleTheme = theme.extension<TitleListTheme>()!;
     final selectedGenres = controller.selectedGenres.toList();
     final excludeGenres = controller.excludeGenres;
-    final foregroundColor = selectedGenres.isNotEmpty
+    final isActive = selectedGenres.isNotEmpty;
+    final foregroundColor = isActive
         ? titleTheme.controlPanelActiveFilterForeground
         : titleTheme.controlPanelInactiveFilterForeground;
-    final backgroundColor = selectedGenres.isNotEmpty
+    final backgroundColor = isActive
         ? titleTheme.controlPanelActiveFilterBackground
         : titleTheme.controlPanelInactiveFilterBackground;
+    final borderRadius = BorderRadius.circular(AppRadius.sm);
 
-    return GestureDetector(
-      onTap: () async {
-        await context.toGenres(
-          genresList: genresList,
-          selectedGenres: selectedGenres,
-          excludeGenres: excludeGenres,
-          onGenresChanged: (genres, exclude) {
-            controller.setGenres(genres, exclude);
-          },
-        );
-      },
-      child: Container(
-        height: 28,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          border: Border.all(
-            color: titleTheme.controlPanelForeground,
-          ),
-          borderRadius: BorderRadius.circular(5),
+    return Material(
+      color: backgroundColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: borderRadius,
+        side: BorderSide(
+          color: isActive ? backgroundColor : theme.colorScheme.outline,
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.genres,
-              style: TextStyle(
-                fontSize: 16,
-                color: foregroundColor,
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        borderRadius: borderRadius,
+        onTap: () async {
+          await context.toGenres(
+            genresList: genresList,
+            selectedGenres: selectedGenres,
+            excludeGenres: excludeGenres,
+            onGenresChanged: (genres, exclude) {
+              controller.setGenres(genres, exclude);
+            },
+          );
+        },
+        child: Container(
+          height: AppSizes.filterControlHeight,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.genres,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: foregroundColor,
+                  fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Icon(
-              Icons.arrow_forward_ios,
-              color: foregroundColor,
-              size: 14,
-            ),
-          ],
+              const SizedBox(width: AppSpacing.xs),
+              Icon(
+                Icons.arrow_forward_ios,
+                color: foregroundColor,
+                size: AppSizes.iconXs,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -148,10 +155,10 @@ class ListControlPanel extends StatelessWidget {
           IconButton(
             visualDensity: VisualDensity.compact,
             padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+            constraints: AppSizes.compactActionConstraints,
             icon: Icon(
               Icons.tv,
-              size: 20,
+              size: AppSizes.iconMd,
               color: isActive ? activeColor : inactiveColor,
             ),
             onPressed: () {
@@ -162,7 +169,7 @@ class ListControlPanel extends StatelessWidget {
               controller.setFilterByProviders(!isActive);
             },
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: AppSpacing.xxs),
           Switch(
             value: isActive,
             onChanged: (bool value) {

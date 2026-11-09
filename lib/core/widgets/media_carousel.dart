@@ -1,8 +1,10 @@
 import 'dart:ui';
-import 'package:moviescout/core/utils/url_constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/utils/api_constants.dart';
+import 'package:moviescout/core/utils/url_constants.dart';
+import 'package:moviescout/core/widgets/app_cached_image.dart';
 
 class MediaCarousel extends StatefulWidget {
   final List<String> images;
@@ -95,12 +97,14 @@ class _MediaCarouselState extends State<MediaCarousel> {
             ),
             if (widget.isLoading)
               const Positioned(
-                top: 10,
-                right: 10,
+                top: AppSpacing.xs,
+                right: AppSpacing.xs,
                 child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                  width: AppSizes.iconMd,
+                  height: AppSizes.iconMd,
+                  child: CircularProgressIndicator(
+                    strokeWidth: AppSizes.strokeWidthSm,
+                  ),
                 ),
               ),
           ],
@@ -137,17 +141,19 @@ class _MediaCarouselState extends State<MediaCarousel> {
   }
 
   Widget _buildPlaceholder(String mediaType) {
-    if (mediaType == ApiConstants.person) {
-      return Image.asset(
-        'assets/person.png',
-        fit: BoxFit.contain,
-      );
-    }
-    return Image.asset(
-      mediaType == ApiConstants.movie
-          ? 'assets/movie_poster.png'
-          : 'assets/tvshow_poster.png',
-      fit: BoxFit.fitWidth,
+    final colorScheme = Theme.of(context).colorScheme;
+    final icon = mediaType == ApiConstants.person
+        ? Icons.person_outline
+        : Icons.movie_outlined;
+
+    return Container(
+      color: colorScheme.surfaceContainerHighest,
+      alignment: Alignment.center,
+      child: Icon(
+        icon,
+        size: AppSizes.iconEmptyState,
+        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.45),
+      ),
     );
   }
 
@@ -162,9 +168,13 @@ class _MediaCarouselState extends State<MediaCarousel> {
       fit: StackFit.expand,
       children: [
         ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+          imageFilter: ImageFilter.blur(
+            sigmaX: AppSizes.carouselBlurSigma,
+            sigmaY: AppSizes.carouselBlurSigma,
+          ),
           child: CachedNetworkImage(
             imageUrl: url,
+            cacheManager: AppCacheManager.instance,
             fit: BoxFit.cover,
             color: colorScheme.surface.withValues(alpha: 0.4),
             colorBlendMode: BlendMode.darken,
@@ -173,11 +183,13 @@ class _MediaCarouselState extends State<MediaCarousel> {
         ),
         CachedNetworkImage(
           imageUrl: url,
+          cacheManager: AppCacheManager.instance,
           fit: BoxFit.contain,
           placeholder: (context, url) => Container(
-            color: colorScheme.surface.withValues(alpha: 0.1),
+            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
           ),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
+          errorWidget: (context, url, error) =>
+              _buildPlaceholder(widget.mediaType),
         ),
       ],
     );
@@ -307,7 +319,7 @@ class _ZoomableImageState extends State<_ZoomableImage>
     _transformationController.addListener(_onTransformationChanged);
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 250),
+      duration: AppDurations.normal,
     )..addListener(_handleAnimationTick);
   }
 
@@ -495,9 +507,9 @@ class _CarouselBase extends StatelessWidget {
 
   Widget _buildDotIndicators(BuildContext context) {
     return Positioned(
-      bottom: 30,
-      left: 10,
-      right: 10,
+      bottom: AppSpacing.xl,
+      left: AppSpacing.xs,
+      right: AppSpacing.xs,
       child: Align(
         alignment: Alignment.center,
         child: FittedBox(
@@ -508,15 +520,17 @@ class _CarouselBase extends StatelessWidget {
               final realCurrentPage = _getRealIndex(currentPage, totalItems);
               final colorScheme = Theme.of(context).colorScheme;
               return AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                height: 8,
-                width: realCurrentPage == index ? 16 : 8,
+                duration: AppDurations.normal,
+                margin: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
+                height: AppSizes.carouselDotSize,
+                width: realCurrentPage == index
+                    ? AppSizes.carouselDotActiveWidth
+                    : AppSizes.carouselDotSize,
                 decoration: BoxDecoration(
                   color: realCurrentPage == index
                       ? colorScheme.primary
                       : colorScheme.onPrimary.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: AppRadius.borderXs,
                 ),
               );
             }),
@@ -529,8 +543,8 @@ class _CarouselBase extends StatelessWidget {
   Widget _buildNavButton(BuildContext context, {required bool isLeft}) {
     final colorScheme = Theme.of(context).colorScheme;
     return Positioned(
-      left: isLeft ? 10 : null,
-      right: !isLeft ? 10 : null,
+      left: isLeft ? AppSpacing.xs : null,
+      right: !isLeft ? AppSpacing.xs : null,
       top: 0,
       bottom: 0,
       child: Center(
@@ -540,18 +554,20 @@ class _CarouselBase extends StatelessWidget {
             shape: BoxShape.circle,
           ),
           child: IconButton(
-            icon: Icon(isLeft ? Icons.chevron_left : Icons.chevron_right,
-                size: 30),
+            icon: Icon(
+              isLeft ? Icons.chevron_left : Icons.chevron_right,
+              size: AppSizes.iconXl,
+            ),
             color: colorScheme.onSurface,
             onPressed: () {
               if (isLeft) {
                 pageController.previousPage(
-                  duration: const Duration(milliseconds: 300),
+                  duration: AppDurations.normal,
                   curve: Curves.easeInOut,
                 );
               } else {
                 pageController.nextPage(
-                  duration: const Duration(milliseconds: 300),
+                  duration: AppDurations.normal,
                   curve: Curves.easeInOut,
                 );
               }

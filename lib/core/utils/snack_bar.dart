@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/main.dart';
 
 class SnackMessage {
-  static void showSnackBar(String message, {BuildContext? context}) {
+  static void showSnackBar(
+    String message, {
+    BuildContext? context,
+    Duration duration = AppDurations.snackBarInfo,
+  }) {
     final scaffold =
         (context != null ? ScaffoldMessenger.maybeOf(context) : null) ??
             scaffoldMessengerKey.currentState;
@@ -22,7 +27,44 @@ class SnackMessage {
           scaffold.hideCurrentSnackBar();
         },
       ),
-      duration: const Duration(seconds: 15),
+      duration: duration,
+    ));
+  }
+
+  static void showErrorSnackBar(
+    String message, {
+    BuildContext? context,
+    Duration duration = AppDurations.snackBarInfo,
+  }) {
+    final scaffold =
+        (context != null ? ScaffoldMessenger.maybeOf(context) : null) ??
+            scaffoldMessengerKey.currentState;
+
+    if (scaffold == null) {
+      debugPrint(
+          'SnackMessage: ScaffoldMessenger is null, cannot show "$message"');
+      return;
+    }
+
+    final colorScheme = context != null ? Theme.of(context).colorScheme : null;
+
+    scaffold.clearSnackBars();
+    scaffold.showSnackBar(SnackBar(
+      backgroundColor: colorScheme?.errorContainer,
+      content: Text(
+        message,
+        style: colorScheme != null
+            ? TextStyle(color: colorScheme.onErrorContainer)
+            : null,
+      ),
+      action: SnackBarAction(
+        label: 'OK',
+        textColor: colorScheme?.onErrorContainer,
+        onPressed: () {
+          scaffold.hideCurrentSnackBar();
+        },
+      ),
+      duration: duration,
     ));
   }
 
@@ -32,7 +74,7 @@ class SnackMessage {
     required VoidCallback onAction,
     BuildContext? context,
     bool showCloseIcon = true,
-    Duration duration = const Duration(seconds: 15),
+    Duration duration = AppDurations.snackBarAction,
   }) {
     final scaffold =
         (context != null ? ScaffoldMessenger.maybeOf(context) : null) ??
@@ -48,24 +90,25 @@ class SnackMessage {
     scaffold.showSnackBar(SnackBar(
       content: Builder(
         builder: (innerContext) {
-          final colorScheme = Theme.of(innerContext).colorScheme;
+          final theme = Theme.of(innerContext);
+          final colorScheme = theme.colorScheme;
           return Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: Text(
                   message,
-                  style: TextStyle(
-                    fontSize: 13,
-                    // color: colorScheme.onSurface,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: AppSpacing.xs),
               TextButton(
                 style: TextButton.styleFrom(
                   visualDensity: VisualDensity.compact,
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
                   foregroundColor: colorScheme.primary,
                 ),
                 onPressed: () {
@@ -75,15 +118,14 @@ class SnackMessage {
                 child: Text(actionLabel),
               ),
               if (showCloseIcon) ...[
-                const SizedBox(width: 2),
+                const SizedBox(width: AppSpacing.xxs),
                 IconButton(
                   visualDensity: VisualDensity.compact,
                   padding: EdgeInsets.zero,
-                  constraints:
-                      const BoxConstraints(minWidth: 28, minHeight: 28),
+                  constraints: AppSizes.compactActionConstraints,
                   icon: Icon(
                     Icons.close,
-                    size: 18,
+                    size: AppSizes.iconSm,
                     color: colorScheme.onSurfaceVariant,
                   ),
                   onPressed: () {

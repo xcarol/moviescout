@@ -48,12 +48,56 @@ abstract final class AppSizes {
   static const double pinnedChipHeight = 172.0;
 
   static const double providerLogoSize = 28.0;
+
+  static const double iconXs = 14.0;
   static const double iconSm = 16.0;
   static const double iconMd = 20.0;
   static const double iconLg = 24.0;
   static const double iconXl = 32.0;
+  static const double iconHero = 48.0;
+  static const double iconEmptyState = 64.0;
   static const double emptyStateIconSize = 64.0;
+
+  static const double avatarSm = 36.0;
+  static const double avatarMd = 48.0;
+  static const double avatarLg = 56.0;
+
+  static const double filterControlHeight = 34.0;
+  static const double ratingFilterWidth = 150.0;
+  static const double ratingFilterHeight = 40.0;
+
+  static const double compactActionSize = 28.0;
   static const double minTouchTarget = 48.0;
+
+  static const BoxConstraints compactActionConstraints = BoxConstraints(
+    minWidth: compactActionSize,
+    minHeight: compactActionSize,
+  );
+  static const BoxConstraints suffixIconConstraints = BoxConstraints(
+    minWidth: iconXl,
+    minHeight: iconXl,
+  );
+
+  static const double borderWidthThin = 0.5;
+  static const double borderWidthRegular = 1.0;
+  static const double borderWidthFocused = 1.5;
+  static const double strokeWidthSm = 2.0;
+
+  static const double carouselDotSize = 8.0;
+  static const double carouselDotActiveWidth = 16.0;
+  static const double carouselBlurSigma = 15.0;
+
+  static const double badgeDotSize = 8.0;
+  static const double refreshOffsetToArmed = 100.0;
+  static const double dropdownMaxMenuHeight = 320.0;
+  static const double searchOverlayOffset = 65.0;
+
+  static const double floatingPlayerWidth = 300.0;
+  static const double floatingPlayerHeaderHeight = 30.0;
+  static const double floatingPlayerInitialX = 16.0;
+  static const double floatingPlayerInitialY = 100.0;
+  static const double floatingPlayerElevation = 12.0;
+  static const double overlayElevation = 4.0;
 }
 
 abstract final class AppBreakpoints {
@@ -73,5 +117,6 @@ abstract final class AppDurations {
   static const Duration normal = Duration(milliseconds: 250);
   static const Duration slow = Duration(milliseconds: 350);
   static const Duration snackBarShort = Duration(seconds: 4);
+  static const Duration snackBarInfo = Duration(seconds: 4);
   static const Duration snackBarAction = Duration(seconds: 8);
 }

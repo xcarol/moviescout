@@ -1,24 +1,25 @@
-import 'package:moviescout/core/services/app_service.dart';
-import 'package:moviescout/core/utils/url_constants.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:moviescout/core/navigation/app_navigator.dart';
-import 'package:moviescout/features/auth/services/supabase_auth_service.dart';
-import 'package:provider/provider.dart';
-import 'package:moviescout/core/utils/snack_bar.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:moviescout/core/services/app_service.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
+import 'package:moviescout/core/utils/snack_bar.dart';
+import 'package:moviescout/core/utils/url_constants.dart';
+import 'package:moviescout/core/widgets/app_cached_image.dart';
+import 'package:moviescout/features/auth/services/supabase_auth_service.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    bool isLoggedIn = Provider.of<SupabaseAuthService>(context).isLoggedIn;
+    final isLoggedIn = Provider.of<SupabaseAuthService>(context).isLoggedIn;
 
     return Drawer(
       child: ListView(
@@ -58,7 +59,8 @@ class AppDrawer extends StatelessWidget {
   }
 
   Widget _userProfileTile(BuildContext context) {
-    var supabaseAuth = Provider.of<SupabaseAuthService>(context);
+    final supabaseAuth = Provider.of<SupabaseAuthService>(context);
+    final theme = Theme.of(context);
 
     String? avatarUrl;
     String? userName;
@@ -85,55 +87,29 @@ class AppDrawer extends StatelessWidget {
     userName ??= AppLocalizations.of(context)!.anonymousUser;
 
     return DrawerHeader(
-      padding: const EdgeInsets.all(0),
-      margin: const EdgeInsets.all(0),
+      padding: EdgeInsets.zero,
+      margin: EdgeInsets.zero,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(
-              backgroundColor: Colors.transparent,
-              child: ClipOval(
-                child: avatarUrl != null && avatarUrl.isNotEmpty
-                    ? (kIsWeb
-                        ? Image.network(
-                            avatarUrl,
-                            width: 40,
-                            height: 40,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Image.asset(
-                              'assets/account.png',
-                              width: 40,
-                              height: 40,
-                            ),
-                          )
-                        : CachedNetworkImage(
-                            imageUrl: avatarUrl,
-                            width: 40,
-                            height: 40,
-                            fit: BoxFit.cover,
-                            errorWidget: (context, url, error) => Image.asset(
-                              'assets/account.png',
-                              width: 40,
-                              height: 40,
-                            ),
-                          ))
-                    : Image.asset(
-                        'assets/account.png',
-                        width: 40,
-                        height: 40,
-                      ),
-              ),
+            AppCachedImage(
+              imageUrl: avatarUrl,
+              type: AppImageType.avatar,
+              width: AppSizes.avatarMd,
+              height: AppSizes.avatarMd,
+              isCircular: true,
+              fallbackIconSize: AppSizes.iconXl,
             ),
-            const SizedBox(height: 16),
-            Text(userName,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                )),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              userName,
+              style: theme.textTheme.headlineSmall,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ],
         ),
       ),
@@ -141,18 +117,19 @@ class AppDrawer extends StatelessWidget {
   }
 
   Widget _aboutTile(BuildContext context) {
+    final theme = Theme.of(context);
     return AboutListTile(
-      icon: Icon(Icons.info),
+      icon: const Icon(Icons.info),
       applicationName: 'MovieScout',
       applicationVersion: dotenv.env['VERSION'] ?? 'x.x.x',
       applicationIcon: SizedBox(
-        width: 48,
-        height: 48,
+        width: AppSizes.avatarMd,
+        height: AppSizes.avatarMd,
         child: Image.asset('assets/logo-icon.png'),
       ),
       aboutBoxChildren: [
         Text(AppLocalizations.of(context)!.aboutDescription),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.xs),
         SelectableText.rich(
           TextSpan(
             children: [
@@ -196,20 +173,22 @@ class AppDrawer extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: AppSpacing.xl),
         Text(
           AppLocalizations.of(context)!.apiDisclaimer,
-          style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+          style: theme.textTheme.bodySmall?.copyWith(
+            fontStyle: FontStyle.italic,
+          ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
         if (kDebugMode || dotenv.env[AppConstants.enableLogs] == 'true')
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton.icon(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Close About dialog
-                  Navigator.pop(context); // Close Drawer
+                  Navigator.of(context).pop();
+                  Navigator.pop(context);
                   context.toLogs();
                 },
                 icon: const Icon(Icons.history),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/theme/title_list_theme.dart';
 
 class TextFilterWidget extends StatelessWidget {
@@ -17,18 +18,23 @@ class TextFilterWidget extends StatelessWidget {
     required this.hintText,
     required this.onChanged,
     this.onCleared,
-    this.height = 26,
-    this.contentPadding = const EdgeInsets.symmetric(horizontal: 5),
+    this.height = AppSizes.filterControlHeight,
+    this.contentPadding = const EdgeInsets.symmetric(
+      horizontal: AppSpacing.xs,
+      vertical: AppSpacing.xxs,
+    ),
   });
 
   @override
   Widget build(BuildContext context) {
-    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
+    final theme = Theme.of(context);
+    final titleTheme = theme.extension<TitleListTheme>()!;
+    final borderRadius = AppRadius.borderSm;
 
     return SizedBox(
       height: height,
       child: Theme(
-        data: Theme.of(context).copyWith(
+        data: theme.copyWith(
           textSelectionTheme: TextSelectionThemeData(
             selectionColor: titleTheme.searchSelectionColor,
             selectionHandleColor: titleTheme.searchCursorColor,
@@ -40,45 +46,55 @@ class TextFilterWidget extends StatelessWidget {
             return TextField(
               controller: controller,
               focusNode: focusNode,
-              style: TextStyle(
+              textAlignVertical: TextAlignVertical.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: titleTheme.controlPanelForeground,
-                fontSize: 14,
                 fontWeight:
-                    value.text.isEmpty ? FontWeight.normal : FontWeight.bold,
+                    value.text.isEmpty ? FontWeight.normal : FontWeight.w600,
               ),
               cursorColor: titleTheme.searchCursorColor,
-              cursorHeight: 16,
+              cursorHeight: AppSizes.iconSm,
               decoration: InputDecoration(
                 isDense: true,
+                filled: true,
+                fillColor: theme.colorScheme.surface,
                 hintText: hintText,
-                hintStyle: TextStyle(color: titleTheme.searchHintColor),
+                hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                  color: titleTheme.searchHintColor,
+                ),
                 suffixIconColor: titleTheme.controlPanelForeground,
+                suffixIconConstraints: AppSizes.suffixIconConstraints,
                 contentPadding: contentPadding,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  borderSide:
-                      BorderSide(color: titleTheme.controlPanelForeground),
+                  borderRadius: borderRadius,
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.outline,
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  borderSide:
-                      BorderSide(color: titleTheme.controlPanelForeground),
+                  borderRadius: borderRadius,
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.outline,
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  borderSide:
-                      BorderSide(color: titleTheme.controlPanelForeground),
+                  borderRadius: borderRadius,
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.primary,
+                    width: AppSizes.borderWidthFocused,
+                  ),
                 ),
                 suffixIcon: value.text.isNotEmpty
-                    ? GestureDetector(
-                        child: const Icon(Icons.clear, size: 18),
+                    ? InkWell(
+                        borderRadius: borderRadius,
                         onTap: () {
                           controller.clear();
                           onChanged('');
                           if (onCleared != null) onCleared!();
                         },
+                        child: const Icon(Icons.clear, size: AppSizes.iconSm),
                       )
-                    : const Icon(Icons.search, size: 18),
+                    : const Icon(Icons.search, size: AppSizes.iconSm),
               ),
               onChanged: (value) => onChanged(value.trim()),
             );

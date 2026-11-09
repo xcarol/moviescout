@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/core/services/app_service.dart';
-import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:moviescout/core/utils/snack_bar.dart';
 import 'package:moviescout/features/settings/services/language_service.dart';
 import 'package:moviescout/features/settings/services/region_service.dart';
 import 'package:moviescout/features/titles/models/tmdb_translation.dart';
-import 'package:moviescout/core/navigation/app_navigator.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ActionMenu extends StatelessWidget {
   final String? editUrl;
@@ -68,9 +69,9 @@ class ActionMenu extends StatelessWidget {
     } catch (e) {
       if (!context.mounted) return;
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(AppLocalizations.of(context)!.errorMessageGeneric)),
+      SnackMessage.showErrorSnackBar(
+        AppLocalizations.of(context)!.errorMessageGeneric,
+        context: context,
       );
     }
   }
