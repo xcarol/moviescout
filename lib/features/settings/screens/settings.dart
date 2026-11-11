@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/theme/app_breakpoints.dart';
-import 'package:moviescout/core/theme/theme_service.dart';
-import 'package:moviescout/features/settings/widgets/theme_form.dart';
 import 'package:moviescout/features/auth/services/supabase_auth_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
@@ -36,7 +34,6 @@ class SettingsScreen extends StatelessWidget {
     final appSettings = Provider.of<AppService>(context);
     final notificationService = Provider.of<NotificationService>(context);
     final providerService = Provider.of<TmdbProviderService>(context);
-    final themeProvider = Provider.of<ThemeService>(context);
     final isUserLoggedIn = authService.isLoggedIn;
 
     final selectedProvidersCount = providerService.enabledProviderIds.length;
@@ -80,15 +77,6 @@ class SettingsScreen extends StatelessWidget {
               SettingsGroup(
                 title: l10n.settingsSectionPreferences,
                 children: [
-                  SettingsTile(
-                    icon: Icons.brightness_4_outlined,
-                    title: l10n.themeTitle,
-                    subtitle: _getThemeModeDisplayName(
-                      themeProvider.themeMode,
-                      context,
-                    ),
-                    onTap: () => _changeTheme(context, themeProvider),
-                  ),
                   SettingsTile(
                     icon: Icons.language,
                     title: l10n.selectLanguage,
@@ -425,36 +413,6 @@ class SettingsScreen extends StatelessWidget {
         return l10n.galician;
       default:
         return code;
-    }
-  }
-
-  String _getThemeModeDisplayName(ThemeMode mode, BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    switch (mode) {
-      case ThemeMode.system:
-        return l10n.themeSystem;
-      case ThemeMode.light:
-        return l10n.themeLight;
-      case ThemeMode.dark:
-        return l10n.themeDark;
-    }
-  }
-
-  Future<void> _changeTheme(
-    BuildContext context,
-    ThemeService themeService,
-  ) async {
-    final ThemeMode? selectedTheme = await showDialog<ThemeMode>(
-      context: context,
-      builder: (context) {
-        return ThemeForm(
-          currentThemeMode: themeService.themeMode,
-        );
-      },
-    );
-
-    if (selectedTheme != null && selectedTheme != themeService.themeMode) {
-      await themeService.setThemeMode(selectedTheme);
     }
   }
 

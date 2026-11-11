@@ -352,7 +352,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     final themeProvider = Provider.of<ThemeService>(context);
 
     return MaterialApp(
-      themeMode: themeProvider.themeMode,
+      themeMode: ThemeMode.dark,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -364,7 +364,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           .toList(),
       locale: languageProvider.locale,
       theme: AppTheme.buildTheme(
-        brightness: Brightness.light,
+        brightness: Brightness.dark,
         themeService: themeProvider,
       ),
       darkTheme: AppTheme.buildTheme(

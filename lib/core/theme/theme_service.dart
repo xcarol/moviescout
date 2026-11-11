@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/theme/title_list_theme.dart';
-import 'package:moviescout/core/utils/app_constants.dart';
-import 'package:moviescout/features/settings/services/preferences_service.dart';
 
 class ThemeService with ChangeNotifier {
   static final ThemeService _instance = ThemeService._internal();
@@ -13,35 +11,10 @@ class ThemeService with ChangeNotifier {
 
   ThemeService._internal();
 
-  ThemeMode _themeMode = ThemeMode.dark;
-  ThemeMode get themeMode => _themeMode;
+  ThemeMode get themeMode => ThemeMode.dark;
 
   void init() {
-    final savedMode =
-        PreferencesService().prefs.getString(AppConstants.themeMode);
-    if (savedMode == 'light') {
-      _themeMode = ThemeMode.light;
-    } else if (savedMode == 'system') {
-      _themeMode = ThemeMode.system;
-    } else {
-      _themeMode = ThemeMode.dark;
-    }
     setupTheme();
-  }
-
-  Future<void> setThemeMode(ThemeMode mode) async {
-    if (_themeMode == mode) return;
-    _themeMode = mode;
-    String modeString = 'dark';
-    if (mode == ThemeMode.light) {
-      modeString = 'light';
-    } else if (mode == ThemeMode.system) {
-      modeString = 'system';
-    }
-    await PreferencesService()
-        .prefs
-        .setString(AppConstants.themeMode, modeString);
-    notifyListeners();
   }
 
   ColorScheme _lightColorScheme = lightColorSchemeDefault;

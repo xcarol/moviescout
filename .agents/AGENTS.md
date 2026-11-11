@@ -18,6 +18,7 @@
 
 # UI/UX & Design System Rules
 - ALWAYS follow the rules defined in `STYLE_GUIDE.md`.
+- STRICTLY DARK MODE: MovieScout is exclusively Dark Mode only. NEVER implement light mode variants or white card/container backgrounds.
 - USE DESIGN TOKENS:
   - Spacings: Use `AppSpacing` (`xxs` through `xxxl`), never hardcode raw numbers for padding, margin, or sized boxes.
   - Border Radii: Use `AppRadius` (`card: 12.0`, `dialog: 16.0`, `bottomSheet: 24.0`, `borderSm: 8.0`, etc.).

@@ -7,9 +7,11 @@ This document is the **Single Source of Truth** for User Interface (UI), User Ex
 
 ## 1. Core Principles
 
-1. **Defensive Theming & Mode Compatibility:**
-   - MovieScout supports **Dark Mode** (default) and **Light Mode**.
-   - Every new or refactored component must render and be legible in both modes using semantic color tokens (`Theme.of(context).colorScheme` and `Theme.of(context).extension<CustomColors>()!`).
+1. **Strictly Dark Mode Only (Cinematic Visual Design):**
+   - MovieScout is exclusively a **Dark Mode Only** application.
+   - Rich cinema artwork (posters, backdrops, and video stills) has high color saturation and dark contrast. Light backgrounds cause severe visual glare, eye strain, and destroy cinematic immersion.
+   - All screens, cards, dialogs, and components must be styled using semantic tokens (`Theme.of(context).colorScheme` and `Theme.of(context).extension<CustomColors>()!`) over dark surfaces (`#1E1E1E` surface, `#121212` backgrounds, `#2B2B2B` containers).
+   - Never implement light mode variants or hardcode bright white backgrounds for cards, lists, or containers.
    - Never hardcode raw color hex values (`Color(0x...)`, `Colors.black`, `Colors.white`), except for specific semi-transparent overlays rendered directly on top of images.
 
 2. **Brand Fallback Assets:**
@@ -31,21 +33,21 @@ All visual constants are centralized under `lib/core/theme/`:
 Location: [`lib/core/theme/custom_colors.dart`](lib/core/theme/custom_colors.dart) and [`lib/core/theme/theme_service.dart`](lib/core/theme/theme_service.dart).
 
 - **Material Color Scheme (`Theme.of(context).colorScheme`):**
-  - `primary`: Accent emerald (`#10B981` dark / `#059669` light) for primary actions, prominent buttons, and active indicators.
-  - `surface`: Background color for screens, scaffolds, and cards.
-  - `surfaceContainerHighest`: Elevated containers, input backgrounds, and image placeholders.
-  - `onSurface`: Text and icons on surface backgrounds.
-  - `onSurfaceVariant`: Secondary text, subtitles, timestamps, and helper labels.
-  - `error` / `onError`: Destructive actions, warnings, and error messages (`#EF4444`).
+  - `primary`: Accent emerald (`#10B981`) for primary actions, prominent buttons, and active indicators.
+  - `surface`: Background color for screens, scaffolds, and cards (`#1E1E1E`).
+  - `surfaceContainerHighest`: Elevated containers, dialogs, bottom sheets, input backgrounds, and image placeholders (`#2B2B2B`).
+  - `onSurface`: Text and icons on surface backgrounds (`#F5F5F5`).
+  - `onSurfaceVariant`: Secondary text, subtitles, timestamps, and helper labels (`#9E9E9E`).
+  - `error` / `onError`: Destructive actions, warnings, and error messages (`#EF4444` / `#FFFFFF`).
 - **Semantic Extensions (`Theme.of(context).extension<CustomColors>()!`):**
-  - `appBarBackground` / `appBarText`: Main app bar background and title/icon color.
+  - `appBarBackground` / `appBarText`: Main app bar background (`#121212`) and title/icon color (`#F5F5F5`).
   - `ratedTitle`: Community / TMDB vote average (golden `#E5BA73`).
   - `userRatedTitle`: Logged-in user's personal rating (`#10B981`).
-  - `followingUserRatedTitle`: Rating from followed community users (`#5B86E5`).
-  - `chipCardBackground`: Background for vertical chip cards.
-  - `watchedOverlayColor`: Darkened overlay (`#66000000` dark / `#4D000000` light) for watched titles.
-  - `dividerColor`: Color for dividers and borders.
-  - `navigationBarSelected` / `navigationBarNotSelected`: Active and inactive navigation colors.
+  - `followingUserRatedTitle`: Rating from followed community users (`#2DD4BF`).
+  - `chipCardBackground`: Background for vertical chip cards (`#2B2B2B`).
+  - `watchedOverlayColor`: Darkened overlay (`Colors.black54`) for watched titles.
+  - `dividerColor`: Color for dividers and borders (`#333333`).
+  - `navigationBarSelected` / `navigationBarNotSelected`: Active (`#10B981`) and inactive (`#8E8E8E`) navigation colors.
 
 ### 2.2 Spacing (`AppSpacing`)
 
