@@ -811,5 +811,15 @@
   "discoverPromoExplore": "Explore",
   "@discoverPromoExplore": {},
   "noProvidersSelectedPrompt": "Select your platforms to see only titles available now.",
-  "@noProvidersSelectedPrompt": {}
+  "@noProvidersSelectedPrompt": {},
+  "themeTitle": "Theme",
+  "@themeTitle": {},
+  "selectTheme": "Select theme",
+  "@selectTheme": {},
+  "themeSystem": "System default",
+  "@themeSystem": {},
+  "themeLight": "Light",
+  "@themeLight": {},
+  "themeDark": "Dark",
+  "@themeDark": {}
 }

@@ -192,6 +192,7 @@ void _runMain() async {
 
   runApp(MultiProvider(
     providers: [
+      ChangeNotifierProvider.value(value: ThemeService()),
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => SupabaseAuthService()),
@@ -270,7 +271,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
 
     final themeProvider = ThemeService();
-    themeProvider.setupTheme();
+    themeProvider.init();
 
     final regionProvider = Provider.of<RegionService>(context, listen: false);
     regionProvider.addListener(_onRegionChanged);
@@ -348,9 +349,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageService>(context);
-    final themeProvider = ThemeService();
+    final themeProvider = Provider.of<ThemeService>(context);
 
     return MaterialApp(
+      themeMode: themeProvider.themeMode,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

@@ -811,5 +811,15 @@
   "discoverPromoExplore": "Explorar",
   "@discoverPromoExplore": {},
   "noProvidersSelectedPrompt": "Seleciona as tuas plataformas para ver apenas títulos disponíveis agora.",
-  "@noProvidersSelectedPrompt": {}
+  "@noProvidersSelectedPrompt": {},
+  "themeTitle": "Tema",
+  "@themeTitle": {},
+  "selectTheme": "Selecionar tema",
+  "@selectTheme": {},
+  "themeSystem": "Padrão do sistema",
+  "@themeSystem": {},
+  "themeLight": "Claro",
+  "@themeLight": {},
+  "themeDark": "Escuro",
+  "@themeDark": {}
 }

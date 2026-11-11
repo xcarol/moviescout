@@ -811,5 +811,15 @@
   "discoverPromoExplore": "Arakatu",
   "@discoverPromoExplore": {},
   "noProvidersSelectedPrompt": "Hautatu zure plataformak orain eskuragarri dauden izenburuak soilik ikusteko.",
-  "@noProvidersSelectedPrompt": {}
+  "@noProvidersSelectedPrompt": {},
+  "themeTitle": "Gaia",
+  "@themeTitle": {},
+  "selectTheme": "Hautatu gaia",
+  "@selectTheme": {},
+  "themeSystem": "Sistemaren lehenetsia",
+  "@themeSystem": {},
+  "themeLight": "Argia",
+  "@themeLight": {},
+  "themeDark": "Iluna",
+  "@themeDark": {}
 }

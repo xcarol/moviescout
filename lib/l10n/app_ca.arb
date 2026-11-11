@@ -811,5 +811,15 @@
   "discoverPromoExplore": "Explora",
   "@discoverPromoExplore": {},
   "noProvidersSelectedPrompt": "Selecciona les teves plataformes per veure només títols disponibles ara.",
-  "@noProvidersSelectedPrompt": {}
+  "@noProvidersSelectedPrompt": {},
+  "themeTitle": "Tema",
+  "@themeTitle": {},
+  "selectTheme": "Selecciona el tema",
+  "@selectTheme": {},
+  "themeSystem": "Segons el sistema",
+  "@themeSystem": {},
+  "themeLight": "Clar",
+  "@themeLight": {},
+  "themeDark": "Fosc",
+  "@themeDark": {}
 }
