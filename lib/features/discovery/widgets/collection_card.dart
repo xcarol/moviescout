@@ -1,22 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/features/discovery/models/tmdb_collection.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 
-class CustomCacheManager {
-  static const key = 'customCacheKey';
-  static CacheManager instance = CacheManager(
-    Config(
-      key,
-      stalePeriod: const Duration(days: 30),
-      maxNrOfCacheObjects: 500,
-      fileService: HttpFileService(),
-    ),
-  );
-}
+import 'package:moviescout/core/services/custom_cache_manager.dart';
 
 class CollectionCard extends StatelessWidget {
   final TmdbCollection _collection;

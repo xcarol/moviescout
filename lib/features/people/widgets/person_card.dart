@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
@@ -8,17 +7,7 @@ import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/seasons/models/tmdb_season.dart';
 import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
 
-class CustomCacheManager {
-  static const key = 'customCacheKey';
-  static CacheManager instance = CacheManager(
-    Config(
-      key,
-      stalePeriod: const Duration(days: 30),
-      maxNrOfCacheObjects: 500,
-      fileService: HttpFileService(),
-    ),
-  );
-}
+import 'package:moviescout/core/services/custom_cache_manager.dart';
 
 class PersonCard extends StatelessWidget {
   final TmdbPerson _person;

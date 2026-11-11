@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
@@ -15,17 +14,8 @@ import 'package:moviescout/features/watchlist/widgets/pin_button.dart';
 import 'package:moviescout/features/notifications/widgets/notify_button.dart';
 import 'package:provider/provider.dart';
 
-class CustomCacheManager {
-  static const key = 'customCacheKey';
-  static CacheManager instance = CacheManager(
-    Config(
-      key,
-      stalePeriod: const Duration(days: 30),
-      maxNrOfCacheObjects: 500,
-      fileService: HttpFileService(),
-    ),
-  );
-}
+import 'package:moviescout/core/services/custom_cache_manager.dart';
+export 'package:moviescout/core/services/custom_cache_manager.dart';
 
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;

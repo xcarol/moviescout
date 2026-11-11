@@ -22,7 +22,7 @@ class SnackMessage {
           scaffold.hideCurrentSnackBar();
         },
       ),
-      duration: const Duration(seconds: 15),
+      duration: const Duration(seconds: 4),
     ));
   }
 
@@ -32,7 +32,7 @@ class SnackMessage {
     required VoidCallback onAction,
     BuildContext? context,
     bool showCloseIcon = true,
-    Duration duration = const Duration(seconds: 15),
+    Duration duration = const Duration(seconds: 8),
   }) {
     final scaffold =
         (context != null ? ScaffoldMessenger.maybeOf(context) : null) ??
