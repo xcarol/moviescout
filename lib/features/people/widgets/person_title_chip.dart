@@ -76,7 +76,12 @@ class PersonTitleChip extends TitleCard {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: titlePoster(_title.posterPath),
+                      child: titlePoster(
+                        _title.posterPath,
+                        fallbackType: _title.isMovie
+                            ? PosterFallbackType.movie
+                            : PosterFallbackType.tvShow,
+                      ),
                     ),
                     Positioned(
                       bottom: 0,

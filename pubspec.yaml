@@ -107,6 +107,8 @@ flutter:
     - assets/tmdb-logo.png
     - assets/tvdb.png
     - assets/tvshow_poster.png
+    - assets/tvshow.png
+    - assets/user.png
     - assets/wikidata.png
     - assets/X.png
     - assets/youtube.png

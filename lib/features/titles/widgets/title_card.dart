@@ -12,10 +12,11 @@ import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:moviescout/features/watchlist/widgets/watchlist_button.dart';
 import 'package:moviescout/features/watchlist/widgets/pin_button.dart';
 import 'package:moviescout/features/notifications/widgets/notify_button.dart';
+import 'package:moviescout/core/widgets/app_poster_image.dart';
 import 'package:provider/provider.dart';
 
-import 'package:moviescout/core/services/custom_cache_manager.dart';
 export 'package:moviescout/core/services/custom_cache_manager.dart';
+export 'package:moviescout/core/widgets/app_poster_image.dart';
 
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
@@ -50,7 +51,12 @@ class TitleCard extends StatelessWidget {
                 },
                 child: Row(
                   children: [
-                    titlePoster(tmdbTitle.posterPath),
+                    titlePoster(
+                      tmdbTitle.posterPath,
+                      fallbackType: tmdbTitle.isMovie
+                          ? PosterFallbackType.movie
+                          : PosterFallbackType.tvShow,
+                    ),
                     const SizedBox(width: 10),
                     _titleDetails(context, tmdbTitle),
                   ],
@@ -159,36 +165,17 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget titlePoster(String? posterPath) {
-    if (posterPath == null || posterPath.isEmpty) {
-      return AspectRatio(
-        aspectRatio: 2 / 3,
-        child: Image.asset(
-          'assets/movie.png',
-          fit: BoxFit.contain,
-        ),
-      );
-    }
-
-    return AspectRatio(
+  Widget titlePoster(
+    String? posterPath, {
+    PosterFallbackType fallbackType = PosterFallbackType.movie,
+  }) {
+    return AppPosterImage(
+      imageUrl: posterPath,
       aspectRatio: 2 / 3,
-      child: CachedNetworkImage(
-        imageUrl: posterPath,
-        cacheManager: CustomCacheManager.instance,
-        fit: BoxFit.cover,
-        memCacheHeight: 300,
-        memCacheWidth: 200,
-        fadeInDuration: Duration.zero,
-        fadeOutDuration: Duration.zero,
-        placeholderFadeInDuration: Duration.zero,
-        cacheKey: posterPath,
-        errorWidget: (context, error, stackTrace) {
-          return Image.asset(
-            'assets/movie.png',
-            fit: BoxFit.contain,
-          );
-        },
-      ),
+      fallbackType: fallbackType,
+      memCacheWidth: 200,
+      memCacheHeight: 300,
+      fit: BoxFit.cover,
     );
   }
 

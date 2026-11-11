@@ -7,13 +7,14 @@ enum PosterFallbackType {
   tvShow,
   person,
   user,
+  account,
 }
 
 class AppPosterImage extends StatelessWidget {
   final String? imageUrl;
   final PosterFallbackType fallbackType;
   final String? customFallbackAsset;
-  final double aspectRatio;
+  final double? aspectRatio;
   final BoxFit fit;
   final BoxFit fallbackFit;
   final BorderRadius? borderRadius;
@@ -41,22 +42,28 @@ class AppPosterImage extends StatelessWidget {
       case PosterFallbackType.movie:
         return 'assets/movie.png';
       case PosterFallbackType.tvShow:
-        return 'assets/tvshow_poster.png';
+        return 'assets/tvshow.png';
       case PosterFallbackType.person:
         return 'assets/person.png';
       case PosterFallbackType.user:
         return 'assets/user.png';
+      case PosterFallbackType.account:
+        return 'assets/account.png';
     }
   }
 
   Widget _buildFallback() {
-    return AspectRatio(
-      aspectRatio: aspectRatio,
-      child: Image.asset(
-        _fallbackAsset,
-        fit: fallbackFit,
-      ),
+    final image = Image.asset(
+      _fallbackAsset,
+      fit: fallbackFit,
     );
+    if (aspectRatio != null) {
+      return AspectRatio(
+        aspectRatio: aspectRatio!,
+        child: image,
+      );
+    }
+    return image;
   }
 
   @override
@@ -69,27 +76,33 @@ class AppPosterImage extends StatelessWidget {
       return fallbackWidget;
     }
 
-    final int defaultMemCacheWidth = aspectRatio == 16 / 9 ? 320 : 200;
-    final int defaultMemCacheHeight = aspectRatio == 16 / 9 ? 180 : 300;
+    final int defaultMemCacheWidth =
+        (aspectRatio != null && aspectRatio == 16 / 9) ? 320 : 200;
+    final int defaultMemCacheHeight =
+        (aspectRatio != null && aspectRatio == 16 / 9) ? 180 : 300;
 
-    Widget imageWidget = AspectRatio(
-      aspectRatio: aspectRatio,
-      child: CachedNetworkImage(
-        imageUrl: imageUrl!,
-        cacheManager: CustomCacheManager.instance,
-        fit: fit,
-        memCacheWidth: memCacheWidth ?? defaultMemCacheWidth,
-        memCacheHeight: memCacheHeight ?? defaultMemCacheHeight,
-        fadeInDuration: const Duration(milliseconds: 200),
-        fadeOutDuration: const Duration(milliseconds: 100),
-        placeholderFadeInDuration: const Duration(milliseconds: 100),
-        cacheKey: imageUrl,
-        placeholder: (context, url) => Container(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        ),
-        errorWidget: (context, error, stackTrace) => _buildFallback(),
+    Widget content = CachedNetworkImage(
+      imageUrl: imageUrl!,
+      cacheManager: CustomCacheManager.instance,
+      fit: fit,
+      memCacheWidth: memCacheWidth ?? defaultMemCacheWidth,
+      memCacheHeight: memCacheHeight ?? defaultMemCacheHeight,
+      fadeInDuration: const Duration(milliseconds: 200),
+      fadeOutDuration: const Duration(milliseconds: 100),
+      placeholderFadeInDuration: const Duration(milliseconds: 100),
+      cacheKey: imageUrl,
+      placeholder: (context, url) => Container(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
       ),
+      errorWidget: (context, error, stackTrace) => _buildFallback(),
     );
+
+    Widget imageWidget = aspectRatio != null
+        ? AspectRatio(
+            aspectRatio: aspectRatio!,
+            child: content,
+          )
+        : content;
 
     if (borderRadius != null) {
       imageWidget = ClipRRect(borderRadius: borderRadius!, child: imageWidget);

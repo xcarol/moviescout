@@ -200,7 +200,12 @@ class TitleChipContent extends TitleCard {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      titlePoster(_title.posterPath),
+                      titlePoster(
+                        _title.posterPath,
+                        fallbackType: _title.isMovie
+                            ? PosterFallbackType.movie
+                            : PosterFallbackType.tvShow,
+                      ),
                       posterOverlay(context),
                     ],
                   ),

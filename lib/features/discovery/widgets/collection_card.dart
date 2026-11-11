@@ -1,11 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/features/discovery/models/tmdb_collection.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-
-import 'package:moviescout/core/services/custom_cache_manager.dart';
+import 'package:moviescout/core/widgets/app_poster_image.dart';
 
 class CollectionCard extends StatelessWidget {
   final TmdbCollection _collection;
@@ -42,10 +40,10 @@ class CollectionCard extends StatelessWidget {
                       children: [
                         Text(
                           _collection.name,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -75,35 +73,13 @@ class CollectionCard extends StatelessWidget {
   }
 
   Widget _poster(String? posterPath) {
-    if (posterPath == null || posterPath.isEmpty) {
-      return AspectRatio(
-        aspectRatio: 2 / 3,
-        child: Image.asset(
-          'assets/movie.png',
-          fit: BoxFit.contain,
-        ),
-      );
-    }
-
-    return AspectRatio(
+    return AppPosterImage(
+      imageUrl: posterPath,
       aspectRatio: 2 / 3,
-      child: CachedNetworkImage(
-        imageUrl: posterPath,
-        cacheManager: CustomCacheManager.instance,
-        fit: BoxFit.cover,
-        memCacheHeight: 300,
-        memCacheWidth: 200,
-        fadeInDuration: Duration.zero,
-        fadeOutDuration: Duration.zero,
-        placeholderFadeInDuration: Duration.zero,
-        cacheKey: posterPath,
-        errorWidget: (context, error, stackTrace) {
-          return Image.asset(
-            'assets/movie.png',
-            fit: BoxFit.contain,
-          );
-        },
-      ),
+      fallbackType: PosterFallbackType.movie,
+      memCacheWidth: 200,
+      memCacheHeight: 300,
+      fit: BoxFit.cover,
     );
   }
 }

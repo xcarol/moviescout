@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
@@ -8,6 +7,7 @@ import 'package:moviescout/features/titles/widgets/title_card.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/seasons/models/tmdb_season.dart';
 import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
+import 'package:moviescout/core/widgets/app_poster_image.dart';
 
 // ignore: constant_identifier_names
 const double CARD_HEIGHT = 336.0;
@@ -86,35 +86,13 @@ class PersonChip extends StatelessWidget {
   }
 
   Widget _poster(String? posterPath) {
-    if (posterPath == null || posterPath.isEmpty) {
-      return AspectRatio(
-        aspectRatio: 2 / 3,
-        child: Image.asset(
-          'assets/person.png',
-          fit: BoxFit.contain,
-        ),
-      );
-    }
-
-    return AspectRatio(
+    return AppPosterImage(
+      imageUrl: posterPath,
       aspectRatio: 2 / 3,
-      child: CachedNetworkImage(
-        imageUrl: posterPath,
-        cacheManager: CustomCacheManager.instance,
-        fit: BoxFit.cover,
-        memCacheHeight: 300,
-        memCacheWidth: 200,
-        fadeInDuration: Duration.zero,
-        fadeOutDuration: Duration.zero,
-        placeholderFadeInDuration: Duration.zero,
-        cacheKey: posterPath,
-        errorWidget: (context, error, stackTrace) {
-          return Image.asset(
-            'assets/person.png',
-            fit: BoxFit.contain,
-          );
-        },
-      ),
+      fallbackType: PosterFallbackType.person,
+      memCacheWidth: 200,
+      memCacheHeight: 300,
+      fit: BoxFit.cover,
     );
   }
 
@@ -133,21 +111,19 @@ class PersonChip extends StatelessWidget {
           tmdbPerson.name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
         ),
         const SizedBox(height: 5),
         Text(
           roleText,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: 12,
-          ),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
         ),
       ],
     );

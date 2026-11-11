@@ -1,16 +1,16 @@
 import 'package:moviescout/core/services/app_service.dart';
 import 'package:moviescout/core/utils/url_constants.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/features/auth/services/supabase_auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/core/utils/snack_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:moviescout/core/widgets/app_poster_image.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -96,36 +96,19 @@ class AppDrawer extends StatelessWidget {
             CircleAvatar(
               backgroundColor: Colors.transparent,
               child: ClipOval(
-                child: avatarUrl != null && avatarUrl.isNotEmpty
-                    ? (kIsWeb
-                        ? Image.network(
-                            avatarUrl,
-                            width: 40,
-                            height: 40,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Image.asset(
-                              'assets/account.png',
-                              width: 40,
-                              height: 40,
-                            ),
-                          )
-                        : CachedNetworkImage(
-                            imageUrl: avatarUrl,
-                            width: 40,
-                            height: 40,
-                            fit: BoxFit.cover,
-                            errorWidget: (context, url, error) => Image.asset(
-                              'assets/account.png',
-                              width: 40,
-                              height: 40,
-                            ),
-                          ))
-                    : Image.asset(
-                        'assets/account.png',
-                        width: 40,
-                        height: 40,
-                      ),
+                child: SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: AppPosterImage(
+                    imageUrl: avatarUrl,
+                    fallbackType: PosterFallbackType.account,
+                    aspectRatio: 1.0,
+                    memCacheWidth: 80,
+                    memCacheHeight: 80,
+                    fit: BoxFit.cover,
+                    fallbackFit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 16),

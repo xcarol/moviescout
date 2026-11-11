@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
@@ -7,6 +6,7 @@ import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
 import 'package:moviescout/features/titles/widgets/title_card.dart';
 import 'package:moviescout/core/utils/date_formatter.dart';
+import 'package:moviescout/core/widgets/app_poster_image.dart';
 
 class EpisodeCard extends StatelessWidget {
   final TmdbEpisode _episode;
@@ -64,35 +64,13 @@ class EpisodeCard extends StatelessWidget {
   }
 
   Widget episodeThumbnail(String? stillPath) {
-    if (stillPath == null || stillPath.isEmpty) {
-      return AspectRatio(
-        aspectRatio: 16 / 9,
-        child: Image.asset(
-          'assets/movie.png',
-          fit: BoxFit.contain,
-        ),
-      );
-    }
-
-    return AspectRatio(
+    return AppPosterImage(
+      imageUrl: stillPath,
       aspectRatio: 16 / 9,
-      child: CachedNetworkImage(
-        imageUrl: stillPath,
-        cacheManager: CustomCacheManager.instance,
-        fit: BoxFit.cover,
-        memCacheHeight: 180,
-        memCacheWidth: 320,
-        fadeInDuration: Duration.zero,
-        fadeOutDuration: Duration.zero,
-        placeholderFadeInDuration: Duration.zero,
-        cacheKey: stillPath,
-        errorWidget: (context, error, stackTrace) {
-          return Image.asset(
-            'assets/movie.png',
-            fit: BoxFit.contain,
-          );
-        },
-      ),
+      fallbackType: PosterFallbackType.tvShow,
+      memCacheWidth: 320,
+      memCacheHeight: 180,
+      fit: BoxFit.cover,
     );
   }
 

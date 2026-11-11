@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
@@ -11,6 +10,7 @@ import 'package:moviescout/features/watchlist/services/user_following_service.da
 import 'package:moviescout/features/watchlist/services/watchlist_service.dart';
 import 'package:moviescout/features/watchlist/widgets/user_title_chip.dart';
 import 'package:moviescout/features/titles/widgets/title_chip.dart';
+import 'package:moviescout/core/widgets/app_poster_image.dart';
 import 'package:provider/provider.dart';
 
 class UserDetails extends StatefulWidget {
@@ -135,32 +135,21 @@ class _UserDetailsState extends State<UserDetails> {
             child: CircleAvatar(
               radius: 46,
               backgroundColor: colorScheme.surfaceContainerHighest,
-              child: (_user.avatarUrl != null && _user.avatarUrl!.isNotEmpty)
-                  ? ClipOval(
-                      child: CachedNetworkImage(
-                        imageUrl: _user.avatarUrl!,
-                        width: 92,
-                        height: 92,
-                        fit: BoxFit.cover,
-                        fadeInDuration: Duration.zero,
-                        fadeOutDuration: Duration.zero,
-                        placeholder: (context, url) => Icon(
-                          Icons.person,
-                          size: 46,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        errorWidget: (context, url, error) => Icon(
-                          Icons.person,
-                          size: 46,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    )
-                  : Icon(
-                      Icons.person,
-                      size: 46,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
+              child: ClipOval(
+                child: SizedBox(
+                  width: 92,
+                  height: 92,
+                  child: AppPosterImage(
+                    imageUrl: _user.avatarUrl,
+                    fallbackType: PosterFallbackType.user,
+                    aspectRatio: 1.0,
+                    fit: BoxFit.cover,
+                    fallbackFit: BoxFit.cover,
+                    memCacheWidth: 184,
+                    memCacheHeight: 184,
+                  ),
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 12),
