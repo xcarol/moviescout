@@ -1,28 +1,16 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:moviescout/features/discovery/models/tmdb_collection.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/widgets/app_cached_image.dart';
+import 'package:moviescout/features/discovery/models/tmdb_collection.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-
-class CustomCacheManager {
-  static const key = 'customCacheKey';
-  static CacheManager instance = CacheManager(
-    Config(
-      key,
-      stalePeriod: const Duration(days: 30),
-      maxNrOfCacheObjects: 500,
-      fileService: HttpFileService(),
-    ),
-  );
-}
 
 class CollectionCard extends StatelessWidget {
   final TmdbCollection _collection;
   final TmdbTitleListService tmdbListService;
 
-  static double cardHeight = 160.0;
+  static double cardHeight = AppSizes.listCardHeight;
 
   const CollectionCard({
     super.key,
@@ -32,6 +20,8 @@ class CollectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return RepaintBoundary(
       child: SizedBox(
         height: cardHeight,
@@ -42,36 +32,42 @@ class CollectionCard extends StatelessWidget {
             },
             child: Row(
               children: [
-                _poster(_collection.posterPath),
-                const SizedBox(width: 10),
+                AppCachedImage(
+                  imageUrl: _collection.posterPath,
+                  type: AppImageType.poster,
+                  aspectRatio: AppSizes.aspectRatioPoster,
+                  memCacheWidth: AppSizes.posterCacheWidth,
+                  memCacheHeight: AppSizes.posterCacheHeight,
+                ),
+                const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 8.0),
+                    padding: const EdgeInsets.only(
+                      top: AppSpacing.xs,
+                      bottom: AppSpacing.xs,
+                      right: AppSpacing.xs,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           _collection.name,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                          style: theme.textTheme.titleMedium,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: AppSpacing.xs),
                         if (_collection.overview.isNotEmpty)
                           Text(
                             _collection.overview,
-                            style: Theme.of(context).textTheme.bodySmall,
+                            style: theme.textTheme.bodySmall,
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                           )
                         else
                           Text(
                             AppLocalizations.of(context)!.collection,
-                            style: Theme.of(context).textTheme.bodySmall,
+                            style: theme.textTheme.bodySmall,
                           ),
                       ],
                     ),
@@ -81,39 +77,6 @@ class CollectionCard extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _poster(String? posterPath) {
-    if (posterPath == null || posterPath.isEmpty) {
-      return AspectRatio(
-        aspectRatio: 2 / 3,
-        child: Image.asset(
-          'assets/movie.png',
-          fit: BoxFit.contain,
-        ),
-      );
-    }
-
-    return AspectRatio(
-      aspectRatio: 2 / 3,
-      child: CachedNetworkImage(
-        imageUrl: posterPath,
-        cacheManager: CustomCacheManager.instance,
-        fit: BoxFit.cover,
-        memCacheHeight: 300,
-        memCacheWidth: 200,
-        fadeInDuration: Duration.zero,
-        fadeOutDuration: Duration.zero,
-        placeholderFadeInDuration: Duration.zero,
-        cacheKey: posterPath,
-        errorWidget: (context, error, stackTrace) {
-          return Image.asset(
-            'assets/movie.png',
-            fit: BoxFit.contain,
-          );
-        },
       ),
     );
   }

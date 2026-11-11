@@ -259,7 +259,8 @@ class _FollowingListState extends State<FollowingList> {
       margin: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       padding: AppSpacing.screenPadding,
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        color: colorScheme.surfaceContainerHighest
+            .withValues(alpha: AppOpacity.half),
         borderRadius: AppRadius.borderMd,
         border: Border.all(
           color: colorScheme.outlineVariant,
@@ -319,7 +320,8 @@ class _FollowingListState extends State<FollowingList> {
       margin: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       padding: AppSpacing.screenPadding,
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        color: colorScheme.surfaceContainerHighest
+            .withValues(alpha: AppOpacity.half),
         borderRadius: AppRadius.borderMd,
         border: Border.all(
           color: colorScheme.outlineVariant,

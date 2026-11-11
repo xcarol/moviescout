@@ -1,24 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
-import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
-import 'package:moviescout/features/titles/models/tmdb_title.dart';
-import 'package:moviescout/features/seasons/models/tmdb_season.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/widgets/app_cached_image.dart';
+import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
-
-class CustomCacheManager {
-  static const key = 'customCacheKey';
-  static CacheManager instance = CacheManager(
-    Config(
-      key,
-      stalePeriod: const Duration(days: 30),
-      maxNrOfCacheObjects: 500,
-      fileService: HttpFileService(),
-    ),
-  );
-}
+import 'package:moviescout/features/seasons/models/tmdb_season.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
 
 class PersonCard extends StatelessWidget {
   final TmdbPerson _person;
@@ -27,7 +15,7 @@ class PersonCard extends StatelessWidget {
   final TmdbSeason? seasonContext;
   final TmdbEpisode? episodeContext;
 
-  static double cardHeight = 160.0;
+  static double cardHeight = AppSizes.listCardHeight;
 
   const PersonCard({
     super.key,
@@ -43,7 +31,7 @@ class PersonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TmdbPerson tmdbPerson = _person;
+    final tmdbPerson = _person;
 
     return RepaintBoundary(
       child: SizedBox(
@@ -62,7 +50,7 @@ class PersonCard extends StatelessWidget {
             child: Row(
               children: [
                 personPoster(tmdbPerson.posterPath),
-                const SizedBox(width: 10),
+                const SizedBox(width: AppSpacing.sm),
                 _personDetails(context, tmdbPerson),
               ],
             ),
@@ -73,51 +61,17 @@ class PersonCard extends StatelessWidget {
   }
 
   Widget personPoster(String? posterPath) {
-    if (posterPath == null || posterPath.isEmpty) {
-      return AspectRatio(
-        aspectRatio: 2 / 3,
-        child: Image.asset(
-          'assets/person.png',
-          fit: BoxFit.contain,
-        ),
-      );
-    }
-
-    return AspectRatio(
-      aspectRatio: 2 / 3,
-      child: CachedNetworkImage(
-        imageUrl: posterPath,
-        cacheManager: CustomCacheManager.instance,
-        fit: BoxFit.cover,
-        memCacheHeight: 300,
-        memCacheWidth: 200,
-        fadeInDuration: Duration.zero,
-        fadeOutDuration: Duration.zero,
-        placeholderFadeInDuration: Duration.zero,
-        cacheKey: posterPath,
-        errorWidget: (context, error, stackTrace) {
-          return Image.asset(
-            'assets/person.png',
-            fit: BoxFit.contain,
-          );
-        },
-      ),
-    );
-  }
-
-  Text _personName(String name, {int maxLines = 1}) {
-    return Text(
-      name,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-      ),
-      maxLines: maxLines,
-      overflow: TextOverflow.ellipsis,
+    return AppCachedImage(
+      imageUrl: posterPath,
+      type: AppImageType.avatar,
+      aspectRatio: AppSizes.aspectRatioPoster,
+      memCacheWidth: AppSizes.posterCacheWidth,
+      memCacheHeight: AppSizes.posterCacheHeight,
     );
   }
 
   Widget _personRoleDetails(BuildContext context, TmdbPerson tmdbPerson) {
+    final theme = Theme.of(context);
     final List<String> roles = [];
     if (tmdbPerson.character.isNotEmpty) {
       roles.add(tmdbPerson.character);
@@ -137,20 +91,39 @@ class PersonCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 5),
-        ...roles.map((role) => Text(role, maxLines: 2)),
+        const SizedBox(height: AppSpacing.xxs),
+        ...roles.map(
+          (role) => Text(
+            role,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
       ],
     );
   }
 
   Widget _personDetails(BuildContext context, TmdbPerson tmdbPerson) {
+    final theme = Theme.of(context);
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: const EdgeInsets.only(
+          top: AppSpacing.xs,
+          bottom: AppSpacing.xs,
+          right: AppSpacing.xs,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _personName(tmdbPerson.name, maxLines: 2),
+            Text(
+              tmdbPerson.name,
+              style: theme.textTheme.titleMedium,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
             _personRoleDetails(context, tmdbPerson),
           ],
         ),

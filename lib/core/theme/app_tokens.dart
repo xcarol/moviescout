@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppSpacing {
+  static const double micro = 2.0;
   static const double xxs = 4.0;
   static const double xs = 8.0;
   static const double sm = 12.0;
@@ -39,15 +40,24 @@ abstract final class AppSizes {
 
   static const double listCardHeight = 168.0;
   static const double episodeCardHeight = 116.0;
-  static const double userCardHeight = 96.0;
+  static const double episodeThumbnailWidth = 192.0;
+  static const double userCardHeight = 104.0;
+  static const double userCardAvatarSize = 68.0;
 
-  static const double posterChipWidth = 152.0;
-  static const double posterChipHeight = 320.0;
+  static const double posterChipWidth = 156.0;
+  static const double posterChipHeight = 328.0;
+  static const double personGridMaxExtent = 148.0;
 
   static const double pinnedChipWidth = 104.0;
   static const double pinnedChipHeight = 172.0;
 
   static const double providerLogoSize = 28.0;
+
+  static const int posterCacheWidth = 200;
+  static const int posterCacheHeight = 300;
+  static const int stillCacheWidth = 320;
+  static const int stillCacheHeight = 180;
+  static const int providerCacheSize = 56;
 
   static const double iconXs = 14.0;
   static const double iconSm = 16.0;
@@ -98,6 +108,21 @@ abstract final class AppSizes {
   static const double floatingPlayerInitialY = 100.0;
   static const double floatingPlayerElevation = 12.0;
   static const double overlayElevation = 4.0;
+
+  static const double textScaleMin = 1.0;
+  static const double textScaleMax = 1.3;
+}
+
+abstract final class AppOpacity {
+  static const double tint = 0.12;
+  static const double scrimLight = 0.3;
+  static const double backdropOverlay = 0.4;
+  static const double muted = 0.45;
+  static const double half = 0.5;
+  static const double disabled = 0.6;
+  static const double chipBadge = 0.85;
+  static const double chipFooter = 0.95;
+  static const double opaque = 1.0;
 }
 
 abstract final class AppBreakpoints {

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/core/theme/custom_colors.dart';
-import 'package:moviescout/features/titles/models/tmdb_title.dart';
-import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/utils/metadata_translator.dart';
+import 'package:moviescout/core/utils/ui_utils.dart';
+import 'package:moviescout/features/people/models/tmdb_person.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/titles/widgets/title_card.dart';
 import 'package:moviescout/features/titles/widgets/title_chip.dart';
-import 'package:moviescout/core/utils/metadata_translator.dart';
 
 extension TmdbTitleRoleTranslation on TmdbTitle {
   String localizedJob(BuildContext context) {
@@ -48,24 +50,24 @@ class PersonTitleChip extends TitleCard {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final clampedScale = mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
+    final customColors = Theme.of(context).extension<CustomColors>()!;
 
     return Padding(
-      padding: const EdgeInsets.only(right: 10),
+      padding: const EdgeInsets.only(right: AppSpacing.xs),
       child: MediaQuery(
-        data: mediaQuery.copyWith(textScaler: TextScaler.linear(clampedScale)),
+        data: mediaQuery.copyWith(
+          textScaler: UiUtils.clampedTextScaler(context),
+        ),
         child: RepaintBoundary(
           child: SizedBox(
             height: CARD_HEIGHT,
             width: CARD_WIDTH,
             child: Card(
-              color: Theme.of(context)
-                  .extension<CustomColors>()!
-                  .chipCardBackground,
-              margin: const EdgeInsets.symmetric(horizontal: 4.0),
+              color: customColors.chipCardBackground,
+              margin: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
               clipBehavior: Clip.antiAlias,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppRadius.borderMd,
               ),
               child: InkWell(
                 onTap: () async {
@@ -75,7 +77,7 @@ class PersonTitleChip extends TitleCard {
                   fit: StackFit.expand,
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: AppRadius.borderMd,
                       child: titlePoster(_title.posterPath),
                     ),
                     Positioned(
@@ -84,15 +86,13 @@ class PersonTitleChip extends TitleCard {
                       right: 0,
                       child: ClipRRect(
                         borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(12),
-                          bottomRight: Radius.circular(12),
+                          bottomLeft: Radius.circular(AppRadius.md),
+                          bottomRight: Radius.circular(AppRadius.md),
                         ),
                         child: Container(
-                          color: Theme.of(context)
-                              .extension<CustomColors>()!
-                              .chipCardBackground
-                              .withValues(alpha: 0.95),
-                          padding: const EdgeInsets.all(8.0),
+                          color: customColors.chipCardBackground
+                              .withValues(alpha: AppOpacity.chipFooter),
+                          padding: AppSpacing.chipPadding,
                           child: _personTitleDetails(context, _title),
                         ),
                       ),
@@ -108,6 +108,7 @@ class PersonTitleChip extends TitleCard {
   }
 
   Widget _personTitleDetails(BuildContext context, TmdbTitle tmdbTitle) {
+    final theme = Theme.of(context);
     final roleText = tmdbTitle.getRoleString(context, role: role);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,22 +118,15 @@ class PersonTitleChip extends TitleCard {
           tmdbTitle.name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+          style: theme.textTheme.titleSmall,
         ),
         if (roleText.isNotEmpty) ...[
-          const SizedBox(height: 5),
+          const SizedBox(height: AppSpacing.xxs),
           Text(
             roleText,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 12,
-            ),
+            style: theme.textTheme.bodySmall,
           ),
         ],
       ],

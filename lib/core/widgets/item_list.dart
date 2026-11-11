@@ -243,10 +243,8 @@ class _ItemListState extends SearchableListState<ItemList> {
                           final mediaQuery = MediaQuery.of(innerContext);
                           return MediaQuery(
                             data: mediaQuery.copyWith(
-                              textScaler: TextScaler.linear(
-                                UiUtils.scaleFactor(
-                                    innerContext, 1.0, 1.0, 1.3),
-                              ),
+                              textScaler:
+                                  UiUtils.clampedTextScaler(innerContext),
                             ),
                             child: _buildItemCard(innerContext, item),
                           );
@@ -276,9 +274,7 @@ class _ItemListState extends SearchableListState<ItemList> {
                         final mediaQuery = MediaQuery.of(innerContext);
                         return MediaQuery(
                           data: mediaQuery.copyWith(
-                            textScaler: TextScaler.linear(
-                              UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3),
-                            ),
+                            textScaler: UiUtils.clampedTextScaler(innerContext),
                           ),
                           child: Column(
                             children: [

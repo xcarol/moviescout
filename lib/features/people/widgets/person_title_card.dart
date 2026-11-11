@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
-import 'package:moviescout/features/titles/widgets/title_card.dart';
-import 'package:moviescout/features/people/widgets/person_title_chip.dart'; // To reuse TmdbTitleRoleTranslation
-
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
+import 'package:moviescout/features/people/widgets/person_title_chip.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/features/titles/widgets/title_card.dart';
 
 class PersonTitleCard extends TitleCard {
   final TmdbTitle _title;
@@ -30,7 +30,7 @@ class PersonTitleCard extends TitleCard {
             child: Row(
               children: [
                 titlePoster(_title.posterPath),
-                const SizedBox(width: 10),
+                const SizedBox(width: AppSpacing.sm),
                 _personTitleDetails(context, _title),
               ],
             ),
@@ -41,40 +41,45 @@ class PersonTitleCard extends TitleCard {
   }
 
   Widget _personTitleDetails(BuildContext context, TmdbTitle tmdbTitle) {
+    final theme = Theme.of(context);
     final roleText = tmdbTitle.getRoleString(context, role: role);
     final dateString = titleSubtitle(context, tmdbTitle);
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+        padding: const EdgeInsets.only(
+          top: AppSpacing.xs,
+          bottom: AppSpacing.xs,
+          right: AppSpacing.xs,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            titleHeader(tmdbTitle.name),
+            titleHeader(
+              tmdbTitle.name,
+              style: theme.textTheme.titleMedium,
+            ),
             if (dateString.isNotEmpty) ...[
-              const SizedBox(height: 2),
+              const SizedBox(height: AppSpacing.xxs),
               Text(
                 dateString,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontSize: 13,
-                ),
+                style: theme.textTheme.bodySmall,
               ),
             ],
             if (roleText.isNotEmpty) ...[
-              const SizedBox(height: 5),
+              const SizedBox(height: AppSpacing.xxs),
               Text(
                 roleText,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
-            const SizedBox(height: 5),
+            const SizedBox(height: AppSpacing.xxs),
             titleRating(context, tmdbTitle),
           ],
         ),

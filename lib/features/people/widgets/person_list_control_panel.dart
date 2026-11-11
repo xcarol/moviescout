@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/theme/title_list_theme.dart';
 import 'package:moviescout/core/widgets/text_filter_widget.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 
 class PersonListControlPanel extends StatelessWidget {
   final TextEditingController textFilterController;
@@ -17,9 +19,14 @@ class PersonListControlPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    final titleTheme = Theme.of(context).extension<TitleListTheme>()!;
 
     return Container(
-      padding: const EdgeInsets.all(4.0),
+      color: titleTheme.controlPanelBackground,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.xs,
+        vertical: AppSpacing.xxs,
+      ),
       child: Column(
         children: [
           TextFilterWidget(

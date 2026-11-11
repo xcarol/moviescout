@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/core/widgets/list_info_line.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/widgets/drop_down_selector.dart';
+import 'package:moviescout/core/widgets/list_info_line.dart';
 import 'package:moviescout/features/people/widgets/person_list_controller.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 
 class PersonListInfoLine extends StatelessWidget {
   final PersonListController controller;
@@ -15,6 +16,7 @@ class PersonListInfoLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final anyFilterActive = controller.textFilterController.text.isNotEmpty;
+    final theme = Theme.of(context);
 
     return ListInfoLine(
       leadingWidgets: [
@@ -22,15 +24,16 @@ class PersonListInfoLine extends StatelessWidget {
           listenable: controller,
           builder: (context, _) {
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xs,
+                vertical: AppSpacing.xxs,
+              ),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: AppRadius.borderSm,
               ),
               child: Text(
                 controller.itemCount.toString(),
-                style: TextStyle(
-                  fontSize: 16,
-                ),
+                style: theme.textTheme.bodyLarge,
               ),
             );
           },
@@ -46,8 +49,8 @@ class PersonListInfoLine extends StatelessWidget {
             options: controller.personSorts,
             onSelected: (value) => controller.setSelectedSort(context, value),
             arrowIcon: controller.isSortAsc
-                ? Icon(Icons.arrow_drop_down)
-                : Icon(Icons.arrow_drop_up),
+                ? const Icon(Icons.arrow_drop_down)
+                : const Icon(Icons.arrow_drop_up),
           );
         },
       ),
@@ -60,6 +63,7 @@ class PersonListInfoLine extends StatelessWidget {
           listenable: controller,
           builder: (context, _) {
             return IconButton(
+              visualDensity: VisualDensity.compact,
               icon: Icon(
                 controller.isGridView ? Icons.view_list : Icons.grid_view,
               ),

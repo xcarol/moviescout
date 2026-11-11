@@ -1,13 +1,14 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/features/auth/models/user_profile.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/widgets/app_cached_image.dart';
+import 'package:moviescout/features/auth/models/user_profile.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 
 class UserCard extends StatelessWidget {
   final UserProfile user;
 
-  static double cardHeight = 120.0;
+  static double cardHeight = AppSizes.userCardHeight;
 
   const UserCard({
     super.key,
@@ -27,11 +28,11 @@ class UserCard extends StatelessWidget {
               context.toUserDetails(user);
             },
             child: Opacity(
-              opacity: isPrivate ? 0.6 : 1.0,
+              opacity: isPrivate ? AppOpacity.disabled : AppOpacity.opaque,
               child: Row(
                 children: [
-                  _avatar(context),
-                  const SizedBox(width: 12),
+                  _avatar(),
+                  const SizedBox(width: AppSpacing.sm),
                   _details(context),
                 ],
               ),
@@ -42,83 +43,56 @@ class UserCard extends StatelessWidget {
     );
   }
 
-  Widget _avatar(BuildContext context) {
-    final avatarUrl = user.avatarUrl;
-    final colorScheme = Theme.of(context).colorScheme;
-
+  Widget _avatar() {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: CircleAvatar(
-        radius: 36,
-        backgroundColor: colorScheme.surfaceContainerHighest,
-        child: (avatarUrl != null && avatarUrl.isNotEmpty)
-            ? ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: avatarUrl,
-                  width: 72,
-                  height: 72,
-                  fit: BoxFit.cover,
-                  fadeInDuration: Duration.zero,
-                  fadeOutDuration: Duration.zero,
-                  placeholder: (context, url) => Icon(
-                    Icons.person,
-                    size: 36,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                  errorWidget: (context, url, error) => Icon(
-                    Icons.person,
-                    size: 36,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              )
-            : Icon(
-                Icons.person,
-                size: 36,
-                color: colorScheme.onSurfaceVariant,
-              ),
+      padding: AppSpacing.cardPadding,
+      child: AppCachedImage(
+        imageUrl: user.avatarUrl,
+        type: AppImageType.avatar,
+        width: AppSizes.userCardAvatarSize,
+        height: AppSizes.userCardAvatarSize,
+        isCircular: true,
+        fallbackIconSize: AppSizes.iconXl,
       ),
     );
   }
 
   Widget _details(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final loc = AppLocalizations.of(context)!;
     final isPrivate = !user.isPublic;
 
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+        padding: const EdgeInsets.symmetric(
+          vertical: AppSpacing.sm,
+          horizontal: AppSpacing.xs,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              user.username.isNotEmpty ? user.username : 'Anonymous',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              user.username.isNotEmpty ? user.username : loc.anonymousUser,
+              style: theme.textTheme.titleMedium,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
             if (isPrivate) ...[
-              const SizedBox(height: 6),
+              const SizedBox(height: AppSpacing.xxs),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     Icons.lock_outline,
-                    size: 14,
+                    size: AppSizes.iconXs,
                     color: colorScheme.onSurfaceVariant,
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AppSpacing.xxs),
                   Text(
                     loc.settingsProfilePrivate,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
+                    style: theme.textTheme.bodySmall,
                   ),
                 ],
               ),

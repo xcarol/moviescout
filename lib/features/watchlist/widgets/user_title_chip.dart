@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/titles/widgets/title_chip.dart';
@@ -55,7 +56,7 @@ class UserTitleChipContent extends TitleChipContent {
 
     if (ratingWidgets.isNotEmpty) {
       return SizedBox(
-        height: 30,
+        height: AppSizes.providerLogoSize,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(children: ratingWidgets),

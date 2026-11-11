@@ -1,12 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/navigation/app_navigator.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/utils/date_formatter.dart';
+import 'package:moviescout/core/widgets/app_cached_image.dart';
 import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
-import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
-import 'package:moviescout/features/titles/widgets/title_card.dart';
-import 'package:moviescout/core/utils/date_formatter.dart';
 
 class EpisodeCard extends StatelessWidget {
   final TmdbEpisode _episode;
@@ -15,7 +15,7 @@ class EpisodeCard extends StatelessWidget {
   final TmdbTitleListService tmdbListService;
   final int? totalEpisodes;
 
-  static double cardHeight = 122.0;
+  static double cardHeight = AppSizes.episodeCardHeight;
 
   const EpisodeCard({
     super.key,
@@ -33,9 +33,8 @@ class EpisodeCard extends StatelessWidget {
       child: SizedBox(
         height: cardHeight,
         child: Card(
-          margin: const EdgeInsets.all(0),
-          clipBehavior: Clip.hardEdge,
-          shape: const RoundedRectangleBorder(),
+          margin: EdgeInsets.zero,
+          clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: () {
               context.toEpisodeDetails(
@@ -50,10 +49,10 @@ class EpisodeCard extends StatelessWidget {
             child: Row(
               children: [
                 SizedBox(
-                  width: 200,
+                  width: AppSizes.episodeThumbnailWidth,
                   child: episodeThumbnail(_episode.stillPath),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: AppSpacing.sm),
                 _episodeDetails(context, _episode),
               ],
             ),
@@ -64,76 +63,65 @@ class EpisodeCard extends StatelessWidget {
   }
 
   Widget episodeThumbnail(String? stillPath) {
-    if (stillPath == null || stillPath.isEmpty) {
-      return AspectRatio(
-        aspectRatio: 16 / 9,
-        child: Image.asset(
-          'assets/movie.png',
-          fit: BoxFit.contain,
-        ),
-      );
-    }
-
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: CachedNetworkImage(
-        imageUrl: stillPath,
-        cacheManager: CustomCacheManager.instance,
-        fit: BoxFit.cover,
-        memCacheHeight: 180,
-        memCacheWidth: 320,
-        fadeInDuration: Duration.zero,
-        fadeOutDuration: Duration.zero,
-        placeholderFadeInDuration: Duration.zero,
-        cacheKey: stillPath,
-        errorWidget: (context, error, stackTrace) {
-          return Image.asset(
-            'assets/movie.png',
-            fit: BoxFit.contain,
-          );
-        },
-      ),
+    return AppCachedImage(
+      imageUrl: stillPath,
+      type: AppImageType.backdrop,
+      aspectRatio: AppSizes.aspectRatioBackdrop,
+      memCacheWidth: AppSizes.stillCacheWidth,
+      memCacheHeight: AppSizes.stillCacheHeight,
     );
   }
 
   Widget _episodeDetails(BuildContext context, TmdbEpisode episode) {
-    final textColor = Theme.of(
-      context,
-    ).colorScheme.onSurfaceVariant;
+    final theme = Theme.of(context);
 
     return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          episodeHeader('${episode.episodeNumber}. ${episode.name}'),
-          const SizedBox(height: 5),
-          Text(
-            DateFormatter.formatDate(context, episode.airDate),
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: textColor),
-          ),
-          if (episode.runtime > 0) ...[
-            const SizedBox(height: 5),
-            Text(
-              '${episode.runtime} min',
-              style: TextStyle(color: textColor),
+      child: Padding(
+        padding: const EdgeInsets.only(
+          top: AppSpacing.xs,
+          bottom: AppSpacing.xs,
+          right: AppSpacing.xs,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            episodeHeader(
+              '${episode.episodeNumber}. ${episode.name}',
+              style: theme.textTheme.titleSmall,
             ),
+            const SizedBox(height: AppSpacing.xxs),
+            Text(
+              DateFormatter.formatDate(context, episode.airDate),
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodySmall,
+            ),
+            if (episode.runtime > 0) ...[
+              const SizedBox(height: AppSpacing.xxs),
+              Text(
+                '${episode.runtime} min',
+                style: theme.textTheme.bodySmall,
+              ),
+            ],
+            const SizedBox(height: AppSpacing.xxs),
+            episodeRating(context, episode),
           ],
-          const SizedBox(height: 5),
-          episodeRating(context, episode),
-        ],
+        ),
       ),
     );
   }
 
-  Text episodeHeader(String name, {int maxLines = 2}) {
+  Text episodeHeader(
+    String name, {
+    int maxLines = 2,
+    TextStyle? style,
+  }) {
     return Text(
       name,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-      ),
+      style: style ??
+          const TextStyle(
+            fontWeight: FontWeight.w600,
+          ),
       maxLines: maxLines,
       overflow: TextOverflow.ellipsis,
     );
@@ -141,18 +129,22 @@ class EpisodeCard extends StatelessWidget {
 
   Widget episodeRating(BuildContext context, TmdbEpisode episode) {
     if (episode.voteAverage == 0.0) {
-      return const SizedBox();
+      return const SizedBox.shrink();
     }
 
+    final theme = Theme.of(context);
     return Row(
       children: [
         Icon(
           Icons.star,
-          size: 16,
-          color: Theme.of(context).extension<CustomColors>()!.ratedTitle,
+          size: AppSizes.iconSm,
+          color: theme.extension<CustomColors>()!.ratedTitle,
         ),
-        const SizedBox(width: 5),
-        Text(episode.voteAverage.toStringAsFixed(2)),
+        const SizedBox(width: AppSpacing.xxs),
+        Text(
+          episode.voteAverage.toStringAsFixed(2),
+          style: theme.textTheme.labelMedium,
+        ),
       ],
     );
   }

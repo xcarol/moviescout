@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/watchlist/services/rateslist_service.dart';
@@ -24,7 +25,7 @@ Widget notifyButton(
             return const SizedBox.shrink();
           }
 
-          bool notifyNewSeasons = titleFromList.notifyNewSeasons;
+          final notifyNewSeasons = titleFromList.notifyNewSeasons;
 
           return IconButton(
             padding: EdgeInsets.zero,
@@ -36,7 +37,7 @@ Widget notifyButton(
               notifyNewSeasons
                   ? Icons.notifications_active
                   : Icons.notifications_off_outlined,
-              size: 20,
+              size: AppSizes.iconMd,
               color: notifyNewSeasons
                   ? Theme.of(context).extension<CustomColors>()!.followingTitle
                   : Theme.of(context).disabledColor,

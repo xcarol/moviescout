@@ -1,18 +1,18 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:moviescout/core/theme/custom_colors.dart';
-import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
-import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
-import 'package:moviescout/features/titles/widgets/title_card.dart';
-import 'package:moviescout/features/titles/models/tmdb_title.dart';
-import 'package:moviescout/features/seasons/models/tmdb_season.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/widgets/app_cached_image.dart';
+import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
+import 'package:moviescout/features/seasons/models/tmdb_season.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
 
 // ignore: constant_identifier_names
-const double CARD_HEIGHT = 336.0;
+const double CARD_HEIGHT = AppSizes.posterChipHeight;
 // ignore: constant_identifier_names
-const double CARD_WIDTH = 160.0;
+const double CARD_WIDTH = AppSizes.posterChipWidth;
 
 class PersonChip extends StatelessWidget {
   final TmdbPerson _person;
@@ -23,8 +23,8 @@ class PersonChip extends StatelessWidget {
 
   const PersonChip({
     super.key,
-    required person,
-    required tmdbListService,
+    required TmdbPerson person,
+    required TmdbTitleListService tmdbListService,
     this.titleContext,
     this.seasonContext,
     this.episodeContext,
@@ -33,14 +33,19 @@ class PersonChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final customColors = Theme.of(context).extension<CustomColors>()!;
+
     return RepaintBoundary(
       child: SizedBox(
         height: CARD_HEIGHT,
         width: CARD_WIDTH,
         child: Card(
-          color:
-              Theme.of(context).extension<CustomColors>()!.chipCardBackground,
-          margin: const EdgeInsets.all(0),
+          color: customColors.chipCardBackground,
+          margin: EdgeInsets.zero,
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: AppRadius.borderMd,
+          ),
           child: InkWell(
             onTap: () {
               context.toPersonDetails(
@@ -54,9 +59,13 @@ class PersonChip extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: _poster(_person.posterPath),
+                AppCachedImage(
+                  imageUrl: _person.posterPath,
+                  type: AppImageType.avatar,
+                  aspectRatio: AppSizes.aspectRatioPoster,
+                  borderRadius: AppRadius.borderMd,
+                  memCacheWidth: AppSizes.posterCacheWidth,
+                  memCacheHeight: AppSizes.posterCacheHeight,
                 ),
                 Positioned(
                   bottom: 0,
@@ -64,15 +73,13 @@ class PersonChip extends StatelessWidget {
                   right: 0,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(12),
-                      bottomRight: Radius.circular(12),
+                      bottomLeft: Radius.circular(AppRadius.md),
+                      bottomRight: Radius.circular(AppRadius.md),
                     ),
                     child: Container(
-                      color: Theme.of(context)
-                          .extension<CustomColors>()!
-                          .chipCardBackground
-                          .withValues(alpha: 0.95),
-                      padding: const EdgeInsets.all(8.0),
+                      color: customColors.chipCardBackground
+                          .withValues(alpha: AppOpacity.chipFooter),
+                      padding: AppSpacing.chipPadding,
                       child: _details(context, _person),
                     ),
                   ),
@@ -85,40 +92,8 @@ class PersonChip extends StatelessWidget {
     );
   }
 
-  Widget _poster(String? posterPath) {
-    if (posterPath == null || posterPath.isEmpty) {
-      return AspectRatio(
-        aspectRatio: 2 / 3,
-        child: Image.asset(
-          'assets/person.png',
-          fit: BoxFit.contain,
-        ),
-      );
-    }
-
-    return AspectRatio(
-      aspectRatio: 2 / 3,
-      child: CachedNetworkImage(
-        imageUrl: posterPath,
-        cacheManager: CustomCacheManager.instance,
-        fit: BoxFit.cover,
-        memCacheHeight: 300,
-        memCacheWidth: 200,
-        fadeInDuration: Duration.zero,
-        fadeOutDuration: Duration.zero,
-        placeholderFadeInDuration: Duration.zero,
-        cacheKey: posterPath,
-        errorWidget: (context, error, stackTrace) {
-          return Image.asset(
-            'assets/person.png',
-            fit: BoxFit.contain,
-          );
-        },
-      ),
-    );
-  }
-
   Widget _details(BuildContext context, TmdbPerson tmdbPerson) {
+    final theme = Theme.of(context);
     final roleText = tmdbPerson.character.isNotEmpty
         ? tmdbPerson.character
         : tmdbPerson.job.isNotEmpty
@@ -133,21 +108,14 @@ class PersonChip extends StatelessWidget {
           tmdbPerson.name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+          style: theme.textTheme.titleSmall,
         ),
-        const SizedBox(height: 5),
+        const SizedBox(height: AppSpacing.xxs),
         Text(
           roleText,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: 12,
-          ),
+          style: theme.textTheme.bodySmall,
         ),
       ],
     );

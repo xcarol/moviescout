@@ -1,37 +1,25 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/core/navigation/app_navigator.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/utils/api_constants.dart';
+import 'package:moviescout/core/utils/app_constants.dart';
+import 'package:moviescout/core/widgets/app_cached_image.dart';
+import 'package:moviescout/features/notifications/widgets/notify_button.dart';
 import 'package:moviescout/features/settings/models/tmdb_provider.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
-import 'package:moviescout/core/utils/api_constants.dart';
-import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
 import 'package:moviescout/features/watchlist/services/rateslist_service.dart';
-import 'package:moviescout/core/utils/app_constants.dart';
-import 'package:moviescout/features/watchlist/widgets/watchlist_button.dart';
 import 'package:moviescout/features/watchlist/widgets/pin_button.dart';
-import 'package:moviescout/features/notifications/widgets/notify_button.dart';
+import 'package:moviescout/features/watchlist/widgets/watchlist_button.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-
-class CustomCacheManager {
-  static const key = 'customCacheKey';
-  static CacheManager instance = CacheManager(
-    Config(
-      key,
-      stalePeriod: const Duration(days: 30),
-      maxNrOfCacheObjects: 500,
-      fileService: HttpFileService(),
-    ),
-  );
-}
 
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
   final TmdbTitleListService _tmdbListService;
 
-  static double cardHeight = 178.0;
+  static double cardHeight = AppSizes.listCardHeight;
 
   const TitleCard({
     super.key,
@@ -61,7 +49,7 @@ class TitleCard extends StatelessWidget {
                 child: Row(
                   children: [
                     titlePoster(tmdbTitle.posterPath),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: AppSpacing.sm),
                     _titleDetails(context, tmdbTitle),
                   ],
                 ),
@@ -73,10 +61,10 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  static const double iconTextSpacingCompact = 2.0;
-  static const double iconTextSpacingDefault = 5.0;
-  static const double betweenSpacingCompact = 8.0;
-  static const double betweenSpacingDefault = 20.0;
+  static const double iconTextSpacingCompact = AppSpacing.xxs;
+  static const double iconTextSpacingDefault = AppSpacing.xxs;
+  static const double betweenSpacingCompact = AppSpacing.xs;
+  static const double betweenSpacingDefault = AppSpacing.md;
 
   List<Widget> buildRatingWidgets(
     BuildContext context, {
@@ -84,28 +72,40 @@ class TitleCard extends StatelessWidget {
     required Color color,
     bool isCompact = false,
   }) {
+    final theme = Theme.of(context);
     final double iconTextSpacing =
         isCompact ? iconTextSpacingCompact : iconTextSpacingDefault;
+    final double iconSize = isCompact ? AppSizes.iconSm : AppSizes.iconMd;
 
     if (rating == AppConstants.seenRating) {
       return [
         Icon(
           Icons.check,
+          size: iconSize,
           color: color,
         ),
         if (!isCompact) ...[
           SizedBox(width: iconTextSpacing),
-          Text(AppLocalizations.of(context)!.seen),
+          Text(
+            AppLocalizations.of(context)!.seen,
+            style: theme.textTheme.labelLarge,
+          ),
         ],
       ];
     } else if (rating > 0) {
       return [
         Icon(
           Icons.star,
+          size: iconSize,
           color: color,
         ),
         SizedBox(width: iconTextSpacing),
-        Text(rating == 10.0 ? '10' : rating.toStringAsFixed(1)),
+        Text(
+          rating == 10.0 ? '10' : rating.toStringAsFixed(1),
+          style: isCompact
+              ? theme.textTheme.labelMedium
+              : theme.textTheme.labelLarge,
+        ),
       ];
     }
     return [];
@@ -113,25 +113,33 @@ class TitleCard extends StatelessWidget {
 
   Widget titleRating(BuildContext context, TmdbTitle tmdbTitle,
       {bool isCompact = false}) {
-    final customColors = Theme.of(context).extension<CustomColors>()!;
+    final theme = Theme.of(context);
+    final customColors = theme.extension<CustomColors>()!;
     final double iconTextSpacing =
         isCompact ? iconTextSpacingCompact : iconTextSpacingDefault;
     final double betweenSpacing =
         isCompact ? betweenSpacingCompact : betweenSpacingDefault;
+    final double iconSize = isCompact ? AppSizes.iconSm : AppSizes.iconMd;
 
     if (tmdbTitle.voteAverage == 0.0) {
-      return const SizedBox();
+      return const SizedBox.shrink();
     }
 
-    List<Widget> children = [];
+    final List<Widget> children = [];
     if (tmdbTitle.voteAverage > 0) {
       children.addAll([
         Icon(
           Icons.star,
+          size: iconSize,
           color: customColors.ratedTitle,
         ),
         SizedBox(width: iconTextSpacing),
-        Text(tmdbTitle.voteAverage.toStringAsFixed(2)),
+        Text(
+          tmdbTitle.voteAverage.toStringAsFixed(2),
+          style: isCompact
+              ? theme.textTheme.labelMedium
+              : theme.textTheme.labelLarge,
+        ),
       ]);
     }
 
@@ -159,7 +167,7 @@ class TitleCard extends StatelessWidget {
             }
 
             if (ratingChildren.isEmpty) {
-              return SizedBox(height: IconTheme.of(context).size ?? 24.0);
+              return SizedBox(height: IconTheme.of(context).size ?? iconSize);
             }
 
             return Row(children: ratingChildren);
@@ -170,63 +178,47 @@ class TitleCard extends StatelessWidget {
   }
 
   Widget titlePoster(String? posterPath) {
-    if (posterPath == null || posterPath.isEmpty) {
-      return AspectRatio(
-        aspectRatio: 2 / 3,
-        child: Image.asset(
-          'assets/movie.png',
-          fit: BoxFit.contain,
-        ),
-      );
-    }
-
-    return AspectRatio(
-      aspectRatio: 2 / 3,
-      child: CachedNetworkImage(
-        imageUrl: posterPath,
-        cacheManager: CustomCacheManager.instance,
-        fit: BoxFit.cover,
-        memCacheHeight: 300,
-        memCacheWidth: 200,
-        fadeInDuration: Duration.zero,
-        fadeOutDuration: Duration.zero,
-        placeholderFadeInDuration: Duration.zero,
-        cacheKey: posterPath,
-        errorWidget: (context, error, stackTrace) {
-          return Image.asset(
-            'assets/movie.png',
-            fit: BoxFit.contain,
-          );
-        },
-      ),
+    return AppCachedImage(
+      imageUrl: posterPath,
+      type: AppImageType.poster,
+      aspectRatio: AppSizes.aspectRatioPoster,
+      memCacheWidth: AppSizes.posterCacheWidth,
+      memCacheHeight: AppSizes.posterCacheHeight,
     );
   }
 
   Widget _titleDetails(BuildContext context, TmdbTitle tmdbTitle) {
+    final theme = Theme.of(context);
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 0),
+        padding: const EdgeInsets.only(
+          top: AppSpacing.xs,
+          bottom: AppSpacing.xxs,
+          right: AppSpacing.xs,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            titleHeader(tmdbTitle.name, maxLines: 2),
-            const SizedBox(height: 4),
+            titleHeader(
+              tmdbTitle.name,
+              maxLines: 2,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: AppSpacing.xxs),
             Row(
               children: [
                 Expanded(
                   child: Text(
                     titleSubtitle(context, tmdbTitle),
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                    style: theme.textTheme.bodySmall,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: AppSpacing.xxs),
             titleRating(context, tmdbTitle),
-            const SizedBox(height: 5),
+            const SizedBox(height: AppSpacing.xxs),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -239,13 +231,17 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Text titleHeader(String name, {int maxLines = 1}) {
+  Text titleHeader(
+    String name, {
+    int maxLines = 1,
+    TextStyle? style,
+  }) {
     return Text(
       name,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-      ),
+      style: style ??
+          const TextStyle(
+            fontWeight: FontWeight.w600,
+          ),
       maxLines: maxLines,
       overflow: TextOverflow.ellipsis,
     );
@@ -259,11 +255,10 @@ class TitleCard extends StatelessWidget {
         Row(
           children: [
             notifyButton(context, tmdbTitle),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.xs),
             pinButton(context, tmdbTitle),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.xs),
             watchlistButton(context, tmdbTitle),
-            const SizedBox(width: 8),
           ],
         ),
       ],
@@ -300,28 +295,17 @@ class TitleCard extends StatelessWidget {
 
   Widget _providerLogo(TmdbProvider provider) {
     return Padding(
-      padding: const EdgeInsets.only(right: 5),
+      padding: const EdgeInsets.only(right: AppSpacing.xxs),
       child: Tooltip(
         message: provider.name,
-        child: SizedBox(
-          width: 30,
-          height: 30,
-          child: CachedNetworkImage(
-            imageUrl: provider.logoPath,
-            fit: BoxFit.cover,
-            memCacheHeight: 30,
-            memCacheWidth: 30,
-            fadeInDuration: Duration.zero,
-            fadeOutDuration: Duration.zero,
-            placeholderFadeInDuration: Duration.zero,
-            cacheKey: provider.logoPath,
-            errorWidget: (context, error, stackTrace) {
-              return Image.asset(
-                'assets/movie.png',
-                fit: BoxFit.cover,
-              );
-            },
-          ),
+        child: AppCachedImage(
+          imageUrl: provider.logoPath,
+          type: AppImageType.logo,
+          width: AppSizes.providerLogoSize,
+          height: AppSizes.providerLogoSize,
+          borderRadius: AppRadius.borderXs,
+          memCacheWidth: AppSizes.providerCacheSize,
+          memCacheHeight: AppSizes.providerCacheSize,
         ),
       ),
     );

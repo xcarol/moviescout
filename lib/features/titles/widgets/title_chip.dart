@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:moviescout/core/theme/custom_colors.dart';
-import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
-import 'package:moviescout/features/watchlist/services/rateslist_service.dart';
-import 'package:moviescout/features/titles/services/tmdb_title_service.dart';
-import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
-import 'package:moviescout/features/titles/widgets/title_card.dart';
-import 'package:moviescout/features/watchlist/widgets/watchlist_button.dart';
-import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:moviescout/core/services/error_service.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/utils/app_constants.dart';
+import 'package:moviescout/core/utils/ui_utils.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
+import 'package:moviescout/features/titles/services/tmdb_title_service.dart';
+import 'package:moviescout/features/titles/widgets/title_card.dart';
+import 'package:moviescout/features/watchlist/services/rateslist_service.dart';
+import 'package:moviescout/features/watchlist/widgets/watchlist_button.dart';
+import 'package:provider/provider.dart';
 
 // ignore: constant_identifier_names
-const double CARD_HEIGHT = 336.0;
+const double CARD_HEIGHT = AppSizes.posterChipHeight;
 // ignore: constant_identifier_names
-const double CARD_WIDTH = 160.0;
+const double CARD_WIDTH = AppSizes.posterChipWidth;
 
 class TitleChip extends StatefulWidget {
   final TmdbTitle title;
@@ -109,19 +111,18 @@ class TitleChipState<T extends TitleChip> extends State<T> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final clampedScale = mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
 
     return Padding(
-      padding: const EdgeInsets.only(right: 10),
+      padding: const EdgeInsets.only(right: AppSpacing.xs),
       child: FutureBuilder<TmdbTitle>(
         future: titleFuture,
         builder: (context, snapshot) {
-          // Fallback to widget.title (API data) while waiting to prevent spinners/flickers
           final titleToDisplay = localTitle ?? snapshot.data ?? widget.title;
 
           return MediaQuery(
             data: mediaQuery.copyWith(
-                textScaler: TextScaler.linear(clampedScale)),
+              textScaler: UiUtils.clampedTextScaler(context),
+            ),
             child: buildContent(context, titleToDisplay),
           );
         },
@@ -175,17 +176,18 @@ class TitleChipContent extends TitleCard {
 
   @override
   Widget build(BuildContext context) {
+    final customColors = Theme.of(context).extension<CustomColors>()!;
+
     return RepaintBoundary(
       child: SizedBox(
         height: CARD_HEIGHT,
         width: CARD_WIDTH,
         child: Card(
-          color:
-              Theme.of(context).extension<CustomColors>()!.chipCardBackground,
-          margin: const EdgeInsets.symmetric(horizontal: 4.0),
+          color: customColors.chipCardBackground,
+          margin: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
           clipBehavior: Clip.antiAlias,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppRadius.borderMd,
           ),
           child: InkWell(
             onTap: () async {
@@ -196,7 +198,7 @@ class TitleChipContent extends TitleCard {
               fit: StackFit.expand,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AppRadius.borderMd,
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
@@ -209,11 +211,12 @@ class TitleChipContent extends TitleCard {
                   top: 0,
                   right: 0,
                   child: Container(
-                    padding: const EdgeInsets.all(2.0),
+                    padding: const EdgeInsets.all(AppSpacing.micro),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.5),
+                      color: customColors.chipCardBackground
+                          .withValues(alpha: AppOpacity.chipBadge),
                       borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(8),
+                        bottomLeft: Radius.circular(AppRadius.sm),
                       ),
                     ),
                     child: watchlistButton(context, _title),
@@ -225,15 +228,13 @@ class TitleChipContent extends TitleCard {
                   right: 0,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(12),
-                      bottomRight: Radius.circular(12),
+                      bottomLeft: Radius.circular(AppRadius.md),
+                      bottomRight: Radius.circular(AppRadius.md),
                     ),
                     child: Container(
-                      color: Theme.of(context)
-                          .extension<CustomColors>()!
-                          .chipCardBackground
-                          .withValues(alpha: 0.95),
-                      padding: const EdgeInsets.all(8.0),
+                      color: customColors.chipCardBackground
+                          .withValues(alpha: AppOpacity.chipFooter),
+                      padding: AppSpacing.chipPadding,
                       child: titleDetails(context, _title),
                     ),
                   ),
@@ -252,13 +253,14 @@ class TitleChipContent extends TitleCard {
       mainAxisSize: MainAxisSize.min,
       children: [
         titleHeaderDetails(context, tmdbTitle),
-        const SizedBox(height: 5),
+        const SizedBox(height: AppSpacing.xxs),
         titleBottomDetails(context, tmdbTitle),
       ],
     );
   }
 
   Widget titleHeaderDetails(BuildContext context, TmdbTitle tmdbTitle) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -267,23 +269,16 @@ class TitleChipContent extends TitleCard {
           tmdbTitle.name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+          style: theme.textTheme.titleSmall,
         ),
-        const SizedBox(height: 5),
+        const SizedBox(height: AppSpacing.xxs),
         Text(
           titleSubtitle(context, tmdbTitle),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: 12,
-          ),
+          style: theme.textTheme.bodySmall,
         ),
-        const SizedBox(height: 5),
+        const SizedBox(height: AppSpacing.xxs),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: titleRating(context, tmdbTitle, isCompact: true),
@@ -294,7 +289,7 @@ class TitleChipContent extends TitleCard {
 
   Widget titleBottomDetails(BuildContext context, TmdbTitle tmdbTitle) {
     return SizedBox(
-      height: 30,
+      height: AppSizes.providerLogoSize,
       child: providers(tmdbTitle),
     );
   }

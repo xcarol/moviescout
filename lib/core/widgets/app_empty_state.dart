@@ -33,7 +33,8 @@ class AppEmptyState extends StatelessWidget {
               Icon(
                 icon,
                 size: AppSizes.iconEmptyState,
-                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.45),
+                color: colorScheme.onSurfaceVariant
+                    .withValues(alpha: AppOpacity.muted),
               ),
               const SizedBox(height: AppSpacing.md),
               Text(

@@ -152,7 +152,7 @@ class _MediaCarouselState extends State<MediaCarousel> {
       child: Icon(
         icon,
         size: AppSizes.iconEmptyState,
-        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.45),
+        color: colorScheme.onSurfaceVariant.withValues(alpha: AppOpacity.muted),
       ),
     );
   }
@@ -176,7 +176,8 @@ class _MediaCarouselState extends State<MediaCarousel> {
             imageUrl: url,
             cacheManager: AppCacheManager.instance,
             fit: BoxFit.cover,
-            color: colorScheme.surface.withValues(alpha: 0.4),
+            color: colorScheme.surface
+                .withValues(alpha: AppOpacity.backdropOverlay),
             colorBlendMode: BlendMode.darken,
             errorWidget: (context, url, error) => const SizedBox.shrink(),
           ),
@@ -186,7 +187,8 @@ class _MediaCarouselState extends State<MediaCarousel> {
           cacheManager: AppCacheManager.instance,
           fit: BoxFit.contain,
           placeholder: (context, url) => Container(
-            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+            color: colorScheme.surfaceContainerHighest
+                .withValues(alpha: AppOpacity.backdropOverlay),
           ),
           errorWidget: (context, url, error) =>
               _buildPlaceholder(widget.mediaType),
@@ -529,7 +531,8 @@ class _CarouselBase extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: realCurrentPage == index
                       ? colorScheme.primary
-                      : colorScheme.onPrimary.withValues(alpha: 0.5),
+                      : colorScheme.onPrimary
+                          .withValues(alpha: AppOpacity.half),
                   borderRadius: AppRadius.borderXs,
                 ),
               );
@@ -550,7 +553,7 @@ class _CarouselBase extends StatelessWidget {
       child: Center(
         child: Container(
           decoration: BoxDecoration(
-            color: colorScheme.surface.withValues(alpha: 0.3),
+            color: colorScheme.surface.withValues(alpha: AppOpacity.scrimLight),
             shape: BoxShape.circle,
           ),
           child: IconButton(
