@@ -80,10 +80,29 @@ class ThemeService with ChangeNotifier {
     _darkCustomColors = darkCustomColors;
     _darkTitleListTheme =
         _createTitleListTheme(darkColorScheme, darkCustomColors);
+    notifyListeners();
   }
 
   static TitleListTheme _createTitleListTheme(
       ColorScheme colorScheme, CustomColors customColors) {
+    if (colorScheme.brightness == Brightness.light) {
+      return TitleListTheme(
+        infoLineBackground: colorScheme.surfaceContainerHighest,
+        infoLineActiveFilterBackground: colorScheme.primaryContainer,
+        infoLineActiveFilterForeground: colorScheme.onPrimaryContainer,
+        infoLineInactiveFilterBackground: colorScheme.surface,
+        infoLineInactiveFilterForeground: colorScheme.onSurfaceVariant,
+        controlPanelBackground: colorScheme.surfaceContainerHighest,
+        controlPanelForeground: colorScheme.onSurface,
+        controlPanelActiveFilterBackground: colorScheme.primary,
+        controlPanelActiveFilterForeground: colorScheme.onPrimary,
+        controlPanelInactiveFilterBackground: colorScheme.surface,
+        controlPanelInactiveFilterForeground: colorScheme.onSurface,
+        searchCursorColor: colorScheme.primary,
+        searchHintColor: colorScheme.onSurfaceVariant,
+        searchSelectionColor: colorScheme.primary.withValues(alpha: 0.25),
+      );
+    }
     return TitleListTheme(
       infoLineBackground: colorScheme.primaryContainer,
       infoLineActiveFilterBackground: colorScheme.surface,
@@ -102,44 +121,91 @@ class ThemeService with ChangeNotifier {
     );
   }
 
-  static ColorScheme lightColorSchemeDefault = ColorScheme(
+  static const ColorScheme lightColorSchemeDefault = ColorScheme(
     brightness: Brightness.light,
-    primary: Color.fromARGB(0xFF, 0x10, 0xB9, 0x81),
-    onPrimary: Color.fromARGB(0xFF, 0x12, 0x12, 0x12),
-    primaryContainer: Color.fromARGB(0xFF, 0x12, 0x12, 0x12),
-    onPrimaryContainer: Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
-    secondary: Color.fromARGB(0xFF, 0x33, 0x33, 0x33),
-    onSecondary: Color.fromARGB(0xFF, 0xFF, 0xFF, 0xFF),
-    tertiary: Color.fromARGB(0xFF, 0xE5, 0xBA, 0x73),
-    onTertiary: Color.fromARGB(0xFF, 0x33, 0x33, 0x33),
-    error: Color.fromARGB(0xFF, 0x33, 0x33, 0x33),
-    onError: Colors.red,
-    surface: Color.fromARGB(0xFF, 0x1E, 0x1E, 0x1E),
-    onSurface: Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
-    onSurfaceVariant: Color.fromARGB(0xFF, 0x9E, 0x9E, 0x9E),
+    primary: Color(0xFF059669),
+    onPrimary: Color(0xFFFFFFFF),
+    primaryContainer: Color(0xFFD1FAE5),
+    onPrimaryContainer: Color(0xFF065F46),
+    secondary: Color(0xFF4B5563),
+    onSecondary: Color(0xFFFFFFFF),
+    secondaryContainer: Color(0xFFF3F4F6),
+    onSecondaryContainer: Color(0xFF1F2937),
+    tertiary: Color(0xFFD97706),
+    onTertiary: Color(0xFFFFFFFF),
+    tertiaryContainer: Color(0xFFFEF3C7),
+    onTertiaryContainer: Color(0xFF92400E),
+    error: Color(0xFFDC2626),
+    onError: Color(0xFFFFFFFF),
+    surface: Color(0xFFFFFFFF),
+    onSurface: Color(0xFF111827),
+    onSurfaceVariant: Color(0xFF6B7280),
+    surfaceContainerHighest: Color(0xFFF3F4F6),
+    outline: Color(0xFFE5E7EB),
+    outlineVariant: Color(0xFFD1D5DB),
   );
 
-  static CustomColors lightCustomColorsDefault = CustomColors(
-    inWatchlist: lightColorSchemeDefault.primary,
-    notInWatchlist: lightColorSchemeDefault.onSurfaceVariant,
-    ratedTitle: lightColorSchemeDefault.tertiary,
-    userRatedTitle: lightColorSchemeDefault.primary,
-    followingTitle: lightColorSchemeDefault.primary,
-    pinnedTitle: lightColorSchemeDefault.tertiary,
-    navigationBarSelected: lightColorSchemeDefault.primary,
-    navigationBarNotSelected: Color.fromARGB(0xFF, 0x8E, 0x8E, 0x8E),
-    chipCardBackground: Color.fromARGB(0xFF, 0x2B, 0x2B, 0x2B),
-    dividerColor: lightColorSchemeDefault.secondary,
-    bottomNavigationBarBackground: lightColorSchemeDefault.secondary,
-    appBarBackground: lightColorSchemeDefault.primaryContainer,
-    appBarText: lightColorSchemeDefault.onSurface,
+  static const CustomColors lightCustomColorsDefault = CustomColors(
+    inWatchlist: Color(0xFF059669),
+    notInWatchlist: Color(0xFF6B7280),
+    ratedTitle: Color(0xFFD97706),
+    userRatedTitle: Color(0xFF059669),
+    followingTitle: Color(0xFF059669),
+    pinnedTitle: Color(0xFFD97706),
+    navigationBarSelected: Color(0xFF059669),
+    navigationBarNotSelected: Color(0xFF6B7280),
+    chipCardBackground: Color(0xFFF3F4F6),
+    dividerColor: Color(0xFFE5E7EB),
+    bottomNavigationBarBackground: Color(0xFFFFFFFF),
+    appBarBackground: Color(0xFFFFFFFF),
+    appBarText: Color(0xFF111827),
+    watchedOverlayColor: Colors.black38,
+    destructiveAction: Color(0xFFDC2626),
+    followingUserRatedTitle: Color(0xFF0D9488),
+    badgeColor: Color(0xFFEF4444),
+  );
+
+  static const ColorScheme darkColorSchemeDefault = ColorScheme(
+    brightness: Brightness.dark,
+    primary: Color(0xFF10B981),
+    onPrimary: Color(0xFF121212),
+    primaryContainer: Color(0xFF121212),
+    onPrimaryContainer: Color(0xFFF5F5F5),
+    secondary: Color(0xFF333333),
+    onSecondary: Color(0xFFFFFFFF),
+    secondaryContainer: Color(0xFF262626),
+    onSecondaryContainer: Color(0xFFE5E5E5),
+    tertiary: Color(0xFFE5BA73),
+    onTertiary: Color(0xFF333333),
+    tertiaryContainer: Color(0xFF3D321F),
+    onTertiaryContainer: Color(0xFFFCEBC7),
+    error: Color(0xFFEF4444),
+    onError: Color(0xFFFFFFFF),
+    surface: Color(0xFF1E1E1E),
+    onSurface: Color(0xFFF5F5F5),
+    onSurfaceVariant: Color(0xFF9E9E9E),
+    surfaceContainerHighest: Color(0xFF2B2B2B),
+    outline: Color(0xFF404040),
+    outlineVariant: Color(0xFF2E2E2E),
+  );
+
+  static const CustomColors darkCustomColorsDefault = CustomColors(
+    inWatchlist: Color(0xFF10B981),
+    notInWatchlist: Color(0xFF9E9E9E),
+    ratedTitle: Color(0xFFE5BA73),
+    userRatedTitle: Color(0xFF10B981),
+    followingTitle: Color(0xFF10B981),
+    pinnedTitle: Color(0xFFE5BA73),
+    navigationBarSelected: Color(0xFF10B981),
+    navigationBarNotSelected: Color(0xFF8E8E8E),
+    chipCardBackground: Color(0xFF2B2B2B),
+    dividerColor: Color(0xFF333333),
+    bottomNavigationBarBackground: Color(0xFF333333),
+    appBarBackground: Color(0xFF121212),
+    appBarText: Color(0xFFF5F5F5),
     watchedOverlayColor: Colors.black54,
-    destructiveAction: Color.fromARGB(0xFF, 0xFF, 0x52, 0x52),
-    followingUserRatedTitle: Color.fromARGB(0xFF, 0x2D, 0xD4, 0xBF),
-    badgeColor: Color.fromARGB(0xFF, 0xFF, 0x52, 0x52),
+    destructiveAction: Color(0xFFFF5252),
+    followingUserRatedTitle: Color(0xFF2DD4BF),
+    badgeColor: Color(0xFFFF5252),
   );
-
-  static ColorScheme darkColorSchemeDefault =
-      lightColorSchemeDefault.copyWith(brightness: Brightness.dark);
-  static CustomColors darkCustomColorsDefault = lightCustomColorsDefault;
 }
