@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 
 class ThemeForm extends StatefulWidget {
@@ -39,8 +40,8 @@ class _ThemeFormState extends State<ThemeForm> {
         icon,
         color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+      shape: const RoundedRectangleBorder(
+        borderRadius: AppRadius.borderSm,
       ),
       value: mode,
       selected: isSelected,

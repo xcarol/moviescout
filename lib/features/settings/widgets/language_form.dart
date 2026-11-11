@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
 
@@ -31,8 +32,8 @@ class _LanguageFormState extends State<LanguageForm> {
               : Theme.of(context).colorScheme.onSurface,
         ),
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+      shape: const RoundedRectangleBorder(
+        borderRadius: AppRadius.borderSm,
       ),
       value: code,
       selected: isSelected,
