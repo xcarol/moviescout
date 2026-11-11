@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/features/auth/models/user_profile.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
@@ -75,19 +76,26 @@ class _UserDetailsState extends State<UserDetails> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 60),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _profileHeader(context, isCurrentUser),
-            Divider(color: customColors.dividerColor),
-            if (!isCurrentUser && !_isPublic)
-              _privateProfileNotice(context)
-            else ...[
-              _pinnedSection(context),
-              Divider(color: customColors.dividerColor),
-              _ratedSection(context),
-            ],
-          ],
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppBreakpoints.maxContentWidth,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _profileHeader(context, isCurrentUser),
+                Divider(color: customColors.dividerColor),
+                if (!isCurrentUser && !_isPublic)
+                  _privateProfileNotice(context)
+                else ...[
+                  _pinnedSection(context),
+                  Divider(color: customColors.dividerColor),
+                  _ratedSection(context),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
     );

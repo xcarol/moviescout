@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/core/theme/theme_service.dart';
 import 'package:moviescout/features/settings/widgets/theme_form.dart';
 import 'package:moviescout/features/auth/services/supabase_auth_service.dart';
@@ -67,9 +68,15 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(l10n.settings),
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-        children: [
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppBreakpoints.maxContentWidth,
+          ),
+          child: ListView(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            children: [
           SettingsGroup(
             title: l10n.settingsSectionPreferences,
             children: [
@@ -240,6 +247,8 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 16.0),
           ],
         ],
+      ),
+        ),
       ),
     );
   }

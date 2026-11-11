@@ -7,7 +7,7 @@ import 'package:moviescout/core/widgets/app_poster_image.dart';
 class UserCard extends StatelessWidget {
   final UserProfile user;
 
-  static double cardHeight = 120.0;
+  static const double cardHeight = 120.0;
 
   const UserCard({
     super.key,

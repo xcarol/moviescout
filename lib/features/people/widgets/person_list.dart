@@ -74,7 +74,7 @@ class _PersonListState extends SearchableListState<PersonList> {
             return MediaQuery(
               data: mediaQuery.copyWith(
                 textScaler: TextScaler.linear(
-                    UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
+                    UiUtils.clampedTextScale(innerContext)),
               ),
               child: Column(
                 children: [
@@ -121,7 +121,7 @@ class _PersonListState extends SearchableListState<PersonList> {
             return MediaQuery(
               data: mediaQuery.copyWith(
                 textScaler: TextScaler.linear(
-                    UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
+                    UiUtils.clampedTextScale(innerContext)),
               ),
               child: PersonChip(
                 person: person,

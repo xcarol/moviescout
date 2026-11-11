@@ -4,6 +4,7 @@ import "package:moviescout/features/auth/services/supabase_auth_service.dart";
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
@@ -140,7 +141,13 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
           if (cachedEpisode != null) {
             return SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: _detailsBody(cachedEpisode),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                      maxWidth: AppBreakpoints.maxContentWidth),
+                  child: _detailsBody(cachedEpisode),
+                ),
+              ),
             );
           } else {
             WidgetsBinding.instance.addPostFrameCallback((_) {

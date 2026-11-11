@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
@@ -171,99 +174,72 @@ class _ItemListState extends SearchableListState<ItemList> {
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Text(
-                      AppLocalizations.of(context)!.emptyList,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 16,
-                      ),
-                    ),
+                  child: AppEmptyState(
+                    icon: Icons.movie_outlined,
+                    title: AppLocalizations.of(context)!.emptyList,
                   ),
                 ),
               ),
             ),
           );
         } else {
-          listView = Scrollbar(
-            controller: _controller.scrollController,
-            child: ListView.builder(
-              key: const PageStorageKey('TitleListView'),
-              controller: _controller.scrollController,
-              physics: AlwaysScrollableScrollPhysics(
+          listView = LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide =
+                  constraints.maxWidth > AppBreakpoints.largeScreenMinWidth;
+              final scrollPhysics = AlwaysScrollableScrollPhysics(
                 parent: BottomClampingScrollPhysics(
                   topRefreshController: _refreshController,
                   parent: ClampingWithOverscrollPhysics(
                     state: _refreshController,
                   ),
                 ),
-              ),
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              itemCount: service.loadedItemCount,
-              itemBuilder: (context, index) {
-                final item = service.getItem(index);
-                if (item == null) {
-                  return const SizedBox.shrink();
-                }
-                return Builder(
-                  builder: (innerContext) {
-                    final mediaQuery = MediaQuery.of(innerContext);
+              );
 
-                    final titleTheme =
-                        Theme.of(context).extension<CustomColors>()!;
-
-                    TmdbTitleListService supportService =
-                        widget.titleListServiceSupport ??
-                            widget.listService as TmdbTitleListService;
-                    Widget card;
-                    if (item is TmdbTitle) {
-                      if (service is TmdbPersonTitlesService) {
-                        card = PersonTitleCard(
-                          title: item,
-                          tmdbListService: supportService,
-                          role: service.role,
-                        );
-                      } else {
-                        card = TitleCard(
-                          title: item,
-                          tmdbListService: supportService,
-                        );
-                      }
-                    } else if (item is TmdbPerson) {
-                      card = PersonCard(
-                        person: item,
-                        tmdbListService: supportService,
-                      );
-                    } else if (item is TmdbCollection) {
-                      card = CollectionCard(
-                        collection: item,
-                        tmdbListService: supportService,
-                      );
-                    } else {
-                      card = const SizedBox.shrink();
-                    }
-
-                    return MediaQuery(
-                      data: mediaQuery.copyWith(
-                        textScaler: TextScaler.linear(
-                            UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
-                      ),
-                      child: Column(
-                        children: [
-                          card,
-                          Divider(
-                            height: 1,
-                            color: titleTheme.dividerColor,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+              if (isWide) {
+                return Scrollbar(
+                  controller: _controller.scrollController,
+                  child: GridView.builder(
+                    key: const PageStorageKey('TitleGridView'),
+                    controller: _controller.scrollController,
+                    physics: scrollPhysics,
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    padding: const EdgeInsets.all(AppSpacing.sm),
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: AppBreakpoints.maxGridCrossAxisExtent,
+                      mainAxisExtent: TitleCard.cardHeight,
+                      crossAxisSpacing: AppSpacing.sm,
+                      mainAxisSpacing: AppSpacing.sm,
+                    ),
+                    itemCount: service.loadedItemCount,
+                    itemBuilder: (context, index) {
+                      final item = service.getItem(index);
+                      return _buildCardItem(context, item, service,
+                          showDivider: false);
+                    },
+                  ),
                 );
-              },
-            ),
+              }
+
+              return Scrollbar(
+                controller: _controller.scrollController,
+                child: ListView.builder(
+                  key: const PageStorageKey('TitleListView'),
+                  controller: _controller.scrollController,
+                  physics: scrollPhysics,
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  itemCount: service.loadedItemCount,
+                  itemBuilder: (context, index) {
+                    final item = service.getItem(index);
+                    return _buildCardItem(context, item, service,
+                        showDivider: true);
+                  },
+                ),
+              );
+            },
           );
         }
 
@@ -301,6 +277,76 @@ class _ItemListState extends SearchableListState<ItemList> {
     );
   }
 
+  Widget _buildCardItem(
+    BuildContext context,
+    dynamic item,
+    TmdbBaseListService service, {
+    bool showDivider = true,
+  }) {
+    if (item == null) {
+      return const SizedBox.shrink();
+    }
+    return Builder(
+      builder: (innerContext) {
+        final mediaQuery = MediaQuery.of(innerContext);
+        final titleTheme = Theme.of(context).extension<CustomColors>()!;
+        final TmdbTitleListService supportService =
+            widget.titleListServiceSupport ??
+                widget.listService as TmdbTitleListService;
+
+        Widget card;
+        if (item is TmdbTitle) {
+          if (service is TmdbPersonTitlesService) {
+            card = PersonTitleCard(
+              title: item,
+              tmdbListService: supportService,
+              role: service.role,
+            );
+          } else {
+            card = TitleCard(
+              title: item,
+              tmdbListService: supportService,
+            );
+          }
+        } else if (item is TmdbPerson) {
+          card = PersonCard(
+            person: item,
+            tmdbListService: supportService,
+          );
+        } else if (item is TmdbCollection) {
+          card = CollectionCard(
+            collection: item,
+            tmdbListService: supportService,
+          );
+        } else {
+          card = const SizedBox.shrink();
+        }
+
+        final scaledCard = MediaQuery(
+          data: mediaQuery.copyWith(
+            textScaler: TextScaler.linear(
+                UiUtils.clampedTextScale(innerContext)),
+          ),
+          child: card,
+        );
+
+        if (!showDivider) {
+          return scaledCard;
+        }
+
+        return Column(
+          children: [
+            scaledCard,
+            Divider(
+              height: 1,
+              color: titleTheme.dividerColor,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _pinnedTitlesRow() {
     return ListenableBuilder(
       listenable: widget.listService,
@@ -327,7 +373,11 @@ class _ItemListState extends SearchableListState<ItemList> {
               },
               child: Padding(
                 padding: const EdgeInsets.only(
-                    left: 12.0, top: 8.0, bottom: 4.0, right: 12.0),
+                  left: AppSpacing.md,
+                  top: AppSpacing.sm,
+                  bottom: AppSpacing.xs,
+                  right: AppSpacing.md,
+                ),
                 child: Row(
                   children: [
                     Text(
@@ -338,7 +388,7 @@ class _ItemListState extends SearchableListState<ItemList> {
                         fontSize: 14,
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AppSpacing.xs),
                     Icon(
                       _isPinnedSectionExpanded
                           ? Icons.arrow_drop_up
@@ -355,7 +405,8 @@ class _ItemListState extends SearchableListState<ItemList> {
                 height: PinnedTitleChip.cardHeight,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                   itemCount: service.pinnedTitles.length,
                   itemBuilder: (context, index) {
                     return PinnedTitleChip(
@@ -365,7 +416,7 @@ class _ItemListState extends SearchableListState<ItemList> {
                   },
                 ),
               ),
-            const SizedBox(height: 8.0),
+            const SizedBox(height: AppSpacing.sm),
             Divider(
               height: 1,
               color: titleTheme.dividerColor,
