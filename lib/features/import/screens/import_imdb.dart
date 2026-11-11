@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/services/error_service.dart';
 import 'package:moviescout/features/import/services/imdb_import_service.dart';
@@ -49,15 +50,20 @@ class _ImportIMDBState extends State<ImportIMDB> {
         title: Text(AppLocalizations.of(context)!.imdbImport),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            _importPanel(),
-            const Divider(),
-            _infoLine(),
-            const Divider(),
-            _importResults(),
-          ],
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppBreakpoints.maxContentWidth,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              _importPanel(),
+              const Divider(),
+              _infoLine(),
+              const Divider(),
+              _importResults(),
+            ],
+          ),
         ),
       ),
     );
@@ -118,7 +124,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
   Widget _importPanel() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16.0),
+      padding: AppSpacing.screenPadding,
       child: Column(
         children: [
           Row(
@@ -128,7 +134,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
                     _operationInProgress ? null : () => _pickFile(context),
                 child: Text(AppLocalizations.of(context)!.select),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: TextField(
                   readOnly: true,
@@ -136,7 +142,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.imdbImportHint,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
+                      borderRadius: AppRadius.borderXs,
                     ),
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.clear),
@@ -148,10 +154,10 @@ class _ImportIMDBState extends State<ImportIMDB> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm),
           Wrap(
-            spacing: 10,
-            runSpacing: 10,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
             alignment: WrapAlignment.center,
             children: [
               OutlinedButton(
@@ -186,14 +192,14 @@ class _ImportIMDBState extends State<ImportIMDB> {
       {double? width = 0, Widget child = const SizedBox()}) {
     return Container(
       width: width,
-      margin: const EdgeInsets.only(bottom: 8.0),
+      margin: const EdgeInsets.only(bottom: AppSpacing.xs),
       decoration: BoxDecoration(
         border: Border.all(
-          color: Colors.grey,
-          width: 0.5,
+          color: Theme.of(context).colorScheme.outlineVariant,
+          width: AppSizes.borderWidthThin,
         ),
       ),
-      padding: const EdgeInsets.all(8.0),
+      padding: AppSpacing.chipPadding,
       child: child,
     );
   }
@@ -204,7 +210,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
     String importedTitles =
         '${_csvTitlesStatus.where((status) => status == ImdbTitleStatus.success).length} ${AppLocalizations.of(context)!.titles}';
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: AppSpacing.screenHorizontal,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -216,6 +222,9 @@ class _ImportIMDBState extends State<ImportIMDB> {
   }
 
   Widget _importResults() {
+    final colorScheme = Theme.of(context).colorScheme;
+    final cellTextStyle = Theme.of(context).textTheme.bodySmall;
+
     return Expanded(
       child: ListView.builder(
         key: const PageStorageKey('ImdbListView'),
@@ -223,7 +232,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
           IconData status;
-          Color statusColor = Colors.grey;
+          Color statusColor = colorScheme.onSurfaceVariant;
 
           if (_importId == index) {
             status = Icons.hourglass_empty;
@@ -234,11 +243,11 @@ class _ImportIMDBState extends State<ImportIMDB> {
                 break;
               case ImdbTitleStatus.success:
                 status = Icons.check_box;
-                statusColor = Colors.green;
+                statusColor = colorScheme.primary;
                 break;
               case ImdbTitleStatus.failed:
                 status = Icons.cancel_outlined;
-                statusColor = Colors.red;
+                statusColor = colorScheme.error;
                 break;
             }
           }
@@ -249,42 +258,42 @@ class _ImportIMDBState extends State<ImportIMDB> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const SizedBox(width: 10),
+                  const SizedBox(width: AppSpacing.md),
                   _importResultsCell(
-                    width: 40,
+                    width: AppSizes.importStatusCellWidth,
                     child: Icon(
                       status,
                       color: statusColor,
                     ),
                   ),
                   _importResultsCell(
-                    width: 100,
+                    width: AppSizes.importIdCellWidth,
                     child: Text(
                       row[_csvData.imdbIdColumn].toString(),
-                      style: const TextStyle(fontSize: 12),
+                      style: cellTextStyle,
                     ),
                   ),
                   Expanded(
                     child: _importResultsCell(
                       child: Text(
                         row[_csvData.imdbTitleColumn].toString(),
-                        style: const TextStyle(fontSize: 12),
+                        style: cellTextStyle,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
                   if (_csvData.isRateList)
                     _importResultsCell(
-                      width: 40,
+                      width: AppSizes.importStatusCellWidth,
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
                           row[_csvData.imdbRateColumn].toString(),
-                          style: const TextStyle(fontSize: 12),
+                          style: cellTextStyle,
                         ),
                       ),
                     ),
-                  const SizedBox(width: 20),
+                  const SizedBox(width: AppSpacing.md),
                 ],
               ),
             ],

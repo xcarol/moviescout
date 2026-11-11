@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
 
@@ -25,14 +26,15 @@ class _LanguageFormState extends State<LanguageForm> {
     return RadioListTile<String>(
       title: Text(
         name,
-        style: TextStyle(
-          color: isSelected
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.onSurface,
-        ),
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            ),
       ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppRadius.borderMd,
       ),
       value: code,
       selected: isSelected,
@@ -65,7 +67,7 @@ class _LanguageFormState extends State<LanguageForm> {
       ),
       content: SizedBox(
         width: double.maxFinite,
-        height: MediaQuery.sizeOf(context).height * 0.65,
+        height: MediaQuery.sizeOf(context).height * AppSizes.dialogHeightFactor,
         child: RadioGroup<String>(
           groupValue: _selectedLanguage,
           onChanged: (newValue) {
@@ -77,7 +79,7 @@ class _LanguageFormState extends State<LanguageForm> {
           },
           child: ListView.separated(
             itemCount: entries.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 6),
+            separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.xs),
             itemBuilder: (context, index) {
               final entry = entries[index];
               return _buildRadioTile(entry.key, entry.value);
@@ -86,7 +88,7 @@ class _LanguageFormState extends State<LanguageForm> {
         ),
       ),
       actions: [
-        FilledButton.tonal(
+        TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },

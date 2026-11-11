@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
 
@@ -7,7 +8,7 @@ class UserRateButton extends StatelessWidget {
   final double rating;
   final VoidCallback? onPressed;
   final double iconSize;
-  final double fontSize;
+  final double? fontSize;
   final EdgeInsetsGeometry padding;
 
   const UserRateButton({
@@ -15,14 +16,18 @@ class UserRateButton extends StatelessWidget {
     required this.isUserLoggedIn,
     required this.rating,
     this.onPressed,
-    this.iconSize = 32,
-    this.fontSize = 22,
-    this.padding = const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+    this.iconSize = AppSizes.iconXl,
+    this.fontSize,
+    this.padding = const EdgeInsets.symmetric(
+      vertical: AppSpacing.xs,
+      horizontal: AppSpacing.sm,
+    ),
   });
 
   @override
   Widget build(BuildContext context) {
     final customColors = Theme.of(context).extension<CustomColors>()!;
+    final baseStyle = Theme.of(context).textTheme.titleLarge;
 
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
@@ -30,11 +35,11 @@ class UserRateButton extends StatelessWidget {
           color: !isUserLoggedIn
               ? Theme.of(context).disabledColor
               : Theme.of(context).colorScheme.onSurfaceVariant,
-          width: 2,
+          width: AppSizes.borderWidthThick,
         ),
         shape: const StadiumBorder(),
         padding: padding,
-        minimumSize: const Size(0, 0),
+        minimumSize: Size.zero,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
       onPressed: !isUserLoggedIn ? null : onPressed,
@@ -48,12 +53,12 @@ class UserRateButton extends StatelessWidget {
                 ? Theme.of(context).disabledColor
                 : customColors.userRatedTitle,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSpacing.xs),
           Text(
             rating > AppConstants.seenRating
                 ? (rating == 10.0 ? '10' : rating.toStringAsFixed(1))
                 : '-.-',
-            style: TextStyle(
+            style: baseStyle?.copyWith(
               fontWeight: FontWeight.bold,
               fontSize: fontSize,
               color: !isUserLoggedIn

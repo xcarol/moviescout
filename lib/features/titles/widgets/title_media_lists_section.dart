@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/utils/ui_utils.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
@@ -36,14 +38,14 @@ class _TitleMediaListsSectionState extends State<TitleMediaListsSection> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (!title.isMovie && title.numberOfSeasons > 0) ...[
-          const SizedBox(height: 15),
+          const SizedBox(height: AppSpacing.md),
           _seasonsDropdown(title),
-          const SizedBox(height: 15),
+          const SizedBox(height: AppSpacing.md),
         ],
         _castAndCrew(title, PersonAttributes.cast),
-        const SizedBox(height: 30),
+        const SizedBox(height: AppSpacing.xl),
         _recommended(title),
-        const SizedBox(height: 30),
+        const SizedBox(height: AppSpacing.xl),
         _castAndCrew(title, PersonAttributes.crew),
       ],
     );
@@ -65,9 +67,12 @@ class _TitleMediaListsSectionState extends State<TitleMediaListsSection> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         BoxedWidget(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm,
+            vertical: AppSpacing.xs,
+          ),
           child: DropdownSelector(
-            maxMenuHeight: 250,
+            maxMenuHeight: AppSizes.dropdownMaxMenuHeight,
             isExpanded: true,
             selectedOption:
                 _selectedSeason.isEmpty ? selectSeasonText : _selectedSeason,
@@ -122,8 +127,7 @@ class _TitleMediaListsSectionState extends State<TitleMediaListsSection> {
                 type == PersonAttributes.cast
                     ? AppLocalizations.of(context)!.cast
                     : AppLocalizations.of(context)!.crew,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: Theme.of(context).textTheme.titleSmall,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -133,21 +137,20 @@ class _TitleMediaListsSectionState extends State<TitleMediaListsSection> {
               },
               child: Text(
                 AppLocalizations.of(context)!.seeThemAll,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: Theme.of(context).textTheme.titleSmall,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: AppSpacing.xs),
         SizedBox(
-          height: 336.0,
+          height: AppSizes.chipCarouselHeight,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: people.length > 20 ? 20 : people.length,
             itemBuilder: (context, index) {
               return Padding(
-                padding: const EdgeInsets.only(right: 10),
+                padding: const EdgeInsets.only(right: AppSpacing.xs),
                 child: _personChip(context, people[index]),
               );
             },
@@ -161,11 +164,9 @@ class _TitleMediaListsSectionState extends State<TitleMediaListsSection> {
     return Builder(
       builder: (innerContext) {
         final mediaQuery = MediaQuery.of(innerContext);
-        final clampedScale = mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
-
         return MediaQuery(
           data: mediaQuery.copyWith(
-            textScaler: TextScaler.linear(clampedScale),
+            textScaler: UiUtils.clampedTextScaler(innerContext),
           ),
           child: PersonChip(
             person: tmdbPerson,
@@ -187,13 +188,13 @@ class _TitleMediaListsSectionState extends State<TitleMediaListsSection> {
       children: [
         Text(
           AppLocalizations.of(context)!.recommended,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          style: Theme.of(context).textTheme.titleSmall,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: AppSpacing.xs),
         SizedBox(
-          height: 336.0,
+          height: AppSizes.chipCarouselHeight,
           child: Consumer<RateslistService>(
             builder: (context, ratesService, child) {
               return FutureBuilder<List<double>>(

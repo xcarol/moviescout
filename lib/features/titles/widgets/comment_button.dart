@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/titles/models/title_comment.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
@@ -32,11 +33,11 @@ Widget commentButton(
 
           return IconButton(
             padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
+            constraints: AppSizes.compactActionConstraints,
             tooltip: hasComment ? loc.editComment : loc.addComment,
             icon: Icon(
               hasComment ? Icons.chat_bubble : Icons.chat_bubble_outline,
-              size: 20,
+              size: AppSizes.iconMd,
               color: hasComment
                   ? Theme.of(context).colorScheme.primary
                   : Theme.of(context).disabledColor,

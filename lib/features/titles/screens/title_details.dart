@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
@@ -168,7 +169,14 @@ class _TitleDetailsState extends State<TitleDetails> {
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
-        child: _detailsBody(_currentTitle),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppBreakpoints.maxContentWidth,
+            ),
+            child: _detailsBody(_currentTitle),
+          ),
+        ),
       ),
     );
   }
@@ -176,7 +184,7 @@ class _TitleDetailsState extends State<TitleDetails> {
   Widget _detailsBody(TmdbTitle title) {
     if (title.lastUpdated == AppConstants.defaultDate && _isUpdating) {
       return const Padding(
-        padding: EdgeInsets.only(top: 100.0),
+        padding: EdgeInsets.only(top: AppSpacing.bottomSafeMargin),
         child: Center(
           child: CircularProgressIndicator(),
         ),
@@ -195,30 +203,35 @@ class _TitleDetailsState extends State<TitleDetails> {
           isUpdating: _isUpdating,
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 5, right: 5, bottom: 100),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.sm,
+            AppSpacing.md,
+            AppSpacing.bottomSafeMargin,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 10),
+              const SizedBox(height: AppSpacing.xs),
               TitleRatingSection(
                 title: title,
                 omdbRatings: _omdbRatings,
                 isUpdatingRatings: _isUpdatingRatings,
                 onRatingChanged: (rating) => _updateTitleRate(title, rating),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: AppSpacing.sm),
               TitleMetadataSection(
                 title: title,
                 tmdbListService: widget._tmdbListService,
               ),
-              const SizedBox(height: 15),
+              const SizedBox(height: AppSpacing.md),
               TitleMediaListsSection(
                 title: title,
                 tmdbListService: widget._tmdbListService,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppSpacing.lg),
               Divider(color: dividerColor),
-              const SizedBox(height: 10),
+              const SizedBox(height: AppSpacing.sm),
               TitleCommentsSection(title: title),
             ],
           ),

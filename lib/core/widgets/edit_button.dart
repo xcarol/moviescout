@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/core/services/app_service.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:moviescout/features/settings/services/language_service.dart';
@@ -17,8 +18,8 @@ class EditButton extends StatelessWidget {
     }
 
     return IconButton(
-      icon: const Icon(Icons.edit, size: 20),
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      icon: const Icon(Icons.edit, size: AppSizes.iconMd),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
       constraints: const BoxConstraints(),
       onPressed: () {
         final languageCode = LanguageService().locale.languageCode;

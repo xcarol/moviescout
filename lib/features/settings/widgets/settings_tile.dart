@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 
 class SettingsTile extends StatelessWidget {
@@ -30,19 +31,20 @@ class SettingsTile extends StatelessWidget {
     final theme = Theme.of(context);
     final customColors = theme.extension<CustomColors>();
     final destructiveColor =
-        customColors?.destructiveAction ?? Colors.redAccent;
+        customColors?.destructiveAction ?? theme.colorScheme.error;
 
     final iconColor = isDestructive
         ? destructiveColor
         : enabled
             ? theme.colorScheme.onSurfaceVariant
-            : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.38);
+            : theme.colorScheme.onSurfaceVariant
+                .withValues(alpha: AppOpacity.backdropOverlay);
 
     Widget? leadingWidget = leading;
     if (leadingWidget == null && icon != null) {
       leadingWidget = Icon(
         icon,
-        size: 24,
+        size: AppSizes.iconLg,
         color: iconColor,
       );
     }
@@ -53,15 +55,17 @@ class SettingsTile extends StatelessWidget {
           ? destructiveColor
           : enabled
               ? theme.colorScheme.onSurface
-              : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+              : theme.colorScheme.onSurfaceVariant
+                  .withValues(alpha: AppOpacity.half),
     );
 
     final subtitleStyle = theme.textTheme.bodySmall?.copyWith(
       color: isDestructive
-          ? destructiveColor.withValues(alpha: 0.8)
+          ? destructiveColor.withValues(alpha: AppOpacity.chipBadge)
           : enabled
               ? theme.colorScheme.onSurfaceVariant
-              : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+              : theme.colorScheme.onSurfaceVariant
+                  .withValues(alpha: AppOpacity.backdropOverlay),
     );
 
     Widget titleWidget = Text(title, style: titleStyle);
@@ -70,15 +74,16 @@ class SettingsTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Flexible(child: Text(title, style: titleStyle)),
-          const SizedBox(width: 4.0),
+          const SizedBox(width: AppSpacing.xxs),
           IconButton(
             icon: Icon(
               Icons.info_outline,
-              size: 18,
-              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+              size: AppSizes.iconSubtle,
+              color: theme.colorScheme.onSurfaceVariant
+                  .withValues(alpha: AppOpacity.subtle),
             ),
             padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+            constraints: AppSizes.compactActionConstraints,
             visualDensity: VisualDensity.compact,
             onPressed: onInfoTap,
           ),
@@ -90,10 +95,12 @@ class SettingsTile extends StatelessWidget {
     if (effectiveTrailing == null && onTap != null && !isDestructive) {
       effectiveTrailing = Icon(
         Icons.chevron_right,
-        size: 20,
+        size: AppSizes.iconMd,
         color: enabled
-            ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6)
-            : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.25),
+            ? theme.colorScheme.onSurfaceVariant
+                .withValues(alpha: AppOpacity.disabled)
+            : theme.colorScheme.onSurfaceVariant
+                .withValues(alpha: AppOpacity.scrimLight),
       );
     }
 
@@ -103,8 +110,10 @@ class SettingsTile extends StatelessWidget {
       subtitle: subtitle != null ? Text(subtitle!, style: subtitleStyle) : null,
       trailing: effectiveTrailing,
       onTap: enabled ? onTap : null,
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.xxs,
+      ),
     );
   }
 }

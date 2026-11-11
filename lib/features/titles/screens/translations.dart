@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
 import 'package:moviescout/core/widgets/edit_button.dart';
 import 'package:moviescout/features/settings/widgets/ai_model_thinking_selector.dart';
 import 'package:moviescout/core/widgets/drop_down_selector.dart';
@@ -30,7 +32,7 @@ class _CopyIconButtonState extends State<_CopyIconButton> {
     setState(() {
       _copied = true;
     });
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(AppDurations.feedback, () {
       if (mounted) {
         setState(() {
           _copied = false;
@@ -45,15 +47,15 @@ class _CopyIconButtonState extends State<_CopyIconButton> {
       child: Tooltip(
         message: _copied ? AppLocalizations.of(context)!.copiedToClipboard : '',
         child: InkWell(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: AppRadius.borderXs,
           onTap: _copy,
           child: Padding(
-            padding: const EdgeInsets.all(2.0),
+            padding: const EdgeInsets.all(AppSpacing.micro),
             child: Icon(
               _copied ? Icons.check : Icons.copy,
-              size: 20,
+              size: AppSizes.iconMd,
               color: _copied
-                  ? Colors.green
+                  ? Theme.of(context).colorScheme.primary
                   : Theme.of(context).colorScheme.onSurface,
             ),
           ),
@@ -192,10 +194,10 @@ class TranslationsScreenState extends State<TranslationsScreen> {
   Widget _buildCopyableTextRow(String text,
       {bool isTitle = false, int? maxLines}) {
     return Container(
-      padding: const EdgeInsets.all(8.0),
+      padding: AppSpacing.chipPadding,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.borderSm,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,16 +244,19 @@ class TranslationsScreenState extends State<TranslationsScreen> {
 
     return Card(
       color: Theme.of(context).colorScheme.primaryContainer,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.xs,
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: AppSpacing.cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                const Icon(Icons.auto_awesome, size: 20),
-                const SizedBox(width: 8),
+                const Icon(Icons.auto_awesome, size: AppSizes.iconMd),
+                const SizedBox(width: AppSpacing.xs),
                 Expanded(
                   child: Text(
                     AppLocalizations.of(context)!.autoTranslation,
@@ -260,8 +265,8 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                 ),
                 Row(
                   children: [
-                    const Icon(Symbols.wand_stars, size: 20),
-                    const SizedBox(width: 8),
+                    const Icon(Symbols.wand_stars, size: AppSizes.iconMd),
+                    const SizedBox(width: AppSpacing.xs),
                     Text(
                       AppLocalizations.of(context)!.enableAiTranslation,
                       style: const TextStyle(fontWeight: FontWeight.bold),
@@ -298,18 +303,19 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.xs),
             LayoutBuilder(
               builder: (context, constraints) {
-                final bool useRow = constraints.maxWidth > 350.0;
+                final bool useRow =
+                    constraints.maxWidth > AppBreakpoints.inlineDropdown;
                 final sourceDropdown = DropdownSelector(
                   border: Border.all(
                     color: Theme.of(context).colorScheme.secondary,
                   ),
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: AppRadius.borderXs,
                   selectedOption: selectedSourceOption,
                   options: sourceOptions,
-                  maxMenuHeight: 300,
+                  maxMenuHeight: AppSizes.dropdownMaxMenuHeight,
                   isExpanded: true,
                   onSelected: (val) {
                     final code = uniqueSourceCodes.entries
@@ -326,10 +332,10 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                   border: Border.all(
                     color: Theme.of(context).colorScheme.secondary,
                   ),
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: AppRadius.borderXs,
                   selectedOption: selectedTargetOption,
                   options: targetOptions,
-                  maxMenuHeight: 300,
+                  maxMenuHeight: AppSizes.dropdownMaxMenuHeight,
                   isExpanded: true,
                   onSelected: (val) {
                     final code = TranslationLanguages.supportedLanguages.entries
@@ -347,8 +353,10 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                     children: [
                       Expanded(child: sourceDropdown),
                       const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Icon(Icons.arrow_forward, size: 16),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xs,
+                        ),
+                        child: Icon(Icons.arrow_forward, size: AppSizes.iconSm),
                       ),
                       Expanded(child: targetDropdown),
                     ],
@@ -359,8 +367,9 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                     children: [
                       sourceDropdown,
                       const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Icon(Icons.arrow_downward, size: 16),
+                        padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+                        child:
+                            Icon(Icons.arrow_downward, size: AppSizes.iconSm),
                       ),
                       targetDropdown,
                     ],
@@ -369,7 +378,7 @@ class TranslationsScreenState extends State<TranslationsScreen> {
               },
             ),
             if (isAiActive) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.xs),
               AiModelThinkingSelector(
                 selectedModel: _selectedAiModel,
                 selectedThinkingLevel: _selectedThinkingLevel,
@@ -386,24 +395,24 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                 _translationError != null ||
                 _translatedTitle.isNotEmpty ||
                 _translatedDescription.isNotEmpty)
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.sm),
             if (_isTranslating)
               const Center(child: CircularProgressIndicator())
             else if (_translationError != null)
               Container(
-                padding: const EdgeInsets.all(8.0),
+                padding: AppSpacing.chipPadding,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.errorContainer,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: AppRadius.borderSm,
                 ),
                 child: Row(
                   children: [
                     Icon(
                       Icons.error_outline,
-                      size: 20,
+                      size: AppSizes.iconMd,
                       color: Theme.of(context).colorScheme.onErrorContainer,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AppSpacing.xs),
                     Expanded(
                       child: Text(
                         _translationError!,
@@ -423,7 +432,7 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                     _buildCopyableTextRow(_translatedTitle, isTitle: true),
                   if (_translatedTitle.isNotEmpty &&
                       _translatedDescription.isNotEmpty)
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.xs),
                   if (_translatedDescription.isNotEmpty)
                     _buildCopyableTextRow(_translatedDescription),
                 ],
@@ -456,19 +465,19 @@ class TranslationsScreenState extends State<TranslationsScreen> {
 
     return Card(
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+      margin: AppSpacing.screenHorizontal,
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: AppSpacing.cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("${AppLocalizations.of(context)!.originalText} ($sourceName)",
                 style: const TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.xs),
             if (sourceTitle.isNotEmpty)
               _buildCopyableTextRow(sourceTitle, isTitle: true),
             if (sourceTitle.isNotEmpty && sourceDesc.isNotEmpty)
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.xs),
             if (sourceDesc.isNotEmpty) _buildCopyableTextRow(sourceDesc),
           ],
         ),
@@ -492,101 +501,114 @@ class TranslationsScreenState extends State<TranslationsScreen> {
         ],
       ),
       body: validTranslations.isEmpty
-          ? Center(
-              child: Text(AppLocalizations.of(context)!.emptyList),
+          ? AppEmptyState(
+              icon: Icons.translate,
+              message: AppLocalizations.of(context)!.emptyList,
             )
-          : ListView.builder(
-              controller: _scrollController,
-              itemCount: validTranslations.length + 1,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return Column(
-                    children: [
-                      _buildMagicCard(),
-                      _buildSourceCard(),
-                      Divider(
-                        height: 1,
-                        color: customColors.dividerColor,
-                      ),
-                    ],
-                  );
-                }
+          : Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: AppBreakpoints.maxContentWidth,
+                ),
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: validTranslations.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return Column(
+                        children: [
+                          _buildMagicCard(),
+                          _buildSourceCard(),
+                          Divider(
+                            height: AppSizes.borderWidthRegular,
+                            color: customColors.dividerColor,
+                          ),
+                        ],
+                      );
+                    }
 
-                final trans = validTranslations[index - 1];
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Card(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                    final trans = validTranslations[index - 1];
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Card(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.md,
+                            vertical: AppSpacing.xs,
+                          ),
+                          child: Padding(
+                            padding: AppSpacing.screenPadding,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        trans.englishName,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      if (trans.name.isNotEmpty &&
-                                          trans.name != trans.englishName)
-                                        Text(
-                                            '${trans.name} ${trans.iso639_1}-${trans.iso3166_1}',
-                                            style: TextStyle(
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            trans.englishName,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          if (trans.name.isNotEmpty &&
+                                              trans.name != trans.englishName)
+                                            Text(
+                                              '${trans.name} ${trans.iso639_1}-${trans.iso3166_1}',
+                                              style: TextStyle(
                                                 color: Theme.of(context)
                                                     .colorScheme
-                                                    .onSurfaceVariant)),
-                                    ],
-                                  ),
+                                                    .onSurfaceVariant,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.auto_awesome),
+                                      tooltip: AppLocalizations.of(context)!
+                                          .autoTranslation,
+                                      onPressed: () {
+                                        context
+                                            .read<WebTranslationService>()
+                                            .setSourceLanguageCode(
+                                                trans.iso639_1);
+                                        _performTranslation();
+                                        _scrollController.animateTo(
+                                          0.0,
+                                          duration: AppDurations.normal,
+                                          curve: Curves.easeOut,
+                                        );
+                                      },
+                                    ),
+                                  ],
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.auto_awesome),
-                                  tooltip: AppLocalizations.of(context)!
-                                      .autoTranslation,
-                                  onPressed: () {
-                                    context
-                                        .read<WebTranslationService>()
-                                        .setSourceLanguageCode(trans.iso639_1);
-                                    _performTranslation();
-                                    _scrollController.animateTo(
-                                      0.0,
-                                      duration:
-                                          const Duration(milliseconds: 300),
-                                      curve: Curves.easeOut,
-                                    );
-                                  },
+                                const SizedBox(height: AppSpacing.xs),
+                                _buildCopyableTextRow(
+                                  trans.translatedTitle.isNotEmpty
+                                      ? trans.translatedTitle
+                                      : widget.originalTitle,
+                                  isTitle: true,
                                 ),
+                                if (trans.description.isNotEmpty) ...[
+                                  const SizedBox(height: AppSpacing.xs),
+                                  _buildCopyableTextRow(trans.description),
+                                ],
                               ],
                             ),
-                            const SizedBox(height: 8),
-                            _buildCopyableTextRow(
-                                trans.translatedTitle.isNotEmpty
-                                    ? trans.translatedTitle
-                                    : widget.originalTitle,
-                                isTitle: true),
-                            if (trans.description.isNotEmpty) ...[
-                              const SizedBox(height: 8),
-                              _buildCopyableTextRow(trans.description),
-                            ],
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                    Divider(
-                      height: 1,
-                      color: customColors.dividerColor,
-                    ),
-                  ],
-                );
-              },
+                        Divider(
+                          height: AppSizes.borderWidthRegular,
+                          color: customColors.dividerColor,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
             ),
     );
   }

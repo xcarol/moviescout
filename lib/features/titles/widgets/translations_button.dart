@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/utils/snack_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/features/titles/models/tmdb_translation.dart';
 import 'package:moviescout/core/services/app_service.dart';
@@ -44,18 +46,18 @@ class _TranslationsButtonState extends State<TranslationsButton> {
 
     if (_isLoading) {
       return const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8),
+        padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
         child: SizedBox(
-          width: 20,
-          height: 20,
-          child: CircularProgressIndicator(strokeWidth: 2),
+          width: AppSizes.iconMd,
+          height: AppSizes.iconMd,
+          child: CircularProgressIndicator(strokeWidth: AppSizes.strokeWidthSm),
         ),
       );
     }
 
     return IconButton(
-      icon: const Icon(Icons.translate, size: 20),
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      icon: const Icon(Icons.translate, size: AppSizes.iconMd),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
       constraints: const BoxConstraints(),
       onPressed: () async {
         setState(() {
@@ -67,10 +69,8 @@ class _TranslationsButtonState extends State<TranslationsButton> {
           _showTranslationsScreen(context, translations);
         } catch (e) {
           if (!context.mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content:
-                    Text(AppLocalizations.of(context)!.errorMessageGeneric)),
+          SnackMessage.showSnackBar(
+            AppLocalizations.of(context)!.errorMessageGeneric,
           );
         } finally {
           if (mounted) {

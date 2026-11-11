@@ -26,7 +26,7 @@ class NotificationPermissionDialog extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
           child: Text(localizations.cancel),
         ),
-        TextButton(
+        FilledButton(
           onPressed: () async {
             Navigator.of(context).pop();
             if (defaultTargetPlatform == TargetPlatform.android) {

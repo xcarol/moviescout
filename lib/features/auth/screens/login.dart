@@ -1,5 +1,6 @@
 import "package:moviescout/features/auth/services/supabase_auth_service.dart";
 import 'package:flutter/gestures.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -63,9 +64,11 @@ class _LoginState extends State<Login> {
     return SingleChildScrollView(
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 380),
+          constraints: const BoxConstraints(
+            maxWidth: AppBreakpoints.maxFormWidth,
+          ),
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -77,26 +80,28 @@ class _LoginState extends State<Login> {
                         ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AppSpacing.lg),
                   OutlinedButton.icon(
                     onPressed: _isLoading ? null : _loginWithGoogle,
                     icon: _isLoading
                         ? const SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                            width: AppSizes.iconSubtle,
+                            height: AppSizes.iconSubtle,
+                            child: CircularProgressIndicator(
+                              strokeWidth: AppSizes.strokeWidthSm,
+                            ),
                           )
                         : SvgPicture.asset(
                             'assets/google-logo.svg',
-                            width: 18,
-                            height: 18,
+                            width: AppSizes.iconSubtle,
+                            height: AppSizes.iconSubtle,
                           ),
                     label:
                         Text(AppLocalizations.of(context)!.googleSignInButton),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AppSpacing.lg),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: AppSpacing.screenHorizontal,
                     child: SelectableText.rich(
                       TextSpan(
                         style: Theme.of(context).textTheme.bodySmall,

@@ -1,3 +1,4 @@
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/utils/url_constants.dart';
 import 'package:moviescout/core/utils/api_constants.dart';
 import 'package:flutter/material.dart';
@@ -138,7 +139,14 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           if (cachedSeason != null) {
             return SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: _detailsBody(cachedSeason),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: AppBreakpoints.maxContentWidth,
+                  ),
+                  child: _detailsBody(cachedSeason),
+                ),
+              ),
             );
           } else {
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -156,7 +164,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   void _goToPreviousSeason() {
     if (_currentSeasonNumber > 1) {
       _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
+        duration: AppDurations.normal,
         curve: Curves.easeInOut,
       );
     }
@@ -165,7 +173,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   void _goToNextSeason() {
     if (_currentSeasonNumber < widget.title.numberOfSeasons) {
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
+        duration: AppDurations.normal,
         curve: Curves.easeInOut,
       );
     }
@@ -182,38 +190,44 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           mediaType: ApiConstants.tv,
           isLoading: _isLoading,
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.md),
         _details(season),
       ],
     );
   }
 
   Widget _details(TmdbSeason season) {
+    final dividerColor =
+        Theme.of(context).extension<CustomColors>()!.dividerColor;
+
     return Padding(
-      padding: const EdgeInsets.only(left: 5, right: 5, bottom: 100),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.xs,
+        AppSpacing.md,
+        AppSpacing.bottomSafeMargin,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _titleLine(season),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.xs),
           _dateAndRatingLine(season),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.xs),
           _description(season),
-          const SizedBox(height: 30),
+          const SizedBox(height: AppSpacing.xl),
           _creditsInfo(season),
           Padding(
-            padding: const EdgeInsets.only(bottom: 20.0),
+            padding: const EdgeInsets.only(bottom: AppSpacing.md),
             child: Align(
               alignment: Alignment.centerRight,
               child: TrailerButtons(videos: season.videos),
             ),
           ),
-          Divider(
-              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
+          Divider(color: dividerColor),
           _externalLinks(),
-          Divider(
-              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
-          const SizedBox(height: 10),
+          Divider(color: dividerColor),
+          const SizedBox(height: AppSpacing.xs),
           _episodesList(season),
         ],
       ),
@@ -228,10 +242,10 @@ class _SeasonDetailsState extends State<SeasonDetails> {
       children: [
         Expanded(
           child: Padding(
-            padding: EdgeInsetsGeometry.only(top: 8),
+            padding: const EdgeInsets.only(top: AppSpacing.xs),
             child: Text(
               season.name,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: Theme.of(context).textTheme.titleMedium,
               textAlign: TextAlign.start,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -242,7 +256,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           icon: const Icon(Icons.chevron_left),
           onPressed: _currentSeasonNumber > 1 ? _goToPreviousSeason : null,
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: AppSpacing.md),
         IconButton(
           icon: const Icon(Icons.chevron_right),
           onPressed: _currentSeasonNumber < widget.title.numberOfSeasons
@@ -262,9 +276,9 @@ class _SeasonDetailsState extends State<SeasonDetails> {
         Expanded(
           child: Text(
             DateFormatter.formatDate(context, season.airDate),
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
           ),
         ),
         if (season.voteAverage > 0)
@@ -273,14 +287,16 @@ class _SeasonDetailsState extends State<SeasonDetails> {
               Icon(
                 Icons.star,
                 color: customColors.ratedTitle,
-                size: 20,
+                size: AppSizes.iconMd,
               ),
-              const SizedBox(width: 5),
+              const SizedBox(width: AppSpacing.xxs),
               Text(
                 season.voteAverage == 10.0
                     ? '10'
                     : season.voteAverage.toStringAsFixed(1),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
             ],
           ),
@@ -301,7 +317,9 @@ class _SeasonDetailsState extends State<SeasonDetails> {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontStyle: FontStyle.italic,
+              ),
         ),
         value,
       ],
@@ -352,7 +370,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
       children: [
         if (creatorsWidget != null) creatorsWidget,
         if (creatorsWidget != null && writersWidget != null)
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.sm),
         if (writersWidget != null) writersWidget,
       ],
     );
@@ -364,9 +382,9 @@ class _SeasonDetailsState extends State<SeasonDetails> {
       children: [
         Text(
           AppLocalizations.of(context)!.watchOn,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.titleSmall,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.xs),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -380,9 +398,9 @@ class _SeasonDetailsState extends State<SeasonDetails> {
                   mode: LaunchMode.externalApplication,
                 );
               },
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              padding: AppSpacing.chipPadding,
               child: SizedBox(
-                height: 20,
+                height: AppSizes.iconMd,
                 child: Image.asset(
                   'assets/tmdb-logo.png',
                   fit: BoxFit.cover,
@@ -405,14 +423,14 @@ class _SeasonDetailsState extends State<SeasonDetails> {
       children: [
         Text(
           '${season.episodes.length} ${AppLocalizations.of(context)!.episodes}',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          style: Theme.of(context).textTheme.titleSmall,
         ),
         const Divider(),
         ...season.episodes.map((episode) {
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
                 child: EpisodeCard(
                   title: widget.title,
                   seasonNumber: _currentSeasonNumber,
@@ -422,7 +440,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
                 ),
               ),
               Divider(
-                height: 1,
+                height: AppSizes.borderWidthRegular,
                 color: customColors.dividerColor,
               ),
             ],

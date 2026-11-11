@@ -1,5 +1,6 @@
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/settings/models/tmdb_region.dart';
 import 'package:moviescout/features/settings/services/language_service.dart';
@@ -89,14 +90,15 @@ class _RegionFormState extends State<RegionForm> {
       value: value,
       title: Text(
         title,
-        style: TextStyle(
-          color: isSelected
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.onSurface,
-        ),
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            ),
       ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppRadius.borderMd,
       ),
       selected: isSelected,
     );
@@ -143,7 +145,7 @@ class _RegionFormState extends State<RegionForm> {
       ),
       content: SizedBox(
         width: double.maxFinite,
-        height: MediaQuery.sizeOf(context).height * 0.65,
+        height: MediaQuery.sizeOf(context).height * AppSizes.dialogHeightFactor,
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : Column(
@@ -152,9 +154,11 @@ class _RegionFormState extends State<RegionForm> {
                     controller: _filterController,
                     focusNode: _focusNode,
                     hintText: AppLocalizations.of(context)!.searchRegion,
-                    height: 36,
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    height: AppSizes.filterControlHeight,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm,
+                      vertical: AppSpacing.xs,
+                    ),
                     onChanged: (value) {
                       setState(() {
                         _applyFilter(value);
@@ -166,7 +170,7 @@ class _RegionFormState extends State<RegionForm> {
                       });
                     },
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.sm),
                   Expanded(
                     child: itemCount == 0
                         ? Center(
@@ -184,7 +188,7 @@ class _RegionFormState extends State<RegionForm> {
                             child: ListView.separated(
                               itemCount: itemCount,
                               separatorBuilder: (_, __) =>
-                                  const SizedBox(height: 6),
+                                  const SizedBox(height: AppSpacing.xs),
                               itemBuilder: (context, index) {
                                 if (showAuto && index == 0) {
                                   return _buildRadioTile(
@@ -207,7 +211,7 @@ class _RegionFormState extends State<RegionForm> {
               ),
       ),
       actions: [
-        FilledButton.tonal(
+        TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },

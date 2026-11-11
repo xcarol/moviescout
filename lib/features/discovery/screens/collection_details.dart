@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/features/discovery/models/tmdb_collection.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/discovery/services/tmdb_collection_service.dart';
@@ -87,54 +88,60 @@ class _CollectionDetailsState extends State<CollectionDetails> {
                   [];
 
           return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                MediaCarousel(
-                  images: images,
-                  backdropPath: backdropPath.isNotEmpty
-                      ? 'https://image.tmdb.org/t/p/original$backdropPath'
-                      : '',
-                  posterPath: posterPath.isNotEmpty
-                      ? 'https://image.tmdb.org/t/p/original$posterPath'
-                      : '',
-                  mediaType: ApiConstants.movie,
-                  isLoading: false,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: AppBreakpoints.maxContentWidth,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (overview.isNotEmpty) ...[
-                        Text(
-                          overview,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                      if (parts.isNotEmpty) ...[
-                        Text(
-                          AppLocalizations.of(context)!.movies,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
-                        const SizedBox(height: 10),
-                        Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          alignment: WrapAlignment.start,
-                          children: parts
-                              .map((title) => TitleChip(
-                                  title: title,
-                                  tmdbListService: widget.tmdbListService))
-                              .toList(),
-                        ),
-                      ]
-                    ],
-                  ),
-                )
-              ],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MediaCarousel(
+                      images: images,
+                      backdropPath: backdropPath.isNotEmpty
+                          ? 'https://image.tmdb.org/t/p/original$backdropPath'
+                          : '',
+                      posterPath: posterPath.isNotEmpty
+                          ? 'https://image.tmdb.org/t/p/original$posterPath'
+                          : '',
+                      mediaType: ApiConstants.movie,
+                      isLoading: false,
+                    ),
+                    Padding(
+                      padding: AppSpacing.screenPadding,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (overview.isNotEmpty) ...[
+                            Text(
+                              overview,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            const SizedBox(height: AppSpacing.lg),
+                          ],
+                          if (parts.isNotEmpty) ...[
+                            Text(
+                              AppLocalizations.of(context)!.movies,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            const SizedBox(height: AppSpacing.sm),
+                            Wrap(
+                              spacing: AppSpacing.sm,
+                              runSpacing: AppSpacing.sm,
+                              alignment: WrapAlignment.start,
+                              children: parts
+                                  .map((title) => TitleChip(
+                                      title: title,
+                                      tmdbListService: widget.tmdbListService))
+                                  .toList(),
+                            ),
+                          ]
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
           );
         },

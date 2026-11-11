@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/widgets/expandable_text.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -45,26 +46,25 @@ class _ExpandableDescriptionState extends State<ExpandableDescription> {
 
   @override
   Widget build(BuildContext context) {
+    final textStyle =
+        (Theme.of(context).textTheme.bodyMedium ?? const TextStyle())
+            .copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant);
+
     if (widget.text.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.only(top: 8.0),
+        padding: const EdgeInsets.only(top: AppSpacing.xs),
         child: Text(
           AppLocalizations.of(context)!.missingDescription,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
+          style: textStyle,
         ),
       );
     }
 
     final hasHtml = widget.text.contains(RegExp(r'<[a-z][\s\S]*>'));
-    final textStyle = TextStyle(
-      color: Theme.of(context).colorScheme.onSurfaceVariant,
-    );
 
     if (!hasHtml) {
       return Padding(
-        padding: const EdgeInsets.only(top: 8.0),
+        padding: const EdgeInsets.only(top: AppSpacing.xs),
         child: ExpandableText(
           text: widget.text,
           initialMaxLines: widget.initialMaxLines,
@@ -74,7 +74,7 @@ class _ExpandableDescriptionState extends State<ExpandableDescription> {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
+      padding: const EdgeInsets.only(top: AppSpacing.xs),
       child: LayoutBuilder(
         builder: (context, constraints) {
           final plainText = _stripHtml(widget.text);
@@ -90,19 +90,18 @@ class _ExpandableDescriptionState extends State<ExpandableDescription> {
 
           final htmlWidget = HtmlWidget(widget.text, textStyle: textStyle);
 
-          // Approximate height based on line height
-          final fontSize = textStyle.fontSize ?? 14.0;
-          final lineHeight = textStyle.height ?? 1.2;
+          final fontSize = textStyle.fontSize ?? AppSizes.iconXs;
+          final lineHeight = textStyle.height ?? AppSizes.defaultLineHeight;
           final approxMaxHeight = widget.initialMaxLines *
               fontSize *
               lineHeight *
-              textScaler.scale(1.0);
+              textScaler.scale(AppSizes.textScaleMin);
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AnimatedSize(
-                duration: const Duration(milliseconds: 200),
+                duration: AppDurations.normal,
                 alignment: Alignment.topCenter,
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
@@ -118,7 +117,7 @@ class _ExpandableDescriptionState extends State<ExpandableDescription> {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [Colors.black, Colors.transparent],
-                              stops: [0.7, 1.0],
+                              stops: [AppOpacity.subtle, AppOpacity.opaque],
                             ).createShader(rect);
                           },
                           blendMode: BlendMode.dstIn,
@@ -141,7 +140,8 @@ class _ExpandableDescriptionState extends State<ExpandableDescription> {
                   },
                   child: Center(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      padding:
+                          const EdgeInsets.symmetric(vertical: AppSpacing.xs),
                       child: Icon(
                         _isExpanded
                             ? Icons.keyboard_arrow_up

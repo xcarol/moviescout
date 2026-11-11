@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/settings/services/ai_service.dart';
 import 'package:moviescout/core/widgets/drop_down_selector.dart';
@@ -64,8 +65,10 @@ class AiModelThinkingSelector extends StatelessWidget {
         : (thinkingOptions.contains(defaultThinking) ? defaultThinking : 'low');
 
     final border = Border.all(color: effectiveBorderColor);
-    final borderRadius = BorderRadius.circular(4);
-    final textStyle = TextStyle(fontSize: 16, color: effectiveTextColor);
+    final borderRadius = AppRadius.borderXs;
+    final textStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+          color: effectiveTextColor,
+        );
     final arrowIcon = Icon(Icons.arrow_drop_down, color: effectiveTextColor);
 
     final modelDropdown = DropdownSelector(
@@ -75,12 +78,12 @@ class AiModelThinkingSelector extends StatelessWidget {
       arrowIcon: arrowIcon,
       leading: Icon(
         Icons.smart_toy_outlined,
-        size: 18,
+        size: AppSizes.iconSubtle,
         color: effectiveTextColor,
       ),
       selectedOption: selectedModelLabel,
       options: modelLabels.values.toList(),
-      maxMenuHeight: 300,
+      maxMenuHeight: AppSizes.dropdownMaxMenuHeight,
       isExpanded: true,
       onSelected: (label) async {
         final newModel = modelLabels.entries
@@ -111,12 +114,12 @@ class AiModelThinkingSelector extends StatelessWidget {
       arrowIcon: arrowIcon,
       leading: Icon(
         Icons.psychology_outlined,
-        size: 18,
+        size: AppSizes.iconSubtle,
         color: effectiveTextColor,
       ),
       selectedOption: selectedThinkingLabel,
       options: thinkingLabels.values.toList(),
-      maxMenuHeight: 300,
+      maxMenuHeight: AppSizes.dropdownMaxMenuHeight,
       isExpanded: true,
       onSelected: (label) async {
         final newThinking = thinkingLabels.entries
@@ -134,14 +137,14 @@ class AiModelThinkingSelector extends StatelessWidget {
       borderRadius: borderRadius,
       onTap: onRefresh,
       child: Container(
-        padding: const EdgeInsets.all(2),
+        padding: const EdgeInsets.all(AppSpacing.micro),
         decoration: BoxDecoration(
           border: border,
           borderRadius: borderRadius,
         ),
         child: Icon(
           Icons.refresh,
-          size: 20,
+          size: AppSizes.iconMd,
           color: effectiveTextColor,
         ),
       ),
@@ -149,13 +152,13 @@ class AiModelThinkingSelector extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (constraints.maxWidth > 350.0) {
+        if (constraints.maxWidth > AppBreakpoints.inlineDropdown) {
           return Row(
             children: [
               Expanded(flex: 3, child: modelDropdown),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.xs),
               Expanded(flex: 2, child: thinkingDropdown),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.xs),
               refreshButton,
             ],
           );
@@ -164,11 +167,11 @@ class AiModelThinkingSelector extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             modelDropdown,
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.xs),
             Row(
               children: [
                 Expanded(child: thinkingDropdown),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.xs),
                 refreshButton,
               ],
             ),

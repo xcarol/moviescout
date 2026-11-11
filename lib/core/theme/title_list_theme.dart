@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 
 @immutable
@@ -56,7 +57,8 @@ class TitleListTheme extends ThemeExtension<TitleListTheme> {
       controlPanelInactiveFilterForeground: colorScheme.onSurface,
       searchCursorColor: colorScheme.primary,
       searchHintColor: colorScheme.onSurfaceVariant,
-      searchSelectionColor: colorScheme.primary.withValues(alpha: 0.3),
+      searchSelectionColor:
+          colorScheme.primary.withValues(alpha: AppOpacity.scrimLight),
     );
   }
 

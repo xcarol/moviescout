@@ -1,5 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/widgets/app_cached_image.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/features/discovery/models/tmdb_collection.dart';
@@ -37,9 +38,9 @@ class TitleMetadataSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _description(context, dividerColor),
-        const SizedBox(height: 10),
+        const SizedBox(height: AppSpacing.sm),
         _infoLine(context),
-        const SizedBox(height: 10),
+        const SizedBox(height: AppSpacing.sm),
         _creditsInfo(context),
         if (title.belongsToCollection != null) ...[
           Divider(color: dividerColor),
@@ -69,13 +70,15 @@ class TitleMetadataSection extends StatelessWidget {
     );
   }
 
-  Widget _infoColumn(String label, Widget value) {
+  Widget _infoColumn(BuildContext context, String label, Widget value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontStyle: FontStyle.italic,
+              ),
         ),
         value,
       ],
@@ -84,6 +87,9 @@ class TitleMetadataSection extends StatelessWidget {
 
   Widget _infoLine(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final valueStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onSurfaceVariant,
+        );
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -91,24 +97,27 @@ class TitleMetadataSection extends StatelessWidget {
       children: [
         Flexible(
           child: Wrap(
-            spacing: 20,
-            runSpacing: 10,
+            spacing: AppSpacing.lg,
+            runSpacing: AppSpacing.sm,
             children: [
               _infoColumn(
+                context,
                 AppLocalizations.of(context)!.originaTitle,
                 Text(
                   title.originalName,
-                  style: TextStyle(color: colorScheme.onSurfaceVariant),
+                  style: valueStyle,
                 ),
               ),
               _infoColumn(
+                context,
                 AppLocalizations.of(context)!.originalLanguage,
                 Text(
                   LanguageService().getLanguageName(title.originalLanguage),
-                  style: TextStyle(color: colorScheme.onSurfaceVariant),
+                  style: valueStyle,
                 ),
               ),
               _infoColumn(
+                context,
                 AppLocalizations.of(context)!.originCountry,
                 Text(
                   title.originCountry
@@ -117,11 +126,12 @@ class TitleMetadataSection extends StatelessWidget {
                           Provider.of<LanguageService>(context, listen: false)
                               .currentLanguage))
                       .join(', '),
-                  style: TextStyle(color: colorScheme.onSurfaceVariant),
+                  style: valueStyle,
                 ),
               ),
               if (title.status.isNotEmpty)
                 _infoColumn(
+                  context,
                   AppLocalizations.of(context)!.status,
                   Text(
                     MetadataTranslator.translateStatus(
@@ -129,7 +139,7 @@ class TitleMetadataSection extends StatelessWidget {
                       Provider.of<LanguageService>(context, listen: false)
                           .currentLanguage,
                     ),
-                    style: TextStyle(color: colorScheme.onSurfaceVariant),
+                    style: valueStyle,
                   ),
                 ),
             ],
@@ -149,6 +159,7 @@ class TitleMetadataSection extends StatelessWidget {
           .toList();
       if (directors.isNotEmpty) {
         creatorsWidget = _infoColumn(
+          context,
           AppLocalizations.of(context)!.director,
           ClickableNames(
             people: directors,
@@ -167,6 +178,7 @@ class TitleMetadataSection extends StatelessWidget {
           .toList();
       if (creators.isNotEmpty) {
         creatorsWidget = _infoColumn(
+          context,
           AppLocalizations.of(context)!.creator,
           ClickableNames(
             people: creators,
@@ -186,6 +198,7 @@ class TitleMetadataSection extends StatelessWidget {
 
     if (writers.isNotEmpty) {
       writersWidget = _infoColumn(
+        context,
         AppLocalizations.of(context)!.writer,
         ClickableNames(
           people: writers,
@@ -203,7 +216,7 @@ class TitleMetadataSection extends StatelessWidget {
       children: [
         if (creatorsWidget != null) creatorsWidget,
         if (creatorsWidget != null && writersWidget != null)
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.sm),
         if (writersWidget != null) writersWidget,
       ],
     );
@@ -261,12 +274,12 @@ class TitleMetadataSection extends StatelessWidget {
       children: [
         Text(
           AppLocalizations.of(context)!.watchOn,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.titleSmall,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.xs),
         Wrap(
-          spacing: 10.0,
-          runSpacing: 10.0,
+          spacing: AppSpacing.xs,
+          runSpacing: AppSpacing.xs,
           children: links,
         ),
       ],
@@ -290,6 +303,7 @@ class TitleMetadataSection extends StatelessWidget {
 
     if (title.providers.free.isNotEmpty) {
       providers.add(_providersByType(
+        context,
         AppLocalizations.of(context)!.freeProviders,
         title.providers.free,
       ));
@@ -297,6 +311,7 @@ class TitleMetadataSection extends StatelessWidget {
 
     if (title.providers.ads.isNotEmpty) {
       providers.add(_providersByType(
+        context,
         AppLocalizations.of(context)!.adsProviders,
         title.providers.ads,
       ));
@@ -304,6 +319,7 @@ class TitleMetadataSection extends StatelessWidget {
 
     if (title.providers.flatrate.isNotEmpty) {
       providers.add(_providersByType(
+        context,
         AppLocalizations.of(context)!.flatrateProviders,
         title.providers.flatrate,
       ));
@@ -311,6 +327,7 @@ class TitleMetadataSection extends StatelessWidget {
 
     if (title.providers.rent.isNotEmpty) {
       providers.add(_providersByType(
+        context,
         AppLocalizations.of(context)!.rentProviders,
         title.providers.rent,
       ));
@@ -318,28 +335,31 @@ class TitleMetadataSection extends StatelessWidget {
 
     if (title.providers.buy.isNotEmpty) {
       providers.add(_providersByType(
+        context,
         AppLocalizations.of(context)!.buyProviders,
         title.providers.buy,
       ));
     }
 
     return Wrap(
-      spacing: 50,
-      runSpacing: 20,
+      spacing: AppSpacing.xl,
+      runSpacing: AppSpacing.md,
       children: providers,
     );
   }
 
-  Widget _providersByType(String typeName, List<TmdbProvider> providers) {
+  Widget _providersByType(
+      BuildContext context, String typeName, List<TmdbProvider> providers) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           typeName,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.titleSmall,
         ),
-        const SizedBox(height: 5),
+        const SizedBox(height: AppSpacing.xxs),
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: providers
               .map<Widget>((provider) => _providerLogo(provider))
               .toList(),
@@ -350,22 +370,17 @@ class TitleMetadataSection extends StatelessWidget {
 
   Widget _providerLogo(TmdbProvider provider) {
     return Padding(
-      padding: const EdgeInsets.only(right: 5),
+      padding: const EdgeInsets.only(right: AppSpacing.xxs),
       child: Tooltip(
         message: provider.name,
-        child: SizedBox(
-          width: 30,
-          height: 30,
-          child: CachedNetworkImage(
-            imageUrl: provider.logoPath,
-            fit: BoxFit.cover,
-            errorWidget: (context, error, stackTrace) {
-              return Image.asset(
-                'assets/movie.png',
-                fit: BoxFit.cover,
-              );
-            },
-          ),
+        child: AppCachedImage(
+          imageUrl: provider.logoPath,
+          width: AppSizes.providerLogoSize,
+          height: AppSizes.providerLogoSize,
+          borderRadius: AppRadius.borderXs,
+          memCacheWidth: AppSizes.providerCacheSize,
+          memCacheHeight: AppSizes.providerCacheSize,
+          type: AppImageType.logo,
         ),
       ),
     );
@@ -379,10 +394,13 @@ class TitleMetadataSection extends StatelessWidget {
     final collection = title.belongsToCollection!;
 
     return BoxedWidget(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
       child: Text(
         AppLocalizations.of(context)!.seeCollection,
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        style: Theme.of(context).textTheme.titleSmall,
       ),
       onPressed: () {
         context.toCollectionDetails(

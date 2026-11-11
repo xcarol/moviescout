@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/titles/models/title_comment.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
@@ -142,7 +143,7 @@ class _CommentDialogState extends State<CommentDialog> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _dialogContentHeader(loc),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm),
           _commentInputField(loc),
         ],
       ),
@@ -157,18 +158,17 @@ class _CommentDialogState extends State<CommentDialog> {
             widget.title.name,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 13,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
           ),
         ),
         if (_hasText && !_isLoading) ...[
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSpacing.xs),
           IconButton(
-            icon: const Icon(Icons.clear, size: 18),
+            icon: const Icon(Icons.clear, size: AppSizes.iconSubtle),
             padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
+            constraints: AppSizes.compactActionConstraints,
             tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
             onPressed: () => _controller.clear(),
           ),
@@ -224,9 +224,11 @@ class _CommentDialogState extends State<CommentDialog> {
       onPressed: (_canSave && !_isLoading) ? _submit : null,
       child: _isLoading
           ? const SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(strokeWidth: 2),
+              width: AppSizes.iconSm,
+              height: AppSizes.iconSm,
+              child: CircularProgressIndicator(
+                strokeWidth: AppSizes.strokeWidthSm,
+              ),
             )
           : Text(loc.save),
     );

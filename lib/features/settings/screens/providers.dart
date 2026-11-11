@@ -1,5 +1,7 @@
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/settings/models/tmdb_provider.dart';
 import 'package:moviescout/features/settings/services/tmdb_provider_service.dart';
@@ -85,26 +87,46 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
         body: Column(
           children: [
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.xs,
+              ),
               color: Theme.of(context)
                   .extension<TitleListTheme>()
                   ?.controlPanelBackground,
-              child: TextFilterWidget(
-                controller: _textFilterController,
-                focusNode: _focusNode,
-                hintText: AppLocalizations.of(context)!.searchProvider,
-                height: 36,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                onChanged: (String value) {
-                  setState(() {
-                    _applyLocalFilter(value);
-                  });
-                },
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: AppBreakpoints.maxContentWidth,
+                  ),
+                  child: TextFilterWidget(
+                    controller: _textFilterController,
+                    focusNode: _focusNode,
+                    hintText: AppLocalizations.of(context)!.searchProvider,
+                    height: AppSizes.filterControlHeight,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm,
+                      vertical: AppSpacing.xs,
+                    ),
+                    onChanged: (String value) {
+                      setState(() {
+                        _applyLocalFilter(value);
+                      });
+                    },
+                  ),
+                ),
               ),
             ),
-            Expanded(child: _body(context, providerService)),
+            Expanded(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: AppBreakpoints.maxContentWidth,
+                  ),
+                  child: _body(context, providerService),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -118,15 +140,10 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
       );
     }
 
-    if (_sortedProviders.isEmpty) {
-      return Center(
-        child: Text(AppLocalizations.of(context)!.noProvidersAvailable),
-      );
-    }
-
-    if (_filteredProviders.isEmpty) {
-      return Center(
-        child: Text(AppLocalizations.of(context)!.noProvidersAvailable),
+    if (_sortedProviders.isEmpty || _filteredProviders.isEmpty) {
+      return AppEmptyState(
+        icon: Icons.tv_off_outlined,
+        message: AppLocalizations.of(context)!.noProvidersAvailable,
       );
     }
 

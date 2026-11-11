@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/features/people/services/tmdb_person_titles_service.dart';
@@ -77,14 +78,9 @@ class _PersonTitlesState extends State<PersonTitles> {
   }
 
   Widget emptyBody() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(AppLocalizations.of(context)!.emptyList,
-              textAlign: TextAlign.center)
-        ],
-      ),
+    return AppEmptyState(
+      icon: Icons.movie_filter_outlined,
+      message: AppLocalizations.of(context)!.emptyList,
     );
   }
 

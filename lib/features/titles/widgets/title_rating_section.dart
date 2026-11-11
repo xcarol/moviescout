@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/auth/services/supabase_auth_service.dart';
@@ -48,14 +49,14 @@ class TitleRatingSection extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/tmdb-logo.png', height: 16),
-                const SizedBox(width: 5),
+                Image.asset('assets/tmdb-logo.png', height: AppSizes.iconSm),
+                const SizedBox(width: AppSpacing.xxs),
                 Text(
                   titleVoteAverage,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSecondary,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ],
             ),
@@ -73,9 +74,11 @@ class TitleRatingSection extends StatelessWidget {
     if (isUpdatingRatings) {
       topChildren.add(
         const SizedBox(
-          width: 15,
-          height: 15,
-          child: CircularProgressIndicator(strokeWidth: 1),
+          width: AppSizes.iconSm,
+          height: AppSizes.iconSm,
+          child: CircularProgressIndicator(
+            strokeWidth: AppSizes.borderWidthRegular,
+          ),
         ),
       );
     }
@@ -84,15 +87,15 @@ class TitleRatingSection extends StatelessWidget {
     List<Widget> rightColChildren = [];
     for (int i = 0; i < 2; i++) {
       if (i > 0) {
-        leftColChildren.add(const SizedBox(height: 12));
-        rightColChildren.add(const SizedBox(height: 12));
+        leftColChildren.add(const SizedBox(height: AppSpacing.sm));
+        rightColChildren.add(const SizedBox(height: AppSpacing.sm));
       }
       leftColChildren.add(topChildren.length > i * 2
           ? topChildren[i * 2]
-          : const SizedBox(height: 24));
+          : const SizedBox(height: AppSizes.iconLg));
       rightColChildren.add(topChildren.length > i * 2 + 1
           ? topChildren[i * 2 + 1]
-          : const SizedBox(height: 24));
+          : const SizedBox(height: AppSizes.iconLg));
     }
 
     return SizedBox(
@@ -100,11 +103,11 @@ class TitleRatingSection extends StatelessWidget {
       child: Wrap(
         alignment: WrapAlignment.spaceBetween,
         crossAxisAlignment: WrapCrossAlignment.end,
-        runSpacing: 15,
+        runSpacing: AppSpacing.md,
         children: [
           if (topChildren.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(top: 4.0),
+              padding: const EdgeInsets.only(top: AppSpacing.xxs),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +116,7 @@ class TitleRatingSection extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: leftColChildren,
                   ),
-                  const SizedBox(width: 15),
+                  const SizedBox(width: AppSpacing.md),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: rightColChildren,
@@ -144,12 +147,12 @@ class TitleRatingSection extends StatelessWidget {
                     children: [
                       Text(
                         AppLocalizations.of(context)!.your_rate.toUpperCase(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                        ),
+                        style:
+                            Theme.of(context).textTheme.labelMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: AppSpacing.xxs),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -170,7 +173,7 @@ class TitleRatingSection extends StatelessWidget {
                               },
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: AppSpacing.xs),
                           OutlinedButton(
                             style: OutlinedButton.styleFrom(
                               side: BorderSide(
@@ -182,14 +185,16 @@ class TitleRatingSection extends StatelessWidget {
                                         : Theme.of(context)
                                             .colorScheme
                                             .onSurface),
-                                width: 1,
+                                width: AppSizes.borderWidthRegular,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: AppRadius.borderSm,
                               ),
                               padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 14),
-                              minimumSize: const Size(0, 0),
+                                vertical: AppSpacing.xs,
+                                horizontal: AppSpacing.sm,
+                              ),
+                              minimumSize: Size.zero,
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
                             onPressed: !isUserLoggedIn ||
@@ -211,7 +216,7 @@ class TitleRatingSection extends StatelessWidget {
                                 titleRating > 0
                                     ? Symbols.done_outline
                                     : Symbols.check,
-                                size: 16,
+                                size: AppSizes.iconSm,
                                 color: titleRating > 0
                                     ? (!isUserLoggedIn ||
                                             titleRating >

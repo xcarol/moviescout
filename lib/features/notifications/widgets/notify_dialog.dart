@@ -22,7 +22,7 @@ class NotifyDialog extends StatelessWidget {
           onPressed: () => Navigator.pop(context, false),
           child: Text(AppLocalizations.of(context)!.no),
         ),
-        TextButton(
+        FilledButton(
           onPressed: () async {
             final rateslistService =
                 Provider.of<RateslistService>(context, listen: false);

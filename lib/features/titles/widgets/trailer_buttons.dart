@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 
 import 'package:moviescout/core/widgets/drop_down_selector.dart';
@@ -66,39 +67,42 @@ class TrailerButtons extends StatelessWidget {
           onPressed: mainVideoId != null
               ? () => _playVideo(context, mainVideoId)
               : null,
-          icon: const Icon(Icons.play_arrow, size: 16),
+          icon: const Icon(Icons.play_arrow, size: AppSizes.iconSm),
           label: Text(AppLocalizations.of(context)!.trailer),
           style: FilledButton.styleFrom(
             backgroundColor: Theme.of(context).colorScheme.primary,
             foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-            minimumSize: const Size(0, 32),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: 0,
+            ),
+            minimumSize: const Size(0, AppSizes.trailerButtonHeight),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.horizontal(
-                left: const Radius.circular(20),
+                left: const Radius.circular(AppRadius.full),
                 right: remainingVideos.isNotEmpty
                     ? Radius.zero
-                    : const Radius.circular(20),
+                    : const Radius.circular(AppRadius.full),
               ),
             ),
           ),
         ),
         if (remainingVideos.isNotEmpty) ...[
-          const SizedBox(width: 1),
+          const SizedBox(width: AppSizes.borderWidthRegular),
           SizedBox(
-            height: 32,
+            height: AppSizes.trailerButtonHeight,
             child: DropdownSelector(
               selectedOption: '',
               options: remainingVideos.map((v) => v['name'] as String).toList(),
               arrowIcon: Icon(
                 Icons.more_vert,
-                size: 20,
+                size: AppSizes.iconMd,
                 color: Theme.of(context).colorScheme.onPrimaryContainer,
               ),
               buttonBackgroundColor: Theme.of(context).colorScheme.primary,
               borderRadius: const BorderRadius.horizontal(
                 left: Radius.zero,
-                right: Radius.circular(20),
+                right: Radius.circular(AppRadius.full),
               ),
               onSelected: (selectedName) {
                 final video = remainingVideos

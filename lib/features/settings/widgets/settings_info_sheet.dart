@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 
 class SettingsInfoItem {
   final IconData icon;
@@ -44,7 +45,9 @@ class SettingsInfoSheet extends StatelessWidget {
       isScrollControlled: true,
       showDragHandle: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadius.xl),
+        ),
       ),
       builder: (context) => SettingsInfoSheet(
         headerIcon: headerIcon,
@@ -65,10 +68,10 @@ class SettingsInfoSheet extends StatelessWidget {
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.only(
-          bottom: MediaQuery.viewInsetsOf(context).bottom + 16.0,
-          left: 20.0,
-          right: 20.0,
-          top: 8.0,
+          bottom: MediaQuery.viewInsetsOf(context).bottom + AppSpacing.md,
+          left: AppSpacing.lg,
+          right: AppSpacing.lg,
+          top: AppSpacing.xs,
         ),
         child: SingleChildScrollView(
           child: Column(
@@ -78,31 +81,29 @@ class SettingsInfoSheet extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    width: 44,
-                    height: 44,
+                    width: AppSizes.infoSheetHeaderBoxSize,
+                    height: AppSizes.infoSheetHeaderBoxSize,
                     decoration: BoxDecoration(
                       color: colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(12.0),
+                      borderRadius: AppRadius.borderMd,
                     ),
                     child: Icon(
                       headerIcon,
-                      size: 24,
+                      size: AppSizes.iconLg,
                       color: colorScheme.primary,
                     ),
                   ),
-                  const SizedBox(width: 14.0),
+                  const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           title,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: theme.textTheme.titleMedium,
                         ),
                         if (subtitle != null) ...[
-                          const SizedBox(height: 2.0),
+                          const SizedBox(height: AppSpacing.micro),
                           Text(
                             subtitle!,
                             style: theme.textTheme.bodySmall?.copyWith(
@@ -115,26 +116,25 @@ class SettingsInfoSheet extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 20.0),
+              const SizedBox(height: AppSpacing.lg),
               for (int i = 0; i < items.length; i++) ...[
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 2.0),
+                      padding: const EdgeInsets.only(top: AppSpacing.micro),
                       child: Icon(
                         items[i].icon,
-                        size: 20,
+                        size: AppSizes.iconMd,
                         color: colorScheme.primary,
                       ),
                     ),
-                    const SizedBox(width: 12.0),
+                    const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: RichText(
                         text: TextSpan(
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: colorScheme.onSurface,
-                            height: 1.35,
                           ),
                           children: [
                             TextSpan(
@@ -155,19 +155,20 @@ class SettingsInfoSheet extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (i < items.length - 1) const SizedBox(height: 16.0),
+                if (i < items.length - 1) const SizedBox(height: AppSpacing.md),
               ],
               if (note != null) ...[
-                const SizedBox(height: 18.0),
+                const SizedBox(height: AppSpacing.md),
                 Container(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: AppSpacing.cardPadding,
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerHighest
-                        .withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(12.0),
+                        .withValues(alpha: AppOpacity.half),
+                    borderRadius: AppRadius.borderMd,
                     border: Border.all(
-                      color: colorScheme.outlineVariant.withValues(alpha: 0.4),
-                      width: 0.8,
+                      color: colorScheme.outlineVariant
+                          .withValues(alpha: AppOpacity.backdropOverlay),
+                      width: AppSizes.borderWidthRegular,
                     ),
                   ),
                   child: Row(
@@ -175,16 +176,15 @@ class SettingsInfoSheet extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.info_outline,
-                        size: 18,
+                        size: AppSizes.iconSubtle,
                         color: colorScheme.primary,
                       ),
-                      const SizedBox(width: 8.0),
+                      const SizedBox(width: AppSpacing.xs),
                       Expanded(
                         child: Text(
                           note!,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: colorScheme.onSurfaceVariant,
-                            height: 1.3,
                           ),
                         ),
                       ),
@@ -192,7 +192,7 @@ class SettingsInfoSheet extends StatelessWidget {
                   ),
                 ),
               ],
-              const SizedBox(height: 24.0),
+              const SizedBox(height: AppSpacing.lg),
               FilledButton.tonal(
                 onPressed: () => Navigator.of(context).pop(),
                 child: Text(closeButtonLabel),

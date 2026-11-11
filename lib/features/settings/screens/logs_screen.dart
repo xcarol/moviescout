@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/utils/snack_bar.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
 import 'package:moviescout/main.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
@@ -137,9 +140,7 @@ class _LogsScreenState extends State<LogsScreen>
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error exporting logs: $e')),
-        );
+        SnackMessage.showSnackBar('Error exporting logs: $e');
       }
     } finally {
       if (mounted) {
@@ -162,9 +163,11 @@ class _LogsScreenState extends State<LogsScreen>
                 return IconButton(
                   icon: _isSharing
                       ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                          width: AppSizes.iconMd,
+                          height: AppSizes.iconMd,
+                          child: CircularProgressIndicator(
+                            strokeWidth: AppSizes.strokeWidthSm,
+                          ),
                         )
                       : const Icon(Icons.share),
                   tooltip: 'Share logs',
@@ -184,7 +187,7 @@ class _LogsScreenState extends State<LogsScreen>
                     content:
                         const Text('Are you sure you want to delete all logs?'),
                     actions: [
-                      FilledButton.tonal(
+                      TextButton(
                         onPressed: () => Navigator.pop(context),
                         child: const Text('Cancel'),
                       ),
@@ -208,52 +211,57 @@ class _LogsScreenState extends State<LogsScreen>
           ],
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Row(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppBreakpoints.maxContentWidth,
+          ),
+          child: Column(
+            children: [
+              Container(
+                padding: AppSpacing.screenPadding,
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Última execució:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.titleSmall,
                     ),
                     Text(_lastBackgroundRunHeader),
                   ],
                 ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: _logs.isEmpty
-                ? Center(
-                    child: Text(
-                      'No logs available yet.',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  )
-                : ListView.separated(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.only(
-                        left: 16, right: 16, top: 16, bottom: 80),
-                    itemCount: _logs.length,
-                    separatorBuilder: (context, index) =>
-                        const Divider(height: 32),
-                    itemBuilder: (context, index) {
-                      return SelectableText(
-                        _logs[index],
-                        style: const TextStyle(
-                          fontFamily: 'monospace',
-                          fontSize: 12,
+              ),
+              Expanded(
+                child: _logs.isEmpty
+                    ? const AppEmptyState(
+                        icon: Icons.receipt_long_outlined,
+                        message: 'No logs available yet.',
+                      )
+                    : ListView.separated(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.md,
+                          AppSpacing.md,
+                          AppSpacing.md,
+                          AppSpacing.bottomSafeMargin,
                         ),
-                      );
-                    },
-                  ),
+                        itemCount: _logs.length,
+                        separatorBuilder: (context, index) =>
+                            const Divider(height: AppSpacing.xl),
+                        itemBuilder: (context, index) {
+                          return SelectableText(
+                            _logs[index],
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontFamily: 'monospace'),
+                          );
+                        },
+                      ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

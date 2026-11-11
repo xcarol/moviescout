@@ -1,5 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/widgets/app_cached_image.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/features/auth/models/user_profile.dart';
@@ -10,7 +12,6 @@ import 'package:moviescout/core/services/cloud_database_service.dart';
 import 'package:moviescout/features/watchlist/services/user_following_service.dart';
 import 'package:moviescout/features/watchlist/services/watchlist_service.dart';
 import 'package:moviescout/features/watchlist/widgets/user_title_chip.dart';
-import 'package:moviescout/features/titles/widgets/title_chip.dart';
 import 'package:provider/provider.dart';
 
 class UserDetails extends StatefulWidget {
@@ -68,26 +69,30 @@ class _UserDetailsState extends State<UserDetails> {
       appBar: AppBar(
         title: Text(
           _user.username.isNotEmpty ? _user.username : 'User',
-          style: TextStyle(color: customColors.appBarText),
         ),
-        backgroundColor: customColors.appBarBackground,
-        iconTheme: IconThemeData(color: customColors.appBarText),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 60),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _profileHeader(context, isCurrentUser),
-            Divider(color: customColors.dividerColor),
-            if (!isCurrentUser && !_isPublic)
-              _privateProfileNotice(context)
-            else ...[
-              _pinnedSection(context),
-              Divider(color: customColors.dividerColor),
-              _ratedSection(context),
-            ],
-          ],
+        padding: const EdgeInsets.only(bottom: AppSpacing.bottomSafeMargin),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppBreakpoints.maxContentWidth,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _profileHeader(context, isCurrentUser),
+                Divider(color: customColors.dividerColor),
+                if (!isCurrentUser && !_isPublic)
+                  _privateProfileNotice(context)
+                else ...[
+                  _pinnedSection(context),
+                  Divider(color: customColors.dividerColor),
+                  _ratedSection(context),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -95,31 +100,9 @@ class _UserDetailsState extends State<UserDetails> {
 
   Widget _privateProfileNotice(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 24.0),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.lock_outline,
-              size: 48,
-              color: colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              loc.privateProfileMessage,
-              style: TextStyle(
-                color: colorScheme.onSurfaceVariant,
-                fontSize: 16,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
+    return AppEmptyState(
+      icon: Icons.lock_outline,
+      message: loc.privateProfileMessage,
     );
   }
 
@@ -128,52 +111,32 @@ class _UserDetailsState extends State<UserDetails> {
     final loc = AppLocalizations.of(context)!;
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: AppSpacing.screenPadding,
       child: Column(
         children: [
           Center(
             child: CircleAvatar(
-              radius: 46,
+              radius: AppSizes.userProfileAvatarRadius,
               backgroundColor: colorScheme.surfaceContainerHighest,
-              child: (_user.avatarUrl != null && _user.avatarUrl!.isNotEmpty)
-                  ? ClipOval(
-                      child: CachedNetworkImage(
-                        imageUrl: _user.avatarUrl!,
-                        width: 92,
-                        height: 92,
-                        fit: BoxFit.cover,
-                        fadeInDuration: Duration.zero,
-                        fadeOutDuration: Duration.zero,
-                        placeholder: (context, url) => Icon(
-                          Icons.person,
-                          size: 46,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        errorWidget: (context, url, error) => Icon(
-                          Icons.person,
-                          size: 46,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    )
-                  : Icon(
-                      Icons.person,
-                      size: 46,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
+              child: ClipOval(
+                child: AppCachedImage(
+                  imageUrl: _user.avatarUrl,
+                  width: AppSizes.userProfileAvatarSize,
+                  height: AppSizes.userProfileAvatarSize,
+                  type: AppImageType.avatar,
+                  fallbackIconSize: AppSizes.userProfileAvatarRadius,
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             _user.username.isNotEmpty ? _user.username : 'Anonymous',
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.headlineSmall,
             textAlign: TextAlign.center,
           ),
           if (isCurrentUser || _isPublic) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -193,7 +156,7 @@ class _UserDetailsState extends State<UserDetails> {
             ),
           ],
           if (!isCurrentUser) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             _followButton(context),
           ],
         ],
@@ -210,34 +173,34 @@ class _UserDetailsState extends State<UserDetails> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.sm,
+      ),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(12),
+        color: colorScheme.surfaceContainerHighest
+            .withValues(alpha: AppOpacity.half),
+        borderRadius: AppRadius.borderMd,
       ),
       child: Column(
         children: [
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 18, color: colorScheme.primary),
-              const SizedBox(width: 6),
+              Icon(icon, size: AppSizes.iconSubtle, color: colorScheme.primary),
+              const SizedBox(width: AppSpacing.xs),
               Text(
                 '$count',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ],
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: AppSpacing.micro),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              color: colorScheme.onSurfaceVariant,
-            ),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
           ),
         ],
       ),
@@ -252,8 +215,8 @@ class _UserDetailsState extends State<UserDetails> {
         final isFollowing = followingService.isFollowing(_user.id);
 
         return SizedBox(
-          width: 180,
-          child: ElevatedButton.icon(
+          width: AppSizes.followButtonWidth,
+          child: FilledButton.icon(
             onPressed: () async {
               final authService =
                   Provider.of<SupabaseAuthService>(context, listen: false);
@@ -270,13 +233,13 @@ class _UserDetailsState extends State<UserDetails> {
             },
             icon: Icon(
               isFollowing ? Icons.check : Icons.person_add,
-              size: 18,
+              size: AppSizes.iconSubtle,
             ),
             label: Text(
               isFollowing ? loc.following : loc.follow,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            style: ElevatedButton.styleFrom(
+            style: FilledButton.styleFrom(
               backgroundColor: isFollowing
                   ? Theme.of(context).colorScheme.surfaceContainerHighest
                   : Theme.of(context).colorScheme.primary,
@@ -297,21 +260,21 @@ class _UserDetailsState extends State<UserDetails> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.xs,
+          ),
           child: Row(
             children: [
               Icon(
                 Icons.push_pin,
-                size: 18,
+                size: AppSizes.iconSubtle,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.xs),
               Text(
                 loc.watchingNow,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.titleSmall,
               ),
             ],
           ),
@@ -319,28 +282,28 @@ class _UserDetailsState extends State<UserDetails> {
         if (_isLoading)
           const Center(
             child: Padding(
-              padding: EdgeInsets.all(24.0),
+              padding: EdgeInsets.all(AppSpacing.lg),
               child: CircularProgressIndicator(),
             ),
           )
         else if (_pinnedTitles.isEmpty)
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: AppSpacing.screenPadding,
             child: Center(
               child: Text(
                 loc.noWatchingNowTitles,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
               ),
             ),
           )
         else
           SizedBox(
-            height: CARD_HEIGHT + 10,
+            height: AppSizes.chipCarouselHeight,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
               itemCount: _pinnedTitles.length,
               itemBuilder: (context, index) {
                 final watchlistService =
@@ -352,7 +315,7 @@ class _UserDetailsState extends State<UserDetails> {
               },
             ),
           ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.xs),
       ],
     );
   }
@@ -364,21 +327,21 @@ class _UserDetailsState extends State<UserDetails> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.xs,
+          ),
           child: Row(
             children: [
               Icon(
                 Icons.star,
-                size: 18,
+                size: AppSizes.iconSubtle,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.xs),
               Text(
                 loc.latestRatedTitles,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.titleSmall,
               ),
             ],
           ),
@@ -386,28 +349,28 @@ class _UserDetailsState extends State<UserDetails> {
         if (_isLoading)
           const Center(
             child: Padding(
-              padding: EdgeInsets.all(24.0),
+              padding: EdgeInsets.all(AppSpacing.lg),
               child: CircularProgressIndicator(),
             ),
           )
         else if (_latestRatedTitles.isEmpty)
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: AppSpacing.screenPadding,
             child: Center(
               child: Text(
                 loc.noRatedTitles,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
               ),
             ),
           )
         else
           SizedBox(
-            height: CARD_HEIGHT + 10,
+            height: AppSizes.chipCarouselHeight,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
               itemCount: _latestRatedTitles.length,
               itemBuilder: (context, index) {
                 final watchlistService =

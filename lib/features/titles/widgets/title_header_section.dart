@@ -1,5 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/widgets/app_cached_image.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
@@ -30,7 +32,11 @@ class TitleHeaderSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final topOffset = (constraints.maxWidth * 9 / 16) - 28;
+        final bannerHeight = math.min(
+          constraints.maxWidth / AppSizes.aspectRatioBackdrop,
+          AppBreakpoints.maxBannerHeight,
+        );
+        final topOffset = bannerHeight - AppSizes.headerPosterOverlap;
         return Stack(
           clipBehavior: Clip.none,
           children: [
@@ -46,12 +52,14 @@ class TitleHeaderSection extends StatelessWidget {
                   isLoading: isUpdating,
                 ),
                 Container(
-                  constraints: const BoxConstraints(minHeight: 150),
+                  constraints: const BoxConstraints(
+                    minHeight: AppSizes.headerInfoMinHeight,
+                  ),
                   padding: const EdgeInsets.only(
-                    left: 144,
-                    right: 5,
-                    top: 10,
-                    bottom: 10,
+                    left: AppSizes.headerInfoLeftPadding,
+                    right: AppSpacing.md,
+                    top: AppSpacing.sm,
+                    bottom: AppSpacing.sm,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,7 +68,7 @@ class TitleHeaderSection extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _titleLine(),
+                          _titleLine(context),
                           _dateAndDuration(context),
                           _primaryCreator(context),
                         ],
@@ -70,11 +78,11 @@ class TitleHeaderSection extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  padding: AppSpacing.screenHorizontal,
                   child: Column(
                     children: [
                       _tagLine(context),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: AppSpacing.xs),
                       _actionButtons(context),
                     ],
                   ),
@@ -82,7 +90,7 @@ class TitleHeaderSection extends StatelessWidget {
               ],
             ),
             Positioned(
-              left: 8,
+              left: AppSpacing.xs,
               top: topOffset,
               child: GestureDetector(
                 onTap: () {
@@ -102,33 +110,20 @@ class TitleHeaderSection extends StatelessWidget {
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: Theme.of(context).scaffoldBackgroundColor,
-                      width: 4,
+                      width: AppSizes.headerPosterBorderWidth,
                     ),
+                    borderRadius: AppRadius.borderSm,
                   ),
-                  child: title.posterPath.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: UrlConstants.tmdbImageW500Template
-                              .replaceFirst('{PATH}', title.posterPath),
-                          width: 120,
-                          height: 170,
-                          fit: BoxFit.cover,
-                          errorWidget: (context, url, error) => Image.asset(
-                            title.isMovie
-                                ? 'assets/movie_poster.png'
-                                : 'assets/tvshow_poster.png',
-                            width: 120,
-                            height: 170,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : Image.asset(
-                          title.isMovie
-                              ? 'assets/movie_poster.png'
-                              : 'assets/tvshow_poster.png',
-                          width: 120,
-                          height: 170,
-                          fit: BoxFit.cover,
-                        ),
+                  child: AppCachedImage(
+                    imageUrl: title.posterPath.isNotEmpty
+                        ? UrlConstants.tmdbImageW500Template
+                            .replaceFirst('{PATH}', title.posterPath)
+                        : null,
+                    width: AppSizes.headerPosterWidth,
+                    height: AppSizes.headerPosterHeight,
+                    borderRadius: AppRadius.borderXs,
+                    type: AppImageType.poster,
+                  ),
                 ),
               ),
             ),
@@ -138,7 +133,7 @@ class TitleHeaderSection extends StatelessWidget {
     );
   }
 
-  Widget _titleLine() {
+  Widget _titleLine(BuildContext context) {
     if (title.name.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -152,8 +147,7 @@ class TitleHeaderSection extends StatelessWidget {
             Expanded(
               child: Text(
                 title.name,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                style: Theme.of(context).textTheme.titleMedium,
                 textAlign: TextAlign.start,
               ),
             ),
@@ -169,12 +163,12 @@ class TitleHeaderSection extends StatelessWidget {
       children: [
         Text(
           '${_releaseDates()} - ${_duration(context)}',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
         ),
         if (title.certification.isNotEmpty) ...[
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSpacing.xs),
           _certificationBadge(context),
         ],
       ],
@@ -183,22 +177,24 @@ class TitleHeaderSection extends StatelessWidget {
 
   Widget _certificationBadge(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.xs,
+        vertical: AppSpacing.micro,
+      ),
       decoration: BoxDecoration(
         border: Border.all(
           color: Theme.of(context)
               .colorScheme
               .onSurfaceVariant
-              .withValues(alpha: 0.5),
+              .withValues(alpha: AppOpacity.half),
         ),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: AppRadius.borderXs,
       ),
       child: Text(
         title.certification,
-        style: TextStyle(
-          fontSize: 11,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
       ),
     );
   }
@@ -238,24 +234,20 @@ class TitleHeaderSection extends StatelessWidget {
     if (people.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.only(top: 4.0),
+      padding: const EdgeInsets.only(top: AppSpacing.xxs),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style:
-                    const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-              ),
-              ClickableNames(
-                people: people,
-                tmdbListService: tmdbListService,
-                useEllipsis: true,
-              ),
-            ],
+          Text(
+            label,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontStyle: FontStyle.italic,
+                ),
+          ),
+          ClickableNames(
+            people: people,
+            tmdbListService: tmdbListService,
+            useEllipsis: true,
           ),
         ],
       ),
@@ -271,10 +263,10 @@ class TitleHeaderSection extends StatelessWidget {
 
     return Text(
       genresText,
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
-        fontStyle: FontStyle.italic,
-      ),
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontStyle: FontStyle.italic,
+          ),
     );
   }
 
@@ -321,11 +313,10 @@ class TitleHeaderSection extends StatelessWidget {
         Expanded(
           child: Text(
             title.tagline,
-            style: TextStyle(
-              fontSize: 12,
-              fontStyle: FontStyle.italic,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontStyle: FontStyle.italic,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
             textAlign: TextAlign.center,
           ),
         ),
@@ -338,11 +329,11 @@ class TitleHeaderSection extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         watchlistButton(context, title),
-        const SizedBox(width: 8),
+        const SizedBox(width: AppSpacing.xs),
         pinButton(context, title),
-        const SizedBox(width: 8),
+        const SizedBox(width: AppSpacing.xs),
         notifyButton(context, title),
-        const SizedBox(width: 8),
+        const SizedBox(width: AppSpacing.xs),
         commentButton(context, title),
         const Spacer(),
         TrailerButtons(videos: title.videos),

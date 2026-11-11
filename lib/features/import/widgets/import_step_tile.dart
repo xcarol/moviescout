@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 
 class ImportStepTile extends StatelessWidget {
   final bool isActive;
@@ -29,9 +30,9 @@ class ImportStepTile extends StatelessWidget {
       textColor = theme.textTheme.bodyMedium?.color;
     } else if (isActive) {
       leading = const SizedBox(
-        width: 20,
-        height: 20,
-        child: CircularProgressIndicator(strokeWidth: 2.0),
+        width: AppSizes.iconMd,
+        height: AppSizes.iconMd,
+        child: CircularProgressIndicator(strokeWidth: AppSizes.strokeWidthSm),
       );
       textColor = theme.colorScheme.primary;
     } else {
@@ -42,8 +43,8 @@ class ImportStepTile extends StatelessWidget {
     return ListTile(
       dense: true,
       leading: SizedBox(
-        width: 24,
-        height: 24,
+        width: AppSizes.iconLg,
+        height: AppSizes.iconLg,
         child: Center(child: leading),
       ),
       title: Text(
@@ -52,7 +53,7 @@ class ImportStepTile extends StatelessWidget {
             : isActive
                 ? activeText
                 : pendingText,
-        style: TextStyle(
+        style: theme.textTheme.bodyMedium?.copyWith(
           color: textColor,
           fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
         ),

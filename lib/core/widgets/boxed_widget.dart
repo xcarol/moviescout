@@ -22,7 +22,7 @@ class BoxedWidget extends StatelessWidget {
 
     return Material(
       color: colorScheme.surfaceContainerHigh,
-      elevation: 1,
+      elevation: AppSizes.elevationSubtle,
       shape: RoundedRectangleBorder(
         borderRadius: AppRadius.borderXs,
         side: BorderSide(

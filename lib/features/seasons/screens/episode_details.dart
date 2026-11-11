@@ -1,3 +1,5 @@
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/utils/ui_utils.dart';
 import 'package:moviescout/core/utils/url_constants.dart';
 import 'package:moviescout/core/utils/api_constants.dart';
 import "package:moviescout/features/auth/services/supabase_auth_service.dart";
@@ -140,7 +142,14 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
           if (cachedEpisode != null) {
             return SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: _detailsBody(cachedEpisode),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: AppBreakpoints.maxContentWidth,
+                  ),
+                  child: _detailsBody(cachedEpisode),
+                ),
+              ),
             );
           } else {
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -158,7 +167,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
   void _goToPreviousEpisode() {
     if (_currentEpisodeNumber > 1) {
       _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
+        duration: AppDurations.normal,
         curve: Curves.easeInOut,
       );
     }
@@ -168,7 +177,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
     if (widget.totalEpisodes == null ||
         _currentEpisodeNumber < widget.totalEpisodes!) {
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
+        duration: AppDurations.normal,
         curve: Curves.easeInOut,
       );
     }
@@ -179,12 +188,13 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         MediaCarousel(
-            images: episode.images,
-            backdropPath: '',
-            posterPath: episode.stillPath, // Usually episodes have stills
-            mediaType: ApiConstants.tv,
-            isLoading: _isUpdating),
-        const SizedBox(height: 20),
+          images: episode.images,
+          backdropPath: '',
+          posterPath: episode.stillPath,
+          mediaType: ApiConstants.tv,
+          isLoading: _isUpdating,
+        ),
+        const SizedBox(height: AppSpacing.md),
         _details(episode),
       ],
     );
@@ -192,18 +202,23 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
 
   Widget _details(TmdbEpisode episode) {
     return Padding(
-      padding: const EdgeInsets.only(left: 5, right: 5, bottom: 100),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.xs,
+        AppSpacing.md,
+        AppSpacing.bottomSafeMargin,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _titleLine(episode),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.xs),
           _durationDateAndRating(episode),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.xs),
           _description(episode),
-          const SizedBox(height: 30),
+          const SizedBox(height: AppSpacing.xl),
           _castAndCrew(episode, PersonAttributes.cast),
-          const SizedBox(height: 30),
+          const SizedBox(height: AppSpacing.xl),
           _castAndCrew(episode, PersonAttributes.crew),
         ],
       ),
@@ -220,10 +235,10 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
       children: [
         Expanded(
           child: Padding(
-            padding: EdgeInsetsGeometry.only(top: 8),
+            padding: const EdgeInsets.only(top: AppSpacing.xs),
             child: Text(
               '${episode.episodeNumber}. ${episode.name}',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: Theme.of(context).textTheme.titleMedium,
               textAlign: TextAlign.start,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -234,7 +249,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
           icon: const Icon(Icons.chevron_left),
           onPressed: _currentEpisodeNumber > 1 ? _goToPreviousEpisode : null,
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: AppSpacing.md),
         IconButton(
           icon: const Icon(Icons.chevron_right),
           onPressed: (widget.totalEpisodes == null ||
@@ -260,6 +275,9 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
   Widget _durationDateAndRating(TmdbEpisode episode) {
     final isUserLoggedIn =
         Provider.of<SupabaseAuthService>(context, listen: false).isLoggedIn;
+    final metaStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        );
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -270,23 +288,17 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
               if (episode.airDate.isNotEmpty)
                 Text(
                   DateFormatter.formatDate(context, episode.airDate),
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                  style: metaStyle,
                 ),
               if (episode.airDate.isNotEmpty && episode.runtime > 0)
                 Text(
                   ' - ',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                  style: metaStyle,
                 ),
               if (episode.runtime > 0)
                 Text(
                   '${episode.runtime} min',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                  style: metaStyle,
                 ),
             ],
           ),
@@ -294,9 +306,12 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
         UserRateButton(
           isUserLoggedIn: isUserLoggedIn,
           rating: episode.rating,
-          iconSize: 16,
-          fontSize: 14,
-          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+          iconSize: AppSizes.iconSm,
+          fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+          padding: const EdgeInsets.symmetric(
+            vertical: AppSpacing.micro,
+            horizontal: AppSpacing.xs,
+          ),
           onPressed: () => showDialog(
             context: context,
             builder: (context) {
@@ -317,16 +332,21 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
             },
           ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: AppSpacing.sm),
         Icon(
           Icons.star,
-          size: 16,
+          size: AppSizes.iconSm,
           color: Theme.of(context).extension<CustomColors>()!.ratedTitle,
         ),
-        const SizedBox(width: 5),
-        Text(episode.voteAverage == 10.0
-            ? '10'
-            : episode.voteAverage.toStringAsFixed(1)),
+        const SizedBox(width: AppSpacing.xxs),
+        Text(
+          episode.voteAverage == 10.0
+              ? '10'
+              : episode.voteAverage.toStringAsFixed(1),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
       ],
     );
   }
@@ -369,8 +389,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
                 type == PersonAttributes.cast
                     ? AppLocalizations.of(context)!.cast
                     : AppLocalizations.of(context)!.crew,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: Theme.of(context).textTheme.titleSmall,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -384,21 +403,20 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
               },
               child: Text(
                 AppLocalizations.of(context)!.seeThemAll,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: Theme.of(context).textTheme.titleSmall,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: AppSpacing.xs),
         SizedBox(
-          height: 336.0,
+          height: AppSizes.chipCarouselHeight,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: people.length > 20 ? 20 : people.length,
             itemBuilder: (context, index) {
               return Padding(
-                padding: const EdgeInsets.only(right: 10),
+                padding: const EdgeInsets.only(right: AppSpacing.xs),
                 child: _personChip(context, people[index]),
               );
             },
@@ -412,11 +430,9 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
     return Builder(
       builder: (innerContext) {
         final mediaQuery = MediaQuery.of(innerContext);
-        final clampedScale = mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
-
         return MediaQuery(
           data: mediaQuery.copyWith(
-            textScaler: TextScaler.linear(clampedScale),
+            textScaler: UiUtils.clampedTextScaler(innerContext),
           ),
           child: PersonChip(
             person: tmdbPerson,

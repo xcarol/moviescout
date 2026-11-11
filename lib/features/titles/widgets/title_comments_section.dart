@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/titles/models/title_comment.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
@@ -76,7 +77,7 @@ class _TitleCommentsSectionState extends State<TitleCommentsSection> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _commentsHeader(loc, comments.length, userComment),
-            const SizedBox(height: 10),
+            const SizedBox(height: AppSpacing.sm),
             if (comments.isEmpty)
               _emptyCommentsPlaceholder(loc)
             else
@@ -97,7 +98,7 @@ class _TitleCommentsSectionState extends State<TitleCommentsSection> {
       children: [
         Text(
           '${loc.comments} ($commentCount)',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          style: Theme.of(context).textTheme.titleSmall,
         ),
         if (userComment == null)
           IconButton(
@@ -111,13 +112,13 @@ class _TitleCommentsSectionState extends State<TitleCommentsSection> {
 
   Widget _emptyCommentsPlaceholder(AppLocalizations loc) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       child: Text(
         loc.noCommentsYet,
-        style: TextStyle(
-          fontStyle: FontStyle.italic,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontStyle: FontStyle.italic,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
       ),
     );
   }
@@ -131,7 +132,7 @@ class _TitleCommentsSectionState extends State<TitleCommentsSection> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: comments.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
       itemBuilder: (context, index) {
         final comment = comments[index];
         final isAuthor =
@@ -147,13 +148,13 @@ class _TitleCommentsSectionState extends State<TitleCommentsSection> {
     AppLocalizations loc,
   ) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: AppSpacing.cardPadding,
       decoration: _commentCardDecoration(isAuthor),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _commentCardHeader(comment, isAuthor, loc),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.xs),
           _commentCardBody(comment),
         ],
       ),
@@ -165,16 +166,21 @@ class _TitleCommentsSectionState extends State<TitleCommentsSection> {
       color: Theme.of(context)
           .colorScheme
           .surfaceContainerHighest
-          .withValues(alpha: 0.5),
-      borderRadius: BorderRadius.circular(10),
+          .withValues(alpha: AppOpacity.half),
+      borderRadius: AppRadius.borderMd,
       border: Border.all(
         color: isAuthor
-            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.5)
+            ? Theme.of(context)
+                .colorScheme
+                .primary
+                .withValues(alpha: AppOpacity.half)
             : Theme.of(context)
                 .colorScheme
                 .outlineVariant
-                .withValues(alpha: 0.3),
-        width: isAuthor ? 1.5 : 1,
+                .withValues(alpha: AppOpacity.scrimLight),
+        width: isAuthor
+            ? AppSizes.borderWidthFocused
+            : AppSizes.borderWidthRegular,
       ),
     );
   }
@@ -208,21 +214,20 @@ class _TitleCommentsSectionState extends State<TitleCommentsSection> {
       children: [
         Icon(
           Icons.account_circle,
-          size: 20,
+          size: AppSizes.iconMd,
           color: isAuthor
               ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.onSurfaceVariant,
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: AppSpacing.xs),
         Text(
           authorName,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 13,
-            color: isAuthor
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onSurface,
-          ),
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: isAuthor
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.onSurface,
+              ),
         ),
       ],
     );
@@ -238,29 +243,28 @@ class _TitleCommentsSectionState extends State<TitleCommentsSection> {
       children: [
         Text(
           dateStr,
-          style: TextStyle(
-            fontSize: 11,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
         ),
         if (isAuthor) ...[
-          const SizedBox(width: 4),
+          const SizedBox(width: AppSpacing.xxs),
           IconButton(
-            icon: const Icon(Icons.edit_outlined, size: 18),
+            icon: const Icon(Icons.edit_outlined, size: AppSizes.iconSubtle),
             padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
+            constraints: AppSizes.compactActionConstraints,
             tooltip: loc.editComment,
             onPressed: () => _openEditCommentDialog(comment),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSpacing.xxs),
           IconButton(
             icon: Icon(
               Icons.delete_outline,
-              size: 18,
+              size: AppSizes.iconSubtle,
               color: Theme.of(context).colorScheme.error,
             ),
             padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
+            constraints: AppSizes.compactActionConstraints,
             tooltip: loc.deleteComment,
             onPressed: () => _confirmAndDeleteComment(comment),
           ),
@@ -273,7 +277,7 @@ class _TitleCommentsSectionState extends State<TitleCommentsSection> {
     return ExpandableText(
       text: comment.comment,
       initialMaxLines: 3,
-      style: const TextStyle(fontSize: 14),
+      style: Theme.of(context).textTheme.bodyMedium,
     );
   }
 

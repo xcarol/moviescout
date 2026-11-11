@@ -85,7 +85,7 @@ class AppCachedImage extends StatelessWidget {
         _defaultIcon,
         size: effectiveIconSize,
         color: colorScheme.onSurfaceVariant.withValues(
-          alpha: isLoading ? 0.25 : 0.45,
+          alpha: isLoading ? AppOpacity.loadingPlaceholder : AppOpacity.muted,
         ),
       ),
     );

@@ -20,7 +20,7 @@ class MediaCarousel extends StatefulWidget {
     required this.posterPath,
     required this.mediaType,
     this.isLoading = false,
-    this.aspectRatio = 16 / 9,
+    this.aspectRatio = AppSizes.aspectRatioBackdrop,
     super.key,
   });
 

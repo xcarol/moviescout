@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:app_links/app_links.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/widgets/app_cached_image.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/titles/repositories/local_title_repository.dart';
 import 'package:moviescout/core/services/error_service.dart';
@@ -206,60 +207,67 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
           slivers: [
             SliverFillRemaining(
               hasScrollBody: false,
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Spacer(),
-                    Icon(
-                      _state == ImportState.success
-                          ? Icons.cloud_done
-                          : Icons.cloud_download,
-                      size: 96,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      _state == ImportState.success
-                          ? AppLocalizations.of(context)!.tmdbImportSuccess
-                          : AppLocalizations.of(context)!
-                              .tmdbImportScreenHeader,
-                      style:
-                          Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    if (_state == ImportState.idle)
-                      Text(
-                        AppLocalizations.of(context)!.tmdbImportScreenBody,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                        textAlign: TextAlign.center,
-                      ),
-                    if (_state == ImportState.idle && isTmdbLoggedIn) ...[
-                      const SizedBox(height: 20),
-                      _buildTmdbUserCard(context, userService.user),
-                    ],
-                    if (_state == ImportState.importing ||
-                        _state == ImportState.success)
-                      _buildProgressIndicators(context),
-                    if (_state == ImportState.error &&
-                        _errorMessage != null) ...[
-                      const SizedBox(height: 24),
-                      Text(
-                        _errorMessage!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: AppBreakpoints.maxFormWidth,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Spacer(),
+                        Icon(
+                          _state == ImportState.success
+                              ? Icons.cloud_done
+                              : Icons.cloud_download,
+                          size: AppSizes.importHeroIconSize,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                    const Spacer(),
-                    _buildActionButtons(context, isTmdbLoggedIn),
-                    const SizedBox(height: 16),
-                  ],
+                        const SizedBox(height: AppSpacing.lg),
+                        Text(
+                          _state == ImportState.success
+                              ? AppLocalizations.of(context)!.tmdbImportSuccess
+                              : AppLocalizations.of(context)!
+                                  .tmdbImportScreenHeader,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        if (_state == ImportState.idle)
+                          Text(
+                            AppLocalizations.of(context)!.tmdbImportScreenBody,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                        if (_state == ImportState.idle && isTmdbLoggedIn) ...[
+                          const SizedBox(height: AppSpacing.lg),
+                          _buildTmdbUserCard(context, userService.user),
+                        ],
+                        if (_state == ImportState.importing ||
+                            _state == ImportState.success)
+                          _buildProgressIndicators(context),
+                        if (_state == ImportState.error &&
+                            _errorMessage != null) ...[
+                          const SizedBox(height: AppSpacing.lg),
+                          Text(
+                            _errorMessage!,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.error,
+                                ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                        const Spacer(),
+                        _buildActionButtons(context, isTmdbLoggedIn),
+                        const SizedBox(height: AppSpacing.md),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -277,29 +285,33 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
       userName = tmdbUser['name'];
     }
 
-    ImageProvider? userImage;
+    String? userImageUrl;
     if (tmdbUser != null) {
       if (tmdbUser['avatar']?['tmdb']?['avatar_path'] != null) {
-        userImage = CachedNetworkImageProvider(
-          UrlConstants.tmdbImageW185Template.replaceFirst(
-            '{PATH}',
-            '/${tmdbUser['avatar']['tmdb']['avatar_path']}',
-          ),
+        userImageUrl = UrlConstants.tmdbImageW185Template.replaceFirst(
+          '{PATH}',
+          '/${tmdbUser['avatar']['tmdb']['avatar_path']}',
         );
       } else if (tmdbUser['avatar']?['gravatar']?['hash'] != null) {
-        userImage = CachedNetworkImageProvider(
-          UrlConstants.gravatarTemplate
-              .replaceFirst('{HASH}', tmdbUser['avatar']['gravatar']['hash'])
-              .replaceFirst('{SIZE}', '200'),
-        );
+        userImageUrl = UrlConstants.gravatarTemplate
+            .replaceFirst('{HASH}', tmdbUser['avatar']['gravatar']['hash'])
+            .replaceFirst('{SIZE}', AppSizes.tmdbAvatarCacheSize.toString());
       }
     }
 
     return Card(
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: userImage,
-          child: userImage == null ? const Icon(Icons.person) : null,
+          radius: AppSizes.avatarSm / 2,
+          child: ClipOval(
+            child: AppCachedImage(
+              imageUrl: userImageUrl,
+              width: AppSizes.avatarSm,
+              height: AppSizes.avatarSm,
+              type: AppImageType.avatar,
+              fallbackIconSize: AppSizes.iconMd,
+            ),
+          ),
         ),
         title: Text(userName),
         subtitle: Text(AppLocalizations.of(context)!.tmdbAccount),
@@ -338,10 +350,10 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
         side: BorderSide(
           color: Theme.of(context).colorScheme.outlineVariant,
         ),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderMd,
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
         child: Column(
           children: [
             ImportStepTile(
@@ -352,7 +364,7 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
               completedText:
                   l10n.tmdbImportWatchlistCount(_watchlistCount ?? 0),
             ),
-            const Divider(height: 1),
+            const Divider(height: AppSizes.borderWidthRegular),
             ImportStepTile(
               isActive: isRateslistActive,
               isCompleted: isRateslistDone,
@@ -361,7 +373,7 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
               completedText:
                   l10n.tmdbImportRateslistCount(_rateslistCount ?? 0),
             ),
-            const Divider(height: 1),
+            const Divider(height: AppSizes.borderWidthRegular),
             ImportStepTile(
               isActive: isEpisodesActive,
               isCompleted: isEpisodesDone,
@@ -369,7 +381,7 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
               activeText: l10n.tmdbImportDownloadingEpisodes,
               completedText: l10n.tmdbImportEpisodesCount(_episodesCount ?? 0),
             ),
-            const Divider(height: 1),
+            const Divider(height: AppSizes.borderWidthRegular),
             ImportStepTile(
               isActive: isUploadActive,
               isCompleted: isUploadDone,
@@ -380,12 +392,12 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AppSpacing.xs),
                         LinearProgressIndicator(
                           value: _uploadProgress > 0 ? _uploadProgress : null,
                         ),
                         if (_totalUpload > 0) ...[
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AppSpacing.xxs),
                           Text(
                             '$_currentUpload / $_totalUpload',
                             style: Theme.of(context).textTheme.bodySmall,
@@ -416,7 +428,7 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
               ),
               if (defaultTargetPlatform == TargetPlatform.linux ||
                   defaultTargetPlatform == TargetPlatform.windows) ...[
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.xs),
                 OutlinedButton(
                   onPressed: _completeTmdbLogin,
                   child:
@@ -430,7 +442,7 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
+              padding: const EdgeInsets.only(bottom: AppSpacing.md),
               child: Text(
                 AppLocalizations.of(context)!.tmdbImportConsentText,
                 style: Theme.of(context).textTheme.bodySmall,

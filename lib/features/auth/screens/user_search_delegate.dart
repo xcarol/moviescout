@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
+import 'package:moviescout/core/widgets/app_error_state.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/features/auth/models/user_profile.dart';
@@ -29,7 +32,7 @@ class UserSearchDelegate extends SearchDelegate<UserProfile?> {
       ),
       inputDecorationTheme: InputDecorationTheme(
         hintStyle: TextStyle(
-          color: appBarFg.withValues(alpha: 0.7),
+          color: appBarFg.withValues(alpha: AppOpacity.subtle),
         ),
         border: InputBorder.none,
       ),
@@ -73,27 +76,9 @@ class UserSearchDelegate extends SearchDelegate<UserProfile?> {
 
   Widget _buildEmptyPrompt(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.person_search,
-            size: 64,
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            loc.searchUsersPlaceholder,
-            style: TextStyle(
-              fontSize: 16,
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
+    return AppEmptyState(
+      icon: Icons.person_search,
+      message: loc.searchUsersPlaceholder,
     );
   }
 
@@ -112,43 +97,40 @@ class UserSearchDelegate extends SearchDelegate<UserProfile?> {
         }
 
         if (snapshot.hasError) {
-          return Center(
-            child: Text(
-              loc.networkErrorMessage,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              ),
-            ),
+          return AppErrorState(
+            message: loc.networkErrorMessage,
           );
         }
 
         final users = snapshot.data ?? [];
         if (users.isEmpty) {
-          return Center(
-            child: Text(
-              loc.noUsersFound,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                fontSize: 16,
-              ),
-            ),
+          return AppEmptyState(
+            icon: Icons.person_off_outlined,
+            message: loc.noUsersFound,
           );
         }
 
-        return ListView.builder(
-          itemCount: users.length,
-          itemBuilder: (context, index) {
-            final user = users[index];
-            return Column(
-              children: [
-                UserCard(user: user),
-                Divider(
-                  height: 1,
-                  color: dividerColor,
-                ),
-              ],
-            );
-          },
+        return Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppBreakpoints.maxContentWidth,
+            ),
+            child: ListView.builder(
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                final user = users[index];
+                return Column(
+                  children: [
+                    UserCard(user: user),
+                    Divider(
+                      height: AppSizes.borderWidthRegular,
+                      color: dividerColor,
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
         );
       },
     );

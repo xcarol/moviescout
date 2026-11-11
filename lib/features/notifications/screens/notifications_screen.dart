@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
+import 'package:moviescout/core/widgets/app_cached_image.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/main.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
@@ -6,7 +9,6 @@ import 'package:moviescout/features/notifications/models/saved_notification.dart
 import 'package:moviescout/core/navigation/deep_link_service.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:moviescout/features/settings/services/tmdb_provider_service.dart';
 import 'package:moviescout/features/settings/models/tmdb_provider.dart';
@@ -80,84 +82,88 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         title: Text(localizations.notificationsHistory),
       ),
       body: _notifications.isEmpty
-          ? Center(
-              child: Text(localizations.emptyList),
+          ? AppEmptyState(
+              icon: Icons.notifications_none_outlined,
+              message: localizations.emptyList,
             )
-          : ListView.builder(
-              itemCount: _notifications.length,
-              itemBuilder: (context, index) {
-                final notification = _notifications[index];
+          : Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: AppBreakpoints.maxContentWidth,
+                ),
+                child: ListView.builder(
+                  itemCount: _notifications.length,
+                  itemBuilder: (context, index) {
+                    final notification = _notifications[index];
 
-                return Column(
-                  children: [
-                    if (index == 0)
-                      Divider(
-                        height: 1,
-                        color: customColors.dividerColor,
-                      ),
-                    ListTile(
-                      leading: notification.imageUrl != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(4.0),
-                              child: CachedNetworkImage(
-                                imageUrl: notification.imageUrl!,
-                                width: 50,
-                                height: 75,
-                                fit: BoxFit.cover,
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.movie),
-                              ),
-                            )
-                          : const Icon(Icons.notifications),
-                      title: Text(notification.title),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            DateFormat.yMMMd(
-                                    Localizations.localeOf(context).toString())
-                                .format(notification.timestamp.toLocal()),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(color: colors.onSurfaceVariant),
+                    return Column(
+                      children: [
+                        if (index == 0)
+                          Divider(
+                            height: AppSizes.borderWidthRegular,
+                            color: customColors.dividerColor,
                           ),
-                          if (notification.providerIds.isNotEmpty) ...[
-                            const SizedBox(height: 8),
-                            Wrap(
-                              children: notification.providerIds.map((id) {
-                                final providerData = allProviders[id];
-                                if (providerData == null) {
-                                  return const SizedBox.shrink();
+                        ListTile(
+                          leading: notification.imageUrl != null
+                              ? AppCachedImage(
+                                  imageUrl: notification.imageUrl,
+                                  width: AppSizes.notificationThumbWidth,
+                                  height: AppSizes.notificationThumbHeight,
+                                  borderRadius: AppRadius.borderXs,
+                                  type: AppImageType.poster,
+                                  fallbackIconSize: AppSizes.iconMd,
+                                )
+                              : const Icon(Icons.notifications),
+                          title: Text(notification.title),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                DateFormat.yMMMd(
+                                  Localizations.localeOf(context).toString(),
+                                ).format(notification.timestamp.toLocal()),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(color: colors.onSurfaceVariant),
+                              ),
+                              if (notification.providerIds.isNotEmpty) ...[
+                                const SizedBox(height: AppSpacing.xs),
+                                Wrap(
+                                  children: notification.providerIds.map((id) {
+                                    final providerData = allProviders[id];
+                                    if (providerData == null) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    return _providerLogo(providerData);
+                                  }).toList(),
+                                ),
+                              ],
+                            ],
+                          ),
+                          onTap: notification.payload != null
+                              ? () {
+                                  final parts =
+                                      notification.payload!.split('|');
+                                  if (parts.length == 2) {
+                                    final type = parts[0];
+                                    final id = int.tryParse(parts[1]);
+                                    if (id != null) {
+                                      DeepLinkService().navigateTo(type, id);
+                                    }
+                                  }
                                 }
-                                return _providerLogo(providerData);
-                              }).toList(),
-                            ),
-                          ],
-                        ],
-                      ),
-                      onTap: notification.payload != null
-                          ? () {
-                              final parts = notification.payload!.split('|');
-                              if (parts.length == 2) {
-                                final type = parts[0];
-                                final id = int.tryParse(parts[1]);
-                                if (id != null) {
-                                  DeepLinkService().navigateTo(type, id);
-                                }
-                              }
-                            }
-                          : null,
-                    ),
-                    Divider(
-                      height: 1,
-                      color: Theme.of(context)
-                          .extension<CustomColors>()!
-                          .dividerColor,
-                    ),
-                  ],
-                );
-              },
+                              : null,
+                        ),
+                        Divider(
+                          height: AppSizes.borderWidthRegular,
+                          color: customColors.dividerColor,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
             ),
     );
   }
@@ -168,21 +174,18 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     final name = provider.name;
 
     return Padding(
-      padding: const EdgeInsets.only(right: 8.0),
+      padding: const EdgeInsets.only(right: AppSpacing.xs),
       child: Tooltip(
         message: name,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(4.0),
-          child: CachedNetworkImage(
-            imageUrl: logoPath,
-            width: 24,
-            height: 24,
-            fit: BoxFit.cover,
-            errorWidget: (context, url, error) => const Icon(
-              Icons.broken_image,
-              size: 24,
-            ),
-          ),
+        child: AppCachedImage(
+          imageUrl: logoPath,
+          width: AppSizes.iconLg,
+          height: AppSizes.iconLg,
+          borderRadius: AppRadius.borderXs,
+          memCacheWidth: AppSizes.providerCacheSize,
+          memCacheHeight: AppSizes.providerCacheSize,
+          type: AppImageType.logo,
+          fallbackIconSize: AppSizes.iconSm,
         ),
       ),
     );

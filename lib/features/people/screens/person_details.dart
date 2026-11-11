@@ -1,3 +1,4 @@
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/utils/url_constants.dart';
 import 'package:moviescout/core/utils/api_constants.dart';
 import 'dart:math';
@@ -130,7 +131,14 @@ class _PersonDetailsState extends State<PersonDetails> {
           ),
           body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            child: _detailsBody(person),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: AppBreakpoints.maxContentWidth,
+                ),
+                child: _detailsBody(person),
+              ),
+            ),
           ),
         );
       },
@@ -139,35 +147,40 @@ class _PersonDetailsState extends State<PersonDetails> {
 
   Widget _detailsBody(TmdbPerson person) {
     final userRatedTitles = _userRatedTitles;
+    final dividerColor =
+        Theme.of(context).extension<CustomColors>()!.dividerColor;
 
     return Padding(
-      padding: EdgeInsets.only(left: 5, right: 5, bottom: 100),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.md,
+        AppSpacing.md,
+        AppSpacing.bottomSafeMargin,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _banner(person),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.lg),
           if (widget.titleContext != null) ...[
             _roleInContext(person),
-            const SizedBox(height: 20)
+            const SizedBox(height: AppSpacing.lg),
           ],
           _description(person),
           if (person.biography.isEmpty) _name(person),
-          const SizedBox(height: 10),
-          Divider(
-              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
+          const SizedBox(height: AppSpacing.sm),
+          Divider(color: dividerColor),
           _socialLinks(person),
-          Divider(
-              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
-          const SizedBox(height: 10),
+          Divider(color: dividerColor),
+          const SizedBox(height: AppSpacing.sm),
           _credits(person),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.sm),
           _crewCredits(person),
-          const SizedBox(height: 30),
+          const SizedBox(height: AppSpacing.xl),
           _ratedCredits(person, userRatedTitles),
-          const SizedBox(height: 30),
+          const SizedBox(height: AppSpacing.xl),
           _taggedImages(person),
-          const SizedBox(height: 50),
+          const SizedBox(height: AppSpacing.xxl),
         ],
       ),
     );
@@ -179,11 +192,11 @@ class _PersonDetailsState extends State<PersonDetails> {
       children: [
         if (person.birthday.isNotEmpty) ...[
           _birthDay(person),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.sm),
         ],
         if (person.deathday.isNotEmpty) ...[
           _deathDay(person),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppSpacing.sm),
         ],
         if (person.placeOfBirth.isNotEmpty) ...[
           _characterPlaceOfBirth(person),
@@ -208,11 +221,15 @@ class _PersonDetailsState extends State<PersonDetails> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
         AppLocalizations.of(context)!.birthDate,
-        style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              fontStyle: FontStyle.italic,
+            ),
       ),
       Text(
         '${_formatDate(context, person.birthday)}$ageString',
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
       ),
     ]);
   }
@@ -229,11 +246,17 @@ class _PersonDetailsState extends State<PersonDetails> {
     }
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(AppLocalizations.of(context)!.deathDate,
-          style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
+      Text(
+        AppLocalizations.of(context)!.deathDate,
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              fontStyle: FontStyle.italic,
+            ),
+      ),
       Text(
         '${_formatDate(context, person.deathday)}$ageString',
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
       ),
     ]);
   }
@@ -333,14 +356,12 @@ class _PersonDetailsState extends State<PersonDetails> {
       children: [
         Text(
           AppLocalizations.of(context)!.watchOn,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(context).textTheme.titleSmall,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.xs),
         Wrap(
-          spacing: 4.0,
-          runSpacing: 4.0,
+          spacing: AppSpacing.xxs,
+          runSpacing: AppSpacing.xxs,
           children: links,
         ),
       ],
@@ -391,61 +412,60 @@ class _PersonDetailsState extends State<PersonDetails> {
     String? cTitle = _buildContextTitle(context);
     if (cTitle == null) return const SizedBox.shrink();
 
-    return Padding(
-      padding: EdgeInsets.only(left: 5, right: 5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 5),
-          Text(
-            '$rolesText${AppLocalizations.of(context)!.inRoleContext(cTitle)}',
-            style: TextStyle(
-                fontSize: 14,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: AppSpacing.xxs),
+        Text(
+          '$rolesText${AppLocalizations.of(context)!.inRoleContext(cTitle)}',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontStyle: FontStyle.italic,
-                color: Theme.of(context).colorScheme.onSurfaceVariant),
-          ),
-        ],
-      ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+        ),
+      ],
     );
   }
 
   Widget _banner(TmdbPerson person) {
-    double posterWidth = min(MediaQuery.sizeOf(context).width * 0.4, 150) + 30;
-    double posterHeight = posterWidth * 1.5;
-    String image = person.posterPath.isNotEmpty ? person.posterPath : '';
+    final double posterWidth = min(
+          MediaQuery.sizeOf(context).width *
+              AppSizes.personBannerPosterWidthFraction,
+          AppSizes.personBannerMaxPosterBaseWidth,
+        ) +
+        AppSizes.personBannerPosterExtraWidth;
+    final double posterHeight = posterWidth / AppSizes.aspectRatioPoster;
+    final String image = person.posterPath.isNotEmpty ? person.posterPath : '';
 
-    return Padding(
-      padding: EdgeInsets.only(left: 5, right: 5),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: posterWidth,
-            height: posterHeight,
-            child: MediaCarousel(
-              images: person.images,
-              backdropPath: '',
-              posterPath: image,
-              mediaType: ApiConstants.person,
-              isLoading: false,
-              aspectRatio: posterWidth / posterHeight,
-            ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: posterWidth,
+          height: posterHeight,
+          child: MediaCarousel(
+            images: person.images,
+            backdropPath: '',
+            posterPath: image,
+            mediaType: ApiConstants.person,
+            isLoading: false,
+            aspectRatio: posterWidth / posterHeight,
           ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 15),
-              child: _characterDetails(person),
-            ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(left: AppSpacing.md),
+            child: _characterDetails(person),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _name(TmdbPerson person) {
     return Text(
       person.name,
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      style: Theme.of(context).textTheme.titleMedium,
       textAlign: TextAlign.start,
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
@@ -454,7 +474,7 @@ class _PersonDetailsState extends State<PersonDetails> {
 
   Widget _description(TmdbPerson person) {
     return Padding(
-      padding: EdgeInsets.only(left: 5, right: 5, top: 10),
+      padding: const EdgeInsets.only(top: AppSpacing.xs),
       child: ExpandableDescription(
         text: person.biography,
         initialMaxLines: 10,
@@ -470,11 +490,15 @@ class _PersonDetailsState extends State<PersonDetails> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
         AppLocalizations.of(context)!.placeOfBirth,
-        style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              fontStyle: FontStyle.italic,
+            ),
       ),
       Text(
         person.placeOfBirth,
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
       ),
     ]);
   }
@@ -500,8 +524,7 @@ class _PersonDetailsState extends State<PersonDetails> {
             Expanded(
               child: Text(
                 AppLocalizations.of(context)!.cast,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: Theme.of(context).textTheme.titleSmall,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -512,15 +535,14 @@ class _PersonDetailsState extends State<PersonDetails> {
               },
               child: Text(
                 AppLocalizations.of(context)!.seeThemAll,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: Theme.of(context).textTheme.titleSmall,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: AppSpacing.xs),
         SizedBox(
-          height: 336.0,
+          height: AppSizes.chipCarouselHeight,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: uniqueCast.length > 10 ? 10 : uniqueCast.length,
@@ -557,8 +579,7 @@ class _PersonDetailsState extends State<PersonDetails> {
             Expanded(
               child: Text(
                 AppLocalizations.of(context)!.crew,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: Theme.of(context).textTheme.titleSmall,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -569,15 +590,14 @@ class _PersonDetailsState extends State<PersonDetails> {
               },
               child: Text(
                 AppLocalizations.of(context)!.seeThemAll,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: Theme.of(context).textTheme.titleSmall,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: AppSpacing.xs),
         SizedBox(
-          height: 336.0,
+          height: AppSizes.chipCarouselHeight,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: uniqueCrew.length > 10 ? 10 : uniqueCrew.length,
@@ -604,19 +624,19 @@ class _PersonDetailsState extends State<PersonDetails> {
       children: [
         Text(
           AppLocalizations.of(context)!.gallery,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          style: Theme.of(context).textTheme.titleSmall,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: AppSpacing.xs),
         SizedBox(
-          height: 200.0,
+          height: AppSizes.personGalleryHeight,
           child: MediaCarousel(
             images: person.taggedImages,
             backdropPath: '',
             posterPath: '',
             mediaType: ApiConstants.person,
-            aspectRatio: 16 / 9,
+            aspectRatio: AppSizes.aspectRatioBackdrop,
           ),
         ),
       ],
@@ -633,13 +653,13 @@ class _PersonDetailsState extends State<PersonDetails> {
       children: [
         Text(
           AppLocalizations.of(context)!.ratedCredits,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          style: Theme.of(context).textTheme.titleSmall,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: AppSpacing.xs),
         SizedBox(
-          height: 336.0,
+          height: AppSizes.chipCarouselHeight,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: userRatedTitles.length,

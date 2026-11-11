@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 
 Widget customRefreshBuilder(
   BuildContext context,
@@ -11,7 +12,8 @@ Widget customRefreshBuilder(
       child,
       if (!controller.side.isNone)
         Positioned(
-          top: -40.0 + (80.0 * controller.value),
+          top: AppSizes.refreshIndicatorBaseOffset +
+              (AppSizes.refreshIndicatorDragRange * controller.value),
           left: 0,
           right: 0,
           child: Center(

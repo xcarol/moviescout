@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 
 class DoubleBackExitWrapper extends StatefulWidget {
@@ -36,7 +37,7 @@ class _DoubleBackExitWrapperState extends State<DoubleBackExitWrapper> {
 
         final now = DateTime.now();
         if (_lastPressedAt == null ||
-            now.difference(_lastPressedAt!) > const Duration(seconds: 2)) {
+            now.difference(_lastPressedAt!) > AppDurations.feedback) {
           _lastPressedAt = now;
           final defaultScheme = Theme.of(context).colorScheme;
 
@@ -46,16 +47,19 @@ class _DoubleBackExitWrapperState extends State<DoubleBackExitWrapper> {
               backgroundColor: Colors.transparent,
               behavior: SnackBarBehavior.floating,
               padding: EdgeInsets.zero,
-              duration: const Duration(seconds: 2),
+              duration: AppDurations.feedback,
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 10.0),
+                      horizontal: AppSpacing.md,
+                      vertical: AppSpacing.sm,
+                    ),
                     decoration: BoxDecoration(
-                      color: defaultScheme.secondary.withValues(alpha: 0.75),
-                      borderRadius: BorderRadius.circular(10.0),
+                      color: defaultScheme.secondary
+                          .withValues(alpha: AppOpacity.chipBadge),
+                      borderRadius: AppRadius.borderMd,
                     ),
                     child: Text(
                       AppLocalizations.of(context)!.pressBackAgainToExit,

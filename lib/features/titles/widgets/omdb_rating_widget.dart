@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/widgets/boxed_widget.dart';
 
 class OmdbRatingWidget extends StatelessWidget {
@@ -50,14 +51,14 @@ class OmdbRatingWidget extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(logoPath, height: 16),
-            const SizedBox(width: 5),
+            Image.asset(logoPath, height: AppSizes.iconSm),
+            const SizedBox(width: AppSpacing.xxs),
             Text(
               value,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSecondary,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSecondary,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
           ],
         ),

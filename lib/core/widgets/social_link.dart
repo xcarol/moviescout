@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 import 'package:moviescout/core/widgets/boxed_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -25,7 +26,7 @@ class SocialLink extends StatelessWidget {
       url: url,
       launchMode: launchMode,
       child: SizedBox(
-        height: 20,
+        height: AppSizes.iconMd,
         child: Image.asset(
           assetPath,
           fit: BoxFit.cover,
@@ -46,11 +47,11 @@ class SocialLink extends StatelessWidget {
       url: url,
       launchMode: launchMode,
       child: SizedBox(
-        height: 20,
-        width: 20,
+        height: AppSizes.iconMd,
+        width: AppSizes.iconMd,
         child: Icon(
           iconData,
-          size: 20,
+          size: AppSizes.iconMd,
           color: color,
         ),
       ),
@@ -60,7 +61,7 @@ class SocialLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BoxedWidget(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: AppSpacing.chipPadding,
       onPressed: () {
         launchUrl(
           Uri.parse(url),

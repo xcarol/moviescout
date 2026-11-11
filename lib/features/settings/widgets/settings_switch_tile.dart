@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_tokens.dart';
 
 class SettingsSwitchTile extends StatelessWidget {
   final IconData? icon;
@@ -29,13 +30,14 @@ class SettingsSwitchTile extends StatelessWidget {
     final theme = Theme.of(context);
     final iconColor = enabled
         ? theme.colorScheme.onSurfaceVariant
-        : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.38);
+        : theme.colorScheme.onSurfaceVariant
+            .withValues(alpha: AppOpacity.backdropOverlay);
 
     Widget? leadingWidget = leading;
     if (leadingWidget == null && icon != null) {
       leadingWidget = Icon(
         icon,
-        size: 24,
+        size: AppSizes.iconLg,
         color: iconColor,
       );
     }
@@ -44,13 +46,15 @@ class SettingsSwitchTile extends StatelessWidget {
       fontWeight: FontWeight.w500,
       color: enabled
           ? theme.colorScheme.onSurface
-          : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+          : theme.colorScheme.onSurfaceVariant
+              .withValues(alpha: AppOpacity.half),
     );
 
     final subtitleStyle = theme.textTheme.bodySmall?.copyWith(
       color: enabled
           ? theme.colorScheme.onSurfaceVariant
-          : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+          : theme.colorScheme.onSurfaceVariant
+              .withValues(alpha: AppOpacity.backdropOverlay),
     );
 
     Widget titleWidget = Text(title, style: titleStyle);
@@ -59,15 +63,16 @@ class SettingsSwitchTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Flexible(child: Text(title, style: titleStyle)),
-          const SizedBox(width: 4.0),
+          const SizedBox(width: AppSpacing.xxs),
           IconButton(
             icon: Icon(
               Icons.info_outline,
-              size: 18,
-              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+              size: AppSizes.iconSubtle,
+              color: theme.colorScheme.onSurfaceVariant
+                  .withValues(alpha: AppOpacity.subtle),
             ),
             padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+            constraints: AppSizes.compactActionConstraints,
             visualDensity: VisualDensity.compact,
             onPressed: onInfoTap,
           ),
@@ -78,7 +83,7 @@ class SettingsSwitchTile extends StatelessWidget {
     return SwitchListTile(
       secondary: isSubOption
           ? Padding(
-              padding: const EdgeInsets.only(left: 8.0),
+              padding: const EdgeInsets.only(left: AppSpacing.xs),
               child: leadingWidget,
             )
           : leadingWidget,
@@ -87,10 +92,10 @@ class SettingsSwitchTile extends StatelessWidget {
       value: value,
       onChanged: enabled ? onChanged : null,
       contentPadding: EdgeInsets.only(
-        left: isSubOption ? 24.0 : 16.0,
-        right: 16.0,
-        top: 2.0,
-        bottom: 2.0,
+        left: isSubOption ? AppSpacing.lg : AppSpacing.md,
+        right: AppSpacing.md,
+        top: AppSpacing.micro,
+        bottom: AppSpacing.micro,
       ),
     );
   }

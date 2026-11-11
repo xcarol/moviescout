@@ -42,11 +42,12 @@ abstract final class AppTheme {
     return ScrollbarThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.dragged)) {
-          return colorScheme.onSurfaceVariant.withValues(alpha: 0.8);
+          return colorScheme.onSurfaceVariant
+              .withValues(alpha: AppOpacity.scrollbarDragged);
         }
-        return colorScheme.onSurfaceVariant.withValues(alpha: 0.5);
+        return colorScheme.onSurfaceVariant.withValues(alpha: AppOpacity.half);
       }),
-      thickness: WidgetStateProperty.all(5.0),
+      thickness: WidgetStateProperty.all(AppSizes.scrollbarThickness),
       radius: const Radius.circular(AppRadius.sm),
       thumbVisibility: WidgetStateProperty.all(false),
       trackVisibility: WidgetStateProperty.all(false),
@@ -72,7 +73,7 @@ abstract final class AppTheme {
         backgroundColor: customColors.appBarBackground,
         foregroundColor: customColors.appBarText,
         elevation: 0,
-        scrolledUnderElevation: 1,
+        scrolledUnderElevation: AppSizes.elevationSubtle,
         surfaceTintColor: Colors.transparent,
         centerTitle: false,
         titleTextStyle: textTheme.titleLarge?.copyWith(
@@ -124,7 +125,8 @@ abstract final class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         isDense: true,
         filled: true,
-        fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        fillColor: colorScheme.surfaceContainerHighest
+            .withValues(alpha: AppOpacity.backdropOverlay),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.sm,
           vertical: AppSpacing.xs,
@@ -142,7 +144,10 @@ abstract final class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: AppRadius.borderSm,
-          borderSide: BorderSide(color: colorScheme.primary, width: 2),
+          borderSide: BorderSide(
+            color: colorScheme.primary,
+            width: AppSizes.borderWidthThick,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: AppRadius.borderSm,
@@ -151,8 +156,8 @@ abstract final class AppTheme {
       ),
       dividerTheme: DividerThemeData(
         color: customColors.dividerColor,
-        thickness: 1,
-        space: 1,
+        thickness: AppSizes.borderWidthRegular,
+        space: AppSizes.borderWidthRegular,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: customColors.bottomNavigationBarBackground,
