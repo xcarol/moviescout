@@ -11,3 +11,7 @@
 
 # Hot reload & Restart
 - DO NOT ask to reload or restart the application, just let me know and I will do it manually.
+
+# Localization (l10n) Rules
+- DO NOT manually edit generated localization files (`lib/l10n/app_localizations*.dart`) or run `flutter gen-l10n`.
+- Only edit the source `.arb` files (`lib/l10n/app_*.arb`) and notify the user when localizations need to be regenerated.
