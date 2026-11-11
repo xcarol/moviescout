@@ -82,9 +82,8 @@ class PinnedTitleChip extends StatelessWidget {
     return AppPosterImage(
       imageUrl: posterPath,
       aspectRatio: null,
-      fallbackType: title.isMovie
-          ? PosterFallbackType.movie
-          : PosterFallbackType.tvShow,
+      fallbackType:
+          title.isMovie ? PosterFallbackType.movie : PosterFallbackType.tvShow,
       memCacheWidth: 200,
       memCacheHeight: 300,
       fit: BoxFit.cover,

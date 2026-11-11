@@ -221,8 +221,7 @@ class _MainScreenState extends State<MainScreen> {
       selectedIndex: _currentIndex,
       labelType: NavigationRailLabelType.all,
       useIndicator: true,
-      indicatorColor:
-          customColors.navigationBarSelected.withValues(alpha: 0.2),
+      indicatorColor: customColors.navigationBarSelected.withValues(alpha: 0.2),
       selectedIconTheme: IconThemeData(
         color: customColors.navigationBarSelected,
       ),

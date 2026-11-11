@@ -77,177 +77,180 @@ class SettingsScreen extends StatelessWidget {
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             children: [
-          SettingsGroup(
-            title: l10n.settingsSectionPreferences,
-            children: [
-              SettingsTile(
-                icon: Icons.brightness_4_outlined,
-                title: l10n.themeTitle,
-                subtitle: _getThemeModeDisplayName(
-                  themeProvider.themeMode,
-                  context,
-                ),
-                onTap: () => _changeTheme(context, themeProvider),
-              ),
-              SettingsTile(
-                icon: Icons.language,
-                title: l10n.selectLanguage,
-                subtitle: _getLanguageDisplayName(
-                  languageProvider.currentLanguage,
-                  context,
-                ),
-                onTap: () => _changeLanguage(context, languageProvider),
-              ),
-              SettingsTile(
-                icon: Icons.public,
-                title: l10n.selectRegion,
-                subtitle: _regionSubtitle(regionProvider, context),
-                onTap: () => _changeRegion(context, regionProvider),
-              ),
-              SettingsTile(
-                icon: Icons.tv,
-                title: l10n.providersTitle,
-                subtitle: providersSubtitle,
-                onInfoTap: () => _showProvidersInfo(context),
-                onTap: () {
-                  context.toProviders();
-                },
-              ),
-            ],
-          ),
-          SettingsGroup(
-            title: l10n.settingsSectionNotifications,
-            children: [
-              SettingsSwitchTile(
-                icon: Icons.notifications,
-                title: l10n.notifications,
-                subtitle: notificationsSubtitle,
-                value: notificationService.enabled,
-                onInfoTap: () => _showNotificationsInfo(context),
-                onChanged: (bool value) async {
-                  final success = await notificationService.setEnabled(value);
-                  if (!success && value && context.mounted) {
-                    NotificationPermissionDialog.show(context);
-                  }
-                },
-              ),
-              SettingsSwitchTile(
-                isSubOption: true,
-                icon: Icons.done_all,
-                title: l10n.notifyCompleteSeason,
-                subtitle: notifySeasonSubtitle,
-                value: notificationService.notifyCompleteSeason,
-                enabled: notificationService.enabled,
-                onChanged: notificationService.enabled
-                    ? (bool value) async {
-                        await notificationService
-                            .setNotifyCompleteSeason(value);
-                      }
-                    : null,
-              ),
-            ],
-          ),
-          if (isUserLoggedIn)
-            SettingsGroup(
-              title: l10n.settingsSectionCommunity,
-              children: [
-                SettingsSwitchTile(
-                  icon: Icons.group,
-                  title: l10n.publicProfileTitle,
-                  subtitle: publicProfileSubtitle,
-                  value: authService.isPublicProfile,
-                  onInfoTap: () => _showProfileInfo(context),
-                  onChanged: (bool value) async {
-                    await authService.setPublicProfile(value);
-                  },
-                ),
-                SettingsSwitchTile(
-                  icon: Icons.people_alt_outlined,
-                  title: l10n.communityTabTitle,
-                  subtitle: communityTabSubtitle,
-                  value: appSettings.showCommunityTab,
-                  onChanged: (bool value) async {
-                    await appSettings.setShowCommunityTab(value);
-                  },
-                ),
-              ],
-            ),
-          SettingsGroup(
-            title: l10n.settingsSectionTools,
-            children: [
-              StatefulBuilder(
-                builder: (context, setTileState) {
-                  final aiSubtitle = AiService().hasApiKey
-                      ? '${l10n.settingsAiConfigured} (${AiService().currentProvider.name})'
-                      : l10n.settingsAiNotConfigured;
-                  return SettingsTile(
-                    icon: Icons.auto_awesome,
-                    title: l10n.aiSettingsTitle,
-                    subtitle: aiSubtitle,
-                    onInfoTap: () => _showAiInfo(context),
+              SettingsGroup(
+                title: l10n.settingsSectionPreferences,
+                children: [
+                  SettingsTile(
+                    icon: Icons.brightness_4_outlined,
+                    title: l10n.themeTitle,
+                    subtitle: _getThemeModeDisplayName(
+                      themeProvider.themeMode,
+                      context,
+                    ),
+                    onTap: () => _changeTheme(context, themeProvider),
+                  ),
+                  SettingsTile(
+                    icon: Icons.language,
+                    title: l10n.selectLanguage,
+                    subtitle: _getLanguageDisplayName(
+                      languageProvider.currentLanguage,
+                      context,
+                    ),
+                    onTap: () => _changeLanguage(context, languageProvider),
+                  ),
+                  SettingsTile(
+                    icon: Icons.public,
+                    title: l10n.selectRegion,
+                    subtitle: _regionSubtitle(regionProvider, context),
+                    onTap: () => _changeRegion(context, regionProvider),
+                  ),
+                  SettingsTile(
+                    icon: Icons.tv,
+                    title: l10n.providersTitle,
+                    subtitle: providersSubtitle,
+                    onInfoTap: () => _showProvidersInfo(context),
                     onTap: () {
-                      context.toAiSettings().then((_) => setTileState(() {}));
+                      context.toProviders();
                     },
-                  );
-                },
+                  ),
+                ],
               ),
-              SettingsSwitchTile(
-                icon: Icons.edit,
-                title: l10n.showEditContent,
-                subtitle: showEditSubtitle,
-                value: appSettings.showEditContent,
-                onInfoTap: () => _showEditInfo(context),
-                onChanged: (bool value) async {
-                  await appSettings.setShowEditContent(value);
-                },
+              SettingsGroup(
+                title: l10n.settingsSectionNotifications,
+                children: [
+                  SettingsSwitchTile(
+                    icon: Icons.notifications,
+                    title: l10n.notifications,
+                    subtitle: notificationsSubtitle,
+                    value: notificationService.enabled,
+                    onInfoTap: () => _showNotificationsInfo(context),
+                    onChanged: (bool value) async {
+                      final success =
+                          await notificationService.setEnabled(value);
+                      if (!success && value && context.mounted) {
+                        NotificationPermissionDialog.show(context);
+                      }
+                    },
+                  ),
+                  SettingsSwitchTile(
+                    isSubOption: true,
+                    icon: Icons.done_all,
+                    title: l10n.notifyCompleteSeason,
+                    subtitle: notifySeasonSubtitle,
+                    value: notificationService.notifyCompleteSeason,
+                    enabled: notificationService.enabled,
+                    onChanged: notificationService.enabled
+                        ? (bool value) async {
+                            await notificationService
+                                .setNotifyCompleteSeason(value);
+                          }
+                        : null,
+                  ),
+                ],
               ),
+              if (isUserLoggedIn)
+                SettingsGroup(
+                  title: l10n.settingsSectionCommunity,
+                  children: [
+                    SettingsSwitchTile(
+                      icon: Icons.group,
+                      title: l10n.publicProfileTitle,
+                      subtitle: publicProfileSubtitle,
+                      value: authService.isPublicProfile,
+                      onInfoTap: () => _showProfileInfo(context),
+                      onChanged: (bool value) async {
+                        await authService.setPublicProfile(value);
+                      },
+                    ),
+                    SettingsSwitchTile(
+                      icon: Icons.people_alt_outlined,
+                      title: l10n.communityTabTitle,
+                      subtitle: communityTabSubtitle,
+                      value: appSettings.showCommunityTab,
+                      onChanged: (bool value) async {
+                        await appSettings.setShowCommunityTab(value);
+                      },
+                    ),
+                  ],
+                ),
+              SettingsGroup(
+                title: l10n.settingsSectionTools,
+                children: [
+                  StatefulBuilder(
+                    builder: (context, setTileState) {
+                      final aiSubtitle = AiService().hasApiKey
+                          ? '${l10n.settingsAiConfigured} (${AiService().currentProvider.name})'
+                          : l10n.settingsAiNotConfigured;
+                      return SettingsTile(
+                        icon: Icons.auto_awesome,
+                        title: l10n.aiSettingsTitle,
+                        subtitle: aiSubtitle,
+                        onInfoTap: () => _showAiInfo(context),
+                        onTap: () {
+                          context
+                              .toAiSettings()
+                              .then((_) => setTileState(() {}));
+                        },
+                      );
+                    },
+                  ),
+                  SettingsSwitchTile(
+                    icon: Icons.edit,
+                    title: l10n.showEditContent,
+                    subtitle: showEditSubtitle,
+                    value: appSettings.showEditContent,
+                    onInfoTap: () => _showEditInfo(context),
+                    onChanged: (bool value) async {
+                      await appSettings.setShowEditContent(value);
+                    },
+                  ),
+                ],
+              ),
+              if (isUserLoggedIn)
+                SettingsGroup(
+                  title: l10n.settingsSectionData,
+                  children: [
+                    SettingsTile(
+                      icon: Icons.cloud_download,
+                      title: l10n.tmdbImport,
+                      subtitle: l10n.settingsTmdbSubtitle,
+                      onTap: () {
+                        context.toImportTmdb();
+                      },
+                    ),
+                    SettingsTile(
+                      icon: Icons.import_export,
+                      title: l10n.imdbImport,
+                      subtitle: l10n.settingsImdbSubtitle,
+                      onTap: () {
+                        context.toImportImdb();
+                      },
+                    ),
+                  ],
+                ),
+              if (isUserLoggedIn) ...[
+                const SizedBox(height: 8.0),
+                Card(
+                  elevation: 0,
+                  margin: EdgeInsets.zero,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  color: theme.colorScheme.surfaceContainerHighest
+                      .withValues(alpha: 0.35),
+                  clipBehavior: Clip.antiAlias,
+                  child: SettingsTile(
+                    icon: Icons.delete_forever,
+                    title: l10n.deleteAccount,
+                    subtitle: l10n.settingsDeleteAccountSubtitle,
+                    isDestructive: true,
+                    onTap: () => _confirmDeleteAccount(context),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+              ],
             ],
           ),
-          if (isUserLoggedIn)
-            SettingsGroup(
-              title: l10n.settingsSectionData,
-              children: [
-                SettingsTile(
-                  icon: Icons.cloud_download,
-                  title: l10n.tmdbImport,
-                  subtitle: l10n.settingsTmdbSubtitle,
-                  onTap: () {
-                    context.toImportTmdb();
-                  },
-                ),
-                SettingsTile(
-                  icon: Icons.import_export,
-                  title: l10n.imdbImport,
-                  subtitle: l10n.settingsImdbSubtitle,
-                  onTap: () {
-                    context.toImportImdb();
-                  },
-                ),
-              ],
-            ),
-          if (isUserLoggedIn) ...[
-            const SizedBox(height: 8.0),
-            Card(
-              elevation: 0,
-              margin: EdgeInsets.zero,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              color: theme.colorScheme.surfaceContainerHighest
-                  .withValues(alpha: 0.35),
-              clipBehavior: Clip.antiAlias,
-              child: SettingsTile(
-                icon: Icons.delete_forever,
-                title: l10n.deleteAccount,
-                subtitle: l10n.settingsDeleteAccountSubtitle,
-                isDestructive: true,
-                onTap: () => _confirmDeleteAccount(context),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-          ],
-        ],
-      ),
         ),
       ),
     );

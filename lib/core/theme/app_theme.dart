@@ -11,9 +11,8 @@ abstract final class AppTheme {
     final isDark = brightness == Brightness.dark;
     final colorScheme =
         isDark ? themeService.darkColorScheme : themeService.lightColorScheme;
-    final customColors = isDark
-        ? themeService.darkCustomColors
-        : themeService.lightCustomColors;
+    final customColors =
+        isDark ? themeService.darkCustomColors : themeService.lightCustomColors;
     final titleListTheme = isDark
         ? themeService.darkTitleListTheme
         : themeService.lightTitleListTheme;
@@ -53,9 +52,8 @@ abstract final class AppTheme {
         clipBehavior: Clip.none,
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: isDark
-            ? colorScheme.surfaceContainerHighest
-            : colorScheme.surface,
+        backgroundColor:
+            isDark ? colorScheme.surfaceContainerHighest : colorScheme.surface,
         elevation: 6.0,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(28.0)),
@@ -69,12 +67,10 @@ abstract final class AppTheme {
         ),
       ),
       bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: isDark
-            ? colorScheme.surfaceContainerHighest
-            : colorScheme.surface,
-        modalBackgroundColor: isDark
-            ? colorScheme.surfaceContainerHighest
-            : colorScheme.surface,
+        backgroundColor:
+            isDark ? colorScheme.surfaceContainerHighest : colorScheme.surface,
+        modalBackgroundColor:
+            isDark ? colorScheme.surfaceContainerHighest : colorScheme.surface,
         elevation: 8.0,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(28.0)),

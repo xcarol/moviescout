@@ -324,8 +324,8 @@ class _ItemListState extends SearchableListState<ItemList> {
 
         final scaledCard = MediaQuery(
           data: mediaQuery.copyWith(
-            textScaler: TextScaler.linear(
-                UiUtils.clampedTextScale(innerContext)),
+            textScaler:
+                TextScaler.linear(UiUtils.clampedTextScale(innerContext)),
           ),
           child: card,
         );

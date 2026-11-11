@@ -19,7 +19,8 @@ abstract final class AppRadius {
   static const BorderRadius borderMd = BorderRadius.all(radiusMd);
   static const BorderRadius borderLg = BorderRadius.all(radiusLg);
   static const BorderRadius borderXl = BorderRadius.all(radiusXl);
-  static const BorderRadius borderFull = BorderRadius.all(Radius.circular(full));
+  static const BorderRadius borderFull =
+      BorderRadius.all(Radius.circular(full));
 
   static const BorderRadius card = borderMd;
   static const BorderRadius dialog = borderLg;

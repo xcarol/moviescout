@@ -124,8 +124,8 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                DateFormat.yMMMd(
-                                        Localizations.localeOf(context).toString())
+                                DateFormat.yMMMd(Localizations.localeOf(context)
+                                        .toString())
                                     .format(notification.timestamp.toLocal()),
                                 style: Theme.of(context)
                                     .textTheme
@@ -148,7 +148,8 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                           ),
                           onTap: notification.payload != null
                               ? () {
-                                  final parts = notification.payload!.split('|');
+                                  final parts =
+                                      notification.payload!.split('|');
                                   if (parts.length == 2) {
                                     final type = parts[0];
                                     final id = int.tryParse(parts[1]);

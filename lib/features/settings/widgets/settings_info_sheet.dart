@@ -54,8 +54,9 @@ class SettingsInfoSheet extends StatelessWidget {
         subtitle: subtitle,
         items: items,
         note: note,
-        closeButtonLabel:
-            closeButtonLabel ?? AppLocalizations.of(context)?.understood ?? 'OK',
+        closeButtonLabel: closeButtonLabel ??
+            AppLocalizations.of(context)?.understood ??
+            'OK',
       ),
     );
   }
