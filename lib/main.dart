@@ -363,6 +363,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           .map((e) => LanguageService.parseLocale(e))
           .toList(),
       locale: languageProvider.locale,
+      scrollBehavior: const MaterialScrollBehavior().copyWith(
+        dragDevices: {
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.touch,
+          PointerDeviceKind.stylus,
+          PointerDeviceKind.trackpad,
+        },
+      ),
       theme: AppTheme.buildTheme(
         brightness: Brightness.dark,
         themeService: themeProvider,
