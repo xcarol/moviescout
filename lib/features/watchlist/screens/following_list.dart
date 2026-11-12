@@ -217,7 +217,12 @@ class _FollowingListState extends State<FollowingList> {
         if (isWide) {
           listWidget = GridView.builder(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(AppSpacing.sm),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.sm,
+              AppSpacing.sm,
+              AppSpacing.sm,
+              AppSpacing.lg,
+            ),
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: AppBreakpoints.maxGridCrossAxisExtent,
               mainAxisExtent: UserCard.cardHeight,

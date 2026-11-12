@@ -205,7 +205,12 @@ class _ItemListState extends SearchableListState<ItemList> {
                     physics: scrollPhysics,
                     keyboardDismissBehavior:
                         ScrollViewKeyboardDismissBehavior.onDrag,
-                    padding: const EdgeInsets.all(AppSpacing.sm),
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.sm,
+                      AppSpacing.sm,
+                      AppSpacing.sm,
+                      AppSpacing.lg,
+                    ),
                     gridDelegate:
                         const SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent: AppBreakpoints.maxGridCrossAxisExtent,

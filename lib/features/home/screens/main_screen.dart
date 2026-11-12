@@ -131,7 +131,11 @@ class _MainScreenState extends State<MainScreen> {
               customColors,
             ),
             drawer: const AppDrawer(),
-            body: _buildBody(isLargeScreen, activeTabs, customColors),
+            body: SafeArea(
+              top: false,
+              bottom: isLargeScreen,
+              child: _buildBody(isLargeScreen, activeTabs, customColors),
+            ),
             bottomNavigationBar: isLargeScreen
                 ? null
                 : _buildBottomNavigationBar(activeTabs, customColors),
