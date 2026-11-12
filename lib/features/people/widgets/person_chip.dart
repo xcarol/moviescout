@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
@@ -43,7 +44,7 @@ class PersonChip extends StatelessWidget {
           margin: const EdgeInsets.all(0),
           clipBehavior: Clip.antiAlias,
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12.0)),
+            borderRadius: AppRadius.chip,
           ),
           child: InkWell(
             onTap: () {

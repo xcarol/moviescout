@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
@@ -184,8 +185,8 @@ class TitleChipContent extends TitleCard {
               Theme.of(context).extension<CustomColors>()!.chipCardBackground,
           margin: const EdgeInsets.symmetric(horizontal: 4.0),
           clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          shape: const RoundedRectangleBorder(
+            borderRadius: AppRadius.chip,
           ),
           child: InkWell(
             onTap: () async {
