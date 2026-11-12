@@ -55,9 +55,12 @@ class _PersonTitlesState extends State<PersonTitles> {
       appBar: AppBar(
         title: Text(appTitle),
       ),
-      body: ChangeNotifierProvider<TmdbTitleListService>.value(
-        value: _personTitlesService,
-        child: body(),
+      body: SafeArea(
+        top: false,
+        child: ChangeNotifierProvider<TmdbTitleListService>.value(
+          value: _personTitlesService,
+          child: body(),
+        ),
       ),
     );
   }

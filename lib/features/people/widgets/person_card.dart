@@ -14,7 +14,7 @@ class PersonCard extends StatelessWidget {
   final TmdbSeason? seasonContext;
   final TmdbEpisode? episodeContext;
 
-  static double cardHeight = 160.0;
+  static const double cardHeight = 160.0;
 
   const PersonCard({
     super.key,

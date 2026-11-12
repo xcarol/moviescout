@@ -299,20 +299,15 @@ class ListController with ChangeNotifier {
 
   void _onListServiceChanged() {
     notifyListeners();
-    if (!listService.isLoading.value &&
-        listService.hasMore &&
-        listService.loadedItemCount > 0 &&
-        scrollController.hasClients &&
-        scrollController.position.maxScrollExtent < 100) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!listService.isLoading.value &&
-            listService.hasMore &&
-            scrollController.hasClients &&
-            scrollController.position.maxScrollExtent < 100) {
-          listService.loadNextPage();
-        }
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!listService.isLoading.value &&
+          listService.hasMore &&
+          listService.loadedItemCount > 0 &&
+          scrollController.hasClients &&
+          scrollController.position.maxScrollExtent < 100) {
+        listService.loadNextPage();
+      }
+    });
   }
 
   void _resetSort() {

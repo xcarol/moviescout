@@ -92,14 +92,15 @@ class PersonListController with ChangeNotifier {
 
   void onScrollNotification(ScrollNotification scrollInfo) {
     final metrics = scrollInfo.metrics;
-    final currentScroll = metrics.pixels;
 
-    final double scrollThreshold = metrics.viewportDimension;
+    final bool isNearEnd = metrics.pixels > 0 && metrics.extentAfter < 500;
+    final bool contentUnderfilled = listService.loadedItemCount > 0 &&
+        metrics.maxScrollExtent < 100 &&
+        metrics.viewportDimension > 0;
 
-    if (currentScroll > 0 &&
+    if ((isNearEnd || contentUnderfilled) &&
         !listService.isLoading.value &&
-        listService.hasMore &&
-        currentScroll >= metrics.maxScrollExtent - scrollThreshold) {
+        listService.hasMore) {
       listService.loadNextPage();
     }
   }
@@ -124,6 +125,15 @@ class PersonListController with ChangeNotifier {
 
   void _onListServiceChanged() {
     notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!listService.isLoading.value &&
+          listService.hasMore &&
+          listService.loadedItemCount > 0 &&
+          scrollController.hasClients &&
+          scrollController.position.maxScrollExtent < 100) {
+        listService.loadNextPage();
+      }
+    });
   }
 
   @override

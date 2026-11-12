@@ -58,13 +58,16 @@ class _TitlePeopleListState extends State<TitlePeopleList> {
       appBar: AppBar(
         title: Text('${widget.title.name} - $titleType'),
       ),
-      body: PersonList(
-        personListService: _personListService,
-        type: widget.type,
-        titleListService: widget.tmdbListService,
-        titleContext: widget.title,
-        seasonContext: widget.season,
-        episodeContext: widget.episode,
+      body: SafeArea(
+        top: false,
+        child: PersonList(
+          personListService: _personListService,
+          type: widget.type,
+          titleListService: widget.tmdbListService,
+          titleContext: widget.title,
+          seasonContext: widget.season,
+          episodeContext: widget.episode,
+        ),
       ),
     );
   }
