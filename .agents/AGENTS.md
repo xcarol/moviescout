@@ -21,7 +21,7 @@
 - STRICTLY DARK MODE: MovieScout is exclusively Dark Mode only. NEVER implement light mode variants or white card/container backgrounds.
 - USE DESIGN TOKENS:
   - Spacings: Use `AppSpacing` (`xxs` through `xxxl`), never hardcode raw numbers for padding, margin, or sized boxes.
-  - Border Radii: Use `AppRadius` (`card: 12.0`, `dialog: 16.0`, `bottomSheet: 24.0`, `borderSm: 8.0`, etc.).
+  - Border Radii: Use `AppRadius` (`card: 0.0` for large cards, `chip: 12.0` for chips, `dialog: 16.0`, `bottomSheet: 24.0`, `borderSm: 8.0`, etc.).
   - Breakpoints: Use `AppBreakpoints` (`largeScreenMinWidth = 600.0`, `maxContentWidth = 800.0`, `maxGridCrossAxisExtent = 480.0`).
   - Colors: Use `Theme.of(context).colorScheme` and `Theme.of(context).extension<CustomColors>()!`. Never hardcode raw hex colors (`Color(0x...)`).
 - IMAGES & FALLBACKS:

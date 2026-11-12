@@ -41,6 +41,10 @@ class PersonChip extends StatelessWidget {
           color:
               Theme.of(context).extension<CustomColors>()!.chipCardBackground,
           margin: const EdgeInsets.all(0),
+          clipBehavior: Clip.antiAlias,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12.0)),
+          ),
           child: InkWell(
             onTap: () {
               context.toPersonDetails(

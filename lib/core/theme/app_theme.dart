@@ -47,7 +47,7 @@ abstract final class AppTheme {
         elevation: 1.0,
         margin: const EdgeInsets.all(4.0),
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12.0)),
+          borderRadius: BorderRadius.zero,
         ),
         clipBehavior: Clip.none,
       ),

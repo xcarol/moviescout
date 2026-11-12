@@ -71,9 +71,10 @@ Location: [`lib/core/theme/app_radius.dart`](lib/core/theme/app_radius.dart).
 
 | Token | Value | Target Components |
 | :--- | :--- | :--- |
+| `AppRadius.card` (`0.0`) | `BorderRadius.zero` | Large content cards (`TitleCard`, `PersonCard`, `CollectionCard`, `UserCard`, `EpisodeCard`) |
 | `AppRadius.xs` (`4.0`) | `Radius.circular(4.0)` | Small thumbnails, mini-posters in lists |
 | `AppRadius.sm` (`8.0`) | `AppRadius.borderSm` | Standard buttons, selection tiles (`RadioListTile`) |
-| `AppRadius.md` (`12.0`) | `AppRadius.card` | Content cards (`TitleCard`, `TitleChip`, `PersonCard`) |
+| `AppRadius.chip` (`12.0`)| `AppRadius.chip` | Content chips (`TitleChip`, `PersonChip`, `PinnedTitleChip`) |
 | `AppRadius.lg` (`16.0`) | `AppRadius.dialog` | Dialogs and alerts (`AlertDialog`, `Dialog`) |
 | `AppRadius.xl` (`24.0`) | `AppRadius.bottomSheet` | Bottom modal sheets (`showModalBottomSheet`, top radius) |
 | `AppRadius.full` (`999.0`)| `AppRadius.borderFull` | Pills, tags, and circular avatars |
