@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:moviescout/main.dart';
 
 class SnackMessage {
-  static void showSnackBar(String message, {BuildContext? context}) {
+  static void showSnackBar(
+    String message, {
+    BuildContext? context,
+  }) {
     final scaffold =
         (context != null ? ScaffoldMessenger.maybeOf(context) : null) ??
             scaffoldMessengerKey.currentState;
@@ -15,13 +18,38 @@ class SnackMessage {
 
     scaffold.clearSnackBars();
     scaffold.showSnackBar(SnackBar(
-      content: Text(message),
-      action: SnackBarAction(
-        label: 'OK',
-        onPressed: () {
-          scaffold.hideCurrentSnackBar();
+      content: Builder(
+        builder: (innerContext) {
+          final colorScheme = Theme.of(innerContext).colorScheme;
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  message,
+                  style: const TextStyle(
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              TextButton(
+                style: TextButton.styleFrom(
+                  visualDensity: VisualDensity.compact,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  foregroundColor: colorScheme.primary,
+                ),
+                onPressed: () {
+                  scaffold.hideCurrentSnackBar();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
         },
       ),
+      behavior: SnackBarBehavior.floating,
+      dismissDirection: DismissDirection.horizontal,
       duration: const Duration(seconds: 4),
     ));
   }
@@ -32,7 +60,6 @@ class SnackMessage {
     required VoidCallback onAction,
     BuildContext? context,
     bool showCloseIcon = true,
-    Duration duration = const Duration(seconds: 8),
   }) {
     final scaffold =
         (context != null ? ScaffoldMessenger.maybeOf(context) : null) ??
@@ -57,7 +84,6 @@ class SnackMessage {
                   message,
                   style: TextStyle(
                     fontSize: 13,
-                    // color: colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -95,7 +121,9 @@ class SnackMessage {
           );
         },
       ),
-      duration: duration,
+      duration: const Duration(seconds: 8),
+      behavior: SnackBarBehavior.floating,
+      dismissDirection: DismissDirection.horizontal,
     ));
   }
 }
