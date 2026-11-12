@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/settings/services/ai_service.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
@@ -187,10 +188,15 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
         title: Text(l10n.aiSettingsTitle),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 32.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppBreakpoints.maxContentWidth,
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 32.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
                 l10n.aiSettingsSubtitle,
@@ -425,6 +431,8 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 }

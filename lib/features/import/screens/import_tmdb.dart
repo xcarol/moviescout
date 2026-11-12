@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/titles/repositories/local_title_repository.dart';
 import 'package:moviescout/core/services/error_service.dart';
@@ -206,10 +207,15 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
           slivers: [
             SliverFillRemaining(
               hasScrollBody: false,
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: AppBreakpoints.maxContentWidth,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const Spacer(),
                     Icon(
@@ -263,6 +269,8 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
                 ),
               ),
             ),
+          ),
+        ),
           ],
         ),
       ),

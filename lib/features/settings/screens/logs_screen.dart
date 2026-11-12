@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moviescout/main.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:path_provider/path_provider.dart';
@@ -208,8 +209,13 @@ class _LogsScreenState extends State<LogsScreen>
           ],
         ],
       ),
-      body: Column(
-        children: [
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppBreakpoints.maxContentWidth,
+          ),
+          child: Column(
+            children: [
           Container(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -255,6 +261,8 @@ class _LogsScreenState extends State<LogsScreen>
           ),
         ],
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 
@@ -40,8 +41,13 @@ class _GenresScreenState extends State<GenresScreen> {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.genres),
       ),
-      body: Column(
-        children: [
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppBreakpoints.maxContentWidth,
+          ),
+          child: Column(
+            children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -137,6 +143,8 @@ class _GenresScreenState extends State<GenresScreen> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 }

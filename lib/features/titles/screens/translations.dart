@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/widgets/edit_button.dart';
 import 'package:moviescout/features/settings/widgets/ai_model_thinking_selector.dart';
@@ -491,11 +492,16 @@ class TranslationsScreenState extends State<TranslationsScreen> {
           EditButton(url: widget.editUrl),
         ],
       ),
-      body: validTranslations.isEmpty
-          ? Center(
-              child: Text(AppLocalizations.of(context)!.emptyList),
-            )
-          : ListView.builder(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppBreakpoints.maxContentWidth,
+          ),
+          child: validTranslations.isEmpty
+              ? Center(
+                  child: Text(AppLocalizations.of(context)!.emptyList),
+                )
+              : ListView.builder(
               controller: _scrollController,
               itemCount: validTranslations.length + 1,
               itemBuilder: (context, index) {
@@ -588,6 +594,8 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                 );
               },
             ),
+        ),
+      ),
     );
   }
 }

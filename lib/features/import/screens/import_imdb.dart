@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/services/error_service.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/features/import/services/imdb_import_service.dart';
 import 'package:moviescout/features/watchlist/services/rateslist_service.dart';
 import 'package:moviescout/features/watchlist/services/watchlist_service.dart';
@@ -49,15 +50,20 @@ class _ImportIMDBState extends State<ImportIMDB> {
         title: Text(AppLocalizations.of(context)!.imdbImport),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            _importPanel(),
-            const Divider(),
-            _infoLine(),
-            const Divider(),
-            _importResults(),
-          ],
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppBreakpoints.maxContentWidth,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              _importPanel(),
+              const Divider(),
+              _infoLine(),
+              const Divider(),
+              _importResults(),
+            ],
+          ),
         ),
       ),
     );
