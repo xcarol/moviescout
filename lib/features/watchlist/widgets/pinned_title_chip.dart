@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/core/theme/app_radius.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
@@ -52,7 +53,7 @@ class PinnedTitleChip extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.5),
                           borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(8),
+                            bottomLeft: AppRadius.radiusSm,
                           ),
                         ),
                         child: pinButton(context, title),
@@ -62,7 +63,7 @@ class PinnedTitleChip extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(4.0),
+                padding: AppSpacing.edgeInsetsAllXs,
                 child: Text(
                   title.name,
                   maxLines: 1,

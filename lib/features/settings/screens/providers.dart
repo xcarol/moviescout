@@ -91,8 +91,8 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
             child: Column(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
                   color: Theme.of(context)
                       .extension<TitleListTheme>()
                       ?.controlPanelBackground,

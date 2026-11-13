@@ -372,7 +372,7 @@ class _TitleCommentsSectionState extends State<TitleCommentsSection> {
         title: Text(loc.deleteComment),
         content: Text(loc.deleteCommentConfirm),
         actions: [
-          TextButton(
+          FilledButton.tonal(
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(loc.cancel),
           ),

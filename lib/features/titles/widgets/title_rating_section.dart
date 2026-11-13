@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/auth/services/supabase_auth_service.dart';
@@ -170,7 +172,7 @@ class TitleRatingSection extends StatelessWidget {
                               },
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: AppSpacing.sm),
                           OutlinedButton(
                             style: OutlinedButton.styleFrom(
                               side: BorderSide(
@@ -184,8 +186,8 @@ class TitleRatingSection extends StatelessWidget {
                                             .onSurface),
                                 width: 1,
                               ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: AppRadius.button,
                               ),
                               padding: const EdgeInsets.symmetric(
                                   vertical: 10, horizontal: 14),

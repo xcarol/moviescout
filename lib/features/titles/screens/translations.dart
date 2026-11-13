@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/core/theme/app_breakpoints.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/widgets/edit_button.dart';
 import 'package:moviescout/features/settings/widgets/ai_model_thinking_selector.dart';
@@ -46,7 +47,7 @@ class _CopyIconButtonState extends State<_CopyIconButton> {
       child: Tooltip(
         message: _copied ? AppLocalizations.of(context)!.copiedToClipboard : '',
         child: InkWell(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: AppRadius.borderXs,
           onTap: _copy,
           child: Padding(
             padding: const EdgeInsets.all(2.0),
@@ -54,7 +55,7 @@ class _CopyIconButtonState extends State<_CopyIconButton> {
               _copied ? Icons.check : Icons.copy,
               size: 20,
               color: _copied
-                  ? Colors.green
+                  ? Theme.of(context).colorScheme.primary
                   : Theme.of(context).colorScheme.onSurface,
             ),
           ),
@@ -502,98 +503,99 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                   child: Text(AppLocalizations.of(context)!.emptyList),
                 )
               : ListView.builder(
-              controller: _scrollController,
-              itemCount: validTranslations.length + 1,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return Column(
-                    children: [
-                      _buildMagicCard(),
-                      _buildSourceCard(),
-                      Divider(
-                        height: 1,
-                        color: customColors.dividerColor,
-                      ),
-                    ],
-                  );
-                }
+                  controller: _scrollController,
+                  itemCount: validTranslations.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return Column(
+                        children: [
+                          _buildMagicCard(),
+                          _buildSourceCard(),
+                          Divider(
+                            height: 1,
+                            color: customColors.dividerColor,
+                          ),
+                        ],
+                      );
+                    }
 
-                final trans = validTranslations[index - 1];
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Card(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                    final trans = validTranslations[index - 1];
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Card(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        trans.englishName,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            trans.englishName,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          if (trans.name.isNotEmpty &&
+                                              trans.name != trans.englishName)
+                                            Text(
+                                                '${trans.name} ${trans.iso639_1}-${trans.iso3166_1}',
+                                                style: TextStyle(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurfaceVariant)),
+                                        ],
                                       ),
-                                      if (trans.name.isNotEmpty &&
-                                          trans.name != trans.englishName)
-                                        Text(
-                                            '${trans.name} ${trans.iso639_1}-${trans.iso3166_1}',
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurfaceVariant)),
-                                    ],
-                                  ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.auto_awesome),
+                                      tooltip: AppLocalizations.of(context)!
+                                          .autoTranslation,
+                                      onPressed: () {
+                                        context
+                                            .read<WebTranslationService>()
+                                            .setSourceLanguageCode(
+                                                trans.iso639_1);
+                                        _performTranslation();
+                                        _scrollController.animateTo(
+                                          0.0,
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          curve: Curves.easeOut,
+                                        );
+                                      },
+                                    ),
+                                  ],
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.auto_awesome),
-                                  tooltip: AppLocalizations.of(context)!
-                                      .autoTranslation,
-                                  onPressed: () {
-                                    context
-                                        .read<WebTranslationService>()
-                                        .setSourceLanguageCode(trans.iso639_1);
-                                    _performTranslation();
-                                    _scrollController.animateTo(
-                                      0.0,
-                                      duration:
-                                          const Duration(milliseconds: 300),
-                                      curve: Curves.easeOut,
-                                    );
-                                  },
-                                ),
+                                const SizedBox(height: 8),
+                                _buildCopyableTextRow(
+                                    trans.translatedTitle.isNotEmpty
+                                        ? trans.translatedTitle
+                                        : widget.originalTitle,
+                                    isTitle: true),
+                                if (trans.description.isNotEmpty) ...[
+                                  const SizedBox(height: 8),
+                                  _buildCopyableTextRow(trans.description),
+                                ],
                               ],
                             ),
-                            const SizedBox(height: 8),
-                            _buildCopyableTextRow(
-                                trans.translatedTitle.isNotEmpty
-                                    ? trans.translatedTitle
-                                    : widget.originalTitle,
-                                isTitle: true),
-                            if (trans.description.isNotEmpty) ...[
-                              const SizedBox(height: 8),
-                              _buildCopyableTextRow(trans.description),
-                            ],
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                    Divider(
-                      height: 1,
-                      color: customColors.dividerColor,
-                    ),
-                  ],
-                );
-              },
-            ),
+                        Divider(
+                          height: 1,
+                          color: customColors.dividerColor,
+                        ),
+                      ],
+                    );
+                  },
+                ),
         ),
       ),
     );

@@ -128,7 +128,6 @@ class _MainScreenState extends State<MainScreen> {
               context,
               activeTabs[_currentIndex],
               authService,
-              customColors,
             ),
             drawer: const AppDrawer(),
             body: SafeArea(
@@ -161,15 +160,9 @@ class _MainScreenState extends State<MainScreen> {
     BuildContext context,
     _NavTab currentTab,
     SupabaseAuthService authService,
-    CustomColors customColors,
   ) {
     return AppBar(
-      iconTheme: IconThemeData(color: customColors.appBarText),
-      title: Text(
-        _getTitleForTab(currentTab, context),
-        style: TextStyle(color: customColors.appBarText),
-      ),
-      backgroundColor: customColors.appBarBackground,
+      title: Text(_getTitleForTab(currentTab, context)),
       actions: [
         if (currentTab == _NavTab.following &&
             authService.isLoggedIn &&

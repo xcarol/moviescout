@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart' show ListEquality;
+import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/core/theme/app_spacing.dart';
@@ -106,7 +107,7 @@ class _ItemListState extends SearchableListState<ItemList> {
                   color: textColor,
                   fontSize: 16,
                 ),
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: AppRadius.borderSm,
                 leading: showCount
                     ? Text(
                         count.toString(),

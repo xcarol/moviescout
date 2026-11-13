@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:moviescout/core/services/video_player_service.dart';
 import 'package:simple_pip_mode/simple_pip.dart';
@@ -126,7 +127,7 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
         top: _y,
         child: Material(
           elevation: 12,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadius.borderMd,
           clipBehavior: Clip.antiAlias,
           color: Colors.black,
           child: SizedBox(

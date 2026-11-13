@@ -103,7 +103,7 @@ class _CommentDialogState extends State<CommentDialog> {
         title: Text(loc.deleteComment),
         content: Text(loc.deleteCommentConfirm),
         actions: [
-          TextButton(
+          FilledButton.tonal(
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(loc.cancel),
           ),
@@ -213,7 +213,7 @@ class _CommentDialogState extends State<CommentDialog> {
   }
 
   Widget _cancelButton(AppLocalizations loc) {
-    return TextButton(
+    return FilledButton.tonal(
       onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
       child: Text(loc.cancel),
     );

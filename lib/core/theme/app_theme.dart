@@ -30,14 +30,14 @@ abstract final class AppTheme {
       scaffoldBackgroundColor: colorScheme.surface,
       scrollbarTheme: scrollbarTheme,
       appBarTheme: AppBarTheme(
-        backgroundColor: colorScheme.surface,
-        foregroundColor: colorScheme.onSurface,
+        backgroundColor: customColors.appBarBackground,
+        foregroundColor: customColors.appBarText,
         elevation: 0,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
-        iconTheme: IconThemeData(color: colorScheme.onSurface),
+        iconTheme: IconThemeData(color: customColors.appBarText),
         titleTextStyle: textTheme.titleLarge?.copyWith(
-          color: colorScheme.onSurface,
+          color: customColors.appBarText,
           fontWeight: FontWeight.w600,
         ),
         centerTitle: false,
@@ -56,7 +56,7 @@ abstract final class AppTheme {
             isDark ? colorScheme.surfaceContainerHighest : colorScheme.surface,
         elevation: 6.0,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(28.0)),
+          borderRadius: AppRadius.dialog,
         ),
         titleTextStyle: textTheme.titleLarge?.copyWith(
           color: colorScheme.onSurface,
@@ -73,29 +73,37 @@ abstract final class AppTheme {
             isDark ? colorScheme.surfaceContainerHighest : colorScheme.surface,
         elevation: 8.0,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28.0)),
+          borderRadius: AppRadius.bottomSheet,
         ),
         showDragHandle: false,
         dragHandleColor: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          shape: const StadiumBorder(),
+          shape: const RoundedRectangleBorder(
+            borderRadius: AppRadius.button,
+          ),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          shape: const StadiumBorder(),
+          shape: const RoundedRectangleBorder(
+            borderRadius: AppRadius.button,
+          ),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          shape: const StadiumBorder(),
+          shape: const RoundedRectangleBorder(
+            borderRadius: AppRadius.button,
+          ),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          shape: const StadiumBorder(),
+          shape: const RoundedRectangleBorder(
+            borderRadius: AppRadius.button,
+          ),
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
@@ -111,10 +119,9 @@ abstract final class AppTheme {
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         shape: const RoundedRectangleBorder(borderRadius: AppRadius.borderSm),
-        backgroundColor:
-            isDark ? const Color(0xFF262626) : const Color(0xFF1F2937),
+        backgroundColor: colorScheme.surfaceContainerHighest,
         contentTextStyle: textTheme.bodyMedium?.copyWith(
-          color: const Color(0xFFFFFFFF),
+          color: colorScheme.onSurface,
         ),
         actionTextColor: colorScheme.primary,
         elevation: 4.0,
@@ -126,7 +133,7 @@ abstract final class AppTheme {
       ),
       badgeTheme: BadgeThemeData(
         backgroundColor: customColors.badgeColor,
-        textColor: Colors.white,
+        textColor: colorScheme.onError,
         textStyle: textTheme.labelSmall,
       ),
       extensions: <ThemeExtension<dynamic>>[

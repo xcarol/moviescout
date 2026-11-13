@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/core/theme/app_radius.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
@@ -60,7 +61,7 @@ class PersonChip extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AppRadius.chip,
                   child: _poster(_person.posterPath),
                 ),
                 Positioned(
@@ -69,15 +70,15 @@ class PersonChip extends StatelessWidget {
                   right: 0,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(12),
-                      bottomRight: Radius.circular(12),
+                      bottomLeft: AppRadius.radiusMd,
+                      bottomRight: AppRadius.radiusMd,
                     ),
                     child: Container(
                       color: Theme.of(context)
                           .extension<CustomColors>()!
                           .chipCardBackground
                           .withValues(alpha: 0.95),
-                      padding: const EdgeInsets.all(8.0),
+                      padding: AppSpacing.edgeInsetsAllSm,
                       child: _details(context, _person),
                     ),
                   ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
 
 class BoxedWidget extends StatelessWidget {
   final Widget child;
@@ -17,7 +18,7 @@ class BoxedWidget extends StatelessWidget {
     return Material(
       color: Theme.of(context).colorScheme.secondary,
       elevation: 4,
-      borderRadius: BorderRadius.circular(6),
+      borderRadius: AppRadius.borderSm,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onPressed,

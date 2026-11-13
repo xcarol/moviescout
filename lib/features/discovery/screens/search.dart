@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/settings/services/search_history_service.dart';
 import 'package:moviescout/features/discovery/services/search_service.dart';
@@ -167,7 +168,7 @@ class _SearchState extends State<Search> {
                   _overlaySetState = setOverlayState;
                   return Material(
                     elevation: 4.0,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: AppRadius.borderSm,
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       shrinkWrap: true,
@@ -301,7 +302,7 @@ class _SearchState extends State<Search> {
                       hintText: _isAiMode
                           ? AppLocalizations.of(context)!.searchAiHint
                           : AppLocalizations.of(context)!.searchBarHint,
-                      hintStyle: TextStyle(color: textColor),
+                      hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
                       suffixIconColor: textColor,
                       suffixIcon: Row(
                         mainAxisSize: MainAxisSize.min,

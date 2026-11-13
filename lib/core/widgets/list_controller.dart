@@ -137,7 +137,8 @@ class ListController with ChangeNotifier {
     }
   }
 
-  void onScrollNotification(ScrollNotification scrollInfo, [double? itemHeight]) {
+  void onScrollNotification(ScrollNotification scrollInfo,
+      [double? itemHeight]) {
     final metrics = scrollInfo.metrics;
 
     final bool isNearEnd = metrics.pixels > 0 && metrics.extentAfter < 500;

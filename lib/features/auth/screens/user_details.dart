@@ -69,10 +69,7 @@ class _UserDetailsState extends State<UserDetails> {
       appBar: AppBar(
         title: Text(
           _user.username.isNotEmpty ? _user.username : 'User',
-          style: TextStyle(color: customColors.appBarText),
         ),
-        backgroundColor: customColors.appBarBackground,
-        iconTheme: IconThemeData(color: customColors.appBarText),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 60),

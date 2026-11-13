@@ -476,7 +476,8 @@ class SettingsScreen extends StatelessWidget {
 
   void _confirmDeleteAccount(BuildContext context) {
     final customColors = Theme.of(context).extension<CustomColors>();
-    final deleteColor = customColors?.destructiveAction ?? Colors.redAccent;
+    final deleteColor =
+        customColors?.destructiveAction ?? Theme.of(context).colorScheme.error;
     final supabaseAuthService =
         Provider.of<SupabaseAuthService>(context, listen: false);
     final successMessage = AppLocalizations.of(context)!.deleteAccountSuccess;
@@ -491,13 +492,14 @@ class SettingsScreen extends StatelessWidget {
           content:
               Text(AppLocalizations.of(context)!.deleteAccountConfirmMessage),
           actions: [
-            TextButton(
+            FilledButton.tonal(
               onPressed: () => Navigator.of(dialogContext).pop(),
               child: Text(AppLocalizations.of(context)!.cancel),
             ),
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: deleteColor,
+                foregroundColor: Theme.of(context).colorScheme.onError,
               ),
               onPressed: () async {
                 Navigator.of(dialogContext).pop();

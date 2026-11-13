@@ -1,5 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
+import 'package:moviescout/core/widgets/app_poster_image.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
@@ -105,30 +106,27 @@ class TitleHeaderSection extends StatelessWidget {
                       width: 4,
                     ),
                   ),
-                  child: title.posterPath.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: UrlConstants.tmdbImageW500Template
-                              .replaceFirst('{PATH}', title.posterPath),
-                          width: 120,
-                          height: 170,
-                          fit: BoxFit.cover,
-                          errorWidget: (context, url, error) => Image.asset(
-                            title.isMovie
-                                ? 'assets/movie_poster.png'
-                                : 'assets/tvshow_poster.png',
-                            width: 120,
-                            height: 170,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : Image.asset(
-                          title.isMovie
-                              ? 'assets/movie_poster.png'
-                              : 'assets/tvshow_poster.png',
-                          width: 120,
-                          height: 170,
-                          fit: BoxFit.cover,
-                        ),
+                  child: SizedBox(
+                    width: 120,
+                    height: 170,
+                    child: AppPosterImage(
+                      imageUrl: title.posterPath.isNotEmpty
+                          ? UrlConstants.tmdbImageW500Template
+                              .replaceFirst('{PATH}', title.posterPath)
+                          : null,
+                      fallbackType: title.isMovie
+                          ? PosterFallbackType.movie
+                          : PosterFallbackType.tvShow,
+                      customFallbackAsset: title.isMovie
+                          ? 'assets/movie_poster.png'
+                          : 'assets/tvshow_poster.png',
+                      aspectRatio: null,
+                      fit: BoxFit.cover,
+                      fallbackFit: BoxFit.cover,
+                      memCacheWidth: 240,
+                      memCacheHeight: 340,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -191,7 +189,7 @@ class TitleHeaderSection extends StatelessWidget {
               .onSurfaceVariant
               .withValues(alpha: 0.5),
         ),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: AppRadius.borderXs,
       ),
       child: Text(
         title.certification,

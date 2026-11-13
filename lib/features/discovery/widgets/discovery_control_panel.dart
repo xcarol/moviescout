@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/discovery/models/discovery_options.dart';
 import 'package:moviescout/core/theme/title_list_theme.dart';
@@ -100,7 +101,7 @@ class DiscoveryControlPanel extends StatelessWidget {
       isExpanded: true,
       buttonBackgroundColor: backgroundColor,
       border: Border.all(color: titleTheme.controlPanelForeground),
-      borderRadius: BorderRadius.circular(5),
+      borderRadius: AppRadius.borderSm,
       textStyle: TextStyle(
         fontSize: 14,
         color: foregroundColor,
@@ -148,7 +149,7 @@ class DiscoveryControlPanel extends StatelessWidget {
       isExpanded: true,
       buttonBackgroundColor: backgroundColor,
       border: Border.all(color: titleTheme.controlPanelForeground),
-      borderRadius: BorderRadius.circular(5),
+      borderRadius: AppRadius.borderSm,
       textStyle: TextStyle(
         fontSize: 14,
         color: foregroundColor,
@@ -195,7 +196,7 @@ class DiscoveryControlPanel extends StatelessWidget {
       isExpanded: true,
       buttonBackgroundColor: backgroundColor,
       border: Border.all(color: titleTheme.controlPanelForeground),
-      borderRadius: BorderRadius.circular(5),
+      borderRadius: AppRadius.borderSm,
       textStyle: TextStyle(
         fontSize: 14,
         color: foregroundColor,
@@ -243,7 +244,7 @@ class DiscoveryControlPanel extends StatelessWidget {
       isExpanded: true,
       buttonBackgroundColor: backgroundColor,
       border: Border.all(color: titleTheme.controlPanelForeground),
-      borderRadius: BorderRadius.circular(5),
+      borderRadius: AppRadius.borderSm,
       textStyle: TextStyle(
         fontSize: 14,
         color: foregroundColor,

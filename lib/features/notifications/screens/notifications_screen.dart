@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
+import 'package:moviescout/core/widgets/app_poster_image.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/main.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
@@ -106,19 +108,18 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                             color: customColors.dividerColor,
                           ),
                         ListTile(
-                          leading: notification.imageUrl != null
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                  child: CachedNetworkImage(
-                                    imageUrl: notification.imageUrl!,
-                                    width: 50,
-                                    height: 75,
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.movie),
-                                  ),
-                                )
-                              : const Icon(Icons.notifications),
+                          leading: SizedBox(
+                            width: 50,
+                            height: 75,
+                            child: AppPosterImage(
+                              imageUrl: notification.imageUrl,
+                              fallbackType: PosterFallbackType.tvShow,
+                              aspectRatio: 2 / 3,
+                              borderRadius: AppRadius.borderXs,
+                              memCacheWidth: 100,
+                              memCacheHeight: 150,
+                            ),
+                          ),
                           title: Text(notification.title),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

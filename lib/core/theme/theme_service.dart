@@ -118,11 +118,11 @@ class ThemeService with ChangeNotifier {
       controlPanelBackground: colorScheme.secondary,
       controlPanelForeground: colorScheme.onSurface,
       controlPanelActiveFilterBackground: colorScheme.primary,
-      controlPanelActiveFilterForeground: colorScheme.onSurface,
+      controlPanelActiveFilterForeground: colorScheme.onPrimary,
       controlPanelInactiveFilterBackground: colorScheme.secondary,
       controlPanelInactiveFilterForeground: colorScheme.onSurface,
       searchCursorColor: colorScheme.onSurface,
-      searchHintColor: colorScheme.onSurface,
+      searchHintColor: colorScheme.onSurfaceVariant,
       searchSelectionColor: colorScheme.onSurface.withValues(alpha: 0.5),
     );
   }
