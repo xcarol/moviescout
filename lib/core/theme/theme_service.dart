@@ -127,50 +127,6 @@ class ThemeService with ChangeNotifier {
     );
   }
 
-  static const ColorScheme lightColorSchemeDefault = ColorScheme(
-    brightness: Brightness.light,
-    primary: Color(0xFF059669),
-    onPrimary: Color(0xFFFFFFFF),
-    primaryContainer: Color(0xFFD1FAE5),
-    onPrimaryContainer: Color(0xFF065F46),
-    secondary: Color(0xFF4B5563),
-    onSecondary: Color(0xFFFFFFFF),
-    secondaryContainer: Color(0xFFF3F4F6),
-    onSecondaryContainer: Color(0xFF1F2937),
-    tertiary: Color(0xFFD97706),
-    onTertiary: Color(0xFFFFFFFF),
-    tertiaryContainer: Color(0xFFFEF3C7),
-    onTertiaryContainer: Color(0xFF92400E),
-    error: Color(0xFFDC2626),
-    onError: Color(0xFFFFFFFF),
-    surface: Color(0xFFFFFFFF),
-    onSurface: Color(0xFF111827),
-    onSurfaceVariant: Color(0xFF6B7280),
-    surfaceContainerHighest: Color(0xFFF3F4F6),
-    outline: Color(0xFFE5E7EB),
-    outlineVariant: Color(0xFFD1D5DB),
-  );
-
-  static const CustomColors lightCustomColorsDefault = CustomColors(
-    inWatchlist: Color(0xFF059669),
-    notInWatchlist: Color(0xFF6B7280),
-    ratedTitle: Color(0xFFD97706),
-    userRatedTitle: Color(0xFF059669),
-    followingTitle: Color(0xFF059669),
-    pinnedTitle: Color(0xFFD97706),
-    navigationBarSelected: Color(0xFF059669),
-    navigationBarNotSelected: Color(0xFF6B7280),
-    chipCardBackground: Color(0xFFF3F4F6),
-    dividerColor: Color(0xFFE5E7EB),
-    bottomNavigationBarBackground: Color(0xFFFFFFFF),
-    appBarBackground: Color(0xFFFFFFFF),
-    appBarText: Color(0xFF111827),
-    watchedOverlayColor: Colors.black38,
-    destructiveAction: Color(0xFFDC2626),
-    followingUserRatedTitle: Color(0xFF0D9488),
-    badgeColor: Color(0xFFEF4444),
-  );
-
   static const ColorScheme darkColorSchemeDefault = ColorScheme(
     brightness: Brightness.dark,
     primary: Color(0xFF10B981),
@@ -214,4 +170,8 @@ class ThemeService with ChangeNotifier {
     followingUserRatedTitle: Color(0xFF2DD4BF),
     badgeColor: Color(0xFFFF5252),
   );
+
+  // MovieScout has only one color scheme
+  static const ColorScheme lightColorSchemeDefault = darkColorSchemeDefault;
+  static const CustomColors lightCustomColorsDefault = darkCustomColorsDefault;
 }
