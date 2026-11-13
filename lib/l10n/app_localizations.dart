@@ -210,24 +210,6 @@ abstract class AppLocalizations {
   /// **'Select the language'**
   String get selectLanguage;
 
-  /// No description provided for @messageEmptyList.
-  ///
-  /// In en, this message translates to:
-  /// **'No films slected yet.'**
-  String get messageEmptyList;
-
-  /// No description provided for @messageEmptySearch.
-  ///
-  /// In en, this message translates to:
-  /// **'You can do a search by using the magnifying glass in the bottom bar.'**
-  String get messageEmptySearch;
-
-  /// No description provided for @messageEmptyOptions.
-  ///
-  /// In en, this message translates to:
-  /// **'You can also'**
-  String get messageEmptyOptions;
-
   /// No description provided for @messageEmptyLogin.
   ///
   /// In en, this message translates to:
@@ -1181,12 +1163,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'API key deleted'**
   String get aiKeyCleared;
-
-  /// No description provided for @aiStatusConfigured.
-  ///
-  /// In en, this message translates to:
-  /// **'API key configured'**
-  String get aiStatusConfigured;
 
   /// No description provided for @aiStatusNotConfigured.
   ///
@@ -2340,35 +2316,65 @@ abstract class AppLocalizations {
   /// **'Select your platforms to see only titles available now.'**
   String get noProvidersSelectedPrompt;
 
-  /// No description provided for @themeTitle.
+  /// No description provided for @emptyWatchlistTitle.
   ///
   /// In en, this message translates to:
-  /// **'Theme'**
-  String get themeTitle;
+  /// **'Your watchlist is empty'**
+  String get emptyWatchlistTitle;
 
-  /// No description provided for @selectTheme.
+  /// No description provided for @emptyWatchlistMessage.
   ///
   /// In en, this message translates to:
-  /// **'Select theme'**
-  String get selectTheme;
+  /// **'Save the movies and TV shows you want to watch later.'**
+  String get emptyWatchlistMessage;
 
-  /// No description provided for @themeSystem.
+  /// No description provided for @emptyWatchlistGuestMessage.
   ///
   /// In en, this message translates to:
-  /// **'System default'**
-  String get themeSystem;
+  /// **'Sign in to save your watchlist and sync it across all your devices.'**
+  String get emptyWatchlistGuestMessage;
 
-  /// No description provided for @themeLight.
+  /// No description provided for @emptySearchTitle.
   ///
   /// In en, this message translates to:
-  /// **'Light'**
-  String get themeLight;
+  /// **'No results found'**
+  String get emptySearchTitle;
 
-  /// No description provided for @themeDark.
+  /// No description provided for @emptySearchMessage.
   ///
   /// In en, this message translates to:
-  /// **'Dark'**
-  String get themeDark;
+  /// **'No titles or people matched your search. Check for typos or try different keywords.'**
+  String get emptySearchMessage;
+
+  /// No description provided for @emptyDiscoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No titles found'**
+  String get emptyDiscoveryTitle;
+
+  /// No description provided for @emptyDiscoveryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No titles match all the selected filters. Try adjusting or clearing some filters.'**
+  String get emptyDiscoveryMessage;
+
+  /// No description provided for @emptyRatesMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate the movies and TV shows you\'ve watched to remember what you thought of them and get better recommendations.'**
+  String get emptyRatesMessage;
+
+  /// No description provided for @emptyFollowingGuestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with the community'**
+  String get emptyFollowingGuestTitle;
+
+  /// No description provided for @emptyFollowingGuestMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to follow other users, discover what they watch, and share ratings.'**
+  String get emptyFollowingGuestMessage;
 }
 
 class _AppLocalizationsDelegate

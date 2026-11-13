@@ -153,14 +153,16 @@ AppPosterImage(
 - `assets/person.png`: Fallback for actors, directors, and crew members.
 - `assets/user.png`: Fallback for 3rd-person community user profiles.
 - `assets/account.png`: Fallback for the 1st-person logged-in user account.
+- `assets/backdrop-placeholder.png`: Fallback for 16:9 widescreen backdrops and media stills.
+- `assets/provider-placeholder.png`: Fallback for 1:1 square streaming provider logos.
 
 ### 3.2 Empty States: [`AppEmptyState`](lib/core/widgets/app_empty_state.dart)
 
-Never display bare, unstyled `Text` widgets when a list or search result is empty:
+Never display bare, unstyled `Text` widgets when a list or search result is empty. Always use `AppEmptyState` with its themed illustration:
 
 ```dart
 AppEmptyState(
-  icon: Icons.movie_outlined,
+  imageAsset: 'assets/empty-search.png',
   title: localizations.emptyList,
   message: localizations.emptyListSubtitle, // optional
   actionLabel: localizations.explore,     // optional
@@ -168,12 +170,20 @@ AppEmptyState(
 )
 ```
 
+**Illustration Map:**
+- `assets/empty-watchlist.png`: Watchlist screen when no titles are added.
+- `assets/empty-rates.png`: Rated / Seen list when no titles have been rated.
+- `assets/empty-search.png`: Search and catalog discovery when filters return no matches.
+- `assets/empty-community.png`: Following / Community when the user doesn't follow anyone.
+- `assets/empty-notifications.png`: Notifications screen when history is empty.
+
 ### 3.3 Error Views with Retry: [`AppErrorView`](lib/core/widgets/app_error_view.dart)
 
-When an asynchronous request fails (network timeout, offline, API error), replace infinite loading spinners or blank screens with:
+When an asynchronous request fails (network timeout, offline, API error), replace infinite loading spinners or blank screens with `AppErrorView`:
 
 ```dart
 AppErrorView(
+  imageAsset: 'assets/error-network.png', // default
   title: loc.errorMessageGeneric,
   message: loc.networkErrorMessage,
   onRetry: () => _retryLoadingData(),

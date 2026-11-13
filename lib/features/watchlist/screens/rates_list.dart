@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/watchlist/services/rateslist_service.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
 import 'package:moviescout/core/widgets/item_list.dart';
 import 'package:moviescout/core/widgets/custom_refresh_builder.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
@@ -87,9 +88,10 @@ class _RatesListState extends State<RatesList> {
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight),
             child: Center(
-              child: Text(
-                AppLocalizations.of(context)!.emptyRates,
-                textAlign: TextAlign.center,
+              child: AppEmptyState(
+                imageAsset: 'assets/empty-rates.png',
+                title: AppLocalizations.of(context)!.emptyRates,
+                message: AppLocalizations.of(context)!.emptyRatesMessage,
               ),
             ),
           ),

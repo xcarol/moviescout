@@ -5,6 +5,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
 import 'package:moviescout/core/widgets/edit_button.dart';
 import 'package:moviescout/features/settings/widgets/ai_model_thinking_selector.dart';
 import 'package:moviescout/core/widgets/drop_down_selector.dart';
@@ -500,7 +501,10 @@ class TranslationsScreenState extends State<TranslationsScreen> {
           ),
           child: validTranslations.isEmpty
               ? Center(
-                  child: Text(AppLocalizations.of(context)!.emptyList),
+                  child: AppEmptyState(
+                    imageAsset: 'assets/empty-search.png',
+                    title: AppLocalizations.of(context)!.emptyList,
+                  ),
                 )
               : ListView.builder(
                   controller: _scrollController,

@@ -93,6 +93,13 @@ flutter:
     - .env
     - assets/l10n/
     - assets/account.png
+    - assets/backdrop-placeholder.png
+    - assets/empty-community.png
+    - assets/empty-notifications.png
+    - assets/empty-rates.png
+    - assets/empty-search.png
+    - assets/empty-watchlist.png
+    - assets/error-network.png
     - assets/facebook.png
     - assets/google-logo.svg
     - assets/imdb-logo.png
@@ -102,6 +109,7 @@ flutter:
     - assets/movie-poster.png
     - assets/movie.png
     - assets/person.png
+    - assets/provider-placeholder.png
     - assets/rotten-logo.png
     - assets/tiktok.png
     - assets/tmdb-logo.png

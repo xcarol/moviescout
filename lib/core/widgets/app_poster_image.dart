@@ -8,6 +8,8 @@ enum PosterFallbackType {
   person,
   user,
   account,
+  backdrop,
+  provider,
 }
 
 class AppPosterImage extends StatelessWidget {
@@ -49,6 +51,10 @@ class AppPosterImage extends StatelessWidget {
         return 'assets/user.png';
       case PosterFallbackType.account:
         return 'assets/account.png';
+      case PosterFallbackType.backdrop:
+        return 'assets/backdrop-placeholder.png';
+      case PosterFallbackType.provider:
+        return 'assets/provider-placeholder.png';
     }
   }
 

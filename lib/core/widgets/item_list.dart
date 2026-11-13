@@ -21,6 +21,7 @@ import 'package:moviescout/core/theme/title_list_theme.dart';
 import 'package:moviescout/core/widgets/list_control_panel.dart';
 import 'package:moviescout/features/discovery/widgets/discovery_control_panel.dart';
 import 'package:moviescout/features/discovery/services/discoverlist_service.dart';
+import 'package:moviescout/features/discovery/services/search_service.dart';
 import 'package:moviescout/features/people/services/tmdb_person_titles_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/core/widgets/list_controller.dart';
@@ -161,6 +162,13 @@ class _ItemListState extends SearchableListState<ItemList> {
 
         Widget listView;
         if (showEmptyMessage) {
+          final loc = AppLocalizations.of(context)!;
+          final bool isSearch = service is SearchService;
+          final String title =
+              isSearch ? loc.emptySearchTitle : loc.emptyDiscoveryTitle;
+          final String message =
+              isSearch ? loc.emptySearchMessage : loc.emptyDiscoveryMessage;
+
           listView = LayoutBuilder(
             builder: (context, constraints) => SingleChildScrollView(
               controller: _controller.scrollController,
@@ -176,8 +184,9 @@ class _ItemListState extends SearchableListState<ItemList> {
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: Center(
                   child: AppEmptyState(
-                    icon: Icons.movie_outlined,
-                    title: AppLocalizations.of(context)!.emptyList,
+                    imageAsset: 'assets/empty-search.png',
+                    title: title,
+                    message: message,
                   ),
                 ),
               ),

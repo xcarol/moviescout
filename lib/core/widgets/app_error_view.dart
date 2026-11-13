@@ -6,7 +6,9 @@ class AppErrorView extends StatelessWidget {
   final String? message;
   final VoidCallback? onRetry;
   final String? retryLabel;
-  final IconData icon;
+  final String? imageAsset;
+  final IconData? icon;
+  final double imageHeight;
 
   const AppErrorView({
     super.key,
@@ -14,7 +16,9 @@ class AppErrorView extends StatelessWidget {
     this.message,
     this.onRetry,
     this.retryLabel,
-    this.icon = Icons.error_outline_rounded,
+    this.imageAsset = 'assets/error-network.png',
+    this.icon,
+    this.imageHeight = 120.0,
   });
 
   @override
@@ -33,12 +37,19 @@ class AppErrorView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 56.0,
-              color: colorScheme.error,
-            ),
-            const SizedBox(height: AppSpacing.md),
+            if (imageAsset != null && imageAsset!.isNotEmpty)
+              Image.asset(
+                imageAsset!,
+                height: imageHeight,
+                fit: BoxFit.contain,
+              )
+            else
+              Icon(
+                icon ?? Icons.error_outline_rounded,
+                size: 56.0,
+                color: colorScheme.error,
+              ),
+            const SizedBox(height: AppSpacing.lg),
             Text(
               title,
               style: theme.textTheme.titleMedium?.copyWith(

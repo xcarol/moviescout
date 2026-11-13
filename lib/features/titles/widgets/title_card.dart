@@ -294,7 +294,7 @@ class TitleCard extends StatelessWidget {
             cacheKey: provider.logoPath,
             errorWidget: (context, error, stackTrace) {
               return Image.asset(
-                'assets/movie.png',
+                'assets/provider-placeholder.png',
                 fit: BoxFit.cover,
               );
             },

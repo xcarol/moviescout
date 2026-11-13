@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
+import 'package:moviescout/core/widgets/app_error_view.dart';
 import 'package:moviescout/features/auth/models/user_profile.dart';
 import 'package:moviescout/features/watchlist/services/user_following_service.dart';
 import 'package:moviescout/features/auth/widgets/user_card.dart';
@@ -113,11 +115,10 @@ class UserSearchDelegate extends SearchDelegate<UserProfile?> {
 
         if (snapshot.hasError) {
           return Center(
-            child: Text(
-              loc.networkErrorMessage,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              ),
+            child: AppErrorView(
+              imageAsset: 'assets/error-network.png',
+              title: loc.errorMessageGeneric,
+              message: loc.networkErrorMessage,
             ),
           );
         }
@@ -125,12 +126,9 @@ class UserSearchDelegate extends SearchDelegate<UserProfile?> {
         final users = snapshot.data ?? [];
         if (users.isEmpty) {
           return Center(
-            child: Text(
-              loc.noUsersFound,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                fontSize: 16,
-              ),
+            child: AppEmptyState(
+              imageAsset: 'assets/empty-community.png',
+              title: loc.noUsersFound,
             ),
           );
         }

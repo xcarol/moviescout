@@ -94,12 +94,12 @@ class _FollowingListState extends State<FollowingList> {
 
     if (isNotLoggedIn) {
       content = AppEmptyState(
-        icon: Icons.people_outline,
-        title: loc.emptyFollowingList,
-        message: loc.messageEmptyOptions,
+        imageAsset: 'assets/empty-community.png',
+        title: loc.emptyFollowingGuestTitle,
+        message: loc.emptyFollowingGuestMessage,
         customAction: Column(
           children: [
-            OutlinedButton(
+            FilledButton.tonal(
               onPressed: () => context.toLogin(),
               child: Text(loc.messageEmptyLogin),
             ),
@@ -124,7 +124,7 @@ class _FollowingListState extends State<FollowingList> {
         content = _publicProfileBanner(context);
       } else {
         content = AppEmptyState(
-          icon: Icons.people_alt_outlined,
+          imageAsset: 'assets/empty-community.png',
           title: loc.emptyFollowingList,
           message: loc.emptyFollowingSearchHint,
           customAction: Column(

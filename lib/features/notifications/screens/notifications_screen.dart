@@ -86,7 +86,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
       body: _notifications.isEmpty
           ? Center(
               child: AppEmptyState(
-                icon: Icons.notifications_none_outlined,
+                imageAsset: 'assets/empty-notifications.png',
                 title: localizations.emptyList,
               ),
             )
@@ -192,9 +192,11 @@ class _NotificationsScreenState extends State<NotificationsScreen>
             width: 24,
             height: 24,
             fit: BoxFit.cover,
-            errorWidget: (context, url, error) => const Icon(
-              Icons.broken_image,
-              size: 24,
+            errorWidget: (context, url, error) => Image.asset(
+              'assets/provider-placeholder.png',
+              width: 24,
+              height: 24,
+              fit: BoxFit.cover,
             ),
           ),
         ),
