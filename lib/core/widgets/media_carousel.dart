@@ -145,8 +145,8 @@ class _MediaCarouselState extends State<MediaCarousel> {
     }
     return Image.asset(
       mediaType == ApiConstants.movie
-          ? 'assets/movie_poster.png'
-          : 'assets/tvshow_poster.png',
+          ? 'assets/movie-poster.png'
+          : 'assets/tvshow-poster.png',
       fit: BoxFit.fitWidth,
     );
   }

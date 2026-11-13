@@ -148,8 +148,8 @@ AppPosterImage(
 #### Brand Fallback Assets Map:
 - `assets/movie.png`: Fallback for movies (cards and lists).
 - `assets/tvshow.png`: Fallback for TV shows (cards and lists).
-- `assets/movie_poster.png`: Full 2:3 vertical poster fallback for large carousels/hero headers.
-- `assets/tvshow_poster.png`: Full 2:3 vertical poster fallback for large carousels/hero headers.
+- `assets/movie-poster.png`: Full 2:3 vertical poster fallback for large carousels/hero headers.
+- `assets/tvshow-poster.png`: Full 2:3 vertical poster fallback for large carousels/hero headers.
 - `assets/person.png`: Fallback for actors, directors, and crew members.
 - `assets/user.png`: Fallback for 3rd-person community user profiles.
 - `assets/account.png`: Fallback for the 1st-person logged-in user account.

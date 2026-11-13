@@ -99,14 +99,14 @@ flutter:
     - assets/instagram.png
     - assets/logo-icon.png
     - assets/metacritic-logo.png
-    - assets/movie_poster.png
+    - assets/movie-poster.png
     - assets/movie.png
     - assets/person.png
     - assets/rotten-logo.png
     - assets/tiktok.png
     - assets/tmdb-logo.png
     - assets/tvdb.png
-    - assets/tvshow_poster.png
+    - assets/tvshow-poster.png
     - assets/tvshow.png
     - assets/user.png
     - assets/wikidata.png

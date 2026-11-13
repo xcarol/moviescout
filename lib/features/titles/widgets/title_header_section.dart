@@ -118,8 +118,8 @@ class TitleHeaderSection extends StatelessWidget {
                           ? PosterFallbackType.movie
                           : PosterFallbackType.tvShow,
                       customFallbackAsset: title.isMovie
-                          ? 'assets/movie_poster.png'
-                          : 'assets/tvshow_poster.png',
+                          ? 'assets/movie-poster.png'
+                          : 'assets/tvshow-poster.png',
                       aspectRatio: null,
                       fit: BoxFit.cover,
                       fallbackFit: BoxFit.cover,
