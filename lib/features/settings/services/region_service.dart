@@ -1,7 +1,7 @@
 import 'package:moviescout/core/utils/url_constants.dart';
 import 'dart:convert';
 import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:http/http.dart' as http;
 import 'package:moviescout/core/services/error_service.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';

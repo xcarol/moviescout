@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/widgets/expandable_text.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';

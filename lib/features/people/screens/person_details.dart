@@ -2,7 +2,7 @@ import 'package:moviescout/core/utils/url_constants.dart';
 import 'package:moviescout/core/utils/api_constants.dart';
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';

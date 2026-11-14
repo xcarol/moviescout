@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,7 +10,6 @@ import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/core/utils/api_constants.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 class MockTitleListService extends Mock implements TmdbTitleListService {}
 
@@ -23,12 +22,7 @@ class FakeScrollNotification extends Fake implements ScrollNotification {
 
 Widget buildTestApp(Widget child) {
   return MaterialApp(
-    localizationsDelegates: const [
-      AppLocalizations.delegate,
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
-    ],
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: const [Locale('en')],
     home: child,
   );

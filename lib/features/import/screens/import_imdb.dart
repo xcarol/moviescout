@@ -1,5 +1,5 @@
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/services/error_service.dart';

@@ -1,7 +1,7 @@
 import 'package:moviescout/core/services/app_service.dart';
 import 'package:moviescout/core/utils/url_constants.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/features/titles/repositories/local_title_repository.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/features/discovery/services/tmdb_genre_service.dart';

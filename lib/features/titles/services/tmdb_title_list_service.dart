@@ -1,7 +1,7 @@
 import "package:moviescout/core/utils/api_constants.dart";
 import 'dart:async';
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/titles/repositories/local_title_repository.dart';
 import 'package:moviescout/core/services/error_service.dart';
