@@ -10,6 +10,7 @@ Future<void> saveLogs(List<String> logLines) async {
   }
 
   try {
+    await PreferencesService().refresh();
     final prefs = PreferencesService().prefs;
     final currentLogs = prefs.getStringList(AppConstants.updateLogs) ?? [];
     final newEntry = logLines.join('\n');
