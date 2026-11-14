@@ -30,7 +30,7 @@ class SettingsTile extends StatelessWidget {
     final theme = Theme.of(context);
     final customColors = theme.extension<CustomColors>();
     final destructiveColor =
-        customColors?.destructiveAction ?? Colors.redAccent;
+        customColors?.destructiveAction ?? theme.colorScheme.error;
 
     final iconColor = isDestructive
         ? destructiveColor

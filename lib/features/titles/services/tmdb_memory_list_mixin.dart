@@ -4,6 +4,9 @@ mixin TmdbMemoryListMixin<T> on TmdbBaseListService<T> {
   final List<T> allItems = [];
   List<T> filteredItems = [];
 
+  @override
+  int get pageSizeVal => 50;
+
   /// Subclasses must implement this to populate [filteredItems] from [allItems]
   /// based on their specific filtering and sorting logic.
   void applyFiltersAndSort();

@@ -61,16 +61,6 @@ class AppLocalizationsCa extends AppLocalizations {
   String get selectLanguage => 'Selecciona l\'idioma';
 
   @override
-  String get messageEmptyList => 'Encara no s\'ha escollit cap pel·lícula.';
-
-  @override
-  String get messageEmptySearch =>
-      'Pots fer una cerca utilitzant la lupa de la barra inferior.';
-
-  @override
-  String get messageEmptyOptions => 'També pots';
-
-  @override
   String get messageEmptyLogin => 'Iniciar sessió a MovieScout';
 
   @override
@@ -506,7 +496,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get rate => 'Valora';
 
   @override
-  String get watchOn => 'Veure a';
+  String get watchOn => 'Més informació';
 
   @override
   String get status => 'Estat';
@@ -567,9 +557,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get aiKeyCleared => 'Clau API eliminada';
-
-  @override
-  String get aiStatusConfigured => 'Clau API configurada';
 
   @override
   String get aiStatusNotConfigured => 'Clau API no configurada';
@@ -1220,4 +1207,40 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get noProvidersSelectedPrompt =>
       'Selecciona les teves plataformes per veure només títols disponibles ara.';
+
+  @override
+  String get emptyWatchlistTitle => 'La teva llista està buida';
+
+  @override
+  String get emptyWatchlistMessage =>
+      'Afegeix les pel·lícules i sèries que vulguis veure per tenir-les sempre a mà.';
+
+  @override
+  String get emptyWatchlistGuestMessage =>
+      'Inicia sessió per guardar els teus títols pendents i sincronitzar-los a tots els teus dispositius.';
+
+  @override
+  String get emptySearchTitle => 'Sense resultats';
+
+  @override
+  String get emptySearchMessage =>
+      'No hem trobat cap títol ni persona que coincideixi. Revisa l\'ortografia o prova una altra cerca.';
+
+  @override
+  String get emptyDiscoveryTitle => 'Cap títol trobat';
+
+  @override
+  String get emptyDiscoveryMessage =>
+      'No hi ha títols que compleixin tots els filtres. Prova de canviar o eliminar algun filtre.';
+
+  @override
+  String get emptyRatesMessage =>
+      'Puntua les pel·lícules i sèries que hagis vist per recordar què et van semblar i rebre millors recomanacions.';
+
+  @override
+  String get emptyFollowingGuestTitle => 'Connecta amb la comunitat';
+
+  @override
+  String get emptyFollowingGuestMessage =>
+      'Inicia sessió per seguir altres usuaris, descobrir què miren i compartir valoracions.';
 }

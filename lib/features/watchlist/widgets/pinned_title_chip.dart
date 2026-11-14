@@ -1,11 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
 import 'package:moviescout/features/titles/widgets/title_card.dart';
 import 'package:moviescout/features/watchlist/widgets/pin_button.dart';
+import 'package:moviescout/core/widgets/app_poster_image.dart';
 
 class PinnedTitleChip extends StatelessWidget {
   final TmdbTitle title;
@@ -29,8 +31,8 @@ class PinnedTitleChip extends StatelessWidget {
         color: Theme.of(context).extension<CustomColors>()!.chipCardBackground,
         margin: const EdgeInsets.symmetric(horizontal: 4.0),
         clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+        shape: const RoundedRectangleBorder(
+          borderRadius: AppRadius.chip,
         ),
         child: InkWell(
           onTap: () {
@@ -51,7 +53,7 @@ class PinnedTitleChip extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.5),
                           borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(8),
+                            bottomLeft: AppRadius.radiusSm,
                           ),
                         ),
                         child: pinButton(context, title),
@@ -61,15 +63,14 @@ class PinnedTitleChip extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(4.0),
+                padding: AppSpacing.edgeInsetsAllXs,
                 child: Text(
                   title.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ),
             ],
@@ -80,37 +81,15 @@ class PinnedTitleChip extends StatelessWidget {
   }
 
   Widget _poster(String? posterPath) {
-    if (posterPath == null || posterPath.isEmpty) {
-      return Center(
-        child: Image.asset(
-          'assets/movie.png',
-          width: 40,
-          height: 40,
-          fit: BoxFit.contain,
-        ),
-      );
-    }
-
-    return CachedNetworkImage(
+    return AppPosterImage(
       imageUrl: posterPath,
-      cacheManager: CustomCacheManager.instance,
-      fit: BoxFit.cover,
-      memCacheHeight: 300,
+      aspectRatio: null,
+      fallbackType:
+          title.isMovie ? PosterFallbackType.movie : PosterFallbackType.tvShow,
       memCacheWidth: 200,
-      fadeInDuration: Duration.zero,
-      fadeOutDuration: Duration.zero,
-      placeholderFadeInDuration: Duration.zero,
-      cacheKey: posterPath,
-      errorWidget: (context, error, stackTrace) {
-        return Center(
-          child: Image.asset(
-            'assets/movie.png',
-            width: 40,
-            height: 40,
-            fit: BoxFit.contain,
-          ),
-        );
-      },
+      memCacheHeight: 300,
+      fit: BoxFit.cover,
+      fallbackFit: BoxFit.contain,
     );
   }
 }

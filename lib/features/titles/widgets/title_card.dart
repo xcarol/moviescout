@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
@@ -13,25 +12,17 @@ import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:moviescout/features/watchlist/widgets/watchlist_button.dart';
 import 'package:moviescout/features/watchlist/widgets/pin_button.dart';
 import 'package:moviescout/features/notifications/widgets/notify_button.dart';
+import 'package:moviescout/core/widgets/app_poster_image.dart';
 import 'package:provider/provider.dart';
 
-class CustomCacheManager {
-  static const key = 'customCacheKey';
-  static CacheManager instance = CacheManager(
-    Config(
-      key,
-      stalePeriod: const Duration(days: 30),
-      maxNrOfCacheObjects: 500,
-      fileService: HttpFileService(),
-    ),
-  );
-}
+export 'package:moviescout/core/services/custom_cache_manager.dart';
+export 'package:moviescout/core/widgets/app_poster_image.dart';
 
 class TitleCard extends StatelessWidget {
   final TmdbTitle _title;
   final TmdbTitleListService _tmdbListService;
 
-  static double cardHeight = 178.0;
+  static const double cardHeight = 178.0;
 
   const TitleCard({
     super.key,
@@ -60,7 +51,12 @@ class TitleCard extends StatelessWidget {
                 },
                 child: Row(
                   children: [
-                    titlePoster(tmdbTitle.posterPath),
+                    titlePoster(
+                      tmdbTitle.posterPath,
+                      fallbackType: tmdbTitle.isMovie
+                          ? PosterFallbackType.movie
+                          : PosterFallbackType.tvShow,
+                    ),
                     const SizedBox(width: 10),
                     _titleDetails(context, tmdbTitle),
                   ],
@@ -169,36 +165,17 @@ class TitleCard extends StatelessWidget {
     );
   }
 
-  Widget titlePoster(String? posterPath) {
-    if (posterPath == null || posterPath.isEmpty) {
-      return AspectRatio(
-        aspectRatio: 2 / 3,
-        child: Image.asset(
-          'assets/movie.png',
-          fit: BoxFit.contain,
-        ),
-      );
-    }
-
-    return AspectRatio(
+  Widget titlePoster(
+    String? posterPath, {
+    PosterFallbackType fallbackType = PosterFallbackType.movie,
+  }) {
+    return AppPosterImage(
+      imageUrl: posterPath,
       aspectRatio: 2 / 3,
-      child: CachedNetworkImage(
-        imageUrl: posterPath,
-        cacheManager: CustomCacheManager.instance,
-        fit: BoxFit.cover,
-        memCacheHeight: 300,
-        memCacheWidth: 200,
-        fadeInDuration: Duration.zero,
-        fadeOutDuration: Duration.zero,
-        placeholderFadeInDuration: Duration.zero,
-        cacheKey: posterPath,
-        errorWidget: (context, error, stackTrace) {
-          return Image.asset(
-            'assets/movie.png',
-            fit: BoxFit.contain,
-          );
-        },
-      ),
+      fallbackType: fallbackType,
+      memCacheWidth: 200,
+      memCacheHeight: 300,
+      fit: BoxFit.cover,
     );
   }
 
@@ -317,7 +294,7 @@ class TitleCard extends StatelessWidget {
             cacheKey: provider.logoPath,
             errorWidget: (context, error, stackTrace) {
               return Image.asset(
-                'assets/movie.png',
+                'assets/provider-placeholder.png',
                 fit: BoxFit.cover,
               );
             },

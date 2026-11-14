@@ -1,7 +1,9 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/services/error_service.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/features/import/services/imdb_import_service.dart';
 import 'package:moviescout/features/watchlist/services/rateslist_service.dart';
 import 'package:moviescout/features/watchlist/services/watchlist_service.dart';
@@ -49,15 +51,20 @@ class _ImportIMDBState extends State<ImportIMDB> {
         title: Text(AppLocalizations.of(context)!.imdbImport),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            _importPanel(),
-            const Divider(),
-            _infoLine(),
-            const Divider(),
-            _importResults(),
-          ],
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppBreakpoints.maxContentWidth,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              _importPanel(),
+              const Divider(),
+              _infoLine(),
+              const Divider(),
+              _importResults(),
+            ],
+          ),
         ),
       ),
     );
@@ -184,12 +191,15 @@ class _ImportIMDBState extends State<ImportIMDB> {
 
   Widget _importResultsCell(
       {double? width = 0, Widget child = const SizedBox()}) {
+    final dividerColor =
+        Theme.of(context).extension<CustomColors>()?.dividerColor ??
+            Theme.of(context).colorScheme.outlineVariant;
     return Container(
       width: width,
       margin: const EdgeInsets.only(bottom: 8.0),
       decoration: BoxDecoration(
         border: Border.all(
-          color: Colors.grey,
+          color: dividerColor,
           width: 0.5,
         ),
       ),
@@ -216,6 +226,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
   }
 
   Widget _importResults() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Expanded(
       child: ListView.builder(
         key: const PageStorageKey('ImdbListView'),
@@ -223,7 +234,7 @@ class _ImportIMDBState extends State<ImportIMDB> {
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
           IconData status;
-          Color statusColor = Colors.grey;
+          Color statusColor = colorScheme.onSurfaceVariant;
 
           if (_importId == index) {
             status = Icons.hourglass_empty;
@@ -234,11 +245,11 @@ class _ImportIMDBState extends State<ImportIMDB> {
                 break;
               case ImdbTitleStatus.success:
                 status = Icons.check_box;
-                statusColor = Colors.green;
+                statusColor = colorScheme.primary;
                 break;
               case ImdbTitleStatus.failed:
                 status = Icons.cancel_outlined;
-                statusColor = Colors.red;
+                statusColor = colorScheme.error;
                 break;
             }
           }

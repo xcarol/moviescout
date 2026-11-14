@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/core/utils/snack_bar.dart';
@@ -31,7 +33,7 @@ class ListControlPanel extends StatelessWidget {
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.all(4.0),
+                padding: AppSpacing.edgeInsetsAllXs,
                 child: Column(
                   children: [
                     Row(
@@ -50,7 +52,7 @@ class ListControlPanel extends StatelessWidget {
                         controller.setTextFilter(value);
                       },
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: AppSpacing.xs),
                     if (showRatingFilter)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -91,13 +93,13 @@ class ListControlPanel extends StatelessWidget {
       },
       child: Container(
         height: 28,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
         decoration: BoxDecoration(
           color: backgroundColor,
           border: Border.all(
             color: titleTheme.controlPanelForeground,
           ),
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: AppRadius.borderSm,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -109,7 +111,7 @@ class ListControlPanel extends StatelessWidget {
                 color: foregroundColor,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.sm),
             Icon(
               Icons.arrow_forward_ios,
               color: foregroundColor,
@@ -162,7 +164,7 @@ class ListControlPanel extends StatelessWidget {
               controller.setFilterByProviders(!isActive);
             },
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: AppSpacing.xs),
           Switch(
             value: isActive,
             onChanged: (bool value) {

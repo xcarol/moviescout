@@ -20,6 +20,7 @@ import 'package:moviescout/features/settings/services/app_lifecycle_service.dart
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/features/settings/services/language_service.dart';
 import 'package:moviescout/core/theme/theme_service.dart';
+import 'package:moviescout/core/theme/app_theme.dart';
 import 'package:moviescout/features/settings/services/background_tasks_service.dart';
 import 'package:moviescout/core/services/tmdb_configuration_service.dart';
 import 'package:moviescout/features/discovery/services/tmdb_genre_service.dart';
@@ -191,6 +192,7 @@ void _runMain() async {
 
   runApp(MultiProvider(
     providers: [
+      ChangeNotifierProvider.value(value: ThemeService()),
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => SupabaseAuthService()),
@@ -269,7 +271,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
 
     final themeProvider = ThemeService();
-    themeProvider.setupTheme();
+    themeProvider.init();
 
     final regionProvider = Provider.of<RegionService>(context, listen: false);
     regionProvider.addListener(_onRegionChanged);
@@ -347,9 +349,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageService>(context);
-    final themeProvider = ThemeService();
+    final themeProvider = Provider.of<ThemeService>(context);
 
     return MaterialApp(
+      themeMode: ThemeMode.dark,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -360,31 +363,21 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           .map((e) => LanguageService.parseLocale(e))
           .toList(),
       locale: languageProvider.locale,
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-        colorScheme: themeProvider.lightColorScheme,
-        scrollbarTheme: themeProvider.lightScrollbarTheme,
-        badgeTheme: BadgeThemeData(
-          backgroundColor: themeProvider.lightCustomColors.badgeColor,
-        ),
-        extensions: <ThemeExtension<dynamic>>[
-          themeProvider.lightCustomColors,
-          themeProvider.lightTitleListTheme,
-        ],
+      scrollBehavior: const MaterialScrollBehavior().copyWith(
+        dragDevices: {
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.touch,
+          PointerDeviceKind.stylus,
+          PointerDeviceKind.trackpad,
+        },
       ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
+      theme: AppTheme.buildTheme(
         brightness: Brightness.dark,
-        colorScheme: themeProvider.darkColorScheme,
-        scrollbarTheme: themeProvider.darkScrollbarTheme,
-        badgeTheme: BadgeThemeData(
-          backgroundColor: themeProvider.darkCustomColors.badgeColor,
-        ),
-        extensions: <ThemeExtension<dynamic>>[
-          themeProvider.darkCustomColors,
-          themeProvider.darkTitleListTheme,
-        ],
+        themeService: themeProvider,
+      ),
+      darkTheme: AppTheme.buildTheme(
+        brightness: Brightness.dark,
+        themeService: themeProvider,
       ),
       title: 'MovieScout',
       home: const MainScreen(),
@@ -412,18 +405,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       },
       builder: (context, child) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          final statusBarBrightness = Brightness.light;
-          final navBarBrightness = Brightness.light;
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          final iconBrightness = isDark ? Brightness.light : Brightness.dark;
 
           SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
           SystemChrome.setSystemUIOverlayStyle(
             SystemUiOverlayStyle(
               systemNavigationBarColor: Colors.transparent,
               systemNavigationBarContrastEnforced: false,
-              systemNavigationBarIconBrightness: navBarBrightness,
+              systemNavigationBarIconBrightness: iconBrightness,
               statusBarColor: Colors.transparent,
               systemStatusBarContrastEnforced: false,
-              statusBarIconBrightness: statusBarBrightness,
+              statusBarIconBrightness: iconBrightness,
             ),
           );
         });

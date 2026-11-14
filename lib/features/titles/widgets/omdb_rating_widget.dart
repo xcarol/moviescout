@@ -46,6 +46,7 @@ class OmdbRatingWidget extends StatelessWidget {
 
     return Tooltip(
       message: source,
+      triggerMode: TooltipTriggerMode.tap,
       child: BoxedWidget(
         child: Row(
           mainAxisSize: MainAxisSize.min,

@@ -5,6 +5,7 @@ import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/features/watchlist/services/watchlist_service.dart';
 import 'package:moviescout/features/discovery/services/discover_promotion_manager.dart';
 import 'package:moviescout/features/discovery/widgets/discover_promo_card.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
 import 'package:moviescout/core/widgets/item_list.dart';
 import 'package:moviescout/core/widgets/custom_refresh_builder.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
@@ -93,45 +94,24 @@ class _WatchListState extends State<WatchList> {
   }
 
   Widget emptyBody() {
-    List<Widget> children = [];
-
+    final loc = AppLocalizations.of(context)!;
     final isGoogleLoggedIn =
         Provider.of<SupabaseAuthService>(context).isLoggedIn;
-    if (isGoogleLoggedIn) {
-      children.add(
-        Text(
-          AppLocalizations.of(context)!.messageEmptyList,
-          textAlign: TextAlign.center,
-        ),
-      );
-    } else {
-      children.add(
-        Text(
-          AppLocalizations.of(context)!.messageEmptySearch,
-          textAlign: TextAlign.center,
-        ),
-      );
-      children.add(
-        const SizedBox(height: 20.0),
-      );
-      children.add(
-        Text(
-          AppLocalizations.of(context)!.messageEmptyOptions,
-          textAlign: TextAlign.center,
-        ),
-      );
-      children.add(
-        const SizedBox(height: 10.0),
-      );
-      children.add(
-        OutlinedButton(
-          onPressed: () {
-            context.toLogin();
-          },
-          child: Text(AppLocalizations.of(context)!.messageEmptyLogin),
-        ),
-      );
-    }
+
+    final emptyWidget = isGoogleLoggedIn
+        ? AppEmptyState(
+            imageAsset: 'assets/empty-watchlist.png',
+            title: loc.emptyWatchlistTitle,
+            message: loc.emptyWatchlistMessage,
+          )
+        : AppEmptyState(
+            imageAsset: 'assets/empty-watchlist.png',
+            title: loc.emptyWatchlistTitle,
+            message: loc.emptyWatchlistGuestMessage,
+            actionLabel: loc.messageEmptyLogin,
+            onAction: () => context.toLogin(),
+          );
+
     return CustomRefreshIndicator(
       onRefresh: () async {
         await _watchlistService.syncFromServer(
@@ -149,10 +129,7 @@ class _WatchListState extends State<WatchList> {
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight),
             child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: children,
-              ),
+              child: emptyWidget,
             ),
           ),
         ),

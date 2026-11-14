@@ -3,6 +3,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/features/people/services/tmdb_person_titles_service.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
 import 'package:moviescout/core/widgets/item_list.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/features/titles/repositories/local_title_repository.dart';
@@ -55,9 +56,12 @@ class _PersonTitlesState extends State<PersonTitles> {
       appBar: AppBar(
         title: Text(appTitle),
       ),
-      body: ChangeNotifierProvider<TmdbTitleListService>.value(
-        value: _personTitlesService,
-        child: body(),
+      body: SafeArea(
+        top: false,
+        child: ChangeNotifierProvider<TmdbTitleListService>.value(
+          value: _personTitlesService,
+          child: body(),
+        ),
       ),
     );
   }
@@ -78,12 +82,9 @@ class _PersonTitlesState extends State<PersonTitles> {
 
   Widget emptyBody() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(AppLocalizations.of(context)!.emptyList,
-              textAlign: TextAlign.center)
-        ],
+      child: AppEmptyState(
+        imageAsset: 'assets/empty-search.png',
+        title: AppLocalizations.of(context)!.emptyList,
       ),
     );
   }

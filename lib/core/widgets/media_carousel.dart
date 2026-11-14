@@ -145,8 +145,8 @@ class _MediaCarouselState extends State<MediaCarousel> {
     }
     return Image.asset(
       mediaType == ApiConstants.movie
-          ? 'assets/movie_poster.png'
-          : 'assets/tvshow_poster.png',
+          ? 'assets/movie-poster.png'
+          : 'assets/tvshow-poster.png',
       fit: BoxFit.fitWidth,
     );
   }
@@ -177,7 +177,10 @@ class _MediaCarouselState extends State<MediaCarousel> {
           placeholder: (context, url) => Container(
             color: colorScheme.surface.withValues(alpha: 0.1),
           ),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
+          errorWidget: (context, url, error) => Image.asset(
+            'assets/backdrop-placeholder.png',
+            fit: BoxFit.contain,
+          ),
         ),
       ],
     );
@@ -436,7 +439,6 @@ class _ZoomableImageState extends State<_ZoomableImage>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return LayoutBuilder(
       builder: (context, constraints) {
         return GestureDetector(
@@ -456,8 +458,10 @@ class _ZoomableImageState extends State<_ZoomableImage>
                 fit: BoxFit.contain,
                 placeholder: (context, url) =>
                     const CircularProgressIndicator(),
-                errorWidget: (context, url, error) =>
-                    Icon(Icons.error, color: colorScheme.error),
+                errorWidget: (context, url, error) => Image.asset(
+                  'assets/backdrop-placeholder.png',
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),

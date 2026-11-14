@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 
 class SettingsGroup extends StatelessWidget {
@@ -44,8 +45,8 @@ class SettingsGroup extends StatelessWidget {
           Card(
             elevation: 0,
             margin: EdgeInsets.zero,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.0),
+            shape: const RoundedRectangleBorder(
+              borderRadius: AppRadius.borderLg,
             ),
             color: theme.colorScheme.surfaceContainerHighest
                 .withValues(alpha: 0.35),

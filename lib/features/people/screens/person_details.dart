@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
@@ -130,7 +131,13 @@ class _PersonDetailsState extends State<PersonDetails> {
           ),
           body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            child: _detailsBody(person),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                    maxWidth: AppBreakpoints.maxContentWidth),
+                child: _detailsBody(person),
+              ),
+            ),
           ),
         );
       },

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
+import 'package:moviescout/core/widgets/app_empty_state.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/features/auth/screens/user_search_delegate.dart';
 import 'package:moviescout/features/auth/services/supabase_auth_service.dart';
@@ -86,95 +89,64 @@ class _FollowingListState extends State<FollowingList> {
 
   Widget emptyBody({required bool isNotLoggedIn}) {
     final loc = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
 
-    List<Widget> children = [];
+    Widget content;
 
     if (isNotLoggedIn) {
-      children.addAll([
-        Icon(
-          Icons.people_outline,
-          size: 64,
-          color: colorScheme.onSurfaceVariant,
+      content = AppEmptyState(
+        imageAsset: 'assets/empty-community.png',
+        title: loc.emptyFollowingGuestTitle,
+        message: loc.emptyFollowingGuestMessage,
+        customAction: Column(
+          children: [
+            FilledButton.tonal(
+              onPressed: () => context.toLogin(),
+              child: Text(loc.messageEmptyLogin),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              loc.emptyFollowingCommunityHint,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurfaceVariant
+                    .withValues(alpha: 0.8),
+                fontSize: 13,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 16),
-        Text(
-          loc.emptyFollowingList,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 16),
-        ),
-        const SizedBox(height: 12),
-        Text(
-          loc.messageEmptyOptions,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(height: 16),
-        OutlinedButton(
-          onPressed: () {
-            context.toLogin();
-          },
-          child: Text(loc.messageEmptyLogin),
-        ),
-        Text(
-          loc.emptyFollowingCommunityHint,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
-            fontSize: 13,
-          ),
-        ),
-      ]);
+      );
     } else {
       final authService = Provider.of<SupabaseAuthService>(context);
       if (!authService.isPublicProfile) {
-        children.addAll([
-          _publicProfileBanner(context),
-        ]);
+        content = _publicProfileBanner(context);
       } else {
-        children.addAll([
-          Icon(
-            Icons.people_alt_outlined,
-            size: 64,
-            color: colorScheme.onSurfaceVariant,
+        content = AppEmptyState(
+          imageAsset: 'assets/empty-community.png',
+          title: loc.emptyFollowingList,
+          message: loc.emptyFollowingSearchHint,
+          customAction: Column(
+            children: [
+              FilledButton.icon(
+                onPressed: () {
+                  showSearch(
+                    context: context,
+                    delegate: UserSearchDelegate(
+                      _followingService,
+                      searchFieldLabel: loc.searchUsersPlaceholder,
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.search),
+                label: Text(loc.searchUsers),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              _shareAppBox(context),
+            ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            loc.emptyFollowingList,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            loc.emptyFollowingSearchHint,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: colorScheme.onSurfaceVariant,
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: 16),
-          FilledButton.icon(
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: UserSearchDelegate(
-                  _followingService,
-                  searchFieldLabel: loc.searchUsersPlaceholder,
-                ),
-              );
-            },
-            icon: const Icon(Icons.search),
-            label: Text(loc.searchUsers),
-          ),
-          const SizedBox(height: 16),
-          _shareAppBox(context),
-        ]);
+        );
       }
     }
 
@@ -184,11 +156,13 @@ class _FollowingListState extends State<FollowingList> {
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: constraints.maxHeight),
           child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: children,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: AppBreakpoints.maxContentWidth,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: content,
               ),
             ),
           ),
@@ -201,29 +175,60 @@ class _FollowingListState extends State<FollowingList> {
     final customColors = Theme.of(context).extension<CustomColors>()!;
     final users = followingService.followingUsers;
 
-    final listView = ListView.builder(
-      physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: users.length,
-      itemBuilder: (context, index) {
-        final user = users[index];
-        return Column(
-          children: [
-            UserCard(user: user),
-            Divider(
-              height: 1,
-              color: customColors.dividerColor,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide =
+            constraints.maxWidth > AppBreakpoints.largeScreenMinWidth;
+        final Widget listWidget;
+
+        if (isWide) {
+          listWidget = GridView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.sm,
+              AppSpacing.sm,
+              AppSpacing.sm,
+              AppSpacing.lg,
             ),
-          ],
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: AppBreakpoints.maxGridCrossAxisExtent,
+              mainAxisExtent: UserCard.cardHeight,
+              crossAxisSpacing: AppSpacing.sm,
+              mainAxisSpacing: AppSpacing.sm,
+            ),
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              final user = users[index];
+              return UserCard(user: user);
+            },
+          );
+        } else {
+          listWidget = ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              final user = users[index];
+              return Column(
+                children: [
+                  UserCard(user: user),
+                  Divider(
+                    height: 1,
+                    color: customColors.dividerColor,
+                  ),
+                ],
+              );
+            },
+          );
+        }
+
+        return CustomRefreshIndicator(
+          onRefresh: () async {
+            await _followingService.fetchFollowingUsers(forceUpdate: true);
+          },
+          builder: customRefreshBuilder,
+          child: listWidget,
         );
       },
-    );
-
-    return CustomRefreshIndicator(
-      onRefresh: () async {
-        await _followingService.fetchFollowingUsers(forceUpdate: true);
-      },
-      builder: customRefreshBuilder,
-      child: listView,
     );
   }
 

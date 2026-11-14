@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
@@ -184,8 +186,8 @@ class TitleChipContent extends TitleCard {
               Theme.of(context).extension<CustomColors>()!.chipCardBackground,
           margin: const EdgeInsets.symmetric(horizontal: 4.0),
           clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          shape: const RoundedRectangleBorder(
+            borderRadius: AppRadius.chip,
           ),
           child: InkWell(
             onTap: () async {
@@ -196,11 +198,16 @@ class TitleChipContent extends TitleCard {
               fit: StackFit.expand,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AppRadius.chip,
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      titlePoster(_title.posterPath),
+                      titlePoster(
+                        _title.posterPath,
+                        fallbackType: _title.isMovie
+                            ? PosterFallbackType.movie
+                            : PosterFallbackType.tvShow,
+                      ),
                       posterOverlay(context),
                     ],
                   ),
@@ -213,7 +220,7 @@ class TitleChipContent extends TitleCard {
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.5),
                       borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(8),
+                        bottomLeft: AppRadius.radiusSm,
                       ),
                     ),
                     child: watchlistButton(context, _title),
@@ -225,15 +232,15 @@ class TitleChipContent extends TitleCard {
                   right: 0,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(12),
-                      bottomRight: Radius.circular(12),
+                      bottomLeft: AppRadius.radiusMd,
+                      bottomRight: AppRadius.radiusMd,
                     ),
                     child: Container(
                       color: Theme.of(context)
                           .extension<CustomColors>()!
                           .chipCardBackground
                           .withValues(alpha: 0.95),
-                      padding: const EdgeInsets.all(8.0),
+                      padding: AppSpacing.edgeInsetsAllSm,
                       child: titleDetails(context, _title),
                     ),
                   ),

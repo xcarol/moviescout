@@ -20,7 +20,9 @@ Widget watchlistButton(
           bool isLoggedIn = authService.isLoggedIn;
           if (!isLoggedIn) {
             return IconButton(
-              icon: const Icon(Icons.highlight_off),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              icon: const Icon(Icons.highlight_off, size: 20),
               onPressed: () {
                 SnackMessage.showSnackBar(
                     AppLocalizations.of(context)!.signInToWatchlist);
@@ -31,10 +33,12 @@ Widget watchlistButton(
           bool isInWatchlist = snapshot.data ?? false;
 
           return IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
             color: isInWatchlist
                 ? Theme.of(context).extension<CustomColors>()!.inWatchlist
                 : Theme.of(context).extension<CustomColors>()!.notInWatchlist,
-            icon: Icon(Icons.remove_red_eye),
+            icon: const Icon(Icons.remove_red_eye, size: 20),
             onPressed: () {
               try {
                 watchlistService.updateWatchlistTitle(

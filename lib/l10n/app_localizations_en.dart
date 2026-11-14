@@ -61,16 +61,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectLanguage => 'Select the language';
 
   @override
-  String get messageEmptyList => 'No films slected yet.';
-
-  @override
-  String get messageEmptySearch =>
-      'You can do a search by using the magnifying glass in the bottom bar.';
-
-  @override
-  String get messageEmptyOptions => 'You can also';
-
-  @override
   String get messageEmptyLogin => 'Sign in to MovieScout';
 
   @override
@@ -508,7 +498,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rate => 'Rate';
 
   @override
-  String get watchOn => 'Watch on';
+  String get watchOn => 'More information';
 
   @override
   String get status => 'Status';
@@ -569,9 +559,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aiKeyCleared => 'API key deleted';
-
-  @override
-  String get aiStatusConfigured => 'API key configured';
 
   @override
   String get aiStatusNotConfigured => 'API key not configured';
@@ -1212,4 +1199,40 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noProvidersSelectedPrompt =>
       'Select your platforms to see only titles available now.';
+
+  @override
+  String get emptyWatchlistTitle => 'Your watchlist is empty';
+
+  @override
+  String get emptyWatchlistMessage =>
+      'Save the movies and TV shows you want to watch later.';
+
+  @override
+  String get emptyWatchlistGuestMessage =>
+      'Sign in to save your watchlist and sync it across all your devices.';
+
+  @override
+  String get emptySearchTitle => 'No results found';
+
+  @override
+  String get emptySearchMessage =>
+      'No titles or people matched your search. Check for typos or try different keywords.';
+
+  @override
+  String get emptyDiscoveryTitle => 'No titles found';
+
+  @override
+  String get emptyDiscoveryMessage =>
+      'No titles match all the selected filters. Try adjusting or clearing some filters.';
+
+  @override
+  String get emptyRatesMessage =>
+      'Rate the movies and TV shows you\'ve watched to remember what you thought of them and get better recommendations.';
+
+  @override
+  String get emptyFollowingGuestTitle => 'Connect with the community';
+
+  @override
+  String get emptyFollowingGuestMessage =>
+      'Sign in to follow other users, discover what they watch, and share ratings.';
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 
 class SettingsInfoItem {
   final IconData icon;
@@ -44,7 +46,7 @@ class SettingsInfoSheet extends StatelessWidget {
       isScrollControlled: true,
       showDragHandle: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
+        borderRadius: AppRadius.bottomSheet,
       ),
       builder: (context) => SettingsInfoSheet(
         headerIcon: headerIcon,
@@ -52,7 +54,9 @@ class SettingsInfoSheet extends StatelessWidget {
         subtitle: subtitle,
         items: items,
         note: note,
-        closeButtonLabel: closeButtonLabel ?? 'Entesos',
+        closeButtonLabel: closeButtonLabel ??
+            AppLocalizations.of(context)?.understood ??
+            'OK',
       ),
     );
   }

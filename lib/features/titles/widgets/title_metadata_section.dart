@@ -361,7 +361,7 @@ class TitleMetadataSection extends StatelessWidget {
             fit: BoxFit.cover,
             errorWidget: (context, error, stackTrace) {
               return Image.asset(
-                'assets/movie.png',
+                'assets/provider-placeholder.png',
                 fit: BoxFit.cover,
               );
             },

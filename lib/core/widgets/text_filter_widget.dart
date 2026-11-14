@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/core/theme/title_list_theme.dart';
 
 class TextFilterWidget extends StatelessWidget {
@@ -18,7 +20,7 @@ class TextFilterWidget extends StatelessWidget {
     required this.onChanged,
     this.onCleared,
     this.height = 26,
-    this.contentPadding = const EdgeInsets.symmetric(horizontal: 5),
+    this.contentPadding = AppSpacing.edgeInsetsHSm,
   });
 
   @override
@@ -55,17 +57,17 @@ class TextFilterWidget extends StatelessWidget {
                 suffixIconColor: titleTheme.controlPanelForeground,
                 contentPadding: contentPadding,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: AppRadius.borderSm,
                   borderSide:
                       BorderSide(color: titleTheme.controlPanelForeground),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: AppRadius.borderSm,
                   borderSide:
                       BorderSide(color: titleTheme.controlPanelForeground),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: AppRadius.borderSm,
                   borderSide:
                       BorderSide(color: titleTheme.controlPanelForeground),
                 ),

@@ -61,16 +61,6 @@ class AppLocalizationsEu extends AppLocalizations {
   String get selectLanguage => 'Hautatu hizkuntza';
 
   @override
-  String get messageEmptyList => 'Oraindik ez da filma hautatu.';
-
-  @override
-  String get messageEmptySearch =>
-      'Bilaketa bat egin dezakezu beheko barran dagoen lupa erabiliz.';
-
-  @override
-  String get messageEmptyOptions => 'Zuk ere egin dezakezu';
-
-  @override
   String get messageEmptyLogin => 'Hasi saioa MovieScout-en';
 
   @override
@@ -508,7 +498,7 @@ class AppLocalizationsEu extends AppLocalizations {
   String get rate => 'Tarifa';
 
   @override
-  String get watchOn => 'Ikusi';
+  String get watchOn => 'Informazio gehiago';
 
   @override
   String get status => 'Estatua';
@@ -569,9 +559,6 @@ class AppLocalizationsEu extends AppLocalizations {
 
   @override
   String get aiKeyCleared => 'Kendu da API gakoa';
-
-  @override
-  String get aiStatusConfigured => 'Konfiguratutako API gakoa';
 
   @override
   String get aiStatusNotConfigured => 'API gakoa ez dago konfiguratuta';
@@ -1216,4 +1203,40 @@ class AppLocalizationsEu extends AppLocalizations {
   @override
   String get noProvidersSelectedPrompt =>
       'Hautatu zure plataformak orain eskuragarri dauden izenburuak soilik ikusteko.';
+
+  @override
+  String get emptyWatchlistTitle => 'Zure zerrenda hutsik dago';
+
+  @override
+  String get emptyWatchlistMessage =>
+      'Gorde geroago ikusi nahi dituzun film eta telesailak eskura izateko.';
+
+  @override
+  String get emptyWatchlistGuestMessage =>
+      'Hasi saioa zure zerrenda gorde eta gailu guztietan sinkronizatzeko.';
+
+  @override
+  String get emptySearchTitle => 'Emaitzarik ez';
+
+  @override
+  String get emptySearchMessage =>
+      'Ez da bat datorren izenburu edo pertsonarik aurkitu. Egiaztatu ortografia edo probatu beste hitz batzuekin.';
+
+  @override
+  String get emptyDiscoveryTitle => 'Ez da izenbururik aurkitu';
+
+  @override
+  String get emptyDiscoveryMessage =>
+      'Ez dago hautatutako iragazki guztiak betetzen dituen izenbururik. Saiatu iragazkiak aldatzen edo kentzen.';
+
+  @override
+  String get emptyRatesMessage =>
+      'Baloratu ikusitako film eta telesailak zer iruditu zaizkizun gogoratzeko eta gomendio hobeak jasotzeko.';
+
+  @override
+  String get emptyFollowingGuestTitle => 'Konektatu komunitatearekin';
+
+  @override
+  String get emptyFollowingGuestMessage =>
+      'Hasi saioa beste erabiltzaile batzuei jarraitzeko, zer ikusten duten ikusteko eta balorazioak partekatzeko.';
 }

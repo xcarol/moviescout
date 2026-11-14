@@ -29,7 +29,12 @@ class PersonTitleCard extends TitleCard {
             },
             child: Row(
               children: [
-                titlePoster(_title.posterPath),
+                titlePoster(
+                  _title.posterPath,
+                  fallbackType: _title.isMovie
+                      ? PosterFallbackType.movie
+                      : PosterFallbackType.tvShow,
+                ),
                 const SizedBox(width: 10),
                 _personTitleDetails(context, _title),
               ],

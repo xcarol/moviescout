@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/features/people/widgets/person_card.dart';
 import 'package:moviescout/features/people/widgets/person_chip.dart';
@@ -56,60 +58,104 @@ class _PersonListState extends SearchableListState<PersonList> {
     super.dispose();
   }
 
-  Widget _buildListView() {
-    return ListView.builder(
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      controller: _controller.scrollController,
-      itemCount: widget.personListService.loadedItemCount,
-      itemBuilder: (context, index) {
-        return Builder(
-          builder: (innerContext) {
-            final person = widget.personListService.getItem(index);
-            if (person == null) return const SizedBox.shrink();
+  Widget _buildPersonCard(
+    BuildContext context,
+    dynamic person, {
+    required bool showDivider,
+  }) {
+    if (person == null) return const SizedBox.shrink();
 
-            final titleTheme = Theme.of(context).extension<CustomColors>()!;
+    final titleTheme = Theme.of(context).extension<CustomColors>()!;
 
-            final mediaQuery = MediaQuery.of(innerContext);
+    return Builder(
+      builder: (innerContext) {
+        final mediaQuery = MediaQuery.of(innerContext);
+        final card = MediaQuery(
+          data: mediaQuery.copyWith(
+            textScaler:
+                TextScaler.linear(UiUtils.clampedTextScale(innerContext)),
+          ),
+          child: PersonCard(
+            person: person,
+            tmdbListService: widget.titleListService,
+            titleContext: widget.titleContext,
+            seasonContext: widget.seasonContext,
+            episodeContext: widget.episodeContext,
+          ),
+        );
 
-            return MediaQuery(
-              data: mediaQuery.copyWith(
-                textScaler: TextScaler.linear(
-                    UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
-              ),
-              child: Column(
-                children: [
-                  PersonCard(
-                    person: person,
-                    tmdbListService: widget.titleListService,
-                    titleContext: widget.titleContext,
-                    seasonContext: widget.seasonContext,
-                    episodeContext: widget.episodeContext,
-                  ),
-                  Divider(
-                    height: 1,
-                    color: titleTheme.dividerColor,
-                  ),
-                ],
-              ),
-            );
-          },
+        if (!showDivider) return card;
+
+        return Column(
+          children: [
+            card,
+            Divider(
+              height: 1,
+              color: titleTheme.dividerColor,
+            ),
+          ],
         );
       },
     );
   }
 
-  Widget _buildGridView() {
+  Widget _buildCardsView(bool isWide) {
+    if (isWide) {
+      return GridView.builder(
+        key: const PageStorageKey('PersonCardsGridView'),
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        controller: _controller.scrollController,
+        itemCount: widget.personListService.loadedItemCount,
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.sm,
+          AppSpacing.sm,
+          AppSpacing.sm,
+          AppSpacing.lg,
+        ),
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: AppBreakpoints.maxGridCrossAxisExtent,
+          mainAxisExtent: PersonCard.cardHeight,
+          crossAxisSpacing: AppSpacing.sm,
+          mainAxisSpacing: AppSpacing.sm,
+        ),
+        itemBuilder: (context, index) {
+          final person = widget.personListService.getItem(index);
+          return _buildPersonCard(context, person, showDivider: false);
+        },
+      );
+    }
+
+    return ListView.builder(
+      key: const PageStorageKey('PersonCardsListView'),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      controller: _controller.scrollController,
+      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+      itemCount: widget.personListService.loadedItemCount,
+      itemBuilder: (context, index) {
+        final person = widget.personListService.getItem(index);
+        return _buildPersonCard(context, person, showDivider: true);
+      },
+    );
+  }
+
+  Widget _buildChipsView() {
     return GridView.builder(
+      key: const PageStorageKey('PersonChipsGridView'),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       controller: _controller.scrollController,
       itemCount: widget.personListService.loadedItemCount,
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 140.0,
         childAspectRatio: CARD_WIDTH / CARD_HEIGHT,
-        crossAxisSpacing: 8.0,
-        mainAxisSpacing: 8.0,
+        crossAxisSpacing: AppSpacing.sm,
+        mainAxisSpacing: AppSpacing.sm,
       ),
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.sm,
+        AppSpacing.sm,
+        AppSpacing.sm,
+        AppSpacing.lg,
+      ),
       itemBuilder: (context, index) {
         return Builder(
           builder: (innerContext) {
@@ -120,8 +166,8 @@ class _PersonListState extends SearchableListState<PersonList> {
 
             return MediaQuery(
               data: mediaQuery.copyWith(
-                textScaler: TextScaler.linear(
-                    UiUtils.scaleFactor(innerContext, 1.0, 1.0, 1.3)),
+                textScaler:
+                    TextScaler.linear(UiUtils.clampedTextScale(innerContext)),
               ),
               child: PersonChip(
                 person: person,
@@ -138,15 +184,24 @@ class _PersonListState extends SearchableListState<PersonList> {
   }
 
   Widget _personList() {
-    return NotificationListener<ScrollNotification>(
-      onNotification: (scrollInfo) {
-        _controller.onScrollNotification(scrollInfo);
-        return false;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide =
+            constraints.maxWidth > AppBreakpoints.largeScreenMinWidth;
+
+        return NotificationListener<ScrollNotification>(
+          onNotification: (scrollInfo) {
+            _controller.onScrollNotification(scrollInfo);
+            return false;
+          },
+          child: Scrollbar(
+            controller: _controller.scrollController,
+            child: _controller.isGridView
+                ? _buildChipsView()
+                : _buildCardsView(isWide),
+          ),
+        );
       },
-      child: Scrollbar(
-        controller: _controller.scrollController,
-        child: _controller.isGridView ? _buildGridView() : _buildListView(),
-      ),
     );
   }
 

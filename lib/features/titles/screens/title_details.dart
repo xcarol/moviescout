@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/titles/repositories/local_title_repository.dart';
 import 'package:moviescout/core/services/omdb_service.dart';
@@ -168,7 +169,13 @@ class _TitleDetailsState extends State<TitleDetails> {
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
-        child: _detailsBody(_currentTitle),
+        child: Center(
+          child: ConstrainedBox(
+            constraints:
+                const BoxConstraints(maxWidth: AppBreakpoints.maxContentWidth),
+            child: _detailsBody(_currentTitle),
+          ),
+        ),
       ),
     );
   }

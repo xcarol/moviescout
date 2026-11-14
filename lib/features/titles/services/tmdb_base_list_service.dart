@@ -32,7 +32,7 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
   @protected
   int pageVal = 0;
   @protected
-  final int pageSizeVal = 10;
+  int get pageSizeVal => 20;
 
   @protected
   bool anyFilterApplied = false;
@@ -282,6 +282,6 @@ abstract class TmdbBaseListService<T> extends TmdbBaseService
   void setSort(String sort, bool ascending) {
     selectedSort = sort;
     isSortAsc = computeSortDirection(sort, ascending);
-    filterItems();
+    filterItems(retainPagination: true);
   }
 }

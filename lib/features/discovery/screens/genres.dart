@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 
@@ -40,102 +41,111 @@ class _GenresScreenState extends State<GenresScreen> {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.genres),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SegmentedButton<bool>(
-                  segments: [
-                    ButtonSegment<bool>(
-                      value: false,
-                      label: Text(AppLocalizations.of(context)!.includeGenres),
-                      icon: const Icon(Icons.check_circle_outline),
-                    ),
-                    ButtonSegment<bool>(
-                      value: true,
-                      label: Text(AppLocalizations.of(context)!.excludeGenres),
-                      icon: const Icon(Icons.block),
-                    ),
-                  ],
-                  selected: {_tempExcludeGenres},
-                  onSelectionChanged: (Set<bool> newSelection) {
-                    setState(() {
-                      _tempExcludeGenres = newSelection.first;
-                    });
-                    widget.onGenresChanged(
-                        _tempSelectedGenres, _tempExcludeGenres);
-                  },
-                ),
-                const SizedBox(width: 8),
-                SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: IconButton.outlined(
-                    padding: EdgeInsets.zero,
-                    style: IconButton.styleFrom(
-                      side: BorderSide(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
-                    icon: Icon(
-                      size: 18,
-                      hasFilters ? Icons.filter_alt_off : Icons.filter_alt,
-                      color: hasFilters
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).disabledColor,
-                    ),
-                    tooltip: AppLocalizations.of(context)!.none,
-                    onPressed: hasFilters
-                        ? () {
-                            setState(() {
-                              _tempSelectedGenres.clear();
-                            });
-                            widget.onGenresChanged(
-                                _tempSelectedGenres, _tempExcludeGenres);
-                          }
-                        : null,
-                  ),
-                ),
-              ],
-            ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppBreakpoints.maxContentWidth,
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: widget.genresList.length,
-              itemBuilder: (context, index) {
-                final genre = widget.genresList[index];
-                final isSelected = _tempSelectedGenres.contains(genre);
-
-                return Column(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SwitchListTile(
-                      title: Text(genre),
-                      value: isSelected,
-                      onChanged: (bool value) {
+                    SegmentedButton<bool>(
+                      segments: [
+                        ButtonSegment<bool>(
+                          value: false,
+                          label:
+                              Text(AppLocalizations.of(context)!.includeGenres),
+                          icon: const Icon(Icons.check_circle_outline),
+                        ),
+                        ButtonSegment<bool>(
+                          value: true,
+                          label:
+                              Text(AppLocalizations.of(context)!.excludeGenres),
+                          icon: const Icon(Icons.block),
+                        ),
+                      ],
+                      selected: {_tempExcludeGenres},
+                      onSelectionChanged: (Set<bool> newSelection) {
                         setState(() {
-                          if (value) {
-                            _tempSelectedGenres.add(genre);
-                          } else {
-                            _tempSelectedGenres.remove(genre);
-                          }
+                          _tempExcludeGenres = newSelection.first;
                         });
                         widget.onGenresChanged(
                             _tempSelectedGenres, _tempExcludeGenres);
                       },
                     ),
-                    Divider(
-                      height: 1,
-                      color: customColors!.dividerColor,
+                    const SizedBox(width: 8),
+                    SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: IconButton.outlined(
+                        padding: EdgeInsets.zero,
+                        style: IconButton.styleFrom(
+                          side: BorderSide(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                        ),
+                        icon: Icon(
+                          size: 18,
+                          hasFilters ? Icons.filter_alt_off : Icons.filter_alt,
+                          color: hasFilters
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).disabledColor,
+                        ),
+                        tooltip: AppLocalizations.of(context)!.none,
+                        onPressed: hasFilters
+                            ? () {
+                                setState(() {
+                                  _tempSelectedGenres.clear();
+                                });
+                                widget.onGenresChanged(
+                                    _tempSelectedGenres, _tempExcludeGenres);
+                              }
+                            : null,
+                      ),
                     ),
                   ],
-                );
-              },
-            ),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: widget.genresList.length,
+                  itemBuilder: (context, index) {
+                    final genre = widget.genresList[index];
+                    final isSelected = _tempSelectedGenres.contains(genre);
+
+                    return Column(
+                      children: [
+                        SwitchListTile(
+                          title: Text(genre),
+                          value: isSelected,
+                          onChanged: (bool value) {
+                            setState(() {
+                              if (value) {
+                                _tempSelectedGenres.add(genre);
+                              } else {
+                                _tempSelectedGenres.remove(genre);
+                              }
+                            });
+                            widget.onGenresChanged(
+                                _tempSelectedGenres, _tempExcludeGenres);
+                          },
+                        ),
+                        Divider(
+                          height: 1,
+                          color: customColors!.dividerColor,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

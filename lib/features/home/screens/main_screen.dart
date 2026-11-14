@@ -4,6 +4,7 @@ import "package:moviescout/features/auth/services/supabase_auth_service.dart";
 import 'package:moviescout/core/services/app_service.dart';
 import 'package:moviescout/features/discovery/services/discover_promotion_manager.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/features/discovery/screens/discover_list.dart';
 import 'package:moviescout/features/watchlist/screens/following_list.dart';
 import 'package:moviescout/features/watchlist/screens/rates_list.dart';
@@ -107,142 +108,273 @@ class _MainScreenState extends State<MainScreen> {
 
     final defaultIndex = _getDefaultIndex(activeTabs);
 
-    return DoubleBackExitWrapper(
-      onPopHandled: () {
-        if (_currentIndex != defaultIndex) {
-          setState(() {
-            _currentIndex = defaultIndex;
-          });
-          return true;
-        }
-        return false;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: customColors.appBarText),
-          title: Text(
-            _getTitleForTab(activeTabs[_currentIndex], context),
-            style: TextStyle(color: customColors.appBarText),
-          ),
-          backgroundColor: customColors.appBarBackground,
-          actions: [
-            if (activeTabs[_currentIndex] == _NavTab.following &&
-                authService.isLoggedIn &&
-                authService.isPublicProfile)
-              IconButton(
-                icon: const Icon(Icons.search),
-                tooltip: AppLocalizations.of(context)!.searchUsers,
-                onPressed: () {
-                  final followingService =
-                      Provider.of<UserFollowingService>(context, listen: false);
-                  final loc = AppLocalizations.of(context)!;
-                  showSearch(
-                    context: context,
-                    delegate: UserSearchDelegate(
-                      followingService,
-                      searchFieldLabel: loc.searchUsersPlaceholder,
-                    ),
-                  );
-                },
-              ),
-          ],
-        ),
-        drawer: const AppDrawer(),
-        body: Column(children: [
-          Expanded(
-            child: IndexedStack(
-              index: _currentIndex,
-              children: activeTabs.map((tab) {
-                switch (tab) {
-                  case _NavTab.watchlist:
-                    return WatchList(
-                      onExploreDiscover: () {
-                        final discoverIndex =
-                            activeTabs.indexOf(_NavTab.discover);
-                        if (discoverIndex >= 0) {
-                          setState(() {
-                            _currentIndex = discoverIndex;
-                          });
-                          _clearDiscoverBadge();
-                        }
-                      },
-                    );
-                  case _NavTab.rateslist:
-                    return const RatesList();
-                  case _NavTab.discover:
-                    return DiscoverList(
-                      isActive: activeTabs[_currentIndex] == _NavTab.discover,
-                    );
-                  case _NavTab.following:
-                    return const FollowingList();
-                  case _NavTab.search:
-                    return const Search();
-                }
-              }).toList(),
-            ),
-          ),
-        ]),
-        bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor: customColors.navigationBarSelected,
-          unselectedItemColor: customColors.navigationBarNotSelected,
-          currentIndex: _currentIndex,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          onTap: (newIndex) {
-            setState(() {
-              _currentIndex = newIndex;
-            });
-            if (activeTabs[newIndex] == _NavTab.discover) {
-              _clearDiscoverBadge();
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isLargeScreen =
+            constraints.maxWidth > AppBreakpoints.largeScreenMinWidth;
+
+        return DoubleBackExitWrapper(
+          onPopHandled: () {
+            if (_currentIndex != defaultIndex) {
+              setState(() {
+                _currentIndex = defaultIndex;
+              });
+              return true;
             }
+            return false;
           },
-          items: activeTabs.map((tab) {
-            switch (tab) {
-              case _NavTab.watchlist:
-                return BottomNavigationBarItem(
-                  icon: const Icon(Icons.remove_red_eye),
-                  label: '',
-                  tooltip: AppLocalizations.of(context)!.watchlistTitle,
-                  backgroundColor: customColors.bottomNavigationBarBackground,
-                );
-              case _NavTab.rateslist:
-                return BottomNavigationBarItem(
-                  icon: const Icon(Icons.rate_review),
-                  label: '',
-                  tooltip: AppLocalizations.of(context)!.rateslistTitle,
-                  backgroundColor: customColors.bottomNavigationBarBackground,
-                );
-              case _NavTab.discover:
-                return BottomNavigationBarItem(
-                  icon: Badge(
-                    isLabelVisible: _showDiscoverBadge,
-                    backgroundColor: customColors.badgeColor,
-                    smallSize: 8,
-                    child: const Icon(Symbols.wand_stars),
-                  ),
-                  label: '',
-                  tooltip: AppLocalizations.of(context)!.discoverlistTitle,
-                  backgroundColor: customColors.bottomNavigationBarBackground,
-                );
-              case _NavTab.following:
-                return BottomNavigationBarItem(
-                  icon: const Icon(Icons.people_alt_outlined),
-                  label: '',
-                  tooltip: AppLocalizations.of(context)!.followingTab,
-                  backgroundColor: customColors.bottomNavigationBarBackground,
-                );
-              case _NavTab.search:
-                return BottomNavigationBarItem(
-                  icon: const Icon(Icons.search),
-                  label: '',
-                  tooltip: AppLocalizations.of(context)!.searchTitle,
-                  backgroundColor: customColors.bottomNavigationBarBackground,
-                );
-            }
-          }).toList(),
-        ),
-      ),
+          child: Scaffold(
+            appBar: _buildAppBar(
+              context,
+              activeTabs[_currentIndex],
+              authService,
+            ),
+            drawer: const AppDrawer(),
+            body: SafeArea(
+              top: false,
+              bottom: isLargeScreen,
+              child: _buildBody(isLargeScreen, activeTabs, customColors),
+            ),
+            bottomNavigationBar: isLargeScreen
+                ? null
+                : _buildBottomNavigationBar(activeTabs, customColors),
+          ),
+        );
+      },
     );
+  }
+
+  void _onTabSelected(int newIndex) {
+    setState(() {
+      _currentIndex = newIndex;
+    });
+    final activeTabs = _getActiveTabs(
+        Provider.of<AppService>(context, listen: false).showCommunityTab);
+    if (newIndex < activeTabs.length &&
+        activeTabs[newIndex] == _NavTab.discover) {
+      _clearDiscoverBadge();
+    }
+  }
+
+  AppBar _buildAppBar(
+    BuildContext context,
+    _NavTab currentTab,
+    SupabaseAuthService authService,
+  ) {
+    return AppBar(
+      title: Text(_getTitleForTab(currentTab, context)),
+      actions: [
+        if (currentTab == _NavTab.following &&
+            authService.isLoggedIn &&
+            authService.isPublicProfile)
+          IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: AppLocalizations.of(context)!.searchUsers,
+            onPressed: () {
+              final followingService =
+                  Provider.of<UserFollowingService>(context, listen: false);
+              final loc = AppLocalizations.of(context)!;
+              showSearch(
+                context: context,
+                delegate: UserSearchDelegate(
+                  followingService,
+                  searchFieldLabel: loc.searchUsersPlaceholder,
+                ),
+              );
+            },
+          ),
+      ],
+    );
+  }
+
+  Widget _buildBody(
+    bool isLargeScreen,
+    List<_NavTab> activeTabs,
+    CustomColors customColors,
+  ) {
+    final indexedStack = _buildIndexedStack(activeTabs);
+    if (isLargeScreen) {
+      return Row(
+        children: [
+          _buildNavigationRail(activeTabs, customColors),
+          const VerticalDivider(width: 1, thickness: 1),
+          Expanded(child: indexedStack),
+        ],
+      );
+    }
+    return Column(
+      children: [
+        Expanded(child: indexedStack),
+      ],
+    );
+  }
+
+  Widget _buildNavigationRail(
+    List<_NavTab> activeTabs,
+    CustomColors customColors,
+  ) {
+    return NavigationRail(
+      backgroundColor: customColors.bottomNavigationBarBackground,
+      selectedIndex: _currentIndex,
+      labelType: NavigationRailLabelType.all,
+      useIndicator: true,
+      indicatorColor: customColors.navigationBarSelected.withValues(alpha: 0.2),
+      selectedIconTheme: IconThemeData(
+        color: customColors.navigationBarSelected,
+      ),
+      unselectedIconTheme: IconThemeData(
+        color: customColors.navigationBarNotSelected,
+      ),
+      selectedLabelTextStyle: TextStyle(
+        color: customColors.navigationBarSelected,
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+      ),
+      unselectedLabelTextStyle: TextStyle(
+        color: customColors.navigationBarNotSelected,
+        fontSize: 12,
+      ),
+      onDestinationSelected: _onTabSelected,
+      destinations: activeTabs
+          .map((tab) => _buildRailDestination(tab, context, customColors))
+          .toList(),
+    );
+  }
+
+  Widget _buildIndexedStack(List<_NavTab> activeTabs) {
+    return IndexedStack(
+      index: _currentIndex,
+      children: activeTabs.map((tab) {
+        switch (tab) {
+          case _NavTab.watchlist:
+            return WatchList(
+              onExploreDiscover: () {
+                final discoverIndex = activeTabs.indexOf(_NavTab.discover);
+                if (discoverIndex >= 0) {
+                  _onTabSelected(discoverIndex);
+                }
+              },
+            );
+          case _NavTab.rateslist:
+            return const RatesList();
+          case _NavTab.discover:
+            return DiscoverList(
+              isActive: activeTabs[_currentIndex] == _NavTab.discover,
+            );
+          case _NavTab.following:
+            return const FollowingList();
+          case _NavTab.search:
+            return const Search();
+        }
+      }).toList(),
+    );
+  }
+
+  BottomNavigationBar _buildBottomNavigationBar(
+    List<_NavTab> activeTabs,
+    CustomColors customColors,
+  ) {
+    return BottomNavigationBar(
+      selectedItemColor: customColors.navigationBarSelected,
+      unselectedItemColor: customColors.navigationBarNotSelected,
+      currentIndex: _currentIndex,
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+      onTap: _onTabSelected,
+      items: activeTabs
+          .map((tab) => _buildBottomNavItem(tab, context, customColors))
+          .toList(),
+    );
+  }
+
+  BottomNavigationBarItem _buildBottomNavItem(
+    _NavTab tab,
+    BuildContext context,
+    CustomColors customColors,
+  ) {
+    final title = _getTitleForTab(tab, context);
+    switch (tab) {
+      case _NavTab.watchlist:
+        return BottomNavigationBarItem(
+          icon: const Icon(Icons.remove_red_eye),
+          label: '',
+          tooltip: title,
+          backgroundColor: customColors.bottomNavigationBarBackground,
+        );
+      case _NavTab.rateslist:
+        return BottomNavigationBarItem(
+          icon: const Icon(Icons.rate_review),
+          label: '',
+          tooltip: title,
+          backgroundColor: customColors.bottomNavigationBarBackground,
+        );
+      case _NavTab.discover:
+        return BottomNavigationBarItem(
+          icon: Badge(
+            isLabelVisible: _showDiscoverBadge,
+            backgroundColor: customColors.badgeColor,
+            smallSize: 8,
+            child: const Icon(Symbols.wand_stars),
+          ),
+          label: '',
+          tooltip: title,
+          backgroundColor: customColors.bottomNavigationBarBackground,
+        );
+      case _NavTab.following:
+        return BottomNavigationBarItem(
+          icon: const Icon(Icons.people_alt_outlined),
+          label: '',
+          tooltip: title,
+          backgroundColor: customColors.bottomNavigationBarBackground,
+        );
+      case _NavTab.search:
+        return BottomNavigationBarItem(
+          icon: const Icon(Icons.search),
+          label: '',
+          tooltip: title,
+          backgroundColor: customColors.bottomNavigationBarBackground,
+        );
+    }
+  }
+
+  NavigationRailDestination _buildRailDestination(
+    _NavTab tab,
+    BuildContext context,
+    CustomColors customColors,
+  ) {
+    final title = _getTitleForTab(tab, context);
+    switch (tab) {
+      case _NavTab.watchlist:
+        return NavigationRailDestination(
+          icon: const Icon(Icons.remove_red_eye),
+          label: Text(title),
+        );
+      case _NavTab.rateslist:
+        return NavigationRailDestination(
+          icon: const Icon(Icons.rate_review),
+          label: Text(title),
+        );
+      case _NavTab.discover:
+        return NavigationRailDestination(
+          icon: Badge(
+            isLabelVisible: _showDiscoverBadge,
+            backgroundColor: customColors.badgeColor,
+            smallSize: 8,
+            child: const Icon(Symbols.wand_stars),
+          ),
+          label: Text(title),
+        );
+      case _NavTab.following:
+        return NavigationRailDestination(
+          icon: const Icon(Icons.people_alt_outlined),
+          label: Text(title),
+        );
+      case _NavTab.search:
+        return NavigationRailDestination(
+          icon: const Icon(Icons.search),
+          label: Text(title),
+        );
+    }
   }
 
   String _getTitleForTab(_NavTab tab, BuildContext context) {

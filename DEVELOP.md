@@ -253,7 +253,7 @@ Once you have completed the Google Cloud and Supabase configuration, ensure your
 
 ## Assets
 
-Images like tvshow_poster.png are created with [Cool Text](https://cooltext.com/) tool using [FUN](https://cooltext.com/Logo-Design-Fun) text style.  
+Images like tvshow-poster.png are created with [Cool Text](https://cooltext.com/) tool using [FUN](https://cooltext.com/Logo-Design-Fun) text style.  
 
 ## Flutter tool box
 

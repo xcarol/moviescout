@@ -63,16 +63,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get selectLanguage => 'Sprache auswählen';
 
   @override
-  String get messageEmptyList => 'Noch keine Filme ausgewählt.';
-
-  @override
-  String get messageEmptySearch =>
-      'Du kannst mit der Lupe in der unteren Leiste suchen.';
-
-  @override
-  String get messageEmptyOptions => 'Du kannst auch';
-
-  @override
   String get messageEmptyLogin => 'Bei MovieScout anmelden';
 
   @override
@@ -511,7 +501,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rate => 'Bewerten';
 
   @override
-  String get watchOn => 'Ansehen auf';
+  String get watchOn => 'Weitere Informationen';
 
   @override
   String get status => 'Status';
@@ -572,9 +562,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get aiKeyCleared => 'API-Schlüssel gelöscht';
-
-  @override
-  String get aiStatusConfigured => 'API-Schlüssel konfiguriert';
 
   @override
   String get aiStatusNotConfigured => 'API-Schlüssel nicht konfiguriert';
@@ -1220,4 +1207,40 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get noProvidersSelectedPrompt =>
       'Wähle deine Plattformen aus, um nur aktuell verfügbare Titel zu sehen.';
+
+  @override
+  String get emptyWatchlistTitle => 'Deine Merkliste ist leer';
+
+  @override
+  String get emptyWatchlistMessage =>
+      'Speichere Filme und Serien, die du später ansehen möchtest.';
+
+  @override
+  String get emptyWatchlistGuestMessage =>
+      'Melde dich an, um deine Merkliste zu speichern und auf allen Geräten zu synchronisieren.';
+
+  @override
+  String get emptySearchTitle => 'Keine Ergebnisse';
+
+  @override
+  String get emptySearchMessage =>
+      'Keine passenden Titel oder Personen gefunden. Überprüfe die Schreibweise oder versuche andere Suchbegriffe.';
+
+  @override
+  String get emptyDiscoveryTitle => 'Keine Titel gefunden';
+
+  @override
+  String get emptyDiscoveryMessage =>
+      'Keine Titel entsprechen allen ausgewählten Filtern. Versuche, Filter anzupassen oder zurückzusetzen.';
+
+  @override
+  String get emptyRatesMessage =>
+      'Bewerte gesehene Filme und Serien, um dich an deinen Eindruck zu erinnern und bessere Empfehlungen zu erhalten.';
+
+  @override
+  String get emptyFollowingGuestTitle => 'Verbinde dich mit der Community';
+
+  @override
+  String get emptyFollowingGuestMessage =>
+      'Melde dich an, um anderen Nutzern zu folgen, Entdeckungen zu teilen und Bewertungen auszutauschen.';
 }

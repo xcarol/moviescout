@@ -1,5 +1,6 @@
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/settings/models/tmdb_provider.dart';
 import 'package:moviescout/features/settings/services/tmdb_provider_service.dart';
@@ -82,30 +83,37 @@ class _ProvidersScreenState extends State<ProvidersScreen> {
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.providersTitle),
         ),
-        body: Column(
-          children: [
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              color: Theme.of(context)
-                  .extension<TitleListTheme>()
-                  ?.controlPanelBackground,
-              child: TextFilterWidget(
-                controller: _textFilterController,
-                focusNode: _focusNode,
-                hintText: AppLocalizations.of(context)!.searchProvider,
-                height: 36,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                onChanged: (String value) {
-                  setState(() {
-                    _applyLocalFilter(value);
-                  });
-                },
-              ),
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppBreakpoints.maxContentWidth,
             ),
-            Expanded(child: _body(context, providerService)),
-          ],
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
+                  color: Theme.of(context)
+                      .extension<TitleListTheme>()
+                      ?.controlPanelBackground,
+                  child: TextFilterWidget(
+                    controller: _textFilterController,
+                    focusNode: _focusNode,
+                    hintText: AppLocalizations.of(context)!.searchProvider,
+                    height: 36,
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    onChanged: (String value) {
+                      setState(() {
+                        _applyLocalFilter(value);
+                      });
+                    },
+                  ),
+                ),
+                Expanded(child: _body(context, providerService)),
+              ],
+            ),
+          ),
         ),
       ),
     );

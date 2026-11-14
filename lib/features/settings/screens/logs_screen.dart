@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moviescout/main.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:path_provider/path_provider.dart';
@@ -208,52 +209,62 @@ class _LogsScreenState extends State<LogsScreen>
           ],
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppBreakpoints.maxContentWidth,
+          ),
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: Column(
                   children: [
-                    const Text(
-                      'Última execució:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Última execució:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(_lastBackgroundRunHeader),
+                      ],
                     ),
-                    Text(_lastBackgroundRunHeader),
                   ],
                 ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: _logs.isEmpty
-                ? Center(
-                    child: Text(
-                      'No logs available yet.',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  )
-                : ListView.separated(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.only(
-                        left: 16, right: 16, top: 16, bottom: 80),
-                    itemCount: _logs.length,
-                    separatorBuilder: (context, index) =>
-                        const Divider(height: 32),
-                    itemBuilder: (context, index) {
-                      return SelectableText(
-                        _logs[index],
-                        style: const TextStyle(
-                          fontFamily: 'monospace',
-                          fontSize: 12,
+              ),
+              Expanded(
+                child: _logs.isEmpty
+                    ? Center(
+                        child: Text(
+                          'No logs available yet.',
+                          style: TextStyle(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                         ),
-                      );
-                    },
-                  ),
+                      )
+                    : ListView.separated(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.only(
+                            left: 16, right: 16, top: 16, bottom: 80),
+                        itemCount: _logs.length,
+                        separatorBuilder: (context, index) =>
+                            const Divider(height: 32),
+                        itemBuilder: (context, index) {
+                          return SelectableText(
+                            _logs[index],
+                            style: const TextStyle(
+                              fontFamily: 'monospace',
+                              fontSize: 12,
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

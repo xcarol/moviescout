@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
 
@@ -32,7 +33,9 @@ class UserRateButton extends StatelessWidget {
               : Theme.of(context).colorScheme.onSurfaceVariant,
           width: 2,
         ),
-        shape: const StadiumBorder(),
+        shape: const RoundedRectangleBorder(
+          borderRadius: AppRadius.button,
+        ),
         padding: padding,
         minimumSize: const Size(0, 0),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,

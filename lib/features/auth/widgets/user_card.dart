@@ -1,13 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/auth/models/user_profile.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
+import 'package:moviescout/core/widgets/app_poster_image.dart';
 
 class UserCard extends StatelessWidget {
   final UserProfile user;
 
-  static double cardHeight = 120.0;
+  static const double cardHeight = 120.0;
 
   const UserCard({
     super.key,
@@ -51,32 +51,17 @@ class UserCard extends StatelessWidget {
       child: CircleAvatar(
         radius: 36,
         backgroundColor: colorScheme.surfaceContainerHighest,
-        child: (avatarUrl != null && avatarUrl.isNotEmpty)
-            ? ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: avatarUrl,
-                  width: 72,
-                  height: 72,
-                  fit: BoxFit.cover,
-                  fadeInDuration: Duration.zero,
-                  fadeOutDuration: Duration.zero,
-                  placeholder: (context, url) => Icon(
-                    Icons.person,
-                    size: 36,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                  errorWidget: (context, url, error) => Icon(
-                    Icons.person,
-                    size: 36,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              )
-            : Icon(
-                Icons.person,
-                size: 36,
-                color: colorScheme.onSurfaceVariant,
-              ),
+        child: ClipOval(
+          child: AppPosterImage(
+            imageUrl: avatarUrl,
+            fallbackType: PosterFallbackType.user,
+            aspectRatio: 1.0,
+            fit: BoxFit.cover,
+            fallbackFit: BoxFit.cover,
+            memCacheWidth: 144,
+            memCacheHeight: 144,
+          ),
+        ),
       ),
     );
   }
@@ -95,10 +80,9 @@ class UserCard extends StatelessWidget {
           children: [
             Text(
               user.username.isNotEmpty ? user.username : 'Anonymous',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -115,10 +99,9 @@ class UserCard extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(
                     loc.settingsProfilePrivate,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                   ),
                 ],
               ),

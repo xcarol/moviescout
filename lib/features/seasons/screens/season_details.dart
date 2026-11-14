@@ -3,6 +3,8 @@ import 'package:moviescout/core/utils/api_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
+import 'package:moviescout/core/widgets/app_error_view.dart';
 import 'package:moviescout/features/seasons/models/tmdb_season.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
@@ -39,6 +41,7 @@ class SeasonDetails extends StatefulWidget {
 
 class _SeasonDetailsState extends State<SeasonDetails> {
   final Map<int, TmdbSeason> _loadedSeasons = {};
+  final Set<int> _errorSeasons = {};
   bool _isLoading = true;
   late int _currentSeasonNumber;
   late PageController _pageController;
@@ -74,6 +77,9 @@ class _SeasonDetailsState extends State<SeasonDetails> {
       setState(() {
         if (season != null) {
           _loadedSeasons[seasonNumber] = season;
+          _errorSeasons.remove(seasonNumber);
+        } else {
+          _errorSeasons.add(seasonNumber);
         }
         if (_currentSeasonNumber == seasonNumber) {
           _isLoading = false;
@@ -138,11 +144,28 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           if (cachedSeason != null) {
             return SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: _detailsBody(cachedSeason),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                      maxWidth: AppBreakpoints.maxContentWidth),
+                  child: _detailsBody(cachedSeason),
+                ),
+              ),
+            );
+          } else if (_errorSeasons.contains(seasonNumber)) {
+            final loc = AppLocalizations.of(context)!;
+            return Center(
+              child: AppErrorView(
+                title: loc.errorMessageGeneric,
+                message: loc.networkErrorMessage,
+                onRetry: () => _loadSeasonDetails(seasonNumber),
+              ),
             );
           } else {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted && !_loadedSeasons.containsKey(seasonNumber)) {
+              if (mounted &&
+                  !_loadedSeasons.containsKey(seasonNumber) &&
+                  !_errorSeasons.contains(seasonNumber)) {
                 _loadSeasonDetails(seasonNumber);
               }
             });

@@ -61,16 +61,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get selectLanguage => 'Selecionar idioma';
 
   @override
-  String get messageEmptyList => 'Nenhum filme selecionado ainda.';
-
-  @override
-  String get messageEmptySearch =>
-      'Você pode pesquisar usando a lupa na barra inferior.';
-
-  @override
-  String get messageEmptyOptions => 'Você também pode';
-
-  @override
   String get messageEmptyLogin => 'Entrar no MovieScout';
 
   @override
@@ -508,7 +498,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get rate => 'Avaliar';
 
   @override
-  String get watchOn => 'Assistir em';
+  String get watchOn => 'Mais informações';
 
   @override
   String get status => 'Status';
@@ -569,9 +559,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get aiKeyCleared => 'Chave de API excluída';
-
-  @override
-  String get aiStatusConfigured => 'Chave de API configurada';
 
   @override
   String get aiStatusNotConfigured => 'Chave de API não configurada';
@@ -1219,6 +1206,42 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get noProvidersSelectedPrompt =>
       'Seleciona as tuas plataformas para ver apenas títulos disponíveis agora.';
+
+  @override
+  String get emptyWatchlistTitle => 'Sua lista está vazia';
+
+  @override
+  String get emptyWatchlistMessage =>
+      'Salve os filmes e séries que você quer assistir mais tarde.';
+
+  @override
+  String get emptyWatchlistGuestMessage =>
+      'Faça login para salvar sua lista e sincronizá-la em todos os seus dispositivos.';
+
+  @override
+  String get emptySearchTitle => 'Nenhum resultado';
+
+  @override
+  String get emptySearchMessage =>
+      'Nenhum título ou pessoa encontrado. Verifique a ortografia ou tente outras palavras-chave.';
+
+  @override
+  String get emptyDiscoveryTitle => 'Nenhum título encontrado';
+
+  @override
+  String get emptyDiscoveryMessage =>
+      'Nenhum título corresponde a todos os filtros selecionados. Tente ajustar ou remover alguns filtros.';
+
+  @override
+  String get emptyRatesMessage =>
+      'Avalie os filmes e séries que você assistiu para lembrar o que achou deles e receber recomendações melhores.';
+
+  @override
+  String get emptyFollowingGuestTitle => 'Conecte-se com a comunidade';
+
+  @override
+  String get emptyFollowingGuestMessage =>
+      'Faça login para seguir outros usuários, descobrir o que estão assistindo e compartilhar avaliações.';
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -1276,16 +1299,6 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get selectLanguage => 'Selecionar idioma';
-
-  @override
-  String get messageEmptyList => 'Nenhum filme selecionado ainda.';
-
-  @override
-  String get messageEmptySearch =>
-      'Você pode pesquisar usando a lupa na barra inferior.';
-
-  @override
-  String get messageEmptyOptions => 'Você também pode';
 
   @override
   String get messageEmptyLogin => 'Entrar no MovieScout';
@@ -1725,7 +1738,7 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   String get rate => 'Avaliar';
 
   @override
-  String get watchOn => 'Ver em';
+  String get watchOn => 'Mais informações';
 
   @override
   String get status => 'Status';
@@ -1787,9 +1800,6 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
 
   @override
   String get aiKeyCleared => 'Chave de API eliminada';
-
-  @override
-  String get aiStatusConfigured => 'Chave de API configurada';
 
   @override
   String get aiStatusNotConfigured => 'Chave de API não configurada';
@@ -2435,4 +2445,40 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   @override
   String get noProvidersSelectedPrompt =>
       'Seleciona as tuas plataformas para ver apenas títulos disponíveis agora.';
+
+  @override
+  String get emptyWatchlistTitle => 'A sua lista está vazia';
+
+  @override
+  String get emptyWatchlistMessage =>
+      'Guarde os filmes e séries que deseja ver mais tarde.';
+
+  @override
+  String get emptyWatchlistGuestMessage =>
+      'Inicie sessão para guardar a sua lista e sincronizá-la em todos os seus dispositivos.';
+
+  @override
+  String get emptySearchTitle => 'Sem resultados';
+
+  @override
+  String get emptySearchMessage =>
+      'Nenhum título ou pessoa encontrado. Verifique a ortografia ou tente outras palavras-chave.';
+
+  @override
+  String get emptyDiscoveryTitle => 'Nenhum título encontrado';
+
+  @override
+  String get emptyDiscoveryMessage =>
+      'Nenhum título corresponde a todos os filtros selecionados. Tente ajustar ou remover alguns filtros.';
+
+  @override
+  String get emptyRatesMessage =>
+      'Classifique os filmes e séries que já viu para recordar a sua opinião e receber melhores recomendações.';
+
+  @override
+  String get emptyFollowingGuestTitle => 'Ligue-se à comunidade';
+
+  @override
+  String get emptyFollowingGuestMessage =>
+      'Inicie sessão para seguir outros utilizadores, descobrir o que estão a ver e partilhar avaliações.';
 }

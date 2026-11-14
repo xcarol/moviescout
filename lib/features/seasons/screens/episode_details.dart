@@ -4,6 +4,8 @@ import "package:moviescout/features/auth/services/supabase_auth_service.dart";
 import 'package:flutter/material.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
+import 'package:moviescout/core/widgets/app_error_view.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
@@ -45,6 +47,7 @@ class EpisodeDetails extends StatefulWidget {
 
 class _EpisodeDetailsState extends State<EpisodeDetails> {
   final Map<int, TmdbEpisode> _loadedEpisodes = {};
+  final Set<int> _errorEpisodes = {};
   bool _isUpdating = false;
   late int _currentEpisodeNumber;
   late PageController _pageController;
@@ -83,6 +86,9 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
         setState(() {
           if (updated != null) {
             _loadedEpisodes[episodeNumber] = updated;
+            _errorEpisodes.remove(episodeNumber);
+          } else {
+            _errorEpisodes.add(episodeNumber);
           }
           if (_currentEpisodeNumber == episodeNumber) {
             _isUpdating = false;
@@ -92,6 +98,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
     } catch (e) {
       if (mounted && _currentEpisodeNumber == episodeNumber) {
         setState(() {
+          _errorEpisodes.add(episodeNumber);
           _isUpdating = false;
         });
       }
@@ -140,11 +147,28 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
           if (cachedEpisode != null) {
             return SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: _detailsBody(cachedEpisode),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                      maxWidth: AppBreakpoints.maxContentWidth),
+                  child: _detailsBody(cachedEpisode),
+                ),
+              ),
+            );
+          } else if (_errorEpisodes.contains(epNumber)) {
+            final loc = AppLocalizations.of(context)!;
+            return Center(
+              child: AppErrorView(
+                title: loc.errorMessageGeneric,
+                message: loc.networkErrorMessage,
+                onRetry: () => _updateDetails(epNumber),
+              ),
             );
           } else {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted && !_loadedEpisodes.containsKey(epNumber)) {
+              if (mounted &&
+                  !_loadedEpisodes.containsKey(epNumber) &&
+                  !_errorEpisodes.contains(epNumber)) {
                 _updateDetails(epNumber);
               }
             });

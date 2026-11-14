@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:app_links/app_links.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/titles/repositories/local_title_repository.dart';
 import 'package:moviescout/core/services/error_service.dart';
@@ -13,6 +13,7 @@ import 'package:moviescout/features/watchlist/services/watchlist_service.dart';
 import 'package:moviescout/features/auth/services/tmdb_user_service.dart';
 import 'package:moviescout/core/utils/url_constants.dart';
 import 'package:moviescout/features/import/widgets/import_step_tile.dart';
+import 'package:moviescout/core/widgets/app_poster_image.dart';
 import 'package:provider/provider.dart';
 
 enum ImportState { idle, importing, success, error }
@@ -206,60 +207,69 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
           slivers: [
             SliverFillRemaining(
               hasScrollBody: false,
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Spacer(),
-                    Icon(
-                      _state == ImportState.success
-                          ? Icons.cloud_done
-                          : Icons.cloud_download,
-                      size: 96,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      _state == ImportState.success
-                          ? AppLocalizations.of(context)!.tmdbImportSuccess
-                          : AppLocalizations.of(context)!
-                              .tmdbImportScreenHeader,
-                      style:
-                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: AppBreakpoints.maxContentWidth,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Spacer(),
+                        Icon(
+                          _state == ImportState.success
+                              ? Icons.cloud_done
+                              : Icons.cloud_download,
+                          size: 96,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(height: 24),
+                        Text(
+                          _state == ImportState.success
+                              ? AppLocalizations.of(context)!.tmdbImportSuccess
+                              : AppLocalizations.of(context)!
+                                  .tmdbImportScreenHeader,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    if (_state == ImportState.idle)
-                      Text(
-                        AppLocalizations.of(context)!.tmdbImportScreenBody,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                        textAlign: TextAlign.center,
-                      ),
-                    if (_state == ImportState.idle && isTmdbLoggedIn) ...[
-                      const SizedBox(height: 20),
-                      _buildTmdbUserCard(context, userService.user),
-                    ],
-                    if (_state == ImportState.importing ||
-                        _state == ImportState.success)
-                      _buildProgressIndicators(context),
-                    if (_state == ImportState.error &&
-                        _errorMessage != null) ...[
-                      const SizedBox(height: 24),
-                      Text(
-                        _errorMessage!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                    const Spacer(),
-                    _buildActionButtons(context, isTmdbLoggedIn),
-                    const SizedBox(height: 16),
-                  ],
+                        const SizedBox(height: 16),
+                        if (_state == ImportState.idle)
+                          Text(
+                            AppLocalizations.of(context)!.tmdbImportScreenBody,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                        if (_state == ImportState.idle && isTmdbLoggedIn) ...[
+                          const SizedBox(height: 20),
+                          _buildTmdbUserCard(context, userService.user),
+                        ],
+                        if (_state == ImportState.importing ||
+                            _state == ImportState.success)
+                          _buildProgressIndicators(context),
+                        if (_state == ImportState.error &&
+                            _errorMessage != null) ...[
+                          const SizedBox(height: 24),
+                          Text(
+                            _errorMessage!,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                        const Spacer(),
+                        _buildActionButtons(context, isTmdbLoggedIn),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -277,29 +287,40 @@ class _ImportTmdbViewState extends State<_ImportTmdbView> {
       userName = tmdbUser['name'];
     }
 
-    ImageProvider? userImage;
+    String? userImageUrl;
     if (tmdbUser != null) {
       if (tmdbUser['avatar']?['tmdb']?['avatar_path'] != null) {
-        userImage = CachedNetworkImageProvider(
-          UrlConstants.tmdbImageW185Template.replaceFirst(
-            '{PATH}',
-            '/${tmdbUser['avatar']['tmdb']['avatar_path']}',
-          ),
+        userImageUrl = UrlConstants.tmdbImageW185Template.replaceFirst(
+          '{PATH}',
+          '/${tmdbUser['avatar']['tmdb']['avatar_path']}',
         );
       } else if (tmdbUser['avatar']?['gravatar']?['hash'] != null) {
-        userImage = CachedNetworkImageProvider(
-          UrlConstants.gravatarTemplate
-              .replaceFirst('{HASH}', tmdbUser['avatar']['gravatar']['hash'])
-              .replaceFirst('{SIZE}', '200'),
-        );
+        userImageUrl = UrlConstants.gravatarTemplate
+            .replaceFirst('{HASH}', tmdbUser['avatar']['gravatar']['hash'])
+            .replaceFirst('{SIZE}', '200');
       }
     }
 
     return Card(
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: userImage,
-          child: userImage == null ? const Icon(Icons.person) : null,
+          backgroundColor:
+              Theme.of(context).colorScheme.surfaceContainerHighest,
+          child: ClipOval(
+            child: SizedBox(
+              width: 40,
+              height: 40,
+              child: AppPosterImage(
+                imageUrl: userImageUrl,
+                fallbackType: PosterFallbackType.user,
+                aspectRatio: 1.0,
+                memCacheWidth: 80,
+                memCacheHeight: 80,
+                fit: BoxFit.cover,
+                fallbackFit: BoxFit.cover,
+              ),
+            ),
+          ),
         ),
         title: Text(userName),
         subtitle: Text(AppLocalizations.of(context)!.tmdbAccount),

@@ -1,5 +1,6 @@
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/settings/models/tmdb_region.dart';
 import 'package:moviescout/features/settings/services/language_service.dart';
@@ -95,8 +96,8 @@ class _RegionFormState extends State<RegionForm> {
               : Theme.of(context).colorScheme.onSurface,
         ),
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+      shape: const RoundedRectangleBorder(
+        borderRadius: AppRadius.borderSm,
       ),
       selected: isSelected,
     );
