@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/core/utils/app_constants.dart';

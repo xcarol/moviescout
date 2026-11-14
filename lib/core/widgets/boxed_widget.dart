@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/core/theme/app_radius.dart';
 
 class BoxedWidget extends StatelessWidget {

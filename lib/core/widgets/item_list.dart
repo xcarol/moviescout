@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:moviescout/core/theme/app_radius.dart';

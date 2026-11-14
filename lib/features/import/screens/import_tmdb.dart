@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/titles/repositories/local_title_repository.dart';

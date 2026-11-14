@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/main.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
@@ -54,9 +53,7 @@ void main() {
         theme: ThemeData(extensions: [ThemeService.lightCustomColorsDefault]),
         localizationsDelegates: const [
           AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
+          ...GlobalMaterialLocalizations.delegates,
         ],
         supportedLocales: const [Locale('en')],
         home: Scaffold(

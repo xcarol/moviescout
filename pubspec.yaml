@@ -71,6 +71,8 @@ dependencies:
   youtube_player_iframe: ^6.0.2
   simple_pip_mode: ^1.1.0
   flutter_widget_from_html: ^0.15.3
+  material_ui: ^1.11.0
+  cupertino_ui: ^1.1.6
 
 dev_dependencies:
   flutter_test:

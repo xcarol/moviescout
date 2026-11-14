@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import "package:moviescout/features/auth/services/supabase_auth_service.dart";
 import 'package:moviescout/core/navigation/app_navigator.dart';

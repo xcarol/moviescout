@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/features/discovery/models/tmdb_collection.dart';
 import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';

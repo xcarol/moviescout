@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/core/widgets/video_player.dart';
 import 'package:moviescout/core/navigation/deep_link_service.dart';
 

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/core/theme/title_list_theme.dart';

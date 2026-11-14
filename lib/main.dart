@@ -3,10 +3,9 @@ import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart'
     show PlatformDispatcher, TargetPlatform, defaultTargetPlatform, kDebugMode;
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -358,9 +357,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       themeMode: ThemeMode.dark,
       localizationsDelegates: const [
         AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
       ],
       supportedLocales: AppConstants.supportedLanguages
           .map((e) => LanguageService.parseLocale(e))

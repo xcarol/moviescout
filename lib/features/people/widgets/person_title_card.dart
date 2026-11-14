@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/features/titles/widgets/title_card.dart';

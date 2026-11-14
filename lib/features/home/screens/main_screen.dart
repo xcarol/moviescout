@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import "package:moviescout/features/auth/services/supabase_auth_service.dart";
 import 'package:moviescout/core/services/app_service.dart';

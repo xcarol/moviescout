@@ -1,7 +1,7 @@
 import "package:moviescout/features/auth/services/supabase_auth_service.dart";
 import 'package:flutter/gestures.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart'
