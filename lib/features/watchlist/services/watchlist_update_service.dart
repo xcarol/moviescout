@@ -5,11 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:moviescout/firebase_options.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
-import 'package:moviescout/features/titles/repositories/cloud_title_repository.dart';
 import 'package:moviescout/features/titles/repositories/local_title_repository.dart';
-import 'package:moviescout/core/services/cloud_database_service.dart';
 import 'package:moviescout/core/services/error_service.dart';
 import 'package:moviescout/core/services/local_database_service.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
@@ -18,6 +15,7 @@ import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:moviescout/features/titles/services/tmdb_base_list_service.dart'
     show RatingFilter;
 import 'package:moviescout/features/notifications/services/notification_service.dart';
+import 'package:moviescout/features/notifications/services/pending_notification_sync_service.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/settings/services/language_service.dart';
@@ -142,7 +140,7 @@ class WatchlistUpdateService {
       await repository.updateNotifyNewSeasonsList([title]);
       final isInRateslist = await repository
           .hasTitlesInList([title.tmdbId], AppConstants.rateslist);
-      await _syncNotificationToCloudDatabase(
+      await _queueNotificationSync(
         title,
         addedToWatchlist: false,
         isInRateslist: isInRateslist,
@@ -189,7 +187,7 @@ class WatchlistUpdateService {
       await repository.updateNotifyNewSeasonsList([title]);
       final isInRateslist = await repository
           .hasTitlesInList([title.tmdbId], AppConstants.rateslist);
-      await _syncNotificationToCloudDatabase(
+      await _queueNotificationSync(
         title,
         addedToWatchlist: addedToWatchlist,
         isInRateslist: isInRateslist,
@@ -201,43 +199,18 @@ class WatchlistUpdateService {
     return false;
   }
 
-  Future<void> _syncNotificationToCloudDatabase(
+  Future<void> _queueNotificationSync(
     TmdbTitle title, {
     required bool addedToWatchlist,
     required bool isInRateslist,
-    CloudTitleRepository? cloudRepository,
     List<String>? logLines,
   }) async {
-    try {
-      final session = CloudDatabaseService.currentSession;
-      final user = CloudDatabaseService.currentUser;
-      if (session == null || user == null) {
-        logLines?.add(
-            '- [CloudDatabase Sync] ${title.name}: Skipped (session: ${session != null ? 'active' : 'null'}, user: ${user?.id ?? 'null'})');
-        return;
-      }
-
-      logLines?.add(
-          '- [CloudDatabase Sync] ${title.name}: Syncing (user: ${user.id}, lastNotifiedSeason: ${title.lastNotifiedSeason}, inRateslist: $isInRateslist, addedToWatchlist: $addedToWatchlist)');
-
-      final repo = cloudRepository ?? CloudTitleRepository();
-      await repo.syncNotification(
-        userId: user.id,
-        title: title,
-        addedToWatchlist: addedToWatchlist,
-        isInRateslist: isInRateslist,
-      );
-      logLines
-          ?.add('- [CloudDatabase Sync] ${title.name}: Completed successfully');
-    } catch (e, stackTrace) {
-      logLines?.add('- [CloudDatabase Sync] ${title.name}: Error $e');
-      ErrorService.log(
-        e,
-        stackTrace: stackTrace,
-        userMessage: 'Error syncing notification to CloudDatabase',
-        reportToCrashlytics: true,
-      );
-    }
+    await PendingNotificationSyncService().enqueue(
+      title,
+      addedToWatchlist: addedToWatchlist,
+      isInRateslist: isInRateslist,
+      logLines: logLines,
+    );
   }
 
   Future<void> checkForUpdates() async {
@@ -265,30 +238,6 @@ class WatchlistUpdateService {
         } catch (e, stackTrace) {
           ErrorService.log(e,
               stackTrace: stackTrace, reportToCrashlytics: false);
-        }
-      }
-
-      final supabaseUrl = dotenv.env['SUPABASE_URL'];
-      final supabaseKey = dotenv.env['SUPABASE_API_KEY'];
-      if (supabaseUrl != null &&
-          supabaseUrl.isNotEmpty &&
-          supabaseKey != null &&
-          supabaseKey.isNotEmpty) {
-        try {
-          await Supabase.initialize(
-            url: supabaseUrl,
-            publishableKey: supabaseKey,
-          );
-          CloudDatabaseService.init();
-        } catch (e, stackTrace) {
-          ErrorService.log(e,
-              stackTrace: stackTrace, reportToCrashlytics: false);
-          try {
-            CloudDatabaseService.init();
-          } catch (e2, stackTrace2) {
-            ErrorService.log(e2,
-                stackTrace: stackTrace2, reportToCrashlytics: false);
-          }
         }
       }
 

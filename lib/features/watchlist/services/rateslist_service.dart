@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
 import 'package:moviescout/core/services/error_service.dart';
+import 'package:moviescout/features/notifications/services/pending_notification_sync_service.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
 import 'package:moviescout/features/titles/services/tmdb_base_list_service.dart'
     show RatingFilter;
@@ -51,6 +52,10 @@ class RateslistService extends TmdbTitleListService {
       if (loadedItemsVal.isEmpty) await filterItems();
       return;
     }
+
+    await PendingNotificationSyncService().flushPendingSyncs(
+      cloudRepository: _cloudRepository,
+    );
 
     final syncSuccess = await retrieveList(
         forceUpdate: forceUpdate,

@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/core/services/error_service.dart';
 import 'package:moviescout/core/services/cloud_database_service.dart';
+import 'package:moviescout/core/utils/save_logs.dart';
 
 class SupabaseAuthService extends ChangeNotifier {
   static final SupabaseAuthService _instance = SupabaseAuthService._internal();
@@ -15,14 +16,36 @@ class SupabaseAuthService extends ChangeNotifier {
     if (_supabase.auth.currentUser != null) {
       fetchProfile();
     }
-    _supabase.auth.onAuthStateChange.listen((data) async {
-      if (_supabase.auth.currentUser != null) {
-        await fetchProfile();
-      } else {
-        userProfile = null;
-      }
-      notifyListeners();
-    });
+    _supabase.auth.onAuthStateChange.listen(
+      (data) async {
+        if (data.event == AuthChangeEvent.signedOut) {
+          await saveLogs([
+            '== AUTH ==',
+            'AuthChangeEvent.signedOut (reason: ${data.signOutReason?.name ?? 'unknown'})',
+            '== AUTH ==',
+          ]);
+        }
+        if (_supabase.auth.currentUser != null) {
+          await fetchProfile();
+        } else {
+          userProfile = null;
+        }
+        notifyListeners();
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        // Auto-refresh ticks emit retryable network errors while offline;
+        // letting them go unhandled floods the persistent log buffer.
+        if (ErrorService.isNetworkError(error)) {
+          debugPrint('Auth network error: $error');
+          return;
+        }
+        ErrorService.log(
+          error,
+          stackTrace: stackTrace,
+          userMessage: 'Auth state change error',
+        );
+      },
+    );
   }
 
   final _supabase = Supabase.instance.client;

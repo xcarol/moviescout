@@ -5,6 +5,7 @@ import 'package:moviescout/features/titles/repositories/local_title_repository.d
 import 'package:moviescout/core/services/cloud_database_service.dart';
 import 'package:moviescout/features/auth/services/supabase_auth_service.dart';
 import 'package:moviescout/core/services/error_service.dart';
+import 'package:moviescout/features/notifications/services/pending_notification_sync_service.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
 import 'package:moviescout/features/watchlist/services/pinned_service.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
@@ -31,6 +32,10 @@ class WatchlistService extends TmdbTitleListService {
       if (loadedItemsVal.isEmpty) await filterItems();
       return;
     }
+
+    await PendingNotificationSyncService().flushPendingSyncs(
+      cloudRepository: _cloudRepository,
+    );
 
     await retrieveList(
         forceUpdate: forceUpdate,

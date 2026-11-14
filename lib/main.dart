@@ -42,6 +42,7 @@ import 'package:moviescout/core/navigation/deep_link_service.dart';
 import 'package:moviescout/core/utils/metadata_translator.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:moviescout/features/notifications/services/notification_service.dart';
+import 'package:moviescout/features/notifications/services/pending_notification_sync_service.dart';
 import 'package:moviescout/features/watchlist/services/watchlist_update_service.dart';
 import 'package:moviescout/core/services/app_service.dart';
 import 'package:moviescout/features/watchlist/services/uninitialized_titles_worker.dart';
@@ -262,6 +263,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         Provider.of<WatchlistService>(context, listen: false);
     DeepLinkService().init(watchlistService);
     NotificationService().handleColdStartNotification();
+    PendingNotificationSyncService().flushPendingSyncs();
 
     if (defaultTargetPlatform == TargetPlatform.android ||
         defaultTargetPlatform == TargetPlatform.iOS) {
@@ -301,6 +303,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      PendingNotificationSyncService().flushPendingSyncs();
       NotificationService().checkSystemPermission();
       final regionService = RegionService();
       if (regionService.manualRegion == null) {

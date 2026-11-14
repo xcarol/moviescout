@@ -23,6 +23,7 @@ class AppConstants {
   static const String notifyCompleteSeason = 'notify_complete_season';
   static const String notificationsAsked = 'notifications_asked';
   static const String savedNotifications = 'saved_notifications';
+  static const String pendingNotificationSyncs = 'pending_notification_syncs';
   static const String showEditContent = 'show_edit_content';
   static const String showCommunityTab = 'show_community_tab';
   static const String personListIsGridView = 'person_list_is_grid_view';
