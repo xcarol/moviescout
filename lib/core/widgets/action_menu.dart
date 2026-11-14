@@ -78,6 +78,14 @@ class ActionMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final showEdit = Provider.of<AppService>(context).showEditContent;
+    final hasEdit = showEdit && editUrl != null;
+    final hasTranslations = showEdit && fetchTranslations != null;
+    final hasPin = onPin != null;
+    final hasShare = shareUrl != null;
+
+    if (!hasEdit && !hasTranslations && !hasPin && !hasShare) {
+      return const SizedBox.shrink();
+    }
 
     return PopupMenuButton<String>(
       onSelected: (value) async {
@@ -101,7 +109,7 @@ class ActionMenu extends StatelessWidget {
       itemBuilder: (context) {
         final loc = AppLocalizations.of(context)!;
         return [
-          if (showEdit && editUrl != null)
+          if (hasEdit)
             PopupMenuItem(
               value: 'edit',
               child: ListTile(
@@ -110,7 +118,7 @@ class ActionMenu extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
               ),
             ),
-          if (showEdit && fetchTranslations != null)
+          if (hasTranslations)
             PopupMenuItem(
               value: 'translations',
               child: ListTile(
@@ -119,7 +127,7 @@ class ActionMenu extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
               ),
             ),
-          if (onPin != null)
+          if (hasPin)
             PopupMenuItem(
               value: 'pin',
               child: ListTile(
@@ -128,7 +136,7 @@ class ActionMenu extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
               ),
             ),
-          if (shareUrl != null)
+          if (hasShare)
             PopupMenuItem(
               value: 'share',
               child: ListTile(
