@@ -355,7 +355,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     return MaterialApp(
       themeMode: ThemeMode.dark,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
+      ],
       supportedLocales: AppConstants.supportedLanguages
           .map((e) => LanguageService.parseLocale(e))
           .toList(),

@@ -22,7 +22,10 @@ class FakeScrollNotification extends Fake implements ScrollNotification {
 
 Widget buildTestApp(Widget child) {
   return MaterialApp(
-    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    localizationsDelegates: const [
+      AppLocalizations.delegate,
+      ...GlobalMaterialLocalizations.delegates,
+    ],
     supportedLocales: const [Locale('en')],
     home: child,
   );

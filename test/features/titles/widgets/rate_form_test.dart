@@ -11,7 +11,10 @@ void main() {
     required Function(double) onSubmit,
   }) {
     return MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
+      ],
       supportedLocales: const [Locale('en')],
       home: Scaffold(
         body: RateForm(
