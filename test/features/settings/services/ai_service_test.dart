@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
+import 'package:moviescout/features/settings/services/ai_key_cipher.dart';
 import 'package:moviescout/features/settings/services/ai_provider.dart';
 import 'package:moviescout/features/settings/services/ai_service.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
@@ -319,9 +320,22 @@ void main() {
       await service.setSelectedProvider(AppConstants.aiProviderOpenRouter);
       await service.saveSelectedModel('openai/gpt-4o-mini', isCustom: true);
       expect(service.selectedModel, 'openai/gpt-4o-mini');
+      expect(service.currentProvider.customModel, 'openai/gpt-4o-mini');
       expect(
         PreferencesService().prefs.getString(AppConstants.aiOpenRouterModelKey),
         'openai/gpt-4o-mini',
+      );
+
+      await service.saveSelectedModel(
+        AppConstants.aiOpenRouterModelAuto,
+        isCustom: false,
+      );
+      expect(service.selectedModel, AppConstants.aiOpenRouterModelAuto);
+      expect(service.currentProvider.isCustomModel, isFalse);
+      expect(service.currentProvider.customModel, 'openai/gpt-4o-mini');
+      expect(
+        service.currentProvider.selectableModels,
+        contains('openai/gpt-4o-mini'),
       );
     });
 
@@ -593,6 +607,84 @@ void main() {
       expect(
         regionalFallback,
         'Translate movie into English. Translate film.',
+      );
+    });
+
+    test('AiKeyCipher encrypts and decrypts per user and rejects tampering',
+        () {
+      const cipher = AiKeyCipher(secret: 'test-super-secret-key-32-chars!!');
+      const userA = 'user-uuid-a';
+      const userB = 'user-uuid-b';
+
+      final encrypted = cipher.encrypt('AIzaSyFakeKey12345', userId: userA);
+      expect(encrypted, isNotNull);
+      expect(encrypted, startsWith('v1:'));
+      expect(encrypted, isNot(contains('AIzaSyFakeKey12345')));
+
+      expect(cipher.decrypt(encrypted, userId: userA), 'AIzaSyFakeKey12345');
+      expect(cipher.decrypt(encrypted, userId: userB), isNull);
+
+      const wrongCipher = AiKeyCipher(secret: 'another-secret-key-completely');
+      expect(wrongCipher.decrypt(encrypted, userId: userA), isNull);
+
+      expect(cipher.decrypt('${encrypted}tampered', userId: userA), isNull);
+    });
+
+    test('cloud payload round-trips encrypted keys, custom model, and settings',
+        () async {
+      const cipher = AiKeyCipher(secret: 'test-super-secret-key-32-chars!!');
+      const userId = 'user-cloud-123';
+      final service = AiService();
+
+      await service.setSelectedProvider(AppConstants.aiProviderGoogle);
+      await service.saveApiKey('google-secret-key');
+      await service.saveSelectedModel('gemini-custom-exp', isCustom: true);
+      await service.saveSelectedModel(
+        AppConstants.aiGoogleModelFlashLite,
+        isCustom: false,
+      );
+      await service.saveSelectedThinkingLevel('high');
+      await PreferencesService()
+          .prefs
+          .setBool(AppConstants.aiTranslationEnabled, true);
+
+      final cloudSettings =
+          service.buildCloudSettings(userId: userId, cipher: cipher);
+      expect(cloudSettings['user_id'], userId);
+      expect(cloudSettings['active_provider'], AppConstants.aiProviderGoogle);
+      expect(cloudSettings['ai_translation_enabled'], isTrue);
+
+      final googleSettings =
+          cloudSettings['providers'][AppConstants.aiProviderGoogle] as Map;
+      expect(
+        googleSettings['api_key_encrypted'],
+        startsWith('v1:'),
+      );
+      expect(
+        googleSettings['api_key_encrypted'],
+        isNot(contains('google-secret-key')),
+      );
+      expect(googleSettings['custom_model'], 'gemini-custom-exp');
+      expect(googleSettings['model'], AppConstants.aiGoogleModelFlashLite);
+      expect(googleSettings['is_custom_model'], isFalse);
+      expect(googleSettings['thinking_level'], 'high');
+
+      await service.clearUserSettings();
+      expect(service.hasApiKey, isFalse);
+      expect(service.currentProvider.customModel, isEmpty);
+
+      await service.applyCloudSettings(
+        cloudSettings,
+        userId: userId,
+        cipher: cipher,
+      );
+      expect(service.apiKey, 'google-secret-key');
+      expect(service.selectedModel, AppConstants.aiGoogleModelFlashLite);
+      expect(service.currentProvider.customModel, 'gemini-custom-exp');
+      expect(service.selectedThinkingLevel, 'high');
+      expect(
+        PreferencesService().prefs.getBool(AppConstants.aiTranslationEnabled),
+        isTrue,
       );
     });
   });

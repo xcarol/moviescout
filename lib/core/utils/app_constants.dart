@@ -37,6 +37,7 @@ class AppConstants {
 
   static const String aiGoogleApiKey = 'ai_google_api_key';
   static const String aiGoogleModelKey = 'ai_google_model';
+  static const String aiGoogleCustomModelKey = 'ai_google_custom_model';
   static const String aiGoogleModelIsCustomKey = 'ai_google_model_is_custom';
   static const String aiGoogleThinkingKey = 'ai_google_thinking';
   static const String aiGoogleModelFlash = 'gemini-flash-latest';
@@ -49,6 +50,7 @@ class AppConstants {
 
   static const String aiOpenRouterApiKey = 'ai_api_key';
   static const String aiOpenRouterModelKey = 'ai_model';
+  static const String aiOpenRouterCustomModelKey = 'ai_openrouter_custom_model';
   static const String aiOpenRouterModelIsCustomKey =
       'ai_openrouter_model_is_custom';
   static const String aiOpenRouterThinkingKey = 'ai_openrouter_thinking';
@@ -229,6 +231,7 @@ class AppConstants {
 
   static const String tmdbApiRat = 'TMDB_API_RAT';
   static const String omdbApiKey = 'OMDB_API_KEY';
+  static const String aiKeyEncryptionSecret = 'AI_KEY_ENCRYPTION_SECRET';
   static const String enableLogs = 'ENABLE_LOGS';
 
   static const String iso3166_1 = 'iso_3166_1';

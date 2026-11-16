@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
+import 'package:moviescout/features/settings/services/ai_key_cipher.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:moviescout/core/utils/url_constants.dart';
@@ -14,6 +15,7 @@ abstract class AiProvider {
   String get keysUrl;
   String get apiKeyPrefKey;
   String get modelPrefKey;
+  String get customModelPrefKey;
   String get isCustomModelPrefKey;
   String get thinkingPrefKey;
   String get fallbackDefaultModel;
@@ -32,6 +34,10 @@ abstract class AiProvider {
 
   List<String> get selectableModels {
     final models = List<String>.from(availableModels);
+    final savedCustom = customModel;
+    if (savedCustom.isNotEmpty && !models.contains(savedCustom)) {
+      models.add(savedCustom);
+    }
     final current = selectedModel;
     if (current.isNotEmpty && !models.contains(current)) {
       models.add(current);
@@ -122,6 +128,18 @@ abstract class AiProvider {
   bool get isCustomModel =>
       PreferencesService().prefs.getBool(isCustomModelPrefKey) ?? false;
 
+  String get customModel {
+    final savedCustom =
+        PreferencesService().prefs.getString(customModelPrefKey)?.trim();
+    if (savedCustom != null && savedCustom.isNotEmpty) {
+      return savedCustom;
+    }
+    if (isCustomModel) {
+      return PreferencesService().prefs.getString(modelPrefKey)?.trim() ?? '';
+    }
+    return '';
+  }
+
   String get selectedModel {
     final saved = PreferencesService().prefs.getString(modelPrefKey);
     if (saved != null && saved.trim().isNotEmpty) {
@@ -143,7 +161,11 @@ abstract class AiProvider {
 
   Future<void> saveApiKey(String key) async {
     final trimmed = key.trim();
-    await PreferencesService().prefs.setString(apiKeyPrefKey, trimmed);
+    if (trimmed.isEmpty) {
+      await PreferencesService().prefs.remove(apiKeyPrefKey);
+    } else {
+      await PreferencesService().prefs.setString(apiKeyPrefKey, trimmed);
+    }
   }
 
   Future<void> saveSelectedModel(
@@ -153,6 +175,9 @@ abstract class AiProvider {
     final trimmed = model.trim();
     await PreferencesService().prefs.setBool(isCustomModelPrefKey, isCustom);
     await PreferencesService().prefs.remove(thinkingPrefKey);
+    if (isCustom && trimmed.isNotEmpty) {
+      await PreferencesService().prefs.setString(customModelPrefKey, trimmed);
+    }
     if (trimmed.isEmpty || (!isCustom && trimmed == defaultModel)) {
       await PreferencesService().prefs.remove(modelPrefKey);
     } else {
@@ -168,6 +193,80 @@ abstract class AiProvider {
     } else {
       await PreferencesService().prefs.setString(thinkingPrefKey, trimmed);
     }
+  }
+
+  Map<String, dynamic> toCloudJson({
+    required AiKeyCipher cipher,
+    required String userId,
+    String? fallbackEncryptedKey,
+  }) {
+    final prefs = PreferencesService().prefs;
+    final key = apiKey.trim();
+    final encryptedKey = key.isNotEmpty
+        ? (cipher.encrypt(key, userId: userId) ?? fallbackEncryptedKey)
+        : null;
+    final savedModel = prefs.getString(modelPrefKey)?.trim() ?? '';
+    final savedCustomModel = customModel;
+    final savedThinking = prefs.getString(thinkingPrefKey)?.trim() ?? '';
+    return {
+      'api_key_encrypted': encryptedKey,
+      'model': savedModel.isNotEmpty ? savedModel : null,
+      'is_custom_model': isCustomModel,
+      'custom_model': savedCustomModel.isNotEmpty ? savedCustomModel : null,
+      'thinking_level': savedThinking.isNotEmpty ? savedThinking : null,
+    };
+  }
+
+  Future<void> applyCloudJson(
+    Map<String, dynamic> json, {
+    required AiKeyCipher cipher,
+    required String userId,
+  }) async {
+    final prefs = PreferencesService().prefs;
+    if (json.containsKey('api_key_encrypted')) {
+      final rawEncrypted = json['api_key_encrypted']?.toString().trim() ?? '';
+      if (rawEncrypted.isEmpty) {
+        await prefs.remove(apiKeyPrefKey);
+      } else {
+        final decrypted = cipher.decrypt(rawEncrypted, userId: userId);
+        if (decrypted != null && decrypted.isNotEmpty) {
+          await prefs.setString(apiKeyPrefKey, decrypted);
+        }
+      }
+    }
+
+    final custom = json['custom_model']?.toString().trim() ?? '';
+    if (custom.isNotEmpty) {
+      await prefs.setString(customModelPrefKey, custom);
+    } else {
+      await prefs.remove(customModelPrefKey);
+    }
+
+    final isCustom = json['is_custom_model'] == true;
+    await prefs.setBool(isCustomModelPrefKey, isCustom);
+
+    final model = json['model']?.toString().trim() ?? '';
+    if (model.isNotEmpty) {
+      await prefs.setString(modelPrefKey, model);
+    } else {
+      await prefs.remove(modelPrefKey);
+    }
+
+    final thinking = json['thinking_level']?.toString().trim() ?? '';
+    if (thinking.isNotEmpty) {
+      await prefs.setString(thinkingPrefKey, thinking);
+    } else {
+      await prefs.remove(thinkingPrefKey);
+    }
+  }
+
+  Future<void> clearLocalSettings() async {
+    final prefs = PreferencesService().prefs;
+    await prefs.remove(apiKeyPrefKey);
+    await prefs.remove(modelPrefKey);
+    await prefs.remove(customModelPrefKey);
+    await prefs.remove(isCustomModelPrefKey);
+    await prefs.remove(thinkingPrefKey);
   }
 
   Uri buildUrl([String? model]);
@@ -217,6 +316,9 @@ class GoogleAiProvider extends AiProvider {
 
   @override
   String get modelPrefKey => AppConstants.aiGoogleModelKey;
+
+  @override
+  String get customModelPrefKey => AppConstants.aiGoogleCustomModelKey;
 
   @override
   String get isCustomModelPrefKey => AppConstants.aiGoogleModelIsCustomKey;
@@ -500,6 +602,9 @@ class OpenRouterProvider extends AiProvider {
 
   @override
   String get modelPrefKey => AppConstants.aiOpenRouterModelKey;
+
+  @override
+  String get customModelPrefKey => AppConstants.aiOpenRouterCustomModelKey;
 
   @override
   String get isCustomModelPrefKey => AppConstants.aiOpenRouterModelIsCustomKey;

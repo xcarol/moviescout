@@ -36,13 +36,15 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
     _obscureText = true;
 
     final currentModel = provider.selectedModel;
+    final savedCustom = provider.customModel;
     if (!provider.isCustomModel &&
         provider.availableModels.contains(currentModel)) {
       _selectedModelDropdown = currentModel;
-      _customModelController.clear();
+      _customModelController.text = savedCustom;
     } else {
       _selectedModelDropdown = AppConstants.aiModelCustom;
-      _customModelController.text = currentModel;
+      _customModelController.text =
+          savedCustom.isNotEmpty ? savedCustom : currentModel;
     }
 
     final currentThinking = provider.selectedThinkingLevel;
@@ -136,20 +138,40 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
 
   Future<void> _onModelSelected(String? newModel) async {
     if (newModel == null) return;
+    final provider = AiService().currentProvider;
+
+    if (newModel == AppConstants.aiModelCustom) {
+      final savedCustom = provider.customModel;
+      _customModelController.text = savedCustom;
+      setState(() {
+        _selectedModelDropdown = newModel;
+      });
+      if (savedCustom.isNotEmpty) {
+        await AiService().saveSelectedModel(savedCustom, isCustom: true);
+        if (!mounted) return;
+        setState(() {
+          final currentThinking = AiService().selectedThinkingLevel;
+          _selectedThinkingDropdown =
+              AiModelThinkingSelector.thinkingOptions.contains(currentThinking)
+                  ? currentThinking
+                  : AppConstants.aiThinkingLevel;
+        });
+      }
+      return;
+    }
+
     setState(() {
       _selectedModelDropdown = newModel;
     });
-
-    if (newModel != AppConstants.aiModelCustom) {
-      await AiService().saveSelectedModel(newModel, isCustom: false);
-      setState(() {
-        final currentThinking = AiService().selectedThinkingLevel;
-        _selectedThinkingDropdown =
-            AiModelThinkingSelector.thinkingOptions.contains(currentThinking)
-                ? currentThinking
-                : AppConstants.aiThinkingLevel;
-      });
-    }
+    await AiService().saveSelectedModel(newModel, isCustom: false);
+    if (!mounted) return;
+    setState(() {
+      final currentThinking = AiService().selectedThinkingLevel;
+      _selectedThinkingDropdown =
+          AiModelThinkingSelector.thinkingOptions.contains(currentThinking)
+              ? currentThinking
+              : AppConstants.aiThinkingLevel;
+    });
   }
 
   Future<void> _onThinkingSelected(String? newThinking) async {

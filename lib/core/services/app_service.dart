@@ -5,6 +5,7 @@ import 'package:moviescout/features/settings/services/language_service.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/features/settings/services/tmdb_provider_service.dart';
 import 'package:moviescout/features/discovery/services/discoverlist_service.dart';
+import 'package:moviescout/features/settings/services/ai_service.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
 
 class AppService extends ChangeNotifier {
@@ -19,6 +20,7 @@ class AppService extends ChangeNotifier {
   RateslistService? _rateslistService;
   TmdbDiscoverlistService? _discoverlistService;
   TmdbProviderService? _providerService;
+  AiService? _aiService;
 
   bool get showEditContent => _showEditContent;
   bool get showCommunityTab => _showCommunityTab;
@@ -28,11 +30,13 @@ class AppService extends ChangeNotifier {
     required RateslistService rateslistService,
     required TmdbDiscoverlistService discoverlistService,
     required TmdbProviderService providerService,
+    required AiService aiService,
   }) {
     _watchlistService = watchlistService;
     _rateslistService = rateslistService;
     _discoverlistService = discoverlistService;
     _providerService = providerService;
+    _aiService = aiService;
   }
 
   Future<void> clearUserData() async {
@@ -41,6 +45,7 @@ class AppService extends ChangeNotifier {
     await _discoverlistService?.clearList();
     _discoverlistService?.resetPagination();
     _providerService?.clearProvidersStatus();
+    await _aiService?.clearUserSettings();
 
     await _discoverlistService?.retrieveDiscoverlist(
       LanguageService().locale,

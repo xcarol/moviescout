@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:translator/translator.dart';
@@ -54,6 +55,11 @@ class WebTranslationService with ChangeNotifier {
     await PreferencesService()
         .prefs
         .setBool(AppConstants.aiTranslationEnabled, enabled);
+    notifyListeners();
+    unawaited(AiService().pushToCloud());
+  }
+
+  void refresh() {
     notifyListeners();
   }
 
