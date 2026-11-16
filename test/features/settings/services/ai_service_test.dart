@@ -5,6 +5,7 @@ import 'package:moviescout/features/settings/services/ai_provider.dart';
 import 'package:moviescout/features/settings/services/ai_service.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
+import 'package:moviescout/core/models/translation_context.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -393,6 +394,205 @@ void main() {
           targetLanguage: 'es',
         ),
         throwsA(isA<Exception>()),
+      );
+    });
+
+    test(
+        'GoogleAiProvider injects model in URL and builds type-specific generateContent bodies',
+        () {
+      final provider = GoogleAiProvider();
+      final url = provider.buildUrl('gemini-3.6-flash');
+      expect(
+        url.toString(),
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent',
+      );
+
+      const episodeContext = TranslationContext(
+        type: TranslationContentType.tvEpisode,
+        seriesTitle: 'The Diplomat',
+        seasonNumber: 2,
+        episodeNumber: 4,
+        genres: ['Drama', 'Political Thriller'],
+      );
+      final episodeBody = provider.buildTranslationBody(
+        'English',
+        'Catalan',
+        'A shocking security breach sends the administration into crisis.',
+        title: 'Redcoats',
+        translationContext: episodeContext,
+        model: 'gemini-3.6-flash',
+        thinkingLevel: 'medium',
+      );
+
+      expect(episodeBody.containsKey('model'), isFalse);
+      expect(episodeBody['system_instruction'], {
+        'parts': [
+          {
+            'text': episodeContext.buildSystemPrompt(
+              targetLanguageName: 'Catalan',
+            ),
+          },
+        ],
+      });
+      expect(episodeBody['contents'], [
+        {
+          'role': 'user',
+          'parts': [
+            {
+              'text':
+                  'Source language: English\nTarget language: Catalan\nType: TV Series Episode\nSeries: The Diplomat\nSeason: 2\nEpisode: 4\nGenres: Drama, Political Thriller\n\nTitle: Redcoats\nSynopsis: A shocking security breach sends the administration into crisis.',
+            },
+          ],
+        },
+      ]);
+      expect(episodeBody['generationConfig'], {
+        'temperature': AppConstants.aiTemperature,
+        'thinkingConfig': {
+          'thinkingLevel': 'MEDIUM',
+        },
+        'responseMimeType': AppConstants.aiMimeTypeJson,
+        'responseSchema': episodeContext.buildResponseSchema(
+          hasTitle: true,
+          hasText: true,
+        ),
+      });
+
+      const personContext = TranslationContext(
+        type: TranslationContentType.person,
+      );
+      final personBody = provider.buildTranslationBody(
+        'English',
+        'Catalan',
+        'Keri Lynn Russell is an American actress.',
+        title: 'Keri Russell',
+        translationContext: personContext,
+        model: 'gemini-3.6-flash',
+        thinkingLevel: 'low',
+      );
+
+      expect(personBody['system_instruction'], {
+        'parts': [
+          {
+            'text': personContext.buildSystemPrompt(
+              targetLanguageName: 'Catalan',
+            ),
+          },
+        ],
+      });
+      expect(personBody['contents'], [
+        {
+          'role': 'user',
+          'parts': [
+            {
+              'text':
+                  'Source language: English\nTarget language: Catalan\nType: Person Biography\n\nPerson: Keri Russell\nBiography: Keri Lynn Russell is an American actress.',
+            },
+          ],
+        },
+      ]);
+      expect(personBody['generationConfig'], {
+        'temperature': AppConstants.aiTemperature,
+        'thinkingConfig': {
+          'thinkingLevel': 'LOW',
+        },
+        'responseMimeType': AppConstants.aiMimeTypeJson,
+        'responseSchema': personContext.buildResponseSchema(
+          hasTitle: true,
+          hasText: true,
+        ),
+      });
+    });
+
+    test(
+        'applyPromptsJson injects remote language templates and content types dynamically',
+        () {
+      final service = AiService();
+      final promptsJson = jsonEncode({
+        'version': 1,
+        'default_language': 'en',
+        'languages': {
+          'en': {
+            'language_name': 'English',
+            'system_template':
+                'Translate {CONTENT_TYPE} into {TARGET_LANGUAGE}. {TASK}',
+            'content_types': {
+              'movie': {'label': 'movie', 'task': 'Translate film.'},
+            },
+          },
+          'ca': {
+            'language_name': 'català',
+            'system_template':
+                'Tradueix {CONTENT_TYPE} al {TARGET_LANGUAGE}. {TASK}',
+            'content_types': {
+              'tv_episode': {
+                'label': 'episodi de sèrie',
+                'task': 'Tradueix episodi en {TARGET_LANGUAGE}.',
+              },
+            },
+          },
+          'ja': {
+            'language_name': '日本語',
+            'system_template':
+                '{CONTENT_TYPE}を{TARGET_LANGUAGE}に翻訳してください。{TASK}',
+            'content_types': {
+              'movie': {
+                'label': '映画',
+                'task': '自然な{TARGET_LANGUAGE}にしてください。',
+              },
+            },
+          },
+        },
+      });
+
+      expect(service.applyPromptsJson(promptsJson), isTrue);
+
+      final provider = GoogleAiProvider();
+      const episodeContext = TranslationContext(
+        type: TranslationContentType.tvEpisode,
+        seriesTitle: 'The Diplomat',
+        seasonNumber: 2,
+        episodeNumber: 4,
+      );
+
+      final caBody = provider.buildTranslationBody(
+        'English',
+        'Catalan',
+        'Plot',
+        title: 'Redcoats',
+        translationContext: episodeContext,
+        promptConfig: service.promptConfig,
+        targetLanguageCode: 'ca',
+      );
+      expect(
+        caBody['system_instruction']['parts'][0]['text'],
+        'Tradueix episodi de sèrie al català. Tradueix episodi en català.',
+      );
+      expect(
+        caBody['contents'][0]['parts'][0]['text'],
+        contains('Type: episodi de sèrie'),
+      );
+
+      const movieContext = TranslationContext(
+        type: TranslationContentType.movie,
+      );
+      final jaPrompt = movieContext.buildSystemPrompt(
+        promptConfig: service.promptConfig,
+        targetLanguageCode: 'ja',
+        targetLanguageName: 'Japanese',
+      );
+      expect(
+        jaPrompt,
+        '映画を日本語に翻訳してください。自然な日本語にしてください。',
+      );
+
+      final regionalFallback = movieContext.buildSystemPrompt(
+        promptConfig: service.promptConfig,
+        targetLanguageCode: 'en-GB',
+        targetLanguageName: 'English',
+      );
+      expect(
+        regionalFallback,
+        'Translate movie into English. Translate film.',
       );
     });
   });

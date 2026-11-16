@@ -16,6 +16,7 @@ import 'package:moviescout/features/settings/services/ai_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/core/services/web_translation_service.dart';
 import 'package:moviescout/core/utils/translation_languages.dart';
+import 'package:moviescout/core/models/translation_context.dart';
 
 class _CopyIconButton extends StatefulWidget {
   final String textToCopy;
@@ -68,16 +69,14 @@ class _CopyIconButtonState extends State<_CopyIconButton> {
 
 class TranslationsScreen extends StatefulWidget {
   final List<TmdbTranslation> translations;
-  final String originalTitle;
-  final String originalDescription;
   final String editUrl;
+  final TranslationContext translationContext;
 
   const TranslationsScreen({
     super.key,
     required this.translations,
-    required this.originalTitle,
-    required this.originalDescription,
     required this.editUrl,
+    required this.translationContext,
   });
 
   @override
@@ -138,8 +137,8 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     final service = context.read<WebTranslationService>();
     final sourceCode = _getEffectiveSourceCode(service.sourceLanguageCode);
 
-    String sourceTitle = widget.originalTitle;
-    String sourceDesc = widget.originalDescription;
+    String sourceTitle = widget.translationContext.originalTitle;
+    String sourceDesc = widget.translationContext.originalDescription;
 
     final matches = widget.translations.where((t) => t.iso639_1 == sourceCode);
     if (matches.isNotEmpty) {
@@ -156,6 +155,7 @@ class TranslationsScreenState extends State<TranslationsScreen> {
       final result = await service.translateTitleAndSynopsis(
         title: sourceTitle,
         description: sourceDesc,
+        translationContext: widget.translationContext,
         model: _selectedAiModel,
         thinkingLevel: _selectedThinkingLevel,
       );
@@ -443,8 +443,8 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     final sourceName = TranslationLanguages.supportedLanguages[sourceCode] ??
         sourceCode.toUpperCase();
 
-    String sourceTitle = widget.originalTitle;
-    String sourceDesc = widget.originalDescription;
+    String sourceTitle = widget.translationContext.originalTitle;
+    String sourceDesc = widget.translationContext.originalDescription;
 
     final matches = widget.translations.where((t) => t.iso639_1 == sourceCode);
     if (matches.isNotEmpty) {
@@ -582,7 +582,8 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                                 _buildCopyableTextRow(
                                     trans.translatedTitle.isNotEmpty
                                         ? trans.translatedTitle
-                                        : widget.originalTitle,
+                                        : widget
+                                            .translationContext.originalTitle,
                                     isTitle: true),
                                 if (trans.description.isNotEmpty) ...[
                                   const SizedBox(height: 8),

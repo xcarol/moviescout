@@ -4,6 +4,8 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:moviescout/core/utils/url_constants.dart';
+import 'package:moviescout/core/models/ai_prompt_config.dart';
+import 'package:moviescout/core/models/translation_context.dart';
 
 abstract class AiProvider {
   String get id;
@@ -168,7 +170,7 @@ abstract class AiProvider {
     }
   }
 
-  Uri buildUrl();
+  Uri buildUrl([String? model]);
   Map<String, String> buildHeaders(String key);
   Map<String, dynamic> buildSuggestionBody(
     String query, [
@@ -178,10 +180,14 @@ abstract class AiProvider {
   Map<String, dynamic> buildTranslationBody(
     String sourceLanguage,
     String targetLanguage,
-    String text, [
+    String text, {
+    String? title,
+    TranslationContext? translationContext,
+    AiPromptConfig? promptConfig,
+    String? targetLanguageCode,
     String? model,
     String? thinkingLevel,
-  ]);
+  });
   String? extractMessageContent(String responseBody);
 
   String description(AppLocalizations l10n);
@@ -227,14 +233,39 @@ class GoogleAiProvider extends AiProvider {
 
   @override
   Map<String, dynamic> get fallbackGenerationConfig => {
-        'thinking_level': AppConstants.aiThinkingLevel,
+        'temperature': AppConstants.aiTemperature,
+        'thinkingConfig': {
+          'thinkingLevel': AppConstants.aiThinkingLevel.toUpperCase(),
+        },
       };
+
+  @override
+  Map<String, dynamic> baseGenerationConfig(String model) {
+    final base = super.baseGenerationConfig(model);
+    base.putIfAbsent('temperature', () => AppConstants.aiTemperature);
+    final legacyLevel = base.remove('thinking_level')?.toString().trim();
+    if (legacyLevel != null &&
+        legacyLevel.isNotEmpty &&
+        base['thinkingConfig'] == null) {
+      base['thinkingConfig'] = {
+        'thinkingLevel': legacyLevel.toUpperCase(),
+      };
+    }
+    return base;
+  }
 
   @override
   String defaultThinkingLevelForModel(String model) {
     final config = baseGenerationConfig(model);
-    final level = config['thinking_level']?.toString().trim();
-    if (level != null && level.isNotEmpty) return level;
+    final thinkingConfig = config['thinkingConfig'];
+    if (thinkingConfig is Map) {
+      final level =
+          thinkingConfig['thinkingLevel']?.toString().trim().toLowerCase();
+      if (level != null && level.isNotEmpty) return level;
+    }
+    final legacyLevel =
+        config['thinking_level']?.toString().trim().toLowerCase();
+    if (legacyLevel != null && legacyLevel.isNotEmpty) return legacyLevel;
     return AppConstants.aiThinkingLevel;
   }
 
@@ -243,15 +274,28 @@ class GoogleAiProvider extends AiProvider {
     Map<String, dynamic> config,
     String thinkingLevel,
   ) {
-    config['thinking_level'] = thinkingLevel;
+    config.remove('thinking_level');
+    final existing = config['thinkingConfig'];
+    final thinkingMap = existing is Map
+        ? Map<String, dynamic>.from(existing)
+        : <String, dynamic>{};
+    thinkingMap['thinkingLevel'] = thinkingLevel.toUpperCase();
+    config['thinkingConfig'] = thinkingMap;
   }
 
   @override
-  Uri buildUrl() => Uri.parse(UrlConstants.googleAiApiUrl);
+  Uri buildUrl([String? model]) {
+    final targetModel = (model != null && model.trim().isNotEmpty)
+        ? model.trim()
+        : selectedModel;
+    return Uri.parse(
+      UrlConstants.googleAiApiUrl.replaceFirst('{MODEL}', targetModel),
+    );
+  }
 
   @override
   Map<String, String> buildHeaders(String key) => {
-        'Content-Type': 'application/json',
+        'Content-Type': AppConstants.aiMimeTypeJson,
         'x-goog-api-key': key,
       };
 
@@ -267,10 +311,23 @@ class GoogleAiProvider extends AiProvider {
       thinkingLevel: thinkingLevel,
     );
     return {
-      'model': targetModel,
-      'system_instruction': AppConstants.aiSearchSystemPrompt,
-      'input': 'Movies or TV shows about: $query',
-      if (genConfig.isNotEmpty) 'generation_config': genConfig,
+      'system_instruction': {
+        'parts': [
+          {'text': AppConstants.aiSearchSystemPrompt},
+        ],
+      },
+      'contents': [
+        {
+          'role': 'user',
+          'parts': [
+            {'text': '${AppConstants.aiSearchUserPromptPrefix}$query'},
+          ],
+        },
+      ],
+      'generationConfig': {
+        ...genConfig,
+        'responseMimeType': AppConstants.aiMimeTypeJson,
+      },
     };
   }
 
@@ -278,20 +335,59 @@ class GoogleAiProvider extends AiProvider {
   Map<String, dynamic> buildTranslationBody(
     String sourceLanguage,
     String targetLanguage,
-    String text, [
+    String text, {
+    String? title,
+    TranslationContext? translationContext,
+    AiPromptConfig? promptConfig,
+    String? targetLanguageCode,
     String? model,
     String? thinkingLevel,
-  ]) {
+  }) {
     final targetModel = model ?? selectedModel;
+    final effectiveContext = translationContext ??
+        const TranslationContext(type: TranslationContentType.movie);
     final genConfig = effectiveGenerationConfig(
       targetModel,
       thinkingLevel: thinkingLevel,
     );
+    final schema = effectiveContext.buildResponseSchema(
+      hasTitle: title != null && title.trim().isNotEmpty,
+      hasText: text.trim().isNotEmpty,
+    );
     return {
-      'model': targetModel,
-      'system_instruction': AppConstants.aiTranslateSystemPrompt,
-      'input': 'Translate from $sourceLanguage to $targetLanguage:\n\n$text',
-      if (genConfig.isNotEmpty) 'generation_config': genConfig,
+      'system_instruction': {
+        'parts': [
+          {
+            'text': effectiveContext.buildSystemPrompt(
+              promptConfig: promptConfig,
+              targetLanguageCode: targetLanguageCode,
+              targetLanguageName: targetLanguage,
+            ),
+          },
+        ],
+      },
+      'contents': [
+        {
+          'role': 'user',
+          'parts': [
+            {
+              'text': effectiveContext.formatPromptInput(
+                sourceLanguage: sourceLanguage,
+                targetLanguage: targetLanguage,
+                text: text,
+                title: title,
+                promptConfig: promptConfig,
+                targetLanguageCode: targetLanguageCode,
+              ),
+            },
+          ],
+        },
+      ],
+      'generationConfig': {
+        ...genConfig,
+        'responseMimeType': AppConstants.aiMimeTypeJson,
+        'responseSchema': schema,
+      },
     };
   }
 
@@ -451,13 +547,13 @@ class OpenRouterProvider extends AiProvider {
   }
 
   @override
-  Uri buildUrl() => Uri.parse(UrlConstants.openRouterApiUrl);
+  Uri buildUrl([String? model]) => Uri.parse(UrlConstants.openRouterApiUrl);
 
   @override
   Map<String, String> buildHeaders(String key) => {
         'Authorization': 'Bearer $key',
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://moviescout.xicra.com',
+        'Content-Type': AppConstants.aiMimeTypeJson,
+        'HTTP-Referer': UrlConstants.moviescoutWebUrl,
         'X-Title': 'MovieScout',
       };
 
@@ -480,7 +576,10 @@ class OpenRouterProvider extends AiProvider {
           'role': 'system',
           'content': AppConstants.aiSearchSystemPrompt,
         },
-        {'role': 'user', 'content': 'Movies or TV shows about: $query'},
+        {
+          'role': 'user',
+          'content': '${AppConstants.aiSearchUserPromptPrefix}$query',
+        },
       ],
     };
   }
@@ -489,14 +588,29 @@ class OpenRouterProvider extends AiProvider {
   Map<String, dynamic> buildTranslationBody(
     String sourceLanguage,
     String targetLanguage,
-    String text, [
+    String text, {
+    String? title,
+    TranslationContext? translationContext,
+    AiPromptConfig? promptConfig,
+    String? targetLanguageCode,
     String? model,
     String? thinkingLevel,
-  ]) {
+  }) {
     final targetModel = model ?? selectedModel;
+    final effectiveContext = translationContext ??
+        const TranslationContext(type: TranslationContentType.movie);
     final genConfig = effectiveGenerationConfig(
       targetModel,
       thinkingLevel: thinkingLevel,
+    );
+    final schema = effectiveContext.buildResponseSchema(
+      hasTitle: title != null && title.trim().isNotEmpty,
+      hasText: text.trim().isNotEmpty,
+    );
+    final systemPrompt = effectiveContext.buildSystemPrompt(
+      promptConfig: promptConfig,
+      targetLanguageCode: targetLanguageCode,
+      targetLanguageName: targetLanguage,
     );
     return {
       'model': targetModel,
@@ -504,12 +618,19 @@ class OpenRouterProvider extends AiProvider {
       'messages': [
         {
           'role': 'system',
-          'content': AppConstants.aiTranslateSystemPrompt,
+          'content':
+              '$systemPrompt\n${AppConstants.aiSchemaInstructionPrefix}${jsonEncode(schema)}',
         },
         {
           'role': 'user',
-          'content':
-              'Translate from $sourceLanguage to $targetLanguage:\n\n$text',
+          'content': effectiveContext.formatPromptInput(
+            sourceLanguage: sourceLanguage,
+            targetLanguage: targetLanguage,
+            text: text,
+            title: title,
+            promptConfig: promptConfig,
+            targetLanguageCode: targetLanguageCode,
+          ),
         },
       ],
     };

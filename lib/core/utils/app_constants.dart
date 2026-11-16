@@ -1,3 +1,5 @@
+import 'package:moviescout/core/models/translation_content_type.dart';
+
 class AppConstants {
   // List Names
   static const String watchlist = 'watchlist';
@@ -31,6 +33,7 @@ class AppConstants {
   static const String aiProviderGoogle = 'google_ai';
   static const String aiProviderOpenRouter = 'openrouter';
   static const String aiConfigCacheKey = 'ai_models_config';
+  static const String aiPromptsCacheKey = 'ai_prompts_config';
 
   static const String aiGoogleApiKey = 'ai_google_api_key';
   static const String aiGoogleModelKey = 'ai_google_model';
@@ -59,10 +62,13 @@ class AppConstants {
 
   static const String aiModelCustom = 'custom';
   static const String aiTranslationEnabled = 'ai_translation_enabled';
-  static const double aiTemperature = 0.2;
+  static const double aiTemperature = 0.5;
   static const int aiMaxSuggestions = 10;
   static const int aiMaxTokens = 4096;
   static const String aiThinkingLevel = 'low';
+  static const String aiMimeTypeJson = 'application/json';
+  static const String aiSearchUserPromptPrefix = 'Movies or TV shows about: ';
+  static const String aiSchemaInstructionPrefix = 'Schema: ';
   static const String aiSearchSystemPrompt =
       'You are an expert movie and TV show search assistant for the MovieScout app.\n'
       'Suggest 1 to $aiMaxSuggestions movies or TV shows that best match the user\'s description.\n'
@@ -73,10 +79,101 @@ class AppConstants {
       '- "media_type": "movie" or "tv".\n'
       'Example:\n'
       '[{"title": "Inception", "year": 2010, "media_type": "movie"}]';
-  static const String aiTranslateSystemPrompt =
-      'You are a professional movie and TV show translator. Translate the given text to the target language. '
-      'If the input contains "TITLE:" and/or "SYNOPSIS:" labels, keep the exact "TITLE:" and "SYNOPSIS:" labels in your response. '
-      'Return ONLY the translated text without any quotes, markdown formatting, or additional comments.';
+
+  static const String aiTemplateTargetLanguagePlaceholder = '{TARGET_LANGUAGE}';
+  static const String aiTemplateContentTypePlaceholder = '{CONTENT_TYPE}';
+  static const String aiTemplateTaskPlaceholder = '{TASK}';
+
+  static const String aiTranslateFallbackSystemTemplate =
+      'You are an expert audiovisual translator for a movie and TV streaming guide. '
+      'Translate the provided $aiTemplateContentTypePlaceholder metadata into $aiTemplateTargetLanguagePlaceholder.\n\n'
+      'Task: $aiTemplateTaskPlaceholder\n\n'
+      'Rules:\n'
+      '1. Adapt idioms, tone, and cultural or historical references naturally to $aiTemplateTargetLanguagePlaceholder; '
+      'strictly avoid literal calques from English or third-party languages.\n'
+      '2. Match the register to the provided content type ($aiTemplateContentTypePlaceholder) and genres.\n'
+      '3. Keep proper character names unchanged, but adapt established historical terms, institutions, or official titles when appropriate.\n'
+      '4. Preserve the original meaning and facts without adding commentary or spoilers.\n'
+      '5. Output strictly valid JSON matching the requested schema.';
+
+  static const Map<TranslationContentType, String> aiTranslateTypeLabels = {
+    TranslationContentType.movie: 'Movie',
+    TranslationContentType.tvSeries: 'TV Series',
+    TranslationContentType.tvSeason: 'TV Series Season',
+    TranslationContentType.tvEpisode: 'TV Series Episode',
+    TranslationContentType.collection: 'Movie Collection',
+    TranslationContentType.person: 'Person Biography',
+  };
+
+  static const Map<TranslationContentType, String> aiTranslateTypeInstructions =
+      {
+    TranslationContentType.movie: 'Translate a feature film title and/or synopsis. '
+        'If an official localized release title is well-established in $aiTemplateTargetLanguagePlaceholder, use it; '
+        'otherwise adapt the title naturally or keep untranslatable proper-noun titles intact.',
+    TranslationContentType.tvSeries: 'Translate a TV series title and/or overview. '
+        'If an official localized release title is well-established in $aiTemplateTargetLanguagePlaceholder, use it; '
+        'otherwise adapt the title naturally or keep untranslatable proper-noun titles intact.',
+    TranslationContentType.tvSeason:
+        'Translate a TV series season title and/or overview using the provided series title and season number as context. '
+            'Adapt standard season labels naturally to $aiTemplateTargetLanguagePlaceholder or translate themed season subtitles consistently with the series tone.',
+    TranslationContentType.tvEpisode:
+        'Translate a TV series episode title and/or synopsis using the provided series title, season/episode numbers, and genres as context. '
+            'Translate episode titles idiomatically in the tone of the series rather than word-for-word, and keep recurring character names and series terminology consistent.',
+    TranslationContentType.collection:
+        'Translate a movie collection or franchise name and/or overview. '
+            'Adapt collection descriptors (such as Collection, Trilogy, or Saga) naturally to $aiTemplateTargetLanguagePlaceholder while preserving recognizable franchise names.',
+    TranslationContentType.person:
+        'Translate a film/TV person\'s biography using their name as context. '
+            'Do NOT translate the person\'s proper name. Produce a natural biographical text in $aiTemplateTargetLanguagePlaceholder, '
+            'preserving credits, awards, institutions, and work titles accurately.',
+  };
+
+  static const String aiInputSourceLanguageLabel = 'Source language';
+  static const String aiInputTargetLanguageLabel = 'Target language';
+  static const String aiInputTypeLabel = 'Type';
+  static const String aiInputSeriesLabel = 'Series';
+  static const String aiInputSeasonLabel = 'Season';
+  static const String aiInputEpisodeLabel = 'Episode';
+  static const String aiInputGenresLabel = 'Genres';
+  static const String aiInputPersonLabel = 'Person';
+  static const String aiInputTitleLabel = 'Title';
+  static const String aiInputSynopsisLabel = 'Synopsis';
+  static const String aiInputBiographyLabel = 'Biography';
+
+  static const String aiSchemaTitleKey = 'title';
+  static const String aiSchemaSynopsisKey = 'synopsis';
+  static const String aiSchemaBiographyKey = 'biography';
+  static const String aiSchemaDescriptionKey = 'description';
+
+  static const Map<TranslationContentType, String>
+      aiTranslateTitleSchemaDescriptions = {
+    TranslationContentType.movie: 'Translated movie title',
+    TranslationContentType.tvSeries: 'Translated TV series title',
+    TranslationContentType.tvSeason: 'Translated season title',
+    TranslationContentType.tvEpisode: 'Translated episode title',
+    TranslationContentType.collection: 'Translated movie collection name',
+  };
+
+  static const Map<TranslationContentType, String>
+      aiTranslateSynopsisSchemaDescriptions = {
+    TranslationContentType.movie:
+        'Natural, idiomatic translation of the movie synopsis',
+    TranslationContentType.tvSeries:
+        'Natural, idiomatic translation of the TV series overview',
+    TranslationContentType.tvSeason:
+        'Natural, idiomatic translation of the season overview',
+    TranslationContentType.tvEpisode:
+        'Natural, idiomatic translation of the episode synopsis',
+    TranslationContentType.collection:
+        'Natural, idiomatic translation of the movie collection overview',
+  };
+
+  static const String aiTranslateBiographySchemaDescription =
+      'Natural, idiomatic translation of the person biography';
+  static const String aiTranslateDefaultTitleSchemaDescription =
+      'Translated media title';
+  static const String aiTranslateDefaultSynopsisSchemaDescription =
+      'Natural, idiomatic translation of the synopsis';
 
   static const String catalan = 'ca-ES';
   static const String spanish = 'es-ES';

@@ -4,19 +4,18 @@ import 'package:moviescout/features/titles/models/tmdb_translation.dart';
 import 'package:moviescout/core/services/app_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
+import 'package:moviescout/core/models/translation_context.dart';
 
 class TranslationsButton extends StatefulWidget {
   final Future<List<TmdbTranslation>> Function() fetchTranslations;
-  final String originalTitle;
-  final String originalDescription;
   final String editUrl;
+  final TranslationContext translationContext;
 
   const TranslationsButton({
     super.key,
     required this.fetchTranslations,
-    required this.originalTitle,
-    required this.originalDescription,
     required this.editUrl,
+    required this.translationContext,
   });
 
   @override
@@ -30,9 +29,8 @@ class _TranslationsButtonState extends State<TranslationsButton> {
       BuildContext context, List<TmdbTranslation> translations) {
     context.toTranslations(
       translations: translations,
-      originalTitle: widget.originalTitle,
-      originalDescription: widget.originalDescription,
       editUrl: widget.editUrl,
+      translationContext: widget.translationContext,
     );
   }
 

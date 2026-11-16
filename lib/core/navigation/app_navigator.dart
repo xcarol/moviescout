@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:moviescout/core/models/translation_context.dart';
 import 'package:moviescout/features/discovery/models/tmdb_collection.dart';
 import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
@@ -197,17 +198,15 @@ extension AppNavigatorExtension on BuildContext {
 
   Future<T?> toTranslations<T>({
     required List<TmdbTranslation> translations,
-    required String originalTitle,
-    required String originalDescription,
     required String editUrl,
+    required TranslationContext translationContext,
   }) {
     return AppNavigator.push<T>(
       this,
       TranslationsScreen(
         translations: translations,
-        originalTitle: originalTitle,
-        originalDescription: originalDescription,
         editUrl: editUrl,
+        translationContext: translationContext,
       ),
     );
   }

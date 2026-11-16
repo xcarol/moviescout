@@ -8,6 +8,8 @@ import 'package:moviescout/core/services/update_manager.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:moviescout/core/utils/url_constants.dart';
+import 'package:moviescout/core/models/ai_prompt_config.dart';
+import 'package:moviescout/core/models/translation_context.dart';
 
 class AiTitleSuggestion {
   final String title;
@@ -85,23 +87,42 @@ class AiService {
   ];
 
   String? _remoteDefaultProviderId;
+  AiPromptConfig? _promptConfig;
+
+  AiPromptConfig? get promptConfig => _promptConfig;
 
   Future<void> init() async {
+    await Future.wait([
+      _initRemoteJson(
+        cacheKey: AppConstants.aiConfigCacheKey,
+        url: UrlConstants.aiModelsConfigUrl,
+        applyJson: applyConfigJson,
+      ),
+      _initRemoteJson(
+        cacheKey: AppConstants.aiPromptsCacheKey,
+        url: UrlConstants.aiPromptsConfigUrl,
+        applyJson: applyPromptsJson,
+      ),
+    ]);
+  }
+
+  Future<void> _initRemoteJson({
+    required String cacheKey,
+    required String url,
+    required bool Function(String jsonStr) applyJson,
+  }) async {
     final prefs = PreferencesService().prefs;
-    final cachedJson = prefs.getString(AppConstants.aiConfigCacheKey);
+    final cachedJson = prefs.getString(cacheKey);
     if (cachedJson != null && cachedJson.isNotEmpty) {
-      applyConfigJson(cachedJson);
+      applyJson(cachedJson);
     }
 
-    if (UpdateManager().isUpToDate(
-      AppConstants.aiConfigCacheKey,
-      UpdateManager.aiConfigTimeout,
-    )) {
+    if (UpdateManager().isUpToDate(cacheKey, UpdateManager.aiConfigTimeout)) {
       return;
     }
 
     try {
-      final uri = Uri.parse(UrlConstants.aiModelsConfigUrl).replace(
+      final uri = Uri.parse(url).replace(
         queryParameters: {
           't': DateTime.now().millisecondsSinceEpoch.toString(),
         },
@@ -109,13 +130,28 @@ class AiService {
       final response = await http.get(uri).timeout(const Duration(seconds: 4));
 
       if (response.statusCode == 200 && response.body.trim().isNotEmpty) {
-        if (applyConfigJson(response.body)) {
-          await prefs.setString(AppConstants.aiConfigCacheKey, response.body);
-          await UpdateManager().updateLastUpdate(AppConstants.aiConfigCacheKey);
+        if (applyJson(response.body)) {
+          await prefs.setString(cacheKey, response.body);
+          await UpdateManager().updateLastUpdate(cacheKey);
         }
       }
     } catch (e) {
-      debugPrint('Failed to fetch remote AI models config: $e');
+      debugPrint('Failed to fetch remote config ($url): $e');
+    }
+  }
+
+  @visibleForTesting
+  bool applyPromptsJson(String jsonStr) {
+    try {
+      final decoded = jsonDecode(jsonStr);
+      if (decoded is! Map) return false;
+      _promptConfig = AiPromptConfig.fromJson(
+        Map<String, dynamic>.from(decoded),
+      );
+      return true;
+    } catch (e) {
+      debugPrint('Error parsing AI prompts config JSON: $e');
+      return false;
     }
   }
 
@@ -150,6 +186,7 @@ class AiService {
   @visibleForTesting
   void resetRemoteConfig() {
     _remoteDefaultProviderId = null;
+    _promptConfig = null;
     for (final provider in providers) {
       provider.applyRemoteConfig(null);
     }
@@ -253,7 +290,7 @@ class AiService {
       throw Exception('${provider.name} API key is not configured');
     }
 
-    final targetUrl = provider.buildUrl();
+    final targetUrl = provider.buildUrl(model);
     final headers = provider.buildHeaders(key);
     final body = jsonEncode(
       provider.buildSuggestionBody(userQuery, model, thinkingLevel),
@@ -292,6 +329,9 @@ class AiService {
     String text, {
     required String sourceLanguage,
     required String targetLanguage,
+    String? targetLanguageCode,
+    String? title,
+    TranslationContext? translationContext,
     String? model,
     String? thinkingLevel,
   }) async {
@@ -301,17 +341,29 @@ class AiService {
       throw Exception('${provider.name} API key is not configured');
     }
 
-    final targetUrl = provider.buildUrl();
+    final targetUrl = provider.buildUrl(model);
     final headers = provider.buildHeaders(key);
     final body = jsonEncode(
       provider.buildTranslationBody(
         sourceLanguage,
         targetLanguage,
         text,
-        model,
-        thinkingLevel,
+        title: title,
+        translationContext: translationContext,
+        promptConfig: _promptConfig,
+        targetLanguageCode: targetLanguageCode,
+        model: model,
+        thinkingLevel: thinkingLevel,
       ),
     );
+    debugPrint('--------- TRANSLATE REQUEST --------');
+    debugPrint('URL: $targetUrl');
+    debugPrint(
+      'BODY:\n${const JsonEncoder.withIndent('  ').convert(body)}',
+      wrapWidth: 700,
+    );
+
+    debugPrint('--------- TRANSLATE REQUEST --------');
 
     try {
       final response = await http
@@ -319,6 +371,9 @@ class AiService {
           .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
+        debugPrint('--------- TRANSLATE RESPONSE --------');
+        debugPrint('BODY: ${response.body}');
+        debugPrint('--------- TRANSLATE RESPONSE --------');
         final content = provider.extractMessageContent(response.body);
         if (content != null && content.isNotEmpty) {
           final cleaned = _cleanTranslation(content);

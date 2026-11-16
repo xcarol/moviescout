@@ -8,12 +8,12 @@ import 'package:moviescout/features/settings/services/language_service.dart';
 import 'package:moviescout/features/settings/services/region_service.dart';
 import 'package:moviescout/features/titles/models/tmdb_translation.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
+import 'package:moviescout/core/models/translation_context.dart';
 
 class ActionMenu extends StatelessWidget {
   final String? editUrl;
   final Future<List<TmdbTranslation>> Function()? fetchTranslations;
-  final String? originalTitle;
-  final String? originalDescription;
+  final TranslationContext? translationContext;
   final String? shareUrl;
   final VoidCallback? onPin;
 
@@ -21,8 +21,7 @@ class ActionMenu extends StatelessWidget {
     super.key,
     this.editUrl,
     this.fetchTranslations,
-    this.originalTitle,
-    this.originalDescription,
+    this.translationContext,
     this.shareUrl,
     this.onPin,
   });
@@ -61,9 +60,9 @@ class ActionMenu extends StatelessWidget {
       Navigator.of(context).pop();
       context.toTranslations(
         translations: translations,
-        originalTitle: originalTitle ?? '',
-        originalDescription: originalDescription ?? '',
         editUrl: editUrl ?? '',
+        translationContext: translationContext ??
+            const TranslationContext(type: TranslationContentType.movie),
       );
     } catch (e) {
       if (!context.mounted) return;

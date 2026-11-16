@@ -21,6 +21,7 @@ import 'package:moviescout/features/titles/widgets/rate_form.dart';
 import 'package:moviescout/core/services/tmdb_translation_service.dart';
 import 'package:moviescout/features/titles/widgets/user_rate_button.dart';
 import 'package:provider/provider.dart';
+import 'package:moviescout/core/models/translation_context.dart';
 
 class EpisodeDetails extends StatefulWidget {
   final TmdbTitle title;
@@ -123,8 +124,13 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
             fetchTranslations: () => TmdbTranslationService()
                 .getEpisodeTranslations(widget.title.tmdbId,
                     widget.seasonNumber, _currentEpisodeNumber),
-            originalTitle: cachedEpisode?.name ?? '',
-            originalDescription: cachedEpisode?.overview ?? '',
+            translationContext: TranslationContext.fromItem(
+              cachedEpisode,
+              type: TranslationContentType.tvEpisode,
+              series: widget.title,
+              seasonNumber: widget.seasonNumber,
+              episodeNumber: _currentEpisodeNumber,
+            ),
           ),
         ],
       ),
