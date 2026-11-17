@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
+import 'package:moviescout/features/settings/services/ai_key_cipher.dart';
 import 'package:moviescout/features/settings/services/ai_provider.dart';
 import 'package:moviescout/features/settings/services/ai_service.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
+import 'package:moviescout/core/models/translation_context.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -318,9 +320,22 @@ void main() {
       await service.setSelectedProvider(AppConstants.aiProviderOpenRouter);
       await service.saveSelectedModel('openai/gpt-4o-mini', isCustom: true);
       expect(service.selectedModel, 'openai/gpt-4o-mini');
+      expect(service.currentProvider.customModel, 'openai/gpt-4o-mini');
       expect(
         PreferencesService().prefs.getString(AppConstants.aiOpenRouterModelKey),
         'openai/gpt-4o-mini',
+      );
+
+      await service.saveSelectedModel(
+        AppConstants.aiOpenRouterModelAuto,
+        isCustom: false,
+      );
+      expect(service.selectedModel, AppConstants.aiOpenRouterModelAuto);
+      expect(service.currentProvider.isCustomModel, isFalse);
+      expect(service.currentProvider.customModel, 'openai/gpt-4o-mini');
+      expect(
+        service.currentProvider.selectableModels,
+        contains('openai/gpt-4o-mini'),
       );
     });
 
@@ -393,6 +408,283 @@ void main() {
           targetLanguage: 'es',
         ),
         throwsA(isA<Exception>()),
+      );
+    });
+
+    test(
+        'GoogleAiProvider injects model in URL and builds type-specific generateContent bodies',
+        () {
+      final provider = GoogleAiProvider();
+      final url = provider.buildUrl('gemini-3.6-flash');
+      expect(
+        url.toString(),
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent',
+      );
+
+      const episodeContext = TranslationContext(
+        type: TranslationContentType.tvEpisode,
+        seriesTitle: 'The Diplomat',
+        seasonNumber: 2,
+        episodeNumber: 4,
+        genres: ['Drama', 'Political Thriller'],
+      );
+      final episodeBody = provider.buildTranslationBody(
+        'English',
+        'Catalan',
+        'A shocking security breach sends the administration into crisis.',
+        title: 'Redcoats',
+        translationContext: episodeContext,
+        model: 'gemini-3.6-flash',
+        thinkingLevel: 'medium',
+      );
+
+      expect(episodeBody.containsKey('model'), isFalse);
+      expect(episodeBody['system_instruction'], {
+        'parts': [
+          {
+            'text': episodeContext.buildSystemPrompt(
+              targetLanguageName: 'Catalan',
+            ),
+          },
+        ],
+      });
+      expect(episodeBody['contents'], [
+        {
+          'role': 'user',
+          'parts': [
+            {
+              'text':
+                  'Source language: English\nTarget language: Catalan\nType: TV Series Episode\nSeries: The Diplomat\nSeason: 2\nEpisode: 4\nGenres: Drama, Political Thriller\n\nTitle: Redcoats\nSynopsis: A shocking security breach sends the administration into crisis.',
+            },
+          ],
+        },
+      ]);
+      expect(episodeBody['generationConfig'], {
+        'temperature': AppConstants.aiTemperature,
+        'thinkingConfig': {
+          'thinkingLevel': 'MEDIUM',
+        },
+        'responseMimeType': AppConstants.aiMimeTypeJson,
+        'responseSchema': episodeContext.buildResponseSchema(
+          hasTitle: true,
+          hasText: true,
+        ),
+      });
+
+      const personContext = TranslationContext(
+        type: TranslationContentType.person,
+      );
+      final personBody = provider.buildTranslationBody(
+        'English',
+        'Catalan',
+        'Keri Lynn Russell is an American actress.',
+        title: 'Keri Russell',
+        translationContext: personContext,
+        model: 'gemini-3.6-flash',
+        thinkingLevel: 'low',
+      );
+
+      expect(personBody['system_instruction'], {
+        'parts': [
+          {
+            'text': personContext.buildSystemPrompt(
+              targetLanguageName: 'Catalan',
+            ),
+          },
+        ],
+      });
+      expect(personBody['contents'], [
+        {
+          'role': 'user',
+          'parts': [
+            {
+              'text':
+                  'Source language: English\nTarget language: Catalan\nType: Person Biography\n\nPerson: Keri Russell\nBiography: Keri Lynn Russell is an American actress.',
+            },
+          ],
+        },
+      ]);
+      expect(personBody['generationConfig'], {
+        'temperature': AppConstants.aiTemperature,
+        'thinkingConfig': {
+          'thinkingLevel': 'LOW',
+        },
+        'responseMimeType': AppConstants.aiMimeTypeJson,
+        'responseSchema': personContext.buildResponseSchema(
+          hasTitle: true,
+          hasText: true,
+        ),
+      });
+    });
+
+    test(
+        'applyPromptsJson injects remote language templates and content types dynamically',
+        () {
+      final service = AiService();
+      final promptsJson = jsonEncode({
+        'version': 1,
+        'default_language': 'en',
+        'languages': {
+          'en': {
+            'language_name': 'English',
+            'system_template':
+                'Translate {CONTENT_TYPE} into {TARGET_LANGUAGE}. {TASK}',
+            'content_types': {
+              'movie': {'label': 'movie', 'task': 'Translate film.'},
+            },
+          },
+          'ca': {
+            'language_name': 'català',
+            'system_template':
+                'Tradueix {CONTENT_TYPE} al {TARGET_LANGUAGE}. {TASK}',
+            'content_types': {
+              'tv_episode': {
+                'label': 'episodi de sèrie',
+                'task': 'Tradueix episodi en {TARGET_LANGUAGE}.',
+              },
+            },
+          },
+          'ja': {
+            'language_name': '日本語',
+            'system_template':
+                '{CONTENT_TYPE}を{TARGET_LANGUAGE}に翻訳してください。{TASK}',
+            'content_types': {
+              'movie': {
+                'label': '映画',
+                'task': '自然な{TARGET_LANGUAGE}にしてください。',
+              },
+            },
+          },
+        },
+      });
+
+      expect(service.applyPromptsJson(promptsJson), isTrue);
+
+      final provider = GoogleAiProvider();
+      const episodeContext = TranslationContext(
+        type: TranslationContentType.tvEpisode,
+        seriesTitle: 'The Diplomat',
+        seasonNumber: 2,
+        episodeNumber: 4,
+      );
+
+      final caBody = provider.buildTranslationBody(
+        'English',
+        'Catalan',
+        'Plot',
+        title: 'Redcoats',
+        translationContext: episodeContext,
+        promptConfig: service.promptConfig,
+        targetLanguageCode: 'ca',
+      );
+      expect(
+        caBody['system_instruction']['parts'][0]['text'],
+        'Tradueix episodi de sèrie al català. Tradueix episodi en català.',
+      );
+      expect(
+        caBody['contents'][0]['parts'][0]['text'],
+        contains('Type: episodi de sèrie'),
+      );
+
+      const movieContext = TranslationContext(
+        type: TranslationContentType.movie,
+      );
+      final jaPrompt = movieContext.buildSystemPrompt(
+        promptConfig: service.promptConfig,
+        targetLanguageCode: 'ja',
+        targetLanguageName: 'Japanese',
+      );
+      expect(
+        jaPrompt,
+        '映画を日本語に翻訳してください。自然な日本語にしてください。',
+      );
+
+      final regionalFallback = movieContext.buildSystemPrompt(
+        promptConfig: service.promptConfig,
+        targetLanguageCode: 'en-GB',
+        targetLanguageName: 'English',
+      );
+      expect(
+        regionalFallback,
+        'Translate movie into English. Translate film.',
+      );
+    });
+
+    test('AiKeyCipher encrypts and decrypts per user and rejects tampering',
+        () {
+      const cipher = AiKeyCipher(secret: 'test-super-secret-key-32-chars!!');
+      const userA = 'user-uuid-a';
+      const userB = 'user-uuid-b';
+
+      final encrypted = cipher.encrypt('AIzaSyFakeKey12345', userId: userA);
+      expect(encrypted, isNotNull);
+      expect(encrypted, startsWith('v1:'));
+      expect(encrypted, isNot(contains('AIzaSyFakeKey12345')));
+
+      expect(cipher.decrypt(encrypted, userId: userA), 'AIzaSyFakeKey12345');
+      expect(cipher.decrypt(encrypted, userId: userB), isNull);
+
+      const wrongCipher = AiKeyCipher(secret: 'another-secret-key-completely');
+      expect(wrongCipher.decrypt(encrypted, userId: userA), isNull);
+
+      expect(cipher.decrypt('${encrypted}tampered', userId: userA), isNull);
+    });
+
+    test('cloud payload round-trips encrypted keys, custom model, and settings',
+        () async {
+      const cipher = AiKeyCipher(secret: 'test-super-secret-key-32-chars!!');
+      const userId = 'user-cloud-123';
+      final service = AiService();
+
+      await service.setSelectedProvider(AppConstants.aiProviderGoogle);
+      await service.saveApiKey('google-secret-key');
+      await service.saveSelectedModel('gemini-custom-exp', isCustom: true);
+      await service.saveSelectedModel(
+        AppConstants.aiGoogleModelFlashLite,
+        isCustom: false,
+      );
+      await service.saveSelectedThinkingLevel('high');
+      await PreferencesService()
+          .prefs
+          .setBool(AppConstants.aiTranslationEnabled, true);
+
+      final cloudSettings =
+          service.buildCloudSettings(userId: userId, cipher: cipher);
+      expect(cloudSettings['user_id'], userId);
+      expect(cloudSettings['active_provider'], AppConstants.aiProviderGoogle);
+      expect(cloudSettings['ai_translation_enabled'], isTrue);
+
+      final googleSettings =
+          cloudSettings['providers'][AppConstants.aiProviderGoogle] as Map;
+      expect(
+        googleSettings['api_key_encrypted'],
+        startsWith('v1:'),
+      );
+      expect(
+        googleSettings['api_key_encrypted'],
+        isNot(contains('google-secret-key')),
+      );
+      expect(googleSettings['custom_model'], 'gemini-custom-exp');
+      expect(googleSettings['model'], AppConstants.aiGoogleModelFlashLite);
+      expect(googleSettings['is_custom_model'], isFalse);
+      expect(googleSettings['thinking_level'], 'high');
+
+      await service.clearUserSettings();
+      expect(service.hasApiKey, isFalse);
+      expect(service.currentProvider.customModel, isEmpty);
+
+      await service.applyCloudSettings(
+        cloudSettings,
+        userId: userId,
+        cipher: cipher,
+      );
+      expect(service.apiKey, 'google-secret-key');
+      expect(service.selectedModel, AppConstants.aiGoogleModelFlashLite);
+      expect(service.currentProvider.customModel, 'gemini-custom-exp');
+      expect(service.selectedThinkingLevel, 'high');
+      expect(
+        PreferencesService().prefs.getBool(AppConstants.aiTranslationEnabled),
+        isTrue,
       );
     });
   });

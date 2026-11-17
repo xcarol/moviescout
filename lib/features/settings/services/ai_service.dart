@@ -2,12 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:moviescout/features/auth/services/supabase_auth_service.dart';
+import 'package:moviescout/features/settings/services/ai_key_cipher.dart';
 import 'package:moviescout/features/settings/services/ai_provider.dart';
+import 'package:moviescout/features/titles/repositories/cloud_title_repository.dart';
+import 'package:moviescout/core/services/cloud_database_service.dart';
 import 'package:moviescout/core/services/error_service.dart';
 import 'package:moviescout/core/services/update_manager.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:moviescout/core/utils/url_constants.dart';
+import 'package:moviescout/core/models/ai_prompt_config.dart';
+import 'package:moviescout/core/models/translation_context.dart';
 
 class AiTitleSuggestion {
   final String title;
@@ -70,10 +76,13 @@ class AiApiException implements Exception {
   String toString() => message;
 }
 
-class AiService {
+class AiService with ChangeNotifier {
   static final AiService _instance = AiService._internal();
 
-  factory AiService() {
+  factory AiService({CloudTitleRepository? cloudRepository}) {
+    if (cloudRepository != null) {
+      _instance._cloudRepository = cloudRepository;
+    }
     return _instance;
   }
 
@@ -84,24 +93,76 @@ class AiService {
     OpenRouterProvider(),
   ];
 
+  CloudTitleRepository? _cloudRepository;
   String? _remoteDefaultProviderId;
+  AiPromptConfig? _promptConfig;
+  String? _syncedUserId;
+  bool _isSyncingCloud = false;
+  Map<String, Map<String, dynamic>> _lastCloudProvidersJson = {};
+
+  AiPromptConfig? get promptConfig => _promptConfig;
+
+  CloudTitleRepository? get _safeCloudRepository {
+    if (_cloudRepository != null) return _cloudRepository;
+    try {
+      return CloudTitleRepository.instance;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  String? get _currentUserId {
+    try {
+      return CloudDatabaseService.currentUser?.id;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void updateAuth(SupabaseAuthService authService) {
+    final user = authService.currentUser;
+    if (user != null) {
+      if (_syncedUserId != user.id) {
+        _syncedUserId = user.id;
+        unawaited(syncWithCloud());
+      }
+    } else {
+      _syncedUserId = null;
+    }
+  }
 
   Future<void> init() async {
+    await Future.wait([
+      _initRemoteJson(
+        cacheKey: AppConstants.aiConfigCacheKey,
+        url: UrlConstants.aiModelsConfigUrl,
+        applyJson: applyConfigJson,
+      ),
+      _initRemoteJson(
+        cacheKey: AppConstants.aiPromptsCacheKey,
+        url: UrlConstants.aiPromptsConfigUrl,
+        applyJson: applyPromptsJson,
+      ),
+    ]);
+  }
+
+  Future<void> _initRemoteJson({
+    required String cacheKey,
+    required String url,
+    required bool Function(String jsonStr) applyJson,
+  }) async {
     final prefs = PreferencesService().prefs;
-    final cachedJson = prefs.getString(AppConstants.aiConfigCacheKey);
+    final cachedJson = prefs.getString(cacheKey);
     if (cachedJson != null && cachedJson.isNotEmpty) {
-      applyConfigJson(cachedJson);
+      applyJson(cachedJson);
     }
 
-    if (UpdateManager().isUpToDate(
-      AppConstants.aiConfigCacheKey,
-      UpdateManager.aiConfigTimeout,
-    )) {
+    if (UpdateManager().isUpToDate(cacheKey, UpdateManager.aiConfigTimeout)) {
       return;
     }
 
     try {
-      final uri = Uri.parse(UrlConstants.aiModelsConfigUrl).replace(
+      final uri = Uri.parse(url).replace(
         queryParameters: {
           't': DateTime.now().millisecondsSinceEpoch.toString(),
         },
@@ -109,13 +170,28 @@ class AiService {
       final response = await http.get(uri).timeout(const Duration(seconds: 4));
 
       if (response.statusCode == 200 && response.body.trim().isNotEmpty) {
-        if (applyConfigJson(response.body)) {
-          await prefs.setString(AppConstants.aiConfigCacheKey, response.body);
-          await UpdateManager().updateLastUpdate(AppConstants.aiConfigCacheKey);
+        if (applyJson(response.body)) {
+          await prefs.setString(cacheKey, response.body);
+          await UpdateManager().updateLastUpdate(cacheKey);
         }
       }
     } catch (e) {
-      debugPrint('Failed to fetch remote AI models config: $e');
+      debugPrint('Failed to fetch remote config ($url): $e');
+    }
+  }
+
+  @visibleForTesting
+  bool applyPromptsJson(String jsonStr) {
+    try {
+      final decoded = jsonDecode(jsonStr);
+      if (decoded is! Map) return false;
+      _promptConfig = AiPromptConfig.fromJson(
+        Map<String, dynamic>.from(decoded),
+      );
+      return true;
+    } catch (e) {
+      debugPrint('Error parsing AI prompts config JSON: $e');
+      return false;
     }
   }
 
@@ -150,6 +226,7 @@ class AiService {
   @visibleForTesting
   void resetRemoteConfig() {
     _remoteDefaultProviderId = null;
+    _promptConfig = null;
     for (final provider in providers) {
       provider.applyRemoteConfig(null);
     }
@@ -189,10 +266,15 @@ class AiService {
     return fallbackDefault;
   }
 
-  Future<void> setSelectedProvider(String providerId) async {
+  Future<void> _persistActiveProvider(String providerId) async {
     await PreferencesService()
         .prefs
         .setString(AppConstants.aiProviderKey, providerId.trim());
+  }
+
+  Future<void> setSelectedProvider(String providerId) async {
+    await _persistActiveProvider(providerId);
+    unawaited(pushToCloud());
   }
 
   String get apiKey => currentProvider.apiKey;
@@ -205,8 +287,9 @@ class AiService {
 
   Future<void> saveApiKey(String key) async {
     final provider = currentProvider;
-    await setSelectedProvider(provider.id);
+    await _persistActiveProvider(provider.id);
     await provider.saveApiKey(key);
+    unawaited(pushToCloud());
   }
 
   Future<void> saveSelectedModel(
@@ -214,14 +297,199 @@ class AiService {
     bool isCustom = false,
   }) async {
     final provider = currentProvider;
-    await setSelectedProvider(provider.id);
+    await _persistActiveProvider(provider.id);
     await provider.saveSelectedModel(model, isCustom: isCustom);
+    unawaited(pushToCloud());
   }
 
   Future<void> saveSelectedThinkingLevel(String? level) async {
     final provider = currentProvider;
-    await setSelectedProvider(provider.id);
+    await _persistActiveProvider(provider.id);
     await provider.saveSelectedThinkingLevel(level);
+    unawaited(pushToCloud());
+  }
+
+  bool _hasAnyLocalSettings() {
+    final prefs = PreferencesService().prefs;
+    if ((prefs.getString(AppConstants.aiProviderKey)?.trim() ?? '')
+        .isNotEmpty) {
+      return true;
+    }
+    if (prefs.getBool(AppConstants.aiTranslationEnabled) == true) {
+      return true;
+    }
+    for (final provider in providers) {
+      if (provider.hasApiKey ||
+          provider.customModel.isNotEmpty ||
+          (prefs.getString(provider.modelPrefKey)?.trim() ?? '').isNotEmpty ||
+          (prefs.getString(provider.thinkingPrefKey)?.trim() ?? '')
+              .isNotEmpty) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Future<void> syncWithCloud({
+    CloudTitleRepository? cloudRepository,
+    String? userId,
+    AiKeyCipher cipher = const AiKeyCipher(),
+  }) async {
+    if (_isSyncingCloud) return;
+    final repo = cloudRepository ?? _safeCloudRepository;
+    final resolvedUserId = userId ?? _currentUserId;
+    if (repo == null || resolvedUserId == null) return;
+
+    _isSyncingCloud = true;
+    try {
+      final cloudSettings = await repo.fetchUserAiSettings(resolvedUserId);
+
+      if (cloudSettings == null) {
+        if (_hasAnyLocalSettings()) {
+          await pushToCloud(
+            cloudRepository: repo,
+            userId: resolvedUserId,
+            cipher: cipher,
+          );
+        }
+        return;
+      }
+
+      await applyCloudSettings(
+        cloudSettings,
+        userId: resolvedUserId,
+        cipher: cipher,
+      );
+      notifyListeners();
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        reportToCrashlytics: false,
+        userMessage: 'Error syncing AI settings from cloud',
+      );
+    } finally {
+      _isSyncingCloud = false;
+    }
+  }
+
+  Future<void> pushToCloud({
+    CloudTitleRepository? cloudRepository,
+    String? userId,
+    AiKeyCipher cipher = const AiKeyCipher(),
+  }) async {
+    final repo = cloudRepository ?? _safeCloudRepository;
+    final resolvedUserId = userId ?? _currentUserId;
+    if (repo == null || resolvedUserId == null) return;
+
+    if (!cipher.isConfigured && providers.any((p) => p.hasApiKey)) {
+      ErrorService.log(
+        'Missing ${AppConstants.aiKeyEncryptionSecret}; skipping encrypted API key upload',
+        reportToCrashlytics: false,
+      );
+    }
+
+    try {
+      final settings =
+          buildCloudSettings(userId: resolvedUserId, cipher: cipher);
+      await repo.updateUserAiSettings(settings);
+    } catch (e, stackTrace) {
+      ErrorService.log(
+        e,
+        stackTrace: stackTrace,
+        reportToCrashlytics: false,
+        userMessage: 'Error saving AI settings to cloud',
+      );
+    }
+  }
+
+  @visibleForTesting
+  Map<String, dynamic> buildCloudSettings({
+    required String userId,
+    AiKeyCipher cipher = const AiKeyCipher(),
+  }) {
+    final prefs = PreferencesService().prefs;
+    final activeProvider =
+        prefs.getString(AppConstants.aiProviderKey)?.trim() ?? '';
+    final aiTranslationEnabled =
+        prefs.getBool(AppConstants.aiTranslationEnabled) ?? false;
+
+    final providersMap = <String, dynamic>{};
+    for (final provider in providers) {
+      final previousEncrypted = _lastCloudProvidersJson[provider.id]
+              ?['api_key_encrypted']
+          ?.toString();
+      final providerJson = provider.toCloudJson(
+        cipher: cipher,
+        userId: userId,
+        fallbackEncryptedKey: previousEncrypted,
+      );
+      providersMap[provider.id] = providerJson;
+    }
+    _lastCloudProvidersJson = providersMap.map(
+      (key, value) => MapEntry(key, Map<String, dynamic>.from(value as Map)),
+    );
+
+    return {
+      'user_id': userId,
+      'active_provider': activeProvider.isNotEmpty ? activeProvider : null,
+      'ai_translation_enabled': aiTranslationEnabled,
+      'providers': providersMap,
+    };
+  }
+
+  @visibleForTesting
+  Future<void> applyCloudSettings(
+    Map<String, dynamic> cloudSettings, {
+    required String userId,
+    AiKeyCipher cipher = const AiKeyCipher(),
+  }) async {
+    final prefs = PreferencesService().prefs;
+
+    final activeProvider =
+        cloudSettings['active_provider']?.toString().trim() ?? '';
+    if (activeProvider.isNotEmpty) {
+      await prefs.setString(AppConstants.aiProviderKey, activeProvider);
+    } else {
+      await prefs.remove(AppConstants.aiProviderKey);
+    }
+
+    if (cloudSettings['ai_translation_enabled'] is bool) {
+      await prefs.setBool(
+        AppConstants.aiTranslationEnabled,
+        cloudSettings['ai_translation_enabled'] as bool,
+      );
+    }
+
+    final rawProviders = cloudSettings['providers'];
+    if (rawProviders is Map) {
+      final cachedProviders = <String, Map<String, dynamic>>{};
+      for (final provider in providers) {
+        final providerData = rawProviders[provider.id];
+        if (providerData is Map) {
+          final typed = Map<String, dynamic>.from(providerData);
+          cachedProviders[provider.id] = typed;
+          await provider.applyCloudJson(
+            typed,
+            cipher: cipher,
+            userId: userId,
+          );
+        }
+      }
+      _lastCloudProvidersJson = cachedProviders;
+    }
+  }
+
+  Future<void> clearUserSettings() async {
+    final prefs = PreferencesService().prefs;
+    await prefs.remove(AppConstants.aiProviderKey);
+    await prefs.remove(AppConstants.aiTranslationEnabled);
+    for (final provider in providers) {
+      await provider.clearLocalSettings();
+    }
+    _syncedUserId = null;
+    _lastCloudProvidersJson = {};
+    notifyListeners();
   }
 
   static int? extractRetrySeconds(String errorMessage) {
@@ -253,7 +521,7 @@ class AiService {
       throw Exception('${provider.name} API key is not configured');
     }
 
-    final targetUrl = provider.buildUrl();
+    final targetUrl = provider.buildUrl(model);
     final headers = provider.buildHeaders(key);
     final body = jsonEncode(
       provider.buildSuggestionBody(userQuery, model, thinkingLevel),
@@ -292,6 +560,9 @@ class AiService {
     String text, {
     required String sourceLanguage,
     required String targetLanguage,
+    String? targetLanguageCode,
+    String? title,
+    TranslationContext? translationContext,
     String? model,
     String? thinkingLevel,
   }) async {
@@ -301,15 +572,19 @@ class AiService {
       throw Exception('${provider.name} API key is not configured');
     }
 
-    final targetUrl = provider.buildUrl();
+    final targetUrl = provider.buildUrl(model);
     final headers = provider.buildHeaders(key);
     final body = jsonEncode(
       provider.buildTranslationBody(
         sourceLanguage,
         targetLanguage,
         text,
-        model,
-        thinkingLevel,
+        title: title,
+        translationContext: translationContext,
+        promptConfig: _promptConfig,
+        targetLanguageCode: targetLanguageCode,
+        model: model,
+        thinkingLevel: thinkingLevel,
       ),
     );
 

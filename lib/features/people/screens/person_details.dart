@@ -27,6 +27,7 @@ import 'package:moviescout/core/services/tmdb_translation_service.dart';
 import 'package:moviescout/core/widgets/social_link.dart';
 import 'package:moviescout/core/navigation/home_screen_shortcut_service.dart';
 import 'package:moviescout/core/utils/snack_bar.dart';
+import 'package:moviescout/core/models/translation_context.dart';
 
 class PersonDetails extends StatefulWidget {
   final TmdbPerson _person;
@@ -113,9 +114,8 @@ class _PersonDetailsState extends State<PersonDetails> {
               ActionMenu(
                 editUrl: editUrl,
                 fetchTranslations: () => TmdbTranslationService()
-                    .getTranslations('person', person.tmdbId),
-                originalTitle: person.name,
-                originalDescription: person.biography,
+                    .getTranslations(ApiConstants.person, person.tmdbId),
+                translationContext: TranslationContext.fromItem(person),
                 shareUrl: UrlConstants.moviescoutPersonWebTemplate
                     .replaceFirst('{ID}', widget._person.tmdbId.toString()),
                 onPin: () async {

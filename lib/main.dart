@@ -168,6 +168,7 @@ void _runMain() async {
   final repository = LocalTitleRepository.instance;
   final cloudRepository = CloudTitleRepository.instance;
 
+  final aiService = AiService(cloudRepository: cloudRepository);
   final tmdbProviderService =
       TmdbProviderService(cloudRepository: cloudRepository);
   final rateslistService =
@@ -176,16 +177,19 @@ void _runMain() async {
       WatchlistService(repository, cloudRepository: cloudRepository);
   final discoverlistService =
       TmdbDiscoverlistService(AppConstants.discoverlist, repository);
+  final webTranslationService = WebTranslationService();
 
   rateslistService.addListener(watchlistService.refresh);
   rateslistService.addListener(discoverlistService.refresh);
   watchlistService.addListener(discoverlistService.refresh);
+  aiService.addListener(webTranslationService.refresh);
 
   AppService().attachServices(
     watchlistService: watchlistService,
     rateslistService: rateslistService,
     discoverlistService: discoverlistService,
     providerService: tmdbProviderService,
+    aiService: aiService,
   );
 
   UninitializedTitlesWorker.dispatch();
@@ -196,6 +200,11 @@ void _runMain() async {
       ChangeNotifierProvider(create: (_) => LanguageService()),
       ChangeNotifierProvider(create: (_) => RegionService()),
       ChangeNotifierProvider(create: (_) => SupabaseAuthService()),
+      ChangeNotifierProxyProvider<SupabaseAuthService, AiService>(
+        lazy: false,
+        create: (_) => aiService,
+        update: (_, authService, service) => service!..updateAuth(authService),
+      ),
       ChangeNotifierProxyProvider<SupabaseAuthService, TmdbProviderService>(
         create: (_) => tmdbProviderService,
         update: (_, authService, providerService) => providerService!..setup(),
@@ -238,7 +247,9 @@ void _runMain() async {
       ),
       ChangeNotifierProvider(create: (_) => NotificationService()),
       ChangeNotifierProvider(create: (_) => AppService()),
-      ChangeNotifierProvider(create: (_) => WebTranslationService()),
+      ChangeNotifierProvider<WebTranslationService>.value(
+        value: webTranslationService,
+      ),
     ],
     child: const MyApp(),
   ));

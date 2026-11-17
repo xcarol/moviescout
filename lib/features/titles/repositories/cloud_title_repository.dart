@@ -319,6 +319,23 @@ class CloudTitleRepository {
     });
   }
 
+  Future<Map<String, dynamic>?> fetchUserAiSettings(String userId) async {
+    return _retryOnFutureJwt(() async {
+      final response = await _client
+          .from('user_ai_settings')
+          .select()
+          .eq('user_id', userId)
+          .maybeSingle();
+      return response != null ? Map<String, dynamic>.from(response) : null;
+    });
+  }
+
+  Future<void> updateUserAiSettings(Map<String, dynamic> payload) async {
+    await _retryOnFutureJwt(() async {
+      await _client.from('user_ai_settings').upsert(payload);
+    });
+  }
+
   Future<List<TitleComment>> fetchTitleComments({
     required int tmdbId,
     required String mediaType,

@@ -10,6 +10,7 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/widgets/action_menu.dart';
 import 'package:moviescout/core/services/tmdb_translation_service.dart';
 import 'package:moviescout/core/utils/url_constants.dart';
+import 'package:moviescout/core/models/translation_context.dart';
 
 class CollectionDetails extends StatefulWidget {
   final TmdbCollection collection;
@@ -48,10 +49,9 @@ class _CollectionDetailsState extends State<CollectionDetails> {
           ActionMenu(
             editUrl: UrlConstants.tmdbCollectionEditWebTemplate
                 .replaceFirst('{ID}', widget.collection.tmdbId.toString()),
-            fetchTranslations: () => TmdbTranslationService()
-                .getTranslations('collection', widget.collection.tmdbId),
-            originalTitle: widget.collection.name,
-            originalDescription: widget.collection.overview,
+            fetchTranslations: () => TmdbTranslationService().getTranslations(
+                ApiConstants.collection, widget.collection.tmdbId),
+            translationContext: TranslationContext.fromItem(widget.collection),
             shareUrl: UrlConstants.moviescoutCollectionWebTemplate
                 .replaceFirst('{ID}', widget.collection.tmdbId.toString()),
           ),

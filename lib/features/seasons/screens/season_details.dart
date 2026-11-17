@@ -22,6 +22,7 @@ import 'package:moviescout/core/widgets/expandable_description.dart';
 import 'package:moviescout/core/widgets/clickable_names.dart';
 import 'package:moviescout/core/navigation/home_screen_shortcut_service.dart';
 import 'package:moviescout/core/utils/snack_bar.dart';
+import 'package:moviescout/core/models/translation_context.dart';
 
 class SeasonDetails extends StatefulWidget {
   final TmdbTitle title;
@@ -105,8 +106,12 @@ class _SeasonDetailsState extends State<SeasonDetails> {
             fetchTranslations: () => TmdbTranslationService()
                 .getSeasonTranslations(
                     widget.title.tmdbId, _currentSeasonNumber),
-            originalTitle: cachedSeason?.name ?? '',
-            originalDescription: cachedSeason?.overview ?? '',
+            translationContext: TranslationContext.fromItem(
+              cachedSeason,
+              type: TranslationContentType.tvSeason,
+              series: widget.title,
+              seasonNumber: _currentSeasonNumber,
+            ),
             shareUrl: UrlConstants.moviescoutTvSeasonWebTemplate
                 .replaceFirst('{ID}', widget.title.tmdbId.toString())
                 .replaceFirst(

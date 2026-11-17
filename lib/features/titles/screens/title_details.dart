@@ -15,6 +15,7 @@ import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:moviescout/core/utils/snack_bar.dart';
 import 'package:moviescout/core/utils/url_constants.dart';
 import 'package:moviescout/core/widgets/action_menu.dart';
+import 'package:moviescout/core/models/translation_context.dart';
 import 'package:moviescout/features/titles/widgets/title_comments_section.dart';
 import 'package:moviescout/features/notifications/widgets/notify_dialog.dart';
 import 'package:moviescout/features/titles/widgets/title_header_section.dart';
@@ -149,10 +150,7 @@ class _TitleDetailsState extends State<TitleDetails> {
               _currentTitle.mediaType,
               _currentTitle.tmdbId,
             ),
-            originalTitle: _currentTitle.originalName.isNotEmpty
-                ? _currentTitle.originalName
-                : _currentTitle.name,
-            originalDescription: _currentTitle.overview,
+            translationContext: TranslationContext.fromItem(_currentTitle),
             shareUrl: UrlConstants.moviescoutTitleWebTemplate
                 .replaceFirst('{MEDIA_TYPE}', _currentTitle.mediaType)
                 .replaceFirst('{ID}', _currentTitle.tmdbId.toString()),

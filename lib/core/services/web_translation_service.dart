@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:translator/translator.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
@@ -5,6 +7,7 @@ import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:moviescout/features/settings/services/language_service.dart';
 import 'package:moviescout/core/utils/translation_languages.dart';
 import 'package:moviescout/features/settings/services/ai_service.dart';
+import 'package:moviescout/core/models/translation_context.dart';
 
 class WebTranslationService with ChangeNotifier {
   static final WebTranslationService _instance =
@@ -53,6 +56,11 @@ class WebTranslationService with ChangeNotifier {
         .prefs
         .setBool(AppConstants.aiTranslationEnabled, enabled);
     notifyListeners();
+    unawaited(AiService().pushToCloud());
+  }
+
+  void refresh() {
+    notifyListeners();
   }
 
   String _getLanguageName(String code) {
@@ -66,19 +74,31 @@ class WebTranslationService with ChangeNotifier {
 
   Future<String> translate(
     String text, {
+    String? title,
+    TranslationContext? translationContext,
     String? model,
     String? thinkingLevel,
   }) async {
     if (text.isEmpty) return text;
 
     if (AiService().hasApiKey && isAiTranslationEnabled) {
-      return await AiService().translate(
+      final response = await AiService().translate(
         text,
         sourceLanguage: sourceLanguageName,
         targetLanguage: targetLanguageName,
+        targetLanguageCode: targetLanguageCode,
+        title: title,
+        translationContext: translationContext,
         model: model,
         thinkingLevel: thinkingLevel,
       );
+      final parsedJson = _tryParseJsonTranslation(response);
+      if (parsedJson != null) {
+        return parsedJson.description.isNotEmpty
+            ? parsedJson.description
+            : parsedJson.title;
+      }
+      return response;
     }
 
     try {
@@ -97,6 +117,7 @@ class WebTranslationService with ChangeNotifier {
   Future<({String title, String description})> translateTitleAndSynopsis({
     required String title,
     required String description,
+    TranslationContext? translationContext,
     String? model,
     String? thinkingLevel,
   }) async {
@@ -106,41 +127,82 @@ class WebTranslationService with ChangeNotifier {
       return (title: '', description: '');
     }
 
+    final isPerson = translationContext?.type == TranslationContentType.person;
+    if (isPerson && trimmedDesc.isEmpty) {
+      return (title: '', description: '');
+    }
+
     if (AiService().hasApiKey && isAiTranslationEnabled) {
-      if (trimmedTitle.isEmpty) {
-        final translatedDesc = await AiService().translate(
-          trimmedDesc,
-          sourceLanguage: sourceLanguageName,
-          targetLanguage: targetLanguageName,
-          model: model,
-          thinkingLevel: thinkingLevel,
-        );
-        return (title: '', description: translatedDesc);
-      }
-
-      final payload = trimmedDesc.isNotEmpty
-          ? 'TITLE: $trimmedTitle\nSYNOPSIS: $trimmedDesc'
-          : 'TITLE: $trimmedTitle';
-
       final response = await AiService().translate(
-        payload,
+        trimmedDesc,
         sourceLanguage: sourceLanguageName,
         targetLanguage: targetLanguageName,
+        targetLanguageCode: targetLanguageCode,
+        title: trimmedTitle,
+        translationContext: translationContext,
         model: model,
         thinkingLevel: thinkingLevel,
       );
 
-      return parseTitleAndSynopsis(
+      final parsed = parseTitleAndSynopsis(
         response,
         hasDescription: trimmedDesc.isNotEmpty,
       );
+      if (isPerson || trimmedTitle.isEmpty) {
+        return (
+          title: '',
+          description:
+              parsed.description.isNotEmpty ? parsed.description : parsed.title,
+        );
+      }
+      return parsed;
     }
 
     final results = await Future.wait([
-      trimmedTitle.isNotEmpty ? translate(trimmedTitle) : Future.value(''),
+      (!isPerson && trimmedTitle.isNotEmpty)
+          ? translate(trimmedTitle)
+          : Future.value(''),
       trimmedDesc.isNotEmpty ? translate(trimmedDesc) : Future.value(''),
     ]);
     return (title: results[0], description: results[1]);
+  }
+
+  ({String title, String description})? _tryParseJsonTranslation(
+    String response,
+  ) {
+    String candidate = response.trim();
+    if (candidate.startsWith('```json')) {
+      candidate = candidate.substring(7);
+    } else if (candidate.startsWith('```')) {
+      candidate = candidate.substring(3);
+    }
+    if (candidate.endsWith('```')) {
+      candidate = candidate.substring(0, candidate.length - 3);
+    }
+    candidate = candidate.trim();
+
+    final firstBrace = candidate.indexOf('{');
+    final lastBrace = candidate.lastIndexOf('}');
+    if (firstBrace == -1 || lastBrace <= firstBrace) {
+      return null;
+    }
+
+    try {
+      final decoded =
+          jsonDecode(candidate.substring(firstBrace, lastBrace + 1));
+      if (decoded is Map) {
+        final parsedTitle =
+            (decoded[AppConstants.aiSchemaTitleKey] ?? '').toString().trim();
+        final parsedSynopsis = (decoded[AppConstants.aiSchemaSynopsisKey] ??
+                decoded[AppConstants.aiSchemaBiographyKey] ??
+                decoded[AppConstants.aiSchemaDescriptionKey] ??
+                '')
+            .toString()
+            .trim();
+        return (title: parsedTitle, description: parsedSynopsis);
+      }
+    } catch (_) {}
+    return null;
   }
 
   @visibleForTesting
@@ -148,6 +210,14 @@ class WebTranslationService with ChangeNotifier {
     String response, {
     required bool hasDescription,
   }) {
+    final jsonParsed = _tryParseJsonTranslation(response);
+    if (jsonParsed != null) {
+      return (
+        title: jsonParsed.title,
+        description: hasDescription ? jsonParsed.description : '',
+      );
+    }
+
     final titlePrefixRegex = RegExp(
       r'^\s*(?:TITLE|TÍTOL|TITOL|TÍTULO|TITULO)\s*:\s*',
       caseSensitive: false,
