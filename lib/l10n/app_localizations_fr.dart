@@ -1246,4 +1246,12 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get emptyFollowingGuestMessage =>
       'Connectez-vous pour suivre d\'autres utilisateurs, découvrir ce qu\'ils regardent et partager vos avis.';
+
+  @override
+  String get existingTranslation => 'Traduction existante';
+
+  @override
+  String otherTranslations(Object count) {
+    return 'Autres traductions ($count)';
+  }
 }

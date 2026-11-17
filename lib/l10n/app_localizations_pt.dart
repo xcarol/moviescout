@@ -1242,6 +1242,14 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get emptyFollowingGuestMessage =>
       'Faça login para seguir outros usuários, descobrir o que estão assistindo e compartilhar avaliações.';
+
+  @override
+  String get existingTranslation => 'Tradução existente';
+
+  @override
+  String otherTranslations(Object count) {
+    return 'Outras traduções ($count)';
+  }
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -2481,4 +2489,12 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   @override
   String get emptyFollowingGuestMessage =>
       'Inicie sessão para seguir outros utilizadores, descobrir o que estão a ver e partilhar avaliações.';
+
+  @override
+  String get existingTranslation => 'Tradução existente';
+
+  @override
+  String otherTranslations(Object count) {
+    return 'Outras traduções ($count)';
+  }
 }

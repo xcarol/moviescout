@@ -823,5 +823,13 @@
   "emptyFollowingGuestTitle": "Connecta amb la comunitat",
   "@emptyFollowingGuestTitle": {},
   "emptyFollowingGuestMessage": "Inicia sessió per seguir altres usuaris, descobrir què miren i compartir valoracions.",
-  "@emptyFollowingGuestMessage": {}
+  "@emptyFollowingGuestMessage": {},
+  "existingTranslation": "Traducció existent",
+  "@existingTranslation": {},
+  "otherTranslations": "Altres traduccions ({count})",
+  "@otherTranslations": {
+    "placeholders": {
+      "count": {}
+    }
+  }
 }

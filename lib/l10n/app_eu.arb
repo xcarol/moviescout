@@ -823,5 +823,13 @@
   "emptyFollowingGuestTitle": "Konektatu komunitatearekin",
   "@emptyFollowingGuestTitle": {},
   "emptyFollowingGuestMessage": "Hasi saioa beste erabiltzaile batzuei jarraitzeko, zer ikusten duten ikusteko eta balorazioak partekatzeko.",
-  "@emptyFollowingGuestMessage": {}
+  "@emptyFollowingGuestMessage": {},
+  "existingTranslation": "Dagoen itzulpena",
+  "@existingTranslation": {},
+  "otherTranslations": "Beste itzulpen batzuk ({count})",
+  "@otherTranslations": {
+    "placeholders": {
+      "count": {}
+    }
+  }
 }

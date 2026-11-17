@@ -823,5 +823,13 @@
   "emptyFollowingGuestTitle": "Connect with the community",
   "@emptyFollowingGuestTitle": {},
   "emptyFollowingGuestMessage": "Sign in to follow other users, discover what they watch, and share ratings.",
-  "@emptyFollowingGuestMessage": {}
+  "@emptyFollowingGuestMessage": {},
+  "existingTranslation": "Existing translation",
+  "@existingTranslation": {},
+  "otherTranslations": "Other translations ({count})",
+  "@otherTranslations": {
+    "placeholders": {
+      "count": {}
+    }
+  }
 }

@@ -75,9 +75,8 @@ class CloudTitleRepository {
           ..isPinned = r['is_pinned'] as bool? ?? false
           ..rating = (r['rating'] as num?)?.toDouble() ?? 0.0
           ..notifyNewSeasons = r['notify_new_seasons'] as bool? ?? false
-          ..lastNotifiedSeason = cloudSeason > 0
-              ? cloudSeason
-              : AppConstants.seasonNotInitialized;
+          ..lastNotifiedSeason =
+              cloudSeason > 0 ? cloudSeason : AppConstants.seasonNotInitialized;
       }).toList();
     });
   }

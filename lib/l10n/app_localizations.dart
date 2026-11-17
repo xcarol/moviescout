@@ -2375,6 +2375,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign in to follow other users, discover what they watch, and share ratings.'**
   String get emptyFollowingGuestMessage;
+
+  /// No description provided for @existingTranslation.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing translation'**
+  String get existingTranslation;
+
+  /// No description provided for @otherTranslations.
+  ///
+  /// In en, this message translates to:
+  /// **'Other translations ({count})'**
+  String otherTranslations(Object count);
 }
 
 class _AppLocalizationsDelegate

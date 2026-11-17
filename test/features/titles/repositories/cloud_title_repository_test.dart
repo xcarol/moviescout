@@ -144,7 +144,8 @@ void main() {
       expect(results.first.name, 'Test Movie');
       expect(results.first.rating, 9.0);
       expect(results.first.isPinned, isTrue);
-      expect(results.first.lastNotifiedSeason, AppConstants.seasonNotInitialized);
+      expect(
+          results.first.lastNotifiedSeason, AppConstants.seasonNotInitialized);
     });
 
     test('upsertWatchlistTitle calls upsert on user_titles', () async {

@@ -1235,4 +1235,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get emptyFollowingGuestMessage =>
       'Sign in to follow other users, discover what they watch, and share ratings.';
+
+  @override
+  String get existingTranslation => 'Existing translation';
+
+  @override
+  String otherTranslations(Object count) {
+    return 'Other translations ($count)';
+  }
 }

@@ -823,5 +823,13 @@
   "emptyFollowingGuestTitle": "Conecta con la comunidad",
   "@emptyFollowingGuestTitle": {},
   "emptyFollowingGuestMessage": "Inicia sesión para seguir a otros usuarios, descubrir qué ven y compartir valoraciones.",
-  "@emptyFollowingGuestMessage": {}
+  "@emptyFollowingGuestMessage": {},
+  "existingTranslation": "Traducción existente",
+  "@existingTranslation": {},
+  "otherTranslations": "Otras traducciones ({count})",
+  "@otherTranslations": {
+    "placeholders": {
+      "count": {}
+    }
+  }
 }

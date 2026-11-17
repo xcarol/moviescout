@@ -645,8 +645,7 @@ void main() {
       pass1Local.flatrateProviderIds = [];
       pass1Local.lastNotifiedSeason = initialTitle.lastNotifiedSeason;
 
-      final pass1Trigger =
-          WatchlistNotificationEvaluator.evaluateNotification(
+      final pass1Trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: pass1Local,
         titleAfterUpdate: pass1Server,
         enabledProviderIds: enabledProviders,
@@ -672,8 +671,7 @@ void main() {
           TmdbTitle.fromMap(title: prepareTitleMap(airingServerJson));
       pass2Local.lastNotifiedSeason = pass1Local.lastNotifiedSeason;
 
-      final pass2Trigger =
-          WatchlistNotificationEvaluator.evaluateNotification(
+      final pass2Trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: pass2Local,
         titleAfterUpdate: pass2Server,
         enabledProviderIds: enabledProviders,
@@ -702,7 +700,8 @@ void main() {
       expect(WatchlistNotificationEvaluator.getBaselineSeason(title, now), 0);
     });
 
-    test('Should return current-1 if SxxE01 has empty air_date and no last_episode in season',
+    test(
+        'Should return current-1 if SxxE01 has empty air_date and no last_episode in season',
         () {
       final title = TmdbTitle.fromMap(title: {
         'number_of_seasons': 2,

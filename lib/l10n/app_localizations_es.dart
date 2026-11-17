@@ -1241,6 +1241,14 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get emptyFollowingGuestMessage =>
       'Inicia sesión para seguir a otros usuarios, descubrir qué ven y compartir valoraciones.';
+
+  @override
+  String get existingTranslation => 'Traducción existente';
+
+  @override
+  String otherTranslations(Object count) {
+    return 'Otras traducciones ($count)';
+  }
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -2480,4 +2488,12 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get emptyFollowingGuestMessage =>
       'Inicia sesión para seguir a otros usuarios, descubrir qué ven y compartir calificaciones.';
+
+  @override
+  String get existingTranslation => 'Traducción existente';
+
+  @override
+  String otherTranslations(Object count) {
+    return 'Otras traducciones ($count)';
+  }
 }

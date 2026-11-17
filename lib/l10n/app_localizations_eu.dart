@@ -1239,4 +1239,12 @@ class AppLocalizationsEu extends AppLocalizations {
   @override
   String get emptyFollowingGuestMessage =>
       'Hasi saioa beste erabiltzaile batzuei jarraitzeko, zer ikusten duten ikusteko eta balorazioak partekatzeko.';
+
+  @override
+  String get existingTranslation => 'Dagoen itzulpena';
+
+  @override
+  String otherTranslations(Object count) {
+    return 'Beste itzulpen batzuk ($count)';
+  }
 }

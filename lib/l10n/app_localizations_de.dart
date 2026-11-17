@@ -1243,4 +1243,12 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get emptyFollowingGuestMessage =>
       'Melde dich an, um anderen Nutzern zu folgen, Entdeckungen zu teilen und Bewertungen auszutauschen.';
+
+  @override
+  String get existingTranslation => 'Vorhandene Übersetzung';
+
+  @override
+  String otherTranslations(Object count) {
+    return 'Weitere Übersetzungen ($count)';
+  }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:moviescout/core/theme/app_breakpoints.dart';
 import 'package:moviescout/core/theme/app_radius.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/widgets/app_empty_state.dart';
 import 'package:moviescout/core/widgets/edit_button.dart';
@@ -479,128 +480,234 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     );
   }
 
+  List<TmdbTranslation> _findExistingTargetTranslations(
+    List<TmdbTranslation> validTranslations,
+    String targetCode,
+  ) {
+    final normalized = targetCode.trim().toLowerCase();
+    if (normalized.isEmpty) return const [];
+
+    if (normalized.contains('-')) {
+      final exactMatches = validTranslations
+          .where(
+            (t) =>
+                '${t.iso639_1.toLowerCase()}-${t.iso3166_1.toLowerCase()}' ==
+                normalized,
+          )
+          .toList();
+      if (exactMatches.isNotEmpty) return exactMatches;
+    }
+
+    final baseCode = normalized.split('-').first;
+    return validTranslations
+        .where((t) => t.iso639_1.toLowerCase() == baseCode)
+        .toList();
+  }
+
+  Widget _buildExistingTargetTile(
+    TmdbTranslation trans, {
+    bool showVariant = false,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+    final displayTitle = trans.translatedTitle.isNotEmpty
+        ? trans.translatedTitle
+        : widget.translationContext.originalTitle;
+    final titleText = showVariant && trans.iso3166_1.isNotEmpty
+        ? '${l10n.existingTranslation} (${trans.iso639_1}-${trans.iso3166_1})'
+        : l10n.existingTranslation;
+
+    return Card(
+      margin: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        0,
+        AppSpacing.lg,
+        AppSpacing.sm,
+      ),
+      child: ExpansionTile(
+        key: ValueKey('existing_${trans.iso639_1}_${trans.iso3166_1}'),
+        initiallyExpanded: false,
+        tilePadding: AppSpacing.edgeInsetsHMd,
+        childrenPadding: const EdgeInsets.fromLTRB(
+          AppSpacing.md,
+          0,
+          AppSpacing.md,
+          AppSpacing.md,
+        ),
+        shape: const Border(),
+        collapsedShape: const Border(),
+        title: Text(
+          titleText,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        children: [
+          if (displayTitle.isNotEmpty)
+            _buildCopyableTextRow(displayTitle, isTitle: true),
+          if (displayTitle.isNotEmpty && trans.description.isNotEmpty)
+            AppSpacing.gapSm,
+          if (trans.description.isNotEmpty)
+            _buildCopyableTextRow(trans.description),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTranslationCard(
+    TmdbTranslation trans, {
+    bool showUseAsSource = false,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+    final displayTitle = trans.translatedTitle.isNotEmpty
+        ? trans.translatedTitle
+        : widget.translationContext.originalTitle;
+
+    return Card(
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.sm,
+      ),
+      child: Padding(
+        padding: AppSpacing.edgeInsetsAllMd,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        trans.englishName,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      if (trans.name.isNotEmpty &&
+                          trans.name != trans.englishName)
+                        Text(
+                          '${trans.name} ${trans.iso639_1}-${trans.iso3166_1}',
+                          style: TextStyle(color: colorScheme.onSurfaceVariant),
+                        ),
+                    ],
+                  ),
+                ),
+                if (showUseAsSource)
+                  IconButton(
+                    icon: const Icon(Icons.auto_awesome),
+                    tooltip: l10n.autoTranslation,
+                    onPressed: () {
+                      context
+                          .read<WebTranslationService>()
+                          .setSourceLanguageCode(trans.iso639_1);
+                      _performTranslation();
+                      _scrollController.animateTo(
+                        0.0,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOut,
+                      );
+                    },
+                  ),
+              ],
+            ),
+            AppSpacing.gapSm,
+            if (displayTitle.isNotEmpty)
+              _buildCopyableTextRow(displayTitle, isTitle: true),
+            if (displayTitle.isNotEmpty && trans.description.isNotEmpty)
+              AppSpacing.gapSm,
+            if (trans.description.isNotEmpty)
+              _buildCopyableTextRow(trans.description),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final validTranslations = widget.translations
         .where((t) => t.description.isNotEmpty || t.translatedTitle.isNotEmpty)
         .toList();
     validTranslations.sort((a, b) => a.englishName.compareTo(b.englishName));
+
+    final service = context.watch<WebTranslationService>();
+    final sourceCode = _getEffectiveSourceCode(service.sourceLanguageCode);
+    final targetCode = service.targetLanguageCode;
+    final targetTranslations =
+        targetCode.toLowerCase() == sourceCode.toLowerCase()
+            ? const <TmdbTranslation>[]
+            : _findExistingTargetTranslations(validTranslations, targetCode);
+    final otherTranslations = validTranslations
+        .where(
+          (t) =>
+              t.iso639_1.toLowerCase() != sourceCode.toLowerCase() &&
+              !targetTranslations.contains(t),
+        )
+        .toList();
+
+    final l10n = AppLocalizations.of(context)!;
     final customColors = Theme.of(context).extension<CustomColors>()!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.translations),
+        title: Text(l10n.translations),
         actions: [
           EditButton(url: widget.editUrl),
         ],
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: AppBreakpoints.maxContentWidth,
-          ),
-          child: validTranslations.isEmpty
-              ? Center(
-                  child: AppEmptyState(
-                    imageAsset: 'assets/empty-search.png',
-                    title: AppLocalizations.of(context)!.emptyList,
-                  ),
-                )
-              : ListView.builder(
-                  controller: _scrollController,
-                  itemCount: validTranslations.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      return Column(
-                        children: [
-                          _buildMagicCard(),
-                          _buildSourceCard(),
-                          Divider(
-                            height: 1,
-                            color: customColors.dividerColor,
-                          ),
-                        ],
-                      );
-                    }
-
-                    final trans = validTranslations[index - 1];
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Card(
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            trans.englishName,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          if (trans.name.isNotEmpty &&
-                                              trans.name != trans.englishName)
-                                            Text(
-                                                '${trans.name} ${trans.iso639_1}-${trans.iso3166_1}',
-                                                style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .onSurfaceVariant)),
-                                        ],
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.auto_awesome),
-                                      tooltip: AppLocalizations.of(context)!
-                                          .autoTranslation,
-                                      onPressed: () {
-                                        context
-                                            .read<WebTranslationService>()
-                                            .setSourceLanguageCode(
-                                                trans.iso639_1);
-                                        _performTranslation();
-                                        _scrollController.animateTo(
-                                          0.0,
-                                          duration:
-                                              const Duration(milliseconds: 300),
-                                          curve: Curves.easeOut,
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                _buildCopyableTextRow(
-                                    trans.translatedTitle.isNotEmpty
-                                        ? trans.translatedTitle
-                                        : widget
-                                            .translationContext.originalTitle,
-                                    isTitle: true),
-                                if (trans.description.isNotEmpty) ...[
-                                  const SizedBox(height: 8),
-                                  _buildCopyableTextRow(trans.description),
-                                ],
-                              ],
-                            ),
-                          ),
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppBreakpoints.maxContentWidth,
+            ),
+            child: validTranslations.isEmpty
+                ? Center(
+                    child: AppEmptyState(
+                      imageAsset: 'assets/empty-search.png',
+                      title: l10n.emptyList,
+                    ),
+                  )
+                : ListView(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+                    children: [
+                      _buildMagicCard(),
+                      for (final trans in targetTranslations)
+                        _buildExistingTargetTile(
+                          trans,
+                          showVariant: targetTranslations.length > 1,
                         ),
+                      _buildSourceCard(),
+                      if (otherTranslations.isNotEmpty) ...[
+                        AppSpacing.gapSm,
                         Divider(
                           height: 1,
                           color: customColors.dividerColor,
                         ),
+                        ExpansionTile(
+                          initiallyExpanded: false,
+                          tilePadding: AppSpacing.edgeInsetsHLg,
+                          shape: const Border(),
+                          collapsedShape: const Border(),
+                          title: Text(
+                            l10n.otherTranslations(otherTranslations.length),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          children: otherTranslations
+                              .map(
+                                (trans) => _buildTranslationCard(
+                                  trans,
+                                  showUseAsSource: true,
+                                ),
+                              )
+                              .toList(),
+                        ),
                       ],
-                    );
-                  },
-                ),
+                    ],
+                  ),
+          ),
         ),
       ),
     );
