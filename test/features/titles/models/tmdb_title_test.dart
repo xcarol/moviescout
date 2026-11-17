@@ -35,7 +35,7 @@ void main() {
       expect(title.popularity, 120.5);
       expect(title.isPinned, isFalse);
       expect(title.notifyNewSeasons, isFalse);
-      expect(title.lastNotifiedSeason, 0);
+      expect(title.lastNotifiedSeason, AppConstants.seasonNotInitialized);
     });
 
     test(

@@ -23,9 +23,9 @@ void main() {
       final title = TmdbTitle.fromMap(title: {
         TmdbTitleFields.id: 1,
         TmdbTitleFields.name: 'Test',
-        'last_notified_season': 0,
+        'last_notified_season': AppConstants.seasonNotInitialized,
         'media_type': 'tv',
-        'last_updated': AppConstants.defaultDate,
+        'last_updated': now.toIso8601String(),
       });
       expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now),
           UpdateType.light);
@@ -592,6 +592,96 @@ void main() {
       expect(trigger, NotificationTrigger.none);
       expect(logLines.any((l) => l.contains('Too old')), isTrue);
     });
+
+    test(
+        'Serie [notifyCompleteSeason: true]: Two-pass flow notifies when S1 becomes complete after arriving incomplete',
+        () {
+      // Pass 1: S1 has not started yet on baseline init -> lastNotifiedSeason stays 0
+      final initialTitle = TmdbTitle.fromMap(title: {
+        'id': 77777,
+        'name': 'The Countess of Monte Cristo',
+        'media_type': 'tv',
+        'number_of_seasons': 1,
+        'last_updated': AppConstants.defaultDate,
+      });
+      WatchlistNotificationEvaluator.initializeBaselineIfNeeded(
+        initialTitle,
+        now,
+        notifyCompleteSeason: true,
+      );
+      expect(initialTitle.lastNotifiedSeason, 0);
+
+      // Pass 1 (later): arrives on provider while S1 is still airing -> deferred
+      final airingServerJson = {
+        'id': 77777,
+        'name': 'The Countess of Monte Cristo',
+        'media_type': 'tv',
+        'number_of_seasons': 1,
+        'last_episode_to_air': {
+          'season_number': 1,
+          'episode_number': 1,
+          'air_date': '2026-03-25'
+        },
+        'next_episode_to_air': {
+          'season_number': 1,
+          'episode_number': 2,
+          'air_date': '2026-04-01'
+        },
+        'watch/providers': {
+          'results': {
+            'ES': {
+              'flatrate': [
+                {'provider_id': 8}
+              ]
+            }
+          }
+        }
+      };
+
+      final pass1Server =
+          TmdbTitle.fromMap(title: prepareTitleMap(airingServerJson));
+      final pass1Local =
+          TmdbTitle.fromMap(title: prepareTitleMap(airingServerJson));
+      pass1Local.flatrateProviderIds = [];
+      pass1Local.lastNotifiedSeason = initialTitle.lastNotifiedSeason;
+
+      final pass1Trigger =
+          WatchlistNotificationEvaluator.evaluateNotification(
+        titleBeforeUpdate: pass1Local,
+        titleAfterUpdate: pass1Server,
+        enabledProviderIds: enabledProviders,
+        now: now,
+        notifyCompleteSeason: true,
+      );
+      expect(pass1Trigger, NotificationTrigger.none);
+
+      // Pass 2: S1 ends within 14 days; providers were persisted in pass 1,
+      // and baseline (0) is NOT re-run since lastUpdated != defaultDate.
+      final completedServerJson = Map<String, dynamic>.from(airingServerJson)
+        ..['last_episode_to_air'] = {
+          'season_number': 1,
+          'episode_number': 8,
+          'air_date': '2026-04-10'
+        }
+        ..['next_episode_to_air'] = null;
+
+      final pass2Now = DateTime(2026, 4, 12);
+      final pass2Server =
+          TmdbTitle.fromMap(title: prepareTitleMap(completedServerJson));
+      final pass2Local =
+          TmdbTitle.fromMap(title: prepareTitleMap(airingServerJson));
+      pass2Local.lastNotifiedSeason = pass1Local.lastNotifiedSeason;
+
+      final pass2Trigger =
+          WatchlistNotificationEvaluator.evaluateNotification(
+        titleBeforeUpdate: pass2Local,
+        titleAfterUpdate: pass2Server,
+        enabledProviderIds: enabledProviders,
+        now: pass2Now,
+        notifyCompleteSeason: true,
+      );
+      expect(pass2Trigger, NotificationTrigger.newSeason);
+    });
   });
 
   group('WatchlistNotificationEvaluator - getBaselineSeason', () {
@@ -602,7 +692,49 @@ void main() {
         'number_of_seasons': 2,
         'last_episode_to_air': {'season_number': 1},
       });
-      expect(WatchlistNotificationEvaluator.getBaselineSeason(title, now), 2);
+      expect(WatchlistNotificationEvaluator.getBaselineSeason(title, now), 1);
+    });
+
+    test('Should return 0 if S1 has no aired or next episode yet', () {
+      final title = TmdbTitle.fromMap(title: {
+        'number_of_seasons': 1,
+      });
+      expect(WatchlistNotificationEvaluator.getBaselineSeason(title, now), 0);
+    });
+
+    test('Should return current-1 if SxxE01 has empty air_date and no last_episode in season',
+        () {
+      final title = TmdbTitle.fromMap(title: {
+        'number_of_seasons': 2,
+        'last_episode_to_air': {'season_number': 1},
+        'next_episode_to_air': {
+          'season_number': 2,
+          'episode_number': 1,
+          'air_date': '',
+        },
+      });
+      expect(WatchlistNotificationEvaluator.getBaselineSeason(title, now), 1);
+    });
+
+    test(
+        'Should return current-1 if notifyCompleteSeason is true and current season has incomplete air_date',
+        () {
+      final title = TmdbTitle.fromMap(title: {
+        'number_of_seasons': 1,
+        'last_episode_to_air': {
+          'season_number': 1,
+          'episode_number': 1,
+          'air_date': '',
+        },
+      });
+      expect(
+        WatchlistNotificationEvaluator.getBaselineSeason(
+          title,
+          now,
+          notifyCompleteSeason: true,
+        ),
+        0,
+      );
     });
 
     test('Should return current-1 if SxxE01 is upcoming', () {
@@ -649,6 +781,76 @@ void main() {
           notifyCompleteSeason: true,
         ),
         0,
+      );
+    });
+  });
+
+  group('WatchlistNotificationEvaluator - initializeBaselineIfNeeded', () {
+    final now = DateTime(2026, 3, 29);
+
+    test('Initializes baseline for serie with seasonNotInitialized', () {
+      final title = TmdbTitle.fromMap(title: {
+        'id': 1,
+        'media_type': 'tv',
+        'number_of_seasons': 3,
+        'last_episode_to_air': {'season_number': 3, 'air_date': '2026-01-01'},
+      });
+
+      expect(title.lastNotifiedSeason, AppConstants.seasonNotInitialized);
+      final updated = WatchlistNotificationEvaluator.initializeBaselineIfNeeded(
+        title,
+        now,
+        notifyCompleteSeason: false,
+      );
+
+      expect(updated, isTrue);
+      expect(title.lastNotifiedSeason, 3);
+    });
+
+    test('Does not modify serie already initialized to 0, >0, or movies', () {
+      final initializedZero = TmdbTitle.fromMap(title: {
+        'id': 1,
+        'media_type': 'tv',
+        'number_of_seasons': 1,
+        'last_episode_to_air': {'season_number': 1, 'air_date': '2026-03-28'},
+        'last_notified_season': 0,
+      });
+      final serie = TmdbTitle.fromMap(title: {
+        'id': 2,
+        'media_type': 'tv',
+        'number_of_seasons': 3,
+        'last_notified_season': 2,
+      });
+      final movie = TmdbTitle.fromMap(title: {
+        'id': 3,
+        'media_type': 'movie',
+      });
+
+      expect(
+        WatchlistNotificationEvaluator.initializeBaselineIfNeeded(
+          initializedZero,
+          now,
+          notifyCompleteSeason: false,
+        ),
+        isFalse,
+      );
+      expect(initializedZero.lastNotifiedSeason, 0);
+      expect(
+        WatchlistNotificationEvaluator.initializeBaselineIfNeeded(
+          serie,
+          now,
+          notifyCompleteSeason: false,
+        ),
+        isFalse,
+      );
+      expect(serie.lastNotifiedSeason, 2);
+      expect(
+        WatchlistNotificationEvaluator.initializeBaselineIfNeeded(
+          movie,
+          now,
+          notifyCompleteSeason: false,
+        ),
+        isFalse,
       );
     });
   });

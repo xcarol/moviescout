@@ -8,8 +8,7 @@ enum NotificationTrigger { none, newAvailability, newSeason }
 class WatchlistNotificationEvaluator {
   static UpdateType checkNeedsUpdate(TmdbTitle title, DateTime now) {
     final isUninitialized = title.isSerie &&
-        title.lastNotifiedSeason == 0 &&
-        title.lastUpdated == AppConstants.defaultDate;
+        title.lastNotifiedSeason == AppConstants.seasonNotInitialized;
 
     final lastUpdated = DateTime.tryParse(title.lastUpdated) ??
         DateTime.parse(AppConstants.defaultDate);
@@ -25,13 +24,34 @@ class WatchlistNotificationEvaluator {
     return UpdateType.none;
   }
 
+  static bool initializeBaselineIfNeeded(
+    TmdbTitle title,
+    DateTime now, {
+    required bool notifyCompleteSeason,
+  }) {
+    if (!title.isSerie ||
+        title.lastNotifiedSeason != AppConstants.seasonNotInitialized) {
+      return false;
+    }
+
+    title.lastNotifiedSeason = getBaselineSeason(
+      title,
+      now,
+      notifyCompleteSeason: notifyCompleteSeason,
+    );
+    return true;
+  }
+
   static int getBaselineSeason(
     TmdbTitle title,
     DateTime now, {
     bool notifyCompleteSeason = false,
   }) {
     final currentSeason = title.numberOfSeasons;
+    if (currentSeason <= 0) return 0;
+
     final nextEpisode = title.nextEpisodeToAir;
+    final lastEpisode = title.lastEpisodeToAir;
 
     if (nextEpisode != null && nextEpisode.seasonNumber > 0) {
       final nextSeason = nextEpisode.seasonNumber;
@@ -40,13 +60,29 @@ class WatchlistNotificationEvaluator {
       final airDate =
           airDateStr.isNotEmpty ? DateTime.tryParse(airDateStr) : null;
 
-      if (nextEpisodeNum == 1 && airDate != null && airDate.isAfter(now)) {
-        return nextSeason - 1;
+      if (nextEpisodeNum == 1) {
+        if (airDate != null && airDate.isAfter(now)) {
+          return nextSeason - 1;
+        }
+        if (airDate == null &&
+            (lastEpisode == null || lastEpisode.seasonNumber < nextSeason)) {
+          return nextSeason - 1;
+        }
       }
 
       if (notifyCompleteSeason) {
         return nextSeason - 1;
       }
+
+      return currentSeason;
+    }
+
+    if (lastEpisode == null || lastEpisode.seasonNumber < currentSeason) {
+      return currentSeason - 1;
+    }
+
+    if (notifyCompleteSeason && !_isSeasonComplete(title, currentSeason, now)) {
+      return currentSeason - 1;
     }
 
     return currentSeason;
