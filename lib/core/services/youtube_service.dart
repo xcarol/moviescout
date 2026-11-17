@@ -1,9 +1,8 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:diacritic/diacritic.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/core/utils/youtube_query_mapper.dart';
-import 'package:moviescout/core/services/error_service.dart';
 
 abstract class YoutubeService {
   Future<List<Map<String, dynamic>>> searchTrailers(
@@ -54,7 +53,8 @@ class YoutubeExplodeService implements YoutubeService {
     final List<Map<String, dynamic>> allResults = [];
 
     try {
-      final searchList = await _yt.search.search(query);
+      final searchList =
+          await _yt.search.search(query).timeout(const Duration(seconds: 10));
       final results = searchList
           .where((v) => _isRelevant(v, title))
           .take(3)
@@ -68,8 +68,8 @@ class YoutubeExplodeService implements YoutubeService {
           .toList();
 
       allResults.addAll(results);
-    } catch (e, stackTrace) {
-      ErrorService.log(e, stackTrace: stackTrace, reportToCrashlytics: false);
+    } catch (e) {
+      debugPrint('YouTube trailer search failed ($query): $e');
     }
 
     return allResults;
