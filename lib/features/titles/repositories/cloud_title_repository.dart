@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
@@ -60,6 +61,7 @@ class CloudTitleRepository {
         final createdAt = r['created_at'] != null
             ? DateTime.parse(r['created_at'] as String)
             : null;
+        final cloudSeason = r['last_notified_season'] as int? ?? 0;
         return TmdbTitle(
           tmdbId: r['tmdb_id'] as int,
           mediaType: r['media_type'] as String,
@@ -73,7 +75,9 @@ class CloudTitleRepository {
           ..isPinned = r['is_pinned'] as bool? ?? false
           ..rating = (r['rating'] as num?)?.toDouble() ?? 0.0
           ..notifyNewSeasons = r['notify_new_seasons'] as bool? ?? false
-          ..lastNotifiedSeason = r['last_notified_season'] as int? ?? 0;
+          ..lastNotifiedSeason = cloudSeason > 0
+              ? cloudSeason
+              : AppConstants.seasonNotInitialized;
       }).toList();
     });
   }
@@ -92,7 +96,7 @@ class CloudTitleRepository {
         'name': title.name,
         'poster_path': title.posterPathSuffix,
         'vote_average': title.voteAverage,
-        'last_notified_season': title.lastNotifiedSeason,
+        'last_notified_season': math.max(0, title.lastNotifiedSeason),
       }, onConflict: 'user_id, tmdb_id, media_type, list_name');
     });
   }
@@ -185,7 +189,7 @@ class CloudTitleRepository {
       final data = <String, dynamic>{
         'notify_new_seasons': notifyNewSeasons,
       };
-      if (lastNotifiedSeason != null) {
+      if (lastNotifiedSeason != null && lastNotifiedSeason >= 0) {
         data['last_notified_season'] = lastNotifiedSeason;
       }
       await _client

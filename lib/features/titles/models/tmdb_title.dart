@@ -207,7 +207,7 @@ class TmdbTitle implements TmdbItem {
   String? externalIdsJson;
   String? belongsToCollectionJson;
 
-  int lastNotifiedSeason = 0;
+  int lastNotifiedSeason = AppConstants.seasonNotInitialized;
 
   List<dynamic>? _seasonsCache;
 
@@ -312,7 +312,7 @@ class TmdbTitle implements TmdbItem {
     this.certification = '',
     this.isPinned = false,
     this.notifyNewSeasons = false,
-    this.lastNotifiedSeason = 0,
+    this.lastNotifiedSeason = AppConstants.seasonNotInitialized,
     this.createdAt,
   }) {
     if (effectiveReleaseDate.isEmpty) {
@@ -336,7 +336,8 @@ class TmdbTitle implements TmdbItem {
       dateRated: DateTime.fromMillisecondsSinceEpoch(0),
       isPinned: title[TmdbTitleFields.isPinned] ?? false,
       notifyNewSeasons: title[TmdbTitleFields.notifyNewSeasons] ?? false,
-      lastNotifiedSeason: title[TmdbTitleFields.lastNotifiedSeason] ?? 0,
+      lastNotifiedSeason: title[TmdbTitleFields.lastNotifiedSeason] ??
+          AppConstants.seasonNotInitialized,
       createdAt: title['created_at'] != null
           ? DateTime.tryParse(title['created_at'].toString())
           : null,

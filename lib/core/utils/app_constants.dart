@@ -228,6 +228,7 @@ class AppConstants {
   static const int updateProvidersNotificationId = 9992;
 
   static const String defaultDate = '1970-01-01';
+  static const int seasonNotInitialized = -1;
 
   static const String tmdbApiRat = 'TMDB_API_RAT';
   static const String omdbApiKey = 'OMDB_API_KEY';
