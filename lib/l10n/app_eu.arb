@@ -853,5 +853,17 @@
       "language": {},
       "code": {}
     }
-  }
+  },
+  "applyTranslationToTmdb": "Ireki TMDb-n eta bete",
+  "@applyTranslationToTmdb": {},
+  "tmdbEditPageTitle": "Editatu TMDb-n",
+  "@tmdbEditPageTitle": {},
+  "tmdbInjectTranslation": "Bete eremuak",
+  "@tmdbInjectTranslation": {},
+  "tmdbEditLoginRequired": "Hasi saioa TMDb-n; editatzeko orria kargatzean eremuak automatikoki beteko dira.",
+  "@tmdbEditLoginRequired": {},
+  "tmdbTranslationInjected": "Eremuak itzulpenarekin bete dira. Berrikusi eta gorde aldaketak TMDb-n.",
+  "@tmdbTranslationInjected": {},
+  "tmdbFieldsNotFound": "Editatzeko eremuak ez dira hemen detektatu. Ireki itzulpen-eremuak eta sakatu Bete eremuak.",
+  "@tmdbFieldsNotFound": {}
 }

@@ -1,4 +1,6 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/features/settings/services/ai_service.dart';
 import 'package:moviescout/core/widgets/drop_down_selector.dart';
@@ -8,6 +10,9 @@ class AiModelThinkingSelector extends StatelessWidget {
   final String? selectedThinkingLevel;
   final void Function(String model, String thinkingLevel) onChanged;
   final VoidCallback onRefresh;
+  final bool showApplyTranslation;
+  final VoidCallback? onApplyTranslation;
+  final String? applyTranslationTooltip;
   final Color? borderColor;
   final Color? textColor;
 
@@ -17,6 +22,9 @@ class AiModelThinkingSelector extends StatelessWidget {
     required this.selectedThinkingLevel,
     required this.onChanged,
     required this.onRefresh,
+    this.showApplyTranslation = false,
+    this.onApplyTranslation,
+    this.applyTranslationTooltip,
     this.borderColor,
     this.textColor,
   });
@@ -130,22 +138,28 @@ class AiModelThinkingSelector extends StatelessWidget {
       },
     );
 
-    final refreshButton = InkWell(
+    final refreshButton = _buildActionButton(
+      icon: Icons.refresh,
+      borderColor: effectiveBorderColor,
+      iconColor: effectiveTextColor,
       borderRadius: borderRadius,
       onTap: onRefresh,
-      child: Container(
-        padding: const EdgeInsets.all(2),
-        decoration: BoxDecoration(
-          border: border,
-          borderRadius: borderRadius,
-        ),
-        child: Icon(
-          Icons.refresh,
-          size: 20,
-          color: effectiveTextColor,
-        ),
-      ),
     );
+
+    final applyButton = showApplyTranslation
+        ? _buildActionButton(
+            icon: Icons.open_in_browser,
+            borderColor: onApplyTranslation != null
+                ? effectiveBorderColor
+                : colorScheme.outlineVariant,
+            iconColor: onApplyTranslation != null
+                ? effectiveTextColor
+                : colorScheme.onSurfaceVariant,
+            borderRadius: borderRadius,
+            tooltip: applyTranslationTooltip,
+            onTap: onApplyTranslation,
+          )
+        : null;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -153,10 +167,14 @@ class AiModelThinkingSelector extends StatelessWidget {
           return Row(
             children: [
               Expanded(flex: 3, child: modelDropdown),
-              const SizedBox(width: 8),
+              AppSpacing.gapSm,
               Expanded(flex: 2, child: thinkingDropdown),
-              const SizedBox(width: 8),
+              AppSpacing.gapSm,
               refreshButton,
+              if (applyButton != null) ...[
+                AppSpacing.gapSm,
+                applyButton,
+              ],
             ],
           );
         }
@@ -164,17 +182,56 @@ class AiModelThinkingSelector extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             modelDropdown,
-            const SizedBox(height: 8),
+            AppSpacing.gapSm,
             Row(
               children: [
                 Expanded(child: thinkingDropdown),
-                const SizedBox(width: 8),
+                AppSpacing.gapSm,
                 refreshButton,
+                if (applyButton != null) ...[
+                  AppSpacing.gapSm,
+                  applyButton,
+                ],
               ],
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required Color borderColor,
+    required Color iconColor,
+    required BorderRadius borderRadius,
+    VoidCallback? onTap,
+    String? tooltip,
+  }) {
+    final button = InkWell(
+      borderRadius: AppRadius.borderXs,
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.xxs),
+        decoration: BoxDecoration(
+          border: Border.all(color: borderColor),
+          borderRadius: borderRadius,
+        ),
+        child: Icon(
+          icon,
+          size: 20,
+          color: iconColor,
+        ),
+      ),
+    );
+
+    if (tooltip == null || tooltip.isEmpty) {
+      return button;
+    }
+
+    return Tooltip(
+      message: tooltip,
+      child: button,
     );
   }
 }

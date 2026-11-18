@@ -69,8 +69,7 @@ import 'app_localizations_pt.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -78,8 +77,7 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -91,8 +89,7 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -2411,10 +2408,45 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hi,\n\nI would like to request an optimized AI translation prompt for {language} ({code}).\n\nI would also be happy to collaborate on writing or reviewing the prompt in this language if needed.'**
   String aiPromptRequestBody(Object language, Object code);
+
+  /// No description provided for @applyTranslationToTmdb.
+  ///
+  /// In en, this message translates to:
+  /// **'Open on TMDb and fill'**
+  String get applyTranslationToTmdb;
+
+  /// No description provided for @tmdbEditPageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit on TMDb'**
+  String get tmdbEditPageTitle;
+
+  /// No description provided for @tmdbInjectTranslation.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill fields'**
+  String get tmdbInjectTranslation;
+
+  /// No description provided for @tmdbEditLoginRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to TMDb; fields will fill automatically once the edit page loads.'**
+  String get tmdbEditLoginRequired;
+
+  /// No description provided for @tmdbTranslationInjected.
+  ///
+  /// In en, this message translates to:
+  /// **'Fields filled with translation. Review and save your changes on TMDb.'**
+  String get tmdbTranslationInjected;
+
+  /// No description provided for @tmdbFieldsNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit fields were not detected here. Open the translation fields and tap Fill fields.'**
+  String get tmdbFieldsNotFound;
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -2423,68 +2455,47 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) => <String>[
-        'ca',
-        'de',
-        'en',
-        'es',
-        'eu',
-        'fr',
-        'gl',
-        'it',
-        'pt'
-      ].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['ca', 'de', 'en', 'es', 'eu', 'fr', 'gl', 'it', 'pt'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+
   // Lookup logic when language+country codes are specified.
   switch (locale.languageCode) {
-    case 'es':
-      {
-        switch (locale.countryCode) {
-          case '419':
-            return AppLocalizationsEs419();
-        }
-        break;
-      }
-    case 'pt':
-      {
-        switch (locale.countryCode) {
-          case 'PT':
-            return AppLocalizationsPtPt();
-        }
-        break;
-      }
+    case 'es': {
+  switch (locale.countryCode) {
+    case '419': return AppLocalizationsEs419();
+   }
+  break;
+   }
+    case 'pt': {
+  switch (locale.countryCode) {
+    case 'PT': return AppLocalizationsPtPt();
+   }
+  break;
+   }
   }
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'ca':
-      return AppLocalizationsCa();
-    case 'de':
-      return AppLocalizationsDe();
-    case 'en':
-      return AppLocalizationsEn();
-    case 'es':
-      return AppLocalizationsEs();
-    case 'eu':
-      return AppLocalizationsEu();
-    case 'fr':
-      return AppLocalizationsFr();
-    case 'gl':
-      return AppLocalizationsGl();
-    case 'it':
-      return AppLocalizationsIt();
-    case 'pt':
-      return AppLocalizationsPt();
+    case 'ca': return AppLocalizationsCa();
+    case 'de': return AppLocalizationsDe();
+    case 'en': return AppLocalizationsEn();
+    case 'es': return AppLocalizationsEs();
+    case 'eu': return AppLocalizationsEu();
+    case 'fr': return AppLocalizationsFr();
+    case 'gl': return AppLocalizationsGl();
+    case 'it': return AppLocalizationsIt();
+    case 'pt': return AppLocalizationsPt();
   }
 
   throw FlutterError(
-      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.'
+  );
 }

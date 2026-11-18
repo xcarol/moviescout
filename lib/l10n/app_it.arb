@@ -853,5 +853,17 @@
       "language": {},
       "code": {}
     }
-  }
+  },
+  "applyTranslationToTmdb": "Apri su TMDb e compila",
+  "@applyTranslationToTmdb": {},
+  "tmdbEditPageTitle": "Modifica su TMDb",
+  "@tmdbEditPageTitle": {},
+  "tmdbInjectTranslation": "Compila campi",
+  "@tmdbInjectTranslation": {},
+  "tmdbEditLoginRequired": "Accedi a TMDb; i campi verranno compilati automaticamente al caricamento della pagina di modifica.",
+  "@tmdbEditLoginRequired": {},
+  "tmdbTranslationInjected": "Campi compilati con la traduzione. Controlla e salva le modifiche su TMDb.",
+  "@tmdbTranslationInjected": {},
+  "tmdbFieldsNotFound": "Campi di modifica non rilevati qui. Apri i campi di traduzione e tocca Compila campi.",
+  "@tmdbFieldsNotFound": {}
 }

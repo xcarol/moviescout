@@ -853,5 +853,17 @@
       "language": {},
       "code": {}
     }
-  }
+  },
+  "applyTranslationToTmdb": "Abrir en TMDb y rellenar",
+  "@applyTranslationToTmdb": {},
+  "tmdbEditPageTitle": "Editar en TMDb",
+  "@tmdbEditPageTitle": {},
+  "tmdbInjectTranslation": "Rellenar campos",
+  "@tmdbInjectTranslation": {},
+  "tmdbEditLoginRequired": "Inicia sesión en TMDb; los campos se rellenarán automáticamente al cargar la página de edición.",
+  "@tmdbEditLoginRequired": {},
+  "tmdbTranslationInjected": "Campos rellenados con la traducción. Revísalos y guarda los cambios en TMDb.",
+  "@tmdbTranslationInjected": {},
+  "tmdbFieldsNotFound": "No se han detectado los campos de edición aquí. Abre los campos de traducción y pulsa Rellenar campos.",
+  "@tmdbFieldsNotFound": {}
 }

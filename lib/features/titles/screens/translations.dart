@@ -487,12 +487,28 @@ class TranslationsScreenState extends State<TranslationsScreen> {
   }
 
   Widget _buildAiConfigurationSection(String targetCode) {
+    final l10n = AppLocalizations.of(context)!;
+    final canApplyToTmdb = !_isTranslating &&
+        _translationError == null &&
+        (_translatedTitle.isNotEmpty || _translatedDescription.isNotEmpty);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AiModelThinkingSelector(
           selectedModel: _selectedAiModel,
           selectedThinkingLevel: _selectedThinkingLevel,
+          showApplyTranslation: widget.editUrl.isNotEmpty,
+          applyTranslationTooltip: l10n.applyTranslationToTmdb,
+          onApplyTranslation: canApplyToTmdb
+              ? () => context.toTmdbEditWebView(
+                    editUrl: widget.editUrl,
+                    targetLanguageCode: targetCode,
+                    contentType: widget.translationContext.type,
+                    translatedTitle: _translatedTitle,
+                    translatedDescription: _translatedDescription,
+                  )
+              : null,
           onChanged: (model, thinkingLevel) {
             setState(() {
               _selectedAiModel = model;
@@ -822,7 +838,10 @@ class TranslationsScreenState extends State<TranslationsScreen> {
       appBar: AppBar(
         title: Text(l10n.translations),
         actions: [
-          EditButton(url: widget.editUrl),
+          EditButton(
+            url: widget.editUrl,
+            targetLanguageCode: targetCode,
+          ),
         ],
       ),
       body: SafeArea(

@@ -853,5 +853,17 @@
       "language": {},
       "code": {}
     }
-  }
+  },
+  "applyTranslationToTmdb": "Open on TMDb and fill",
+  "@applyTranslationToTmdb": {},
+  "tmdbEditPageTitle": "Edit on TMDb",
+  "@tmdbEditPageTitle": {},
+  "tmdbInjectTranslation": "Fill fields",
+  "@tmdbInjectTranslation": {},
+  "tmdbEditLoginRequired": "Sign in to TMDb; fields will fill automatically once the edit page loads.",
+  "@tmdbEditLoginRequired": {},
+  "tmdbTranslationInjected": "Fields filled with translation. Review and save your changes on TMDb.",
+  "@tmdbTranslationInjected": {},
+  "tmdbFieldsNotFound": "Edit fields were not detected here. Open the translation fields and tap Fill fields.",
+  "@tmdbFieldsNotFound": {}
 }

@@ -23,6 +23,7 @@ import 'package:moviescout/features/seasons/screens/season_details.dart';
 import 'package:moviescout/features/settings/screens/settings.dart';
 import 'package:moviescout/features/titles/screens/title_details.dart';
 import 'package:moviescout/features/titles/screens/title_people_list.dart';
+import 'package:moviescout/features/titles/screens/tmdb_edit_webview_screen.dart';
 import 'package:moviescout/features/titles/screens/translations.dart';
 import 'package:moviescout/features/auth/screens/user_details.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
@@ -207,6 +208,25 @@ extension AppNavigatorExtension on BuildContext {
         translations: translations,
         editUrl: editUrl,
         translationContext: translationContext,
+      ),
+    );
+  }
+
+  Future<T?> toTmdbEditWebView<T>({
+    required String editUrl,
+    String? targetLanguageCode,
+    TranslationContentType contentType = TranslationContentType.movie,
+    String translatedTitle = '',
+    String translatedDescription = '',
+  }) {
+    return AppNavigator.push<T>(
+      this,
+      TmdbEditWebViewScreen(
+        editUrl: editUrl,
+        targetLanguageCode: targetLanguageCode,
+        contentType: contentType,
+        translatedTitle: translatedTitle,
+        translatedDescription: translatedDescription,
       ),
     );
   }

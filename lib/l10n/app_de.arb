@@ -853,5 +853,17 @@
       "language": {},
       "code": {}
     }
-  }
+  },
+  "applyTranslationToTmdb": "Auf TMDb öffnen und ausfüllen",
+  "@applyTranslationToTmdb": {},
+  "tmdbEditPageTitle": "Auf TMDb bearbeiten",
+  "@tmdbEditPageTitle": {},
+  "tmdbInjectTranslation": "Felder ausfüllen",
+  "@tmdbInjectTranslation": {},
+  "tmdbEditLoginRequired": "Melde dich bei TMDb an; die Felder werden automatisch ausgefüllt, sobald die Bearbeitungsseite geladen ist.",
+  "@tmdbEditLoginRequired": {},
+  "tmdbTranslationInjected": "Felder mit der Übersetzung ausgefüllt. Überprüfe und speichere deine Änderungen auf TMDb.",
+  "@tmdbTranslationInjected": {},
+  "tmdbFieldsNotFound": "Bearbeitungsfelder wurden hier nicht erkannt. Öffne die Übersetzungsfelder und tippe auf Felder ausfüllen.",
+  "@tmdbFieldsNotFound": {}
 }

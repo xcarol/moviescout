@@ -853,5 +853,17 @@
       "language": {},
       "code": {}
     }
-  }
+  },
+  "applyTranslationToTmdb": "Abrir no TMDb e preencher",
+  "@applyTranslationToTmdb": {},
+  "tmdbEditPageTitle": "Editar no TMDb",
+  "@tmdbEditPageTitle": {},
+  "tmdbInjectTranslation": "Preencher campos",
+  "@tmdbInjectTranslation": {},
+  "tmdbEditLoginRequired": "Inicia sessão no TMDb; os campos serão preenchidos automaticamente quando a página de edição carregar.",
+  "@tmdbEditLoginRequired": {},
+  "tmdbTranslationInjected": "Campos preenchidos com a tradução. Revê e guarda as alterações no TMDb.",
+  "@tmdbTranslationInjected": {},
+  "tmdbFieldsNotFound": "Campos de edição não detetados aqui. Abre os campos de tradução e toca em Preencher campos.",
+  "@tmdbFieldsNotFound": {}
 }
