@@ -1249,6 +1249,24 @@ class AppLocalizationsEs extends AppLocalizations {
   String otherTranslations(Object count) {
     return 'Otras traducciones ($count)';
   }
+
+  @override
+  String aiPromptMissingLanguage(Object language) {
+    return 'Todavía no hay un prompt optimizado para $language (se usará el de inglés).';
+  }
+
+  @override
+  String get aiPromptRequestButton => 'Solicitar';
+
+  @override
+  String aiPromptRequestSubject(Object language, Object code) {
+    return '[MovieScout] Solicitud de prompt IA: $language ($code)';
+  }
+
+  @override
+  String aiPromptRequestBody(Object language, Object code) {
+    return 'Hola,\n\nMe gustaría solicitar un prompt de traducción con IA optimizado para $language ($code).\n\nSi lo necesitáis, también me ofrezco a colaborar en la redacción o revisión del prompt en este idioma.';
+  }
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -2495,5 +2513,23 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String otherTranslations(Object count) {
     return 'Otras traducciones ($count)';
+  }
+
+  @override
+  String aiPromptMissingLanguage(Object language) {
+    return 'Todavía no hay un prompt optimizado para $language (se usará el de inglés).';
+  }
+
+  @override
+  String get aiPromptRequestButton => 'Solicitar';
+
+  @override
+  String aiPromptRequestSubject(Object language, Object code) {
+    return '[MovieScout] Solicitud de prompt IA: $language ($code)';
+  }
+
+  @override
+  String aiPromptRequestBody(Object language, Object code) {
+    return 'Hola,\n\nMe gustaría solicitar un prompt de traducción con IA optimizado para $language ($code).\n\nSi lo necesitan, también me ofrezco a colaborar en la redacción o revisión del prompt en este idioma.';
   }
 }

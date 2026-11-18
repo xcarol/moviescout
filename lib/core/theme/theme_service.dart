@@ -144,6 +144,7 @@ class ThemeService with ChangeNotifier {
     error: Color(0xFFEF4444),
     onError: Color(0xFFFFFFFF),
     surface: Color(0xFF1E1E1E),
+    surfaceContainerLow: Color(0xFF171717),
     onSurface: Color(0xFFF5F5F5),
     onSurfaceVariant: Color(0xFF9E9E9E),
     surfaceContainerHighest: Color(0xFF2B2B2B),

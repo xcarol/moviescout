@@ -831,5 +831,27 @@
     "placeholders": {
       "count": {}
     }
+  },
+  "aiPromptMissingLanguage": "Oraindik ez dago {language} hizkuntzarako prompt optimizaturik (ingelesa erabiliko da).",
+  "@aiPromptMissingLanguage": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "aiPromptRequestButton": "Eskatu",
+  "@aiPromptRequestButton": {},
+  "aiPromptRequestSubject": "[MovieScout] IA itzulpen-prompt eskaera: {language} ({code})",
+  "@aiPromptRequestSubject": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "aiPromptRequestBody": "Kaixo,\n\n{language} ({code}) hizkuntzarako IA bidezko itzulpen-prompt optimizatu bat eskatu nahi nuke.\n\nBehar izanez gero, hizkuntza honetako prompta idazten edo berrikusten laguntzeko ere prest nago.",
+  "@aiPromptRequestBody": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
   }
 }

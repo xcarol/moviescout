@@ -831,5 +831,27 @@
     "placeholders": {
       "count": {}
     }
+  },
+  "aiPromptMissingLanguage": "Aucun prompt optimisé pour {language} pour l'instant (l'anglais sera utilisé).",
+  "@aiPromptMissingLanguage": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "aiPromptRequestButton": "Demander",
+  "@aiPromptRequestButton": {},
+  "aiPromptRequestSubject": "[MovieScout] Demande de prompt IA : {language} ({code})",
+  "@aiPromptRequestSubject": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "aiPromptRequestBody": "Bonjour,\n\nJe souhaite demander un prompt de traduction IA optimisé pour {language} ({code}).\n\nSi besoin, je serais également ravi de collaborer à la rédaction ou à la relecture du prompt dans cette langue.",
+  "@aiPromptRequestBody": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
   }
 }

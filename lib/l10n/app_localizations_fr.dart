@@ -1254,4 +1254,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String otherTranslations(Object count) {
     return 'Autres traductions ($count)';
   }
+
+  @override
+  String aiPromptMissingLanguage(Object language) {
+    return 'Aucun prompt optimisé pour $language pour l\'instant (l\'anglais sera utilisé).';
+  }
+
+  @override
+  String get aiPromptRequestButton => 'Demander';
+
+  @override
+  String aiPromptRequestSubject(Object language, Object code) {
+    return '[MovieScout] Demande de prompt IA : $language ($code)';
+  }
+
+  @override
+  String aiPromptRequestBody(Object language, Object code) {
+    return 'Bonjour,\n\nJe souhaite demander un prompt de traduction IA optimisé pour $language ($code).\n\nSi besoin, je serais également ravi de collaborer à la rédaction ou à la relecture du prompt dans cette langue.';
+  }
 }

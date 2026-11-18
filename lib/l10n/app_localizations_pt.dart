@@ -1250,6 +1250,24 @@ class AppLocalizationsPt extends AppLocalizations {
   String otherTranslations(Object count) {
     return 'Outras traduções ($count)';
   }
+
+  @override
+  String aiPromptMissingLanguage(Object language) {
+    return 'Ainda não há um prompt otimizado para $language (será usado o inglês).';
+  }
+
+  @override
+  String get aiPromptRequestButton => 'Solicitar';
+
+  @override
+  String aiPromptRequestSubject(Object language, Object code) {
+    return '[MovieScout] Solicitação de prompt IA: $language ($code)';
+  }
+
+  @override
+  String aiPromptRequestBody(Object language, Object code) {
+    return 'Olá,\n\nGostaria de solicitar um prompt de tradução por IA otimizado para $language ($code).\n\nSe quiserem, também fico à disposição para colaborar na redação ou revisão do prompt nesse idioma.';
+  }
 }
 
 /// The translations for Portuguese, as used in Portugal (`pt_PT`).
@@ -2496,5 +2514,23 @@ class AppLocalizationsPtPt extends AppLocalizationsPt {
   @override
   String otherTranslations(Object count) {
     return 'Outras traduções ($count)';
+  }
+
+  @override
+  String aiPromptMissingLanguage(Object language) {
+    return 'Ainda não existe um prompt otimizado para $language (será usado o inglês).';
+  }
+
+  @override
+  String get aiPromptRequestButton => 'Pedir';
+
+  @override
+  String aiPromptRequestSubject(Object language, Object code) {
+    return '[MovieScout] Pedido de prompt IA: $language ($code)';
+  }
+
+  @override
+  String aiPromptRequestBody(Object language, Object code) {
+    return 'Olá,\n\nGostaria de pedir um prompt de tradução por IA otimizado para $language ($code).\n\nSe for útil, também me ofereço para colaborar na redação ou revisão do prompt neste idioma.';
   }
 }

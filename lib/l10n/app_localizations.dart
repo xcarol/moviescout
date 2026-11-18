@@ -2387,6 +2387,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Other translations ({count})'**
   String otherTranslations(Object count);
+
+  /// No description provided for @aiPromptMissingLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'No optimized prompt for {language} yet (using English).'**
+  String aiPromptMissingLanguage(Object language);
+
+  /// No description provided for @aiPromptRequestButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Request'**
+  String get aiPromptRequestButton;
+
+  /// No description provided for @aiPromptRequestSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'[MovieScout] AI translation prompt request: {language} ({code})'**
+  String aiPromptRequestSubject(Object language, Object code);
+
+  /// No description provided for @aiPromptRequestBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi,\n\nI would like to request an optimized AI translation prompt for {language} ({code}).\n\nI would also be happy to collaborate on writing or reviewing the prompt in this language if needed.'**
+  String aiPromptRequestBody(Object language, Object code);
 }
 
 class _AppLocalizationsDelegate

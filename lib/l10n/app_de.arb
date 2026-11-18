@@ -831,5 +831,27 @@
     "placeholders": {
       "count": {}
     }
+  },
+  "aiPromptMissingLanguage": "Noch kein optimierter Prompt für {language} vorhanden (Englisch wird verwendet).",
+  "@aiPromptMissingLanguage": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "aiPromptRequestButton": "Anfragen",
+  "@aiPromptRequestButton": {},
+  "aiPromptRequestSubject": "[MovieScout] Anfrage für KI-Übersetzungs-Prompt: {language} ({code})",
+  "@aiPromptRequestSubject": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "aiPromptRequestBody": "Hallo,\n\nich möchte einen optimierten KI-Übersetzungs-Prompt für {language} ({code}) anfragen.\n\nBei Bedarf helfe ich auch gerne beim Verfassen oder Überprüfen des Prompts in dieser Sprache.",
+  "@aiPromptRequestBody": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
   }
 }

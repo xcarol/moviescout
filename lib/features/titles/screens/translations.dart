@@ -17,7 +17,9 @@ import 'package:moviescout/features/settings/services/ai_service.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/core/services/web_translation_service.dart';
 import 'package:moviescout/core/utils/translation_languages.dart';
+import 'package:moviescout/core/utils/url_constants.dart';
 import 'package:moviescout/core/models/translation_context.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class _CopyIconButton extends StatefulWidget {
   final String textToCopy;
@@ -219,6 +221,22 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     );
   }
 
+  Future<void> _requestMissingPrompt(
+    String targetName,
+    String targetCode,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final subject = l10n.aiPromptRequestSubject(targetName, targetCode);
+    final body = l10n.aiPromptRequestBody(targetName, targetCode);
+    final mailtoUri = Uri(
+      scheme: 'mailto',
+      path: UrlConstants.contactEmail,
+      query:
+          'subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(body)}',
+    );
+    await launchUrl(mailtoUri, mode: LaunchMode.externalApplication);
+  }
+
   Future<void> _openAiSettings(
     WebTranslationService service, {
     bool enableIfConfigured = false,
@@ -250,248 +268,345 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     }
   }
 
-  Widget _buildMagicCard() {
-    final service = context.watch<WebTranslationService>();
-    final targetCode = service.targetLanguageCode;
-    final sourceCode = _getEffectiveSourceCode(service.sourceLanguageCode);
-
+  Map<String, String> _buildUniqueSourceCodes() {
     final uniqueSourceCodes = <String, String>{};
-    for (var t in widget.translations) {
+    for (final t in widget.translations) {
       if (t.description.isNotEmpty || t.translatedTitle.isNotEmpty) {
         uniqueSourceCodes[t.iso639_1] = t.englishName;
       }
     }
+    return uniqueSourceCodes;
+  }
 
-    final List<String> sourceOptions = uniqueSourceCodes.values.toList();
-    sourceOptions.sort();
+  Widget _buildMagicCard() {
+    final service = context.watch<WebTranslationService>();
+    final targetCode = service.targetLanguageCode;
+    final sourceCode = _getEffectiveSourceCode(service.sourceLanguageCode);
+    final uniqueSourceCodes = _buildUniqueSourceCodes();
+    final isAiActive = AiService().hasApiKey && service.isAiTranslationEnabled;
+    final colorScheme = Theme.of(context).colorScheme;
 
-    final allLangs = TranslationLanguages.supportedLanguages.entries.toList();
-    final List<String> targetOptions = allLangs.map((e) => e.value).toList();
-    targetOptions.sort();
+    return Card(
+      color: colorScheme.primaryContainer,
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.sm,
+      ),
+      child: Padding(
+        padding: AppSpacing.edgeInsetsAllMd,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildMagicCardHeader(service, isAiActive),
+            AppSpacing.gapSm,
+            _buildLanguageSelectors(
+              service: service,
+              uniqueSourceCodes: uniqueSourceCodes,
+              sourceCode: sourceCode,
+              targetCode: targetCode,
+              isAiActive: isAiActive,
+            ),
+            if (isAiActive) ...[
+              AppSpacing.gapSm,
+              _buildAiConfigurationSection(targetCode),
+            ],
+            _buildTranslationResult(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMagicCardHeader(
+    WebTranslationService service,
+    bool isAiActive,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Row(
+      children: [
+        const Icon(Icons.auto_awesome, size: 20),
+        AppSpacing.gapSm,
+        Expanded(
+          child: Text(
+            l10n.autoTranslation,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Row(
+          children: [
+            Tooltip(
+              message: l10n.aiSettingsTitle,
+              child: Material(
+                type: MaterialType.transparency,
+                child: InkWell(
+                  borderRadius: AppRadius.borderXs,
+                  onTap: () => _openAiSettings(service),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm,
+                      vertical: AppSpacing.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: colorScheme.outlineVariant,
+                      ),
+                      borderRadius: AppRadius.borderXs,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Symbols.wand_stars, size: 20),
+                        AppSpacing.gapXs,
+                        Text(
+                          l10n.enableAiTranslation,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            AppSpacing.gapXs,
+            Switch(
+              value: isAiActive,
+              onChanged: (val) {
+                if (val && !AiService().hasApiKey) {
+                  _openAiSettings(service, enableIfConfigured: true);
+                } else {
+                  service.setAiTranslationEnabled(val);
+                  if (val) {
+                    setState(() {
+                      _translatedTitle = '';
+                      _translatedDescription = '';
+                      _translationError = null;
+                    });
+                  } else {
+                    _performTranslation();
+                  }
+                }
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLanguageSelectors({
+    required WebTranslationService service,
+    required Map<String, String> uniqueSourceCodes,
+    required String sourceCode,
+    required String targetCode,
+    required bool isAiActive,
+  }) {
+    final sourceOptions = uniqueSourceCodes.values.toList()..sort();
+    final targetOptions =
+        TranslationLanguages.supportedLanguages.values.toList()..sort();
 
     final selectedSourceOption = uniqueSourceCodes[sourceCode] ??
         (sourceOptions.isNotEmpty ? sourceOptions.first : '');
     final selectedTargetOption =
         TranslationLanguages.supportedLanguages[targetCode] ?? '';
-    final isAiActive = AiService().hasApiKey && service.isAiTranslationEnabled;
 
+    final sourceDropdown = _buildLanguageDropdown(
+      selectedOption: selectedSourceOption,
+      options: sourceOptions,
+      onSelected: (val) {
+        final code =
+            uniqueSourceCodes.entries.firstWhere((e) => e.value == val).key;
+        service.setSourceLanguageCode(code);
+        if (!isAiActive) {
+          _performTranslation();
+        }
+      },
+    );
+
+    final targetDropdown = _buildLanguageDropdown(
+      selectedOption: selectedTargetOption,
+      options: targetOptions,
+      onSelected: (val) {
+        final code = TranslationLanguages.supportedLanguages.entries
+            .firstWhere((e) => e.value == val)
+            .key;
+        service.setTargetLanguageCode(code);
+        if (!isAiActive) {
+          _performTranslation();
+        }
+      },
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth > 350.0) {
+          return Row(
+            children: [
+              Expanded(child: sourceDropdown),
+              const Padding(
+                padding: AppSpacing.edgeInsetsHSm,
+                child: Icon(Icons.arrow_forward, size: 16),
+              ),
+              Expanded(child: targetDropdown),
+            ],
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            sourceDropdown,
+            const Padding(
+              padding: AppSpacing.edgeInsetsVSm,
+              child: Icon(Icons.arrow_downward, size: 16),
+            ),
+            targetDropdown,
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildLanguageDropdown({
+    required String selectedOption,
+    required List<String> options,
+    required ValueChanged<String> onSelected,
+  }) {
+    return DropdownSelector(
+      border: Border.all(
+        color: Theme.of(context).colorScheme.secondary,
+      ),
+      borderRadius: AppRadius.borderXs,
+      selectedOption: selectedOption,
+      options: options,
+      maxMenuHeight: 300,
+      isExpanded: true,
+      onSelected: onSelected,
+    );
+  }
+
+  Widget _buildAiConfigurationSection(String targetCode) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AiModelThinkingSelector(
+          selectedModel: _selectedAiModel,
+          selectedThinkingLevel: _selectedThinkingLevel,
+          onChanged: (model, thinkingLevel) {
+            setState(() {
+              _selectedAiModel = model;
+              _selectedThinkingLevel = thinkingLevel;
+            });
+          },
+          onRefresh: _performTranslation,
+        ),
+        if (!AiService().hasPromptForLanguage(targetCode)) ...[
+          AppSpacing.gapSm,
+          _buildMissingPromptNotice(targetCode),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildMissingPromptNotice(String targetCode) {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
+    final targetName =
+        TranslationLanguages.supportedLanguages[targetCode] ?? targetCode;
 
-    return Card(
-      color: colorScheme.primaryContainer,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: AppRadius.borderXs,
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.info_outline,
+            size: 18,
+            color: colorScheme.onSurfaceVariant,
+          ),
+          AppSpacing.gapSm,
+          Expanded(
+            child: Text(
+              l10n.aiPromptMissingLanguage(targetName),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
+          AppSpacing.gapSm,
+          TextButton.icon(
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm,
+                vertical: AppSpacing.xs,
+              ),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            onPressed: () => _requestMissingPrompt(targetName, targetCode),
+            icon: const Icon(Icons.mail_outline, size: 16),
+            label: Text(l10n.aiPromptRequestButton),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTranslationResult() {
+    final hasContent = _isTranslating ||
+        _translationError != null ||
+        _translatedTitle.isNotEmpty ||
+        _translatedDescription.isNotEmpty;
+    if (!hasContent) {
+      return const SizedBox.shrink();
+    }
+
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppSpacing.gapMd,
+        if (_isTranslating)
+          const Center(child: CircularProgressIndicator())
+        else if (_translationError != null)
+          Container(
+            padding: AppSpacing.edgeInsetsAllSm,
+            decoration: BoxDecoration(
+              color: colorScheme.errorContainer,
+              borderRadius: AppRadius.borderSm,
+            ),
+            child: Row(
               children: [
-                const Icon(Icons.auto_awesome, size: 20),
-                const SizedBox(width: 8),
+                Icon(
+                  Icons.error_outline,
+                  size: 20,
+                  color: colorScheme.onErrorContainer,
+                ),
+                AppSpacing.gapSm,
                 Expanded(
                   child: Text(
-                    l10n.autoTranslation,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    _translationError!,
+                    style: TextStyle(color: colorScheme.onErrorContainer),
                   ),
-                ),
-                Row(
-                  children: [
-                    Tooltip(
-                      message: l10n.aiSettingsTitle,
-                      child: Material(
-                        type: MaterialType.transparency,
-                        child: InkWell(
-                          borderRadius: AppRadius.borderXs,
-                          onTap: () => _openAiSettings(service),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.sm,
-                              vertical: AppSpacing.xs,
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: colorScheme.secondary.withValues(
-                                  alpha: 0.5,
-                                ),
-                              ),
-                              borderRadius: AppRadius.borderXs,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(Symbols.wand_stars, size: 20),
-                                AppSpacing.gapXs,
-                                Text(
-                                  l10n.enableAiTranslation,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    AppSpacing.gapXs,
-                    Switch(
-                      value: isAiActive,
-                      onChanged: (val) {
-                        if (val && !AiService().hasApiKey) {
-                          _openAiSettings(service, enableIfConfigured: true);
-                        } else {
-                          service.setAiTranslationEnabled(val);
-                          if (val) {
-                            setState(() {
-                              _translatedTitle = '';
-                              _translatedDescription = '';
-                              _translationError = null;
-                            });
-                          } else {
-                            _performTranslation();
-                          }
-                        }
-                      },
-                    ),
-                  ],
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final bool useRow = constraints.maxWidth > 350.0;
-                final sourceDropdown = DropdownSelector(
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  borderRadius: BorderRadius.circular(4),
-                  selectedOption: selectedSourceOption,
-                  options: sourceOptions,
-                  maxMenuHeight: 300,
-                  isExpanded: true,
-                  onSelected: (val) {
-                    final code = uniqueSourceCodes.entries
-                        .firstWhere((e) => e.value == val)
-                        .key;
-                    service.setSourceLanguageCode(code);
-                    if (!isAiActive) {
-                      _performTranslation();
-                    }
-                  },
-                );
-
-                final targetDropdown = DropdownSelector(
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  borderRadius: BorderRadius.circular(4),
-                  selectedOption: selectedTargetOption,
-                  options: targetOptions,
-                  maxMenuHeight: 300,
-                  isExpanded: true,
-                  onSelected: (val) {
-                    final code = TranslationLanguages.supportedLanguages.entries
-                        .firstWhere((e) => e.value == val)
-                        .key;
-                    service.setTargetLanguageCode(code);
-                    if (!isAiActive) {
-                      _performTranslation();
-                    }
-                  },
-                );
-
-                if (useRow) {
-                  return Row(
-                    children: [
-                      Expanded(child: sourceDropdown),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Icon(Icons.arrow_forward, size: 16),
-                      ),
-                      Expanded(child: targetDropdown),
-                    ],
-                  );
-                } else {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      sourceDropdown,
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Icon(Icons.arrow_downward, size: 16),
-                      ),
-                      targetDropdown,
-                    ],
-                  );
-                }
-              },
-            ),
-            if (isAiActive) ...[
-              const SizedBox(height: 8),
-              AiModelThinkingSelector(
-                selectedModel: _selectedAiModel,
-                selectedThinkingLevel: _selectedThinkingLevel,
-                onChanged: (model, thinkingLevel) {
-                  setState(() {
-                    _selectedAiModel = model;
-                    _selectedThinkingLevel = thinkingLevel;
-                  });
-                },
-                onRefresh: _performTranslation,
-              ),
-            ],
-            if (_isTranslating ||
-                _translationError != null ||
-                _translatedTitle.isNotEmpty ||
-                _translatedDescription.isNotEmpty)
-              const SizedBox(height: 12),
-            if (_isTranslating)
-              const Center(child: CircularProgressIndicator())
-            else if (_translationError != null)
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.errorContainer,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 20,
-                      color: Theme.of(context).colorScheme.onErrorContainer,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        _translationError!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onErrorContainer,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            else
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (_translatedTitle.isNotEmpty)
-                    _buildCopyableTextRow(_translatedTitle, isTitle: true),
-                  if (_translatedTitle.isNotEmpty &&
-                      _translatedDescription.isNotEmpty)
-                    const SizedBox(height: 8),
-                  if (_translatedDescription.isNotEmpty)
-                    _buildCopyableTextRow(_translatedDescription),
-                ],
-              ),
-          ],
-        ),
-      ),
+          )
+        else ...[
+          if (_translatedTitle.isNotEmpty)
+            _buildCopyableTextRow(_translatedTitle, isTitle: true),
+          if (_translatedTitle.isNotEmpty && _translatedDescription.isNotEmpty)
+            AppSpacing.gapSm,
+          if (_translatedDescription.isNotEmpty)
+            _buildCopyableTextRow(_translatedDescription),
+        ],
+      ],
     );
   }
 

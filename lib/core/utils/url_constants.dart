@@ -31,6 +31,7 @@ class UrlConstants {
       'https://openrouter.ai/api/v1/chat/completions';
   static const String aiModelsConfigUrl = '$moviescoutWebUrl/ai-models.json';
   static const String aiPromptsConfigUrl = '$moviescoutWebUrl/ai-prompts.json';
+  static const String contactEmail = 'xcarolr@gmail.com';
 
   // Web Templates
   static const String tmdbSignupWebTemplate = '$tmdbWebUrl/account/signup';

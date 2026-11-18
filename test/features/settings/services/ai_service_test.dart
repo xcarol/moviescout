@@ -608,6 +608,10 @@ void main() {
         regionalFallback,
         'Translate movie into English. Translate film.',
       );
+
+      expect(service.hasPromptForLanguage('ca'), isTrue);
+      expect(service.hasPromptForLanguage('en-GB'), isTrue);
+      expect(service.hasPromptForLanguage('pl'), isFalse);
     });
 
     test('AiKeyCipher encrypts and decrypts per user and rejects tampering',

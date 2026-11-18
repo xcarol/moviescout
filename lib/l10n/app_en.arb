@@ -831,5 +831,27 @@
     "placeholders": {
       "count": {}
     }
+  },
+  "aiPromptMissingLanguage": "No optimized prompt for {language} yet (using English).",
+  "@aiPromptMissingLanguage": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "aiPromptRequestButton": "Request",
+  "@aiPromptRequestButton": {},
+  "aiPromptRequestSubject": "[MovieScout] AI translation prompt request: {language} ({code})",
+  "@aiPromptRequestSubject": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "aiPromptRequestBody": "Hi,\n\nI would like to request an optimized AI translation prompt for {language} ({code}).\n\nI would also be happy to collaborate on writing or reviewing the prompt in this language if needed.",
+  "@aiPromptRequestBody": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
   }
 }

@@ -1247,4 +1247,22 @@ class AppLocalizationsEu extends AppLocalizations {
   String otherTranslations(Object count) {
     return 'Beste itzulpen batzuk ($count)';
   }
+
+  @override
+  String aiPromptMissingLanguage(Object language) {
+    return 'Oraindik ez dago $language hizkuntzarako prompt optimizaturik (ingelesa erabiliko da).';
+  }
+
+  @override
+  String get aiPromptRequestButton => 'Eskatu';
+
+  @override
+  String aiPromptRequestSubject(Object language, Object code) {
+    return '[MovieScout] IA itzulpen-prompt eskaera: $language ($code)';
+  }
+
+  @override
+  String aiPromptRequestBody(Object language, Object code) {
+    return 'Kaixo,\n\n$language ($code) hizkuntzarako IA bidezko itzulpen-prompt optimizatu bat eskatu nahi nuke.\n\nBehar izanez gero, hizkuntza honetako prompta idazten edo berrikusten laguntzeko ere prest nago.';
+  }
 }
