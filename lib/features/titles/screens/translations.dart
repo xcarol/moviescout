@@ -219,6 +219,37 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     );
   }
 
+  Future<void> _openAiSettings(
+    WebTranslationService service, {
+    bool enableIfConfigured = false,
+  }) async {
+    await context.toAiSettings();
+    if (!mounted) return;
+
+    final hasKey = AiService().hasApiKey;
+    if (enableIfConfigured && hasKey) {
+      await service.setAiTranslationEnabled(true);
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _selectedAiModel = null;
+      _selectedThinkingLevel = null;
+      if (enableIfConfigured && hasKey) {
+        _translatedTitle = '';
+        _translatedDescription = '';
+        _translationError = null;
+      }
+    });
+
+    if (!hasKey &&
+        !_isTranslating &&
+        _translatedTitle.isEmpty &&
+        _translatedDescription.isEmpty) {
+      _performTranslation();
+    }
+  }
+
   Widget _buildMagicCard() {
     final service = context.watch<WebTranslationService>();
     final targetCode = service.targetLanguageCode;
@@ -244,8 +275,11 @@ class TranslationsScreenState extends State<TranslationsScreen> {
         TranslationLanguages.supportedLanguages[targetCode] ?? '';
     final isAiActive = AiService().hasApiKey && service.isAiTranslationEnabled;
 
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
-      color: Theme.of(context).colorScheme.primaryContainer,
+      color: colorScheme.primaryContainer,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -258,32 +292,55 @@ class TranslationsScreenState extends State<TranslationsScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    AppLocalizations.of(context)!.autoTranslation,
+                    l10n.autoTranslation,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
                 Row(
                   children: [
-                    const Icon(Symbols.wand_stars, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      AppLocalizations.of(context)!.enableAiTranslation,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    Tooltip(
+                      message: l10n.aiSettingsTitle,
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(
+                          borderRadius: AppRadius.borderXs,
+                          onTap: () => _openAiSettings(service),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm,
+                              vertical: AppSpacing.xs,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: colorScheme.secondary.withValues(
+                                  alpha: 0.5,
+                                ),
+                              ),
+                              borderRadius: AppRadius.borderXs,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Symbols.wand_stars, size: 20),
+                                AppSpacing.gapXs,
+                                Text(
+                                  l10n.enableAiTranslation,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
+                    AppSpacing.gapXs,
                     Switch(
                       value: isAiActive,
                       onChanged: (val) {
                         if (val && !AiService().hasApiKey) {
-                          context.toAiSettings().then((_) {
-                            if (AiService().hasApiKey && mounted) {
-                              service.setAiTranslationEnabled(true);
-                              setState(() {
-                                _translatedTitle = '';
-                                _translatedDescription = '';
-                                _translationError = null;
-                              });
-                            }
-                          });
+                          _openAiSettings(service, enableIfConfigured: true);
                         } else {
                           service.setAiTranslationEnabled(val);
                           if (val) {
