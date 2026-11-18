@@ -7,6 +7,7 @@ import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/widgets/app_empty_state.dart';
+import 'package:moviescout/core/widgets/app_error_view.dart';
 import 'package:moviescout/core/widgets/edit_button.dart';
 import 'package:moviescout/features/settings/widgets/ai_model_thinking_selector.dart';
 import 'package:moviescout/core/widgets/drop_down_selector.dart';
@@ -19,6 +20,7 @@ import 'package:moviescout/core/services/web_translation_service.dart';
 import 'package:moviescout/core/utils/translation_languages.dart';
 import 'package:moviescout/core/utils/url_constants.dart';
 import 'package:moviescout/core/models/translation_context.dart';
+import 'package:moviescout/core/models/translations_pager.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class _CopyIconButton extends StatefulWidget {
@@ -74,12 +76,14 @@ class TranslationsScreen extends StatefulWidget {
   final List<TmdbTranslation> translations;
   final String editUrl;
   final TranslationContext translationContext;
+  final TranslationsPager? pager;
 
   const TranslationsScreen({
     super.key,
     required this.translations,
     required this.editUrl,
     required this.translationContext,
+    this.pager,
   });
 
   @override
@@ -87,6 +91,179 @@ class TranslationsScreen extends StatefulWidget {
 }
 
 class TranslationsScreenState extends State<TranslationsScreen> {
+  late int _currentIndex;
+  PageController? _pageController;
+  final Map<int, TranslationPageData> _loadedPages = {};
+  final Set<int> _loadingPages = {};
+  final Set<int> _errorPages = {};
+
+  @override
+  void initState() {
+    super.initState();
+    final pager = widget.pager;
+    _currentIndex =
+        pager != null ? pager.initialIndex.clamp(0, pager.itemCount - 1) : 0;
+    _loadedPages[_currentIndex] = TranslationPageData(
+      translations: widget.translations,
+      editUrl: widget.editUrl,
+      translationContext: widget.translationContext,
+    );
+
+    if (pager != null && pager.itemCount > 1) {
+      _pageController = PageController(initialPage: _currentIndex);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pageController?.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadPageIfNeeded(int index, {bool force = false}) async {
+    final pager = widget.pager;
+    if (pager == null) return;
+    if (!force &&
+        (_loadedPages.containsKey(index) ||
+            _loadingPages.contains(index) ||
+            _errorPages.contains(index))) {
+      return;
+    }
+
+    _loadingPages.add(index);
+    if (force && mounted) {
+      setState(() {
+        _errorPages.remove(index);
+      });
+    }
+
+    try {
+      final data = await pager.loadPage(index);
+      if (!mounted) return;
+      setState(() {
+        _loadingPages.remove(index);
+        if (data != null) {
+          _loadedPages[index] = data;
+          _errorPages.remove(index);
+        } else {
+          _errorPages.add(index);
+        }
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _loadingPages.remove(index);
+        _errorPages.add(index);
+      });
+    }
+  }
+
+  Widget _buildPageWrapper(Widget child) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: AppBreakpoints.maxContentWidth,
+        ),
+        child: child,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final targetCode = context.watch<WebTranslationService>().targetLanguageCode;
+    final pager = widget.pager;
+    final currentPage = _loadedPages[_currentIndex];
+    final subtitle = pager?.pageTitleBuilder?.call(_currentIndex, l10n);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: subtitle != null && subtitle.isNotEmpty
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.translations),
+                  Text(
+                    subtitle,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              )
+            : Text(l10n.translations),
+        actions: [
+          if (currentPage != null)
+            EditButton(
+              url: currentPage.editUrl,
+              targetLanguageCode: targetCode,
+            ),
+        ],
+      ),
+      body: SafeArea(
+        child: pager == null || pager.itemCount <= 1
+            ? _buildPageWrapper(
+                _TranslationPageContent(
+                  pageData: _loadedPages[_currentIndex]!,
+                ),
+              )
+            : PageView.builder(
+                controller: _pageController,
+                itemCount: pager.itemCount,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                  _loadPageIfNeeded(index);
+                },
+                itemBuilder: (context, index) {
+                  final pageData = _loadedPages[index];
+                  if (pageData != null) {
+                    return _buildPageWrapper(
+                      _TranslationPageContent(
+                        key: ValueKey('translation_page_$index'),
+                        pageData: pageData,
+                      ),
+                    );
+                  }
+                  if (_errorPages.contains(index)) {
+                    return _buildPageWrapper(
+                      Center(
+                        child: AppErrorView(
+                          title: l10n.errorMessageGeneric,
+                          message: l10n.networkErrorMessage,
+                          onRetry: () => _loadPageIfNeeded(index, force: true),
+                        ),
+                      ),
+                    );
+                  }
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) {
+                      _loadPageIfNeeded(index);
+                    }
+                  });
+                  return const Center(child: CircularProgressIndicator());
+                },
+              ),
+      ),
+    );
+  }
+}
+
+class _TranslationPageContent extends StatefulWidget {
+  final TranslationPageData pageData;
+
+  const _TranslationPageContent({
+    super.key,
+    required this.pageData,
+  });
+
+  @override
+  State<_TranslationPageContent> createState() =>
+      _TranslationPageContentState();
+}
+
+class _TranslationPageContentState extends State<_TranslationPageContent>
+    with AutomaticKeepAliveClientMixin {
   String _translatedTitle = '';
   String _translatedDescription = '';
   String? _translationError;
@@ -95,6 +272,13 @@ class TranslationsScreenState extends State<TranslationsScreen> {
 
   bool _isTranslating = false;
   final ScrollController _scrollController = ScrollController();
+
+  String? _lastSourceCode;
+  String? _lastTargetCode;
+  bool? _lastAiActive;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void dispose() {
@@ -107,15 +291,47 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     super.initState();
     final service = context.read<WebTranslationService>();
     final isAiActive = AiService().hasApiKey && service.isAiTranslationEnabled;
+    _lastSourceCode = _getEffectiveSourceCode(service.sourceLanguageCode);
+    _lastTargetCode = service.targetLanguageCode;
+    _lastAiActive = isAiActive;
     if (!isAiActive) {
       _performTranslation();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final service = context.watch<WebTranslationService>();
+    final sourceCode = _getEffectiveSourceCode(service.sourceLanguageCode);
+    final targetCode = service.targetLanguageCode;
+    final isAiActive = AiService().hasApiKey && service.isAiTranslationEnabled;
+
+    if (sourceCode != _lastSourceCode ||
+        targetCode != _lastTargetCode ||
+        isAiActive != _lastAiActive) {
+      _lastSourceCode = sourceCode;
+      _lastTargetCode = targetCode;
+      _lastAiActive = isAiActive;
+
+      if (isAiActive) {
+        _translatedTitle = '';
+        _translatedDescription = '';
+        _translationError = null;
+      } else {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            _performTranslation();
+          }
+        });
+      }
     }
   }
 
   String _getEffectiveSourceCode(String serviceSourceCode) {
     var sourceCode = serviceSourceCode;
     final uniqueSourceCodes = <String>{};
-    for (var t in widget.translations) {
+    for (var t in widget.pageData.translations) {
       if (t.description.isNotEmpty || t.translatedTitle.isNotEmpty) {
         uniqueSourceCodes.add(t.iso639_1);
       }
@@ -140,10 +356,11 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     final service = context.read<WebTranslationService>();
     final sourceCode = _getEffectiveSourceCode(service.sourceLanguageCode);
 
-    String sourceTitle = widget.translationContext.originalTitle;
-    String sourceDesc = widget.translationContext.originalDescription;
+    String sourceTitle = widget.pageData.translationContext.originalTitle;
+    String sourceDesc = widget.pageData.translationContext.originalDescription;
 
-    final matches = widget.translations.where((t) => t.iso639_1 == sourceCode);
+    final matches =
+        widget.pageData.translations.where((t) => t.iso639_1 == sourceCode);
     if (matches.isNotEmpty) {
       final sourceTrans = matches.first;
       if (sourceTrans.translatedTitle.isNotEmpty) {
@@ -158,7 +375,7 @@ class TranslationsScreenState extends State<TranslationsScreen> {
       final result = await service.translateTitleAndSynopsis(
         title: sourceTitle,
         description: sourceDesc,
-        translationContext: widget.translationContext,
+        translationContext: widget.pageData.translationContext,
         model: _selectedAiModel,
         thinkingLevel: _selectedThinkingLevel,
       );
@@ -270,7 +487,7 @@ class TranslationsScreenState extends State<TranslationsScreen> {
 
   Map<String, String> _buildUniqueSourceCodes() {
     final uniqueSourceCodes = <String, String>{};
-    for (final t in widget.translations) {
+    for (final t in widget.pageData.translations) {
       if (t.description.isNotEmpty || t.translatedTitle.isNotEmpty) {
         uniqueSourceCodes[t.iso639_1] = t.englishName;
       }
@@ -498,13 +715,13 @@ class TranslationsScreenState extends State<TranslationsScreen> {
         AiModelThinkingSelector(
           selectedModel: _selectedAiModel,
           selectedThinkingLevel: _selectedThinkingLevel,
-          showApplyTranslation: widget.editUrl.isNotEmpty,
+          showApplyTranslation: widget.pageData.editUrl.isNotEmpty,
           applyTranslationTooltip: l10n.applyTranslationToTmdb,
           onApplyTranslation: canApplyToTmdb
               ? () => context.toTmdbEditWebView(
-                    editUrl: widget.editUrl,
+                    editUrl: widget.pageData.editUrl,
                     targetLanguageCode: targetCode,
-                    contentType: widget.translationContext.type,
+                    contentType: widget.pageData.translationContext.type,
                     translatedTitle: _translatedTitle,
                     translatedDescription: _translatedDescription,
                   )
@@ -632,10 +849,11 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     final sourceName = TranslationLanguages.supportedLanguages[sourceCode] ??
         sourceCode.toUpperCase();
 
-    String sourceTitle = widget.translationContext.originalTitle;
-    String sourceDesc = widget.translationContext.originalDescription;
+    String sourceTitle = widget.pageData.translationContext.originalTitle;
+    String sourceDesc = widget.pageData.translationContext.originalDescription;
 
-    final matches = widget.translations.where((t) => t.iso639_1 == sourceCode);
+    final matches =
+        widget.pageData.translations.where((t) => t.iso639_1 == sourceCode);
     if (matches.isNotEmpty) {
       final sourceTrans = matches.first;
       if (sourceTrans.translatedTitle.isNotEmpty) {
@@ -699,7 +917,7 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     final l10n = AppLocalizations.of(context)!;
     final displayTitle = trans.translatedTitle.isNotEmpty
         ? trans.translatedTitle
-        : widget.translationContext.originalTitle;
+        : widget.pageData.translationContext.originalTitle;
     final titleText = showVariant && trans.iso3166_1.isNotEmpty
         ? '${l10n.existingTranslation} (${trans.iso639_1}-${trans.iso3166_1})'
         : l10n.existingTranslation;
@@ -747,7 +965,7 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     final displayTitle = trans.translatedTitle.isNotEmpty
         ? trans.translatedTitle
-        : widget.translationContext.originalTitle;
+        : widget.pageData.translationContext.originalTitle;
 
     return Card(
       margin: const EdgeInsets.symmetric(
@@ -811,7 +1029,8 @@ class TranslationsScreenState extends State<TranslationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final validTranslations = widget.translations
+    super.build(context);
+    final validTranslations = widget.pageData.translations
         .where((t) => t.description.isNotEmpty || t.translatedTitle.isNotEmpty)
         .toList();
     validTranslations.sort((a, b) => a.englishName.compareTo(b.englishName));
@@ -834,73 +1053,55 @@ class TranslationsScreenState extends State<TranslationsScreen> {
     final l10n = AppLocalizations.of(context)!;
     final customColors = Theme.of(context).extension<CustomColors>()!;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.translations),
-        actions: [
-          EditButton(
-            url: widget.editUrl,
-            targetLanguageCode: targetCode,
+    if (validTranslations.isEmpty) {
+      return Center(
+        child: AppEmptyState(
+          imageAsset: 'assets/empty-search.png',
+          title: l10n.emptyList,
+        ),
+      );
+    }
+
+    return ListView(
+      controller: _scrollController,
+      padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+      children: [
+        _buildMagicCard(),
+        for (final trans in targetTranslations)
+          _buildExistingTargetTile(
+            trans,
+            showVariant: targetTranslations.length > 1,
+          ),
+        _buildSourceCard(),
+        if (otherTranslations.isNotEmpty) ...[
+          AppSpacing.gapSm,
+          Divider(
+            height: 1,
+            color: customColors.dividerColor,
+          ),
+          ExpansionTile(
+            initiallyExpanded: false,
+            tilePadding: AppSpacing.edgeInsetsHLg,
+            shape: const Border(),
+            collapsedShape: const Border(),
+            title: Text(
+              l10n.otherTranslations(otherTranslations.length),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleSmall
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            children: otherTranslations
+                .map(
+                  (trans) => _buildTranslationCard(
+                    trans,
+                    showUseAsSource: true,
+                  ),
+                )
+                .toList(),
           ),
         ],
-      ),
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: AppBreakpoints.maxContentWidth,
-            ),
-            child: validTranslations.isEmpty
-                ? Center(
-                    child: AppEmptyState(
-                      imageAsset: 'assets/empty-search.png',
-                      title: l10n.emptyList,
-                    ),
-                  )
-                : ListView(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.only(bottom: AppSpacing.xl),
-                    children: [
-                      _buildMagicCard(),
-                      for (final trans in targetTranslations)
-                        _buildExistingTargetTile(
-                          trans,
-                          showVariant: targetTranslations.length > 1,
-                        ),
-                      _buildSourceCard(),
-                      if (otherTranslations.isNotEmpty) ...[
-                        AppSpacing.gapSm,
-                        Divider(
-                          height: 1,
-                          color: customColors.dividerColor,
-                        ),
-                        ExpansionTile(
-                          initiallyExpanded: false,
-                          tilePadding: AppSpacing.edgeInsetsHLg,
-                          shape: const Border(),
-                          collapsedShape: const Border(),
-                          title: Text(
-                            l10n.otherTranslations(otherTranslations.length),
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          children: otherTranslations
-                              .map(
-                                (trans) => _buildTranslationCard(
-                                  trans,
-                                  showUseAsSource: true,
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      ],
-                    ],
-                  ),
-          ),
-        ),
-      ),
+      ],
     );
   }
 }

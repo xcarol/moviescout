@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/core/models/translation_context.dart';
+import 'package:moviescout/core/models/translations_pager.dart';
 import 'package:moviescout/features/discovery/models/tmdb_collection.dart';
 import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
@@ -201,6 +202,7 @@ extension AppNavigatorExtension on BuildContext {
     required List<TmdbTranslation> translations,
     required String editUrl,
     required TranslationContext translationContext,
+    TranslationsPager? translationsPager,
   }) {
     return AppNavigator.push<T>(
       this,
@@ -208,6 +210,7 @@ extension AppNavigatorExtension on BuildContext {
         translations: translations,
         editUrl: editUrl,
         translationContext: translationContext,
+        pager: translationsPager,
       ),
     );
   }

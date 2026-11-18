@@ -19,6 +19,8 @@ import 'package:moviescout/core/widgets/expandable_description.dart';
 import 'package:moviescout/core/widgets/action_menu.dart';
 import 'package:moviescout/features/titles/widgets/rate_form.dart';
 import 'package:moviescout/core/services/tmdb_translation_service.dart';
+import 'package:moviescout/features/titles/models/tmdb_translation.dart';
+import 'package:moviescout/core/models/translations_pager.dart';
 import 'package:moviescout/features/titles/widgets/user_rate_button.dart';
 import 'package:provider/provider.dart';
 import 'package:moviescout/core/models/translation_context.dart';
@@ -106,6 +108,58 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
     }
   }
 
+  TranslationsPager? _buildTranslationsPager() {
+    final totalEpisodes = widget.totalEpisodes ?? 0;
+    if (totalEpisodes <= 1) return null;
+    return TranslationsPager(
+      itemCount: totalEpisodes,
+      initialIndex: _currentEpisodeNumber - 1,
+      pageTitleBuilder: (index, l10n) =>
+          '${l10n.seasonLabel(widget.seasonNumber)} · ${l10n.episodeLabel(index + 1)}',
+      loadPage: (index) async {
+        final epNumber = index + 1;
+        final cached = _loadedEpisodes[epNumber];
+        final results = await Future.wait([
+          TmdbTranslationService().getEpisodeTranslations(
+            widget.title.tmdbId,
+            widget.seasonNumber,
+            epNumber,
+          ),
+          if (cached != null)
+            Future.value(cached)
+          else
+            TmdbEpisodeService().getEpisodeDetails(
+              widget.title.tmdbId,
+              widget.seasonNumber,
+              epNumber,
+            ),
+        ]);
+
+        final translations = results[0] as List<TmdbTranslation>;
+        final episode = results[1] as TmdbEpisode?;
+        if (episode != null && mounted) {
+          _loadedEpisodes[epNumber] = episode;
+        }
+        final pageEditUrl = UrlConstants.tmdbTvEpisodeEditWebTemplate
+            .replaceFirst('{ID}', widget.title.tmdbId.toString())
+            .replaceFirst('{SEASON_NUMBER}', widget.seasonNumber.toString())
+            .replaceFirst('{EPISODE_NUMBER}', epNumber.toString());
+
+        return TranslationPageData(
+          translations: translations,
+          editUrl: pageEditUrl,
+          translationContext: TranslationContext.fromItem(
+            episode,
+            type: TranslationContentType.tvEpisode,
+            series: widget.title,
+            seasonNumber: widget.seasonNumber,
+            episodeNumber: epNumber,
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     String appTitle = widget.title.name;
@@ -131,6 +185,7 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
               seasonNumber: widget.seasonNumber,
               episodeNumber: _currentEpisodeNumber,
             ),
+            translationsPager: _buildTranslationsPager(),
           ),
         ],
       ),
