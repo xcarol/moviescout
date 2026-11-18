@@ -38,6 +38,7 @@ flowchart TD
     Eval -- "newAvailability" --> NotifyAvail["Send availability notification; if isSerie set lastNotifiedSeason = numberOfSeasons; save DB + enqueue cloud sync"]
     Eval -- "newSeason" --> NotifySeason["Send new season notification; set lastNotifiedSeason = numberOfSeasons; ensure in watchlist + save DB + enqueue cloud sync"]
 ```
+![Diagram of _updateTitle](assets/docs/update_title_flow.jpeg)
 
 ---
 
@@ -67,6 +68,8 @@ flowchart TD
     CompletePref2 -- Yes --> RetCurrMinus1
     CompletePref2 -- No --> RetCurr2["Return numberOfSeasons"]
 ```
+![Diagram of getBaseLine](assets/docs/get_base_line_flow.jpeg)
+
 
 ---
 
@@ -105,6 +108,7 @@ flowchart TD
     CheckNext1 -- Yes --> RetSeason
     CheckNext1 -- No --> RetNone4["Return none"]
 ```
+![Diagram of evaluateNotification](assets/docs/evaluate_notification_flow.jpeg)
 
 ---
 
