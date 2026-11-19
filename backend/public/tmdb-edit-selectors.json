@@ -1,0 +1,54 @@
+{
+  "login_path_token": "/login",
+  "login_form_selector": "form[action*=\"/login\"]",
+  "title_selectors": [
+    "input[name=\"translated_title\"]",
+    "input#translated_title",
+    "input[name=\"translated_name\"]",
+    "input#translated_name",
+    "input[name=\"title\"]",
+    "input#title",
+    "input[name=\"name\"]",
+    "input#name",
+    "input[name$=\"[title]\"]",
+    "input[name$=\"[name]\"]",
+    "input[id*=\"translated\"][id*=\"title\"]",
+    "input[id*=\"translated\"][id*=\"name\"]",
+    "input[name*=\"title\"]",
+    "input[id*=\"title\"]",
+    "input[name*=\"name\"]",
+    "input[id*=\"name\"]"
+  ],
+  "overview_selectors": [
+    "textarea[name=\"translated_overview\"]",
+    "textarea#translated_overview",
+    "textarea[name=\"overview\"]",
+    "textarea#overview",
+    "textarea[name$=\"[overview]\"]",
+    "textarea[id*=\"overview\"]"
+  ],
+  "biography_selectors": [
+    "textarea[name=\"translated_biography\"]",
+    "textarea#translated_biography",
+    "textarea[name=\"biography\"]",
+    "textarea#biography",
+    "textarea[name$=\"[biography]\"]",
+    "textarea[id*=\"biography\"]"
+  ],
+  "excluded_title_keywords": [
+    "original",
+    "tagline",
+    "subtitle",
+    "username",
+    "search"
+  ],
+  "excluded_fallback_input_keywords": [
+    "date",
+    "runtime",
+    "budget",
+    "revenue",
+    "homepage",
+    "imdb",
+    "status"
+  ]
+}
