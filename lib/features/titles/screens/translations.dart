@@ -249,6 +249,20 @@ class TranslationsScreenState extends State<TranslationsScreen> {
   }
 }
 
+class _TranslationCandidate {
+  final String title;
+  final String description;
+  final String? modelId;
+  final String? thinkingLevel;
+
+  const _TranslationCandidate({
+    required this.title,
+    required this.description,
+    this.modelId,
+    this.thinkingLevel,
+  });
+}
+
 class _TranslationPageContent extends StatefulWidget {
   final TranslationPageData pageData;
 
@@ -264,8 +278,8 @@ class _TranslationPageContent extends StatefulWidget {
 
 class _TranslationPageContentState extends State<_TranslationPageContent>
     with AutomaticKeepAliveClientMixin {
-  String _translatedTitle = '';
-  String _translatedDescription = '';
+  final List<_TranslationCandidate> _candidates = [];
+  int _selectedCandidateIndex = 0;
   String? _translationError;
   String? _selectedAiModel;
   String? _selectedThinkingLevel;
@@ -276,6 +290,22 @@ class _TranslationPageContentState extends State<_TranslationPageContent>
   String? _lastSourceCode;
   String? _lastTargetCode;
   bool? _lastAiActive;
+
+  _TranslationCandidate? get _currentCandidate =>
+      (_candidates.isNotEmpty &&
+              _selectedCandidateIndex >= 0 &&
+              _selectedCandidateIndex < _candidates.length)
+          ? _candidates[_selectedCandidateIndex]
+          : null;
+
+  String get _translatedTitle => _currentCandidate?.title ?? '';
+  String get _translatedDescription => _currentCandidate?.description ?? '';
+
+  void _clearCandidates() {
+    _candidates.clear();
+    _selectedCandidateIndex = 0;
+    _translationError = null;
+  }
 
   @override
   bool get wantKeepAlive => true;
@@ -314,11 +344,8 @@ class _TranslationPageContentState extends State<_TranslationPageContent>
       _lastTargetCode = targetCode;
       _lastAiActive = isAiActive;
 
-      if (isAiActive) {
-        _translatedTitle = '';
-        _translatedDescription = '';
-        _translationError = null;
-      } else {
+      _clearCandidates();
+      if (!isAiActive) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             _performTranslation();
@@ -354,6 +381,23 @@ class _TranslationPageContentState extends State<_TranslationPageContent>
     });
 
     final service = context.read<WebTranslationService>();
+    final isAiActive = AiService().hasApiKey && service.isAiTranslationEnabled;
+    final provider = AiService().currentProvider;
+    final models = provider.selectableModels;
+    final effectiveModel =
+        (_selectedAiModel != null && models.contains(_selectedAiModel))
+            ? _selectedAiModel!
+            : provider.selectedModel;
+    final defaultThinking =
+        provider.defaultThinkingLevelForModel(effectiveModel);
+    final rawThinking =
+        _selectedThinkingLevel ?? provider.selectedThinkingLevel;
+    final effectiveThinking =
+        AiModelThinkingSelector.thinkingOptions.contains(rawThinking)
+            ? rawThinking
+            : (AiModelThinkingSelector.thinkingOptions.contains(defaultThinking)
+                ? defaultThinking
+                : 'low');
     final sourceCode = _getEffectiveSourceCode(service.sourceLanguageCode);
 
     String sourceTitle = widget.pageData.translationContext.originalTitle;
@@ -382,8 +426,21 @@ class _TranslationPageContentState extends State<_TranslationPageContent>
 
       if (mounted) {
         setState(() {
-          _translatedTitle = result.title;
-          _translatedDescription = result.description;
+          final candidate = _TranslationCandidate(
+            title: result.title,
+            description: result.description,
+            modelId: isAiActive ? effectiveModel : null,
+            thinkingLevel: isAiActive ? effectiveThinking : null,
+          );
+          if (isAiActive) {
+            _candidates.add(candidate);
+            _selectedCandidateIndex = _candidates.length - 1;
+          } else {
+            _candidates
+              ..clear()
+              ..add(candidate);
+            _selectedCandidateIndex = 0;
+          }
           _isTranslating = false;
         });
       }
@@ -404,8 +461,6 @@ class _TranslationPageContentState extends State<_TranslationPageContent>
       }
 
       setState(() {
-        _translatedTitle = '';
-        _translatedDescription = '';
         _translationError = errorMessage;
         _isTranslating = false;
       });
@@ -471,9 +526,7 @@ class _TranslationPageContentState extends State<_TranslationPageContent>
       _selectedAiModel = null;
       _selectedThinkingLevel = null;
       if (enableIfConfigured && hasKey) {
-        _translatedTitle = '';
-        _translatedDescription = '';
-        _translationError = null;
+        _clearCandidates();
       }
     });
 
@@ -596,11 +649,10 @@ class _TranslationPageContentState extends State<_TranslationPageContent>
                   service.setAiTranslationEnabled(val);
                   if (val) {
                     setState(() {
-                      _translatedTitle = '';
-                      _translatedDescription = '';
-                      _translationError = null;
+                      _clearCandidates();
                     });
                   } else {
+                    _clearCandidates();
                     _performTranslation();
                   }
                 }
@@ -706,7 +758,6 @@ class _TranslationPageContentState extends State<_TranslationPageContent>
   Widget _buildAiConfigurationSection(String targetCode) {
     final l10n = AppLocalizations.of(context)!;
     final canApplyToTmdb = !_isTranslating &&
-        _translationError == null &&
         (_translatedTitle.isNotEmpty || _translatedDescription.isNotEmpty);
 
     return Column(
@@ -790,11 +841,101 @@ class _TranslationPageContentState extends State<_TranslationPageContent>
     );
   }
 
+  Widget _buildCandidateHistoryBar() {
+    if (_candidates.length <= 1) {
+      return const SizedBox.shrink();
+    }
+
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final current = _currentCandidate;
+    final provider = AiService().currentProvider;
+
+    String metadataLabel = '';
+    if (current?.modelId != null && current!.modelId!.isNotEmpty) {
+      final modelLabel = provider.modelDisplayLabel(current.modelId!, l10n);
+      if (current.thinkingLevel != null && current.thinkingLevel!.isNotEmpty) {
+        final thinkingLabel = AiModelThinkingSelector.thinkingDisplayLabel(
+          current.thinkingLevel!,
+          l10n,
+        );
+        metadataLabel = '$modelLabel · $thinkingLabel';
+      } else {
+        metadataLabel = modelLabel;
+      }
+    }
+
+    final canGoPrev = _selectedCandidateIndex > 0;
+    final canGoNext = _selectedCandidateIndex < _candidates.length - 1;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              metadataLabel,
+              style: textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          InkWell(
+            borderRadius: AppRadius.borderXs,
+            onTap: canGoPrev
+                ? () => setState(() => _selectedCandidateIndex--)
+                : null,
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.xxs),
+              child: Icon(
+                Icons.chevron_left,
+                size: 18,
+                color: canGoPrev
+                    ? colorScheme.onSurface
+                    : colorScheme.outlineVariant,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+            child: Text(
+              '${_selectedCandidateIndex + 1} / ${_candidates.length}',
+              style: textTheme.labelMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          InkWell(
+            borderRadius: AppRadius.borderXs,
+            onTap: canGoNext
+                ? () => setState(() => _selectedCandidateIndex++)
+                : null,
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.xxs),
+              child: Icon(
+                Icons.chevron_right,
+                size: 18,
+                color: canGoNext
+                    ? colorScheme.onSurface
+                    : colorScheme.outlineVariant,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTranslationResult() {
-    final hasContent = _isTranslating ||
-        _translationError != null ||
-        _translatedTitle.isNotEmpty ||
-        _translatedDescription.isNotEmpty;
+    final hasCandidateContent =
+        _translatedTitle.isNotEmpty || _translatedDescription.isNotEmpty;
+    final hasContent =
+        _isTranslating || _translationError != null || hasCandidateContent;
     if (!hasContent) {
       return const SizedBox.shrink();
     }
@@ -807,37 +948,43 @@ class _TranslationPageContentState extends State<_TranslationPageContent>
         AppSpacing.gapMd,
         if (_isTranslating)
           const Center(child: CircularProgressIndicator())
-        else if (_translationError != null)
-          Container(
-            padding: AppSpacing.edgeInsetsAllSm,
-            decoration: BoxDecoration(
-              color: colorScheme.errorContainer,
-              borderRadius: AppRadius.borderSm,
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 20,
-                  color: colorScheme.onErrorContainer,
-                ),
-                AppSpacing.gapSm,
-                Expanded(
-                  child: Text(
-                    _translationError!,
-                    style: TextStyle(color: colorScheme.onErrorContainer),
-                  ),
-                ),
-              ],
-            ),
-          )
         else ...[
-          if (_translatedTitle.isNotEmpty)
-            _buildCopyableTextRow(_translatedTitle, isTitle: true),
-          if (_translatedTitle.isNotEmpty && _translatedDescription.isNotEmpty)
-            AppSpacing.gapSm,
-          if (_translatedDescription.isNotEmpty)
-            _buildCopyableTextRow(_translatedDescription),
+          if (_translationError != null) ...[
+            Container(
+              padding: AppSpacing.edgeInsetsAllSm,
+              decoration: BoxDecoration(
+                color: colorScheme.errorContainer,
+                borderRadius: AppRadius.borderSm,
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 20,
+                    color: colorScheme.onErrorContainer,
+                  ),
+                  AppSpacing.gapSm,
+                  Expanded(
+                    child: Text(
+                      _translationError!,
+                      style: TextStyle(color: colorScheme.onErrorContainer),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (hasCandidateContent) AppSpacing.gapSm,
+          ],
+          if (hasCandidateContent) ...[
+            _buildCandidateHistoryBar(),
+            if (_translatedTitle.isNotEmpty)
+              _buildCopyableTextRow(_translatedTitle, isTitle: true),
+            if (_translatedTitle.isNotEmpty &&
+                _translatedDescription.isNotEmpty)
+              AppSpacing.gapSm,
+            if (_translatedDescription.isNotEmpty)
+              _buildCopyableTextRow(_translatedDescription),
+          ],
         ],
       ],
     );
