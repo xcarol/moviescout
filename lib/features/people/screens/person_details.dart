@@ -616,14 +616,16 @@ class _PersonDetailsState extends State<PersonDetails> {
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 10),
-        SizedBox(
-          height: 200.0,
-          child: MediaCarousel(
-            images: person.taggedImages,
-            backdropPath: '',
-            posterPath: '',
-            mediaType: ApiConstants.person,
-            aspectRatio: 16 / 9,
+        Center(
+          child: SizedBox(
+            height: 200.0,
+            child: MediaCarousel(
+              images: person.taggedImages,
+              backdropPath: '',
+              posterPath: '',
+              mediaType: ApiConstants.person,
+              aspectRatio: 16 / 9,
+            ),
           ),
         ),
       ],
