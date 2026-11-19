@@ -51,10 +51,14 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
   void dispose() {
     VideoPlayerService().removeListener(_onPlayerStateChanged);
     _controller?.close();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    _restoreSystemUi();
     _disableAutoPip();
     super.dispose();
+  }
+
+  Future<void> _restoreSystemUi() async {
+    await SystemChrome.setPreferredOrientations([]);
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }
 
   Future<void> _disableAutoPip() async {
@@ -77,9 +81,7 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
         _controller?.close();
         _controller = null;
         _currentVideoId = null;
-        await SystemChrome.setPreferredOrientations(
-            [DeviceOrientation.portraitUp]);
-        await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        await _restoreSystemUi();
         if (mounted) setState(() {});
       } else {
         _controller?.close();
@@ -103,10 +105,7 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
             await SystemChrome.setEnabledSystemUIMode(
                 SystemUiMode.immersiveSticky);
           } else {
-            await SystemChrome.setPreferredOrientations([
-              DeviceOrientation.portraitUp,
-            ]);
-            await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+            await _restoreSystemUi();
           }
         });
 
