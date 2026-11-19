@@ -210,8 +210,8 @@ class WatchlistUpdateService {
     List<String>? logLines,
   }) async {
     await repository.updateNotifyNewSeasonsList([title]);
-    final isInRateslist =
-        await repository.hasTitlesInList([title.tmdbId], AppConstants.rateslist);
+    final isInRateslist = await repository
+        .hasTitlesInList([title.tmdbId], AppConstants.rateslist);
     await _queueNotificationSync(
       title,
       addedToWatchlist: addedToWatchlist,

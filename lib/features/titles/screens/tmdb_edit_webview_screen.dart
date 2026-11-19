@@ -6,6 +6,7 @@ import 'package:moviescout/core/models/translation_content_type.dart';
 import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
 import 'package:moviescout/core/utils/snack_bar.dart';
+import 'package:moviescout/core/utils/tmdb_edit_script.dart';
 import 'package:moviescout/features/settings/services/language_service.dart';
 import 'package:moviescout/features/settings/services/region_service.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
@@ -113,183 +114,6 @@ class TmdbEditWebViewScreen extends StatefulWidget {
     return baseUri.replace(queryParameters: queryParams);
   }
 
-  static String buildInjectionScript({
-    required TranslationContentType contentType,
-    required String translatedTitle,
-    required String translatedDescription,
-  }) {
-    final titleJson = jsonEncode(translatedTitle);
-    final descJson = jsonEncode(translatedDescription);
-    final isPersonJson = jsonEncode(contentType == TranslationContentType.person);
-
-    return '''
-(function() {
-  var path = (window.location && window.location.pathname) ? window.location.pathname : '';
-  if (path.indexOf('/login') !== -1 || document.querySelector('form[action*="/login"]')) {
-    return JSON.stringify({ status: 'login', appliedTitle: false, appliedDescription: false });
-  }
-
-  function isEditable(el, allowedTags) {
-    if (!el || el.disabled || el.readOnly) return false;
-    var tag = el.tagName ? el.tagName.toLowerCase() : '';
-    if (allowedTags.indexOf(tag) === -1) return false;
-    if (tag === 'input') {
-      var type = (el.type || 'text').toLowerCase();
-      if (type !== 'text' && type !== 'search' && type !== '') return false;
-    }
-    var style = window.getComputedStyle(el);
-    if (style.display === 'none' || style.visibility === 'hidden') return false;
-    var rect = el.getBoundingClientRect();
-    return rect.width > 0 && rect.height > 0;
-  }
-
-  function isExcludedTitleField(el) {
-    var meta = ((el.name || '') + ' ' + (el.id || '')).toLowerCase();
-    return meta.indexOf('original') !== -1 ||
-      meta.indexOf('tagline') !== -1 ||
-      meta.indexOf('subtitle') !== -1 ||
-      meta.indexOf('username') !== -1 ||
-      meta.indexOf('search') !== -1;
-  }
-
-  function findFirstEditable(root, selectors, allowedTags, excludeFn) {
-    if (!root) return null;
-    for (var i = 0; i < selectors.length; i++) {
-      var list = root.querySelectorAll(selectors[i]);
-      for (var j = 0; j < list.length; j++) {
-        var el = list[j];
-        if (!isEditable(el, allowedTags)) continue;
-        if (excludeFn && excludeFn(el)) continue;
-        return { el: el, selector: selectors[i] };
-      }
-    }
-    return null;
-  }
-
-  function setFieldValue(el, value) {
-    if (!el) return false;
-    try { el.focus(); } catch (_) {}
-    var proto = Object.getPrototypeOf(el);
-    var desc = proto ? Object.getOwnPropertyDescriptor(proto, 'value') : null;
-    if (desc && typeof desc.set === 'function') {
-      desc.set.call(el, value);
-    } else {
-      el.value = value;
-    }
-    el.dispatchEvent(new Event('input', { bubbles: true }));
-    el.dispatchEvent(new Event('change', { bubbles: true }));
-    el.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
-    el.dispatchEvent(new Event('blur', { bubbles: true }));
-    return true;
-  }
-
-  var titleText = $titleJson;
-  var descText = $descJson;
-  var isPerson = $isPersonJson;
-
-  var descSelectors = isPerson
-    ? [
-        'textarea[name="translated_biography"]',
-        'textarea#translated_biography',
-        'textarea[name="biography"]',
-        'textarea#biography',
-        'textarea[name\$="[biography]"]',
-        'textarea[id*="biography"]'
-      ]
-    : [
-        'textarea[name="translated_overview"]',
-        'textarea#translated_overview',
-        'textarea[name="overview"]',
-        'textarea#overview',
-        'textarea[name\$="[overview]"]',
-        'textarea[id*="overview"]'
-      ];
-
-  var descMatch = findFirstEditable(document, descSelectors, ['textarea'], null);
-  var formScope = (descMatch && descMatch.el && descMatch.el.form) ? descMatch.el.form : document;
-
-  var appliedDescription = false;
-  if (descText.length > 0 && descMatch) {
-    appliedDescription = setFieldValue(descMatch.el, descText);
-  }
-
-  var appliedTitle = false;
-  var titleMatch = null;
-  if (!isPerson && titleText.length > 0) {
-    var titleSelectors = [
-      'input[name="translated_title"]',
-      'input#translated_title',
-      'input[name="translated_name"]',
-      'input#translated_name',
-      'input[name="title"]',
-      'input#title',
-      'input[name="name"]',
-      'input#name',
-      'input[name\$="[title]"]',
-      'input[name\$="[name]"]',
-      'input[id*="translated"][id*="title"]',
-      'input[id*="translated"][id*="name"]',
-      'input[name*="title"]',
-      'input[id*="title"]',
-      'input[name*="name"]',
-      'input[id*="name"]'
-    ];
-
-    titleMatch = findFirstEditable(formScope, titleSelectors, ['input', 'textarea'], isExcludedTitleField);
-    if (!titleMatch && formScope !== document) {
-      titleMatch = findFirstEditable(document, titleSelectors, ['input', 'textarea'], isExcludedTitleField);
-    }
-
-    if (!titleMatch && formScope !== document) {
-      var textInputs = formScope.querySelectorAll('input');
-      for (var k = 0; k < textInputs.length; k++) {
-        var candidate = textInputs[k];
-        if (!isEditable(candidate, ['input']) || isExcludedTitleField(candidate)) continue;
-        var meta = ((candidate.name || '') + ' ' + (candidate.id || '')).toLowerCase();
-        if (meta.indexOf('date') !== -1 || meta.indexOf('runtime') !== -1 ||
-            meta.indexOf('budget') !== -1 || meta.indexOf('revenue') !== -1 ||
-            meta.indexOf('homepage') !== -1 || meta.indexOf('imdb') !== -1 ||
-            meta.indexOf('status') !== -1) continue;
-        titleMatch = { el: candidate, selector: 'form-first-text-input' };
-        break;
-      }
-    }
-
-    if (titleMatch) {
-      appliedTitle = setFieldValue(titleMatch.el, titleText);
-    }
-  }
-
-  var formDebug = [];
-  if ((!isPerson && titleText.length > 0 && !appliedTitle) || (descText.length > 0 && !appliedDescription)) {
-    var allFields = (formScope || document).querySelectorAll('input, textarea');
-    for (var f = 0; f < allFields.length; f++) {
-      var el = allFields[f];
-      if (el.type === 'hidden') continue;
-      formDebug.push({
-        tag: el.tagName,
-        type: el.type || '',
-        id: el.id || '',
-        name: el.name || '',
-        disabled: !!el.disabled,
-        readOnly: !!el.readOnly
-      });
-    }
-  }
-
-  var status = (appliedTitle || appliedDescription) ? 'injected' : 'not_found';
-  return JSON.stringify({
-    status: status,
-    appliedTitle: appliedTitle,
-    appliedDescription: appliedDescription,
-    titleSelector: titleMatch ? titleMatch.selector : null,
-    descSelector: descMatch ? descMatch.selector : null,
-    formDebug: formDebug
-  });
-})();
-''';
-  }
-
   @override
   State<TmdbEditWebViewScreen> createState() => _TmdbEditWebViewScreenState();
 }
@@ -382,7 +206,7 @@ class _TmdbEditWebViewScreenState extends State<TmdbEditWebViewScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     try {
-      final script = TmdbEditWebViewScreen.buildInjectionScript(
+      final script = TmdbEditScript.build(
         contentType: widget.contentType,
         translatedTitle: widget.translatedTitle,
         translatedDescription: widget.translatedDescription,

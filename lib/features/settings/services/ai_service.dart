@@ -11,6 +11,7 @@ import 'package:moviescout/core/services/error_service.dart';
 import 'package:moviescout/core/services/update_manager.dart';
 import 'package:moviescout/features/settings/services/preferences_service.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
+import 'package:moviescout/core/utils/tmdb_edit_script.dart';
 import 'package:moviescout/core/utils/url_constants.dart';
 import 'package:moviescout/core/models/ai_prompt_config.dart';
 import 'package:moviescout/core/models/translation_context.dart';
@@ -145,6 +146,11 @@ class AiService with ChangeNotifier {
         cacheKey: AppConstants.aiPromptsCacheKey,
         url: UrlConstants.aiPromptsConfigUrl,
         applyJson: applyPromptsJson,
+      ),
+      _initRemoteJson(
+        cacheKey: AppConstants.tmdbEditSelectorsCacheKey,
+        url: UrlConstants.tmdbEditSelectorsConfigUrl,
+        applyJson: TmdbEditScript.applyConfigJson,
       ),
     ]);
   }

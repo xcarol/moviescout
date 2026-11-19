@@ -34,6 +34,7 @@ class AppConstants {
   static const String aiProviderOpenRouter = 'openrouter';
   static const String aiConfigCacheKey = 'ai_models_config';
   static const String aiPromptsCacheKey = 'ai_prompts_config';
+  static const String tmdbEditSelectorsCacheKey = 'tmdb_edit_selectors_config';
 
   static const String aiGoogleApiKey = 'ai_google_api_key';
   static const String aiGoogleModelKey = 'ai_google_model';
