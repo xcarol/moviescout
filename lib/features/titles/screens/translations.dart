@@ -172,7 +172,8 @@ class TranslationsScreenState extends State<TranslationsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final targetCode = context.watch<WebTranslationService>().targetLanguageCode;
+    final targetCode =
+        context.watch<WebTranslationService>().targetLanguageCode;
     final pager = widget.pager;
     final currentPage = _loadedPages[_currentIndex];
     final subtitle = pager?.pageTitleBuilder?.call(_currentIndex, l10n);
@@ -291,12 +292,11 @@ class _TranslationPageContentState extends State<_TranslationPageContent>
   String? _lastTargetCode;
   bool? _lastAiActive;
 
-  _TranslationCandidate? get _currentCandidate =>
-      (_candidates.isNotEmpty &&
-              _selectedCandidateIndex >= 0 &&
-              _selectedCandidateIndex < _candidates.length)
-          ? _candidates[_selectedCandidateIndex]
-          : null;
+  _TranslationCandidate? get _currentCandidate => (_candidates.isNotEmpty &&
+          _selectedCandidateIndex >= 0 &&
+          _selectedCandidateIndex < _candidates.length)
+      ? _candidates[_selectedCandidateIndex]
+      : null;
 
   String get _translatedTitle => _currentCandidate?.title ?? '';
   String get _translatedDescription => _currentCandidate?.description ?? '';

@@ -100,8 +100,7 @@ class TmdbEditSelectorsConfig {
         json['custom_script_template']?.toString().trim() ?? '';
 
     return TmdbEditSelectorsConfig(
-      loginPathToken:
-          loginPath.isNotEmpty ? loginPath : defaultLoginPathToken,
+      loginPathToken: loginPath.isNotEmpty ? loginPath : defaultLoginPathToken,
       loginFormSelector:
           loginForm.isNotEmpty ? loginForm : defaultLoginFormSelector,
       titleSelectors: _parseStringList(

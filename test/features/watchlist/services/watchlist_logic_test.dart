@@ -44,7 +44,8 @@ void main() {
         TmdbTitleFields.title: 'Test Movie',
         TmdbTitleFields.mediaType: 'movie',
         'last_notified_season': AppConstants.seasonNotInitialized,
-        'last_updated': now.subtract(const Duration(hours: 1)).toIso8601String(),
+        'last_updated':
+            now.subtract(const Duration(hours: 1)).toIso8601String(),
       });
       expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now),
           UpdateType.none);
@@ -172,7 +173,8 @@ void main() {
       expect(trigger, NotificationTrigger.none);
     });
 
-    test('Movie: Does NOT notify if already available or removed from providers',
+    test(
+        'Movie: Does NOT notify if already available or removed from providers',
         () {
       final serverJson = loadJson('[Lamar Odom]_future_documentary.json');
       serverJson['watch/providers'] = {
@@ -201,7 +203,8 @@ void main() {
         NotificationTrigger.none,
       );
 
-      final removedTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      final removedTitle =
+          TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       removedTitle.flatrateProviderIds = [];
 
       expect(
