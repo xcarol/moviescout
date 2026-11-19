@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:material_ui/material_ui.dart';
@@ -19,7 +21,11 @@ class FloatingVideoPlayerWidget extends StatefulWidget {
 
 class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
   YoutubePlayerController? _controller;
+  StreamSubscription<YoutubePlayerValue>? _playerSub;
   String? _currentVideoId;
+  PlayerState _lastPlayerState = PlayerState.unknown;
+  int _lastPlayingMs = 0;
+  int _resumeUntilMs = 0;
 
   double _x = 16.0;
   double _y = 100.0;
@@ -50,11 +56,16 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
   @override
   void dispose() {
     VideoPlayerService().removeListener(_onPlayerStateChanged);
+    _playerSub?.cancel();
     _controller?.close();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    _restoreSystemUi();
     _disableAutoPip();
     super.dispose();
+  }
+
+  Future<void> _restoreSystemUi() async {
+    await SystemChrome.setPreferredOrientations([]);
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }
 
   Future<void> _disableAutoPip() async {
@@ -74,16 +85,20 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
     final videoId = VideoPlayerService().videoId;
     if (videoId != _currentVideoId) {
       if (videoId == null) {
+        _playerSub?.cancel();
+        _playerSub = null;
         _controller?.close();
         _controller = null;
         _currentVideoId = null;
-        await SystemChrome.setPreferredOrientations(
-            [DeviceOrientation.portraitUp]);
-        await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        await _restoreSystemUi();
         if (mounted) setState(() {});
       } else {
+        _playerSub?.cancel();
         _controller?.close();
         _currentVideoId = videoId;
+        _lastPlayerState = PlayerState.unknown;
+        _lastPlayingMs = 0;
+        _resumeUntilMs = 0;
 
         _controller = YoutubePlayerController.fromVideoId(
           videoId: videoId,
@@ -94,7 +109,27 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
           ),
         );
 
+        _playerSub = _controller!.stream.listen((value) {
+          _lastPlayerState = value.playerState;
+          if (value.playerState == PlayerState.playing ||
+              value.playerState == PlayerState.buffering) {
+            _lastPlayingMs = DateTime.now().millisecondsSinceEpoch;
+          } else if (value.playerState == PlayerState.paused &&
+              DateTime.now().millisecondsSinceEpoch < _resumeUntilMs) {
+            _controller?.playVideo();
+          }
+        });
+
         _controller!.setFullScreenListener((isFullScreen) async {
+          final nowMs = DateTime.now().millisecondsSinceEpoch;
+          // The YouTube iframe can emit a pause right before or during a fullscreen transition.
+          final wasPlaying = _lastPlayerState == PlayerState.playing ||
+              _lastPlayerState == PlayerState.buffering ||
+              (nowMs - _lastPlayingMs) < 800;
+          if (wasPlaying) {
+            _resumeUntilMs = nowMs + 1000;
+          }
+
           if (isFullScreen) {
             await SystemChrome.setPreferredOrientations([
               DeviceOrientation.landscapeLeft,
@@ -103,10 +138,13 @@ class _FloatingVideoPlayerWidgetState extends State<FloatingVideoPlayerWidget> {
             await SystemChrome.setEnabledSystemUIMode(
                 SystemUiMode.immersiveSticky);
           } else {
-            await SystemChrome.setPreferredOrientations([
-              DeviceOrientation.portraitUp,
-            ]);
-            await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+            await _restoreSystemUi();
+          }
+
+          if (mounted &&
+              wasPlaying &&
+              _controller?.value.playerState == PlayerState.paused) {
+            await _controller?.playVideo();
           }
         });
 
