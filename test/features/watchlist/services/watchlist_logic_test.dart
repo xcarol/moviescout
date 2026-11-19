@@ -6,6 +6,11 @@ import 'package:moviescout/features/notifications/services/watchlist_notificatio
 import 'package:moviescout/core/utils/app_constants.dart';
 
 void main() {
+  Map<String, dynamic> loadJson(String fileName) {
+    final file = File('test/test_data/$fileName');
+    return jsonDecode(file.readAsStringSync());
+  }
+
   group('WatchlistNotificationEvaluator - checkNeedsUpdate', () {
     final now = DateTime(2026, 3, 29);
 
@@ -29,6 +34,20 @@ void main() {
       });
       expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now),
           UpdateType.light);
+    });
+
+    test(
+        'Movie: Should return none if recently updated even with seasonNotInitialized',
+        () {
+      final title = TmdbTitle.fromMap(title: {
+        TmdbTitleFields.id: 1,
+        TmdbTitleFields.title: 'Test Movie',
+        TmdbTitleFields.mediaType: 'movie',
+        'last_notified_season': AppConstants.seasonNotInitialized,
+        'last_updated': now.subtract(const Duration(hours: 1)).toIso8601String(),
+      });
+      expect(WatchlistNotificationEvaluator.checkNeedsUpdate(title, now),
+          UpdateType.none);
     });
 
     test('Serie: Does NOT full update every hour if already initialized to 0',
@@ -75,11 +94,6 @@ void main() {
       1796,
       337
     }; // Netflix, Netflix with Ads, Disney Plus
-
-    Map<String, dynamic> loadJson(String fileName) {
-      final file = File('test/test_data/$fileName');
-      return jsonDecode(file.readAsStringSync());
-    }
 
     Map<String, dynamic> prepareTitleMap(Map<String, dynamic> json,
         {String region = 'ES'}) {
@@ -128,11 +142,86 @@ void main() {
       expect(trigger, NotificationTrigger.newAvailability);
     });
 
+    test(
+        'First sync: Does NOT notify even if available when titleBeforeUpdate.lastUpdated == defaultDate',
+        () {
+      final serverJson = loadJson('[Lamar Odom]_future_documentary.json');
+      serverJson['watch/providers'] = {
+        'results': {
+          'ES': {
+            'flatrate': [
+              {'provider_id': 8}
+            ]
+          }
+        }
+      };
+
+      final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      localTitle.lastUpdated = AppConstants.defaultDate;
+      localTitle.flatrateProviderIds = [];
+
+      final trigger = WatchlistNotificationEvaluator.evaluateNotification(
+        titleBeforeUpdate: localTitle,
+        titleAfterUpdate: serverTitle,
+        enabledProviderIds: enabledProviders,
+        now: now,
+        notifyCompleteSeason: false,
+      );
+
+      expect(trigger, NotificationTrigger.none);
+    });
+
+    test('Movie: Does NOT notify if already available or removed from providers',
+        () {
+      final serverJson = loadJson('[Lamar Odom]_future_documentary.json');
+      serverJson['watch/providers'] = {
+        'results': {
+          'ES': {
+            'flatrate': [
+              {'provider_id': 8}
+            ]
+          }
+        }
+      };
+
+      final availableTitle =
+          TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      final localAvailable =
+          TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+
+      expect(
+        WatchlistNotificationEvaluator.evaluateNotification(
+          titleBeforeUpdate: localAvailable,
+          titleAfterUpdate: availableTitle,
+          enabledProviderIds: enabledProviders,
+          now: now,
+          notifyCompleteSeason: false,
+        ),
+        NotificationTrigger.none,
+      );
+
+      final removedTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      removedTitle.flatrateProviderIds = [];
+
+      expect(
+        WatchlistNotificationEvaluator.evaluateNotification(
+          titleBeforeUpdate: localAvailable,
+          titleAfterUpdate: removedTitle,
+          enabledProviderIds: enabledProviders,
+          now: now,
+          notifyCompleteSeason: false,
+        ),
+        NotificationTrigger.none,
+      );
+    });
+
     test('Serie: Silent initialization on first sync', () {
       final serverJson = loadJson('[Dorohedoro]_serie_new_season.json');
       final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
-      localTitle.lastNotifiedSeason = 0; // Uninitialized
+      localTitle.lastUpdated = AppConstants.defaultDate;
+      localTitle.lastNotifiedSeason = AppConstants.seasonNotInitialized;
 
       final trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: localTitle,
@@ -223,7 +312,7 @@ void main() {
         notifyCompleteSeason: false,
       );
 
-      expect(trigger, NotificationTrigger.none);
+      expect(trigger, NotificationTrigger.seasonTooOld);
     });
 
     test('Serie: Notifies for binge-release if recently premiered', () {
@@ -331,6 +420,11 @@ void main() {
 
       final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
       final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      WatchlistNotificationEvaluator.initializeBaselineIfNeeded(
+        localTitle,
+        now,
+        notifyCompleteSeason: false,
+      );
 
       final trigger = WatchlistNotificationEvaluator.evaluateNotification(
         titleBeforeUpdate: localTitle,
@@ -589,8 +683,36 @@ void main() {
         logLines: logLines,
       );
 
-      expect(trigger, NotificationTrigger.none);
+      expect(trigger, NotificationTrigger.seasonTooOld);
       expect(logLines.any((l) => l.contains('Too old')), isTrue);
+    });
+
+    test(
+        'Serie: Marks as seasonTooOld when next_episode SxxE01 premiered >= 14 days ago',
+        () {
+      final serverJson = loadJson('[Dorohedoro]_serie_new_season.json');
+      // next_episode is S2E1 on 2026-04-01.
+      final testNow = DateTime(2026, 4, 20);
+
+      serverJson['seasons'] = [
+        {'season_number': 1, 'air_date': '2020-01-12'},
+        {'season_number': 2, 'air_date': '2026-04-01'},
+      ];
+
+      final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      localTitle.lastNotifiedSeason = 1;
+      serverTitle.numberOfSeasons = 2;
+
+      final trigger = WatchlistNotificationEvaluator.evaluateNotification(
+        titleBeforeUpdate: localTitle,
+        titleAfterUpdate: serverTitle,
+        enabledProviderIds: enabledProviders,
+        now: testNow,
+        notifyCompleteSeason: false,
+      );
+
+      expect(trigger, NotificationTrigger.seasonTooOld);
     });
 
     test(
@@ -680,10 +802,302 @@ void main() {
       );
       expect(pass2Trigger, NotificationTrigger.newSeason);
     });
+
+    test(
+        'Serie [notifyCompleteSeason: false]: Notifies newAvailability when arriving in ES even with lastNotifiedSeason == 1 (Monte Cristo)',
+        () {
+      final baseJson = loadJson('La comptesse de Monte-Cristo.json');
+      final testNow = DateTime(2026, 11, 18);
+
+      final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(baseJson));
+      localTitle.lastNotifiedSeason =
+          WatchlistNotificationEvaluator.getBaselineSeason(
+        localTitle,
+        testNow,
+        notifyCompleteSeason: false,
+      );
+      expect(localTitle.lastNotifiedSeason, 1);
+      expect(localTitle.flatrateProviderIds, isEmpty);
+
+      final serverJson = Map<String, dynamic>.from(baseJson);
+      final providersMap =
+          Map<String, dynamic>.from(baseJson['watch/providers']);
+      final resultsMap = Map<String, dynamic>.from(providersMap['results']);
+      resultsMap['ES'] = {
+        'flatrate': [
+          {'provider_id': 8}
+        ]
+      };
+      providersMap['results'] = resultsMap;
+      serverJson['watch/providers'] = providersMap;
+
+      final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+
+      final trigger = WatchlistNotificationEvaluator.evaluateNotification(
+        titleBeforeUpdate: localTitle,
+        titleAfterUpdate: serverTitle,
+        enabledProviderIds: enabledProviders,
+        now: testNow,
+        notifyCompleteSeason: false,
+      );
+
+      expect(trigger, NotificationTrigger.newAvailability);
+    });
+
+    test(
+        'Serie [notifyCompleteSeason: true]: Notifies newAvailability when becoming available with season completed > 14 days ago',
+        () {
+      final serverJson = {
+        'id': 88888,
+        'name': 'Old Completed Show',
+        'media_type': 'tv',
+        'number_of_seasons': 1,
+        'last_episode_to_air': {
+          'season_number': 1,
+          'episode_number': 8,
+          'air_date': '2026-01-10',
+        },
+        'next_episode_to_air': null,
+        'watch/providers': {
+          'results': {
+            'ES': {
+              'flatrate': [
+                {'provider_id': 8}
+              ]
+            }
+          }
+        }
+      };
+
+      final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      localTitle.flatrateProviderIds = [];
+      localTitle.lastNotifiedSeason = 1;
+
+      final trigger = WatchlistNotificationEvaluator.evaluateNotification(
+        titleBeforeUpdate: localTitle,
+        titleAfterUpdate: serverTitle,
+        enabledProviderIds: enabledProviders,
+        now: now,
+        notifyCompleteSeason: true,
+      );
+
+      expect(trigger, NotificationTrigger.newAvailability);
+    });
+
+    test(
+        'Serie [notifyCompleteSeason: true]: Does NOT notify in pass 2 if lastNotifiedSeason already equals currentSeason',
+        () {
+      final airingJson = {
+        'id': 88889,
+        'name': 'Already Baselined Show',
+        'media_type': 'tv',
+        'number_of_seasons': 1,
+        'last_episode_to_air': {
+          'season_number': 1,
+          'episode_number': 1,
+          'air_date': '2026-03-25',
+        },
+        'next_episode_to_air': {
+          'season_number': 1,
+          'episode_number': 2,
+          'air_date': '2026-04-01',
+        },
+        'watch/providers': {
+          'results': {
+            'ES': {
+              'flatrate': [
+                {'provider_id': 8}
+              ]
+            }
+          }
+        }
+      };
+
+      final pass1Server = TmdbTitle.fromMap(title: prepareTitleMap(airingJson));
+      final pass1Local = TmdbTitle.fromMap(title: prepareTitleMap(airingJson));
+      pass1Local.flatrateProviderIds = [];
+      pass1Local.lastNotifiedSeason = 1;
+
+      expect(
+        WatchlistNotificationEvaluator.evaluateNotification(
+          titleBeforeUpdate: pass1Local,
+          titleAfterUpdate: pass1Server,
+          enabledProviderIds: enabledProviders,
+          now: now,
+          notifyCompleteSeason: true,
+        ),
+        NotificationTrigger.none,
+      );
+
+      final completedJson = Map<String, dynamic>.from(airingJson)
+        ..['last_episode_to_air'] = {
+          'season_number': 1,
+          'episode_number': 8,
+          'air_date': '2026-04-10',
+        }
+        ..['next_episode_to_air'] = null;
+
+      final pass2Server =
+          TmdbTitle.fromMap(title: prepareTitleMap(completedJson));
+      final pass2Local = TmdbTitle.fromMap(title: prepareTitleMap(airingJson));
+      pass2Local.lastNotifiedSeason = 1;
+
+      expect(
+        WatchlistNotificationEvaluator.evaluateNotification(
+          titleBeforeUpdate: pass2Local,
+          titleAfterUpdate: pass2Server,
+          enabledProviderIds: enabledProviders,
+          now: DateTime(2026, 4, 12),
+          notifyCompleteSeason: true,
+        ),
+        NotificationTrigger.none,
+      );
+    });
+
+    test('Serie: Does NOT notify newSeason if title lost availability', () {
+      final serverJson = loadJson('[Dorohedoro]_serie_new_season.json');
+      serverJson['last_episode_to_air'] = {
+        'season_number': 2,
+        'episode_number': 1,
+        'air_date': '2026-03-28',
+      };
+      serverJson['number_of_seasons'] = 2;
+      serverJson['seasons'] = [
+        {'season_number': 1, 'air_date': '2020-01-12'},
+        {'season_number': 2, 'air_date': '2026-03-28'},
+      ];
+
+      final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      localTitle.lastNotifiedSeason = 1;
+
+      final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      serverTitle.flatrateProviderIds = [];
+
+      expect(
+        WatchlistNotificationEvaluator.evaluateNotification(
+          titleBeforeUpdate: localTitle,
+          titleAfterUpdate: serverTitle,
+          enabledProviderIds: enabledProviders,
+          now: now,
+          notifyCompleteSeason: false,
+        ),
+        NotificationTrigger.none,
+      );
+    });
+
+    test(
+        'Serie: Notifies S1 when baseline was 0 and S1 premieres while already on provider',
+        () {
+      final serverJson = {
+        'id': 55555,
+        'name': 'Neuromante',
+        'media_type': 'tv',
+        'number_of_seasons': 1,
+        'last_episode_to_air': {
+          'season_number': 1,
+          'episode_number': 1,
+          'air_date': '2026-03-28',
+        },
+        'seasons': [
+          {'season_number': 1, 'air_date': '2026-03-28'},
+        ],
+        'watch/providers': {
+          'results': {
+            'ES': {
+              'flatrate': [
+                {'provider_id': 8}
+              ]
+            }
+          }
+        }
+      };
+
+      final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      localTitle.lastNotifiedSeason = 0;
+
+      expect(
+        WatchlistNotificationEvaluator.evaluateNotification(
+          titleBeforeUpdate: localTitle,
+          titleAfterUpdate: serverTitle,
+          enabledProviderIds: enabledProviders,
+          now: now,
+          notifyCompleteSeason: false,
+        ),
+        NotificationTrigger.newSeason,
+      );
+    });
+
+    test(
+        'Serie: Does NOT notify on fallback when season airDate is missing and episodeNumber > 1',
+        () {
+      final serverJson = loadJson('[Dorohedoro]_serie_new_season.json');
+      serverJson['last_episode_to_air'] = {
+        'season_number': 2,
+        'episode_number': 2,
+      };
+      serverJson['next_episode_to_air'] = null;
+      serverJson['number_of_seasons'] = 2;
+      serverJson['seasons'] = [
+        {'season_number': 1, 'air_date': '2020-01-12'},
+        {'season_number': 2},
+      ];
+
+      final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      localTitle.lastNotifiedSeason = 1;
+
+      expect(
+        WatchlistNotificationEvaluator.evaluateNotification(
+          titleBeforeUpdate: localTitle,
+          titleAfterUpdate: serverTitle,
+          enabledProviderIds: enabledProviders,
+          now: now,
+          notifyCompleteSeason: false,
+        ),
+        NotificationTrigger.none,
+      );
+    });
+
+    test(
+        'Serie [notifyCompleteSeason: true]: Does NOT notify if last_episode belongs to previous season',
+        () {
+      final serverJson = loadJson('[Dorohedoro]_serie_new_season.json');
+      serverJson['number_of_seasons'] = 2;
+      serverJson['last_episode_to_air'] = {
+        'season_number': 1,
+        'episode_number': 12,
+        'air_date': '2020-03-29',
+      };
+      serverJson['next_episode_to_air'] = null;
+
+      final serverTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      final localTitle = TmdbTitle.fromMap(title: prepareTitleMap(serverJson));
+      localTitle.lastNotifiedSeason = 1;
+
+      expect(
+        WatchlistNotificationEvaluator.evaluateNotification(
+          titleBeforeUpdate: localTitle,
+          titleAfterUpdate: serverTitle,
+          enabledProviderIds: enabledProviders,
+          now: now,
+          notifyCompleteSeason: true,
+        ),
+        NotificationTrigger.none,
+      );
+    });
   });
 
   group('WatchlistNotificationEvaluator - getBaselineSeason', () {
     final now = DateTime(2026, 3, 29);
+
+    test('Should return 0 when numberOfSeasons <= 0', () {
+      final title = TmdbTitle.fromMap(title: {
+        'number_of_seasons': 0,
+      });
+      expect(WatchlistNotificationEvaluator.getBaselineSeason(title, now), 0);
+    });
 
     test('Should return last_episode season if available and aired', () {
       final title = TmdbTitle.fromMap(title: {
@@ -691,6 +1105,53 @@ void main() {
         'last_episode_to_air': {'season_number': 1},
       });
       expect(WatchlistNotificationEvaluator.getBaselineSeason(title, now), 1);
+    });
+
+    test(
+        'Should return numberOfSeasons when next_episode is null and last_episode is in current season',
+        () {
+      final title = TmdbTitle.fromMap(title: {
+        'number_of_seasons': 2,
+        'last_episode_to_air': {
+          'season_number': 2,
+          'episode_number': 8,
+          'air_date': '2026-03-25',
+        },
+      });
+      expect(WatchlistNotificationEvaluator.getBaselineSeason(title, now), 2);
+      expect(
+        WatchlistNotificationEvaluator.getBaselineSeason(
+          title,
+          now,
+          notifyCompleteSeason: true,
+        ),
+        2,
+      );
+    });
+
+    test(
+        'Monte Cristo airing fixture: returns 1 when notifyCompleteSeason is false and 0 when true',
+        () {
+      final json = loadJson('La comptesse de Monte-Cristo.json');
+      final title = TmdbTitle.fromMap(title: json);
+      final testNow = DateTime(2026, 11, 18);
+
+      expect(
+        WatchlistNotificationEvaluator.getBaselineSeason(
+          title,
+          testNow,
+          notifyCompleteSeason: false,
+        ),
+        1,
+      );
+      expect(
+        WatchlistNotificationEvaluator.getBaselineSeason(
+          title,
+          testNow,
+          notifyCompleteSeason: true,
+        ),
+        0,
+      );
     });
 
     test('Should return 0 if S1 has no aired or next episode yet', () {

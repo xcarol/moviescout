@@ -92,7 +92,19 @@ class WatchlistUpdateService {
       return false;
     }
 
-    // Handle Notifications
+    if (trigger == NotificationTrigger.seasonTooOld) {
+      title.lastNotifiedSeason = title.numberOfSeasons;
+      logLines.add(
+          '- [DB Local] ${title.name}: season too old, lastNotifiedSeason saved as ${title.lastNotifiedSeason}');
+      await _persistAndSyncSeasonState(
+        title,
+        repository,
+        addedToWatchlist: false,
+        logLines: logLines,
+      );
+      return false;
+    }
+
     final availableProviderIds = title.flatrateProviderIds
         .where((id) => enabledProviderIds.contains(id))
         .toList();
@@ -135,13 +147,10 @@ class WatchlistUpdateService {
       }
       logLines.add(
           '- [DB Local] ${title.name}: lastNotifiedSeason saved as ${title.lastNotifiedSeason}');
-      await repository.updateNotifyNewSeasonsList([title]);
-      final isInRateslist = await repository
-          .hasTitlesInList([title.tmdbId], AppConstants.rateslist);
-      await _queueNotificationSync(
+      await _persistAndSyncSeasonState(
         title,
+        repository,
         addedToWatchlist: false,
-        isInRateslist: isInRateslist,
         logLines: logLines,
       );
 
@@ -182,19 +191,33 @@ class WatchlistUpdateService {
         await repository.saveTitles([title], AppConstants.watchlist);
       }
 
-      await repository.updateNotifyNewSeasonsList([title]);
-      final isInRateslist = await repository
-          .hasTitlesInList([title.tmdbId], AppConstants.rateslist);
-      await _queueNotificationSync(
+      await _persistAndSyncSeasonState(
         title,
+        repository,
         addedToWatchlist: addedToWatchlist,
-        isInRateslist: isInRateslist,
         logLines: logLines,
       );
       return true;
     }
 
     return false;
+  }
+
+  Future<void> _persistAndSyncSeasonState(
+    TmdbTitle title,
+    LocalTitleRepository repository, {
+    required bool addedToWatchlist,
+    List<String>? logLines,
+  }) async {
+    await repository.updateNotifyNewSeasonsList([title]);
+    final isInRateslist =
+        await repository.hasTitlesInList([title.tmdbId], AppConstants.rateslist);
+    await _queueNotificationSync(
+      title,
+      addedToWatchlist: addedToWatchlist,
+      isInRateslist: isInRateslist,
+      logLines: logLines,
+    );
   }
 
   Future<void> _queueNotificationSync(
