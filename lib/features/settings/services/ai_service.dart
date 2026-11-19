@@ -102,6 +102,9 @@ class AiService with ChangeNotifier {
 
   AiPromptConfig? get promptConfig => _promptConfig;
 
+  bool hasPromptForLanguage(String? languageCode) =>
+      _promptConfig?.hasLanguagePrompt(languageCode) ?? true;
+
   CloudTitleRepository? get _safeCloudRepository {
     if (_cloudRepository != null) return _cloudRepository;
     try {

@@ -16,6 +16,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:moviescout/core/utils/date_formatter.dart';
 import 'package:moviescout/core/widgets/action_menu.dart';
 import 'package:moviescout/core/services/tmdb_translation_service.dart';
+import 'package:moviescout/features/titles/models/tmdb_translation.dart';
+import 'package:moviescout/core/models/translations_pager.dart';
 import 'package:moviescout/features/titles/widgets/trailer_buttons.dart';
 import 'package:moviescout/core/widgets/boxed_widget.dart';
 import 'package:moviescout/core/widgets/expandable_description.dart';
@@ -89,6 +91,51 @@ class _SeasonDetailsState extends State<SeasonDetails> {
     }
   }
 
+  TranslationsPager? _buildTranslationsPager() {
+    if (widget.title.numberOfSeasons <= 1) return null;
+    return TranslationsPager(
+      itemCount: widget.title.numberOfSeasons,
+      initialIndex: _currentSeasonNumber - 1,
+      pageTitleBuilder: (index, l10n) => l10n.seasonLabel(index + 1),
+      loadPage: (index) async {
+        final seasonNumber = index + 1;
+        final cached = _loadedSeasons[seasonNumber];
+        final results = await Future.wait([
+          TmdbTranslationService()
+              .getSeasonTranslations(widget.title.tmdbId, seasonNumber),
+          if (cached != null)
+            Future.value(cached)
+          else
+            TmdbSeasonService().getSeasonDetails(
+              widget.title.tmdbId,
+              seasonNumber,
+              includeYoutubeSearch: false,
+            ),
+        ]);
+
+        final translations = results[0] as List<TmdbTranslation>;
+        final season = results[1] as TmdbSeason?;
+        if (season != null && mounted) {
+          _loadedSeasons[seasonNumber] = season;
+        }
+        final pageEditUrl = UrlConstants.tmdbTvSeasonEditWebTemplate
+            .replaceFirst('{ID}', widget.title.tmdbId.toString())
+            .replaceFirst('{SEASON_NUMBER}', seasonNumber.toString());
+
+        return TranslationPageData(
+          translations: translations,
+          editUrl: pageEditUrl,
+          translationContext: TranslationContext.fromItem(
+            season,
+            type: TranslationContentType.tvSeason,
+            series: widget.title,
+            seasonNumber: seasonNumber,
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     String appTitle = widget.title.name;
@@ -112,6 +159,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
               series: widget.title,
               seasonNumber: _currentSeasonNumber,
             ),
+            translationsPager: _buildTranslationsPager(),
             shareUrl: UrlConstants.moviescoutTvSeasonWebTemplate
                 .replaceFirst('{ID}', widget.title.tmdbId.toString())
                 .replaceFirst(

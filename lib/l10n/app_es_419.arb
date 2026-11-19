@@ -823,5 +823,47 @@
   "emptyFollowingGuestTitle": "Conecta con la comunidad",
   "@emptyFollowingGuestTitle": {},
   "emptyFollowingGuestMessage": "Inicia sesión para seguir a otros usuarios, descubrir qué ven y compartir calificaciones.",
-  "@emptyFollowingGuestMessage": {}
+  "@emptyFollowingGuestMessage": {},
+  "existingTranslation": "Traducción existente",
+  "@existingTranslation": {},
+  "otherTranslations": "Otras traducciones ({count})",
+  "@otherTranslations": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "aiPromptMissingLanguage": "Todavía no hay un prompt optimizado para {language} (se usará el de inglés).",
+  "@aiPromptMissingLanguage": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "aiPromptRequestButton": "Solicitar",
+  "@aiPromptRequestButton": {},
+  "aiPromptRequestSubject": "[MovieScout] Solicitud de prompt IA: {language} ({code})",
+  "@aiPromptRequestSubject": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "aiPromptRequestBody": "Hola,\n\nMe gustaría solicitar un prompt de traducción con IA optimizado para {language} ({code}).\n\nSi lo necesitan, también me ofrezco a colaborar en la redacción o revisión del prompt en este idioma.",
+  "@aiPromptRequestBody": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "applyTranslationToTmdb": "Abrir en TMDb y rellenar",
+  "@applyTranslationToTmdb": {},
+  "tmdbEditPageTitle": "Editar en TMDb",
+  "@tmdbEditPageTitle": {},
+  "tmdbInjectTranslation": "Rellenar campos",
+  "@tmdbInjectTranslation": {},
+  "tmdbEditLoginRequired": "Inicia sesión en TMDb; los campos se rellenarán automáticamente al cargar la página de edición.",
+  "@tmdbEditLoginRequired": {},
+  "tmdbTranslationInjected": "Campos rellenados con la traducción. Revísalos y guarda los cambios en TMDb.",
+  "@tmdbTranslationInjected": {},
+  "tmdbFieldsNotFound": "No se han detectado los campos de edición aquí. Abre los campos de traducción y pulsa Rellenar campos.",
+  "@tmdbFieldsNotFound": {}
 }

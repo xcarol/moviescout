@@ -112,19 +112,26 @@ class AiPromptConfig {
   static String _normalizeCode(String code) =>
       code.trim().toLowerCase().replaceAll('_', '-');
 
-  AiLanguagePrompt? resolveLanguage(String? languageCode) {
-    if (languages.isEmpty) return null;
-    if (languageCode != null && languageCode.trim().isNotEmpty) {
-      final normalized = _normalizeCode(languageCode);
-      final exact = languages[normalized];
-      if (exact != null) return exact;
-
-      final separatorIdx = normalized.indexOf('-');
-      if (separatorIdx != -1) {
-        final base = languages[normalized.substring(0, separatorIdx)];
-        if (base != null) return base;
-      }
+  AiLanguagePrompt? _findByCode(String? languageCode) {
+    if (languages.isEmpty ||
+        languageCode == null ||
+        languageCode.trim().isEmpty) {
+      return null;
     }
-    return languages[defaultLanguage];
+    final normalized = _normalizeCode(languageCode);
+    final exact = languages[normalized];
+    if (exact != null) return exact;
+
+    final separatorIdx = normalized.indexOf('-');
+    if (separatorIdx != -1) {
+      return languages[normalized.substring(0, separatorIdx)];
+    }
+    return null;
   }
+
+  bool hasLanguagePrompt(String? languageCode) =>
+      _findByCode(languageCode) != null;
+
+  AiLanguagePrompt? resolveLanguage(String? languageCode) =>
+      _findByCode(languageCode) ?? languages[defaultLanguage];
 }

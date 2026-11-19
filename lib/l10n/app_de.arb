@@ -823,5 +823,47 @@
   "emptyFollowingGuestTitle": "Verbinde dich mit der Community",
   "@emptyFollowingGuestTitle": {},
   "emptyFollowingGuestMessage": "Melde dich an, um anderen Nutzern zu folgen, Entdeckungen zu teilen und Bewertungen auszutauschen.",
-  "@emptyFollowingGuestMessage": {}
+  "@emptyFollowingGuestMessage": {},
+  "existingTranslation": "Vorhandene Übersetzung",
+  "@existingTranslation": {},
+  "otherTranslations": "Weitere Übersetzungen ({count})",
+  "@otherTranslations": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "aiPromptMissingLanguage": "Noch kein optimierter Prompt für {language} vorhanden (Englisch wird verwendet).",
+  "@aiPromptMissingLanguage": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "aiPromptRequestButton": "Anfragen",
+  "@aiPromptRequestButton": {},
+  "aiPromptRequestSubject": "[MovieScout] Anfrage für KI-Übersetzungs-Prompt: {language} ({code})",
+  "@aiPromptRequestSubject": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "aiPromptRequestBody": "Hallo,\n\nich möchte einen optimierten KI-Übersetzungs-Prompt für {language} ({code}) anfragen.\n\nBei Bedarf helfe ich auch gerne beim Verfassen oder Überprüfen des Prompts in dieser Sprache.",
+  "@aiPromptRequestBody": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "applyTranslationToTmdb": "Auf TMDb öffnen und ausfüllen",
+  "@applyTranslationToTmdb": {},
+  "tmdbEditPageTitle": "Auf TMDb bearbeiten",
+  "@tmdbEditPageTitle": {},
+  "tmdbInjectTranslation": "Felder ausfüllen",
+  "@tmdbInjectTranslation": {},
+  "tmdbEditLoginRequired": "Melde dich bei TMDb an; die Felder werden automatisch ausgefüllt, sobald die Bearbeitungsseite geladen ist.",
+  "@tmdbEditLoginRequired": {},
+  "tmdbTranslationInjected": "Felder mit der Übersetzung ausgefüllt. Überprüfe und speichere deine Änderungen auf TMDb.",
+  "@tmdbTranslationInjected": {},
+  "tmdbFieldsNotFound": "Bearbeitungsfelder wurden hier nicht erkannt. Öffne die Übersetzungsfelder und tippe auf Felder ausfüllen.",
+  "@tmdbFieldsNotFound": {}
 }

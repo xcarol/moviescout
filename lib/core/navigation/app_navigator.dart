@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/core/models/translation_context.dart';
+import 'package:moviescout/core/models/translations_pager.dart';
 import 'package:moviescout/features/discovery/models/tmdb_collection.dart';
 import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
@@ -23,6 +24,7 @@ import 'package:moviescout/features/seasons/screens/season_details.dart';
 import 'package:moviescout/features/settings/screens/settings.dart';
 import 'package:moviescout/features/titles/screens/title_details.dart';
 import 'package:moviescout/features/titles/screens/title_people_list.dart';
+import 'package:moviescout/features/titles/screens/tmdb_edit_webview_screen.dart';
 import 'package:moviescout/features/titles/screens/translations.dart';
 import 'package:moviescout/features/auth/screens/user_details.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
@@ -200,6 +202,7 @@ extension AppNavigatorExtension on BuildContext {
     required List<TmdbTranslation> translations,
     required String editUrl,
     required TranslationContext translationContext,
+    TranslationsPager? translationsPager,
   }) {
     return AppNavigator.push<T>(
       this,
@@ -207,6 +210,26 @@ extension AppNavigatorExtension on BuildContext {
         translations: translations,
         editUrl: editUrl,
         translationContext: translationContext,
+        pager: translationsPager,
+      ),
+    );
+  }
+
+  Future<T?> toTmdbEditWebView<T>({
+    required String editUrl,
+    String? targetLanguageCode,
+    TranslationContentType contentType = TranslationContentType.movie,
+    String translatedTitle = '',
+    String translatedDescription = '',
+  }) {
+    return AppNavigator.push<T>(
+      this,
+      TmdbEditWebViewScreen(
+        editUrl: editUrl,
+        targetLanguageCode: targetLanguageCode,
+        contentType: contentType,
+        translatedTitle: translatedTitle,
+        translatedDescription: translatedDescription,
       ),
     );
   }

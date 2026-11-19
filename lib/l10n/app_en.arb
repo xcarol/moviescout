@@ -823,5 +823,47 @@
   "emptyFollowingGuestTitle": "Connect with the community",
   "@emptyFollowingGuestTitle": {},
   "emptyFollowingGuestMessage": "Sign in to follow other users, discover what they watch, and share ratings.",
-  "@emptyFollowingGuestMessage": {}
+  "@emptyFollowingGuestMessage": {},
+  "existingTranslation": "Existing translation",
+  "@existingTranslation": {},
+  "otherTranslations": "Other translations ({count})",
+  "@otherTranslations": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "aiPromptMissingLanguage": "No optimized prompt for {language} yet (using English).",
+  "@aiPromptMissingLanguage": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "aiPromptRequestButton": "Request",
+  "@aiPromptRequestButton": {},
+  "aiPromptRequestSubject": "[MovieScout] AI translation prompt request: {language} ({code})",
+  "@aiPromptRequestSubject": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "aiPromptRequestBody": "Hi,\n\nI would like to request an optimized AI translation prompt for {language} ({code}).\n\nI would also be happy to collaborate on writing or reviewing the prompt in this language if needed.",
+  "@aiPromptRequestBody": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "applyTranslationToTmdb": "Open on TMDb and fill",
+  "@applyTranslationToTmdb": {},
+  "tmdbEditPageTitle": "Edit on TMDb",
+  "@tmdbEditPageTitle": {},
+  "tmdbInjectTranslation": "Fill fields",
+  "@tmdbInjectTranslation": {},
+  "tmdbEditLoginRequired": "Sign in to TMDb; fields will fill automatically once the edit page loads.",
+  "@tmdbEditLoginRequired": {},
+  "tmdbTranslationInjected": "Fields filled with translation. Review and save your changes on TMDb.",
+  "@tmdbTranslationInjected": {},
+  "tmdbFieldsNotFound": "Edit fields were not detected here. Open the translation fields and tap Fill fields.",
+  "@tmdbFieldsNotFound": {}
 }

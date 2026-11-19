@@ -823,5 +823,47 @@
   "emptyFollowingGuestTitle": "Rejoignez la communauté",
   "@emptyFollowingGuestTitle": {},
   "emptyFollowingGuestMessage": "Connectez-vous pour suivre d'autres utilisateurs, découvrir ce qu'ils regardent et partager vos avis.",
-  "@emptyFollowingGuestMessage": {}
+  "@emptyFollowingGuestMessage": {},
+  "existingTranslation": "Traduction existante",
+  "@existingTranslation": {},
+  "otherTranslations": "Autres traductions ({count})",
+  "@otherTranslations": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "aiPromptMissingLanguage": "Aucun prompt optimisé pour {language} pour l'instant (l'anglais sera utilisé).",
+  "@aiPromptMissingLanguage": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "aiPromptRequestButton": "Demander",
+  "@aiPromptRequestButton": {},
+  "aiPromptRequestSubject": "[MovieScout] Demande de prompt IA : {language} ({code})",
+  "@aiPromptRequestSubject": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "aiPromptRequestBody": "Bonjour,\n\nJe souhaite demander un prompt de traduction IA optimisé pour {language} ({code}).\n\nSi besoin, je serais également ravi de collaborer à la rédaction ou à la relecture du prompt dans cette langue.",
+  "@aiPromptRequestBody": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "applyTranslationToTmdb": "Ouvrir sur TMDb et remplir",
+  "@applyTranslationToTmdb": {},
+  "tmdbEditPageTitle": "Modifier sur TMDb",
+  "@tmdbEditPageTitle": {},
+  "tmdbInjectTranslation": "Remplir les champs",
+  "@tmdbInjectTranslation": {},
+  "tmdbEditLoginRequired": "Connectez-vous à TMDb ; les champs seront remplis automatiquement une fois la page d'édition chargée.",
+  "@tmdbEditLoginRequired": {},
+  "tmdbTranslationInjected": "Champs remplis avec la traduction. Vérifiez et enregistrez vos modifications sur TMDb.",
+  "@tmdbTranslationInjected": {},
+  "tmdbFieldsNotFound": "Les champs d'édition n'ont pas été détectés ici. Ouvrez les champs de traduction et appuyez sur Remplir les champs.",
+  "@tmdbFieldsNotFound": {}
 }

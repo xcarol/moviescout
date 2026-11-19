@@ -823,5 +823,47 @@
   "emptyFollowingGuestTitle": "Conéctate coa comunidade",
   "@emptyFollowingGuestTitle": {},
   "emptyFollowingGuestMessage": "Inicia sesión para seguir a outros usuarios, descubrir o que ven e compartir valoracións.",
-  "@emptyFollowingGuestMessage": {}
+  "@emptyFollowingGuestMessage": {},
+  "existingTranslation": "Tradución existente",
+  "@existingTranslation": {},
+  "otherTranslations": "Outras traducións ({count})",
+  "@otherTranslations": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "aiPromptMissingLanguage": "Aínda non hai un prompt optimizado para {language} (usarase o inglés).",
+  "@aiPromptMissingLanguage": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "aiPromptRequestButton": "Solicitar",
+  "@aiPromptRequestButton": {},
+  "aiPromptRequestSubject": "[MovieScout] Solicitude de prompt IA: {language} ({code})",
+  "@aiPromptRequestSubject": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "aiPromptRequestBody": "Ola,\n\nGustaríame solicitar un prompt de tradución con IA optimizado para {language} ({code}).\n\nSe o precisades, tamén me ofrezo a colaborar na redacción ou revisión do prompt neste idioma.",
+  "@aiPromptRequestBody": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "applyTranslationToTmdb": "Abrir en TMDb e encher",
+  "@applyTranslationToTmdb": {},
+  "tmdbEditPageTitle": "Editar en TMDb",
+  "@tmdbEditPageTitle": {},
+  "tmdbInjectTranslation": "Encher campos",
+  "@tmdbInjectTranslation": {},
+  "tmdbEditLoginRequired": "Inicia sesión en TMDb; os campos encheranse automaticamente ao cargar a páxina de edición.",
+  "@tmdbEditLoginRequired": {},
+  "tmdbTranslationInjected": "Campos enchidos coa tradución. Revísaos e garda os cambios en TMDb.",
+  "@tmdbTranslationInjected": {},
+  "tmdbFieldsNotFound": "Non se detectaron os campos de edición aquí. Abre os campos de tradución e preme Encher campos.",
+  "@tmdbFieldsNotFound": {}
 }

@@ -3,10 +3,8 @@ import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/services/app_service.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:moviescout/features/settings/services/language_service.dart';
-import 'package:moviescout/features/settings/services/region_service.dart';
 import 'package:moviescout/features/titles/models/tmdb_translation.dart';
+import 'package:moviescout/core/models/translations_pager.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/core/models/translation_context.dart';
 
@@ -14,6 +12,7 @@ class ActionMenu extends StatelessWidget {
   final String? editUrl;
   final Future<List<TmdbTranslation>> Function()? fetchTranslations;
   final TranslationContext? translationContext;
+  final TranslationsPager? translationsPager;
   final String? shareUrl;
   final VoidCallback? onPin;
 
@@ -22,25 +21,14 @@ class ActionMenu extends StatelessWidget {
     this.editUrl,
     this.fetchTranslations,
     this.translationContext,
+    this.translationsPager,
     this.shareUrl,
     this.onPin,
   });
 
-  void _openEditUrl() {
+  void _openEditUrl(BuildContext context) {
     if (editUrl == null) return;
-    final languageCode = LanguageService().locale.languageCode;
-    final countryCode = RegionService().currentRegion ??
-        LanguageService().locale.countryCode ??
-        "US";
-    final localeStr = '$languageCode-$countryCode';
-
-    final separator = editUrl!.contains('?') ? '&' : '?';
-    final finalUrl = '$editUrl$separator' 'language=$localeStr';
-
-    launchUrl(
-      Uri.parse(finalUrl),
-      mode: LaunchMode.inAppBrowserView,
-    );
+    context.toTmdbEditWebView(editUrl: editUrl!);
   }
 
   Future<void> _fetchTranslations(BuildContext context) async {
@@ -63,6 +51,7 @@ class ActionMenu extends StatelessWidget {
         editUrl: editUrl ?? '',
         translationContext: translationContext ??
             const TranslationContext(type: TranslationContentType.movie),
+        translationsPager: translationsPager,
       );
     } catch (e) {
       if (!context.mounted) return;
@@ -90,7 +79,7 @@ class ActionMenu extends StatelessWidget {
       onSelected: (value) async {
         switch (value) {
           case 'edit':
-            _openEditUrl();
+            _openEditUrl(context);
             break;
           case 'translations':
             await _fetchTranslations(context);

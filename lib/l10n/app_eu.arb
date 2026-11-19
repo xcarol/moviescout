@@ -823,5 +823,47 @@
   "emptyFollowingGuestTitle": "Konektatu komunitatearekin",
   "@emptyFollowingGuestTitle": {},
   "emptyFollowingGuestMessage": "Hasi saioa beste erabiltzaile batzuei jarraitzeko, zer ikusten duten ikusteko eta balorazioak partekatzeko.",
-  "@emptyFollowingGuestMessage": {}
+  "@emptyFollowingGuestMessage": {},
+  "existingTranslation": "Dagoen itzulpena",
+  "@existingTranslation": {},
+  "otherTranslations": "Beste itzulpen batzuk ({count})",
+  "@otherTranslations": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "aiPromptMissingLanguage": "Oraindik ez dago {language} hizkuntzarako prompt optimizaturik (ingelesa erabiliko da).",
+  "@aiPromptMissingLanguage": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "aiPromptRequestButton": "Eskatu",
+  "@aiPromptRequestButton": {},
+  "aiPromptRequestSubject": "[MovieScout] IA itzulpen-prompt eskaera: {language} ({code})",
+  "@aiPromptRequestSubject": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "aiPromptRequestBody": "Kaixo,\n\n{language} ({code}) hizkuntzarako IA bidezko itzulpen-prompt optimizatu bat eskatu nahi nuke.\n\nBehar izanez gero, hizkuntza honetako prompta idazten edo berrikusten laguntzeko ere prest nago.",
+  "@aiPromptRequestBody": {
+    "placeholders": {
+      "language": {},
+      "code": {}
+    }
+  },
+  "applyTranslationToTmdb": "Ireki TMDb-n eta bete",
+  "@applyTranslationToTmdb": {},
+  "tmdbEditPageTitle": "Editatu TMDb-n",
+  "@tmdbEditPageTitle": {},
+  "tmdbInjectTranslation": "Bete eremuak",
+  "@tmdbInjectTranslation": {},
+  "tmdbEditLoginRequired": "Hasi saioa TMDb-n; editatzeko orria kargatzean eremuak automatikoki beteko dira.",
+  "@tmdbEditLoginRequired": {},
+  "tmdbTranslationInjected": "Eremuak itzulpenarekin bete dira. Berrikusi eta gorde aldaketak TMDb-n.",
+  "@tmdbTranslationInjected": {},
+  "tmdbFieldsNotFound": "Editatzeko eremuak ez dira hemen detektatu. Ireki itzulpen-eremuak eta sakatu Bete eremuak.",
+  "@tmdbFieldsNotFound": {}
 }
