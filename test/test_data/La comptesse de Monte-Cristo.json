@@ -1,0 +1,560 @@
+{
+  "adult": false,
+  "backdrop_path": "/VxxzdXXBaGz46UKehYn0jwQynM.jpg",
+  "created_by": [
+    {
+      "id": 2269777,
+      "credit_id": "6afcd27a6f635c39ab37ecec",
+      "name": "Gaia Guasti",
+      "original_name": "Gaia Guasti",
+      "gender": 0,
+      "profile_path": null
+    },
+    {
+      "id": 2216271,
+      "credit_id": "6afcd284481044097782779f",
+      "name": "Djibril Glissant",
+      "original_name": "Djibril Glissant",
+      "gender": 0,
+      "profile_path": null
+    }
+  ],
+  "episode_run_time": [],
+  "first_air_date": "2026-11-16",
+  "genres": [
+    {
+      "id": 18,
+      "name": "Drama"
+    }
+  ],
+  "homepage": "https://www.tf1.fr/tf1/la-comtesse-de-monte-cristo",
+  "id": 271338,
+  "in_production": true,
+  "languages": ["fr"],
+  "last_air_date": "2026-11-16",
+  "last_episode_to_air": {
+    "id": 8024242,
+    "name": "Faria",
+    "overview": "",
+    "vote_average": 0,
+    "vote_count": 0,
+    "air_date": "2026-11-16",
+    "episode_number": 2,
+    "episode_type": "standard",
+    "production_code": "",
+    "runtime": null,
+    "season_number": 1,
+    "show_id": 271338,
+    "still_path": "/sGbXzjAdT9VCGiM5Gik8jx945CR.jpg"
+  },
+  "name": "The Countess of Monte Cristo",
+  "next_episode_to_air": {
+    "id": 8024243,
+    "name": "Bertuccio",
+    "overview": "",
+    "vote_average": 0,
+    "vote_count": 0,
+    "air_date": "2026-11-23",
+    "episode_number": 3,
+    "episode_type": "standard",
+    "production_code": "",
+    "runtime": 50,
+    "season_number": 1,
+    "show_id": 271338,
+    "still_path": null
+  },
+  "networks": [
+    {
+      "id": 290,
+      "logo_path": "/fqsd09CrijoGu6qfoNIdgUQmVGO.png",
+      "name": "TF1",
+      "origin_country": "FR"
+    }
+  ],
+  "number_of_episodes": 8,
+  "number_of_seasons": 1,
+  "origin_country": ["FR"],
+  "original_language": "fr",
+  "original_name": "La Comtesse de Monte-Cristo",
+  "overview": "1815. When her fiancé is wrongfully imprisoned and her rescue attempt ends in tragedy, Mercédès vows revenge against those who destroyed her life.",
+  "popularity": 11.6502,
+  "poster_path": "/2NH9iAVr1xLCDNmBoaqvW5XXQbG.jpg",
+  "production_companies": [
+    {
+      "id": 238945,
+      "logo_path": null,
+      "name": "Bahia Blanca",
+      "origin_country": "FR"
+    },
+    {
+      "id": 22123,
+      "logo_path": "/zPTy6QDAlCKGeAALZoFEL3QAlut.png",
+      "name": "TF1",
+      "origin_country": "FR"
+    },
+    {
+      "id": 160908,
+      "logo_path": "/llVFyu0XedaUI4RroWsFN4WIJSC.png",
+      "name": "Itinéraire Productions",
+      "origin_country": "FR"
+    },
+    {
+      "id": 178464,
+      "logo_path": "/tyHnxjQJLH6h4iDQKhN5iqebWmX.png",
+      "name": "Netflix",
+      "origin_country": "US"
+    },
+    {
+      "id": 31660,
+      "logo_path": "/WyMvFzAQje4GFWqCbW7fZCvN1H.png",
+      "name": "Okko Production",
+      "origin_country": "CZ"
+    },
+    {
+      "id": 19037,
+      "logo_path": "/tceh2aAORA5JxIZSLQ1GkzTBZDL.png",
+      "name": "uMedia",
+      "origin_country": "BE"
+    },
+    {
+      "id": 792,
+      "logo_path": "/cRhBQP1FFNugNxKkO1pUgeD2Rkr.png",
+      "name": "RTBF",
+      "origin_country": "BE"
+    }
+  ],
+  "production_countries": [
+    {
+      "iso_3166_1": "FR",
+      "name": "France"
+    },
+    {
+      "iso_3166_1": "US",
+      "name": "United States of America"
+    },
+    {
+      "iso_3166_1": "CZ",
+      "name": "Czech Republic"
+    }
+  ],
+  "seasons": [
+    {
+      "air_date": "2026-11-16",
+      "episode_count": 8,
+      "id": 418390,
+      "name": "Miniseries",
+      "overview": "",
+      "poster_path": "/asnC3wlSDcnhxpHioxrJXlHilWv.jpg",
+      "season_number": 1,
+      "vote_average": 0
+    }
+  ],
+  "softcore": false,
+  "spoken_languages": [
+    {
+      "english_name": "French",
+      "iso_639_1": "fr",
+      "name": "Français"
+    }
+  ],
+  "status": "Returning Series",
+  "tagline": "",
+  "type": "Miniseries",
+  "vote_average": 0,
+  "vote_count": 0,
+  "watch/providers": {
+    "results": {
+      "AD": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=AD",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "AO": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=AO",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "BE": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=BE",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 1
+          }
+        ]
+      },
+      "CH": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=CH",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "CI": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=CI",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "CM": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=CM",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 1
+          }
+        ]
+      },
+      "CV": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=CV",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "DZ": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=DZ",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "EG": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=EG",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "FR": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=FR",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          },
+          {
+            "logo_path": "/eGUwOOIxcazwEBxqJpSN5sWEu6V.png",
+            "provider_id": 1796,
+            "provider_name": "Netflix Standard with Ads",
+            "display_priority": 52
+          }
+        ]
+      },
+      "GF": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=GF",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "GH": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=GH",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "GQ": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=GQ",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "KE": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=KE",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 1
+          }
+        ]
+      },
+      "LB": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=LB",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 1
+          }
+        ]
+      },
+      "LU": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=LU",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "LY": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=LY",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "MA": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=MA",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "MC": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=MC",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "MG": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=MG",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 1
+          }
+        ]
+      },
+      "ML": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=ML",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 1
+          }
+        ]
+      },
+      "MU": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=MU",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "MZ": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=MZ",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "NE": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=NE",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "NG": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=NG",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 1
+          }
+        ]
+      },
+      "PF": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=PF",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 1
+          }
+        ]
+      },
+      "SC": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=SC",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 1
+          }
+        ]
+      },
+      "SN": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=SN",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 1
+          }
+        ]
+      },
+      "TD": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=TD",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 1
+          }
+        ]
+      },
+      "TN": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=TN",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 1
+          }
+        ]
+      },
+      "TZ": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=TZ",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "UG": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=UG",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "ZA": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=ZA",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 0
+          }
+        ]
+      },
+      "ZM": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=ZM",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 1
+          }
+        ]
+      },
+      "ZW": {
+        "link": "https://www.themoviedb.org/tv/271338-la-comtesse-de-monte-cristo/watch?locale=ZW",
+        "flatrate": [
+          {
+            "logo_path": "/rK1KljqmbvO9HQa1PBFLILWah72.png",
+            "provider_id": 8,
+            "provider_name": "Netflix",
+            "display_priority": 1
+          }
+        ]
+      }
+    }
+  }
+}

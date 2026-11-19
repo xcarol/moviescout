@@ -3,7 +3,7 @@ import 'package:moviescout/core/utils/app_constants.dart';
 
 enum UpdateType { none, full, light }
 
-enum NotificationTrigger { none, newAvailability, newSeason }
+enum NotificationTrigger { none, newAvailability, newSeason, seasonTooOld }
 
 class WatchlistNotificationEvaluator {
   static UpdateType checkNeedsUpdate(TmdbTitle title, DateTime now) {
@@ -18,7 +18,7 @@ class WatchlistNotificationEvaluator {
         isUninitialized;
 
     if (needsUpdate) {
-      return UpdateType.light; // We use light update for everything now!
+      return UpdateType.light;
     }
 
     return UpdateType.none;
@@ -131,20 +131,25 @@ class WatchlistNotificationEvaluator {
           '- check newSeason (${titleAfterUpdate.name}): currentSeason=$currentSeason, lastNotified=$lastNotified');
 
       if (currentSeason > lastNotified) {
-        if (_hasNewSeasonStarted(
+        final seasonTrigger = _evaluateNewSeasonStatus(
           logLines ?? [],
           titleAfterUpdate,
           currentSeason,
           now,
           notifyCompleteSeason,
-        )) {
+        );
+        if (seasonTrigger == NotificationTrigger.newSeason) {
           logLines?.add(
               '- Notification Trigger: New season started for ${titleAfterUpdate.name}.');
           return NotificationTrigger.newSeason;
-        } else {
-          logLines?.add(
-              '- Found new season for ${titleAfterUpdate.name} but premiere date not reached or too old.');
         }
+        if (seasonTrigger == NotificationTrigger.seasonTooOld) {
+          logLines?.add(
+              '- Season for ${titleAfterUpdate.name} is older than ${AppConstants.watchlistNewSeasonNotificationWindowDays} days. Marking as notified.');
+          return NotificationTrigger.seasonTooOld;
+        }
+        logLines?.add(
+            '- Found new season for ${titleAfterUpdate.name} but premiere/completion date not reached yet.');
       }
     }
 
@@ -181,7 +186,7 @@ class WatchlistNotificationEvaluator {
     return true;
   }
 
-  static bool _hasNewSeasonStarted(
+  static NotificationTrigger _evaluateNewSeasonStatus(
     List<String> logLines,
     TmdbTitle title,
     int currentSeason,
@@ -197,7 +202,7 @@ class WatchlistNotificationEvaluator {
         if (nextEpisode != null && nextEpisode.seasonNumber == currentSeason) {
           logLines.add(
               '- check (NotifyCompleteSeason): $titleName S$currentSeason is not complete yet (next episode is in the same season).');
-          return false;
+          return NotificationTrigger.none;
         }
 
         final airDateStr = lastEpisode.airDate;
@@ -211,15 +216,18 @@ class WatchlistNotificationEvaluator {
                     AppConstants.watchlistNewSeasonNotificationWindowDays) {
               logLines.add(
                   '- check (NotifyCompleteSeason): $titleName S$currentSeason ended $daysSinceEnded days ago. Notify.');
-              return true;
-            } else {
+              return NotificationTrigger.newSeason;
+            }
+            if (daysSinceEnded >=
+                AppConstants.watchlistNewSeasonNotificationWindowDays) {
               logLines.add(
-                  '- check (NotifyCompleteSeason): $titleName S$currentSeason ended $daysSinceEnded days ago. Too old.');
+                  '- check (NotifyCompleteSeason): $titleName S$currentSeason ended $daysSinceEnded days ago ($airDateStr). Too old.');
+              return NotificationTrigger.seasonTooOld;
             }
           }
         }
       }
-      return false;
+      return NotificationTrigger.none;
     }
 
     if (lastEpisode != null && lastEpisode.seasonNumber == currentSeason) {
@@ -231,17 +239,21 @@ class WatchlistNotificationEvaluator {
                 AppConstants.watchlistNewSeasonNotificationWindowDays) {
           logLines.add(
               '- check: $titleName S$currentSeason started $daysSinceStart days ago. Notify.');
-          return true;
-        } else {
+          return NotificationTrigger.newSeason;
+        }
+        if (daysSinceStart >=
+            AppConstants.watchlistNewSeasonNotificationWindowDays) {
+          final startDateStr = seasonAirDate.toIso8601String().split('T').first;
           logLines.add(
-              '- check: $titleName S$currentSeason started $daysSinceStart days ago. Too old.');
+              '- check: $titleName S$currentSeason started $daysSinceStart days ago ($startDateStr). Too old.');
+          return NotificationTrigger.seasonTooOld;
         }
       } else {
         // Fallback if no season air date: use the old "Episode 1" rule as a safe default
         if (lastEpisode.episodeNumber == 1) {
           logLines.add(
               '- check: $titleName S$currentSeason has no date but episode is 1. Notify.');
-          return true;
+          return NotificationTrigger.newSeason;
         }
       }
     }
@@ -262,7 +274,13 @@ class WatchlistNotificationEvaluator {
                       AppConstants.watchlistNewSeasonNotificationWindowDays) {
                 logLines.add(
                     '- check: $titleName S$currentSeason premiered today/recently via next_episode. Notify.');
-                return true;
+                return NotificationTrigger.newSeason;
+              }
+              if (daysSinceStart >=
+                  AppConstants.watchlistNewSeasonNotificationWindowDays) {
+                logLines.add(
+                    '- check: $titleName S$currentSeason premiered $daysSinceStart days ago ($airDateStr) via next_episode. Too old.');
+                return NotificationTrigger.seasonTooOld;
               }
             }
           }
@@ -272,7 +290,7 @@ class WatchlistNotificationEvaluator {
       }
     }
 
-    return false;
+    return NotificationTrigger.none;
   }
 
   static DateTime? _getSeasonAirDate(TmdbTitle title, int seasonNumber) {

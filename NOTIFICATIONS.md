@@ -35,6 +35,7 @@ flowchart TD
     CalcBase --> Eval["evaluateNotification(...)"]
 
     Eval -- "none" --> DoneNone["Return false"]
+    Eval -- "seasonTooOld" --> MarkOld["Set lastNotifiedSeason = numberOfSeasons; save DB + enqueue cloud sync; return false"]
     Eval -- "newAvailability" --> NotifyAvail["Send availability notification; if isSerie set lastNotifiedSeason = numberOfSeasons; save DB + enqueue cloud sync"]
     Eval -- "newSeason" --> NotifySeason["Send new season notification; set lastNotifiedSeason = numberOfSeasons; ensure in watchlist + save DB + enqueue cloud sync"]
 ```
@@ -91,21 +92,27 @@ flowchart TD
     CheckSeason -- No --> RetNone2["Return none"]
     CheckSeason -- Yes --> PrefMode{"notifyCompleteSeason?"}
 
-    PrefMode -- True --> FinCheck{"lastEpisode.season == currentSeason AND nextEpisode.season != currentSeason AND 0 <= (now - lastEpisode.airDate) < 14d?"}
-    FinCheck -- Yes --> RetSeason["Return newSeason"]
+    PrefMode -- True --> FinCheck{"lastEpisode.season == currentSeason AND nextEpisode.season != currentSeason AND lastEpisode.airDate <= now?"}
+    FinCheck -- Yes --> FinWin{"(now - lastEpisode.airDate) < 14d?"}
+    FinWin -- Yes --> RetSeason["Return newSeason"]
+    FinWin -- No --> RetOld1["Return seasonTooOld"]
     FinCheck -- No --> RetNone3["Return none"]
 
     PrefMode -- False --> StartCheck1{"lastEpisode.season == currentSeason?"}
     StartCheck1 -- Yes --> HasSeasonDate{"season.air_date exists?"}
     HasSeasonDate -- Yes --> InWin1{"0 <= (now - season.air_date) < 14d?"}
     InWin1 -- Yes --> RetSeason
-    InWin1 -- No --> CheckNext1
+    InWin1 -- No --> OldWin1{"(now - season.air_date) >= 14d?"}
+    OldWin1 -- Yes --> RetOld2["Return seasonTooOld"]
+    OldWin1 -- No --> CheckNext1
     HasSeasonDate -- No --> Ep1Fallback{"lastEpisode.episodeNumber == 1?"}
     Ep1Fallback -- Yes --> RetSeason
     Ep1Fallback -- No --> CheckNext1
 
-    StartCheck1 -- No --> CheckNext1{"nextEpisode.season == currentSeason AND nextEpisode.episodeNumber == 1 AND 0 <= (now - nextEpisode.airDate) < 14d?"}
-    CheckNext1 -- Yes --> RetSeason
+    StartCheck1 -- No --> CheckNext1{"nextEpisode.season == currentSeason AND nextEpisode.episodeNumber == 1 AND nextEpisode.airDate <= now?"}
+    CheckNext1 -- Yes --> NextWin{"(now - nextEpisode.airDate) < 14d?"}
+    NextWin -- Yes --> RetSeason
+    NextWin -- No --> RetOld3["Return seasonTooOld"]
     CheckNext1 -- No --> RetNone4["Return none"]
 ```
 ![Diagram of evaluateNotification](assets/docs/evaluate_notification_flow.jpeg)
@@ -114,5 +121,26 @@ flowchart TD
 
 ## Key Behavioral Notes
 
-- **Deferred `newAvailability` with `notifyCompleteSeason = true`:** When an incomplete season becomes available on a provider, `flatrateProviderIds` is persisted on the first run. Once the season finishes (within 14 days), `wasAvailable` is already `true`, so it fires as `newSeason` ("New season") provided `currentSeason > lastNotifiedSeason`.
+- **Deferred `newAvailability` with `notifyCompleteSeason = true`:** When an incomplete season becomes available on a provider, `flatrateProviderIds` is persisted on the first run. Once the last episode airs, `wasAvailable` is already `true`, so it fires as `newSeason` ("New season") provided `currentSeason > lastNotifiedSeason` (the 14-day window only starts from that finale date).
 - **Cloud sync (`CloudTitleRepository`):** Local `-1` (`seasonNotInitialized`) is clamped to `0` (`math.max(0, lastNotifiedSeason)`) on write, and remote values `<= 0` are mapped back to `-1` on initial fetch.
+
+---
+
+## 4. User Use Cases (When Do You Get Notified?)
+
+### Movies
+
+- **Not available → available** on any of your enabled platforms → **Notifies** (*Now available*).
+- Already available, not available, or removed → **Does not notify**.
+
+### TV Series
+
+| Real-World Situation | `notifyCompleteSeason = false` | `notifyCompleteSeason = true` |
+| :--- | :--- | :--- |
+| **1. You add a series NOT yet on your platforms**, and later it arrives on one | **Notifies** (*Now available*) as soon as it arrives | **Notifies** (*Now available*) if already complete; if still airing, defers and **notifies** (*New season*) once the season finishes |
+| **2. You add a series ALREADY on your platforms whose current season already started/ended** | **Does not notify** on add (baseline set to `numberOfSeasons`) | **Does not notify** if finished; if still airing, baseline is `numberOfSeasons - 1` so it **notifies** when finished |
+| **3. You add an unreleased series ALREADY listed on a platform** | Baseline stays `0`; **notifies** (*New season*) when S1 premieres | Baseline stays `0`; **notifies** (*New season*) when S1 finishes |
+| **4. A followed/watchlist series on your platforms gets a new season** | **Notifies** (*New season*) when it premieres | **Notifies** (*New season*) when the last episode airs |
+| **5. A new season premiered (or finished, if `notifyCompleteSeason = true`) `>= 14` days ago** (missed sync or late TMDB update) | **Does not notify** and marks `lastNotifiedSeason = currentSeason` | **Does not notify** and marks `lastNotifiedSeason = currentSeason` |
+| **6. A new season airs, but the series is NOT on your platforms** | **Does not notify** (will notify via Case 1 if the series later arrives on your platforms) | **Does not notify** (will notify via Case 1 if the series later arrives complete on your platforms) |
+
