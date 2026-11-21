@@ -76,14 +76,20 @@ class AiModelThinkingSelector extends StatelessWidget {
     final textStyle = TextStyle(fontSize: 16, color: effectiveTextColor);
     final arrowIcon = Icon(Icons.arrow_drop_down, color: effectiveTextColor);
 
+    const dropdownPadding = EdgeInsets.symmetric(
+      horizontal: AppSpacing.sm,
+      vertical: AppSpacing.xs,
+    );
+
     final modelDropdown = DropdownSelector(
       border: border,
       borderRadius: borderRadius,
+      padding: dropdownPadding,
       textStyle: textStyle,
       arrowIcon: arrowIcon,
       leading: Icon(
         Icons.smart_toy_outlined,
-        size: 18,
+        size: 20,
         color: effectiveTextColor,
       ),
       selectedOption: selectedModelLabel,
@@ -115,11 +121,12 @@ class AiModelThinkingSelector extends StatelessWidget {
     final thinkingDropdown = DropdownSelector(
       border: border,
       borderRadius: borderRadius,
+      padding: dropdownPadding,
       textStyle: textStyle,
       arrowIcon: arrowIcon,
       leading: Icon(
         Icons.psychology_outlined,
-        size: 18,
+        size: 20,
         color: effectiveTextColor,
       ),
       selectedOption: selectedThinkingLabel,
@@ -212,14 +219,14 @@ class AiModelThinkingSelector extends StatelessWidget {
       borderRadius: AppRadius.borderXs,
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(AppSpacing.xxs),
+        padding: AppSpacing.edgeInsetsAllXs,
         decoration: BoxDecoration(
           border: Border.all(color: borderColor),
           borderRadius: borderRadius,
         ),
         child: Icon(
           icon,
-          size: 20,
+          size: 24,
           color: iconColor,
         ),
       ),
