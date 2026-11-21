@@ -117,13 +117,16 @@ class TmdbEditWebViewScreen extends StatefulWidget {
   State<TmdbEditWebViewScreen> createState() => _TmdbEditWebViewScreenState();
 }
 
-class _TmdbEditWebViewScreenState extends State<TmdbEditWebViewScreen> {
+class _TmdbEditWebViewScreenState extends State<TmdbEditWebViewScreen>
+    with WidgetsBindingObserver {
   late final WebViewController _controller;
   late final Uri _initialUri;
   Timer? _retryTimer;
   Timer? _injectedFeedbackTimer;
+  Timer? _insetDebounceTimer;
 
   double _progress = 0.0;
+  double _settledBottomInset = 0.0;
   bool _backgroundInitialized = false;
   bool _showInjectedCheck = false;
   String? _statusBanner;
@@ -135,6 +138,7 @@ class _TmdbEditWebViewScreenState extends State<TmdbEditWebViewScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _initialUri = TmdbEditWebViewScreen.buildEditUri(
       widget.editUrl,
       widget.targetLanguageCode,
@@ -174,9 +178,26 @@ class _TmdbEditWebViewScreenState extends State<TmdbEditWebViewScreen> {
   }
 
   @override
+  void didChangeMetrics() {
+    _insetDebounceTimer?.cancel();
+    _insetDebounceTimer = Timer(const Duration(milliseconds: 140), () {
+      if (!mounted) return;
+      final view = View.of(context);
+      final bottomInset = view.viewInsets.bottom / view.devicePixelRatio;
+      if ((bottomInset - _settledBottomInset).abs() > 0.5) {
+        setState(() {
+          _settledBottomInset = bottomInset;
+        });
+      }
+    });
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _retryTimer?.cancel();
     _injectedFeedbackTimer?.cancel();
+    _insetDebounceTimer?.cancel();
     super.dispose();
   }
 
@@ -272,6 +293,7 @@ class _TmdbEditWebViewScreenState extends State<TmdbEditWebViewScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(l10n.tmdbEditPageTitle),
         actions: [
@@ -330,6 +352,7 @@ class _TmdbEditWebViewScreenState extends State<TmdbEditWebViewScreen> {
             Expanded(
               child: WebViewWidget(controller: _controller),
             ),
+            if (_settledBottomInset > 0) SizedBox(height: _settledBottomInset),
           ],
         ),
       ),

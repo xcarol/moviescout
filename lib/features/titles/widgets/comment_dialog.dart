@@ -23,6 +23,9 @@ class CommentDialog extends StatefulWidget {
 
 class _CommentDialogState extends State<CommentDialog> {
   late final TextEditingController _controller;
+  final FocusNode _focusNode = FocusNode();
+  Animation<double>? _routeAnimation;
+  bool _focusRequested = false;
   bool _isLoading = false;
   late bool _canSave;
   late bool _hasText;
@@ -39,6 +42,34 @@ class _CommentDialogState extends State<CommentDialog> {
     _controller.addListener(_handleTextChanged);
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_focusRequested) {
+      final animation = ModalRoute.of(context)?.animation;
+      if (animation == null || animation.isCompleted) {
+        _focusRequested = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _focusNode.requestFocus();
+        });
+      } else if (_routeAnimation != animation) {
+        _routeAnimation?.removeStatusListener(_handleRouteAnimationStatus);
+        _routeAnimation = animation;
+        animation.addStatusListener(_handleRouteAnimationStatus);
+      }
+    }
+  }
+
+  void _handleRouteAnimationStatus(AnimationStatus status) {
+    if (status == AnimationStatus.completed && !_focusRequested) {
+      _focusRequested = true;
+      _routeAnimation?.removeStatusListener(_handleRouteAnimationStatus);
+      if (mounted) {
+        _focusNode.requestFocus();
+      }
+    }
+  }
+
   void _handleTextChanged() {
     final canSave = _controller.text.trim().isNotEmpty;
     final hasText = _controller.text.isNotEmpty;
@@ -52,8 +83,10 @@ class _CommentDialogState extends State<CommentDialog> {
 
   @override
   void dispose() {
+    _routeAnimation?.removeStatusListener(_handleRouteAnimationStatus);
     _controller.removeListener(_handleTextChanged);
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -124,10 +157,12 @@ class _CommentDialogState extends State<CommentDialog> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
 
-    return AlertDialog(
-      title: _dialogTitle(loc),
-      content: _dialogContent(loc),
-      actions: _dialogActions(loc),
+    return RepaintBoundary(
+      child: AlertDialog(
+        title: _dialogTitle(loc),
+        content: _dialogContent(loc),
+        actions: _dialogActions(loc),
+      ),
     );
   }
 
@@ -180,7 +215,7 @@ class _CommentDialogState extends State<CommentDialog> {
   Widget _commentInputField(AppLocalizations loc) {
     return TextField(
       controller: _controller,
-      autofocus: true,
+      focusNode: _focusNode,
       enabled: !_isLoading,
       maxLines: 6,
       minLines: 3,
