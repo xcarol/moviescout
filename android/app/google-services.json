@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "522907829647-8up8udu6u75knaiat9arndavorj8i9mr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.xicra.moviescout",
+            "certificate_hash": "5c610bf87831bd4ceea2bcd5fd2c06c068f81e46"
+          }
+        },
+        {
+          "client_id": "522907829647-b7nrs1aqtj9qq3lvh4mcdb36ct3knqvn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.xicra.moviescout",
+            "certificate_hash": "ed439e7338dcec8ba5f8d7d86692991d8ea9c51c"
+          }
+        },
+        {
           "client_id": "522907829647-er8h75idoblm2af8o412ejgav6rvvc8l.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -23,8 +39,12 @@
           }
         },
         {
-          "client_id": "522907829647-g3amo1mcfp0smq336kqsaf8826g3d418.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "522907829647-qp3jmor8rfp7rvtifkdoe4l0qe6jdd99.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.xicra.moviescout",
+            "certificate_hash": "7598681ce56ef4e27c7517ac891c0be75a36eade"
+          }
         }
       ],
       "api_key": [
@@ -36,7 +56,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "522907829647-g3amo1mcfp0smq336kqsaf8826g3d418.apps.googleusercontent.com",
+              "client_id": "522907829647-a0if1au9njdu1t9iu080vvcsk760uner.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
