@@ -5,7 +5,6 @@ import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/core/models/translation_content_type.dart';
 import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/core/utils/app_constants.dart';
-import 'package:moviescout/core/utils/snack_bar.dart';
 import 'package:moviescout/core/utils/tmdb_edit_script.dart';
 import 'package:moviescout/features/settings/services/language_service.dart';
 import 'package:moviescout/features/settings/services/region_service.dart';
@@ -118,13 +117,18 @@ class TmdbEditWebViewScreen extends StatefulWidget {
   State<TmdbEditWebViewScreen> createState() => _TmdbEditWebViewScreenState();
 }
 
-class _TmdbEditWebViewScreenState extends State<TmdbEditWebViewScreen> {
+class _TmdbEditWebViewScreenState extends State<TmdbEditWebViewScreen>
+    with WidgetsBindingObserver {
   late final WebViewController _controller;
   late final Uri _initialUri;
   Timer? _retryTimer;
+  Timer? _injectedFeedbackTimer;
+  Timer? _insetDebounceTimer;
 
   double _progress = 0.0;
+  double _settledBottomInset = 0.0;
   bool _backgroundInitialized = false;
+  bool _showInjectedCheck = false;
   String? _statusBanner;
 
   bool get _hasTranslationToInject =>
@@ -134,6 +138,7 @@ class _TmdbEditWebViewScreenState extends State<TmdbEditWebViewScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _initialUri = TmdbEditWebViewScreen.buildEditUri(
       widget.editUrl,
       widget.targetLanguageCode,
@@ -173,8 +178,26 @@ class _TmdbEditWebViewScreenState extends State<TmdbEditWebViewScreen> {
   }
 
   @override
+  void didChangeMetrics() {
+    _insetDebounceTimer?.cancel();
+    _insetDebounceTimer = Timer(const Duration(milliseconds: 140), () {
+      if (!mounted) return;
+      final view = View.of(context);
+      final bottomInset = view.viewInsets.bottom / view.devicePixelRatio;
+      if ((bottomInset - _settledBottomInset).abs() > 0.5) {
+        setState(() {
+          _settledBottomInset = bottomInset;
+        });
+      }
+    });
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _retryTimer?.cancel();
+    _injectedFeedbackTimer?.cancel();
+    _insetDebounceTimer?.cancel();
     super.dispose();
   }
 
@@ -228,13 +251,18 @@ class _TmdbEditWebViewScreenState extends State<TmdbEditWebViewScreen> {
       }
 
       if (status == 'injected') {
+        _injectedFeedbackTimer?.cancel();
         setState(() {
           _statusBanner = null;
+          _showInjectedCheck = true;
         });
-        SnackMessage.showSnackBar(
-          l10n.tmdbTranslationInjected,
-          context: context,
-        );
+        _injectedFeedbackTimer = Timer(const Duration(seconds: 2), () {
+          if (mounted) {
+            setState(() {
+              _showInjectedCheck = false;
+            });
+          }
+        });
         return;
       }
 
@@ -265,13 +293,19 @@ class _TmdbEditWebViewScreenState extends State<TmdbEditWebViewScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(l10n.tmdbEditPageTitle),
         actions: [
           if (_hasTranslationToInject)
             IconButton(
-              tooltip: l10n.tmdbInjectTranslation,
-              icon: const Icon(Icons.edit_note),
+              tooltip: _showInjectedCheck
+                  ? l10n.tmdbTranslationInjected
+                  : l10n.tmdbInjectTranslation,
+              icon: Icon(
+                _showInjectedCheck ? Icons.check : Icons.edit_note,
+                color: _showInjectedCheck ? colorScheme.primary : null,
+              ),
               onPressed: () => _attemptInjection(retryCount: 0, manual: true),
             ),
           IconButton(
@@ -318,6 +352,7 @@ class _TmdbEditWebViewScreenState extends State<TmdbEditWebViewScreen> {
             Expanded(
               child: WebViewWidget(controller: _controller),
             ),
+            if (_settledBottomInset > 0) SizedBox(height: _settledBottomInset),
           ],
         ),
       ),

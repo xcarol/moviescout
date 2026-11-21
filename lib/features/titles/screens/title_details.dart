@@ -141,6 +141,7 @@ class _TitleDetailsState extends State<TitleDetails> {
         .replaceFirst('{ID}', _currentTitle.tmdbId.toString());
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(appTitle),
         actions: [

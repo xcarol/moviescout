@@ -10,6 +10,7 @@ class DropdownSelector extends StatelessWidget {
   final Color? backgroundColor;
   final BoxBorder? border;
   final BorderRadiusGeometry? borderRadius;
+  final EdgeInsetsGeometry? padding;
   final Widget Function(BuildContext, String, bool, VoidCallback)? itemBuilder;
   final Widget? leading;
   final double? maxMenuHeight;
@@ -26,6 +27,7 @@ class DropdownSelector extends StatelessWidget {
     this.buttonBackgroundColor,
     this.border,
     this.borderRadius,
+    this.padding,
     this.itemBuilder,
     this.leading,
     this.maxMenuHeight,
@@ -53,7 +55,7 @@ class DropdownSelector extends StatelessWidget {
             controller.isOpen ? controller.close() : controller.open();
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
+            padding: padding ?? const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
               color: buttonBackgroundColor,
               border: border,

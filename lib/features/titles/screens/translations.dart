@@ -747,6 +747,10 @@ class _TranslationPageContentState extends State<_TranslationPageContent>
         color: Theme.of(context).colorScheme.secondary,
       ),
       borderRadius: AppRadius.borderXs,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
       selectedOption: selectedOption,
       options: options,
       maxMenuHeight: 300,
