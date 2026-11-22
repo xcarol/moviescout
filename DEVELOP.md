@@ -90,7 +90,18 @@ On _MovieScout Android_ parameter `--device-id` set the desired device name.
 
 Followed this guide: [i18n|Flutter](https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization)  
 
-Run `flutter gen-l10n` to update the i18n generated files.  
+Run `flutter gen-l10n` to update the i18n generated files.
+
+### Web Companion Sync & Adding Languages
+
+The SvelteKit web companion in `backend/` reuses the Flutter `.arb` translations and `assets/l10n/*.json` metadata tables. Because Vercel deploys with `backend` as its Root Directory, generated copies are committed inside `backend/`:
+
+- **After modifying `.arb` literals or `assets/l10n/*.json`:** run `cd backend && npm run sync` (`backend/scripts/sync-shared-assets.mjs`) and commit the updated files in `backend/src/lib/i18n/generated/`.
+- **When adding a new language:**
+  1. Add the `app_<lang>.arb` → `<locale>` mapping to `ARB_LOCALE_MAP` in `backend/scripts/sync-shared-assets.mjs` and run `cd backend && npm run sync`.
+  2. Register the locale in `backend/src/lib/i18n/locales.ts` (`SUPPORTED_LOCALES`, `LOCALE_NATIVE_NAMES`, `LOCALE_OG_MAP`, `BASE_LANGUAGE_MAP`).
+  3. Add web-specific translations in `backend/src/lib/i18n/web-messages.ts`.
+  4. Import the generated message and metadata JSONs in `backend/src/lib/i18n/metadata.ts` and `backend/src/lib/i18n/index.ts`.
 
 ## Shared Preferences
 
@@ -162,15 +173,21 @@ Get the **API Key** (`OMDB_API_KEY`) from [OMDb API](https://www.omdbapi.com/api
 
 ## Vercel Deployment
 
-MovieScout relies on a Vercel-hosted environment (located in the `backend/` directory) for:
+MovieScout relies on a **SvelteKit (Svelte 5) + TypeScript** web companion hosted on Vercel in the `backend/` directory (`@sveltejs/adapter-vercel`) for:
 
-1. **Web Landing Page & Legal Terms:** Serving `index.html`, `privacy.html`, `terms.html`, and Google Search Console site verification directly under `https://moviescout.xicra.com/`.
-2. **Android App Links verification:** Serving the `/.well-known/assetlinks.json` file so Android can verify `moviescout.xicra.com` deep links belong to the app.
-3. **URL Redirects (`vercel.json`):** Redirecting TMDB links (`/movie/*`, `/tv/*`, `/person/*`, `/collection/*`) to `themoviedb.org`.
+1. **Public SSR Pages & Landing (`src/routes/`):** Serving a multi-language landing page (`/`) and server-rendered pages with SEO, OpenGraph, and JSON-LD for `/movie/[id]`, `/tv/[id]`, `/tv/[id]/season/[seasonNumber]`, `/tv/[id]/season/[seasonNumber]/episode/[episodeNumber]`, `/person/[id]`, and `/collection/[id]`.
+2. **Android App Links verification:** Serving `backend/static/.well-known/assetlinks.json` (`Content-Type: application/json` via `vercel.json`) so Android can verify `moviescout.xicra.com` deep links belong to the app.
+3. **Legal Pages, Verification & Remote Config (`backend/static/`):** Serving `privacy.html`, `terms.html`, `google5da2fd1c2b04afea.html`, and CORS-enabled remote JSONs (`ai-models.json`, `ai-prompts.json`, `tmdb-edit-selectors.json`).
+
+### Environment Variables & Sync
+
+- In the Vercel Dashboard (*Project Settings → Environment Variables*), configure `TMDB_API_RAT` (required, server-only) and `OMDB_API_KEY` (optional, server-only).
+- Before pushing changes that modify `lib/l10n/*.arb`, `assets/l10n/*.json`, or shared `assets/*.png`, run `cd backend && npm run sync` so `backend/` stays self-contained for Vercel builds.
+- See `backend/README.md` for local development commands (`npm run dev`, `npm run check`, `npm run build`, `npm run preview`).
 
 ### How Deployment Works
 
-- **Automatic Deploy (via Git):** The Vercel project is linked to the GitHub repository (`xcarol/moviescout`) with **Root Directory** set to `backend`. Pushing commits to the tracked branch (`master`) automatically builds and deploys changes to production (`https://moviescout.xicra.com/`).
+- **Automatic Deploy (via Git):** The Vercel project is linked to the GitHub repository (`xcarol/moviescout`) with **Root Directory** set to `backend` and **Framework Preset** set to **SvelteKit**. Pushing commits to the tracked branch (`master`) automatically builds and deploys changes to production (`https://moviescout.xicra.com/`).
 - **Manual Deploy (via CLI):** If deploying without pushing, execute:
   ```bash
   cd backend
@@ -180,9 +197,9 @@ MovieScout relies on a Vercel-hosted environment (located in the `backend/` dire
 ### Domain & Google Verification
 
 - **Custom Domain:** Configured as `moviescout.xicra.com` in Vercel settings, pointing via DNS CNAME to Vercel.
-- **Google Search Console:** Verified using the URL prefix method (`https://moviescout.xicra.com/`) via the static verification file `backend/public/google*.html`.
+- **Google Search Console:** Verified using the URL prefix method (`https://moviescout.xicra.com/`) via the static verification file `backend/static/google*.html`.
 - **Google Cloud OAuth Consent Screen:** `moviescout.xicra.com` is added as an **Authorized Domain**, allowing `https://moviescout.xicra.com/privacy.html` and `https://moviescout.xicra.com/terms.html` to be valid for Google Sign-In and Google Play verification.
-- **App Links Fingerprints:** Ensure `backend/public/.well-known/assetlinks.json` contains the SHA-256 certificate fingerprints for both your local debug keystore and Google Play App Signing key.
+- **App Links Fingerprints:** Ensure `backend/static/.well-known/assetlinks.json` contains the SHA-256 certificate fingerprints for both your local debug keystore and Google Play App Signing key.
 
 *(Note: The legacy Firebase Custom Auth serverless function previously hosted on Vercel has been deprecated and removed, as all authentication and user data are now handled by Supabase).*
 
@@ -254,6 +271,8 @@ Once you have completed the Google Cloud and Supabase configuration, ensure your
 ## Assets
 
 Images like tvshow-poster.png are created with [Cool Text](https://cooltext.com/) tool using [FUN](https://cooltext.com/Logo-Design-Fun) text style.  
+
+Shared PNG brand and fallback assets used by the web companion are copied to `backend/static/assets/` by `cd backend && npm run sync`. Re-run `npm run sync` when updating shared PNGs, or add new filenames to `SHARED_PNG_ASSETS` in `backend/scripts/sync-shared-assets.mjs`.
 
 ## Flutter tool box
 
