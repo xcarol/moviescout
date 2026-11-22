@@ -31,7 +31,8 @@ export const TMDB_LOGO_ASSET = '/assets/tmdb-logo.png';
 export const ERROR_NETWORK_ASSET = '/assets/error-network.png';
 
 export function tmdbImageUrl(path: string, size: TmdbImageSize = 'w500'): string {
-	return `${TMDB_IMAGE_BASE_URL}/${size}${path}`;
+	const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+	return `${TMDB_IMAGE_BASE_URL}/${size}${normalizedPath}`;
 }
 
 export function youtubeEmbedUrl(key: string): string {

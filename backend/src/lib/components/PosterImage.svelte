@@ -52,20 +52,18 @@
 	}: Props = $props();
 
 	let failed = $state(false);
-	let loaded = $state(false);
 	let imgEl: HTMLImageElement | undefined = $state();
 
 	const fallbackSrc = $derived(FALLBACK_ASSETS[fallbackType]);
 
 	const resolvedSrc = $derived.by(() => {
 		if (failed || !path) return fallbackSrc;
-		if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/')) {
+		if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/assets/')) {
 			return path;
 		}
 		return tmdbImageUrl(path, size);
 	});
 
-	const isFallback = $derived(failed || !path);
 	const effectiveFetchPriority = $derived(
 		priority === 'high' ? 'high' : priority === 'low' ? 'low' : undefined
 	);
@@ -77,24 +75,20 @@
 		// Reset error state when the requested path changes across client-side navigations.
 		void path;
 		failed = false;
-		loaded = browser && imgEl?.complete ? imgEl.naturalWidth > 0 : false;
+		if (browser && imgEl && imgEl.complete && imgEl.naturalWidth === 0 && path) {
+			failed = true;
+		}
 	});
-
-	function handleLoad() {
-		loaded = true;
-	}
 
 	function handleError() {
 		if (!failed) {
 			failed = true;
-			loaded = true;
 		}
 	}
 </script>
 
 <div
 	class="poster-frame"
-	class:is-loaded={loaded || isFallback}
 	style:aspect-ratio={aspectRatio}
 	style:border-radius={radius}
 >
@@ -109,8 +103,6 @@
 		loading={effectiveLoading}
 		fetchpriority={effectiveFetchPriority}
 		decoding={priority === 'high' ? 'sync' : 'async'}
-		class:is-fallback={isFallback}
-		onload={handleLoad}
 		onerror={handleError}
 	/>
 </div>
@@ -127,17 +119,5 @@
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		opacity: 0;
-	}
-
-	.poster-frame.is-loaded img,
-	img.is-fallback {
-		opacity: 1;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		img {
-			transition: opacity 200ms ease-out;
-		}
 	}
 </style>
