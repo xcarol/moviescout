@@ -1,5 +1,6 @@
 <script lang="ts">
 	import AppPromoBanner from '$lib/components/AppPromoBanner.svelte';
+	import CreditsInfo from '$lib/components/CreditsInfo.svelte';
 	import ExpandableText from '$lib/components/ExpandableText.svelte';
 	import HorizontalRail from '$lib/components/HorizontalRail.svelte';
 	import MediaCarousel from '$lib/components/MediaCarousel.svelte';
@@ -89,6 +90,8 @@
 			{/if}
 		</div>
 	</header>
+
+	<CreditsInfo crew={season.crew} mediaType="tv" locale={data.locale} />
 
 	<section class="section-block" aria-labelledby="episodes-heading">
 		<h2 id="episodes-heading" class="section-title">{t(data.locale, 'episodes')}</h2>

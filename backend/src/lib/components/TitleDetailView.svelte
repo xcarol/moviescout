@@ -11,7 +11,10 @@
 		type SupportedLocale
 	} from '$lib/i18n';
 	import type { TitleDetails } from '$lib/types/tmdb';
+	import { getPrimaryHeaderCredit } from '$lib/utils/credits';
 	import AppPromoBanner from './AppPromoBanner.svelte';
+	import ClickableNames from './ClickableNames.svelte';
+	import CreditsInfo from './CreditsInfo.svelte';
 	import ExpandableText from './ExpandableText.svelte';
 	import ExternalLinks from './ExternalLinks.svelte';
 	import HorizontalRail from './HorizontalRail.svelte';
@@ -64,13 +67,7 @@
 		return '';
 	});
 
-	const keyCrew = $derived(
-		details.crew
-			.filter((member) =>
-				/\b(Director|Creator|Writer|Screenplay|Showrunner)\b/i.test(member.role)
-			)
-			.slice(0, 6)
-	);
+	const headerCredit = $derived(getPrimaryHeaderCredit(details.crew));
 
 	const visibleSeasons = $derived(
 		[...details.seasons].sort((a, b) => {
@@ -138,6 +135,13 @@
 					<span class="cert-badge">{details.certification}</span>
 				{/if}
 			</div>
+
+			{#if headerCredit}
+				<div class="header-credit">
+					<span class="header-credit-label">{t(locale, headerCredit.labelKey)}</span>
+					<ClickableNames people={headerCredit.people} {locale} useEllipsis={true} />
+				</div>
+			{/if}
 
 			{#if details.genres.length > 0}
 				<ul class="genre-list">
@@ -217,16 +221,7 @@
 		{/if}
 	</section>
 
-	{#if keyCrew.length > 0}
-		<section class="section-block key-crew">
-			{#each keyCrew as member (member.id)}
-				<a class="crew-pill" href={`/person/${member.id}`}>
-					<span class="crew-name">{member.name}</span>
-					<span class="crew-role">{translateJob(member.role, locale)}</span>
-				</a>
-			{/each}
-		</section>
-	{/if}
+	<CreditsInfo crew={details.crew} mediaType={details.mediaType} {locale} />
 
 	{#if details.belongsToCollection}
 		<section class="section-block">
@@ -410,6 +405,18 @@
 		font-weight: 600;
 	}
 
+	.header-credit {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+	}
+
+	.header-credit-label {
+		font-size: var(--text-body-sm);
+		font-style: italic;
+		color: var(--color-text-subtle);
+	}
+
 	.genre-list {
 		display: flex;
 		flex-wrap: wrap;
@@ -462,35 +469,6 @@
 		font-size: var(--text-body-md);
 		color: var(--color-text);
 		font-weight: 500;
-	}
-
-	.key-crew {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-sm);
-	}
-
-	.crew-pill {
-		display: flex;
-		flex-direction: column;
-		padding: var(--space-sm) var(--space-md);
-		border-radius: var(--radius-sm);
-		background-color: var(--color-surface);
-		border: 1px solid var(--color-border);
-	}
-
-	.crew-pill:hover {
-		border-color: var(--color-primary);
-	}
-
-	.crew-name {
-		font-weight: 600;
-		font-size: var(--text-body-sm);
-	}
-
-	.crew-role {
-		font-size: var(--text-body-sm);
-		color: var(--color-text-muted);
 	}
 
 	.collection-card {

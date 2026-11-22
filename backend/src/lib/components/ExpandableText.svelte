@@ -1,30 +1,35 @@
 <script lang="ts">
-	import { untrack } from 'svelte';
+	import { untrack, type Snippet } from 'svelte';
 
 	interface Props {
-		text: string;
+		text?: string;
+		children?: Snippet;
+		resetKey?: string | number;
 		maxLines?: number;
 		moreLabel: string;
 		lessLabel: string;
 	}
 
-	let { text, maxLines = 3, moreLabel, lessLabel }: Props = $props();
+	let { text = '', children, resetKey, maxLines = 3, moreLabel, lessLabel }: Props = $props();
 
 	let expanded = $state(false);
 	let canExpand = $state(false);
 	let paragraphEl: HTMLParagraphElement | undefined = $state();
-	let lastText = '';
+	let lastResetKey = '';
+
+	const effectiveResetKey = $derived(resetKey !== undefined ? String(resetKey) : text);
+	const hasContent = $derived(Boolean(children) || text.trim().length > 0);
 
 	$effect(() => {
-		if (text !== lastText) {
-			lastText = text;
+		if (effectiveResetKey !== lastResetKey) {
+			lastResetKey = effectiveResetKey;
 			expanded = false;
 		}
 	});
 
 	$effect(() => {
 		const el = paragraphEl;
-		void text;
+		void effectiveResetKey;
 		void maxLines;
 		if (!el) return;
 
@@ -42,15 +47,20 @@
 	});
 </script>
 
-{#if text.trim()}
+{#if hasContent}
 	<div class="expandable-text">
 		<p
 			bind:this={paragraphEl}
 			class="body"
+			class:pre-line={!children}
 			class:is-clamped={!expanded}
 			style:--line-clamp={maxLines}
 		>
-			{text}
+			{#if children}
+				{@render children()}
+			{:else}
+				{text}
+			{/if}
 		</p>
 		{#if canExpand || expanded}
 			<button
@@ -99,6 +109,9 @@
 		color: var(--color-text);
 		font-size: var(--text-body-md);
 		line-height: 1.6;
+	}
+
+	.body.pre-line {
 		white-space: pre-line;
 	}
 
