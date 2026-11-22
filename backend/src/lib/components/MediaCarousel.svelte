@@ -331,23 +331,23 @@
 					</div>
 				{/each}
 			</div>
+
+			<nav class="carousel-markers" aria-label={label}>
+				{#each images as imgPath, idx (imgPath)}
+					<button
+						type="button"
+						class="marker-btn"
+						aria-label={`${idx + 1} / ${count}`}
+						aria-current={idx === currentIndex ? 'true' : undefined}
+						onclick={() => jumpToMarker(idx)}
+					>
+						<span class="marker-dot"></span>
+					</button>
+				{/each}
+			</nav>
 		</div>
 
 		<p class="visually-hidden" role="status" aria-live="polite">{announcement}</p>
-
-		<nav class="carousel-markers" aria-label={label}>
-			{#each images as imgPath, idx (imgPath)}
-				<button
-					type="button"
-					class="marker-btn"
-					aria-label={`${idx + 1} / ${count}`}
-					aria-current={idx === currentIndex ? 'true' : undefined}
-					onclick={() => jumpToMarker(idx)}
-				>
-					<span class="marker-dot"></span>
-				</button>
-			{/each}
-		</nav>
 	</section>
 {/if}
 
@@ -434,37 +434,50 @@
 	}
 
 	.carousel-markers {
+		position: absolute;
+		inset-block-end: var(--space-sm);
+		inset-inline: var(--space-sm);
+		z-index: 2;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		flex-wrap: wrap;
-		gap: var(--space-xs);
+		flex-wrap: nowrap;
+		gap: var(--space-xxs);
+		pointer-events: none;
 	}
 
 	.marker-btn {
+		pointer-events: auto;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		min-width: 24px;
-		min-height: 24px;
-		padding: 0;
+		flex: 0 1 20px;
+		min-width: 0;
+		height: 24px;
+		padding-inline: var(--space-xxs);
 		border: none;
 		background: transparent;
 		cursor: pointer;
 		touch-action: manipulation;
 	}
 
+	.marker-btn[aria-current='true'] {
+		flex: 0 1 28px;
+	}
+
 	.marker-dot {
 		display: block;
-		width: 8px;
+		width: 100%;
+		max-width: 8px;
 		height: 8px;
 		border-radius: var(--radius-full);
-		background-color: var(--color-outline);
-		transition: width 150ms ease, background-color 150ms ease;
+		background-color: rgba(245, 245, 245, 0.55);
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+		transition: max-width 150ms ease, background-color 150ms ease;
 	}
 
 	.marker-btn[aria-current='true'] .marker-dot {
-		width: 20px;
+		max-width: 16px;
 		background-color: var(--color-primary);
 		outline: 1px solid var(--color-text);
 	}
