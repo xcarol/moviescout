@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
+
 	interface Props {
 		text: string;
 		maxLines?: number;
@@ -11,12 +13,32 @@
 	let expanded = $state(false);
 	let canExpand = $state(false);
 	let paragraphEl: HTMLParagraphElement | undefined = $state();
+	let lastText = '';
 
 	$effect(() => {
+		if (text !== lastText) {
+			lastText = text;
+			expanded = false;
+		}
+	});
+
+	$effect(() => {
+		const el = paragraphEl;
 		void text;
-		expanded = false;
-		if (!paragraphEl) return;
-		canExpand = paragraphEl.scrollHeight > paragraphEl.clientHeight + 2;
+		void maxLines;
+		if (!el) return;
+
+		const measure = () => {
+			if (!untrack(() => expanded)) {
+				canExpand = el.scrollHeight > el.clientHeight + 2;
+			}
+		};
+
+		measure();
+		const observer = new ResizeObserver(measure);
+		observer.observe(el);
+
+		return () => observer.disconnect();
 	});
 </script>
 
@@ -35,9 +57,31 @@
 				type="button"
 				class="toggle-btn"
 				aria-expanded={expanded}
+				aria-label={expanded ? lessLabel : moreLabel}
+				title={expanded ? lessLabel : moreLabel}
 				onclick={() => (expanded = !expanded)}
 			>
-				{expanded ? lessLabel : moreLabel}
+				{#if expanded}
+					<svg
+						viewBox="0 0 24 24"
+						width="22"
+						height="22"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<path d="m18 15-6-6-6 6" />
+					</svg>
+				{:else}
+					<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+						<circle cx="6" cy="12" r="1.75" />
+						<circle cx="12" cy="12" r="1.75" />
+						<circle cx="18" cy="12" r="1.75" />
+					</svg>
+				{/if}
 			</button>
 		{/if}
 	</div>
@@ -47,7 +91,7 @@
 	.expandable-text {
 		display: flex;
 		flex-direction: column;
-		align-items: flex-start;
+		align-items: stretch;
 		gap: var(--space-xs);
 	}
 
@@ -67,16 +111,20 @@
 	}
 
 	.toggle-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		min-height: 32px;
 		padding: var(--space-xs) 0;
 		border: none;
+		border-radius: var(--radius-sm);
 		background: transparent;
-		color: var(--color-primary);
-		font-size: var(--text-body-sm);
-		font-weight: 600;
+		color: var(--color-text-muted);
 		cursor: pointer;
 	}
 
 	.toggle-btn:hover {
-		text-decoration: underline;
+		color: var(--color-primary);
 	}
 </style>
