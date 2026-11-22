@@ -30,16 +30,9 @@
 </script>
 
 <section class="providers-section" aria-labelledby="providers-heading">
-	<div class="section-head">
-		<h2 id="providers-heading" class="section-title">
-			{tw(locale, 'watchInRegion', { region })}
-		</h2>
-		{#if providers.link}
-			<a class="jw-link" href={providers.link} target="_blank" rel="noopener noreferrer">
-				JustWatch &nearr;
-			</a>
-		{/if}
-	</div>
+	<h2 id="providers-heading" class="section-title">
+		{tw(locale, 'watchInRegion', { region })}
+	</h2>
 
 	{#if groups.length === 0}
 		<p class="empty-note">{t(locale, 'noProvidersAvailable')}</p>
@@ -78,27 +71,9 @@
 		gap: var(--space-md);
 	}
 
-	.section-head {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: var(--space-md);
-		flex-wrap: wrap;
-	}
-
 	.section-title {
 		font-size: var(--text-title-md);
 		font-weight: 700;
-	}
-
-	.jw-link {
-		font-size: var(--text-body-sm);
-		color: var(--color-primary);
-		font-weight: 600;
-	}
-
-	.jw-link:hover {
-		text-decoration: underline;
 	}
 
 	.empty-note {

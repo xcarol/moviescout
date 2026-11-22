@@ -244,6 +244,15 @@
 	{/if}
 
 	<section class="section-block">
+		<ExternalLinks
+			mediaType={details.mediaType}
+			id={details.id}
+			links={details.externalLinks}
+			heading={tw(locale, 'externalLinks')}
+		/>
+	</section>
+
+	<section class="section-block">
 		<WatchProviders providers={details.providers} {locale} {region} />
 	</section>
 
@@ -315,14 +324,6 @@
 		</section>
 	{/if}
 
-	<section class="section-block">
-		<ExternalLinks
-			mediaType={details.mediaType}
-			id={details.id}
-			links={details.externalLinks}
-			heading={tw(locale, 'externalLinks')}
-		/>
-	</section>
 </article>
 
 <style>
@@ -420,7 +421,9 @@
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
+		justify-content: space-between;
 		gap: var(--space-md);
+		width: 100%;
 		margin-block-start: var(--space-xs);
 	}
 

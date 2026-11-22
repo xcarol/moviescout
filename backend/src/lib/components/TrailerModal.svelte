@@ -142,6 +142,7 @@
 
 <style>
 	.trailer-trigger {
+		margin-inline-start: auto;
 		display: inline-flex;
 		align-items: center;
 		gap: var(--space-xs);

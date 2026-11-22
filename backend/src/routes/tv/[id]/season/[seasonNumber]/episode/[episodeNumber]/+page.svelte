@@ -203,7 +203,9 @@
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
+		justify-content: space-between;
 		gap: var(--space-md);
+		width: 100%;
 		margin-block-start: var(--space-xs);
 	}
 

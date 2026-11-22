@@ -85,6 +85,30 @@
 		trackEl.scrollBy({ left: delta, behavior });
 	}
 
+	function applyInstantCompensation(updateVar: () => void, anchor: HTMLElement | undefined) {
+		if (!trackEl || !anchor) return;
+
+		const beforeLeft = anchor.offsetLeft;
+		const prevSnap = trackEl.style.scrollSnapType;
+		const prevBehavior = trackEl.style.scrollBehavior;
+
+		trackEl.style.scrollSnapType = 'none';
+		trackEl.style.scrollBehavior = 'auto';
+		updateVar();
+
+		const afterLeft = anchor.offsetLeft;
+		const diff = afterLeft - beforeLeft;
+		if (diff !== 0) {
+			trackEl.scrollTo({ left: trackEl.scrollLeft + diff, behavior: 'instant' });
+		}
+		trackEl.style.scrollBehavior = prevBehavior;
+
+		requestAnimationFrame(() => {
+			if (!trackEl) return;
+			trackEl.style.scrollSnapType = prevSnap;
+		});
+	}
+
 	function syncParking(activeIdx: number) {
 		if (!trackEl || count < 3) return;
 		const slides = getSlideElements();
@@ -94,18 +118,9 @@
 		const prevVar = trackEl.style.getPropertyValue('--current');
 		if (prevVar === String(activeIdx)) return;
 
-		const beforeLeft = anchor.offsetLeft;
-		const prevSnap = trackEl.style.scrollSnapType;
-		trackEl.style.scrollSnapType = 'none';
-		trackEl.style.setProperty('--current', String(activeIdx));
-		const afterLeft = anchor.offsetLeft;
-		const diff = afterLeft - beforeLeft;
-		if (diff !== 0) {
-			trackEl.scrollLeft += diff;
-		}
-		requestAnimationFrame(() => {
-			if (trackEl) trackEl.style.scrollSnapType = prevSnap;
-		});
+		applyInstantCompensation(() => {
+			trackEl?.style.setProperty('--current', String(activeIdx));
+		}, anchor);
 	}
 
 	function handleSettled() {
@@ -197,16 +212,24 @@
 		if (count >= 3) {
 			const slides = getSlideElements();
 			const anchor = slides[currentIndex];
-			const prevSnap = trackEl.style.scrollSnapType;
-			const beforeLeft = anchor?.offsetLeft ?? 0;
+			if (anchor) {
+				const beforeLeft = anchor.offsetLeft;
+				const prevSnap = trackEl.style.scrollSnapType;
+				const prevBehavior = trackEl.style.scrollBehavior;
 
-			trackEl.style.scrollSnapType = 'none';
-			trackEl.style.setProperty('--current', 'initial');
-			const afterLeft = anchor?.offsetLeft ?? 0;
-			if (afterLeft !== beforeLeft) {
-				trackEl.scrollLeft += afterLeft - beforeLeft;
+				trackEl.style.scrollSnapType = 'none';
+				trackEl.style.scrollBehavior = 'auto';
+				trackEl.style.setProperty('--current', 'initial');
+				const afterLeft = anchor.offsetLeft;
+				if (afterLeft !== beforeLeft) {
+					trackEl.scrollTo({
+						left: trackEl.scrollLeft + (afterLeft - beforeLeft),
+						behavior: 'instant'
+					});
+				}
+				trackEl.style.scrollBehavior = prevBehavior;
+				trackEl.style.scrollSnapType = prevSnap;
 			}
-			trackEl.style.scrollSnapType = prevSnap;
 		}
 
 		pendingTarget = targetIndex;
