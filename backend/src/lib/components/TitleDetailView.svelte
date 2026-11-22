@@ -179,7 +179,7 @@
 	{/if}
 
 	<section class="section-block meta-grid">
-		{#if details.originalTitle && details.originalTitle !== details.title}
+		{#if details.originalTitle}
 			<div class="meta-field">
 				<span class="field-label">{t(locale, 'originaTitle')}</span>
 				<span class="field-value">{details.originalTitle}</span>
