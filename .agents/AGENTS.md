@@ -35,3 +35,6 @@
 - EMPTY & ERROR STATES:
   - Use `AppEmptyState` for empty lists and search results instead of bare text.
   - Use `AppErrorView` with retry callback (`onRetry`) instead of infinite loading spinners or blank screens.
+
+# Web Companion Rules
+- ANDROID AS UI MODEL: For the web companion (`backend/`), follow the Android (Flutter) app's UI, layout structure, information hierarchy, and visual design (`STYLE_GUIDE.md`) as the primary reference model. Only deviate when necessary for web coherence and usability (e.g., URL routing, native browser semantics, hover/keyboard interactions, SEO/OpenGraph, or responsive desktop ergonomics).
