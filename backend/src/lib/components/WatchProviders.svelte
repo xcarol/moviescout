@@ -1,16 +1,15 @@
 <script lang="ts">
 	import { TMDB_IMAGE_SIZE } from '$lib/constants/urls';
-	import { t, tw, type SupportedLocale } from '$lib/i18n';
+	import { t, type SupportedLocale } from '$lib/i18n';
 	import type { WatchProviderItem, WatchProviders as WatchProvidersData } from '$lib/types/tmdb';
 	import PosterImage from './PosterImage.svelte';
 
 	interface Props {
 		providers: WatchProvidersData;
 		locale: SupportedLocale;
-		region: string;
 	}
 
-	let { providers, locale, region }: Props = $props();
+	let { providers, locale }: Props = $props();
 
 	interface ProviderGroup {
 		label: string;
@@ -29,18 +28,12 @@
 	});
 </script>
 
-<section class="providers-section" aria-labelledby="providers-heading">
-	<h2 id="providers-heading" class="section-title">
-		{tw(locale, 'watchInRegion', { region })}
-	</h2>
-
-	{#if groups.length === 0}
-		<p class="empty-note">{t(locale, 'noProvidersAvailable')}</p>
-	{:else}
+{#if groups.length > 0}
+	<section class="providers-section">
 		<div class="provider-groups">
 			{#each groups as group (group.label)}
 				<div class="provider-group">
-					<h3 class="group-label">{group.label}</h3>
+					<h2 class="group-label">{group.label}</h2>
 					<ul class="logo-row">
 						{#each group.items as item (item.providerId)}
 							<li class="logo-item" title={item.providerName}>
@@ -61,26 +54,10 @@
 				</div>
 			{/each}
 		</div>
-	{/if}
-</section>
+	</section>
+{/if}
 
 <style>
-	.providers-section {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-md);
-	}
-
-	.section-title {
-		font-size: var(--text-title-md);
-		font-weight: 700;
-	}
-
-	.empty-note {
-		color: var(--color-text-muted);
-		font-size: var(--text-body-sm);
-	}
-
 	.provider-groups {
 		display: flex;
 		flex-wrap: wrap;

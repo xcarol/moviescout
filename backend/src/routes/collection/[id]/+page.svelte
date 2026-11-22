@@ -100,7 +100,7 @@
 		<ExternalLinks
 			mediaType="collection"
 			id={collection.id}
-			heading={tw(data.locale, 'externalLinks')}
+			heading={t(data.locale, 'watchOn')}
 		/>
 	</section>
 </article>

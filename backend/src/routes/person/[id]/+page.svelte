@@ -140,7 +140,7 @@
 			mediaType="person"
 			id={person.id}
 			links={person.externalLinks}
-			heading={tw(data.locale, 'externalLinks')}
+			heading={t(data.locale, 'watchOn')}
 		/>
 	</section>
 </article>

@@ -36,7 +36,6 @@ export type WebMessageKey =
 	| 'nextEpisode'
 	| 'showMore'
 	| 'showLess'
-	| 'watchInRegion'
 	| 'notFoundTitle'
 	| 'notFoundMessage'
 	| 'backToHome'
@@ -50,7 +49,6 @@ export type WebMessageKey =
 	| 'minutesShort'
 	| 'playTrailer'
 	| 'close'
-	| 'externalLinks'
 	| 'skipToContent'
 	| 'airDate';
 
@@ -99,7 +97,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		nextEpisode: 'Next episode',
 		showMore: 'Show more',
 		showLess: 'Show less',
-		watchInRegion: 'Where to watch in {region}',
 		notFoundTitle: 'Content not found',
 		notFoundMessage: 'The requested title, person, or page is unavailable or does not exist.',
 		backToHome: 'Back to home',
@@ -113,7 +110,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		minutesShort: 'min',
 		playTrailer: 'Watch trailer',
 		close: 'Close',
-		externalLinks: 'External links',
 		skipToContent: 'Skip to content',
 		airDate: 'Air date'
 	},
@@ -159,7 +155,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		nextEpisode: 'Episodi següent',
 		showMore: 'Veure més',
 		showLess: 'Veure menys',
-		watchInRegion: 'On veure-ho a {region}',
 		notFoundTitle: 'Contingut no trobat',
 		notFoundMessage: 'El títol, la persona o la pàgina sol·licitada no existeix o no està disponible.',
 		backToHome: "Tornar a l'inici",
@@ -173,7 +168,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		minutesShort: 'min',
 		playTrailer: 'Veure tràiler',
 		close: 'Tancar',
-		externalLinks: 'Enllaços externs',
 		skipToContent: 'Anar al contingut',
 		airDate: "Data d'emissió"
 	},
@@ -219,7 +213,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		nextEpisode: 'Episodio siguiente',
 		showMore: 'Ver más',
 		showLess: 'Ver menos',
-		watchInRegion: 'Dónde ver en {region}',
 		notFoundTitle: 'Contenido no encontrado',
 		notFoundMessage: 'El título, la persona o la página solicitada no existe o no está disponible.',
 		backToHome: 'Volver al inicio',
@@ -233,7 +226,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		minutesShort: 'min',
 		playTrailer: 'Ver tráiler',
 		close: 'Cerrar',
-		externalLinks: 'Enlaces externos',
 		skipToContent: 'Ir al contenido',
 		airDate: 'Fecha de emisión'
 	},
@@ -279,7 +271,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		nextEpisode: 'Episodio siguiente',
 		showMore: 'Ver más',
 		showLess: 'Ver menos',
-		watchInRegion: 'Dónde ver en {region}',
 		notFoundTitle: 'Contenido no encontrado',
 		notFoundMessage: 'El título, la persona o la página solicitada no existe o no está disponible.',
 		backToHome: 'Volver al inicio',
@@ -293,7 +284,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		minutesShort: 'min',
 		playTrailer: 'Ver tráiler',
 		close: 'Cerrar',
-		externalLinks: 'Enlaces externos',
 		skipToContent: 'Ir al contenido',
 		airDate: 'Fecha de emisión'
 	},
@@ -339,7 +329,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		nextEpisode: 'Hurrengo atala',
 		showMore: 'Gehiago ikusi',
 		showLess: 'Gutxiago ikusi',
-		watchInRegion: 'Non ikusi hemen: {region}',
 		notFoundTitle: 'Edukia ez da aurkitu',
 		notFoundMessage: 'Eskatutako titulua, pertsona edo orria ez dago eskuragarri edo ez da existitzen.',
 		backToHome: 'Itzuli hasierara',
@@ -353,7 +342,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		minutesShort: 'min',
 		playTrailer: 'Ikusi trailerra',
 		close: 'Itxi',
-		externalLinks: 'Kanpoko estekak',
 		skipToContent: 'Joan edukira',
 		airDate: 'Emisio data'
 	},
@@ -399,7 +387,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		nextEpisode: 'Seguinte episodio',
 		showMore: 'Ver máis',
 		showLess: 'Ver menos',
-		watchInRegion: 'Onde ver en {region}',
 		notFoundTitle: 'Contido non atopado',
 		notFoundMessage: 'O título, a persoa ou a páxina solicitada non existe ou non está dispoñible.',
 		backToHome: 'Volver ao inicio',
@@ -413,7 +400,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		minutesShort: 'min',
 		playTrailer: 'Ver tráiler',
 		close: 'Pechar',
-		externalLinks: 'Ligazóns externas',
 		skipToContent: 'Ir ao contido',
 		airDate: 'Data de emisión'
 	},
@@ -459,7 +445,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		nextEpisode: 'Épisode suivant',
 		showMore: 'Voir plus',
 		showLess: 'Voir moins',
-		watchInRegion: 'Où regarder ({region})',
 		notFoundTitle: 'Contenu introuvable',
 		notFoundMessage: 'Le titre, la personne ou la page demandée est indisponible ou introuvable.',
 		backToHome: "Retour à l'accueil",
@@ -473,7 +458,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		minutesShort: 'min',
 		playTrailer: 'Voir la bande-annonce',
 		close: 'Fermer',
-		externalLinks: 'Liens externes',
 		skipToContent: 'Aller au contenu',
 		airDate: 'Date de diffusion'
 	},
@@ -519,7 +503,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		nextEpisode: 'Nächste Folge',
 		showMore: 'Mehr anzeigen',
 		showLess: 'Weniger anzeigen',
-		watchInRegion: 'Wo ansehen in {region}',
 		notFoundTitle: 'Inhalt nicht gefunden',
 		notFoundMessage: 'Der angeforderte Titel, die Person oder Seite existiert nicht oder ist nicht verfügbar.',
 		backToHome: 'Zur Startseite',
@@ -533,7 +516,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		minutesShort: 'Min.',
 		playTrailer: 'Trailer ansehen',
 		close: 'Schließen',
-		externalLinks: 'Externe Links',
 		skipToContent: 'Zum Inhalt springen',
 		airDate: 'Ausstrahlungsdatum'
 	},
@@ -579,7 +561,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		nextEpisode: 'Episodio successivo',
 		showMore: 'Mostra di più',
 		showLess: 'Mostra meno',
-		watchInRegion: 'Dove guardare in {region}',
 		notFoundTitle: 'Contenuto non trovato',
 		notFoundMessage: 'Il titolo, la persona o la pagina richiesta non è disponibile o non esiste.',
 		backToHome: 'Torna alla home',
@@ -593,7 +574,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		minutesShort: 'min',
 		playTrailer: 'Guarda trailer',
 		close: 'Chiudi',
-		externalLinks: 'Link esterni',
 		skipToContent: 'Vai al contenuto',
 		airDate: 'Data di trasmissione'
 	},
@@ -639,7 +619,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		nextEpisode: 'Próximo episódio',
 		showMore: 'Ver mais',
 		showLess: 'Ver menos',
-		watchInRegion: 'Onde assistir em {region}',
 		notFoundTitle: 'Conteúdo não encontrado',
 		notFoundMessage: 'O título, pessoa ou página solicitada não existe ou não está disponível.',
 		backToHome: 'Voltar ao início',
@@ -653,7 +632,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		minutesShort: 'min',
 		playTrailer: 'Assistir trailer',
 		close: 'Fechar',
-		externalLinks: 'Links externos',
 		skipToContent: 'Ir para o conteúdo',
 		airDate: 'Data de exibição'
 	},
@@ -699,7 +677,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		nextEpisode: 'Episódio seguinte',
 		showMore: 'Ver mais',
 		showLess: 'Ver menos',
-		watchInRegion: 'Onde ver em {region}',
 		notFoundTitle: 'Conteúdo não encontrado',
 		notFoundMessage: 'O título, pessoa ou página solicitada não existe ou não está disponível.',
 		backToHome: 'Voltar ao início',
@@ -713,7 +690,6 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		minutesShort: 'min',
 		playTrailer: 'Ver trailer',
 		close: 'Fechar',
-		externalLinks: 'Ligações externas',
 		skipToContent: 'Saltar para o conteúdo',
 		airDate: 'Data de transmissão'
 	}

@@ -26,10 +26,17 @@
 	interface Props {
 		details: TitleDetails;
 		locale: SupportedLocale;
-		region: string;
 	}
 
-	let { details, locale, region }: Props = $props();
+	let { details, locale }: Props = $props();
+
+	const hasProviders = $derived(
+		details.providers.free.length > 0 ||
+			details.providers.ads.length > 0 ||
+			details.providers.flatrate.length > 0 ||
+			details.providers.rent.length > 0 ||
+			details.providers.buy.length > 0
+	);
 
 	const isMovie = $derived(details.mediaType === 'movie');
 	const heroImages = $derived.by(() => {
@@ -248,13 +255,15 @@
 			mediaType={details.mediaType}
 			id={details.id}
 			links={details.externalLinks}
-			heading={tw(locale, 'externalLinks')}
+			heading={t(locale, 'watchOn')}
 		/>
 	</section>
 
-	<section class="section-block">
-		<WatchProviders providers={details.providers} {locale} {region} />
-	</section>
+	{#if hasProviders}
+		<section class="section-block">
+			<WatchProviders providers={details.providers} {locale} />
+		</section>
+	{/if}
 
 	<section class="section-block">
 		<AppPromoBanner {locale} />

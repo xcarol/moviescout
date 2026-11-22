@@ -20,4 +20,4 @@
 	jsonLd={data.seo.jsonLd}
 />
 
-<TitleDetailView details={data.details} locale={data.locale} region={data.region} />
+<TitleDetailView details={data.details} locale={data.locale} />
