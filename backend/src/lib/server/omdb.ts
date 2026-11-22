@@ -1,10 +1,8 @@
 import { env } from '$env/dynamic/private';
+import { OMDB_CACHE_TTL_MS, OMDB_TIMEOUT_MS } from '$lib/constants/app';
+import { OMDB_API_URL } from '$lib/constants/urls';
 import type { OmdbRating } from '$lib/types/tmdb';
 import { TtlLruCache } from './cache';
-
-const OMDB_BASE_URL = 'https://www.omdbapi.com/';
-const OMDB_TIMEOUT_MS = 2500;
-const OMDB_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 const omdbCache = new TtlLruCache<OmdbRating[]>({
 	maxEntries: 500,
@@ -55,7 +53,7 @@ export async function getOmdbRatings(imdbId?: string | null): Promise<OmdbRating
 	return omdbCache.getOrFetch(
 		imdbId,
 		async () => {
-			const url = new URL(OMDB_BASE_URL);
+			const url = new URL(OMDB_API_URL);
 			url.searchParams.set('i', imdbId);
 			url.searchParams.set('apikey', apiKey);
 

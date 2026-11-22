@@ -1,10 +1,11 @@
 import type { Handle } from '@sveltejs/kit';
+import { LANG_COOKIE_NAME, REGION_COOKIE_NAME } from '$lib/constants/app';
 import { resolveLocale, resolveRegion } from '$lib/i18n';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	const langOverride = event.url.searchParams.get('lang') || event.cookies.get('ms_lang');
+	const langOverride = event.url.searchParams.get('lang') || event.cookies.get(LANG_COOKIE_NAME);
 	const regionOverride =
-		event.url.searchParams.get('region') || event.cookies.get('ms_region');
+		event.url.searchParams.get('region') || event.cookies.get(REGION_COOKIE_NAME);
 
 	const locale = resolveLocale(event.request.headers.get('accept-language'), langOverride);
 	const region = resolveRegion(
@@ -14,8 +15,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 	);
 
 	const hasCustomPrefs = Boolean(
-		event.cookies.get('ms_lang') ||
-			event.cookies.get('ms_region') ||
+		event.cookies.get(LANG_COOKIE_NAME) ||
+			event.cookies.get(REGION_COOKIE_NAME) ||
 			event.url.searchParams.get('lang') ||
 			event.url.searchParams.get('region')
 	);

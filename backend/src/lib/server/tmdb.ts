@@ -1,4 +1,6 @@
 import { env } from '$env/dynamic/private';
+import { TMDB_CACHE_TTL_MS, TMDB_TIMEOUT_MS } from '$lib/constants/app';
+import { TMDB_API_BASE_URL } from '$lib/constants/urls';
 import type { SupportedLocale } from '$lib/i18n';
 import type {
 	CollectionDetails,
@@ -18,10 +20,6 @@ import type {
 	WatchProviders
 } from '$lib/types/tmdb';
 import { TtlLruCache } from './cache';
-
-const TMDB_API_BASE = 'https://api.themoviedb.org/3';
-const TMDB_TIMEOUT_MS = 6000;
-const TMDB_CACHE_TTL_MS = 30 * 60 * 1000;
 
 const tmdbCache = new TtlLruCache<unknown>({
 	maxEntries: 600,
@@ -81,7 +79,7 @@ async function fetchTmdbJson<T>(path: string, params: Record<string, string> = {
 		throw new TmdbConfigError();
 	}
 
-	const url = new URL(`${TMDB_API_BASE}${path}`);
+	const url = new URL(`${TMDB_API_BASE_URL}${path}`);
 	for (const [key, value] of Object.entries(params)) {
 		if (value) url.searchParams.set(key, value);
 	}
