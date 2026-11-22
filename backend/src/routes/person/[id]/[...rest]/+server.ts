@@ -1,4 +1,4 @@
-import { redirectToCanonicalEntity } from '$lib/server/loaders';
+import { redirectToCanonicalEntity } from '$lib/server/core/routing';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = ({ params }) => {

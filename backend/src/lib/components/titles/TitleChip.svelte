@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { TMDB_IMAGE_SIZE } from '$lib/constants/urls';
 	import type { TitleSummary } from '$lib/types/tmdb';
-	import PosterImage from './PosterImage.svelte';
+	import PosterImage from '../core/PosterImage.svelte';
 
 	interface Props {
 		item: TitleSummary;

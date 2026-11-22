@@ -2,7 +2,7 @@
 	import { TMDB_IMAGE_SIZE } from '$lib/constants/urls';
 	import { t, type SupportedLocale } from '$lib/i18n';
 	import type { WatchProviderItem, WatchProviders as WatchProvidersData } from '$lib/types/tmdb';
-	import PosterImage from './PosterImage.svelte';
+	import PosterImage from '../core/PosterImage.svelte';
 
 	interface Props {
 		providers: WatchProvidersData;

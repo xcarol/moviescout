@@ -1,12 +1,12 @@
 <script lang="ts">
-	import AppPromoBanner from '$lib/components/AppPromoBanner.svelte';
-	import ExpandableText from '$lib/components/ExpandableText.svelte';
-	import HorizontalRail from '$lib/components/HorizontalRail.svelte';
-	import MediaCarousel from '$lib/components/MediaCarousel.svelte';
-	import PersonChip from '$lib/components/PersonChip.svelte';
-	import RatingBadges from '$lib/components/RatingBadges.svelte';
-	import SeoHead from '$lib/components/SeoHead.svelte';
-	import TrailerModal from '$lib/components/TrailerModal.svelte';
+	import AppPromoBanner from '$lib/components/core/AppPromoBanner.svelte';
+	import ExpandableText from '$lib/components/core/ExpandableText.svelte';
+	import HorizontalRail from '$lib/components/core/HorizontalRail.svelte';
+	import MediaCarousel from '$lib/components/core/MediaCarousel.svelte';
+	import PersonChip from '$lib/components/people/PersonChip.svelte';
+	import RatingBadges from '$lib/components/titles/RatingBadges.svelte';
+	import SeoHead from '$lib/components/core/SeoHead.svelte';
+	import TrailerModal from '$lib/components/titles/TrailerModal.svelte';
 	import { TMDB_IMAGE_SIZE } from '$lib/constants/urls';
 	import { t, translateJob, tw } from '$lib/i18n';
 	import type { PageData } from './$types';

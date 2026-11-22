@@ -1,6 +1,6 @@
 <script lang="ts">
-	import SeoHead from '$lib/components/SeoHead.svelte';
-	import TitleDetailView from '$lib/components/TitleDetailView.svelte';
+	import SeoHead from '$lib/components/core/SeoHead.svelte';
+	import TitleDetailView from '$lib/components/titles/TitleDetailView.svelte';
 	import type { PageData } from './$types';
 
 	interface Props {

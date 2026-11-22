@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
-import { buildPersonSeo } from '$lib/server/seo';
-import { getPersonDetails, parseTmdbId } from '$lib/server/tmdb';
+import { parseTmdbId } from '$lib/server/core/tmdb-client';
+import { buildPersonSeo } from '$lib/server/people/person-seo';
+import { getPersonDetails } from '$lib/server/people/tmdb-people';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {

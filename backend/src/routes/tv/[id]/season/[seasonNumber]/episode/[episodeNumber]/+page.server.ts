@@ -1,11 +1,11 @@
 import { error } from '@sveltejs/kit';
-import { buildEpisodeSeo } from '$lib/server/seo';
+import { parseTmdbId } from '$lib/server/core/tmdb-client';
+import { buildEpisodeSeo } from '$lib/server/seasons/season-seo';
 import {
 	getEpisodeDetails,
 	parseEpisodeNumber,
-	parseSeasonNumber,
-	parseTmdbId
-} from '$lib/server/tmdb';
+	parseSeasonNumber
+} from '$lib/server/seasons/tmdb-seasons';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {

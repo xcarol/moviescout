@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SeoHead from '$lib/components/SeoHead.svelte';
+	import SeoHead from '$lib/components/core/SeoHead.svelte';
 	import { APP_NAME } from '$lib/constants/app';
 	import { GITHUB_REPO_URL, GOOGLE_PLAY_URL } from '$lib/constants/urls';
 	import { tw } from '$lib/i18n';

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import SeoHead from '$lib/components/SeoHead.svelte';
+	import SeoHead from '$lib/components/core/SeoHead.svelte';
 	import { APP_NAME } from '$lib/constants/app';
 	import { ERROR_NETWORK_ASSET } from '$lib/constants/urls';
 	import { DEFAULT_LOCALE, t, tw, type SupportedLocale } from '$lib/i18n';
