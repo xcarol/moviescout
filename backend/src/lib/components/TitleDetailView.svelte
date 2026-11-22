@@ -313,21 +313,21 @@
 		</section>
 	{/if}
 
-	{#if details.crew.length > 0}
-		<section class="section-block">
-			<HorizontalRail title={t(locale, 'crew')}>
-				{#each details.crew.slice(0, 20) as person (person.id)}
-					<PersonChip {person} roleText={translateJob(person.role, locale)} />
-				{/each}
-			</HorizontalRail>
-		</section>
-	{/if}
-
 	{#if details.recommendations.length > 0}
 		<section class="section-block">
 			<HorizontalRail title={t(locale, 'recommended')}>
 				{#each details.recommendations.slice(0, 20) as rec (`${rec.mediaType}-${rec.id}`)}
 					<TitleChip item={rec} />
+				{/each}
+			</HorizontalRail>
+		</section>
+	{/if}
+
+	{#if details.crew.length > 0}
+		<section class="section-block">
+			<HorizontalRail title={t(locale, 'crew')}>
+				{#each details.crew.slice(0, 20) as person (person.id)}
+					<PersonChip {person} roleText={translateJob(person.role, locale)} />
 				{/each}
 			</HorizontalRail>
 		</section>
