@@ -94,14 +94,12 @@ Run `flutter gen-l10n` to update the i18n generated files.
 
 ### Web Companion Sync & Adding Languages
 
-The SvelteKit web companion in `backend/` reuses the Flutter `.arb` translations and `assets/l10n/*.json` metadata tables. Because Vercel deploys with `backend` as its Root Directory, generated copies are committed inside `backend/`:
+The SvelteKit web companion in `backend/` reuses the Flutter `.arb` translations and `assets/l10n/*.json` metadata tables automatically at install and build time (`backend/scripts/sync-shared-assets.mjs`, gitignored outputs):
 
-- **After modifying `.arb` literals or `assets/l10n/*.json`:** run `cd backend && npm run sync` (`backend/scripts/sync-shared-assets.mjs`) and commit the updated files in `backend/src/lib/i18n/generated/`.
+- **Modifying `.arb` literals or `assets/l10n/*.json`:** no manual sync is needed; `npm run dev`, `npm run check`, `npm run build`, and Vercel deployments regenerate them automatically.
 - **When adding a new language:**
-  1. Add the `app_<lang>.arb` → `<locale>` mapping to `ARB_LOCALE_MAP` in `backend/scripts/sync-shared-assets.mjs` and run `cd backend && npm run sync`.
-  2. Register the locale in `backend/src/lib/i18n/locales.ts` (`SUPPORTED_LOCALES`, `LOCALE_NATIVE_NAMES`, `LOCALE_OG_MAP`, `BASE_LANGUAGE_MAP`).
-  3. Add web-specific translations in `backend/src/lib/i18n/web-messages.ts`.
-  4. Import the generated message and metadata JSONs in `backend/src/lib/i18n/metadata.ts` and `backend/src/lib/i18n/index.ts`.
+  1. Register the locale in `backend/src/lib/i18n/locales.ts` (`SUPPORTED_LOCALES`, `LOCALE_NATIVE_NAMES`, `LOCALE_OG_MAP`, `BASE_LANGUAGE_MAP`).
+  2. Add web-specific translations in `backend/src/lib/i18n/web-messages.ts` (enforced by TypeScript).
 
 ## Shared Preferences
 
@@ -179,10 +177,11 @@ MovieScout relies on a **SvelteKit (Svelte 5) + TypeScript** web companion hoste
 2. **Android App Links verification:** Serving `backend/static/.well-known/assetlinks.json` (`Content-Type: application/json` via `vercel.json`) so Android can verify `moviescout.xicra.com` deep links belong to the app.
 3. **Legal Pages, Verification & Remote Config (`backend/static/`):** Serving `privacy.html`, `terms.html`, `google5da2fd1c2b04afea.html`, and CORS-enabled remote JSONs (`ai-models.json`, `ai-prompts.json`, `tmdb-edit-selectors.json`).
 
-### Environment Variables & Sync
+### Environment Variables & Build Sync
 
 - In the Vercel Dashboard (*Project Settings → Environment Variables*), configure `TMDB_API_RAT` (required, server-only) and `OMDB_API_KEY` (optional, server-only).
-- Before pushing changes that modify `lib/l10n/*.arb`, `assets/l10n/*.json`, or shared `assets/*.png`, run `cd backend && npm run sync` so `backend/` stays self-contained for Vercel builds.
+- In **Settings → Build and Deployment → Root Directory**, keep `backend` with **Include files outside the Root Directory in the Build Step** enabled.
+- `backend/vercel.json` defines `ignoreCommand` so changes in `backend/`, `lib/l10n/`, `assets/l10n/`, or `assets/` trigger deploys and `npm run build` syncs shared assets automatically.
 - See `backend/README.md` for local development commands (`npm run dev`, `npm run check`, `npm run build`, `npm run preview`).
 
 ### How Deployment Works
@@ -272,7 +271,7 @@ Once you have completed the Google Cloud and Supabase configuration, ensure your
 
 Images like tvshow-poster.png are created with [Cool Text](https://cooltext.com/) tool using [FUN](https://cooltext.com/Logo-Design-Fun) text style.  
 
-Shared PNG brand and fallback assets used by the web companion are copied to `backend/static/assets/` by `cd backend && npm run sync`. Re-run `npm run sync` when updating shared PNGs, or add new filenames to `SHARED_PNG_ASSETS` in `backend/scripts/sync-shared-assets.mjs`.
+Shared PNG brand and fallback assets used by the web companion are copied automatically to `backend/static/assets/` during `npm run dev` / `npm run build` (`backend/scripts/sync-shared-assets.mjs`).
 
 ## Flutter tool box
 

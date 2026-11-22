@@ -5,3 +5,5 @@ build/
 .env
 .env.*
 !.env.example
+src/lib/i18n/generated/
+static/assets/

@@ -1,4 +1,4 @@
-import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -6,53 +6,47 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const backendDir = path.resolve(__dirname, '..');
 const repoRoot = path.resolve(backendDir, '..');
 
-const ARB_LOCALE_MAP = {
-	'app_ca.arb': 'ca-ES',
-	'app_de.arb': 'de-DE',
-	'app_en.arb': 'en-US',
-	'app_es.arb': 'es-ES',
-	'app_es_419.arb': 'es-419',
-	'app_eu.arb': 'eu-ES',
-	'app_fr.arb': 'fr-FR',
-	'app_gl.arb': 'gl-ES',
-	'app_it.arb': 'it-IT',
-	'app_pt.arb': 'pt-BR',
-	'app_pt_PT.arb': 'pt-PT'
-};
-
 const METADATA_PREFIXES = ['countries', 'genres', 'languages', 'person_jobs', 'status'];
 
-const SHARED_PNG_ASSETS = [
-	'logo-icon.png',
-	'movie.png',
-	'movie-poster.png',
-	'tvshow.png',
-	'tvshow-poster.png',
-	'person.png',
-	'backdrop-placeholder.png',
-	'provider-placeholder.png',
-	'error-network.png',
-	'tmdb-logo.png',
-	'imdb-logo.png',
-	'rotten-logo.png',
-	'metacritic-logo.png',
-	'wikidata.png',
-	'facebook.png',
-	'instagram.png',
-	'X.png',
-	'tiktok.png',
-	'youtube.png'
-];
+function toIdentifier(prefix, locale) {
+	return `${prefix}_${locale.replace(/[^a-zA-Z0-9]/g, '_')}`;
+}
 
-async function syncArbMessages() {
+async function discoverLocales() {
+	const metadataSrcDir = path.join(repoRoot, 'assets', 'l10n');
+	const entries = await readdir(metadataSrcDir);
+	const locales = entries
+		.map((name) => /^countries_(.+)\.json$/.exec(name)?.[1])
+		.filter(Boolean)
+		.sort();
+
+	if (locales.length === 0) {
+		throw new Error(`No metadata locale tables found in ${metadataSrcDir}`);
+	}
+
+	const l10nSrcDir = path.join(repoRoot, 'lib', 'l10n');
+	const arbFiles = new Set(await readdir(l10nSrcDir));
+
+	return locales.map((locale) => {
+		const exactArb = `app_${locale.replace(/-/g, '_')}.arb`;
+		const baseArb = `app_${locale.split('-')[0]}.arb`;
+		const arbFile = arbFiles.has(exactArb) ? exactArb : arbFiles.has(baseArb) ? baseArb : null;
+		if (!arbFile) {
+			throw new Error(`Missing ARB file (${exactArb} or ${baseArb}) for locale ${locale}`);
+		}
+		return { locale, arbFile };
+	});
+}
+
+async function syncArbMessages(localeEntries) {
 	const srcDir = path.join(repoRoot, 'lib', 'l10n');
 	const outDir = path.join(backendDir, 'src', 'lib', 'i18n', 'generated', 'messages');
+	await rm(outDir, { recursive: true, force: true });
 	await mkdir(outDir, { recursive: true });
 
 	const allKeys = new Set();
-	const localeCount = Object.keys(ARB_LOCALE_MAP).length;
 
-	for (const [arbFile, locale] of Object.entries(ARB_LOCALE_MAP)) {
+	for (const { locale, arbFile } of localeEntries) {
 		const raw = await readFile(path.join(srcDir, arbFile), 'utf8');
 		const parsed = JSON.parse(raw);
 		const clean = {};
@@ -63,8 +57,11 @@ async function syncArbMessages() {
 			allKeys.add(key);
 		}
 
-		const outPath = path.join(outDir, `${locale}.json`);
-		await writeFile(outPath, `${JSON.stringify(clean, null, 2)}\n`, 'utf8');
+		await writeFile(
+			path.join(outDir, `${locale}.json`),
+			`${JSON.stringify(clean, null, 2)}\n`,
+			'utf8'
+		);
 	}
 
 	const sortedKeys = Array.from(allKeys).sort();
@@ -84,19 +81,19 @@ async function syncArbMessages() {
 		'utf8'
 	);
 
-	return { localeCount, keyCount: sortedKeys.length };
+	return sortedKeys.length;
 }
 
-async function syncMetadataTables() {
+async function syncMetadataTables(localeEntries) {
 	const srcDir = path.join(repoRoot, 'assets', 'l10n');
 	const outDir = path.join(backendDir, 'src', 'lib', 'i18n', 'generated', 'metadata');
+	await rm(outDir, { recursive: true, force: true });
 	await mkdir(outDir, { recursive: true });
 
-	const locales = Object.values(ARB_LOCALE_MAP);
 	let copied = 0;
 
 	for (const prefix of METADATA_PREFIXES) {
-		for (const locale of locales) {
+		for (const { locale } of localeEntries) {
 			const fileName = `${prefix}_${locale}.json`;
 			await copyFile(path.join(srcDir, fileName), path.join(outDir, fileName));
 			copied += 1;
@@ -106,25 +103,111 @@ async function syncMetadataTables() {
 	return copied;
 }
 
+async function generateRegistry(localeEntries) {
+	const imports = [];
+	const messageEntries = [];
+	const countryEntries = [];
+	const genreEntries = [];
+	const languageEntries = [];
+	const personJobEntries = [];
+	const statusEntries = [];
+
+	for (const { locale } of localeEntries) {
+		const msgId = toIdentifier('msg', locale);
+		const cId = toIdentifier('countries', locale);
+		const gId = toIdentifier('genres', locale);
+		const lId = toIdentifier('languages', locale);
+		const pId = toIdentifier('personJobs', locale);
+		const sId = toIdentifier('status', locale);
+
+		imports.push(
+			`import ${msgId} from './messages/${locale}.json';`,
+			`import ${cId} from './metadata/countries_${locale}.json';`,
+			`import ${gId} from './metadata/genres_${locale}.json';`,
+			`import ${lId} from './metadata/languages_${locale}.json';`,
+			`import ${pId} from './metadata/person_jobs_${locale}.json';`,
+			`import ${sId} from './metadata/status_${locale}.json';`
+		);
+
+		messageEntries.push(`\t${JSON.stringify(locale)}: ${msgId} as Record<ArbMessageKey, string>`);
+		countryEntries.push(`\t${JSON.stringify(locale)}: ${cId}.countries as StringMap`);
+		genreEntries.push(`\t${JSON.stringify(locale)}: ${gId} as StringMap`);
+		languageEntries.push(`\t${JSON.stringify(locale)}: ${lId}.languages as StringMap`);
+		personJobEntries.push(
+			`\t${JSON.stringify(locale)}: ${pId} as { departments: StringMap; jobs: StringMap }`
+		);
+		statusEntries.push(`\t${JSON.stringify(locale)}: ${sId} as StringMap`);
+	}
+
+	const content = [
+		'// Generated by scripts/sync-shared-assets.mjs. Do not edit manually.',
+		"import type { ArbMessageKey } from './keys';",
+		'',
+		...imports,
+		'',
+		'type StringMap = Record<string, string>;',
+		'',
+		'export const ARB_MESSAGES: Record<string, Record<ArbMessageKey, string>> = {',
+		messageEntries.join(',\n'),
+		'};',
+		'',
+		'export const COUNTRIES: Record<string, StringMap> = {',
+		countryEntries.join(',\n'),
+		'};',
+		'',
+		'export const GENRES: Record<string, StringMap> = {',
+		genreEntries.join(',\n'),
+		'};',
+		'',
+		'export const LANGUAGES: Record<string, StringMap> = {',
+		languageEntries.join(',\n'),
+		'};',
+		'',
+		'export const PERSON_JOBS: Record<string, { departments: StringMap; jobs: StringMap }> = {',
+		personJobEntries.join(',\n'),
+		'};',
+		'',
+		'export const STATUSES: Record<string, StringMap> = {',
+		statusEntries.join(',\n'),
+		'};',
+		''
+	].join('\n');
+
+	await writeFile(
+		path.join(backendDir, 'src', 'lib', 'i18n', 'generated', 'registry.ts'),
+		content,
+		'utf8'
+	);
+}
+
 async function syncBrandAssets() {
 	const srcDir = path.join(repoRoot, 'assets');
 	const outDir = path.join(backendDir, 'static', 'assets');
+	await rm(outDir, { recursive: true, force: true });
 	await mkdir(outDir, { recursive: true });
 
-	for (const fileName of SHARED_PNG_ASSETS) {
+	const entries = await readdir(srcDir, { withFileTypes: true });
+	const pngFiles = entries
+		.filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith('.png'))
+		.map((entry) => entry.name)
+		.sort();
+
+	for (const fileName of pngFiles) {
 		await copyFile(path.join(srcDir, fileName), path.join(outDir, fileName));
 	}
 
-	return SHARED_PNG_ASSETS.length;
+	return pngFiles.length;
 }
 
 async function main() {
-	const { localeCount, keyCount } = await syncArbMessages();
-	const metadataCount = await syncMetadataTables();
+	const localeEntries = await discoverLocales();
+	const keyCount = await syncArbMessages(localeEntries);
+	const metadataCount = await syncMetadataTables(localeEntries);
+	await generateRegistry(localeEntries);
 	const assetCount = await syncBrandAssets();
 
 	console.log(
-		`Synced ${localeCount} locales (${keyCount} ARB keys), ${metadataCount} metadata tables, and ${assetCount} PNG assets.`
+		`Synced ${localeEntries.length} locales (${keyCount} ARB keys), ${metadataCount} metadata tables, and ${assetCount} PNG assets.`
 	);
 }
 

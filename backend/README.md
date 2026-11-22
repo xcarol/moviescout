@@ -18,7 +18,7 @@ This directory contains the **SvelteKit (Svelte 5) + TypeScript** web companion 
 
 ## Local Development
 
-1. Install dependencies:
+1. Install dependencies (automatically runs `npm run sync` via `postinstall`):
    ```bash
    cd backend
    npm install
@@ -32,37 +32,30 @@ This directory contains the **SvelteKit (Svelte 5) + TypeScript** web companion 
    - `TMDB_API_RAT` is required for `/movie/*`, `/tv/*`, `/person/*`, and `/collection/*`.
    - `OMDB_API_KEY` is optional (pages render without OMDb scores if omitted or rate-limited).
 
-3. Sync shared translations, metadata tables, and brand assets from the Flutter app:
-   ```bash
-   npm run sync
-   ```
-
-4. Start the local dev server or verify a production build:
+3. Run locally or verify production build (`npm run sync` runs automatically before `dev`, `check`, and `build`):
    ```bash
    npm run dev      # Development server
-   npm run check    # svelte-kit sync + svelte-check
-   npm run build    # Production build (@sveltejs/adapter-vercel)
+   npm run check    # sync + svelte-kit sync + svelte-check
+   npm run build    # sync + production build (@sveltejs/adapter-vercel)
    npm run preview  # Preview production build locally
    ```
 
-## Syncing Shared i18n & Assets (`npm run sync`)
+## Automatic Shared i18n & Assets Sync
 
-Because the Vercel project uses `backend` as its **Root Directory**, Vercel builds cannot read `../lib/l10n/` or `../assets/` at build time. Run `npm run sync` (`scripts/sync-shared-assets.mjs`) whenever shared Flutter resources change, and commit the generated outputs:
+`scripts/sync-shared-assets.mjs` runs automatically on `postinstall`, `npm run dev`, `npm run check`, and `npm run build`. Its outputs (`src/lib/i18n/generated/` and `static/assets/`) are gitignored and generated fresh on every install/build:
 
-- Reads `../lib/l10n/app_*.arb` → generates `src/lib/i18n/generated/messages/<locale>.json` and `src/lib/i18n/generated/keys.ts`.
+- Discovers all locales from `../assets/l10n/countries_*.json` and reads matching `../lib/l10n/app_*.arb` files → generates `src/lib/i18n/generated/messages/<locale>.json`, `keys.ts`, and `registry.ts`.
 - Copies `../assets/l10n/{countries,genres,languages,person_jobs,status}_*.json` → `src/lib/i18n/generated/metadata/`.
-- Copies shared brand and fallback PNGs from `../assets/` → `static/assets/`.
+- Copies all root `*.png` assets from `../assets/` → `static/assets/`.
 
-When **adding a new language**:
-1. Add the `.arb` → locale mapping to `ARB_LOCALE_MAP` in `scripts/sync-shared-assets.mjs` and run `npm run sync`.
-2. Register the locale in `src/lib/i18n/locales.ts`, add web-specific strings in `src/lib/i18n/web-messages.ts`, and import the generated JSONs in `src/lib/i18n/metadata.ts` and `src/lib/i18n/index.ts`.
-
-When **adding a new shared PNG**, add its filename to `SHARED_PNG_ASSETS` in `scripts/sync-shared-assets.mjs` and run `npm run sync`.
+When **adding a new language**, `sync-shared-assets.mjs` picks up its `.arb` and metadata tables automatically; you only need to register the locale in `src/lib/i18n/locales.ts` and add its web-only strings in `src/lib/i18n/web-messages.ts` (enforced by TypeScript).
 
 ## How to Deploy (Vercel)
 
 - **Root Directory**: `backend`
+- **Build & Deployment → Root Directory**: Ensure **"Include files outside the Root Directory in the Build Step"** is enabled (so Vercel's build can read `../lib/l10n` and `../assets`).
 - **Framework Preset**: `SvelteKit` (detected automatically via `@sveltejs/adapter-vercel`)
+- **Ignored Build Step**: Configured in `vercel.json` (`ignoreCommand`) so changes in `backend/`, `lib/l10n/`, `assets/l10n/`, or `assets/` trigger a deploy automatically.
 - **Environment Variables** (*Project Settings → Environment Variables*):
   - `TMDB_API_RAT` (required, server-only)
   - `OMDB_API_KEY` (optional, server-only)

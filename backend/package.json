@@ -5,10 +5,11 @@
   "type": "module",
   "description": "MovieScout Web Companion and Vercel configuration",
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
+    "postinstall": "node scripts/sync-shared-assets.mjs",
+    "dev": "npm run sync && vite dev",
+    "build": "npm run sync && vite build",
     "preview": "vite preview",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check": "npm run sync && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "sync": "node scripts/sync-shared-assets.mjs"
   },
   "devDependencies": {

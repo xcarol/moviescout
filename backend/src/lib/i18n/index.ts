@@ -1,34 +1,9 @@
 import { DEFAULT_LOCALE, type SupportedLocale } from './locales';
 import type { ArbMessageKey } from './generated/keys';
+import { ARB_MESSAGES } from './generated/registry';
 import { WEB_MESSAGES, type WebMessageKey, type WebMessagesDictionary } from './web-messages';
 
-import caES from './generated/messages/ca-ES.json';
-import deDE from './generated/messages/de-DE.json';
-import enUS from './generated/messages/en-US.json';
-import es419 from './generated/messages/es-419.json';
-import esES from './generated/messages/es-ES.json';
-import euES from './generated/messages/eu-ES.json';
-import frFR from './generated/messages/fr-FR.json';
-import glES from './generated/messages/gl-ES.json';
-import itIT from './generated/messages/it-IT.json';
-import ptBR from './generated/messages/pt-BR.json';
-import ptPT from './generated/messages/pt-PT.json';
-
 export type ArbDictionary = Record<ArbMessageKey, string>;
-
-const ARB_MESSAGES: Record<SupportedLocale, ArbDictionary> = {
-	'ca-ES': caES as ArbDictionary,
-	'de-DE': deDE as ArbDictionary,
-	'en-US': enUS as ArbDictionary,
-	'es-ES': esES as ArbDictionary,
-	'es-419': es419 as ArbDictionary,
-	'eu-ES': euES as ArbDictionary,
-	'fr-FR': frFR as ArbDictionary,
-	'gl-ES': glES as ArbDictionary,
-	'it-IT': itIT as ArbDictionary,
-	'pt-BR': ptBR as ArbDictionary,
-	'pt-PT': ptPT as ArbDictionary
-};
 
 export function interpolate(
 	template: string,

@@ -1,4 +1,5 @@
 {
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ../lib/l10n ../assets/l10n ../assets",
   "headers": [
     {
       "source": "/ai-models.json",
