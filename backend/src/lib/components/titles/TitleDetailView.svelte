@@ -186,44 +186,38 @@
 		</section>
 	{/if}
 
-	<section class="section-block meta-grid">
-		{#if details.originalTitle}
-			<div class="meta-field">
-				<span class="field-label">{t(locale, 'originaTitle')}</span>
-				<span class="field-value">{details.originalTitle}</span>
-			</div>
-		{/if}
-		{#if details.releaseDate}
-			<div class="meta-field">
-				<span class="field-label">
-					{isMovie ? tw(locale, 'releaseDate') : tw(locale, 'firstAirDate')}
-				</span>
-				<span class="field-value">{details.releaseDate}</span>
-			</div>
-		{/if}
-		{#if details.originalLanguage}
-			<div class="meta-field">
-				<span class="field-label">{t(locale, 'originalLanguage')}</span>
-				<span class="field-value">
-					{translateLanguage(details.originalLanguage, locale)}
-				</span>
-			</div>
-		{/if}
-		{#if details.originCountry.length > 0}
-			<div class="meta-field">
-				<span class="field-label">{t(locale, 'originCountry')}</span>
-				<span class="field-value">
-					{details.originCountry.map((c) => translateCountry(c, locale)).join(', ')}
-				</span>
-			</div>
-		{/if}
-		{#if details.status}
-			<div class="meta-field">
-				<span class="field-label">{tw(locale, 'status')}</span>
-				<span class="field-value">{translateStatus(details.status, locale)}</span>
-			</div>
-		{/if}
-	</section>
+	{#if details.originalTitle || details.originalLanguage || details.originCountry.length > 0 || details.status}
+		<section class="section-block meta-grid">
+			{#if details.originalTitle}
+				<div class="meta-field">
+					<span class="field-label">{t(locale, 'originaTitle')}</span>
+					<span class="field-value">{details.originalTitle}</span>
+				</div>
+			{/if}
+			{#if details.originalLanguage}
+				<div class="meta-field">
+					<span class="field-label">{t(locale, 'originalLanguage')}</span>
+					<span class="field-value">
+						{translateLanguage(details.originalLanguage, locale)}
+					</span>
+				</div>
+			{/if}
+			{#if details.originCountry.length > 0}
+				<div class="meta-field">
+					<span class="field-label">{t(locale, 'originCountry')}</span>
+					<span class="field-value">
+						{details.originCountry.map((c) => translateCountry(c, locale)).join(', ')}
+					</span>
+				</div>
+			{/if}
+			{#if details.status}
+				<div class="meta-field">
+					<span class="field-label">{tw(locale, 'status')}</span>
+					<span class="field-value">{translateStatus(details.status, locale)}</span>
+				</div>
+			{/if}
+		</section>
+	{/if}
 
 	<CreditsInfo crew={details.crew} mediaType={details.mediaType} {locale} />
 
@@ -476,9 +470,9 @@
 	}
 
 	.meta-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-		gap: var(--space-md);
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-md) var(--space-xl);
 	}
 
 	.meta-field {
