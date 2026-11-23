@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { GOOGLE_PLAY_URL, LOGO_ICON_ASSET } from '$lib/constants/urls';
 	import { tw, type SupportedLocale } from '$lib/i18n';
+	import GooglePlayIcon from './GooglePlayIcon.svelte';
 
 	interface Props {
 		locale: SupportedLocale;
@@ -24,7 +25,8 @@
 		target="_blank"
 		rel="noopener noreferrer"
 	>
-		{tw(locale, 'getItOnGooglePlay')}
+		<GooglePlayIcon size={18} />
+		<span>{tw(locale, 'getItOnGooglePlay')}</span>
 	</a>
 </aside>
 
@@ -75,6 +77,7 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+		gap: var(--space-sm);
 		min-height: 40px;
 		padding: var(--space-sm) var(--space-lg);
 		border-radius: var(--radius-sm);
