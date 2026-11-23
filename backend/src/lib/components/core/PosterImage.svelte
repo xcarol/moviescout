@@ -44,7 +44,7 @@
 		aspectRatio = '2 / 3',
 		priority = 'normal',
 		lazy = false,
-		radius = 'var(--radius-xs)',
+		radius = 'var(--radius-card)',
 		width,
 		height,
 		sizes,

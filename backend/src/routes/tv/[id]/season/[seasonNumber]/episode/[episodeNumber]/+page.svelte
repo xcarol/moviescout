@@ -56,7 +56,6 @@
 			size={TMDB_IMAGE_SIZE.w780}
 			firstPriority="high"
 			label={t(data.locale, 'gallery')}
-			radius="var(--radius-chip)"
 		/>
 	</div>
 

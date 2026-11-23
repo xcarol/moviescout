@@ -44,7 +44,6 @@
 				size={TMDB_IMAGE_SIZE.w500}
 				firstPriority="high"
 				label={t(data.locale, 'gallery')}
-				radius="var(--radius-chip)"
 			/>
 		</div>
 
@@ -130,7 +129,6 @@
 				size={TMDB_IMAGE_SIZE.w780}
 				firstPriority="normal"
 				label={tw(data.locale, 'taggedImages')}
-				radius="var(--radius-chip)"
 			/>
 		</section>
 	{/if}

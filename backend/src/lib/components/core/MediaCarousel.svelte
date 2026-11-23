@@ -20,7 +20,7 @@
 		size = 'w780',
 		firstPriority = 'high',
 		label = 'Gallery',
-		radius = 'var(--radius-chip)'
+		radius = 'var(--radius-card)'
 	}: Props = $props();
 
 	let trackEl: HTMLDivElement | undefined = $state();
@@ -373,10 +373,30 @@
 		display: flex;
 		justify-content: space-between;
 		pointer-events: none;
+		opacity: 0;
+		transition: opacity 150ms ease;
+	}
+
+	@media (hover: hover) {
+		.carousel-stage:hover .carousel-controls {
+			opacity: 1;
+		}
+
+		.carousel-stage:hover .nav-btn {
+			pointer-events: auto;
+		}
+	}
+
+	.carousel-controls:focus-within {
+		opacity: 1;
+	}
+
+	.carousel-controls:focus-within .nav-btn {
+		pointer-events: auto;
 	}
 
 	.nav-btn {
-		pointer-events: auto;
+		pointer-events: none;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;

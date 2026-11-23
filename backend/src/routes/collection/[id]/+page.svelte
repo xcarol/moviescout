@@ -43,7 +43,6 @@
 			size={TMDB_IMAGE_SIZE.w780}
 			firstPriority="high"
 			label={t(data.locale, 'gallery')}
-			radius="var(--radius-chip)"
 		/>
 	</div>
 
@@ -55,7 +54,7 @@
 				alt={collection.name}
 				size={TMDB_IMAGE_SIZE.w500}
 				aspectRatio="2 / 3"
-				radius="var(--radius-chip)"
+				radius="var(--radius-card)"
 				priority={heroImages.length === 0 ? 'high' : 'normal'}
 			/>
 		</div>

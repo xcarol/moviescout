@@ -88,7 +88,6 @@
 			size={TMDB_IMAGE_SIZE.w780}
 			firstPriority="high"
 			label={t(locale, 'gallery')}
-			radius="var(--radius-chip)"
 		/>
 	</div>
 
@@ -100,7 +99,7 @@
 				alt={details.title}
 				size={TMDB_IMAGE_SIZE.w500}
 				aspectRatio="2 / 3"
-				radius="var(--radius-chip)"
+				radius="var(--radius-card)"
 				priority={heroImages.length === 0 ? 'high' : 'normal'}
 			/>
 		</div>
@@ -233,7 +232,7 @@
 						alt={details.belongsToCollection.name}
 						size={TMDB_IMAGE_SIZE.w185}
 						aspectRatio="2 / 3"
-						radius="var(--radius-sm)"
+						radius="var(--radius-card)"
 						lazy={true}
 					/>
 				</div>

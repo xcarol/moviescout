@@ -53,7 +53,6 @@
 				size={TMDB_IMAGE_SIZE.w500}
 				firstPriority="high"
 				label={t(data.locale, 'gallery')}
-				radius="var(--radius-chip)"
 			/>
 		</div>
 
@@ -110,7 +109,7 @@
 								alt={ep.name}
 								size={TMDB_IMAGE_SIZE.w500}
 								aspectRatio="16 / 9"
-								radius="var(--radius-sm)"
+								radius="var(--radius-card)"
 								lazy={true}
 							/>
 						</div>
