@@ -1,7 +1,6 @@
 <script lang="ts">
 	import AppPromoBanner from '$lib/components/core/AppPromoBanner.svelte';
 	import ExpandableText from '$lib/components/core/ExpandableText.svelte';
-	import ExternalLinks from '$lib/components/core/ExternalLinks.svelte';
 	import MediaCarousel from '$lib/components/core/MediaCarousel.svelte';
 	import PosterImage from '$lib/components/core/PosterImage.svelte';
 	import SeoHead from '$lib/components/core/SeoHead.svelte';
@@ -34,37 +33,41 @@
 />
 
 <article class="collection-page content-container">
-	<div class="hero-backdrop">
-		<MediaCarousel
-			images={heroImages}
-			fallbackType="backdrop"
-			alt={collection.name}
-			aspectRatio="16 / 9"
-			size={TMDB_IMAGE_SIZE.w780}
-			firstPriority="high"
-			label={t(data.locale, 'gallery')}
-		/>
-	</div>
-
-	<header class="collection-header">
-		<div class="poster-col">
-			<PosterImage
-				path={collection.posterPath}
-				fallbackType="movie-poster"
+	<div class="hero-header">
+		<div class="hero-backdrop">
+			<MediaCarousel
+				images={heroImages}
+				fallbackType="backdrop"
 				alt={collection.name}
-				size={TMDB_IMAGE_SIZE.w500}
-				aspectRatio="2 / 3"
-				radius="var(--radius-card)"
-				priority={heroImages.length === 0 ? 'high' : 'normal'}
+				aspectRatio="16 / 9"
+				size={TMDB_IMAGE_SIZE.w780}
+				firstPriority="high"
+				label={t(data.locale, 'gallery')}
 			/>
 		</div>
 
-		<div class="summary-col">
-			<span class="type-pill">{t(data.locale, 'collection')}</span>
-			<h1 class="collection-heading">{collection.name}</h1>
-			<p class="count-meta">
-				{tw(data.locale, 'moviesCountLabel', { count: collection.parts.length })}
-			</p>
+		<header class="collection-header">
+			<div class="header-main">
+				<div class="poster-col">
+					<PosterImage
+						path={collection.posterPath}
+						fallbackType="movie-poster"
+						alt={collection.name}
+						size={TMDB_IMAGE_SIZE.w500}
+						aspectRatio="2 / 3"
+						radius="var(--radius-card)"
+						priority={heroImages.length === 0 ? 'high' : 'normal'}
+					/>
+				</div>
+
+				<div class="summary-col">
+					<span class="type-pill">{t(data.locale, 'collection')}</span>
+					<h1 class="collection-heading">{collection.name}</h1>
+					<p class="count-meta">
+						{tw(data.locale, 'moviesCountLabel', { count: collection.parts.length })}
+					</p>
+				</div>
+			</div>
 
 			{#if collection.overview}
 				<ExpandableText
@@ -74,8 +77,8 @@
 					lessLabel={tw(data.locale, 'showLess')}
 				/>
 			{/if}
-		</div>
-	</header>
+		</header>
+	</div>
 
 	{#if collection.parts.length > 0}
 		<section class="section-block" aria-labelledby="parts-heading">
@@ -94,14 +97,6 @@
 	<section class="section-block">
 		<AppPromoBanner locale={data.locale} />
 	</section>
-
-	<section class="section-block">
-		<ExternalLinks
-			mediaType="collection"
-			id={collection.id}
-			heading={t(data.locale, 'watchOn')}
-		/>
-	</section>
 </article>
 
 <style>
@@ -112,24 +107,45 @@
 		padding-block: var(--space-lg);
 	}
 
+	.hero-header {
+		display: flex;
+		flex-direction: column;
+	}
+
 	.collection-header {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-md);
+	}
+
+	.header-main {
 		display: grid;
-		grid-template-columns: 160px minmax(0, 1fr);
-		gap: var(--space-xl);
+		grid-template-columns: 148px minmax(0, 1fr);
+		gap: var(--space-lg);
+		padding-inline-start: var(--space-sm);
 		align-items: start;
 	}
 
 	@media (max-width: 600px) {
-		.collection-header {
-			grid-template-columns: 120px minmax(0, 1fr);
+		.header-main {
+			grid-template-columns: 128px minmax(0, 1fr);
 			gap: var(--space-md);
 		}
+	}
+
+	.poster-col {
+		position: relative;
+		z-index: 3;
+		margin-block-start: -28px;
+		border: var(--space-xs) solid var(--color-bg);
+		background-color: var(--color-bg);
 	}
 
 	.summary-col {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-sm);
+		padding-block-start: var(--space-md);
 		min-width: 0;
 	}
 

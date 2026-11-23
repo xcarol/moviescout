@@ -8,6 +8,7 @@
 	import TitleChip from '$lib/components/titles/TitleChip.svelte';
 	import { TMDB_IMAGE_SIZE } from '$lib/constants/urls';
 	import { t, translateDepartment, translateJob, tw } from '$lib/i18n';
+	import { calculateAge, formatDate } from '$lib/utils/date';
 	import type { PageData } from './$types';
 
 	interface Props {
@@ -21,6 +22,11 @@
 		if (person.images.length > 0) return person.images.slice(0, 10);
 		return person.profilePath ? [person.profilePath] : [];
 	});
+
+	const livingAge = $derived(!person.deathday ? calculateAge(person.birthday) : null);
+	const deceasedAge = $derived(
+		person.deathday ? calculateAge(person.birthday, person.deathday) : null
+	);
 </script>
 
 <SeoHead
@@ -60,13 +66,17 @@
 				{#if person.birthday}
 					<div class="meta-item">
 						<dt>{t(data.locale, 'birthDate')}</dt>
-						<dd>{person.birthday}</dd>
+						<dd>
+							{formatDate(person.birthday, data.locale)}{#if livingAge !== null}{' '}({livingAge} {t(data.locale, 'years')}){/if}
+						</dd>
 					</div>
 				{/if}
 				{#if person.deathday}
 					<div class="meta-item">
 						<dt>{t(data.locale, 'deathDate')}</dt>
-						<dd>{person.deathday}</dd>
+						<dd>
+							{formatDate(person.deathday, data.locale)}{#if deceasedAge !== null}{' '}({deceasedAge} {t(data.locale, 'years')}){/if}
+						</dd>
 					</div>
 				{/if}
 				{#if person.placeOfBirth}
@@ -90,6 +100,15 @@
 			/>
 		</section>
 	{/if}
+
+	<section class="section-block">
+		<ExternalLinks
+			mediaType="person"
+			id={person.id}
+			links={person.externalLinks}
+			heading={t(data.locale, 'watchOn')}
+		/>
+	</section>
 
 	<section class="section-block">
 		<AppPromoBanner locale={data.locale} />
@@ -119,8 +138,8 @@
 	{/if}
 
 	{#if person.taggedImages.length > 0}
-		<section class="section-block" aria-labelledby="tagged-heading">
-			<h2 id="tagged-heading" class="section-title">{tw(data.locale, 'taggedImages')}</h2>
+		<section class="section-block" aria-labelledby="gallery-heading">
+			<h2 id="gallery-heading" class="section-title">{t(data.locale, 'gallery')}</h2>
 			<MediaCarousel
 				images={person.taggedImages.slice(0, 10)}
 				fallbackType="backdrop"
@@ -128,19 +147,10 @@
 				aspectRatio="16 / 9"
 				size={TMDB_IMAGE_SIZE.w780}
 				firstPriority="normal"
-				label={tw(data.locale, 'taggedImages')}
+				label={t(data.locale, 'gallery')}
 			/>
 		</section>
 	{/if}
-
-	<section class="section-block">
-		<ExternalLinks
-			mediaType="person"
-			id={person.id}
-			links={person.externalLinks}
-			heading={t(data.locale, 'watchOn')}
-		/>
-	</section>
 </article>
 
 <style>

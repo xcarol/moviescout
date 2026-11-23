@@ -23,10 +23,6 @@
 		if (ep.images.length > 0) return ep.images;
 		return ep.stillPath ? [ep.stillPath] : [];
 	});
-
-	const episodeCode = $derived(
-		`S${String(ep.seasonNumber).padStart(2, '0')}E${String(ep.episodeNumber).padStart(2, '0')}`
-	);
 </script>
 
 <SeoHead
@@ -61,7 +57,6 @@
 	</div>
 
 	<header class="episode-header">
-		<span class="episode-kicker">{episodeCode}</span>
 		<h1 class="episode-heading">{ep.name}</h1>
 
 		<div class="meta-row">
@@ -173,16 +168,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-sm);
-	}
-
-	.episode-kicker {
-		align-self: flex-start;
-		padding: var(--space-xxs) var(--space-sm);
-		border-radius: var(--radius-full);
-		background-color: var(--color-surface-elevated);
-		color: var(--color-primary);
-		font-size: var(--text-body-sm);
-		font-weight: 700;
 	}
 
 	.episode-heading {
