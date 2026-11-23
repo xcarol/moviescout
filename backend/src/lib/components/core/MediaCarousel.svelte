@@ -455,7 +455,7 @@
 
 	.carousel-markers {
 		position: absolute;
-		inset-block-end: var(--space-sm);
+		inset-block-end: var(--space-xl);
 		inset-inline: var(--space-sm);
 		z-index: 2;
 		display: flex;

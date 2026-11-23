@@ -79,77 +79,82 @@
 </script>
 
 <article class="detail-page content-container">
-	<div class="hero-backdrop">
-		<MediaCarousel
-			images={heroImages}
-			fallbackType="backdrop"
-			alt={details.title}
-			aspectRatio="16 / 9"
-			size={TMDB_IMAGE_SIZE.w780}
-			firstPriority="high"
-			label={t(locale, 'gallery')}
-		/>
-	</div>
-
-	<header class="title-header">
-		<div class="poster-col">
-			<PosterImage
-				path={details.posterPath}
-				fallbackType={isMovie ? 'movie-poster' : 'tvshow-poster'}
+	<div class="hero-header">
+		<div class="hero-backdrop">
+			<MediaCarousel
+				images={heroImages}
+				fallbackType="backdrop"
 				alt={details.title}
-				size={TMDB_IMAGE_SIZE.w500}
-				aspectRatio="2 / 3"
-				radius="var(--radius-card)"
-				priority={heroImages.length === 0 ? 'high' : 'normal'}
+				aspectRatio="16 / 9"
+				size={TMDB_IMAGE_SIZE.w780}
+				firstPriority="high"
+				label={t(locale, 'gallery')}
 			/>
 		</div>
 
-		<div class="summary-col">
-			<div class="type-pill">
-				{isMovie ? t(locale, 'movie') : t(locale, 'tvShow')}
+		<header class="title-header">
+			<div class="header-main">
+				<div class="poster-col">
+					<PosterImage
+						path={details.posterPath}
+						fallbackType={isMovie ? 'movie-poster' : 'tvshow-poster'}
+						alt={details.title}
+						size={TMDB_IMAGE_SIZE.w500}
+						aspectRatio="2 / 3"
+						radius="var(--radius-card)"
+						priority={heroImages.length === 0 ? 'high' : 'normal'}
+					/>
+				</div>
+
+				<div class="summary-col">
+					<div class="type-pill">
+						{isMovie ? t(locale, 'movie') : t(locale, 'tvShow')}
+					</div>
+					<h1 class="title-heading">{details.title}</h1>
+
+					<div class="meta-chips">
+						{#if releaseYear}
+							<span class="meta-item">{releaseYear}</span>
+						{/if}
+						{#if formattedRuntime}
+							<span class="meta-item">{formattedRuntime}</span>
+						{/if}
+						{#if !isMovie && details.numberOfSeasons}
+							<span class="meta-item">
+								{tw(locale, 'seasonsCountLabel', { count: details.numberOfSeasons })}
+							</span>
+						{/if}
+						{#if !isMovie && details.numberOfEpisodes}
+							<span class="meta-item">
+								{tw(locale, 'episodesCount', { count: details.numberOfEpisodes })}
+							</span>
+						{/if}
+						{#if details.certification}
+							<span class="cert-badge">{details.certification}</span>
+						{/if}
+					</div>
+
+					{#if headerCredit}
+						<div class="header-credit">
+							<span class="header-credit-label">{t(locale, headerCredit.labelKey)}</span>
+							<ClickableNames people={headerCredit.people} {locale} useEllipsis={true} />
+						</div>
+					{/if}
+
+					{#if details.genres.length > 0}
+						<ul class="genre-list">
+							{#each details.genres as genre (genre.id)}
+								<li class="genre-chip">
+									{translateGenre(genre.id, locale) ?? genre.name}
+								</li>
+							{/each}
+						</ul>
+					{/if}
+				</div>
 			</div>
-			<h1 class="title-heading">{details.title}</h1>
+
 			{#if details.tagline}
 				<p class="tagline">{details.tagline}</p>
-			{/if}
-
-			<div class="meta-chips">
-				{#if releaseYear}
-					<span class="meta-item">{releaseYear}</span>
-				{/if}
-				{#if formattedRuntime}
-					<span class="meta-item">{formattedRuntime}</span>
-				{/if}
-				{#if !isMovie && details.numberOfSeasons}
-					<span class="meta-item">
-						{tw(locale, 'seasonsCountLabel', { count: details.numberOfSeasons })}
-					</span>
-				{/if}
-				{#if !isMovie && details.numberOfEpisodes}
-					<span class="meta-item">
-						{tw(locale, 'episodesCount', { count: details.numberOfEpisodes })}
-					</span>
-				{/if}
-				{#if details.certification}
-					<span class="cert-badge">{details.certification}</span>
-				{/if}
-			</div>
-
-			{#if headerCredit}
-				<div class="header-credit">
-					<span class="header-credit-label">{t(locale, headerCredit.labelKey)}</span>
-					<ClickableNames people={headerCredit.people} {locale} useEllipsis={true} />
-				</div>
-			{/if}
-
-			{#if details.genres.length > 0}
-				<ul class="genre-list">
-					{#each details.genres as genre (genre.id)}
-						<li class="genre-chip">
-							{translateGenre(genre.id, locale) ?? genre.name}
-						</li>
-					{/each}
-				</ul>
 			{/if}
 
 			<div class="actions-row">
@@ -167,8 +172,8 @@
 					trailerLabel={t(locale, 'trailer')}
 				/>
 			</div>
-		</div>
-	</header>
+		</header>
+	</div>
 
 	{#if details.overview}
 		<section class="section-block">
@@ -337,24 +342,45 @@
 		padding-block: var(--space-lg);
 	}
 
+	.hero-header {
+		display: flex;
+		flex-direction: column;
+	}
+
 	.title-header {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-sm);
+	}
+
+	.header-main {
 		display: grid;
-		grid-template-columns: 160px minmax(0, 1fr);
-		gap: var(--space-xl);
+		grid-template-columns: 148px minmax(0, 1fr);
+		gap: var(--space-lg);
+		padding-inline-start: var(--space-sm);
 		align-items: start;
 	}
 
 	@media (max-width: 600px) {
-		.title-header {
-			grid-template-columns: 120px minmax(0, 1fr);
+		.header-main {
+			grid-template-columns: 128px minmax(0, 1fr);
 			gap: var(--space-md);
 		}
+	}
+
+	.poster-col {
+		position: relative;
+		z-index: 3;
+		margin-block-start: -28px;
+		border: var(--space-xs) solid var(--color-bg);
+		background-color: var(--color-bg);
 	}
 
 	.summary-col {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-sm);
+		padding-block-start: var(--space-md);
 		min-width: 0;
 	}
 
@@ -379,7 +405,9 @@
 	.tagline {
 		color: var(--color-text-muted);
 		font-style: italic;
-		font-size: var(--text-body-md);
+		font-size: var(--text-body-sm);
+		text-align: center;
+		padding-block-start: var(--space-xs);
 	}
 
 	.meta-chips {
