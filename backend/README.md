@@ -16,6 +16,31 @@ This directory contains the **SvelteKit (Svelte 5) + TypeScript** web companion 
    - **Legal & Verification**: `privacy.html`, `terms.html`, and `google5da2fd1c2b04afea.html`.
    - **Remote Config JSONs**: `ai-models.json`, `ai-prompts.json`, and `tmdb-edit-selectors.json` (served with `Access-Control-Allow-Origin: *` and `Cache-Control: public, max-age=0, must-revalidate`).
 
+## Project Structure (Feature-First)
+
+Following the Flutter app's **feature-first** organization (see [DEVELOP.md](../DEVELOP.md#architecture--directory-structure) and the official [Flutter Guide to App Architecture](https://docs.flutter.dev/app-architecture)), both `src/lib/components/` and `src/lib/server/` group shared primitives under `core/` and domain modules by feature:
+
+```text
+src/lib/
+├── components/
+│   ├── core/        # Shared UI components (AppHeader, AppFooter, PosterImage, MediaCarousel, ClickableNames, ...)
+│   ├── titles/      # Movie & TV UI (TitleDetailView, TitleChip, RatingBadges, TrailerModal, WatchProviders)
+│   └── people/      # Person UI (PersonChip)
+├── server/
+│   ├── core/        # Shared server utilities (cache, omdb, tmdb-client, routing, base seo)
+│   ├── titles/      # Movie & TV loaders, TMDB client, and SEO (tmdb-titles, title-loader, title-seo)
+│   ├── seasons/     # Season & episode TMDB client and SEO (tmdb-seasons, season-seo)
+│   ├── people/      # Person TMDB client and SEO (tmdb-people, person-seo)
+│   └── discovery/   # Collection TMDB client and SEO (tmdb-collections, collection-seo)
+├── constants/       # Shared URLs, image sizes, and app constants
+├── i18n/            # Locale/region resolution, metadata helpers, and synced Flutter translations
+├── styles/          # Dark-mode CSS tokens (aligned with STYLE_GUIDE.md) and global styles
+├── types/           # TypeScript domain contracts
+└── utils/           # Pure shared helpers (e.g. credits filtering)
+```
+
+For UI rules, colors, spacing, radii, and fallback assets, see [STYLE_GUIDE.md](../STYLE_GUIDE.md).
+
 ## Local Development
 
 1. Install dependencies (automatically runs `npm run sync` via `postinstall`):

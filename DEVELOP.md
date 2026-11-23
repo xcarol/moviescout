@@ -1,5 +1,14 @@
 # Development
 
+## Architecture & Directory Structure
+
+MovieScout follows a **Feature-First** + **Layered (UI / Data / Services)** architecture adapted from the official [**Flutter Guide to App Architecture**](https://docs.flutter.dev/app-architecture) ([Compass App case study](https://docs.flutter.dev/app-architecture/case-study/overview)):
+
+- **`lib/core/`**: Cross-feature building blocks (`database/`, `models/`, `navigation/`, `services/`, `theme/`, `utils/`, `widgets/`).
+- **`lib/features/<feature>/`**: Domain modules (`auth`, `discovery`, `home`, `import`, `notifications`, `people`, `seasons`, `settings`, `titles`, `watchlist`), each organized internally into `models/`, `repositories/`, `services/`, `screens/`, and `widgets/`.
+
+The SvelteKit web companion (`backend/`) mirrors this same feature-first grouping (`core/`, `titles/`, `seasons/`, `people/`, `discovery/`) inside `backend/src/lib/components/` and `backend/src/lib/server/` (see [backend/README.md](backend/README.md)).
+
 ## Flutter installation
 
 - Install Java 17: `sudo apt install openjdk-17-jdk`

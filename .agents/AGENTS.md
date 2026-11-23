@@ -38,3 +38,11 @@
 
 # Web Companion Rules
 - ANDROID AS UI MODEL: For the web companion (`backend/`), follow the Android (Flutter) app's UI, layout structure, information hierarchy, and visual design (`STYLE_GUIDE.md`) as the primary reference model. Only deviate when necessary for web coherence and usability (e.g., URL routing, native browser semantics, hover/keyboard interactions, SEO/OpenGraph, or responsive desktop ergonomics).
+- MIRROR FEATURE-FIRST STRUCTURE: Organize `backend/src/lib/components/` and `backend/src/lib/server/` by `core/` + feature folders (`titles/`, `seasons/`, `people/`, `discovery/`) matching `lib/core/` and `lib/features/` (see `backend/README.md`).
+
+# Project Documentation References
+- `DEVELOP.md`: Environment setup, integrations (Firebase, TMDB, OMDb, Supabase, Vercel), and the **Feature-First** architecture overview (based on `https://docs.flutter.dev/app-architecture`).
+- `STYLE_GUIDE.md`: Design system, dark-mode tokens, responsive breakpoints, spacing, radii, and fallback image rules.
+- `backend/README.md`: SvelteKit web companion architecture, feature-first folder layout, shared i18n/assets sync, and Vercel deployment.
+- `NOTIFICATIONS.md`: Watchlist update and notification evaluation flows.
+- `DATABASE BACKUP.md`: Database schema and backup/export documentation.
