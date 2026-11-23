@@ -2,15 +2,15 @@
 	import AppPromoBanner from '$lib/components/core/AppPromoBanner.svelte';
 	import CreditsInfo from '$lib/components/core/CreditsInfo.svelte';
 	import ExpandableText from '$lib/components/core/ExpandableText.svelte';
-	import HorizontalRail from '$lib/components/core/HorizontalRail.svelte';
+	import ExternalLinks from '$lib/components/core/ExternalLinks.svelte';
 	import MediaCarousel from '$lib/components/core/MediaCarousel.svelte';
-	import PersonChip from '$lib/components/people/PersonChip.svelte';
 	import PosterImage from '$lib/components/core/PosterImage.svelte';
 	import RatingBadges from '$lib/components/titles/RatingBadges.svelte';
 	import SeoHead from '$lib/components/core/SeoHead.svelte';
 	import TrailerModal from '$lib/components/titles/TrailerModal.svelte';
 	import { TMDB_IMAGE_SIZE } from '$lib/constants/urls';
-	import { t, translateJob, tw } from '$lib/i18n';
+	import { t, tw } from '$lib/i18n';
+	import { formatDate } from '$lib/utils/date';
 	import type { PageData } from './$types';
 
 	interface Props {
@@ -62,12 +62,11 @@
 				{season.name || t(data.locale, 'seasonLabel', { count: season.seasonNumber })}
 			</h1>
 
-			<div class="meta-row">
-				{#if season.airDate}
-					<span>{season.airDate}</span>
-				{/if}
-				<span>{tw(data.locale, 'episodesCount', { count: season.episodes.length })}</span>
-			</div>
+			{#if season.airDate}
+				<div class="meta-row">
+					<span>{formatDate(season.airDate, data.locale)}</span>
+				</div>
+			{/if}
 
 			<div class="actions-row">
 				<RatingBadges tmdbVoteAverage={season.voteAverage} />
@@ -92,55 +91,68 @@
 
 	<CreditsInfo crew={season.crew} mediaType="tv" locale={data.locale} />
 
-	<section class="section-block" aria-labelledby="episodes-heading">
-		<h2 id="episodes-heading" class="section-title">{t(data.locale, 'episodes')}</h2>
-
-		<ul class="episode-list">
-			{#each season.episodes as ep (ep.id || ep.episodeNumber)}
-				<li>
-					<a
-						class="episode-card"
-						href={`/tv/${season.tvId}/season/${season.seasonNumber}/episode/${ep.episodeNumber}`}
-					>
-						<div class="episode-still">
-							<PosterImage
-								path={ep.stillPath}
-								fallbackType="tvshow"
-								alt={ep.name}
-								size={TMDB_IMAGE_SIZE.w500}
-								aspectRatio="16 / 9"
-								radius="var(--radius-card)"
-								lazy={true}
-							/>
-						</div>
-
-						<div class="episode-info">
-							<div class="episode-top">
-								<span class="episode-num">
-									{t(data.locale, 'episodeLabel', { count: ep.episodeNumber })}
-								</span>
-								{#if ep.voteAverage > 0}
-									<span class="episode-rating">&#9733; {ep.voteAverage.toFixed(1)}</span>
-								{/if}
-							</div>
-							<h3 class="episode-title">{ep.name}</h3>
-							<div class="episode-meta">
-								{#if ep.airDate}
-									<span>{ep.airDate}</span>
-								{/if}
-								{#if ep.runtime}
-									<span>{ep.runtime} {tw(data.locale, 'minutesShort')}</span>
-								{/if}
-							</div>
-							{#if ep.overview}
-								<p class="episode-overview">{ep.overview}</p>
-							{/if}
-						</div>
-					</a>
-				</li>
-			{/each}
-		</ul>
+	<section class="section-block">
+		<ExternalLinks
+			mediaType="tv"
+			id={season.tvId}
+			seasonNumber={season.seasonNumber}
+			heading={t(data.locale, 'watchOn')}
+		/>
 	</section>
+
+	{#if season.episodes.length > 0}
+		<section class="section-block" aria-labelledby="episodes-heading">
+			<h2 id="episodes-heading" class="section-title episodes-heading">
+				{tw(data.locale, 'episodesCount', { count: season.episodes.length })}
+			</h2>
+
+			<ul class="episode-list">
+				{#each season.episodes as ep (ep.id || ep.episodeNumber)}
+					<li>
+						<a
+							class="episode-card"
+							href={`/tv/${season.tvId}/season/${season.seasonNumber}/episode/${ep.episodeNumber}`}
+						>
+							<div class="episode-still">
+								<PosterImage
+									path={ep.stillPath}
+									fallbackType="tvshow"
+									alt={ep.name}
+									size={TMDB_IMAGE_SIZE.w500}
+									aspectRatio="16 / 9"
+									radius="var(--radius-card)"
+									lazy={true}
+								/>
+							</div>
+
+							<div class="episode-info">
+								<div class="episode-top">
+									<span class="episode-num">
+										{t(data.locale, 'episodeLabel', { count: ep.episodeNumber })}
+									</span>
+									{#if ep.voteAverage > 0}
+										<span class="episode-rating">&#9733; {ep.voteAverage.toFixed(1)}</span>
+									{/if}
+								</div>
+								<h3 class="episode-title">{ep.name}</h3>
+								<div class="episode-meta">
+									{#if ep.airDate}
+										<span>{formatDate(ep.airDate, data.locale)}</span>
+									{/if}
+									{#if ep.runtime}
+										<span>{ep.runtime} {tw(data.locale, 'minutesShort')}</span>
+									{/if}
+								</div>
+								{#if ep.overview}
+									<p class="episode-overview">{ep.overview}</p>
+								{/if}
+							</div>
+						</a>
+					</li>
+				{/each}
+			</ul>
+		</section>
+	{/if}
 
 	{#if season.seasonNumber > 1 || (season.totalSeasons > 0 && season.seasonNumber < season.totalSeasons)}
 		<nav class="season-pager" aria-label={t(data.locale, 'selectSeason')}>
@@ -168,26 +180,6 @@
 	<section class="section-block">
 		<AppPromoBanner locale={data.locale} />
 	</section>
-
-	{#if season.cast.length > 0}
-		<section class="section-block">
-			<HorizontalRail title={t(data.locale, 'cast')}>
-				{#each season.cast.slice(0, 20) as person (person.id)}
-					<PersonChip {person} />
-				{/each}
-			</HorizontalRail>
-		</section>
-	{/if}
-
-	{#if season.crew.length > 0}
-		<section class="section-block">
-			<HorizontalRail title={t(data.locale, 'crew')}>
-				{#each season.crew.slice(0, 20) as person (person.id)}
-					<PersonChip {person} roleText={translateJob(person.role, data.locale)} />
-				{/each}
-			</HorizontalRail>
-		</section>
-	{/if}
 </article>
 
 <style>
@@ -272,6 +264,11 @@
 		margin-block-end: var(--space-md);
 	}
 
+	.episodes-heading {
+		padding-block-end: var(--space-md);
+		border-block-end: 1px solid var(--color-border);
+	}
+
 	.episode-list {
 		display: flex;
 		flex-direction: column;
@@ -285,7 +282,7 @@
 		grid-template-columns: 196px minmax(0, 1fr);
 		gap: var(--space-md);
 		padding: var(--space-md);
-		border-radius: var(--radius-chip);
+		border-radius: var(--radius-card);
 		background-color: var(--color-surface);
 		border: 1px solid var(--color-border);
 		transition: border-color 150ms ease;

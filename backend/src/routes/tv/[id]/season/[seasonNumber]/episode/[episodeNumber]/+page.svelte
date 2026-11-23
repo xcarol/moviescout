@@ -9,6 +9,7 @@
 	import TrailerModal from '$lib/components/titles/TrailerModal.svelte';
 	import { TMDB_IMAGE_SIZE } from '$lib/constants/urls';
 	import { t, translateJob, tw } from '$lib/i18n';
+	import { formatDate } from '$lib/utils/date';
 	import type { PageData } from './$types';
 
 	interface Props {
@@ -65,7 +66,7 @@
 
 		<div class="meta-row">
 			{#if ep.airDate}
-				<span>{tw(data.locale, 'airDate')}: {ep.airDate}</span>
+				<span>{tw(data.locale, 'airDate')}: {formatDate(ep.airDate, data.locale)}</span>
 			{/if}
 			{#if ep.runtime}
 				<span>{ep.runtime} {tw(data.locale, 'minutesShort')}</span>

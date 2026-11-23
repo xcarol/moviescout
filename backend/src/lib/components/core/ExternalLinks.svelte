@@ -5,11 +5,12 @@
 	interface Props {
 		mediaType: 'movie' | 'tv' | 'person' | 'collection';
 		id: number;
+		seasonNumber?: number;
 		links?: ExternalLinksData;
 		heading: string;
 	}
 
-	let { mediaType, id, links = {}, heading }: Props = $props();
+	let { mediaType, id, seasonNumber, links = {}, heading }: Props = $props();
 
 	interface LinkItem {
 		label: string;
@@ -19,10 +20,15 @@
 	}
 
 	const items = $derived.by((): LinkItem[] => {
+		const tmdbPath =
+			mediaType === 'tv' && seasonNumber !== undefined
+				? `tv/${id}/season/${seasonNumber}`
+				: `${mediaType}/${id}`;
+
 		const list: LinkItem[] = [
 			{
 				label: 'The Movie Database (TMDB)',
-				href: `${TMDB_WEB_URL}/${mediaType}/${id}`,
+				href: `${TMDB_WEB_URL}/${tmdbPath}`,
 				iconAsset: TMDB_LOGO_ASSET
 			}
 		];
