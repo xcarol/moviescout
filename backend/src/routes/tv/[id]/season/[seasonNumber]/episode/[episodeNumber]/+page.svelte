@@ -117,10 +117,10 @@
 		<AppPromoBanner locale={data.locale} />
 	</section>
 
-	{#if ep.cast.length > 0 || ep.guestStars.length > 0}
+	{#if ep.cast.length > 0}
 		<section class="section-block">
 			<HorizontalRail title={t(data.locale, 'cast')}>
-				{#each [...ep.cast, ...ep.guestStars].slice(0, 20) as person (`${person.id}-${person.role}`)}
+				{#each ep.cast.slice(0, 20) as person (person.id)}
 					<PersonChip {person} />
 				{/each}
 			</HorizontalRail>

@@ -172,7 +172,6 @@ export interface EpisodeDetails {
 	images: string[];
 	videos: TmdbVideo[];
 	cast: PersonSummary[];
-	guestStars: PersonSummary[];
 	crew: PersonSummary[];
 }
 

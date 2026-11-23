@@ -138,7 +138,7 @@ export async function getEpisodeDetails(
 			fetchTmdbJson<RawRecord>(
 				`/tv/${tvId}/season/${seasonNumber}/episode/${episodeNumber}`,
 				{
-					append_to_response: 'translations,images,videos,credits',
+					append_to_response: 'translations,images,videos',
 					language: tmdbLang,
 					include_image_language: includeLangs,
 					include_video_language: includeLangs
@@ -206,9 +206,8 @@ export async function getEpisodeDetails(
 			voteCount: Number(raw.vote_count ?? 0),
 			images,
 			videos,
-			cast: parsePersonSummaryList(raw.credits?.cast, 'cast'),
-			guestStars: parsePersonSummaryList(raw.guest_stars, 'cast'),
-			crew: parsePersonSummaryList(raw.credits?.crew ?? raw.crew, 'crew')
+			cast: parsePersonSummaryList(raw.guest_stars, 'cast'),
+			crew: parsePersonSummaryList(raw.crew, 'crew')
 		} satisfies EpisodeDetails;
 	}) as Promise<EpisodeDetails | null>;
 }
