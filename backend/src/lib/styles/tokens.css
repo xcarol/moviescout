@@ -72,6 +72,17 @@
 	scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
 }
 
+@media (max-width: 600px) {
+	:root {
+		--text-title-lg: 1.3125rem;
+		--text-title-md: 1.0625rem;
+		--text-title-sm: 0.9375rem;
+		--text-body-lg: 1.0625rem;
+		--text-body-md: 0.9375rem;
+		--text-body-sm: 0.8125rem;
+	}
+}
+
 @supports not (scrollbar-color: auto) {
 	:root::-webkit-scrollbar {
 		width: 10px;
