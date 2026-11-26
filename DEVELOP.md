@@ -1,5 +1,14 @@
 # Development
 
+## Architecture & Directory Structure
+
+MovieScout follows a **Feature-First** + **Layered (UI / Data / Services)** architecture adapted from the official [**Flutter Guide to App Architecture**](https://docs.flutter.dev/app-architecture) ([Compass App case study](https://docs.flutter.dev/app-architecture/case-study/overview)):
+
+- **`lib/core/`**: Cross-feature building blocks (`database/`, `models/`, `navigation/`, `services/`, `theme/`, `utils/`, `widgets/`).
+- **`lib/features/<feature>/`**: Domain modules (`auth`, `discovery`, `home`, `import`, `notifications`, `people`, `seasons`, `settings`, `titles`, `watchlist`), each organized internally into `models/`, `repositories/`, `services/`, `screens/`, and `widgets/`.
+
+The SvelteKit web companion (`backend/`) mirrors this same feature-first grouping (`core/`, `titles/`, `seasons/`, `people/`, `discovery/`) inside `backend/src/lib/components/` and `backend/src/lib/server/` (see [backend/README.md](backend/README.md)).
+
 ## Flutter installation
 
 - Install Java 17: `sudo apt install openjdk-17-jdk`
@@ -90,7 +99,16 @@ On _MovieScout Android_ parameter `--device-id` set the desired device name.
 
 Followed this guide: [i18n|Flutter](https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization)  
 
-Run `flutter gen-l10n` to update the i18n generated files.  
+Run `flutter gen-l10n` to update the i18n generated files.
+
+### Web Companion Sync & Adding Languages
+
+The SvelteKit web companion in `backend/` reuses the Flutter `.arb` translations and `assets/l10n/*.json` metadata tables automatically at install and build time (`backend/scripts/sync-shared-assets.mjs`, gitignored outputs):
+
+- **Modifying `.arb` literals or `assets/l10n/*.json`:** no manual sync is needed; `npm run dev`, `npm run check`, `npm run build`, and Vercel deployments regenerate them automatically.
+- **When adding a new language:**
+  1. Register the locale in `backend/src/lib/i18n/locales.ts` (`SUPPORTED_LOCALES`, `LOCALE_NATIVE_NAMES`, `LOCALE_OG_MAP`, `BASE_LANGUAGE_MAP`).
+  2. Add web-specific translations in `backend/src/lib/i18n/web-messages.ts` (enforced by TypeScript).
 
 ## Shared Preferences
 
@@ -162,15 +180,22 @@ Get the **API Key** (`OMDB_API_KEY`) from [OMDb API](https://www.omdbapi.com/api
 
 ## Vercel Deployment
 
-MovieScout relies on a Vercel-hosted environment (located in the `backend/` directory) for:
+MovieScout relies on a **SvelteKit (Svelte 5) + TypeScript** web companion hosted on Vercel in the `backend/` directory (`@sveltejs/adapter-vercel`) for:
 
-1. **Web Landing Page & Legal Terms:** Serving `index.html`, `privacy.html`, `terms.html`, and Google Search Console site verification directly under `https://moviescout.xicra.com/`.
-2. **Android App Links verification:** Serving the `/.well-known/assetlinks.json` file so Android can verify `moviescout.xicra.com` deep links belong to the app.
-3. **URL Redirects (`vercel.json`):** Redirecting TMDB links (`/movie/*`, `/tv/*`, `/person/*`, `/collection/*`) to `themoviedb.org`.
+1. **Public SSR Pages & Landing (`src/routes/`):** Serving a multi-language landing page (`/`) and server-rendered pages with SEO, OpenGraph, and JSON-LD for `/movie/[id]`, `/tv/[id]`, `/tv/[id]/season/[seasonNumber]`, `/tv/[id]/season/[seasonNumber]/episode/[episodeNumber]`, `/person/[id]`, and `/collection/[id]`.
+2. **Android App Links verification:** Serving `backend/static/.well-known/assetlinks.json` (`Content-Type: application/json` via `vercel.json`) so Android can verify `moviescout.xicra.com` deep links belong to the app.
+3. **Legal Pages, Verification & Remote Config (`backend/static/`):** Serving `privacy.html`, `terms.html`, `google5da2fd1c2b04afea.html`, and CORS-enabled remote JSONs (`ai-models.json`, `ai-prompts.json`, `tmdb-edit-selectors.json`).
+
+### Environment Variables & Build Sync
+
+- In the Vercel Dashboard (*Project Settings → Environment Variables*), configure `TMDB_API_RAT` (required, server-only), `OMDB_API_KEY` (optional, server-only), and `PUBLIC_GA_MEASUREMENT_ID` (optional, public GA4 Web Data Stream ID `G-...` for consent-gated web analytics).
+- In **Settings → Build and Deployment → Root Directory**, keep `backend` with **Include files outside the Root Directory in the Build Step** enabled.
+- `backend/vercel.json` defines `ignoreCommand` so changes in `backend/`, `lib/l10n/`, `assets/l10n/`, or `assets/` trigger deploys and `npm run build` syncs shared assets automatically.
+- See `backend/README.md` for local development commands (`npm run dev`, `npm run check`, `npm run build`, `npm run preview`).
 
 ### How Deployment Works
 
-- **Automatic Deploy (via Git):** The Vercel project is linked to the GitHub repository (`xcarol/moviescout`) with **Root Directory** set to `backend`. Pushing commits to the tracked branch (`master`) automatically builds and deploys changes to production (`https://moviescout.xicra.com/`).
+- **Automatic Deploy (via Git):** The Vercel project is linked to the GitHub repository (`xcarol/moviescout`) with **Root Directory** set to `backend` and **Framework Preset** set to **SvelteKit**. Pushing commits to the tracked branch (`master`) automatically builds and deploys changes to production (`https://moviescout.xicra.com/`).
 - **Manual Deploy (via CLI):** If deploying without pushing, execute:
   ```bash
   cd backend
@@ -180,9 +205,9 @@ MovieScout relies on a Vercel-hosted environment (located in the `backend/` dire
 ### Domain & Google Verification
 
 - **Custom Domain:** Configured as `moviescout.xicra.com` in Vercel settings, pointing via DNS CNAME to Vercel.
-- **Google Search Console:** Verified using the URL prefix method (`https://moviescout.xicra.com/`) via the static verification file `backend/public/google*.html`.
+- **Google Search Console:** Verified using the URL prefix method (`https://moviescout.xicra.com/`) via the static verification file `backend/static/google*.html`.
 - **Google Cloud OAuth Consent Screen:** `moviescout.xicra.com` is added as an **Authorized Domain**, allowing `https://moviescout.xicra.com/privacy.html` and `https://moviescout.xicra.com/terms.html` to be valid for Google Sign-In and Google Play verification.
-- **App Links Fingerprints:** Ensure `backend/public/.well-known/assetlinks.json` contains the SHA-256 certificate fingerprints for both your local debug keystore and Google Play App Signing key.
+- **App Links Fingerprints:** Ensure `backend/static/.well-known/assetlinks.json` contains the SHA-256 certificate fingerprints for both your local debug keystore and Google Play App Signing key.
 
 *(Note: The legacy Firebase Custom Auth serverless function previously hosted on Vercel has been deprecated and removed, as all authentication and user data are now handled by Supabase).*
 
@@ -254,6 +279,8 @@ Once you have completed the Google Cloud and Supabase configuration, ensure your
 ## Assets
 
 Images like tvshow-poster.png are created with [Cool Text](https://cooltext.com/) tool using [FUN](https://cooltext.com/Logo-Design-Fun) text style.  
+
+Shared PNG brand and fallback assets used by the web companion are copied automatically to `backend/static/assets/` during `npm run dev` / `npm run build` (`backend/scripts/sync-shared-assets.mjs`).
 
 ## Flutter tool box
 

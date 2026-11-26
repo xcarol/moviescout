@@ -22,6 +22,10 @@ This document is the **Single Source of Truth** for User Interface (UI), User Ex
    - Never assume the app runs solely on a vertical phone screen. It runs on phones, foldables, tablets, desktop, resizable windows, and in landscape orientation.
    - Base all adaptive layout decisions on available screen space (`LayoutBuilder` and `BoxConstraints`), never on platform checks or physical device hardware dimensions.
 
+4. **Web Companion Follows Android as UI Model:**
+   - The Android (Flutter) app is the primary visual and structural model for the web companion (`backend/`).
+   - Replicate its layout structure, information hierarchy, design tokens, and brand fallback assets, adapting only when needed for web coherence and usability (URL navigation, native web controls, keyboard/hover ergonomics, SEO/OpenGraph).
+
 ---
 
 ## 2. Design Tokens

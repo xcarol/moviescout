@@ -1,4 +1,5 @@
 {
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ../lib/l10n ../assets/l10n ../assets",
   "headers": [
     {
       "source": "/ai-models.json",
@@ -38,28 +39,15 @@
           "value": "public, max-age=0, must-revalidate"
         }
       ]
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/movie/:path*",
-      "destination": "https://www.themoviedb.org/movie/:path*",
-      "permanent": false
     },
     {
-      "source": "/tv/:path*",
-      "destination": "https://www.themoviedb.org/tv/:path*",
-      "permanent": false
-    },
-    {
-      "source": "/person/:path*",
-      "destination": "https://www.themoviedb.org/person/:path*",
-      "permanent": false
-    },
-    {
-      "source": "/collection/:path*",
-      "destination": "https://www.themoviedb.org/collection/:path*",
-      "permanent": false
+      "source": "/.well-known/assetlinks.json",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
     }
   ]
 }
