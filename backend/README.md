@@ -23,7 +23,7 @@ Following the Flutter app's **feature-first** organization (see [DEVELOP.md](../
 ```text
 src/lib/
 ├── components/
-│   ├── core/        # Shared UI components (AppHeader, AppFooter, PosterImage, MediaCarousel, ClickableNames, ...)
+│   ├── core/        # Shared UI components (AppHeader, AppFooter, PosterImage, MediaCarousel, ClickableNames, ConsentBanner, ...)
 │   ├── titles/      # Movie & TV UI (TitleDetailView, TitleChip, RatingBadges, TrailerModal, WatchProviders)
 │   └── people/      # Person UI (PersonChip)
 ├── server/
@@ -36,7 +36,7 @@ src/lib/
 ├── i18n/            # Locale/region resolution, metadata helpers, and synced Flutter translations
 ├── styles/          # Dark-mode CSS tokens (aligned with STYLE_GUIDE.md) and global styles
 ├── types/           # TypeScript domain contracts
-└── utils/           # Pure shared helpers (e.g. credits filtering)
+└── utils/           # Pure shared helpers (credits filtering, date formatting, GA4 consent & pageviews)
 ```
 
 For UI rules, colors, spacing, radii, and fallback assets, see [STYLE_GUIDE.md](../STYLE_GUIDE.md).
@@ -53,9 +53,11 @@ For UI rules, colors, spacing, radii, and fallback assets, see [STYLE_GUIDE.md](
    ```env
    TMDB_API_RAT=your_tmdb_api_read_access_token
    OMDB_API_KEY=your_omdb_api_key
+   PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
    ```
    - `TMDB_API_RAT` is required for `/movie/*`, `/tv/*`, `/person/*`, and `/collection/*`.
    - `OMDB_API_KEY` is optional (pages render without OMDb scores if omitted or rate-limited).
+   - `PUBLIC_GA_MEASUREMENT_ID` is optional (Google Analytics 4 Measurement ID `G-...` for web analytics). When omitted, neither `gtag.js` nor the consent banner loads.
 
 3. Run locally or verify production build (`npm run sync` runs automatically before `dev`, `check`, and `build`):
    ```bash
@@ -84,6 +86,7 @@ When **adding a new language**, `sync-shared-assets.mjs` picks up its `.arb` and
 - **Environment Variables** (*Project Settings → Environment Variables*):
   - `TMDB_API_RAT` (required, server-only)
   - `OMDB_API_KEY` (optional, server-only)
+  - `PUBLIC_GA_MEASUREMENT_ID` (optional, public client-side GA4 Measurement ID)
 
 1. **Automatic Deployment**: Pushing commits to the tracked branch builds and deploys `backend/` automatically to `https://moviescout.xicra.com/`.
 2. **Manual CLI Deployment**:
@@ -91,6 +94,21 @@ When **adding a new language**, `sync-shared-assets.mjs` picks up its `.arb` and
    cd backend
    npx -y vercel --prod
    ```
+
+## Google Analytics 4 & Cookie Consent
+
+To enable web usage statistics using an existing Google Analytics 4 property (such as the MovieScout Firebase/GA4 property):
+
+1. In [Google Analytics](https://analytics.google.com/), go to **Admin → Data collection and modification → Data streams**.
+2. Find an existing _Web Data Stream_ (**movie_scout (web)**) or click **Add stream → Web**, enter `https://moviescout.xicra.com`, name the stream (e.g. `MovieScout Web Companion`), keep **Enhanced measurement** enabled, and click **Create stream**.
+3. Copy the existing (or new generated) **Measurement ID** (`G-...`) and configure it as `PUBLIC_GA_MEASUREMENT_ID` in both:
+   - Local development (`backend/.env`) if you want to verify events locally.
+   - Vercel Dashboard (*Project Settings → Environment Variables*) for production/preview builds.
+
+How the integration behaves (`src/lib/utils/analytics.svelte.ts`, `ConsentBanner.svelte`, and `+layout.svelte`):
+- **Privacy by default:** When `PUBLIC_GA_MEASUREMENT_ID` is set, a compact, non-modal consent bar is shown until the user accepts or declines. Zero requests to `googletagmanager.com` are made and no GA cookies are written before explicit acceptance.
+- **SPA page tracking:** Initializes GA4 with `send_page_view: false` and dispatches `page_view` events on initial consented load and across client-side `afterNavigate` route transitions.
+- **Easy opt-out:** Users can reopen the banner and update or revoke consent at any time via **Cookie settings** in `AppFooter.svelte` (which also clears `_ga*` cookies).
 
 ## Domain & Google Verification
 

@@ -50,7 +50,11 @@ export type WebMessageKey =
 	| 'playTrailer'
 	| 'close'
 	| 'skipToContent'
-	| 'airDate';
+	| 'airDate'
+	| 'analyticsConsentMessage'
+	| 'analyticsConsentAccept'
+	| 'analyticsConsentDecline'
+	| 'cookieSettings';
 
 export type WebMessagesDictionary = Record<WebMessageKey, string>;
 
@@ -111,7 +115,12 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		playTrailer: 'Watch trailer',
 		close: 'Close',
 		skipToContent: 'Skip to content',
-		airDate: 'Air date'
+		airDate: 'Air date',
+		analyticsConsentMessage:
+			'We use Google Analytics cookies only with your consent to understand traffic and improve MovieScout.',
+		analyticsConsentAccept: 'Accept',
+		analyticsConsentDecline: 'Decline',
+		cookieSettings: 'Cookie settings'
 	},
 	'ca-ES': {
 		landingMotto: 'Descobreix. Segueix. Mira.',
@@ -169,7 +178,12 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		playTrailer: 'Veure tràiler',
 		close: 'Tancar',
 		skipToContent: 'Anar al contingut',
-		airDate: "Data d'emissió"
+		airDate: "Data d'emissió",
+		analyticsConsentMessage:
+			'Usem galetes de Google Analytics només amb el teu consentiment per analitzar les visites i millorar MovieScout.',
+		analyticsConsentAccept: 'Acceptar',
+		analyticsConsentDecline: 'Rebutjar',
+		cookieSettings: 'Configuració de galetes'
 	},
 	'es-ES': {
 		landingMotto: 'Descubre. Sigue. Mira.',
@@ -227,7 +241,12 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		playTrailer: 'Ver tráiler',
 		close: 'Cerrar',
 		skipToContent: 'Ir al contenido',
-		airDate: 'Fecha de emisión'
+		airDate: 'Fecha de emisión',
+		analyticsConsentMessage:
+			'Usamos cookies de Google Analytics solo con tu consentimiento para analizar el tráfico y mejorar MovieScout.',
+		analyticsConsentAccept: 'Aceptar',
+		analyticsConsentDecline: 'Rechazar',
+		cookieSettings: 'Configuración de cookies'
 	},
 	'es-419': {
 		landingMotto: 'Descubre. Sigue. Mira.',
@@ -285,7 +304,12 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		playTrailer: 'Ver tráiler',
 		close: 'Cerrar',
 		skipToContent: 'Ir al contenido',
-		airDate: 'Fecha de emisión'
+		airDate: 'Fecha de emisión',
+		analyticsConsentMessage:
+			'Usamos cookies de Google Analytics solo con tu consentimiento para analizar el tráfico y mejorar MovieScout.',
+		analyticsConsentAccept: 'Aceptar',
+		analyticsConsentDecline: 'Rechazar',
+		cookieSettings: 'Configuración de cookies'
 	},
 	'eu-ES': {
 		landingMotto: 'Ezagutu. Jarraitu. Ikusi.',
@@ -343,7 +367,12 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		playTrailer: 'Ikusi trailerra',
 		close: 'Itxi',
 		skipToContent: 'Joan edukira',
-		airDate: 'Emisio data'
+		airDate: 'Emisio data',
+		analyticsConsentMessage:
+			'Google Analytics-eko cookieak zure baimenarekin soilik erabiltzen ditugu trafikoa ulertzeko eta MovieScout hobetzeko.',
+		analyticsConsentAccept: 'Onartu',
+		analyticsConsentDecline: 'Baztertu',
+		cookieSettings: 'Cookieen ezarpenak'
 	},
 	'gl-ES': {
 		landingMotto: 'Descobre. Segue. Mira.',
@@ -401,7 +430,12 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		playTrailer: 'Ver tráiler',
 		close: 'Pechar',
 		skipToContent: 'Ir ao contido',
-		airDate: 'Data de emisión'
+		airDate: 'Data de emisión',
+		analyticsConsentMessage:
+			'Usamos cookies de Google Analytics só co teu consentimento para analizar o tráfico e mellorar MovieScout.',
+		analyticsConsentAccept: 'Aceptar',
+		analyticsConsentDecline: 'Rexeitar',
+		cookieSettings: 'Configuración de cookies'
 	},
 	'fr-FR': {
 		landingMotto: 'Découvrir. Suivre. Regarder.',
@@ -459,7 +493,12 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		playTrailer: 'Voir la bande-annonce',
 		close: 'Fermer',
 		skipToContent: 'Aller au contenu',
-		airDate: 'Date de diffusion'
+		airDate: 'Date de diffusion',
+		analyticsConsentMessage:
+			"Nous utilisons des cookies Google Analytics uniquement avec votre consentement pour mesurer l'audience et améliorer MovieScout.",
+		analyticsConsentAccept: 'Accepter',
+		analyticsConsentDecline: 'Refuser',
+		cookieSettings: 'Paramètres des cookies'
 	},
 	'de-DE': {
 		landingMotto: 'Entdecken. Merken. Ansehen.',
@@ -517,7 +556,12 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		playTrailer: 'Trailer ansehen',
 		close: 'Schließen',
 		skipToContent: 'Zum Inhalt springen',
-		airDate: 'Ausstrahlungsdatum'
+		airDate: 'Ausstrahlungsdatum',
+		analyticsConsentMessage:
+			'Wir verwenden Google Analytics-Cookies nur mit deiner Zustimmung, um Zugriffe zu verstehen und MovieScout zu verbessern.',
+		analyticsConsentAccept: 'Akzeptieren',
+		analyticsConsentDecline: 'Ablehnen',
+		cookieSettings: 'Cookie-Einstellungen'
 	},
 	'it-IT': {
 		landingMotto: 'Scopri. Segui. Guarda.',
@@ -575,7 +619,12 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		playTrailer: 'Guarda trailer',
 		close: 'Chiudi',
 		skipToContent: 'Vai al contenuto',
-		airDate: 'Data di trasmissione'
+		airDate: 'Data di trasmissione',
+		analyticsConsentMessage:
+			'Utilizziamo i cookie di Google Analytics solo con il tuo consenso per analizzare il traffico e migliorare MovieScout.',
+		analyticsConsentAccept: 'Accetta',
+		analyticsConsentDecline: 'Rifiuta',
+		cookieSettings: 'Impostazioni cookie'
 	},
 	'pt-BR': {
 		landingMotto: 'Descubra. Acompanhe. Assista.',
@@ -633,7 +682,12 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		playTrailer: 'Assistir trailer',
 		close: 'Fechar',
 		skipToContent: 'Ir para o conteúdo',
-		airDate: 'Data de exibição'
+		airDate: 'Data de exibição',
+		analyticsConsentMessage:
+			'Usamos cookies do Google Analytics apenas com o seu consentimento para entender o tráfego e melhorar o MovieScout.',
+		analyticsConsentAccept: 'Aceitar',
+		analyticsConsentDecline: 'Recusar',
+		cookieSettings: 'Configurações de cookies'
 	},
 	'pt-PT': {
 		landingMotto: 'Descobre. Acompanha. Vê.',
@@ -691,6 +745,11 @@ export const WEB_MESSAGES: Record<SupportedLocale, WebMessagesDictionary> = {
 		playTrailer: 'Ver trailer',
 		close: 'Fechar',
 		skipToContent: 'Saltar para o conteúdo',
-		airDate: 'Data de transmissão'
+		airDate: 'Data de transmissão',
+		analyticsConsentMessage:
+			'Utilizamos cookies do Google Analytics apenas com o teu consentimento para compreender o tráfego e melhorar o MovieScout.',
+		analyticsConsentAccept: 'Aceitar',
+		analyticsConsentDecline: 'Recusar',
+		cookieSettings: 'Definições de cookies'
 	}
 };

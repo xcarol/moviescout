@@ -188,7 +188,7 @@ MovieScout relies on a **SvelteKit (Svelte 5) + TypeScript** web companion hoste
 
 ### Environment Variables & Build Sync
 
-- In the Vercel Dashboard (*Project Settings → Environment Variables*), configure `TMDB_API_RAT` (required, server-only) and `OMDB_API_KEY` (optional, server-only).
+- In the Vercel Dashboard (*Project Settings → Environment Variables*), configure `TMDB_API_RAT` (required, server-only), `OMDB_API_KEY` (optional, server-only), and `PUBLIC_GA_MEASUREMENT_ID` (optional, public GA4 Web Data Stream ID `G-...` for consent-gated web analytics).
 - In **Settings → Build and Deployment → Root Directory**, keep `backend` with **Include files outside the Root Directory in the Build Step** enabled.
 - `backend/vercel.json` defines `ignoreCommand` so changes in `backend/`, `lib/l10n/`, `assets/l10n/`, or `assets/` trigger deploys and `npm run build` syncs shared assets automatically.
 - See `backend/README.md` for local development commands (`npm run dev`, `npm run check`, `npm run build`, `npm run preview`).

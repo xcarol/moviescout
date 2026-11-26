@@ -11,6 +11,7 @@
 		TMDB_WEB_URL
 	} from '$lib/constants/urls';
 	import { t, tw, type SupportedLocale } from '$lib/i18n';
+	import { hasAnalyticsConfigured, openConsentBanner } from '$lib/utils/analytics.svelte';
 
 	interface Props {
 		locale: SupportedLocale;
@@ -56,6 +57,11 @@
 			<nav class="footer-links" aria-label="Footer">
 				<a href={PRIVACY_POLICY_PATH}>{tw(locale, 'privacyPolicy')}</a>
 				<a href={TERMS_OF_SERVICE_PATH}>{tw(locale, 'termsOfService')}</a>
+				{#if hasAnalyticsConfigured()}
+					<button type="button" class="footer-link-btn" onclick={openConsentBanner}>
+						{tw(locale, 'cookieSettings')}
+					</button>
+				{/if}
 				<a href={GITHUB_REPO_URL} target="_blank" rel="noopener noreferrer">
 					GitHub
 				</a>
@@ -135,12 +141,21 @@
 		gap: var(--space-md);
 	}
 
-	.footer-links a {
+	.footer-links a,
+	.footer-link-btn {
 		color: var(--color-text);
 		transition: color 150ms ease;
 	}
 
-	.footer-links a:hover {
+	.footer-link-btn {
+		padding: 0;
+		border: none;
+		background: transparent;
+		cursor: pointer;
+	}
+
+	.footer-links a:hover,
+	.footer-link-btn:hover {
 		color: var(--color-primary);
 		text-decoration: underline;
 	}
