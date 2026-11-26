@@ -8,7 +8,7 @@ const GTAG_SCRIPT_ID = 'ga-gtag-script';
 
 declare global {
 	interface Window {
-		dataLayer?: unknown[][];
+		dataLayer?: Array<IArguments | unknown[]>;
 		gtag?: (...args: unknown[]) => void;
 	}
 }
@@ -80,8 +80,10 @@ function ensureGtagInitialized(measurementId: string): void {
 
 	window.dataLayer = window.dataLayer || [];
 	if (!window.gtag) {
-		window.gtag = (...args: unknown[]) => {
-			window.dataLayer?.push(args);
+		window.gtag = function (..._args: unknown[]) {
+			// Google's gtag.js requires the native Arguments object rather than a plain Array.
+			// eslint-disable-next-line prefer-rest-params
+			window.dataLayer?.push(arguments);
 		};
 		window.gtag('consent', 'default', {
 			analytics_storage: 'granted',
