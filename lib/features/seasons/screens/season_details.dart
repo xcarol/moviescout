@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/theme/app_breakpoints.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/core/widgets/app_error_view.dart';
 import 'package:moviescout/features/seasons/models/tmdb_season.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
@@ -248,83 +249,157 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   }
 
   Widget _detailsBody(TmdbSeason season) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact =
+            constraints.maxWidth <= AppBreakpoints.largeScreenMinWidth;
+
+        return Padding(
+          padding: const EdgeInsets.only(
+            left: AppSpacing.sm,
+            right: AppSpacing.sm,
+            top: AppSpacing.md,
+            bottom: 100,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _headerSection(season, isCompact: isCompact),
+              if (isCompact && season.overview.isNotEmpty) ...[
+                AppSpacing.gapMd,
+                _description(season),
+              ],
+              _creditsInfo(season),
+              AppSpacing.gapMd,
+              Divider(
+                  color:
+                      Theme.of(context).extension<CustomColors>()!.dividerColor),
+              _externalLinks(),
+              Divider(
+                  color:
+                      Theme.of(context).extension<CustomColors>()!.dividerColor),
+              AppSpacing.gapMd,
+              _episodesList(season),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _headerSection(TmdbSeason season, {required bool isCompact}) {
+    final double posterWidth = isCompact ? 130.0 : 180.0;
+    final double posterHeight = posterWidth * 1.5;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MediaCarousel(
-          images: season.images,
-          backdropPath: '',
-          posterPath: season.posterPath,
-          mediaType: ApiConstants.tv,
-          isLoading: _isLoading,
+        SizedBox(
+          width: posterWidth,
+          height: posterHeight,
+          child: MediaCarousel(
+            images: season.images,
+            backdropPath: '',
+            posterPath: season.posterPath,
+            mediaType: ApiConstants.tv,
+            isLoading: _isLoading,
+            aspectRatio: 2 / 3,
+          ),
         ),
-        const SizedBox(height: 20),
-        _details(season),
+        SizedBox(width: isCompact ? AppSpacing.md : AppSpacing.xl),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _titleLine(season, showNavButtons: !isCompact),
+              AppSpacing.gapSm,
+              _dateAndRatingLine(season),
+              AppSpacing.gapMd,
+              _headerActions(season, showNavButtons: isCompact),
+              if (!isCompact && season.overview.isNotEmpty) ...[
+                AppSpacing.gapMd,
+                _description(season),
+              ],
+            ],
+          ),
+        ),
       ],
     );
   }
 
-  Widget _details(TmdbSeason season) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 5, right: 5, bottom: 100),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  List<Widget> _seasonNavButtons() {
+    return [
+      IconButton(
+        icon: const Icon(Icons.chevron_left),
+        visualDensity: VisualDensity.compact,
+        onPressed: _currentSeasonNumber > 1 ? _goToPreviousSeason : null,
+      ),
+      IconButton(
+        icon: const Icon(Icons.chevron_right),
+        visualDensity: VisualDensity.compact,
+        onPressed: _currentSeasonNumber < widget.title.numberOfSeasons
+            ? _goToNextSeason
+            : null,
+      ),
+    ];
+  }
+
+  Widget _headerActions(TmdbSeason season, {required bool showNavButtons}) {
+    final hasNav = showNavButtons && widget.title.numberOfSeasons > 1;
+    if (!hasNav) {
+      return Align(
+        alignment: Alignment.centerRight,
+        child: TrailerButtons(videos: season.videos),
+      );
+    }
+
+    return SizedBox(
+      width: double.infinity,
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: AppSpacing.xs,
+        runSpacing: AppSpacing.xs,
         children: [
-          _titleLine(season),
-          const SizedBox(height: 10),
-          _dateAndRatingLine(season),
-          const SizedBox(height: 10),
-          _description(season),
-          const SizedBox(height: 30),
-          _creditsInfo(season),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20.0),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: TrailerButtons(videos: season.videos),
-            ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: _seasonNavButtons(),
           ),
-          Divider(
-              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
-          _externalLinks(),
-          Divider(
-              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
-          const SizedBox(height: 10),
-          _episodesList(season),
+          TrailerButtons(videos: season.videos),
         ],
       ),
     );
   }
 
-  Widget _titleLine(TmdbSeason season) {
-    if (season.name.isEmpty) return const SizedBox.shrink();
+  Widget _titleLine(TmdbSeason season, {required bool showNavButtons}) {
+    if (season.name.isEmpty && !showNavButtons) {
+      return const SizedBox.shrink();
+    }
+
+    final titleWidget = season.name.isEmpty
+        ? const SizedBox.shrink()
+        : Text(
+            season.name,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            textAlign: TextAlign.start,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          );
+
+    if (!showNavButtons || widget.title.numberOfSeasons <= 1) {
+      return titleWidget;
+    }
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: Padding(
-            padding: EdgeInsetsGeometry.only(top: 8),
-            child: Text(
-              season.name,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              textAlign: TextAlign.start,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
+            padding: const EdgeInsets.only(top: AppSpacing.xs),
+            child: titleWidget,
           ),
         ),
-        IconButton(
-          icon: const Icon(Icons.chevron_left),
-          onPressed: _currentSeasonNumber > 1 ? _goToPreviousSeason : null,
-        ),
-        const SizedBox(width: 16),
-        IconButton(
-          icon: const Icon(Icons.chevron_right),
-          onPressed: _currentSeasonNumber < widget.title.numberOfSeasons
-              ? _goToNextSeason
-              : null,
-        ),
+        ..._seasonNavButtons(),
       ],
     );
   }
@@ -423,14 +498,17 @@ class _SeasonDetailsState extends State<SeasonDetails> {
       return const SizedBox.shrink();
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (creatorsWidget != null) creatorsWidget,
-        if (creatorsWidget != null && writersWidget != null)
-          const SizedBox(height: 10),
-        if (writersWidget != null) writersWidget,
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (creatorsWidget != null) creatorsWidget,
+          if (creatorsWidget != null && writersWidget != null)
+            AppSpacing.gapSm,
+          if (writersWidget != null) writersWidget,
+        ],
+      ),
     );
   }
 
