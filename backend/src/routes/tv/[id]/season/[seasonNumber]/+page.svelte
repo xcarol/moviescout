@@ -19,6 +19,10 @@
 
 	let { data }: Props = $props();
 	const season = $derived(data.season);
+	const hasPrevSeason = $derived(season.seasonNumber > 1);
+	const hasNextSeason = $derived(
+		season.totalSeasons > 0 && season.seasonNumber < season.totalSeasons
+	);
 
 	const seasonPosters = $derived.by(() => {
 		if (season.images.length > 0) return season.images;
@@ -41,6 +45,48 @@
 		<a class="back-link" href={`/tv/${season.tvId}`}>
 			&larr; {season.seriesName}
 		</a>
+
+		{#if hasPrevSeason || hasNextSeason}
+			<div class="header-season-nav" role="group" aria-label={t(data.locale, 'selectSeason')}>
+				{#if hasPrevSeason}
+					<a
+						class="season-nav-btn"
+						href={`/tv/${season.tvId}/season/${season.seasonNumber - 1}`}
+						aria-label={t(data.locale, 'seasonLabel', { count: season.seasonNumber - 1 })}
+						title={t(data.locale, 'seasonLabel', { count: season.seasonNumber - 1 })}
+					>
+						<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+							<path d="M15 18l-6-6 6-6" />
+						</svg>
+					</a>
+				{:else}
+					<span class="season-nav-btn is-disabled" aria-hidden="true">
+						<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2">
+							<path d="M15 18l-6-6 6-6" />
+						</svg>
+					</span>
+				{/if}
+
+				{#if hasNextSeason}
+					<a
+						class="season-nav-btn"
+						href={`/tv/${season.tvId}/season/${season.seasonNumber + 1}`}
+						aria-label={t(data.locale, 'seasonLabel', { count: season.seasonNumber + 1 })}
+						title={t(data.locale, 'seasonLabel', { count: season.seasonNumber + 1 })}
+					>
+						<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+							<path d="M9 18l6-6-6-6" />
+						</svg>
+					</a>
+				{:else}
+					<span class="season-nav-btn is-disabled" aria-hidden="true">
+						<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2">
+							<path d="M9 18l6-6-6-6" />
+						</svg>
+					</span>
+				{/if}
+			</div>
+		{/if}
 	</nav>
 
 	<header class="season-header">
@@ -156,9 +202,9 @@
 		</section>
 	{/if}
 
-	{#if season.seasonNumber > 1 || (season.totalSeasons > 0 && season.seasonNumber < season.totalSeasons)}
+	{#if hasPrevSeason || hasNextSeason}
 		<nav class="season-pager" aria-label={t(data.locale, 'selectSeason')}>
-			{#if season.seasonNumber > 1}
+			{#if hasPrevSeason}
 				<a
 					class="pager-link"
 					href={`/tv/${season.tvId}/season/${season.seasonNumber - 1}`}
@@ -168,7 +214,7 @@
 			{:else}
 				<span></span>
 			{/if}
-			{#if season.totalSeasons > 0 && season.seasonNumber < season.totalSeasons}
+			{#if hasNextSeason}
 				<a
 					class="pager-link"
 					href={`/tv/${season.tvId}/season/${season.seasonNumber + 1}`}
@@ -192,6 +238,13 @@
 		padding-block: var(--space-lg);
 	}
 
+	.breadcrumb {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-md);
+	}
+
 	.back-link {
 		display: inline-flex;
 		align-items: center;
@@ -199,6 +252,36 @@
 		color: var(--color-primary);
 		font-weight: 600;
 		font-size: var(--text-body-sm);
+		min-width: 0;
+	}
+
+	.header-season-nav {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-xs);
+		flex-shrink: 0;
+	}
+
+	.season-nav-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 2rem;
+		height: 2rem;
+		border-radius: var(--radius-sm);
+		background-color: var(--color-surface);
+		border: 1px solid var(--color-outline);
+		color: var(--color-text);
+		transition: border-color 150ms ease, color 150ms ease;
+	}
+
+	.season-nav-btn:hover:not(.is-disabled) {
+		border-color: var(--color-primary);
+		color: var(--color-primary);
+	}
+
+	.season-nav-btn.is-disabled {
+		opacity: 0.35;
 	}
 
 	.back-link:hover {
