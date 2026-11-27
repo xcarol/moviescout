@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/core/theme/app_spacing.dart';
-import 'package:moviescout/core/utils/ui_utils.dart';
+import 'package:moviescout/core/widgets/horizontal_chip_rail.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/features/people/widgets/person_chip.dart';
 import 'package:moviescout/features/seasons/widgets/season_chip.dart';
@@ -70,9 +70,6 @@ class TitleMediaListsSection extends StatelessWidget {
     final seasons = _resolveSeasons(title);
     if (seasons.isEmpty) return const SizedBox.shrink();
 
-    final mediaQuery = MediaQuery.of(context);
-    final clampedScale = UiUtils.clampedTextScale(context);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -83,37 +80,20 @@ class TitleMediaListsSection extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         AppSpacing.gapMd,
-        MediaQuery(
-          data: mediaQuery.copyWith(
-            textScaler: TextScaler.linear(clampedScale),
-          ),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: List.generate(seasons.length, (index) {
-                  final season = seasons[index];
-                  final seasonNumber = (season['season_number'] as int?) ?? 1;
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      right: index < seasons.length - 1 ? AppSpacing.md : 0,
-                    ),
-                    child: SeasonChip(
-                      season: season,
-                      onTap: () {
-                        context.toSeasonDetails(
-                          title,
-                          seasonNumber,
-                          tmdbListService,
-                        );
-                      },
-                    ),
-                  );
-                }),
-              ),
-            ),
-          ),
+        HorizontalChipRail(
+          children: seasons.map((season) {
+            final seasonNumber = (season['season_number'] as int?) ?? 1;
+            return SeasonChip(
+              season: season,
+              onTap: () {
+                context.toSeasonDetails(
+                  title,
+                  seasonNumber,
+                  tmdbListService,
+                );
+              },
+            );
+          }).toList(),
         ),
       ],
     );
@@ -160,40 +140,19 @@ class TitleMediaListsSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 10),
-        SizedBox(
-          height: 336.0,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: people.length > 20 ? 20 : people.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: _personChip(context, people[index]),
-              );
-            },
-          ),
+        HorizontalChipRail(
+          children: people
+              .take(20)
+              .map(
+                (person) => PersonChip(
+                  person: person,
+                  tmdbListService: tmdbListService,
+                  titleContext: title,
+                ),
+              )
+              .toList(),
         ),
       ],
-    );
-  }
-
-  Widget _personChip(BuildContext context, TmdbPerson tmdbPerson) {
-    return Builder(
-      builder: (innerContext) {
-        final mediaQuery = MediaQuery.of(innerContext);
-        final clampedScale = mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
-
-        return MediaQuery(
-          data: mediaQuery.copyWith(
-            textScaler: TextScaler.linear(clampedScale),
-          ),
-          child: PersonChip(
-            person: tmdbPerson,
-            tmdbListService: tmdbListService,
-            titleContext: title,
-          ),
-        );
-      },
     );
   }
 

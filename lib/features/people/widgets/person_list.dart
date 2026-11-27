@@ -145,8 +145,8 @@ class _PersonListState extends SearchableListState<PersonList> {
       controller: _controller.scrollController,
       itemCount: widget.personListService.loadedItemCount,
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 140.0,
-        childAspectRatio: CARD_WIDTH / CARD_HEIGHT,
+        maxCrossAxisExtent: PersonChip.cardWidth + AppSpacing.xl,
+        childAspectRatio: PersonChip.cardWidth / PersonChip.cardHeight,
         crossAxisSpacing: AppSpacing.sm,
         mainAxisSpacing: AppSpacing.sm,
       ),
