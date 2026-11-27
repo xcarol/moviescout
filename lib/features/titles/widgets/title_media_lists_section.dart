@@ -1,17 +1,18 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:moviescout/l10n/app_localizations.dart';
-import 'package:moviescout/features/people/models/tmdb_person.dart';
-import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
-import 'package:moviescout/features/watchlist/services/rateslist_service.dart';
-import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
+import 'package:moviescout/core/utils/ui_utils.dart';
+import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/features/people/widgets/person_chip.dart';
+import 'package:moviescout/features/seasons/widgets/season_chip.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
 import 'package:moviescout/features/titles/widgets/title_chip.dart';
-import 'package:moviescout/core/widgets/drop_down_selector.dart';
-import 'package:moviescout/core/widgets/boxed_widget.dart';
+import 'package:moviescout/features/watchlist/services/rateslist_service.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
-class TitleMediaListsSection extends StatefulWidget {
+class TitleMediaListsSection extends StatelessWidget {
   final TmdbTitle title;
   final TmdbTitleListService tmdbListService;
 
@@ -22,84 +23,103 @@ class TitleMediaListsSection extends StatefulWidget {
   });
 
   @override
-  State<TitleMediaListsSection> createState() => _TitleMediaListsSectionState();
-}
-
-class _TitleMediaListsSectionState extends State<TitleMediaListsSection> {
-  String _selectedSeason = '';
-
-  @override
   Widget build(BuildContext context) {
-    final title = widget.title;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (!title.isMovie && title.numberOfSeasons > 0) ...[
-          const SizedBox(height: 15),
-          _seasonsDropdown(title),
-          const SizedBox(height: 15),
+          AppSpacing.gapLg,
+          _seasonsSection(context, title),
+          AppSpacing.gapXl,
         ],
-        _castAndCrew(title, PersonAttributes.cast),
+        _castAndCrew(context, title, PersonAttributes.cast),
         const SizedBox(height: 30),
-        _recommended(title),
+        _recommended(context, title),
         const SizedBox(height: 30),
-        _castAndCrew(title, PersonAttributes.crew),
+        _castAndCrew(context, title, PersonAttributes.crew),
       ],
     );
   }
 
-  Widget _seasonsDropdown(TmdbTitle title) {
-    if (title.isMovie || title.numberOfSeasons == 0) {
+  List<Map<String, dynamic>> _resolveSeasons(TmdbTitle title) {
+    final parsed = title.seasons
+        .whereType<Map>()
+        .map((s) => Map<String, dynamic>.from(s))
+        .where((s) => (s['season_number'] as int? ?? 0) > 0)
+        .toList()
+      ..sort((a, b) => ((a['season_number'] as int?) ?? 0)
+          .compareTo((b['season_number'] as int?) ?? 0));
+
+    if (parsed.isNotEmpty) {
+      return parsed;
+    }
+
+    return List.generate(
+      title.numberOfSeasons,
+      (index) => <String, dynamic>{
+        'season_number': index + 1,
+      },
+    );
+  }
+
+  Widget _seasonsSection(BuildContext context, TmdbTitle title) {
+    if (title.isMovie || title.numberOfSeasons <= 0) {
       return const SizedBox.shrink();
     }
 
-    final selectSeasonText = AppLocalizations.of(context)!.selectSeason;
+    final seasons = _resolveSeasons(title);
+    if (seasons.isEmpty) return const SizedBox.shrink();
 
-    final List<String> seasonOptions = [selectSeasonText];
-    for (int i = 1; i <= title.numberOfSeasons; i++) {
-      seasonOptions.add(AppLocalizations.of(context)!.seasonLabel(i));
-    }
+    final mediaQuery = MediaQuery.of(context);
+    final clampedScale = UiUtils.clampedTextScale(context);
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        BoxedWidget(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          child: DropdownSelector(
-            maxMenuHeight: 250,
-            isExpanded: true,
-            selectedOption:
-                _selectedSeason.isEmpty ? selectSeasonText : _selectedSeason,
-            options: seasonOptions,
-            onSelected: (option) {
-              if (option == selectSeasonText) return;
-
-              final seasonIndex = seasonOptions.indexOf(option);
-              if (seasonIndex < 1) return;
-              final seasonNumber = seasonIndex;
-
-              context
-                  .toSeasonDetails(title, seasonNumber, widget.tmdbListService)
-                  .then((_) {
-                if (mounted) {
-                  setState(() {
-                    _selectedSeason = '';
-                  });
-                }
-              });
-
-              setState(() {
-                _selectedSeason = option;
-              });
-            },
+        Text(
+          AppLocalizations.of(context)!.selectSeason,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        AppSpacing.gapMd,
+        MediaQuery(
+          data: mediaQuery.copyWith(
+            textScaler: TextScaler.linear(clampedScale),
+          ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: List.generate(seasons.length, (index) {
+                  final season = seasons[index];
+                  final seasonNumber = (season['season_number'] as int?) ?? 1;
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      right: index < seasons.length - 1 ? AppSpacing.md : 0,
+                    ),
+                    child: SeasonChip(
+                      season: season,
+                      onTap: () {
+                        context.toSeasonDetails(
+                          title,
+                          seasonNumber,
+                          tmdbListService,
+                        );
+                      },
+                    ),
+                  );
+                }),
+              ),
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _castAndCrew(TmdbTitle title, String type) {
+  Widget _castAndCrew(BuildContext context, TmdbTitle title, String type) {
     if (type == PersonAttributes.cast && title.cast.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -129,7 +149,7 @@ class _TitleMediaListsSectionState extends State<TitleMediaListsSection> {
             ),
             TextButton(
               onPressed: () {
-                context.toTitlePeopleList(title, type, widget.tmdbListService);
+                context.toTitlePeopleList(title, type, tmdbListService);
               },
               child: Text(
                 AppLocalizations.of(context)!.seeThemAll,
@@ -169,15 +189,15 @@ class _TitleMediaListsSectionState extends State<TitleMediaListsSection> {
           ),
           child: PersonChip(
             person: tmdbPerson,
-            tmdbListService: widget.tmdbListService,
-            titleContext: widget.title,
+            tmdbListService: tmdbListService,
+            titleContext: title,
           ),
         );
       },
     );
   }
 
-  Widget _recommended(TmdbTitle title) {
+  Widget _recommended(BuildContext context, TmdbTitle title) {
     if (title.recommendations.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -217,7 +237,7 @@ class _TitleMediaListsSectionState extends State<TitleMediaListsSection> {
 
                       return TitleChip(
                         title: recTitle,
-                        tmdbListService: widget.tmdbListService,
+                        tmdbListService: tmdbListService,
                         isDimmed: isRated,
                       );
                     },
