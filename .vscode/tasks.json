@@ -12,7 +12,7 @@
       }
     },
     {
-      "label": "Llença l'emulador",
+      "label": "Llença l'emulador lleuger",
       "type": "shell",
       "command": "emulator -avd Emulador_Lleuger",
       "presentation": {
@@ -24,9 +24,57 @@
       ]
     },
     {
-      "label": "Llença l'emulador (en fred)",
+      "label": "Llença l'emulador lleuger (en fred)",
       "type": "shell",
       "command": "emulator -avd Emulador_Lleuger -no-snapshot-load",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      },
+      "problemMatcher": [
+        "$eslint-compact"
+      ]
+    },
+    {
+      "label": "Llença l'emulador modern",
+      "type": "shell",
+      "command": "emulator -avd Mobil_Modern",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      },
+      "problemMatcher": [
+        "$eslint-compact"
+      ]
+    },
+    {
+      "label": "Llença l'emulador modern (en fred)",
+      "type": "shell",
+      "command": "emulator -avd Mobil_Modern -no-snapshot-load",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      },
+      "problemMatcher": [
+        "$eslint-compact"
+      ]
+    },
+    {
+      "label": "Llença l'emulador tablet",
+      "type": "shell",
+      "command": "emulator -avd Tablet_Moderna",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      },
+      "problemMatcher": [
+        "$eslint-compact"
+      ]
+    },
+    {
+      "label": "Llença l'emulador tablet (en fred)",
+      "type": "shell",
+      "command": "emulator -avd Tablet_Moderna -no-snapshot-load",
       "presentation": {
         "reveal": "silent",
         "panel": "shared"

@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/theme/app_breakpoints.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/core/widgets/app_error_view.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
@@ -12,6 +13,7 @@ import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
 import 'package:moviescout/features/seasons/services/tmdb_episode_service.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
+import 'package:moviescout/core/widgets/horizontal_chip_rail.dart';
 import 'package:moviescout/core/widgets/media_carousel.dart';
 import 'package:moviescout/features/people/widgets/person_chip.dart';
 import 'package:moviescout/core/utils/date_formatter.dart';
@@ -277,7 +279,11 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
 
   Widget _details(TmdbEpisode episode) {
     return Padding(
-      padding: const EdgeInsets.only(left: 5, right: 5, bottom: 100),
+      padding: const EdgeInsets.only(
+        left: 5,
+        right: 5,
+        bottom: AppSpacing.detailBottomPadding,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -476,41 +482,20 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
           ],
         ),
         const SizedBox(height: 10),
-        SizedBox(
-          height: 336.0,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: people.length > 20 ? 20 : people.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: _personChip(context, people[index]),
-              );
-            },
-          ),
+        HorizontalChipRail(
+          children: people
+              .take(20)
+              .map(
+                (person) => PersonChip(
+                  person: person,
+                  tmdbListService: widget.tmdbListService,
+                  titleContext: widget.title,
+                  episodeContext: _loadedEpisodes[_currentEpisodeNumber],
+                ),
+              )
+              .toList(),
         ),
       ],
-    );
-  }
-
-  Widget _personChip(BuildContext context, TmdbPerson tmdbPerson) {
-    return Builder(
-      builder: (innerContext) {
-        final mediaQuery = MediaQuery.of(innerContext);
-        final clampedScale = mediaQuery.textScaler.scale(1.0).clamp(1.0, 1.3);
-
-        return MediaQuery(
-          data: mediaQuery.copyWith(
-            textScaler: TextScaler.linear(clampedScale),
-          ),
-          child: PersonChip(
-            person: tmdbPerson,
-            tmdbListService: widget.tmdbListService,
-            titleContext: widget.title,
-            episodeContext: _loadedEpisodes[_currentEpisodeNumber],
-          ),
-        );
-      },
     );
   }
 }

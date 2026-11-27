@@ -51,10 +51,11 @@ class TmdbSeasonService extends TmdbBaseService {
       return dbSeason;
     }
 
+    final primaryLocale = '${getLanguageCode()}-${getCountryCode()}';
     final result = await _retrieveSeasonDetails(
       tvId,
       seasonNumber,
-      '${getLanguageCode()}-${getCountryCode()}',
+      primaryLocale,
     );
 
     if (result.statusCode != 200) {
@@ -71,17 +72,19 @@ class TmdbSeasonService extends TmdbBaseService {
 
     _mergeMediaFallback(details, details);
 
-    final hasOverview = (details[TmdbTitleFields.overview] ?? '').isNotEmpty;
-    final hasMedia = (details[TmdbTitleFields.images] is List &&
-            (details[TmdbTitleFields.images] as List).isNotEmpty) ||
-        (details[TmdbTitleFields.videos] is List &&
-            (details[TmdbTitleFields.videos] as List).isNotEmpty);
+    final parentTitle = await _repository.getTitleGlobal(tvId, ApiConstants.tv);
+    final originalLang = parentTitle?.originalLanguage.trim() ?? '';
+    final fallbackLocales = _buildFallbackLocales(
+      primaryLocale: primaryLocale,
+      originalLanguage: originalLang,
+    );
 
-    if (!hasOverview || !hasMedia) {
+    for (final fbLocale in fallbackLocales) {
+      if (!_needsFallback(details)) break;
       final fallbackResult = await _retrieveSeasonBrief(
         tvId,
         seasonNumber,
-        getCountryCode().toLowerCase(),
+        fbLocale,
       );
 
       if (fallbackResult.statusCode == 200) {
@@ -89,23 +92,8 @@ class TmdbSeasonService extends TmdbBaseService {
       }
     }
 
-    final hasOverviewFinal =
-        (details[TmdbTitleFields.overview] ?? '').isNotEmpty;
-    final hasMediaFinal = (details[TmdbTitleFields.images] is List &&
-            (details[TmdbTitleFields.images] as List).isNotEmpty) ||
-        (details[TmdbTitleFields.videos] is List &&
-            (details[TmdbTitleFields.videos] as List).isNotEmpty);
-
-    if (!hasOverviewFinal || !hasMediaFinal) {
-      final enResult = await _retrieveSeasonBrief(
-        tvId,
-        seasonNumber,
-        'en-US',
-      );
-
-      if (enResult.statusCode == 200) {
-        _mergeFallback(details, body(enResult), ApiConstants.tv);
-      }
+    if ((details[TmdbTitleFields.overview] ?? '').toString().trim().isEmpty) {
+      _mergeTranslationsFallback(details, originalLanguage: originalLang);
     }
 
     if (includeYoutubeSearch && seriesName != null && !kIsWeb) {
@@ -156,19 +144,162 @@ class TmdbSeasonService extends TmdbBaseService {
     }
   }
 
+  List<String> _buildFallbackLocales({
+    required String primaryLocale,
+    required String originalLanguage,
+  }) {
+    final countryCode = getCountryCode().toLowerCase();
+    final candidates = <String>[
+      if (countryCode.isNotEmpty && countryCode != 'us' && countryCode != 'gb')
+        countryCode,
+      'en-US',
+      if (originalLanguage.isNotEmpty) originalLanguage,
+    ];
+
+    final seen = <String>{
+      primaryLocale.toLowerCase(),
+      getLanguageCode().toLowerCase(),
+    };
+    final result = <String>[];
+    for (final loc in candidates) {
+      final key = loc.toLowerCase();
+      if (!seen.add(key)) continue;
+      if (key == 'en-us') seen.add('en');
+      result.add(loc);
+    }
+    return result;
+  }
+
+  bool _hasMissingEpisodeOverview(Map<String, dynamic> target) {
+    final episodes = target['episodes'];
+    if (episodes is! List) return false;
+    return episodes.any((ep) =>
+        ep is Map &&
+        (ep[TmdbTitleFields.overview] ?? '').toString().trim().isEmpty);
+  }
+
+  bool _needsFallback(Map<String, dynamic> target) {
+    final hasOverview =
+        (target[TmdbTitleFields.overview] ?? '').toString().trim().isNotEmpty;
+    final hasImages = target[TmdbTitleFields.images] is List &&
+        (target[TmdbTitleFields.images] as List).isNotEmpty;
+    final hasVideos = target[TmdbTitleFields.videos] is List &&
+        (target[TmdbTitleFields.videos] as List).isNotEmpty;
+    return !hasOverview ||
+        (!hasImages && !hasVideos) ||
+        _hasMissingEpisodeOverview(target);
+  }
+
   void _mergeFallback(Map<String, dynamic> target,
       Map<String, dynamic> fallback, String mediaType) {
-    final String fallbackOverview = fallback[TmdbTitleFields.overview] ?? '';
+    final String currentOverview =
+        (target[TmdbTitleFields.overview] ?? '').toString().trim();
+    final String fallbackOverview =
+        (fallback[TmdbTitleFields.overview] ?? '').toString().trim();
 
-    if (fallbackOverview.isNotEmpty) {
+    if (currentOverview.isEmpty && fallbackOverview.isNotEmpty) {
       target[TmdbTitleFields.overview] = fallbackOverview;
+    }
 
-      if (fallback[TmdbTitleFields.name] != null) {
-        target[TmdbTitleFields.name] = fallback[TmdbTitleFields.name];
+    final String currentName =
+        (target[TmdbTitleFields.name] ?? '').toString().trim();
+    final String fallbackName =
+        (fallback[TmdbTitleFields.name] ?? '').toString().trim();
+    if (currentName.isEmpty && fallbackName.isNotEmpty) {
+      target[TmdbTitleFields.name] = fallbackName;
+    }
+
+    _mergeEpisodesFallback(target, fallback);
+    _mergeMediaFallback(target, fallback, overwriteIfEmpty: true);
+  }
+
+  void _mergeEpisodesFallback(
+      Map<String, dynamic> target, Map<String, dynamic> fallback) {
+    final targetEpisodes = target['episodes'];
+    final fallbackEpisodes = fallback['episodes'];
+    if (targetEpisodes is! List || fallbackEpisodes is! List) return;
+
+    final fallbackByNumber = <int, Map<String, dynamic>>{};
+    for (final ep in fallbackEpisodes) {
+      if (ep is Map<String, dynamic>) {
+        final num = ep['episode_number'];
+        if (num is int) {
+          fallbackByNumber[num] = ep;
+        }
       }
     }
 
-    _mergeMediaFallback(target, fallback, overwriteIfEmpty: true);
+    for (final ep in targetEpisodes) {
+      if (ep is! Map<String, dynamic>) continue;
+      final epNum = ep['episode_number'];
+      if (epNum is! int) continue;
+      final fbEp = fallbackByNumber[epNum];
+      if (fbEp == null) continue;
+
+      final currentOverview =
+          (ep[TmdbTitleFields.overview] ?? '').toString().trim();
+      final fbOverview =
+          (fbEp[TmdbTitleFields.overview] ?? '').toString().trim();
+      if (currentOverview.isEmpty && fbOverview.isNotEmpty) {
+        ep[TmdbTitleFields.overview] = fbOverview;
+      }
+
+      final currentName = (ep[TmdbTitleFields.name] ?? '').toString().trim();
+      final fbName = (fbEp[TmdbTitleFields.name] ?? '').toString().trim();
+      if (currentName.isEmpty && fbName.isNotEmpty) {
+        ep[TmdbTitleFields.name] = fbName;
+      }
+    }
+  }
+
+  void _mergeTranslationsFallback(
+    Map<String, dynamic> target, {
+    required String originalLanguage,
+  }) {
+    final translations = target['translations']?['translations'];
+    if (translations is! List) return;
+
+    final preferredLangs = <String>[
+      if (originalLanguage.isNotEmpty) originalLanguage.toLowerCase(),
+      getCountryCode().toLowerCase(),
+      'en',
+    ];
+
+    Map<String, dynamic>? matchData;
+    for (final lang in preferredLangs) {
+      for (final item in translations) {
+        if (item is! Map) continue;
+        final iso = (item['iso_639_1'] ?? '').toString().toLowerCase();
+        final data = item['data'];
+        if (iso == lang &&
+            data is Map<String, dynamic> &&
+            (data['overview'] ?? '').toString().trim().isNotEmpty) {
+          matchData = data;
+          break;
+        }
+      }
+      if (matchData != null) break;
+    }
+
+    if (matchData == null) {
+      for (final item in translations) {
+        if (item is! Map) continue;
+        final data = item['data'];
+        if (data is Map<String, dynamic> &&
+            (data['overview'] ?? '').toString().trim().isNotEmpty) {
+          matchData = data;
+          break;
+        }
+      }
+    }
+
+    if (matchData == null) return;
+
+    target[TmdbTitleFields.overview] = matchData['overview'].toString().trim();
+    if ((target[TmdbTitleFields.name] ?? '').toString().trim().isEmpty &&
+        (matchData['name'] ?? '').toString().trim().isNotEmpty) {
+      target[TmdbTitleFields.name] = matchData['name'].toString().trim();
+    }
   }
 
   void _mergeMediaFallback(

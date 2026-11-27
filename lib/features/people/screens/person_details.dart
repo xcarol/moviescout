@@ -1,12 +1,13 @@
 import 'package:moviescout/core/utils/url_constants.dart';
 import 'package:moviescout/core/utils/api_constants.dart';
-import 'dart:math';
 
 import 'package:material_ui/material_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/theme/app_breakpoints.dart';
+import 'package:moviescout/core/theme/app_dimensions.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
@@ -147,36 +148,51 @@ class _PersonDetailsState extends State<PersonDetails> {
   Widget _detailsBody(TmdbPerson person) {
     final userRatedTitles = _userRatedTitles;
 
-    return Padding(
-      padding: EdgeInsets.only(left: 5, right: 5, bottom: 100),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _banner(person),
-          const SizedBox(height: 20),
-          if (widget.titleContext != null) ...[
-            _roleInContext(person),
-            const SizedBox(height: 20)
-          ],
-          _description(person),
-          if (person.biography.isEmpty) _name(person),
-          const SizedBox(height: 10),
-          Divider(
-              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
-          _socialLinks(person),
-          Divider(
-              color: Theme.of(context).extension<CustomColors>()!.dividerColor),
-          const SizedBox(height: 10),
-          _credits(person),
-          const SizedBox(height: 10),
-          _crewCredits(person),
-          const SizedBox(height: 30),
-          _ratedCredits(person, userRatedTitles),
-          const SizedBox(height: 30),
-          _taggedImages(person),
-          const SizedBox(height: 50),
-        ],
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact =
+            constraints.maxWidth <= AppBreakpoints.largeScreenMinWidth;
+
+        return Padding(
+          padding: const EdgeInsets.only(
+            left: 5,
+            right: 5,
+            bottom: AppSpacing.detailBottomPadding,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _banner(person, isCompact: isCompact),
+              const SizedBox(height: 20),
+              if (widget.titleContext != null) ...[
+                _roleInContext(person),
+                const SizedBox(height: 20)
+              ],
+              _description(person),
+              if (person.biography.isEmpty) _name(person),
+              const SizedBox(height: 10),
+              Divider(
+                  color: Theme.of(context)
+                      .extension<CustomColors>()!
+                      .dividerColor),
+              _socialLinks(person),
+              Divider(
+                  color: Theme.of(context)
+                      .extension<CustomColors>()!
+                      .dividerColor),
+              const SizedBox(height: 10),
+              _credits(person),
+              const SizedBox(height: 10),
+              _crewCredits(person),
+              const SizedBox(height: 30),
+              _ratedCredits(person, userRatedTitles),
+              const SizedBox(height: 30),
+              _taggedImages(person),
+              const SizedBox(height: 50),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -416,9 +432,11 @@ class _PersonDetailsState extends State<PersonDetails> {
     );
   }
 
-  Widget _banner(TmdbPerson person) {
-    double posterWidth = min(MediaQuery.sizeOf(context).width * 0.4, 150) + 30;
-    double posterHeight = posterWidth * 1.5;
+  Widget _banner(TmdbPerson person, {required bool isCompact}) {
+    final double posterWidth = isCompact
+        ? AppDimensions.detailPosterWidthCompact
+        : AppDimensions.detailPosterWidthWide;
+    final double posterHeight = posterWidth * AppDimensions.posterHeightRatio;
     String image = person.posterPath.isNotEmpty ? person.posterPath : '';
 
     return Padding(

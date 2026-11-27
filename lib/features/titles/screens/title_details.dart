@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/theme/app_breakpoints.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/features/titles/repositories/local_title_repository.dart';
 import 'package:moviescout/core/services/omdb_service.dart';
@@ -201,7 +202,11 @@ class _TitleDetailsState extends State<TitleDetails> {
           isUpdating: _isUpdating,
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 5, right: 5, bottom: 100),
+          padding: const EdgeInsets.only(
+            left: 5,
+            right: 5,
+            bottom: AppSpacing.detailBottomPadding,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

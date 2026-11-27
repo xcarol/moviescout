@@ -1,20 +1,15 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:moviescout/core/navigation/app_navigator.dart';
+import 'package:moviescout/core/theme/app_dimensions.dart';
 import 'package:moviescout/core/theme/app_radius.dart';
 import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
-import 'package:moviescout/features/people/models/tmdb_person.dart';
-import 'package:moviescout/core/navigation/app_navigator.dart';
-import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
-import 'package:moviescout/features/titles/widgets/title_card.dart';
-import 'package:moviescout/features/titles/models/tmdb_title.dart';
-import 'package:moviescout/features/seasons/models/tmdb_season.dart';
-import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
 import 'package:moviescout/core/widgets/app_poster_image.dart';
-
-// ignore: constant_identifier_names
-const double CARD_HEIGHT = 336.0;
-// ignore: constant_identifier_names
-const double CARD_WIDTH = 160.0;
+import 'package:moviescout/features/people/models/tmdb_person.dart';
+import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
+import 'package:moviescout/features/seasons/models/tmdb_season.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
 
 class PersonChip extends StatelessWidget {
   final TmdbPerson _person;
@@ -22,6 +17,9 @@ class PersonChip extends StatelessWidget {
   final TmdbTitle? titleContext;
   final TmdbSeason? seasonContext;
   final TmdbEpisode? episodeContext;
+
+  static const double cardWidth = AppDimensions.personChipWidth;
+  static const double cardHeight = AppDimensions.personChipHeight;
 
   const PersonChip({
     super.key,
@@ -35,14 +33,15 @@ class PersonChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tmdbPerson = _person;
+
     return RepaintBoundary(
       child: SizedBox(
-        height: CARD_HEIGHT,
-        width: CARD_WIDTH,
+        width: cardWidth,
         child: Card(
           color:
               Theme.of(context).extension<CustomColors>()!.chipCardBackground,
-          margin: const EdgeInsets.all(0),
+          margin: EdgeInsets.zero,
           clipBehavior: Clip.antiAlias,
           shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.chip,
@@ -50,37 +49,23 @@ class PersonChip extends StatelessWidget {
           child: InkWell(
             onTap: () {
               context.toPersonDetails(
-                TmdbPerson.fromMap(person: _person.toMap()),
+                TmdbPerson.fromMap(person: tmdbPerson.toMap()),
                 _tmdbListService,
                 titleContext: titleContext,
                 seasonContext: seasonContext,
                 episodeContext: episodeContext,
               );
             },
-            child: Stack(
-              fit: StackFit.expand,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                ClipRRect(
-                  borderRadius: AppRadius.chip,
-                  child: _poster(_person.posterPath),
-                ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: AppRadius.radiusMd,
-                      bottomRight: AppRadius.radiusMd,
-                    ),
-                    child: Container(
-                      color: Theme.of(context)
-                          .extension<CustomColors>()!
-                          .chipCardBackground
-                          .withValues(alpha: 0.95),
-                      padding: AppSpacing.edgeInsetsAllSm,
-                      child: _details(context, _person),
-                    ),
+                _poster(tmdbPerson.posterPath),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: Padding(
+                    padding: AppSpacing.edgeInsetsAllSm,
+                    child: _details(context, tmdbPerson),
                   ),
                 ),
               ],
@@ -103,11 +88,12 @@ class PersonChip extends StatelessWidget {
   }
 
   Widget _details(BuildContext context, TmdbPerson tmdbPerson) {
+    final theme = Theme.of(context);
     final roleText = tmdbPerson.character.isNotEmpty
         ? tmdbPerson.character
         : tmdbPerson.job.isNotEmpty
             ? tmdbPerson.localizedJob(context)
-            : ' '; // Space maintains fixed overlay height without text clipping
+            : '';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,22 +101,22 @@ class PersonChip extends StatelessWidget {
       children: [
         Text(
           tmdbPerson.name,
-          maxLines: 1,
+          maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.onSurface,
+          ),
         ),
-        const SizedBox(height: 5),
-        Text(
-          roleText,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-        ),
+        if (roleText.isNotEmpty) ...[
+          AppSpacing.gapXxs,
+          Text(
+            roleText,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.bodySmall,
+          ),
+        ],
       ],
     );
   }
