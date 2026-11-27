@@ -30,6 +30,87 @@ async function fetchTvParentSummary(tvId: number, locale: SupportedLocale): Prom
 	) as Promise<RawRecord | null>;
 }
 
+function buildFallbackLocales(
+	locale: SupportedLocale,
+	region: string,
+	originalLanguage?: unknown
+): string[] {
+	const tmdbLang = toTmdbLanguage(locale).toLowerCase();
+	const baseLang = locale.split('-')[0].toLowerCase();
+	const regionLang = region.toLowerCase();
+	const origLang = typeof originalLanguage === 'string' ? originalLanguage.trim().toLowerCase() : '';
+
+	const candidates = [
+		baseLang,
+		regionLang && regionLang !== 'us' && regionLang !== 'gb' ? regionLang : '',
+		'en-US',
+		origLang
+	];
+
+	const seen = new Set<string>([tmdbLang]);
+	const result: string[] = [];
+	for (const candidate of candidates) {
+		if (!candidate) continue;
+		const key = candidate.toLowerCase();
+		if (seen.has(key)) continue;
+		seen.add(key);
+		if (key === 'en-us') seen.add('en');
+		result.push(candidate);
+	}
+	return result;
+}
+
+function mergeEpisodesFallback(episodes: EpisodeSummary[], fallbackRaw: unknown): void {
+	if (!Array.isArray(fallbackRaw)) return;
+	const byNumber = new Map<number, RawRecord>();
+	for (const item of fallbackRaw) {
+		const record = item as RawRecord;
+		const num = Number(record?.episode_number ?? -1);
+		if (num >= 0) byNumber.set(num, record);
+	}
+
+	for (const ep of episodes) {
+		const fb = byNumber.get(ep.episodeNumber);
+		if (!fb) continue;
+		if (!ep.overview.trim() && typeof fb.overview === 'string' && fb.overview.trim()) {
+			ep.overview = fb.overview.trim();
+		}
+		if (!ep.name.trim() && typeof fb.name === 'string' && fb.name.trim()) {
+			ep.name = fb.name.trim();
+		}
+	}
+}
+
+function extractFallbackTranslationOverview(
+	translations: unknown,
+	preferredLangs: string[]
+): { overview: string; name: string } | null {
+	if (!Array.isArray(translations)) return null;
+
+	const findMatch = (lang?: string): { overview: string; name: string } | null => {
+		for (const item of translations) {
+			const record = item as RawRecord;
+			const iso = String(record?.iso_639_1 ?? '').toLowerCase();
+			if (lang !== undefined && iso !== lang) continue;
+			const data = record?.data as RawRecord | undefined;
+			if (!data) continue;
+			const overview = typeof data.overview === 'string' ? data.overview.trim() : '';
+			if (!overview) continue;
+			const name = typeof data.name === 'string' ? data.name.trim() : '';
+			return { overview, name };
+		}
+		return null;
+	};
+
+	for (const lang of preferredLangs) {
+		if (!lang) continue;
+		const matched = findMatch(lang.toLowerCase());
+		if (matched) return matched;
+	}
+
+	return findMatch();
+}
+
 export async function getSeasonDetails(
 	tvId: number,
 	seasonNumber: number,
@@ -58,33 +139,6 @@ export async function getSeasonDetails(
 		let images = extractTopImages(raw.images?.posters, 10);
 		let videos = extractTopYoutubeVideos(raw.videos?.results, 5);
 
-		const baseLang = locale.split('-')[0].toLowerCase();
-		const fallbackLocales = Array.from(new Set([baseLang, 'en-US']));
-
-		for (const fbLocale of fallbackLocales) {
-			if (overview && (images.length > 0 || videos.length > 0)) break;
-			if (fbLocale === tmdbLang.toLowerCase()) continue;
-
-			const brief = await fetchTmdbJson<RawRecord>(`/tv/${tvId}/season/${seasonNumber}`, {
-				append_to_response: 'images,videos',
-				language: fbLocale,
-				include_image_language: `${fbLocale},null,en`,
-				include_video_language: `${fbLocale},null,en`
-			});
-			if (!brief) continue;
-
-			if (!overview && typeof brief.overview === 'string' && brief.overview.trim()) {
-				overview = brief.overview.trim();
-				if (brief.name) name = String(brief.name);
-			}
-			if (images.length === 0) {
-				images = extractTopImages(brief.images?.posters, 10);
-			}
-			if (videos.length === 0) {
-				videos = extractTopYoutubeVideos(brief.videos?.results, 5);
-			}
-		}
-
 		const episodes: EpisodeSummary[] = Array.isArray(raw.episodes)
 			? raw.episodes.map((ep: RawRecord) => ({
 					id: Number(ep.id ?? 0),
@@ -99,6 +153,56 @@ export async function getSeasonDetails(
 					voteCount: Number(ep.vote_count ?? 0)
 				}))
 			: [];
+
+		const fallbackLocales = buildFallbackLocales(locale, region, parent.original_language);
+		const hasMissingEpisodeOverview = () => episodes.some((ep) => !ep.overview.trim());
+
+		for (const fbLocale of fallbackLocales) {
+			if (
+				overview.trim() &&
+				(images.length > 0 || videos.length > 0) &&
+				!hasMissingEpisodeOverview()
+			) {
+				break;
+			}
+
+			const brief = await fetchTmdbJson<RawRecord>(`/tv/${tvId}/season/${seasonNumber}`, {
+				append_to_response: 'images,videos',
+				language: fbLocale,
+				include_image_language: `${fbLocale},null,en`,
+				include_video_language: `${fbLocale},null,en`
+			});
+			if (!brief) continue;
+
+			if (!overview.trim() && typeof brief.overview === 'string' && brief.overview.trim()) {
+				overview = brief.overview.trim();
+			}
+			if (!name.trim() && typeof brief.name === 'string' && brief.name.trim()) {
+				name = brief.name.trim();
+			}
+			if (images.length === 0) {
+				images = extractTopImages(brief.images?.posters, 10);
+			}
+			if (videos.length === 0) {
+				videos = extractTopYoutubeVideos(brief.videos?.results, 5);
+			}
+			mergeEpisodesFallback(episodes, brief.episodes);
+		}
+
+		if (!overview.trim()) {
+			const originalLang =
+				typeof parent.original_language === 'string' ? parent.original_language.trim() : '';
+			const fallbackTranslation = extractFallbackTranslationOverview(
+				raw.translations?.translations,
+				[originalLang, region, 'en']
+			);
+			if (fallbackTranslation) {
+				overview = fallbackTranslation.overview;
+				if (!name.trim() && fallbackTranslation.name) {
+					name = fallbackTranslation.name;
+				}
+			}
+		}
 
 		return {
 			id: Number(raw.id ?? 0),
@@ -157,12 +261,10 @@ export async function getEpisodeDetails(
 		let images = extractTopImages(raw.images?.stills, 10);
 		let videos = extractTopYoutubeVideos(raw.videos?.results, 5);
 
-		const baseLang = locale.split('-')[0].toLowerCase();
-		const fallbackLocales = Array.from(new Set([baseLang, 'en-US']));
+		const fallbackLocales = buildFallbackLocales(locale, region, parent.original_language);
 
 		for (const fbLocale of fallbackLocales) {
-			if (overview && (images.length > 0 || videos.length > 0)) break;
-			if (fbLocale === tmdbLang.toLowerCase()) continue;
+			if (overview.trim() && (images.length > 0 || videos.length > 0)) break;
 
 			const brief = await fetchTmdbJson<RawRecord>(
 				`/tv/${tvId}/season/${seasonNumber}/episode/${episodeNumber}`,
@@ -175,15 +277,32 @@ export async function getEpisodeDetails(
 			);
 			if (!brief) continue;
 
-			if (!overview && typeof brief.overview === 'string' && brief.overview.trim()) {
+			if (!overview.trim() && typeof brief.overview === 'string' && brief.overview.trim()) {
 				overview = brief.overview.trim();
-				if (brief.name) name = String(brief.name);
+			}
+			if (!name.trim() && typeof brief.name === 'string' && brief.name.trim()) {
+				name = brief.name.trim();
 			}
 			if (images.length === 0) {
 				images = extractTopImages(brief.images?.stills, 10);
 			}
 			if (videos.length === 0) {
 				videos = extractTopYoutubeVideos(brief.videos?.results, 5);
+			}
+		}
+
+		if (!overview.trim()) {
+			const originalLang =
+				typeof parent.original_language === 'string' ? parent.original_language.trim() : '';
+			const fallbackTranslation = extractFallbackTranslationOverview(
+				raw.translations?.translations,
+				[originalLang, region, 'en']
+			);
+			if (fallbackTranslation) {
+				overview = fallbackTranslation.overview;
+				if (!name.trim() && fallbackTranslation.name) {
+					name = fallbackTranslation.name;
+				}
 			}
 		}
 

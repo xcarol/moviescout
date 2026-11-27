@@ -266,7 +266,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _headerSection(season, isCompact: isCompact),
-              if (isCompact && season.overview.isNotEmpty) ...[
+              if (isCompact) ...[
                 AppSpacing.gapMd,
                 _description(season),
               ],
@@ -341,10 +341,8 @@ class _SeasonDetailsState extends State<SeasonDetails> {
                     _dateAndRatingLine(season),
                     AppSpacing.gapMd,
                     _headerActions(season, showNavButtons: false),
-                    if (season.overview.isNotEmpty) ...[
-                      AppSpacing.gapMd,
-                      _description(season),
-                    ],
+                    AppSpacing.gapMd,
+                    _description(season),
                   ],
                 ),
         ),

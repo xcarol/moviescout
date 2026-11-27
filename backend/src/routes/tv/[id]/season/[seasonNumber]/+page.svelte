@@ -125,16 +125,18 @@
 			</div>
 		</div>
 
-		{#if season.overview}
-			<div class="overview-block">
+		<div class="overview-block">
+			{#if season.overview}
 				<ExpandableText
 					text={season.overview}
 					maxLines={5}
 					moreLabel={tw(data.locale, 'showMore')}
 					lessLabel={tw(data.locale, 'showLess')}
 				/>
-			</div>
-		{/if}
+			{:else}
+				<p class="missing-description">{t(data.locale, 'missingDescription')}</p>
+			{/if}
+		</div>
 	</header>
 
 	<CreditsInfo crew={season.crew} mediaType="tv" locale={data.locale} />
@@ -314,6 +316,11 @@
 		grid-row: 2;
 		margin-block-start: var(--space-md);
 		min-width: 0;
+	}
+
+	.missing-description {
+		font-size: var(--text-body-md);
+		color: var(--color-text-muted);
 	}
 
 	@media (max-width: 600px) {
