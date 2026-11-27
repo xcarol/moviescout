@@ -311,20 +311,42 @@ class _SeasonDetailsState extends State<SeasonDetails> {
         ),
         SizedBox(width: isCompact ? AppSpacing.md : AppSpacing.xl),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _titleLine(season, showNavButtons: !isCompact),
-              AppSpacing.gapSm,
-              _dateAndRatingLine(season),
-              AppSpacing.gapMd,
-              _headerActions(season, showNavButtons: isCompact),
-              if (!isCompact && season.overview.isNotEmpty) ...[
-                AppSpacing.gapMd,
-                _description(season),
-              ],
-            ],
-          ),
+          child: isCompact
+              ? ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: posterHeight),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _titleLine(season, showNavButtons: false),
+                          AppSpacing.gapSm,
+                          _dateAndRatingLine(season),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: AppSpacing.md),
+                        child: _headerActions(season, showNavButtons: true),
+                      ),
+                    ],
+                  ),
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _titleLine(season, showNavButtons: true),
+                    AppSpacing.gapSm,
+                    _dateAndRatingLine(season),
+                    AppSpacing.gapMd,
+                    _headerActions(season, showNavButtons: false),
+                    if (season.overview.isNotEmpty) ...[
+                      AppSpacing.gapMd,
+                      _description(season),
+                    ],
+                  ],
+                ),
         ),
       ],
     );
