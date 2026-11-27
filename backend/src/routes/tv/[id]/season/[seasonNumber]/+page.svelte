@@ -77,16 +77,18 @@
 					trailerLabel={t(data.locale, 'trailer')}
 				/>
 			</div>
+		</div>
 
-			{#if season.overview}
+		{#if season.overview}
+			<div class="overview-block">
 				<ExpandableText
 					text={season.overview}
 					maxLines={5}
 					moreLabel={tw(data.locale, 'showMore')}
 					lessLabel={tw(data.locale, 'showLess')}
 				/>
-			{/if}
-		</div>
+			</div>
+		{/if}
 	</header>
 
 	<CreditsInfo crew={season.crew} mediaType="tv" locale={data.locale} />
@@ -206,22 +208,44 @@
 	.season-header {
 		display: grid;
 		grid-template-columns: 180px minmax(0, 1fr);
-		gap: var(--space-xl);
+		column-gap: var(--space-xl);
 		align-items: start;
+	}
+
+	.poster-col {
+		grid-column: 1;
+		grid-row: 1 / span 2;
+	}
+
+	.summary-col {
+		grid-column: 2;
+		grid-row: 1;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-sm);
+		min-width: 0;
+	}
+
+	.overview-block {
+		grid-column: 2;
+		grid-row: 2;
+		margin-block-start: var(--space-md);
+		min-width: 0;
 	}
 
 	@media (max-width: 600px) {
 		.season-header {
 			grid-template-columns: 130px minmax(0, 1fr);
-			gap: var(--space-md);
+			column-gap: var(--space-md);
 		}
-	}
 
-	.summary-col {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-sm);
-		min-width: 0;
+		.poster-col {
+			grid-row: 1;
+		}
+
+		.overview-block {
+			grid-column: 1 / -1;
+		}
 	}
 
 	.series-kicker {
