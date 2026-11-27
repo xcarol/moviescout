@@ -1,12 +1,16 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:moviescout/core/theme/custom_colors.dart';
-import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
-import 'package:moviescout/features/titles/models/tmdb_title.dart';
 import 'package:moviescout/core/navigation/app_navigator.dart';
-import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
-import 'package:moviescout/features/titles/widgets/title_card.dart';
+import 'package:moviescout/core/theme/app_breakpoints.dart';
+import 'package:moviescout/core/theme/app_dimensions.dart';
+import 'package:moviescout/core/theme/app_radius.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
+import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/utils/date_formatter.dart';
 import 'package:moviescout/core/widgets/app_poster_image.dart';
+import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
+import 'package:moviescout/features/titles/models/tmdb_title.dart';
+import 'package:moviescout/features/titles/services/tmdb_title_list_service.dart';
+import 'package:moviescout/l10n/app_localizations.dart';
 
 class EpisodeCard extends StatelessWidget {
   final TmdbEpisode _episode;
@@ -14,8 +18,6 @@ class EpisodeCard extends StatelessWidget {
   final int seasonNumber;
   final TmdbTitleListService tmdbListService;
   final int? totalEpisodes;
-
-  static double cardHeight = 122.0;
 
   const EpisodeCard({
     super.key,
@@ -30,107 +32,163 @@ class EpisodeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
-      child: SizedBox(
-        height: cardHeight,
-        child: Card(
-          margin: const EdgeInsets.all(0),
-          clipBehavior: Clip.hardEdge,
-          shape: const RoundedRectangleBorder(),
-          child: InkWell(
-            onTap: () {
-              context.toEpisodeDetails(
-                title: _title,
-                seasonNumber: seasonNumber,
-                episodeNumber: _episode.episodeNumber,
-                tmdbListService: tmdbListService,
-                initialEpisode: _episode,
-                totalEpisodes: totalEpisodes ?? 0,
+      child: Card(
+        margin: EdgeInsets.zero,
+        clipBehavior: Clip.hardEdge,
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.card),
+        child: InkWell(
+          onTap: () {
+            context.toEpisodeDetails(
+              title: _title,
+              seasonNumber: seasonNumber,
+              episodeNumber: _episode.episodeNumber,
+              tmdbListService: tmdbListService,
+              initialEpisode: _episode,
+              totalEpisodes: totalEpisodes ?? 0,
+            );
+          },
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isCompact =
+                  constraints.maxWidth <= AppBreakpoints.largeScreenMinWidth;
+
+              if (isCompact) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _episodeThumbnail(_episode.stillPath, isCompact: true),
+                    Padding(
+                      padding: const EdgeInsets.only(top: AppSpacing.sm),
+                      child: _episodeDetails(context, _episode),
+                    ),
+                  ],
+                );
+              }
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: AppDimensions.episodeStillWidth,
+                    child:
+                        _episodeThumbnail(_episode.stillPath, isCompact: false),
+                  ),
+                  AppSpacing.gapMd,
+                  Expanded(child: _episodeDetails(context, _episode)),
+                ],
               );
             },
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 200,
-                  child: episodeThumbnail(_episode.stillPath),
-                ),
-                const SizedBox(width: 10),
-                _episodeDetails(context, _episode),
-              ],
-            ),
           ),
         ),
       ),
     );
   }
 
-  Widget episodeThumbnail(String? stillPath) {
+  Widget _episodeThumbnail(String? stillPath, {required bool isCompact}) {
     return AppPosterImage(
       imageUrl: stillPath,
       aspectRatio: 16 / 9,
       fallbackType: PosterFallbackType.tvShow,
-      memCacheWidth: 320,
-      memCacheHeight: 180,
+      memCacheWidth: isCompact ? 640 : 320,
+      memCacheHeight: isCompact ? 360 : 180,
       fit: BoxFit.cover,
     );
   }
 
   Widget _episodeDetails(BuildContext context, TmdbEpisode episode) {
-    final textColor = Theme.of(
-      context,
-    ).colorScheme.onSurfaceVariant;
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final secondaryColor = theme.colorScheme.onSurfaceVariant;
+    final formattedDate = DateFormatter.formatDate(context, episode.airDate);
 
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          episodeHeader('${episode.episodeNumber}. ${episode.name}'),
-          const SizedBox(height: 5),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _episodeTopRow(context, episode),
+        if (episode.name.isNotEmpty) ...[
+          AppSpacing.gapXs,
           Text(
-            DateFormatter.formatDate(context, episode.airDate),
+            episode.name,
+            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: textColor),
           ),
-          if (episode.runtime > 0) ...[
-            const SizedBox(height: 5),
-            Text(
-              '${episode.runtime} min',
-              style: TextStyle(color: textColor),
-            ),
-          ],
-          const SizedBox(height: 5),
-          episodeRating(context, episode),
         ],
-      ),
+        if (formattedDate.isNotEmpty || episode.runtime > 0) ...[
+          AppSpacing.gapXs,
+          Wrap(
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.xxs,
+            children: [
+              if (formattedDate.isNotEmpty)
+                Text(
+                  formattedDate,
+                  style: textTheme.bodySmall?.copyWith(color: secondaryColor),
+                ),
+              if (episode.runtime > 0)
+                Text(
+                  '${episode.runtime} min',
+                  style: textTheme.bodySmall?.copyWith(color: secondaryColor),
+                ),
+            ],
+          ),
+        ],
+        if (episode.overview.isNotEmpty) ...[
+          AppSpacing.gapXs,
+          Text(
+            episode.overview,
+            style: textTheme.bodySmall?.copyWith(color: secondaryColor),
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ],
     );
   }
 
-  Text episodeHeader(String name, {int maxLines = 2}) {
-    return Text(
-      name,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-      ),
-      maxLines: maxLines,
-      overflow: TextOverflow.ellipsis,
-    );
-  }
-
-  Widget episodeRating(BuildContext context, TmdbEpisode episode) {
-    if (episode.voteAverage == 0.0) {
-      return const SizedBox();
-    }
+  Widget _episodeTopRow(BuildContext context, TmdbEpisode episode) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<CustomColors>()!;
+    final episodeLabel =
+        AppLocalizations.of(context)!.episodeLabel(episode.episodeNumber);
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Icon(
-          Icons.star,
-          size: 16,
-          color: Theme.of(context).extension<CustomColors>()!.ratedTitle,
+        Expanded(
+          child: Text(
+            episodeLabel,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
-        const SizedBox(width: 5),
-        Text(episode.voteAverage.toStringAsFixed(2)),
+        if (episode.voteAverage > 0) ...[
+          AppSpacing.gapSm,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.star,
+                size: 16,
+                color: customColors.ratedTitle,
+              ),
+              AppSpacing.gapXs,
+              Text(
+                episode.voteAverage == 10.0
+                    ? '10'
+                    : episode.voteAverage.toStringAsFixed(1),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: customColors.ratedTitle,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }

@@ -586,12 +586,13 @@ class _SeasonDetailsState extends State<SeasonDetails> {
           '${season.episodes.length} ${AppLocalizations.of(context)!.episodes}',
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
-        const Divider(),
-        ...season.episodes.map((episode) {
+        Divider(color: customColors.dividerColor),
+        ...List.generate(season.episodes.length, (index) {
+          final episode = season.episodes[index];
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                padding: AppSpacing.edgeInsetsVMd,
                 child: EpisodeCard(
                   title: widget.title,
                   seasonNumber: _currentSeasonNumber,
@@ -600,10 +601,11 @@ class _SeasonDetailsState extends State<SeasonDetails> {
                   totalEpisodes: season.episodes.length,
                 ),
               ),
-              Divider(
-                height: 1,
-                color: customColors.dividerColor,
-              ),
+              if (index < season.episodes.length - 1)
+                Divider(
+                  height: 1,
+                  color: customColors.dividerColor,
+                ),
             ],
           );
         }),
