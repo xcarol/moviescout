@@ -9,6 +9,7 @@ abstract final class AppSpacing {
   static const double xl = 24.0;
   static const double xxl = 32.0;
   static const double xxxl = 48.0;
+  static const double detailBottomPadding = 100.0;
 
   static const EdgeInsets edgeInsetsAllZero = EdgeInsets.zero;
   static const EdgeInsets edgeInsetsAllXs = EdgeInsets.all(xs);

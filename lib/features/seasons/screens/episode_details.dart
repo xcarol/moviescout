@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/theme/app_breakpoints.dart';
+import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/core/widgets/app_error_view.dart';
 import 'package:moviescout/features/people/models/tmdb_person.dart';
 import 'package:moviescout/features/seasons/models/tmdb_episode.dart';
@@ -277,7 +278,11 @@ class _EpisodeDetailsState extends State<EpisodeDetails> {
 
   Widget _details(TmdbEpisode episode) {
     return Padding(
-      padding: const EdgeInsets.only(left: 5, right: 5, bottom: 100),
+      padding: const EdgeInsets.only(
+        left: 5,
+        right: 5,
+        bottom: AppSpacing.detailBottomPadding,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

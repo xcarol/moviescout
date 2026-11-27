@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:moviescout/l10n/app_localizations.dart';
 import 'package:moviescout/core/theme/custom_colors.dart';
 import 'package:moviescout/core/theme/app_breakpoints.dart';
+import 'package:moviescout/core/theme/app_dimensions.dart';
 import 'package:moviescout/core/theme/app_spacing.dart';
 import 'package:moviescout/core/widgets/app_error_view.dart';
 import 'package:moviescout/features/seasons/models/tmdb_season.dart';
@@ -259,7 +260,7 @@ class _SeasonDetailsState extends State<SeasonDetails> {
             left: AppSpacing.sm,
             right: AppSpacing.sm,
             top: AppSpacing.md,
-            bottom: 100,
+            bottom: AppSpacing.detailBottomPadding,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -288,8 +289,10 @@ class _SeasonDetailsState extends State<SeasonDetails> {
   }
 
   Widget _headerSection(TmdbSeason season, {required bool isCompact}) {
-    final double posterWidth = isCompact ? 130.0 : 180.0;
-    final double posterHeight = posterWidth * 1.5;
+    final double posterWidth = isCompact
+        ? AppDimensions.detailPosterWidthCompact
+        : AppDimensions.detailPosterWidthWide;
+    final double posterHeight = posterWidth * AppDimensions.posterHeightRatio;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
